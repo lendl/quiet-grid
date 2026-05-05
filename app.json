@@ -1,0 +1,48 @@
+{
+  "expo": {
+    "name": "Quiet Grid",
+    "slug": "quiet-grid",
+    "version": "1.0.2",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "icon": "./assets/icon.png",
+    "android": {
+      "package": "com.quietgrid.app",
+      "versionCode": 2,
+      "blockedPermissions": [
+        "android.permission.INTERNET",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.VIBRATE",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "com.android.vending.CHECK_LICENSE",
+        "com.quietgrid.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+      ],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0d1117"
+      }
+    },
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0d1117"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "06d3f810-3f74-42fa-a3b7-53cc7ee3f51c"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/06d3f810-3f74-42fa-a3b7-53cc7ee3f51c"
+    },
+    "ios": {},
+    "plugins": [
+      "expo-font",
+      "expo-localization"
+    ]
+  }
+}

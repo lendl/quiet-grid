@@ -1,0 +1,217 @@
+import React, { useCallback, useMemo, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { useLanguage } from '../../app/context/LanguageContext';
+import { useTheme } from '../../app/context/ThemeContext';
+import { createPuzzlePlayAdapter } from '../../app/shell/games/playAdapter';
+import {
+  clearActivePuzzleState,
+} from '../../app/utils/activePuzzleStateStorage';
+import type { Theme } from '../../app/theme';
+import { withAlpha } from '../../app/utils/color';
+import type {
+  PuzzleEffectHandlerArgs,
+  PuzzlePlayAdapter,
+  PuzzlePlayAdapterInstance,
+  PuzzlePlayAdapterShellArgs,
+  PuzzleRenderState,
+} from '../../app/shell/games/playAdapter';
+import MinesweeperBoard from './components/MinesweeperBoard';
+import {
+  getMinesweeperNextMoveHint,
+  type MinesweeperNextMoveHint,
+} from './learningCenter';
+import { applyMinesweeperAction } from './actions';
+import {
+  minesweeperPlayContract,
+  type MinesweeperAction,
+  type MinesweeperActionEffect,
+  type MinesweeperHudState,
+  type MinesweeperPlaySession,
+} from './playContract';
+import type { MinesweeperActivePuzzle } from './activePuzzle';
+
+function useMinesweeperAdapter({
+  goHome,
+}: PuzzlePlayAdapterShellArgs): PuzzlePlayAdapterInstance<
+  MinesweeperPlaySession,
+  MinesweeperAction,
+  MinesweeperActionEffect
+> {
+  const { resolvedLanguage } = useLanguage();
+  const { theme } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+  const [nextMoveHint, setNextMoveHint] = useState<MinesweeperNextMoveHint | null>(null);
+  const [nextMoveVisible, setNextMoveVisible] = useState(false);
+
+  const resetHelperState = useCallback(() => {
+    setNextMoveHint(null);
+    setNextMoveVisible(false);
+  }, []);
+
+  const handleMissingPuzzle = useCallback(async () => {
+    resetHelperState();
+    await clearActivePuzzleState();
+    goHome();
+  }, [goHome, resetHelperState]);
+
+  const runImmediateAction = useMemo(() => ({
+    run(session: MinesweeperPlaySession, action: MinesweeperAction) {
+      return applyMinesweeperAction(session, action);
+    },
+  }), []);
+
+  const handleEffects = useCallback(async ({
+    effects,
+    finalizedRef,
+    finishLossSession,
+  }: PuzzleEffectHandlerArgs<MinesweeperPlaySession, MinesweeperActionEffect>) => {
+    if (!effects.some((effect) => effect.type === 'lost') || finalizedRef.current) {
+      return;
+    }
+
+    await finishLossSession('rule-based');
+  }, []);
+
+  const getState = useCallback(({
+    session,
+    sessionRef,
+    runImmediateAction: runShellAction,
+  }: PuzzleRenderState<MinesweeperPlaySession, MinesweeperAction>) => {
+    const resetNextMove = () => {
+      setNextMoveHint(null);
+      setNextMoveVisible(false);
+    };
+
+    const handleToggleNextMove = () => {
+      if (nextMoveVisible) {
+        setNextMoveVisible(false);
+        return;
+      }
+
+      if (!sessionRef.current) {
+        return;
+      }
+
+      setNextMoveHint(getMinesweeperNextMoveHint(sessionRef.current.board));
+      setNextMoveVisible(true);
+    };
+
+    return {
+      grid: session ? (
+        <View style={styles.gridArea}>
+          <MinesweeperBoard
+            board={session.board}
+            onReveal={(row, col) => {
+              resetNextMove();
+              void runShellAction({ type: 'reveal-cell', row, col });
+            }}
+            onToggleFlag={(row, col) => {
+              resetNextMove();
+              void runShellAction({ type: 'toggle-flag', row, col });
+            }}
+            nextMoveEvidenceCells={nextMoveVisible ? nextMoveHint?.evidenceCells : []}
+            nextMoveTargetCells={nextMoveVisible ? nextMoveHint?.targetCells : []}
+          />
+        </View>
+      ) : (
+        <View style={styles.gridArea} />
+      ),
+      helperState: {
+        showHelperToggle: true,
+        helperVisible: nextMoveVisible,
+        helperToggleLabel: nextMoveVisible
+          ? (resolvedLanguage === 'nl' ? 'Verberg volgende zet' : 'Hide next move')
+          : (resolvedLanguage === 'nl' ? 'Toon volgende zet' : 'Show next move'),
+        onToggleHelper: handleToggleNextMove,
+        footer: nextMoveVisible && nextMoveHint ? (
+          <View style={styles.nextMoveCard}>
+            <View style={styles.nextMoveCardHeader}>
+              <View style={styles.nextMoveCardBadge}>
+                <Text style={styles.nextMoveCardBadgeText}>i</Text>
+              </View>
+              <Text style={styles.nextMoveCardTitle}>{nextMoveHint.title}</Text>
+            </View>
+            <Text style={styles.nextMoveCardBody}>{nextMoveHint.body}</Text>
+          </View>
+        ) : (
+          <View style={styles.emptyFooter} />
+        ),
+      },
+    };
+  }, [nextMoveHint, nextMoveVisible, resolvedLanguage, styles]);
+
+  return {
+    onMissing: handleMissingPuzzle,
+    onFreshMissing: handleMissingPuzzle,
+    onBeforeLoad: resetHelperState,
+    onCleanup: resetHelperState,
+    runImmediateAction,
+    handleEffects,
+    getState,
+  };
+}
+
+const minesweeperTypedPlayAdapter = {
+  contract: minesweeperPlayContract,
+  useAdapter: useMinesweeperAdapter,
+} satisfies PuzzlePlayAdapter<
+  MinesweeperPlaySession,
+  MinesweeperActivePuzzle,
+  MinesweeperHudState,
+  MinesweeperAction,
+  MinesweeperActionEffect
+>;
+
+export const minesweeperPlayAdapter = createPuzzlePlayAdapter(minesweeperTypedPlayAdapter);
+
+const makeStyles = (theme: Theme) => StyleSheet.create({
+  gridArea: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 12,
+    paddingBottom: 24,
+  },
+  nextMoveCard: {
+    flex: 1,
+    borderRadius: 16,
+    paddingHorizontal: 12,
+    paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: withAlpha(theme.surfaceElevated, 0.96),
+    borderWidth: 1,
+    borderColor: withAlpha(theme.primaryLight, 0.34),
+  },
+  nextMoveCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 4,
+  },
+  nextMoveCardBadge: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: withAlpha(theme.primary, 0.24),
+  },
+  nextMoveCardBadgeText: {
+    color: theme.primaryLight,
+    fontSize: 13,
+    fontWeight: '800',
+  },
+  nextMoveCardTitle: {
+    flex: 1,
+    color: theme.text,
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  nextMoveCardBody: {
+    color: theme.textSecondary,
+    fontSize: 13,
+    lineHeight: 18,
+  },
+  emptyFooter: {
+    minHeight: 1,
+  },
+});

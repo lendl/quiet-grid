@@ -1,0 +1,130 @@
+import path from 'path';
+import { analyzeDifficulty } from '../../../engine/difficultyAnalyzer';
+import {
+  classifyPuzzleDifficulty,
+  computeDifficultyScore,
+} from '../../../engine/difficultyScore';
+import {
+  SUPPORTED_BUCKETS,
+  SUPPORTED_PUZZLE_SIZES,
+  type DifficultyLabel,
+  type SupportedPuzzleSize,
+} from '../../../engine/difficultyConfig';
+import { gridToHex, maskToHex } from '../../../engine/encoding';
+import { generateGrid } from '../../../engine/generator';
+import type {
+  EngineCatalogEntry,
+  EngineGameDefinition,
+  EngineGenerateResult,
+} from '../../../engine/gameDefinition';
+import { generateMask } from '../../../engine/mask';
+import type { Puzzle } from '../types';
+
+interface BinaryCatalogEntry extends Puzzle, EngineCatalogEntry {}
+
+function formatPuzzleEntry(puzzle: BinaryCatalogEntry): string {
+  return `  { id: '${puzzle.id}', size: ${puzzle.size}, rows: ${puzzle.rows}, cols: ${puzzle.cols}, difficulty: '${puzzle.difficulty}', solution: '${puzzle.solution}', mask: '${puzzle.mask}' },`;
+}
+
+function normalizePuzzleEntry(puzzle: BinaryCatalogEntry): BinaryCatalogEntry {
+  return {
+    ...puzzle,
+    rows: puzzle.rows ?? puzzle.size,
+    cols: puzzle.cols ?? puzzle.size,
+  };
+}
+
+function toSupportedPuzzleSize(size: number): SupportedPuzzleSize | null {
+  return size === 6 || size === 8 || size === 10 ? size : null;
+}
+
+function getSupportedDifficultiesForSize(size: SupportedPuzzleSize): DifficultyLabel[] {
+  return [...new Set(
+    SUPPORTED_BUCKETS
+      .filter((bucket) => bucket.size === size)
+      .map((bucket) => bucket.difficulty),
+  )];
+}
+
+function generateBinaryPuzzleWithDifficulty(
+  size: SupportedPuzzleSize,
+  targetDifficulty: DifficultyLabel,
+): EngineGenerateResult<BinaryCatalogEntry> | null {
+  const grid = generateGrid(size);
+  if (!grid) {
+    return null;
+  }
+
+  const solutionHex = gridToHex(grid);
+  const maskGrid = generateMask(grid, targetDifficulty);
+  if (!maskGrid) {
+    return null;
+  }
+
+  const maskHex = maskToHex(maskGrid);
+  const metrics = analyzeDifficulty(solutionHex, maskHex, size);
+  const score = computeDifficultyScore(size, metrics);
+  const difficulty = classifyPuzzleDifficulty(size, metrics, score);
+  if (difficulty !== targetDifficulty) {
+    return null;
+  }
+
+  return {
+    dedupeKey: solutionHex,
+    entry: {
+      size,
+      rows: size,
+      cols: size,
+      difficulty,
+      solution: solutionHex,
+      mask: maskHex,
+    },
+    label: `${size}x${size} ${difficulty}`,
+    score,
+  };
+}
+
+export const binaryEngineDefinition: EngineGameDefinition<BinaryCatalogEntry> = {
+  id: 'binary',
+  title: 'Binary',
+  catalogPath: path.resolve(__dirname, '../puzzles/all.ts'),
+  entryIdPrefix: 'p',
+  catalog: {
+    importTypePath: '../types',
+    entryTypeName: 'Puzzle',
+    formatEntry: formatPuzzleEntry,
+    normalizeParsedEntry: normalizePuzzleEntry,
+  },
+  listAllowedSizes: () => SUPPORTED_PUZZLE_SIZES,
+  pickTargetDifficulty: (size) => {
+    const supportedSize = toSupportedPuzzleSize(size);
+    if (!supportedSize) {
+      throw new Error(`Binary engine does not support size ${size}.`);
+    }
+
+    const difficulties = getSupportedDifficultiesForSize(supportedSize);
+    return difficulties[Math.floor(Math.random() * difficulties.length)];
+  },
+  generateOne: (size, targetDifficulty) => {
+    const supportedSize = toSupportedPuzzleSize(size);
+    if (!supportedSize) {
+      throw new Error(`Binary engine does not support size ${size}.`);
+    }
+
+    return generateBinaryPuzzleWithDifficulty(supportedSize, targetDifficulty as DifficultyLabel);
+  },
+  getEntryDedupeKey: (entry) => entry.solution,
+  reclassifyEntries: (entries) => entries.flatMap((entry) => {
+    const metrics = analyzeDifficulty(entry.solution, entry.mask, entry.size);
+    const difficultyScore = computeDifficultyScore(entry.size, metrics);
+    const difficulty = classifyPuzzleDifficulty(entry.size, metrics, difficultyScore);
+    if (!difficulty) {
+      return [];
+    }
+
+    return [{
+      ...entry,
+      difficulty,
+    }];
+  }),
+};

@@ -1,0 +1,47 @@
+{
+  "name": "quiet-grid",
+  "version": "1.0.0",
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "engine": "ts-node --project src/engine/tsconfig.json src/engine/index.ts",
+    "lint": "eslint src App.tsx",
+    "lint:fix": "eslint src App.tsx --fix",
+    "typecheck:app": "tsc --noEmit",
+    "typecheck:engine": "tsc --noEmit --project src/engine/tsconfig.json"
+  },
+  "dependencies": {
+    "@expo/vector-icons": "^15.0.3",
+    "@react-native-async-storage/async-storage": "^2.2.0",
+    "@react-navigation/native": "^6.1.18",
+    "@react-navigation/stack": "^6.4.1",
+    "expo": "~54.0.34",
+    "expo-font": "~14.0.11",
+    "expo-linear-gradient": "~15.0.8",
+    "expo-localization": "~17.0.8",
+    "expo-status-bar": "~3.0.9",
+    "expo-updates": "~29.0.17",
+    "react": "^19.1.0",
+    "react-native": "^0.81.5",
+    "react-native-gesture-handler": "~2.28.0",
+    "react-native-safe-area-context": "~5.6.0",
+    "react-native-screens": "~4.16.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.0",
+    "@eslint/js": "^10.0.1",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^25.5.2",
+    "@types/react": "~19.1.10",
+    "babel-preset-expo": "~54.0.10",
+    "better-sqlite3": "^12.8.0",
+    "eslint": "^10.2.1",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.5.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3",
+    "typescript-eslint": "^8.59.1"
+  },
+  "private": true
+}
