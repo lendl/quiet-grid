@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Android / iOS builds
+android/
+ios/
+*.apk
+*.ipa
+*.aab
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# TypeScript
+*.tsbuildinfo
+
+# Git worktrees
+.worktrees/
+.superpowers/
+
+# Local planning docs
+docs/superpowers/
+
+# Engine tracking database
+src/engine/puzzles.db
+
+# Android signing credentials
+credentials/
