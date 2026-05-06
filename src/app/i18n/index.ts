@@ -64,7 +64,7 @@ const EN_STRINGS = {
     playAgain: 'Play Again',
     next: 'Next',
     getStarted: 'Get Started',
-    config: 'Config',
+    settings: 'Settings',
     support: 'Support',
     stats: 'Stats',
     rules: 'Rules',
@@ -115,8 +115,8 @@ const EN_STRINGS = {
       },
     ],
   },
-  config: {
-    title: 'Config',
+  settings: {
+    title: 'Settings',
     subtitle: 'Choose your theme, language, and whether first-time tutorials open automatically.',
     appearance: 'Appearance',
     language: 'Language',
@@ -287,7 +287,7 @@ const NL_STRINGS: AppStrings = {
     playAgain: 'Opnieuw spelen',
     next: 'Volgende',
     getStarted: 'Beginnen',
-    config: 'Config',
+    settings: 'Instellingen',
     support: 'Ondersteuning',
     stats: 'Statistieken',
     rules: 'Regels',
@@ -338,8 +338,8 @@ const NL_STRINGS: AppStrings = {
       },
     ],
   },
-  config: {
-    title: 'Config',
+  settings: {
+    title: 'Instellingen',
     subtitle: 'Kies je thema, taal en of tutorials automatisch openen bij de eerste keer.',
     appearance: 'Weergave',
     language: 'Taal',

@@ -15,9 +15,9 @@ import {
   saveTutorialsEnabled,
 } from '../utils/settingsStorage';
 
-type Props = StackScreenProps<RootStackParamList, 'Config'>;
+type Props = StackScreenProps<RootStackParamList, 'Settings'>;
 
-type ConfigRow = {
+type SettingsRow = {
   key: string;
   label: string;
   detail?: string;
@@ -44,7 +44,7 @@ function Section({
   styles,
 }: {
   title: string;
-  rows: ConfigRow[];
+  rows: SettingsRow[];
   styles: ReturnType<typeof makeStyles>;
 }) {
   return (
@@ -72,7 +72,7 @@ function Section({
   );
 }
 
-export default function ConfigScreen({ navigation }: Props) {
+export default function SettingsScreen({ navigation }: Props) {
   const { strings, resolvedLanguage, setLanguageSetting } = useLanguage();
   const { theme, themeMode, setThemeMode } = useTheme();
   const [tutorialsEnabled, setTutorialsEnabled] = React.useState(true);
@@ -97,8 +97,8 @@ export default function ConfigScreen({ navigation }: Props) {
   const themeOptions = useMemo<ThemeOption[]>(() => [
     {
       key: 'dark',
-      label: strings.config.dark,
-      detail: strings.config.darkDetail,
+      label: strings.settings.dark,
+      detail: strings.settings.darkDetail,
     },
   ], [strings]);
   const selectedTheme = useMemo(
@@ -106,8 +106,8 @@ export default function ConfigScreen({ navigation }: Props) {
       if (themeMode === 'light') {
         return {
           key: 'light',
-          label: strings.config.light,
-          detail: strings.config.lightDetail,
+          label: strings.settings.light,
+          detail: strings.settings.lightDetail,
         } satisfies ThemeOption;
       }
 
@@ -120,13 +120,13 @@ export default function ConfigScreen({ navigation }: Props) {
     {
       key: 'en',
       label: strings.common.english,
-      detail: strings.config.languageEnglishDetail,
+      detail: strings.settings.languageEnglishDetail,
       icon: '🇬🇧',
     },
     {
       key: 'nl',
       label: strings.common.dutch,
-      detail: strings.config.languageDutchDetail,
+      detail: strings.settings.languageDutchDetail,
       icon: '🇳🇱',
     },
   ]), [strings]);
@@ -135,11 +135,11 @@ export default function ConfigScreen({ navigation }: Props) {
     [languageOptions, resolvedLanguage],
   );
 
-  const tutorialRows = useMemo<ConfigRow[]>(() => [
+  const tutorialRows = useMemo<SettingsRow[]>(() => [
     {
       key: 'tutorials',
-      label: strings.config.tutorialsLabel,
-      detail: strings.config.tutorialsDetail,
+      label: strings.settings.tutorialsLabel,
+      detail: strings.settings.tutorialsDetail,
       value: tutorialsEnabled ? strings.common.on : strings.common.off,
       onPress: () => {
         const next = !tutorialsEnabled;
@@ -162,14 +162,14 @@ export default function ConfigScreen({ navigation }: Props) {
         </TouchableOpacity>
 
         <View style={s.header}>
-          <Text style={s.title}>{strings.config.title}</Text>
+          <Text style={s.title}>{strings.settings.title}</Text>
           <Text style={s.subtitle}>
-            {strings.config.subtitle}
+            {strings.settings.subtitle}
           </Text>
         </View>
 
         <View style={s.section}>
-          <Text style={s.sectionTitle}>{strings.config.appearance}</Text>
+          <Text style={s.sectionTitle}>{strings.settings.appearance}</Text>
           <TouchableOpacity
             style={s.dropdownTrigger}
             onPress={() => {
@@ -182,14 +182,14 @@ export default function ConfigScreen({ navigation }: Props) {
               });
             }}
             accessibilityRole="button"
-            accessibilityLabel={strings.config.appearance}
+            accessibilityLabel={strings.settings.appearance}
             activeOpacity={0.82}
           >
             <View style={s.dropdownIconWrap}>
               <Ionicons name="color-palette-outline" size={18} color={theme.primaryLight} />
             </View>
             <View style={s.rowTextWrap}>
-              <Text style={s.rowLabel}>{strings.config.appearance}</Text>
+              <Text style={s.rowLabel}>{strings.settings.appearance}</Text>
             </View>
             <View style={s.dropdownValueWrap}>
               <Text style={s.rowValue}>{selectedTheme.label}</Text>
@@ -229,7 +229,7 @@ export default function ConfigScreen({ navigation }: Props) {
           ) : null}
         </View>
         <View style={s.section}>
-          <Text style={s.sectionTitle}>{strings.config.language}</Text>
+          <Text style={s.sectionTitle}>{strings.settings.language}</Text>
           <TouchableOpacity
             style={s.dropdownTrigger}
             onPress={() => {
@@ -242,15 +242,15 @@ export default function ConfigScreen({ navigation }: Props) {
               });
             }}
             accessibilityRole="button"
-            accessibilityLabel={strings.config.language}
+            accessibilityLabel={strings.settings.language}
             activeOpacity={0.82}
           >
             <View style={s.dropdownIconWrap}>
               <Ionicons name="globe-outline" size={18} color={theme.primaryLight} />
             </View>
             <View style={s.rowTextWrap}>
-              <Text style={s.rowLabel}>{strings.config.language}</Text>
-              <Text style={s.rowDetail}>{strings.config.languageDropdownDetail}</Text>
+              <Text style={s.rowLabel}>{strings.settings.language}</Text>
+              <Text style={s.rowDetail}>{strings.settings.languageDropdownDetail}</Text>
             </View>
             <View style={s.dropdownValueWrap}>
               <Text style={s.rowValue}>{selectedLanguage.label}</Text>
@@ -289,9 +289,9 @@ export default function ConfigScreen({ navigation }: Props) {
               ))}
             </View>
           ) : null}
-          <Text style={s.disclaimerText}>{strings.config.languageAiDisclaimer}</Text>
+          <Text style={s.disclaimerText}>{strings.settings.languageAiDisclaimer}</Text>
         </View>
-        <Section title={strings.config.tutorials} rows={tutorialRows} styles={s} />
+        <Section title={strings.settings.tutorials} rows={tutorialRows} styles={s} />
       </ScrollView>
     </AppScreen>
   );

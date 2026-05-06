@@ -34,7 +34,7 @@ export type TutorialEntryPoint = 'startup' | 'howToPlay';
 export type RootStackParamList = {
   Welcome: undefined;
   Home: undefined;
-  Config: undefined;
+  Settings: undefined;
   Support: undefined;
   SupportInfo: { infoKey: SupportInfoKey };
   PuzzleTypePicker: undefined;

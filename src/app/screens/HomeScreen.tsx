@@ -183,10 +183,10 @@ export default function HomeScreen({ navigation }: Props) {
         </TouchableOpacity>
         <TouchableOpacity
           style={[s.btn, s.btnSecondary]}
-          onPress={() => navigation.navigate('Config')}
+          onPress={() => navigation.navigate('Settings')}
           activeOpacity={0.8}
         >
-          <Text style={[s.btnText, s.btnTextSecondary]}>{strings.common.config}</Text>
+          <Text style={[s.btnText, s.btnTextSecondary]}>{strings.common.settings}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[s.btn, s.btnSecondary]}

@@ -10,8 +10,8 @@ import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import type { RootStackParamList } from './types';
 import { hasSeenWelcome } from '../utils/settingsStorage';
-import ConfigScreen          from '../screens/ConfigScreen';
 import HomeScreen            from '../screens/HomeScreen';
+import SettingsScreen        from '../screens/SettingsScreen';
 import WelcomeScreen         from '../screens/WelcomeScreen';
 import PuzzleTypePickerScreen from '../screens/PuzzleTypePickerScreen';
 import PuzzleScreen          from '../screens/PuzzleScreen';
@@ -78,7 +78,7 @@ export default function AppNavigator() {
       >
         <Stack.Screen name="Welcome"         component={WelcomeScreen} />
         <Stack.Screen name="Home"            component={HomeScreen} />
-        <Stack.Screen name="Config"          component={ConfigScreen} />
+        <Stack.Screen name="Settings"        component={SettingsScreen} />
         <Stack.Screen name="Support"         component={SupportScreen} />
         <Stack.Screen name="SupportInfo"     component={SupportInfoScreen} />
         <Stack.Screen name="PuzzleTypePicker" component={PuzzleTypePickerScreen} />
