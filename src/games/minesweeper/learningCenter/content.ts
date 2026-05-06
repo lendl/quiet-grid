@@ -1,4 +1,7 @@
-import { getMinesweeperLearningCenterContent as getContent } from '../i18n';
+import {
+  getMinesweeperLearningCenterContent as getContent,
+  type MinesweeperLearningCenterPatternKey,
+} from '../i18n';
 
 interface MinesweeperCellRef {
   row: number;
@@ -6,14 +9,24 @@ interface MinesweeperCellRef {
 }
 
 interface SafeRevealCopyParams {
-  clueCell: MinesweeperCellRef;
+  patternKey: MinesweeperLearningCenterPatternKey;
+  clueCell?: MinesweeperCellRef;
+  secondaryClueCell?: MinesweeperCellRef;
   targetCount: number;
-  mineCount: number;
+  mineCount?: number;
+}
+
+interface NextMoveTeachingCopy {
+  patternTitle: string;
+  patternLabel: string;
+  explanationTitle: string;
+  explanation: string;
 }
 
 interface NextMoveCopy {
   title: string;
   body: string;
+  teaching?: NextMoveTeachingCopy;
 }
 
 function formatCell({ row, col }: MinesweeperCellRef): string {
@@ -24,11 +37,22 @@ function pluralize(count: number, singular: string, plural: string): string {
   return count === 1 ? singular : plural;
 }
 
-export function buildSafeRevealNextMove(params: SafeRevealCopyParams): NextMoveCopy {
-  const clueLabel = formatCell(params.clueCell);
+export function buildPatternNextMove(params: SafeRevealCopyParams): NextMoveCopy {
+  const clueLabel = params.clueCell ? formatCell(params.clueCell) : undefined;
+  const secondaryClueLabel = params.secondaryClueCell
+    ? formatCell(params.secondaryClueCell)
+    : undefined;
   const tileLabel = pluralize(params.targetCount, 'tile', 'tiles');
-  const mineLabel = pluralize(params.mineCount, 'mine', 'mines');
-  return getContent().safeReveal(clueLabel, tileLabel, params.mineCount, mineLabel);
+  const mineCount = params.mineCount ?? 1;
+  const mineLabel = pluralize(mineCount, 'mine', 'mines');
+  return getContent().nextMovePattern({
+    patternKey: params.patternKey,
+    clueLabel,
+    secondaryClueLabel,
+    tileLabel,
+    mineLabel,
+    mineCount,
+  });
 }
 
 export function buildGuessNextMove(): NextMoveCopy {

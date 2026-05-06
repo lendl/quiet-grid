@@ -151,6 +151,14 @@ function useMinesweeperAdapter({
               <Text style={styles.nextMoveCardTitle}>{nextMoveHint.title}</Text>
             </View>
             <Text style={styles.nextMoveCardBody}>{nextMoveHint.body}</Text>
+            {nextMoveHint.teaching ? (
+              <>
+                <Text style={styles.nextMoveCardLabel}>{nextMoveHint.teaching.patternTitle}</Text>
+                <Text style={styles.nextMoveCardPattern}>{nextMoveHint.teaching.patternLabel}</Text>
+                <Text style={styles.nextMoveCardLabel}>{nextMoveHint.teaching.explanationTitle}</Text>
+                <Text style={styles.nextMoveCardBody}>{nextMoveHint.teaching.explanation}</Text>
+              </>
+            ) : null}
           </View>
         ) : (
           <View style={styles.emptyFooter} />
@@ -229,6 +237,19 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     color: theme.textSecondary,
     fontSize: 13,
     lineHeight: 18,
+  },
+  nextMoveCardLabel: {
+    marginTop: 8,
+    color: theme.textSecondary,
+    fontSize: 11,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+  },
+  nextMoveCardPattern: {
+    marginTop: 2,
+    color: theme.text,
+    fontSize: 14,
+    fontWeight: '700',
   },
   emptyFooter: {
     minHeight: 1,

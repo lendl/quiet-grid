@@ -114,11 +114,73 @@ const en = {
     },
   },
   learningCenter: {
-    safeReveal(clueLabel: string, tileLabel: string, mineCount: number, mineLabel: string) {
-      return {
-        title: `Safe next move near ${clueLabel}`,
-        body: `Reveal highlighted ${tileLabel}. Why: around ${clueLabel}, shaded tiles already account for all ${mineCount} ${mineLabel}, so remaining hidden ${tileLabel} are safe.`,
-      };
+    nextMovePattern({
+      patternKey,
+      clueLabel,
+      secondaryClueLabel,
+      tileLabel,
+      mineLabel,
+      mineCount,
+    }: LearningCenterPatternParams) {
+      switch (patternKey) {
+        case 'single-mine-logic':
+          return {
+            title: `Safe next move near ${clueLabel ?? 'this clue'}`,
+            body: `Reveal highlighted ${tileLabel}. This local clue pattern still leaves one mine slot, which makes the other hidden ${tileLabel} safe.`,
+            teaching: {
+              patternTitle: 'Pattern',
+              patternLabel: 'Single-Mine Logic',
+              explanationTitle: 'Explanation',
+              explanation: `This local clue pattern still needs exactly one ${mineLabel}. Once that single mine slot is pinned down, the other touching hidden ${tileLabel} must be safe.`,
+            },
+          };
+        case 'all-mines-accounted-for':
+          return {
+            title: `Safe next move near ${clueLabel ?? 'this clue'}`,
+            body: `Reveal highlighted ${tileLabel}. Around ${clueLabel ?? 'this clue'}, known mine positions already account for all ${mineCount} ${mineLabel}.`,
+            teaching: {
+              patternTitle: 'Pattern',
+              patternLabel: 'All Mines Accounted For',
+              explanationTitle: 'Explanation',
+              explanation: `This clue already has all ${mineCount} ${mineLabel} it needs, so every other hidden ${tileLabel} touching it must be safe.`,
+            },
+          };
+        case 'only-one-possible-mine':
+          return {
+            title: `Safe next move from comparing clues`,
+            body: `Reveal highlighted ${tileLabel}. Reading ${clueLabel ?? 'one clue'} together with ${secondaryClueLabel ?? 'another clue'} leaves only one legal place for the remaining mine.`,
+            teaching: {
+              patternTitle: 'Pattern',
+              patternLabel: 'Only One Possible Mine',
+              explanationTitle: 'Explanation',
+              explanation: `Comparing these clues leaves exactly one legal location for the remaining ${mineLabel}, so the extra hidden ${tileLabel} outside that mine slot must be safe.`,
+            },
+          };
+        case 'guaranteed-safe-tile':
+          return {
+            title: `Safe next move near ${clueLabel ?? 'this clue'}`,
+            body: `Reveal highlighted ${tileLabel}. If this tile were a mine, nearby clue counts would be too high.`,
+            teaching: {
+              patternTitle: 'Pattern',
+              patternLabel: 'Guaranteed Safe Tile',
+              explanationTitle: 'Explanation',
+              explanation: `If the highlighted ${tileLabel} were a mine, at least one nearby clue would have too many ${mineLabel}. Since that would break the clue, the tile must be safe.`,
+            },
+          };
+        case 'full-clue-resolution':
+          return {
+            title: `Safe next move near ${clueLabel ?? 'this clue'}`,
+            body: `Reveal highlighted ${tileLabel}. This clue's mine requirement is fully resolved, so its remaining hidden ${tileLabel} are safe.`,
+            teaching: {
+              patternTitle: 'Pattern',
+              patternLabel: 'Full Clue Resolution',
+              explanationTitle: 'Explanation',
+              explanation: `This clue's mine requirement is fully resolved by nearby forced mine positions, so the remaining hidden ${tileLabel} touching it must be safe.`,
+            },
+          };
+        default:
+          throw new Error(`Unhandled next move pattern: ${patternKey satisfies never}`);
+      }
     },
     guess: {
       title: 'No certain next move yet',
@@ -128,3 +190,4 @@ const en = {
 } as const;
 
 export default en;
+import type { LearningCenterPatternParams } from './index';

@@ -114,11 +114,73 @@ const nl = {
     },
   },
   learningCenter: {
-    safeReveal(clueLabel: string, tileLabel: string, mineCount: number, mineLabel: string) {
-      return {
-        title: `Veilige volgende zet bij ${clueLabel}`,
-        body: `Open de gemarkeerde ${tileLabel}. Waarom: rond ${clueLabel} verklaren de gearceerde vakken al alle ${mineCount} ${mineLabel}, dus de overblijvende verborgen ${tileLabel} zijn veilig.`,
-      };
+    nextMovePattern({
+      patternKey,
+      clueLabel,
+      secondaryClueLabel,
+      tileLabel,
+      mineLabel,
+      mineCount,
+    }: LearningCenterPatternParams) {
+      switch (patternKey) {
+        case 'single-mine-logic':
+          return {
+            title: `Veilige volgende zet bij ${clueLabel ?? 'dit cijfer'}`,
+            body: `Open de gemarkeerde ${tileLabel}. Dit lokale cijferpatroon laat nog maar één mijnvak over, waardoor de andere verborgen ${tileLabel} veilig zijn.`,
+            teaching: {
+              patternTitle: 'Patroon',
+              patternLabel: 'Single-Mine Logic',
+              explanationTitle: 'Uitleg',
+              explanation: `Dit lokale cijferpatroon heeft nog precies één ${mineLabel} nodig. Zodra dat ene mijnvak vastligt, zijn de andere aangrenzende verborgen ${tileLabel} veilig.`,
+            },
+          };
+        case 'all-mines-accounted-for':
+          return {
+            title: `Veilige volgende zet bij ${clueLabel ?? 'dit cijfer'}`,
+            body: `Open de gemarkeerde ${tileLabel}. Rond ${clueLabel ?? 'dit cijfer'} zijn alle ${mineCount} ${mineLabel} al verklaard.`,
+            teaching: {
+              patternTitle: 'Patroon',
+              patternLabel: 'Alle mijnen al verklaard',
+              explanationTitle: 'Uitleg',
+              explanation: `Dit cijfer heeft al alle ${mineCount} ${mineLabel} die het nodig heeft, dus elk ander verborgen ${tileLabel} ernaast is veilig.`,
+            },
+          };
+        case 'only-one-possible-mine':
+          return {
+            title: 'Veilige volgende zet door cijfers te vergelijken',
+            body: `Open de gemarkeerde ${tileLabel}. Samen laten ${clueLabel ?? 'deze aanwijzing'} en ${secondaryClueLabel ?? 'de andere aanwijzing'} nog maar één legale plek voor de overblijvende mijn over.`,
+            teaching: {
+              patternTitle: 'Patroon',
+              patternLabel: 'Slechts één mogelijke mijn',
+              explanationTitle: 'Uitleg',
+              explanation: `Door deze cijfers samen te lezen blijft er precies één legale plek voor de overblijvende ${mineLabel} over. De extra verborgen ${tileLabel} buiten dat mijnvak zijn dus veilig.`,
+            },
+          };
+        case 'guaranteed-safe-tile':
+          return {
+            title: `Veilige volgende zet bij ${clueLabel ?? 'dit cijfer'}`,
+            body: `Open de gemarkeerde ${tileLabel}. Als dit vak een mijn was, zouden nabije cijfers te veel mijnen tellen.`,
+            teaching: {
+              patternTitle: 'Patroon',
+              patternLabel: 'Gegarandeerd veilig vak',
+              explanationTitle: 'Uitleg',
+              explanation: `Als het gemarkeerde ${tileLabel} een mijn was, zou minstens één naburig cijfer te veel ${mineLabel} hebben. Dat kan niet, dus dit vak is veilig.`,
+            },
+          };
+        case 'full-clue-resolution':
+          return {
+            title: `Veilige volgende zet bij ${clueLabel ?? 'dit cijfer'}`,
+            body: `Open de gemarkeerde ${tileLabel}. De mijnopgave van dit cijfer is volledig opgelost, dus de resterende verborgen ${tileLabel} zijn veilig.`,
+            teaching: {
+              patternTitle: 'Patroon',
+              patternLabel: 'Volledige cijferoplossing',
+              explanationTitle: 'Uitleg',
+              explanation: `De mijnopgave van dit cijfer is volledig opgelost door nabije geforceerde mijnvakken, dus de resterende verborgen ${tileLabel} ernaast zijn veilig.`,
+            },
+          };
+        default:
+          throw new Error(`Unhandled next move pattern: ${patternKey satisfies never}`);
+      }
     },
     guess: {
       title: 'Nog geen zekere volgende zet',
@@ -128,3 +190,4 @@ const nl = {
 } as const;
 
 export default nl;
+import type { LearningCenterPatternParams } from './index';

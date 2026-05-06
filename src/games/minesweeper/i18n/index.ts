@@ -24,15 +24,39 @@ type InfoLessonText = {
   continueLabel: string;
 };
 
+export type MinesweeperLearningCenterPatternKey =
+  | 'single-mine-logic'
+  | 'all-mines-accounted-for'
+  | 'only-one-possible-mine'
+  | 'guaranteed-safe-tile'
+  | 'full-clue-resolution';
+
+export type LearningCenterPatternParams = {
+  patternKey: MinesweeperLearningCenterPatternKey;
+  clueLabel?: string;
+  secondaryClueLabel?: string;
+  tileLabel: string;
+  mineLabel: string;
+  mineCount: number;
+};
+
+type LearningCenterTeachingText = {
+  patternTitle: string;
+  patternLabel: string;
+  explanationTitle: string;
+  explanation: string;
+};
+
 export interface MinesweeperI18n {
   strings: MinesweeperStrings;
   howToPlay: HowToPlayContent;
   loss: LossContent;
   tutorialText: Record<TutorialTextKey, ActionLessonText | InfoLessonText>;
   learningCenter: {
-    safeReveal(clueLabel: string, tileLabel: string, mineCount: number, mineLabel: string): {
+    nextMovePattern(params: LearningCenterPatternParams): {
       title: string;
       body: string;
+      teaching: LearningCenterTeachingText;
     };
     guess: {
       title: string;
