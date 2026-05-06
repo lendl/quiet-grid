@@ -1,3 +1,5 @@
+import { getTakuzuLearningCenterContent as getContent } from '../i18n';
+
 type LineKind = 'row' | 'column';
 
 interface NextMoveCopy {
@@ -64,17 +66,7 @@ function pluralize(count: number, singular: string, plural: string): string {
 }
 
 export function buildPausedNextMove(): NextMoveCopy {
-  if (getCurrentLanguage() === 'nl') {
-    return {
-      title: 'Nog geen duidelijke volgende zet',
-      body: 'Dit deel van de puzzel biedt nu geen sterke volgende zet. Probeer een andere rij of kolom en vraag daarna opnieuw.',
-    };
-  }
-
-  return {
-    title: 'No clear next move yet',
-    body: 'This part of the puzzle does not offer a strong next move right now. Try another row or column, then ask again.',
-  };
+  return getContent().pausedNextMove;
 }
 
 export function buildFindPairsNextMove({
@@ -84,20 +76,12 @@ export function buildFindPairsNextMove({
   targetValue,
   targetCount,
 }: FindPairsProgressParams): NextMoveCopy {
-  const lineLabel = formatLine(lineKind, lineIndex);
-  const cellLabel = pluralize(targetCount, 'cell', 'cells');
-
-  if (getCurrentLanguage() === 'nl') {
-    return {
-      title: `Volgende zet in ${lineLabel}`,
-      body: `Plaats ${targetValue} in de gemarkeerde ${cellLabel}. Waarom: er staan al twee ${repeatedValue}'en naast elkaar in ${lineLabel}, dus nog een ${repeatedValue} zou drie op rij maken.`,
-    };
-  }
-
-  return {
-    title: `Next move in ${lineLabel}`,
-    body: `Place ${targetValue} in the highlighted ${cellLabel}. Why: two ${repeatedValue}s already sit together in ${lineLabel}, so another ${repeatedValue} would create three in a row.`,
-  };
+  return getContent().findPairs(
+    formatLine(lineKind, lineIndex),
+    repeatedValue,
+    targetValue,
+    pluralize(targetCount, 'cell', 'cells'),
+  );
 }
 
 export function buildAvoidTriosNextMove({
@@ -106,19 +90,7 @@ export function buildAvoidTriosNextMove({
   repeatedValue,
   targetValue,
 }: AvoidTriosProgressParams): NextMoveCopy {
-  const lineLabel = formatLine(lineKind, lineIndex);
-
-  if (getCurrentLanguage() === 'nl') {
-    return {
-      title: `Volgende zet in ${lineLabel}`,
-      body: `Plaats ${targetValue} in de gemarkeerde cel. Waarom: ${lineLabel} toont al ${repeatedValue} _ ${repeatedValue}, dus de open cel ertussen moet ${targetValue} zijn om drie op rij te vermijden.`,
-    };
-  }
-
-  return {
-    title: `Next move in ${lineLabel}`,
-    body: `Place ${targetValue} in the highlighted cell. Why: ${lineLabel} already shows ${repeatedValue} _ ${repeatedValue}, so the open cell between them must be ${targetValue} to avoid three in a row.`,
-  };
+  return getContent().avoidTrios(formatLine(lineKind, lineIndex), repeatedValue, targetValue);
 }
 
 export function buildCompleteLinesNextMove({
@@ -129,20 +101,13 @@ export function buildCompleteLinesNextMove({
   targetValue,
   targetCount,
 }: CompleteLinesProgressParams): NextMoveCopy {
-  const lineLabel = formatLine(lineKind, lineIndex);
-  const cellLabel = pluralize(targetCount, 'cell', 'cells');
-
-  if (getCurrentLanguage() === 'nl') {
-    return {
-      title: `Volgende zet in ${lineLabel}`,
-      body: `Plaats ${targetValue} in de gemarkeerde ${cellLabel}. Waarom: ${lineLabel} heeft al ${filledCount} ${filledValue}${filledCount === 1 ? '' : 's'}, dus de resterende open ${cellLabel} moeten ${targetValue} zijn om de lijn in balans te houden.`,
-    };
-  }
-
-  return {
-    title: `Next move in ${lineLabel}`,
-    body: `Place ${targetValue} in the highlighted ${cellLabel}. Why: ${lineLabel} already has ${filledCount} ${filledValue}${filledCount === 1 ? '' : 's'}, so the remaining open ${cellLabel} must be ${targetValue} to keep the line balanced.`,
-  };
+  return getContent().completeLines(
+    formatLine(lineKind, lineIndex),
+    filledValue,
+    filledCount,
+    targetValue,
+    pluralize(targetCount, 'cell', 'cells'),
+  );
 }
 
 export function buildEliminateFilledLinesNextMove({
@@ -152,21 +117,13 @@ export function buildEliminateFilledLinesNextMove({
   targetValue,
   targetCount,
 }: EliminateFilledLinesProgressParams): NextMoveCopy {
-  const lineLabel = formatLine(lineKind, lineIndex);
-  const matchingLineLabel = formatLine(lineKind, matchingLineIndex);
-  const cellLabel = pluralize(targetCount, 'cell', 'cells');
-
-  if (getCurrentLanguage() === 'nl') {
-    return {
-      title: `Volgende zet in ${lineLabel}`,
-      body: `Plaats ${targetValue} in de gemarkeerde ${cellLabel}. Waarom: als ${lineLabel} gelijk werd aan ${matchingLineLabel}, zouden complete ${pluralize(targetCount, lineKind, `${lineKind}s`)} niet uniek meer zijn.`,
-    };
-  }
-
-  return {
-    title: `Next move in ${lineLabel}`,
-    body: `Place ${targetValue} in the highlighted ${cellLabel}. Why: if ${lineLabel} matched ${matchingLineLabel}, the completed ${pluralize(targetCount, lineKind, `${lineKind}s`)} would stop being unique.`,
-  };
+  return getContent().eliminateFilledLines(
+    formatLine(lineKind, lineIndex),
+    formatLine(lineKind, matchingLineIndex),
+    targetValue,
+    pluralize(targetCount, 'cell', 'cells'),
+    pluralize(targetCount, lineKind, `${lineKind}s`),
+  );
 }
 
 export function buildEliminateImpossibleCombinationsNextMove({
@@ -175,19 +132,11 @@ export function buildEliminateImpossibleCombinationsNextMove({
   blockedValue,
   targetValue,
 }: EliminateImpossibleCombinationsProgressParams): NextMoveCopy {
-  const lineLabel = formatLine(lineKind, lineIndex);
-
-  if (getCurrentLanguage() === 'nl') {
-    return {
-      title: `Volgende zet in ${lineLabel}`,
-      body: `Plaats ${targetValue} in de gemarkeerde cel. Waarom: als deze cel ${blockedValue} was, zou ${lineLabel} later een ongeldig trio forceren, dus ${targetValue} is de enige waarde die de lijn oplosbaar houdt.`,
-    };
-  }
-
-  return {
-    title: `Next move in ${lineLabel}`,
-    body: `Place ${targetValue} in the highlighted cell. Why: if this cell were ${blockedValue}, ${lineLabel} would force an invalid trio later, so ${targetValue} is the only value that keeps the line solvable.`,
-  };
+  return getContent().eliminateImpossible(
+    formatLine(lineKind, lineIndex),
+    blockedValue,
+    targetValue,
+  );
 }
 
 export function buildAvoidTriosRepair({
@@ -195,19 +144,7 @@ export function buildAvoidTriosRepair({
   lineIndex,
   repeatedValue,
 }: AvoidTriosRecoveryParams): NextMoveCopy {
-  const lineLabel = formatLine(lineKind, lineIndex);
-
-  if (getCurrentLanguage() === 'nl') {
-    return {
-      title: `Volgende zet om ${lineLabel} te herstellen`,
-      body: `Pas een gemarkeerde cel in ${lineLabel} aan. Waarom: drie ${repeatedValue}'en op rij breken de regel zonder trio's.`,
-    };
-  }
-
-  return {
-    title: `Next move to repair ${lineLabel}`,
-    body: `Change one highlighted cell in ${lineLabel}. Why: three ${repeatedValue}s in a row break the no-trios rule.`,
-  };
+  return getContent().avoidTriosRepair(formatLine(lineKind, lineIndex), repeatedValue);
 }
 
 export function buildCompleteLinesRepair({
@@ -217,19 +154,12 @@ export function buildCompleteLinesRepair({
   filledCount,
   limit,
 }: CompleteLinesRecoveryParams): NextMoveCopy {
-  const lineLabel = formatLine(lineKind, lineIndex);
-
-  if (getCurrentLanguage() === 'nl') {
-    return {
-      title: `Volgende zet om ${lineLabel} opnieuw in balans te brengen`,
-      body: `Pas een gemarkeerde cel in ${lineLabel} aan. Waarom: ${lineLabel} bevat al ${filledCount} ${filledValue}${filledCount === 1 ? '' : 's'}, maar de limiet is ${limit}.`,
-    };
-  }
-
-  return {
-    title: `Next move to rebalance ${lineLabel}`,
-    body: `Change one highlighted cell in ${lineLabel}. Why: ${lineLabel} already contains ${filledCount} ${filledValue}${filledCount === 1 ? '' : 's'}, but limit is ${limit}.`,
-  };
+  return getContent().completeLinesRepair(
+    formatLine(lineKind, lineIndex),
+    filledValue,
+    filledCount,
+    limit,
+  );
 }
 
 export function buildEliminateFilledLinesRepair({
@@ -237,20 +167,9 @@ export function buildEliminateFilledLinesRepair({
   firstLineIndex,
   secondLineIndex,
 }: EliminateFilledLinesRecoveryParams): NextMoveCopy {
-  const firstLineLabel = formatLine(lineKind, firstLineIndex);
-  const secondLineLabel = formatLine(lineKind, secondLineIndex);
-  const lineLabel = pluralize(2, lineKind, `${lineKind}s`);
-
-  if (getCurrentLanguage() === 'nl') {
-    return {
-      title: `Volgende zet om gelijke ${lineLabel} te scheiden`,
-      body: `Pas een gemarkeerde cel aan. Waarom: ${firstLineLabel} en ${secondLineLabel} zijn gelijk, maar complete ${lineLabel} moeten uniek blijven.`,
-    };
-  }
-
-  return {
-    title: `Next move to separate matching ${lineLabel}`,
-    body: `Change one highlighted cell. Why: ${firstLineLabel} and ${secondLineLabel} match, but completed ${lineLabel} must stay unique.`,
-  };
+  return getContent().eliminateFilledLinesRepair(
+    formatLine(lineKind, firstLineIndex),
+    formatLine(lineKind, secondLineIndex),
+    pluralize(2, lineKind, `${lineKind}s`),
+  );
 }
-import { getCurrentLanguage } from '../../../app/i18n';

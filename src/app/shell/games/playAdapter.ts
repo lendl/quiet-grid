@@ -9,6 +9,12 @@ import type { DialogConfig } from '../../components/AppDialog';
 import type { PuzzlePlayContract, PuzzlePlayContractBase } from '../playContract';
 import type { PuzzleDifficulty } from '../types';
 
+export interface PuzzleMetaItem {
+  key: string;
+  label: string;
+  value: string;
+}
+
 export interface PuzzleHelperState {
   showHelperToggle: boolean;
   helperVisible: boolean;
@@ -79,6 +85,7 @@ export interface PuzzlePlayAdapterState {
   loading?: boolean;
   loadingLabel?: string;
   exitToHome?: () => Promise<void>;
+  metadata?: PuzzleMetaItem[];
   helperState?: PuzzleHelperState;
   grid: ReactNode;
 }

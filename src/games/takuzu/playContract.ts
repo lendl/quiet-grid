@@ -1,6 +1,6 @@
 import type { TakuzuActivePuzzle } from './activePuzzle';
 import type { Grid, LineKey, Puzzle } from './types';
-import { formatElapsed } from '../../app/utils/format';
+import { formatElapsed } from '../../app/utils/formatElapsed';
 import { computeAccuracyPct, computeFinalScore } from '../../app/utils/scoring';
 import { decodeMask, decodePuzzle, decodeSolution, getRandomPuzzle } from './puzzleData';
 import { isBoardSolved } from './validation';

@@ -13,7 +13,7 @@ import type { Theme } from '../theme';
 
 type Props = StackScreenProps<RootStackParamList, 'HowToPlay'>;
 
-function MiniGrid({ rows }: { rows: HowToPlayCellValue[][] }) {
+function MiniGrid({ rows }: { rows: readonly (readonly HowToPlayCellValue[])[] }) {
   const { theme } = useTheme();
   return (
     <View style={{ gap: 3, marginTop: 10, alignSelf: 'flex-start' }}>

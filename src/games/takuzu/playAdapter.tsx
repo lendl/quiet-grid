@@ -12,6 +12,7 @@ import type {
   PuzzlePlayAdapterShellArgs,
   PuzzleRenderState,
 } from '../../app/shell/games/playAdapter';
+import { getTakuzuStrings } from './content/strings';
 import TakuzuPuzzleGrid from './components/TakuzuPuzzleGrid';
 import { getTakuzuNextMoveHint } from './learningCenter';
 import type { CompletedLineState } from './validation';
@@ -240,10 +241,23 @@ function useTakuzuAdapter({
       rows: lineAnimationEventState.rowIndexes,
       cols: lineAnimationEventState.colIndexes,
     } : null;
+    const metadata = session ? [
+      {
+        key: 'size',
+        label: resolvedLanguage === 'nl' ? 'Grootte' : 'Size',
+        value: `${session.puzzle.size}x${session.puzzle.size}`,
+      },
+      {
+        key: 'difficulty',
+        label: resolvedLanguage === 'nl' ? 'Niveau' : 'Difficulty',
+        value: getTakuzuStrings().difficultyLabels[session.puzzle.difficulty],
+      },
+    ] : [];
 
     return {
       loading: loading || !session,
       exitToHome,
+      metadata,
       helperState: {
         showHelperToggle: true,
         helperVisible: nextMoveVisible,

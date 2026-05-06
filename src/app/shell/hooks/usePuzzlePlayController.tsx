@@ -218,6 +218,7 @@ export function usePuzzlePlayController(props: Props): PuzzlePlayLayoutState {
     onToggleHelper: adapterState.helperState?.onToggleHelper,
     exitToHome,
     onForfeit: handleForfeit,
+    metadata: adapterState.metadata ?? [],
     grid: adapterState.grid,
     footer: adapterState.helperState?.footer ?? null,
   };

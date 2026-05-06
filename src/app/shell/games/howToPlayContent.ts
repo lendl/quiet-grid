@@ -4,7 +4,7 @@ export interface HowToPlayTip {
   key: string;
   title: string;
   body: string;
-  example?: HowToPlayCellValue[][];
+  example?: readonly (readonly HowToPlayCellValue[])[];
 }
 
 export interface HowToPlayRule {

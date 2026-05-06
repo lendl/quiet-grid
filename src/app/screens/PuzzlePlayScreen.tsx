@@ -10,7 +10,7 @@ import type { RootStackParamList } from '../navigation/types';
 import { usePuzzlePlayController } from '../shell/hooks/usePuzzlePlayController';
 import type { Theme } from '../theme';
 import { withAlpha } from '../utils/color';
-import { formatElapsed } from '../utils/format';
+import { formatElapsed } from '../utils/formatElapsed';
 
 type Props = StackScreenProps<RootStackParamList, 'PuzzlePlay'>;
 
@@ -29,50 +29,62 @@ export default function PuzzlePlayScreen(props: Props) {
       onDismissDialog={layout.onDismissDialog}
       header={(
         <View style={s.header}>
-          <TouchableOpacity
-            accessibilityRole="button"
-            accessibilityLabel={strings.common.goHome}
-            onPress={() => {
-              void layout.exitToHome();
-            }}
-            style={s.iconButton}
-            activeOpacity={0.8}
-          >
-            <GridHomeIcon />
-          </TouchableOpacity>
-          <View style={s.headerActions}>
-            <View style={s.timerPill}>
-              <Text style={s.timerText}>{elapsedLabel}</Text>
-            </View>
-            {layout.showHelperToggle ? (
-              <TouchableOpacity
-                accessibilityRole="button"
-                accessibilityLabel={layout.helperToggleLabel}
-                onPress={layout.onToggleHelper}
-                style={[s.iconButton, layout.helperVisible ? s.helperActive : null]}
-                activeOpacity={0.8}
-              >
-                <Ionicons
-                  name={layout.helperVisible ? 'bulb' : 'bulb-outline'}
-                  size={18}
-                  color={layout.helperVisible ? theme.primaryLight : theme.text}
-                />
-              </TouchableOpacity>
-            ) : null}
+          <View style={s.headerMainRow}>
             <TouchableOpacity
               accessibilityRole="button"
-                accessibilityLabel={strings.common.endPuzzle}
-              onPress={layout.onForfeit}
+              accessibilityLabel={strings.common.goHome}
+              onPress={() => {
+                void layout.exitToHome();
+              }}
               style={s.iconButton}
               activeOpacity={0.8}
             >
-              <Ionicons
-                name="flag-outline"
-                size={18}
-                color={theme.text}
-              />
+              <GridHomeIcon />
             </TouchableOpacity>
+            <View style={s.headerActions}>
+              <View style={s.timerPill}>
+                <Text style={s.timerText}>{elapsedLabel}</Text>
+              </View>
+              {layout.showHelperToggle ? (
+                <TouchableOpacity
+                  accessibilityRole="button"
+                  accessibilityLabel={layout.helperToggleLabel}
+                  onPress={layout.onToggleHelper}
+                  style={[s.iconButton, layout.helperVisible ? s.helperActive : null]}
+                  activeOpacity={0.8}
+                >
+                  <Ionicons
+                    name={layout.helperVisible ? 'bulb' : 'bulb-outline'}
+                    size={18}
+                    color={layout.helperVisible ? theme.primaryLight : theme.text}
+                  />
+                </TouchableOpacity>
+              ) : null}
+              <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityLabel={strings.common.endPuzzle}
+                onPress={layout.onForfeit}
+                style={s.iconButton}
+                activeOpacity={0.8}
+              >
+                <Ionicons
+                  name="flag-outline"
+                  size={18}
+                  color={theme.text}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
+          {layout.metadata.length > 0 ? (
+            <View style={s.metadataRow}>
+              {layout.metadata.map((item) => (
+                <View key={item.key} style={s.metadataPill}>
+                  <Text style={s.metadataLabel}>{item.label}</Text>
+                  <Text style={s.metadataValue}>{item.value}</Text>
+                </View>
+              ))}
+            </View>
+          ) : null}
         </View>
       )}
       grid={layout.grid}
@@ -83,11 +95,14 @@ export default function PuzzlePlayScreen(props: Props) {
 
 const makeStyles = (theme: Theme) => StyleSheet.create({
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
     paddingHorizontal: 10,
     paddingTop: 6,
     paddingBottom: 6,
+    gap: 8,
+  },
+  headerMainRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
   },
   headerActions: {
@@ -123,6 +138,34 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   timerText: {
     color: theme.text,
     fontSize: 14,
+    fontWeight: '700',
+  },
+  metadataRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  metadataPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    minHeight: 30,
+    paddingHorizontal: 10,
+    borderRadius: 999,
+    backgroundColor: withAlpha(theme.surface, 0.84),
+    borderWidth: 1,
+    borderColor: withAlpha(theme.border, 0.6),
+  },
+  metadataLabel: {
+    color: theme.textMuted,
+    fontSize: 11,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
+  },
+  metadataValue: {
+    color: theme.text,
+    fontSize: 13,
     fontWeight: '700',
   },
 });

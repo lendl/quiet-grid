@@ -1,7 +1,8 @@
 import type { ActivePuzzle } from '../shell/activePuzzleTypes';
 import type { Difficulty } from '../types';
 import { getPuzzleDefinition } from '../shell/games/gameRegistry';
-import { formatDifficultyLabel, formatElapsed } from './format';
+import { formatDifficultyLabel } from './format';
+import { formatElapsed } from './formatElapsed';
 
 export type ActivePuzzleDisplay = {
   label: string;

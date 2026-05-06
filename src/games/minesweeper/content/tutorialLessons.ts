@@ -3,7 +3,7 @@ import type {
   MinesweeperCell,
   MinesweeperCellState,
 } from '../types';
-import { getCurrentLanguage } from '../../../app/i18n';
+import { getMinesweeperTutorialText } from '../i18n';
 
 export type MinesweeperTutorialAction = 'reveal' | 'flag';
 
@@ -369,99 +369,45 @@ const ENGLISH_LESSONS: readonly MinesweeperTutorialLesson[] = [
   GUESS_LESSON,
 ];
 
-const DUTCH_TEXT = {
-  'forced-flag': {
-    title: 'Markeer het vak dat zeker een mijn verbergt',
-    body: 'Die 1 heeft nog steeds één mijn nodig, en het gemarkeerde vak is de enige verborgen buur.',
-    prompt: 'Wat moet je doen met het gemarkeerde vak?',
-    retry: 'Kijk naar de 1 naast het gemarkeerde vak. Die heeft nog steeds één mijn nodig, en geen andere verborgen buur kan dat leveren.',
-    success: 'Juist. Die aanwijzing had nog één mijn nodig, dus het gemarkeerde vak moest worden gemarkeerd.',
-  },
-  'safe-reveal': {
-    title: 'Open het vak dat zeker veilig is',
-    body: 'Deze 1 raakt zijn gemarkeerde mijn al, dus het gemarkeerde vak kan geen andere mijn verbergen.',
-    prompt: 'Wat moet je doen met het gemarkeerde vak?',
-    retry: 'Die aanwijzing is al voldaan door de gemarkeerde mijn. Het gemarkeerde vak is de overblijvende verborgen buur, dus het is veilig.',
-    success: 'Juist. Zodra die aanwijzing zijn mijn al heeft, kun je het gemarkeerde vak veilig openen.',
-  },
-  'diagonals-count': {
-    title: 'Diagonale buren tellen ook mee',
-    body: 'De zichtbare aanwijzingen leggen eerst de gemarkeerde mijn vast. Daarna telt de hoek-1 mee omdat diagonale buren ook meetellen.',
-    prompt: 'Wat moet je doen met het gemarkeerde vak?',
-    retry: 'De zichtbare aanwijzingen forceren de gemarkeerde tegel al als mijn. Als je die diagonale mijn meetelt voor de hoek-1, is het gemarkeerde vak veilig.',
-    success: 'Juist. De gemarkeerde tegel is een bekende mijn, en de hoekaanwijzing telt die diagonaal mee, dus het gemarkeerde vak kan worden geopend.',
-  },
-  'compare-clues': {
-    title: 'Vergelijk twee aanwijzingen samen',
-    body: 'Deze twee 1-aanwijzingen delen verborgen vakken. Zodra het gedeelde paar één mijn bevat, moet het extra vak bij de rechter 1 veilig zijn.',
-    prompt: 'Wat moet je doen met het gemarkeerde vak?',
-    retry: 'Lees beide 1-aanwijzingen samen. Het gedeelde verborgen paar kan maar één mijn bevatten, dus het extra vak bij de rechter aanwijzing is veilig.',
-    success: 'Juist. Door beide aanwijzingen te vergelijken zie je dat het gemarkeerde vak geen mijn kan verbergen.',
-  },
-  'guess-moments': {
-    title: 'Soms is de volgende zet een gok',
-    body: 'Niet elke puzzel biedt een volledig bewezen volgende zet. Op dit bord ondersteunt de verborgen bovenrand nog meer dan één mogelijke mijnopstelling.',
-    prompt: 'Wanneer aanwijzingen niet één zet bewijzen, maak dan de rustigste gok die je kunt.',
-    summary: 'Er past nog meer dan één mijnpatroon in de verborgen bovenrand, dus daar is nog geen enkele zet bewezen.',
-    continueLabel: 'Verder',
-  },
-} as const;
-
-type DutchActionLessonText = {
-  title: string;
-  body: string;
-  prompt: string;
-  retry: string;
-  success: string;
-};
-
-type DutchInfoLessonText = {
-  title: string;
-  body: string;
-  prompt: string;
-  summary: string;
-  continueLabel: string;
-};
-
-const DUTCH_ACTION_TEXT: Record<'forced-flag' | 'safe-reveal' | 'diagonals-count' | 'compare-clues', DutchActionLessonText> = {
-  'forced-flag': DUTCH_TEXT['forced-flag'],
-  'safe-reveal': DUTCH_TEXT['safe-reveal'],
-  'diagonals-count': DUTCH_TEXT['diagonals-count'],
-  'compare-clues': DUTCH_TEXT['compare-clues'],
-};
-
-const DUTCH_INFO_TEXT: Record<'guess-moments', DutchInfoLessonText> = {
-  'guess-moments': DUTCH_TEXT['guess-moments'],
-};
-
 export function getMinesweeperTutorialLessons(): readonly MinesweeperTutorialLesson[] {
-  if (getCurrentLanguage() !== 'nl') {
-    return ENGLISH_LESSONS;
-  }
-
+  const text = getMinesweeperTutorialText();
   return ENGLISH_LESSONS.map((lesson) => {
+    const translated = text[lesson.key as keyof typeof text];
+
     if (lesson.kind === 'info') {
-      const translated = DUTCH_INFO_TEXT[lesson.key as keyof typeof DUTCH_INFO_TEXT];
+      const info = translated as {
+        title: string;
+        body: string;
+        prompt: string;
+        summary: string;
+        continueLabel: string;
+      };
 
       return {
         ...lesson,
-        title: translated.title,
-        body: translated.body,
-        prompt: translated.prompt,
-        summary: translated.summary,
-        continueLabel: translated.continueLabel,
+        title: info.title,
+        body: info.body,
+        prompt: info.prompt,
+        summary: info.summary,
+        continueLabel: info.continueLabel,
       };
     }
 
-    const translated = DUTCH_ACTION_TEXT[lesson.key as keyof typeof DUTCH_ACTION_TEXT];
+    const action = translated as {
+      title: string;
+      body: string;
+      prompt: string;
+      retry: string;
+      success: string;
+    };
 
     return {
       ...lesson,
-      title: translated.title,
-      body: translated.body,
-      prompt: translated.prompt,
-      retry: translated.retry,
-      success: translated.success,
+      title: action.title,
+      body: action.body,
+      prompt: action.prompt,
+      retry: action.retry,
+      success: action.success,
     };
   });
 }

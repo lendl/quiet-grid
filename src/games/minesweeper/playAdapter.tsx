@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useLanguage } from '../../app/context/LanguageContext';
 import { useTheme } from '../../app/context/ThemeContext';
 import { createPuzzlePlayAdapter } from '../../app/shell/games/playAdapter';
+import { getMinesweeperStrings } from './content/strings';
 import {
   clearActivePuzzleState,
 } from '../../app/utils/activePuzzleStateStorage';
@@ -29,6 +30,7 @@ import {
   type MinesweeperPlaySession,
 } from './playContract';
 import type { MinesweeperActivePuzzle } from './activePuzzle';
+import { countFlaggedCells } from './rules';
 
 function useMinesweeperAdapter({
   goHome,
@@ -97,6 +99,23 @@ function useMinesweeperAdapter({
     };
 
     return {
+      metadata: session ? [
+        {
+          key: 'size',
+          label: resolvedLanguage === 'nl' ? 'Grootte' : 'Size',
+          value: `${session.board.rows}x${session.board.cols}`,
+        },
+        {
+          key: 'difficulty',
+          label: resolvedLanguage === 'nl' ? 'Niveau' : 'Difficulty',
+          value: getMinesweeperStrings().difficultyLabels[session.puzzle.difficulty],
+        },
+        {
+          key: 'mines-left',
+          label: resolvedLanguage === 'nl' ? 'Mijnen' : 'Mines',
+          value: String(Math.max(0, session.board.mines - countFlaggedCells(session.board))),
+        },
+      ] : [],
       grid: session ? (
         <View style={styles.gridArea}>
           <MinesweeperBoard
