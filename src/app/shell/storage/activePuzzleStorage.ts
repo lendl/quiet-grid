@@ -2,14 +2,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { PuzzleSessionEnvelope } from '../types';
 import { ACTIVE_PUZZLE_KEY } from '../../utils/storageKeys';
 
-function isPuzzleSessionEnvelope(value: unknown): value is PuzzleSessionEnvelope {
+function isStoredPuzzleSessionEnvelope(value: unknown): boolean {
   if (!value || typeof value !== 'object') {
     return false;
   }
 
   const envelope = value as Record<string, unknown>;
   return (
-    (envelope.puzzleTypeId === 'binary' || envelope.puzzleTypeId === 'minesweeper')
+    (envelope.puzzleTypeId === 'binary'
+      || envelope.puzzleTypeId === 'takuzu'
+      || envelope.puzzleTypeId === 'minesweeper')
     && Number.isInteger(envelope.version)
     && 'payload' in envelope
   );
@@ -30,7 +32,7 @@ export async function loadActivePuzzle(): Promise<unknown> {
 
   try {
     const parsed: unknown = JSON.parse(raw);
-    if (isPuzzleSessionEnvelope(parsed)) {
+    if (isStoredPuzzleSessionEnvelope(parsed)) {
       return parsed;
     }
 

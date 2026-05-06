@@ -1,8 +1,8 @@
 import type { HowToPlayContent } from '../../../app/shell/games/howToPlayContent';
 import { getCurrentLanguage } from '../../../app/i18n';
-import { getBinaryHowToPlayTips } from './howToPlayTips';
+import { getTakuzuHowToPlayTips } from './howToPlayTips';
 
-export function getBinaryHowToPlay(): HowToPlayContent {
+export function getTakuzuHowToPlay(): HowToPlayContent {
   if (getCurrentLanguage() === 'nl') {
     return {
       rules: [
@@ -27,7 +27,7 @@ export function getBinaryHowToPlay(): HowToPlayContent {
           body: 'Geen twee rijen mogen identiek zijn, en geen twee kolommen mogen identiek zijn.',
         },
       ],
-      tips: getBinaryHowToPlayTips(),
+      tips: getTakuzuHowToPlayTips(),
     };
   }
 
@@ -54,6 +54,6 @@ export function getBinaryHowToPlay(): HowToPlayContent {
         body: 'No two rows may be identical, and no two columns may be identical.',
       },
     ],
-    tips: getBinaryHowToPlayTips(),
+    tips: getTakuzuHowToPlayTips(),
   };
 }

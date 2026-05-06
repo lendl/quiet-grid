@@ -1,7 +1,7 @@
-import type { BinaryActivePuzzle } from '../../games/binary/activePuzzle';
+import type { TakuzuActivePuzzle } from '../../games/takuzu/activePuzzle';
 import type { MinesweeperActivePuzzle } from '../../games/minesweeper/activePuzzle';
 
-export type { BinaryActivePuzzle } from '../../games/binary/activePuzzle';
+export type { TakuzuActivePuzzle } from '../../games/takuzu/activePuzzle';
 export type { MinesweeperActivePuzzle } from '../../games/minesweeper/activePuzzle';
 
-export type ActivePuzzle = BinaryActivePuzzle | MinesweeperActivePuzzle;
+export type ActivePuzzle = TakuzuActivePuzzle | MinesweeperActivePuzzle;

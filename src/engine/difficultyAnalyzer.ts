@@ -11,7 +11,7 @@ import {
   hasUniqueLines,
   isCandidateLegal,
   otherValue,
-} from '../games/binary/core';
+} from '../games/takuzu/core';
 import type { EngineTipKey } from './tipCatalog';
 import { TIP_LEVELS } from './tipCatalog';
 

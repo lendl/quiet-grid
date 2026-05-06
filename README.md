@@ -7,12 +7,12 @@ A lightweight, privacy-first logic puzzle game for **Android**, built with React
 
 Quiet Grid currently includes two offline puzzle types:
 
-1. **Binary** — fill a grid with 0s and 1s using logic
+1. **Takuzu** — fill a grid with 0s and 1s using logic
 2. **Minesweeper** — clear the grid without opening a mine
 
 ## Features
 
-- Binary offers 3 puzzle sizes across 4 difficulty levels:
+- Takuzu offers 3 puzzle sizes across 4 difficulty levels:
   - Easy: 6x6 and 8x8
   - Medium: 8x8 and 10x10
   - Hard: 8x8 and 10x10
@@ -43,19 +43,19 @@ src/
     utils/                  #   Shared helpers and transitional utilities
   games/                    # Puzzle-type modules
     shared/                 #   Engine-safe puzzle primitives used by game packages
-    binary/                 #   Binary puzzle package
-      core/                 #     Engine-safe binary types, decoding, validation
-      engine/               #     Binary engine plugin for shared CLI runner
+    takuzu/                 #   Takuzu puzzle package
+      core/                 #     Engine-safe takuzu types, decoding, validation
+      engine/               #     Takuzu engine plugin for shared CLI runner
     minesweeper/            #   Minesweeper puzzle package
       core/                 #     Engine-safe minesweeper types and rules
   engine/                   # Offline puzzle generator CLI (Node.js)
     gameDefinition.ts       #   Shared contract for engine-capable games
     gameRegistry.ts         #   Registry of installed engine plugins
     encoding.ts             #   Shared hex encode/decode utilities
-    generator.ts            #   Binary grid generator (legacy Binary-specific helper)
-    validator.ts            #   Binary validation helper
-    solver.ts               #   Binary unique-solution counter
-    mask.ts                 #   Binary mask generator
+    generator.ts            #   Takuzu grid generator (legacy Takuzu-specific helper)
+    validator.ts            #   Takuzu validation helper
+    solver.ts               #   Takuzu unique-solution counter
+    mask.ts                 #   Takuzu mask generator
     db.ts                   #   SQLite deduplication tracking
     writer.ts               #   Shared catalog append/reset helpers
     index.ts                #   CLI entry point
@@ -86,13 +86,13 @@ npm run android
 
 The app will launch automatically in the running emulator. On a physical device, scan the QR code shown in the terminal with Expo Go.
 
-## Generating binary puzzles
+## Generating takuzu puzzles
 
-The engine uses a shared CLI runner in `src/engine/` plus game-owned engine plugins in `src/games/<id>/engine/`. Binary is the first engine-capable game today, and its generator appends puzzles to `src/games/binary/puzzles/all.ts`. Everything runs entirely offline — no network access, no external services.
+The engine uses a shared CLI runner in `src/engine/` plus game-owned engine plugins in `src/games/<id>/engine/`. Takuzu is the first engine-capable game today, and its generator appends puzzles to `src/games/takuzu/puzzles/all.ts`. Everything runs entirely offline — no network access, no external services.
 
 ```bash
-npm run engine -- --game=binary
-npm run engine -- --game=binary --size=8
+npm run engine -- --game=takuzu
+npm run engine -- --game=takuzu --size=8
 ```
 
 Each run uses the selected game's engine plugin. Previously seen dedupe keys are tracked in `src/engine/puzzles.db` (local SQLite, gitignored) so duplicate generated puzzles are not written.

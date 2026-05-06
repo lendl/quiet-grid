@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { View, StyleSheet } from 'react-native';
-import type { BinaryNextMoveCell, BinaryNextMoveTargetCell, Grid } from '../types';
-import BinaryGridCell from './BinaryGridCell';
+import type { TakuzuNextMoveCell, TakuzuNextMoveTargetCell, Grid } from '../types';
+import TakuzuGridCell from './TakuzuGridCell';
 import { useTheme } from '../../../app/context/ThemeContext';
 import type { Theme } from '../../../app/theme';
 import { withAlpha } from '../../../app/utils/color';
@@ -20,8 +20,8 @@ interface PuzzleGridProps {
   isGiven: boolean[][];
   finishedCells: boolean[][];
   lineAnimationEvent: LineAnimationEvent | null;
-  nextMoveEvidenceCells?: BinaryNextMoveCell[];
-  nextMoveTargetCells?: BinaryNextMoveTargetCell[];
+  nextMoveEvidenceCells?: TakuzuNextMoveCell[];
+  nextMoveTargetCells?: TakuzuNextMoveTargetCell[];
   nextMoveHighlightRows?: number[];
   nextMoveHighlightCols?: number[];
   size: number;
@@ -30,7 +30,7 @@ interface PuzzleGridProps {
   containerHeight: number;
 }
 
-function BinaryPuzzleGrid({
+function TakuzuPuzzleGrid({
   board,
   isGiven,
   finishedCells,
@@ -89,7 +89,7 @@ function BinaryPuzzleGrid({
         {board.map((row, r) => (
           <View key={r} style={s.row}>
             {row.map((value, c) => (
-              <BinaryGridCell
+              <TakuzuGridCell
                 key={c}
                 value={value}
                 given={isGiven[r][c]}
@@ -130,4 +130,4 @@ const makeStyles = (theme: Theme, isDark: boolean) => StyleSheet.create({
   },
 });
 
-export default React.memo(BinaryPuzzleGrid);
+export default React.memo(TakuzuPuzzleGrid);

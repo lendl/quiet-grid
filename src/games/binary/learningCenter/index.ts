@@ -1,1 +1,0 @@
-export { getBinaryNextMoveHint } from './nextMove';

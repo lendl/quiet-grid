@@ -21,10 +21,10 @@ import {
   otherValue,
 } from '../core';
 import type {
-  BinaryNextMoveCell,
-  BinaryNextMoveHint,
-  BinaryNextMoveRuleKey,
-  BinaryNextMoveTargetCell,
+  TakuzuNextMoveCell,
+  TakuzuNextMoveHint,
+  TakuzuNextMoveRuleKey,
+  TakuzuNextMoveTargetCell,
   CellValue,
   Grid,
 } from '../types';
@@ -35,7 +35,7 @@ type CandidateMove = {
   row: number;
   col: number;
   value: 0 | 1;
-  ruleKey: BinaryNextMoveRuleKey;
+  ruleKey: TakuzuNextMoveRuleKey;
   lineKind: LineKind;
   lineIndex: number;
   matchingLineIndex?: number;
@@ -53,7 +53,7 @@ function buildLineCells(
   lineKind: LineKind,
   lineIndex: number,
   indexes: number[],
-): BinaryNextMoveCell[] {
+): TakuzuNextMoveCell[] {
   return indexes.map((index) => (
     lineKind === 'row'
       ? { row: lineIndex, col: index }
@@ -66,7 +66,7 @@ function buildLineTargets(
   lineIndex: number,
   indexes: number[],
   value: 0 | 1,
-): BinaryNextMoveTargetCell[] {
+): TakuzuNextMoveTargetCell[] {
   return indexes.map((index) => (
     lineKind === 'row'
       ? { row: lineIndex, col: index, value }
@@ -74,14 +74,14 @@ function buildLineTargets(
   ));
 }
 
-function toHint(candidate: Omit<BinaryNextMoveHint, 'kind'>): BinaryNextMoveHint {
+function toHint(candidate: Omit<TakuzuNextMoveHint, 'kind'>): TakuzuNextMoveHint {
   return {
     kind: 'progress',
     ...candidate,
   };
 }
 
-function createPausedHint(): BinaryNextMoveHint {
+function createPausedHint(): TakuzuNextMoveHint {
   const paused = buildPausedNextMove();
   return {
     kind: 'paused',
@@ -94,7 +94,7 @@ function createPausedHint(): BinaryNextMoveHint {
   };
 }
 
-function buildProgressHint(board: Grid, move: CandidateMove): BinaryNextMoveHint {
+function buildProgressHint(board: Grid, move: CandidateMove): TakuzuNextMoveHint {
   const line = getLine(board, move.lineKind, move.lineIndex);
   const targetIndex = move.lineKind === 'row' ? move.col : move.row;
 
@@ -225,7 +225,7 @@ function buildProgressHint(board: Grid, move: CandidateMove): BinaryNextMoveHint
   }
 }
 
-function findTripleMismatch(board: Grid): BinaryNextMoveHint | null {
+function findTripleMismatch(board: Grid): TakuzuNextMoveHint | null {
   const size = board.length;
 
   for (let rowIndex = 0; rowIndex < size; rowIndex += 1) {
@@ -285,7 +285,7 @@ function findTripleMismatch(board: Grid): BinaryNextMoveHint | null {
   return null;
 }
 
-function findBalanceMismatch(board: Grid): BinaryNextMoveHint | null {
+function findBalanceMismatch(board: Grid): TakuzuNextMoveHint | null {
   const size = board.length;
   const limit = size / 2;
 
@@ -388,7 +388,7 @@ function findBalanceMismatch(board: Grid): BinaryNextMoveHint | null {
   return null;
 }
 
-function findDuplicateMismatch(board: Grid): BinaryNextMoveHint | null {
+function findDuplicateMismatch(board: Grid): TakuzuNextMoveHint | null {
   const size = board.length;
   const allIndexes = getLineIndexes(size);
   const completedRows = board
@@ -690,13 +690,13 @@ function findImpossibleCombinationMove(board: Grid): CandidateMove | null {
   return null;
 }
 
-export function getBinaryRecoveryHint(board: Grid): BinaryNextMoveHint | null {
+export function getTakuzuRecoveryHint(board: Grid): TakuzuNextMoveHint | null {
   return findTripleMismatch(board)
     ?? findBalanceMismatch(board)
     ?? findDuplicateMismatch(board);
 }
 
-export function getBinaryProgressHint(board: Grid): BinaryNextMoveHint | null {
+export function getTakuzuProgressHint(board: Grid): TakuzuNextMoveHint | null {
   const move =
     findPairMove(board) ??
     findAvoidTrioMove(board) ??
@@ -708,8 +708,8 @@ export function getBinaryProgressHint(board: Grid): BinaryNextMoveHint | null {
   return move ? buildProgressHint(board, move) : null;
 }
 
-export function getBinaryNextMoveHint(board: Grid): BinaryNextMoveHint {
-  return getBinaryRecoveryHint(board)
-    ?? getBinaryProgressHint(board)
+export function getTakuzuNextMoveHint(board: Grid): TakuzuNextMoveHint {
+  return getTakuzuRecoveryHint(board)
+    ?? getTakuzuProgressHint(board)
     ?? createPausedHint();
 }

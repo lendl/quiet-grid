@@ -1,12 +1,12 @@
 import type { HowToPlayCellValue, HowToPlayTip, HowToPlayTipKey } from './howToPlayTips';
 import { getCurrentLanguage } from '../../../app/i18n';
-import { getBinaryHowToPlayTips } from './howToPlayTips';
+import { getTakuzuHowToPlayTips } from './howToPlayTips';
 import type { TutorialLesson } from '../types';
 
 type ExampleTip = HowToPlayTip & { example: HowToPlayCellValue[][] };
 
 function getTip(key: HowToPlayTipKey): ExampleTip {
-  const tip = getBinaryHowToPlayTips().find((entry) => entry.key === key);
+  const tip = getTakuzuHowToPlayTips().find((entry) => entry.key === key);
   if (!tip || !tip.example) {
     throw new Error(`Missing tutorial tip example for ${key}`);
   }
@@ -47,7 +47,7 @@ const completeLinesExample = toGridAndMoves(completeLinesTip.example);
 const filledLinesExample = toGridAndMoves(filledLinesTip.example);
 const impossibleExample = toGridAndMoves(impossibleTip.example);
 
-export function getBinaryTutorialLessons(): TutorialLesson[] {
+export function getTakuzuTutorialLessons(): TutorialLesson[] {
   if (getCurrentLanguage() === 'nl') {
     return [
       {

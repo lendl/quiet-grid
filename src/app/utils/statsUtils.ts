@@ -39,6 +39,10 @@ function safeStreak(value: unknown): number {
   return typeof value === 'number' && value >= 0 ? Math.floor(value) : 0;
 }
 
+function normalizePuzzleTypeId(key: string): string {
+  return key === 'binary' ? 'takuzu' : key;
+}
+
 export const DEFAULT_STATS: AppStats = {
   puzzles: {},
   streaks: {},
@@ -48,8 +52,8 @@ export const DEFAULT_STATS: AppStats = {
  * Merges a raw parsed AsyncStorage value into a valid AppStats object.
  * Handles three formats:
  *   1. null/undefined/invalid → DEFAULT_STATS
- *   2. Legacy flat  { easy, medium, hard, expert, streak } → migrated to binary.*
- *   3. New format   { binary, minesweeper, streaks }
+ *   2. Legacy flat  { easy, medium, hard, expert, streak } → migrated to takuzu.*
+ *   3. New format   { takuzu, minesweeper, streaks }
  */
 export function mergeStats(raw: unknown): AppStats {
   if (!raw || typeof raw !== 'object') {
@@ -62,11 +66,11 @@ export function mergeStats(raw: unknown): AppStats {
   const p = raw as Record<string, unknown>;
 
   // Legacy format: has top-level 'easy'/'medium'/'hard'/'expert' or 'streak'
-  // but no 'binary' key.
-  if (!('binary' in p) && ('easy' in p || 'streak' in p)) {
+  // but no 'takuzu' key.
+  if (!('takuzu' in p) && ('easy' in p || 'streak' in p)) {
     return {
       puzzles: {
-        binary: {
+        takuzu: {
           easy:   mergeDiffStats(p.easy),
           medium: mergeDiffStats(p.medium),
           hard:   mergeDiffStats(p.hard),
@@ -74,7 +78,7 @@ export function mergeStats(raw: unknown): AppStats {
         },
       },
       streaks: {
-        binary: safeStreak(p.streak),
+        takuzu: safeStreak(p.streak),
       },
     };
   }
@@ -88,10 +92,16 @@ export function mergeStats(raw: unknown): AppStats {
       : {};
 
     const puzzles = Object.fromEntries(
-      Object.entries(rawPuzzles).map(([puzzleTypeId, value]) => [puzzleTypeId, mergeGameStats(value)]),
+      Object.entries(rawPuzzles).map(([puzzleTypeId, value]) => [
+        normalizePuzzleTypeId(puzzleTypeId),
+        mergeGameStats(value),
+      ]),
     );
     const streaks = Object.fromEntries(
-      Object.entries(rawStreaks).map(([puzzleTypeId, value]) => [puzzleTypeId, safeStreak(value)]),
+      Object.entries(rawStreaks).map(([puzzleTypeId, value]) => [
+        normalizePuzzleTypeId(puzzleTypeId),
+        safeStreak(value),
+      ]),
     );
 
     return { puzzles, streaks };
@@ -104,11 +114,11 @@ export function mergeStats(raw: unknown): AppStats {
 
   return {
     puzzles: {
-      binary: mergeGameStats(p.binary),
+      takuzu: mergeGameStats(p.takuzu ?? p.binary),
       minesweeper: mergeGameStats(p.minesweeper),
     },
     streaks: {
-      binary: safeStreak(rawStreaks.binary),
+      takuzu: safeStreak(rawStreaks.takuzu ?? rawStreaks.binary),
       minesweeper: safeStreak(rawStreaks.minesweeper),
     },
   };

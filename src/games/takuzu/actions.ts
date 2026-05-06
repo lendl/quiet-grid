@@ -1,25 +1,25 @@
-import type { BinaryPlaySession } from './playContract';
+import type { TakuzuPlaySession } from './playContract';
 import type { CellValue, Grid, LineKey } from './types';
 import {
   getCompletedLineStateForKey,
   getMismatchedCompletedLines,
 } from './validation';
 
-export type BinaryAction =
+export type TakuzuAction =
   | { type: 'press-cell'; row: number; col: number }
   | { type: 'finalize-validation'; board: Grid; lineKeys: LineKey[] };
 
-export interface BinaryValidationEffect {
+export interface TakuzuValidationEffect {
   type: 'validated-lines';
   correctRowIndexes: number[];
   correctColIndexes: number[];
   newPenaltyCount: number;
 }
 
-export interface BinaryActionResult {
-  session: BinaryPlaySession;
+export interface TakuzuActionResult {
+  session: TakuzuPlaySession;
   changed: boolean;
-  effects: BinaryValidationEffect[];
+  effects: TakuzuValidationEffect[];
 }
 
 function mergeFinishedCellsForLineKeys(
@@ -57,10 +57,10 @@ function mergeFinishedCellsForLineKeys(
   return changed ? nextFinishedCells : currentFinishedCells;
 }
 
-export function applyBinaryAction(
-  session: BinaryPlaySession,
-  action: BinaryAction,
-): BinaryActionResult {
+export function applyTakuzuAction(
+  session: TakuzuPlaySession,
+  action: TakuzuAction,
+): TakuzuActionResult {
   if (action.type === 'press-cell') {
     if (session.isGiven[action.row][action.col] || session.finishedCells[action.row][action.col]) {
       return { session, changed: false, effects: [] };

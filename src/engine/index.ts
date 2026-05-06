@@ -14,7 +14,7 @@ function parseGameArg(): string {
   const gameIndex = process.argv.findIndex((arg) => arg === '--game');
   const pairedArg = gameIndex >= 0 ? process.argv[gameIndex + 1] : null;
   const inlineArg = process.argv.find((arg) => arg.startsWith('--game='))?.split('=')[1];
-  return inlineArg ?? pairedArg ?? 'binary';
+  return inlineArg ?? pairedArg ?? 'takuzu';
 }
 
 function parseRequestedCount(): number {

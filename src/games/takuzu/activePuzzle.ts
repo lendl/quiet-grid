@@ -1,7 +1,7 @@
 import type { Grid, LineKey, Puzzle } from './types';
 
-export interface BinaryActivePuzzle {
-  puzzleTypeId: 'binary';
+export interface TakuzuActivePuzzle {
+  puzzleTypeId: 'takuzu';
   puzzle: Puzzle;
   board: Grid;
   elapsedSeconds: number;

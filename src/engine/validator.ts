@@ -1,10 +1,10 @@
-import type { CellValue } from '../games/binary/core';
+import type { CellValue } from '../games/takuzu/core';
 import {
   equalHalvesFeasible,
   hasUniqueLines,
   isLegalCell,
   noThreeConsec,
-} from '../games/binary/core';
+} from '../games/takuzu/core';
 
 export type Cell = CellValue;
 

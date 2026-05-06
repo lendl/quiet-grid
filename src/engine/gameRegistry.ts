@@ -1,8 +1,8 @@
-import { binaryEngineDefinition } from '../games/binary/engine/definition';
+import { takuzuEngineDefinition } from '../games/takuzu/engine/definition';
 import type { EngineGameDefinition } from './gameDefinition';
 
 export const engineGameRegistry = [
-  binaryEngineDefinition,
+  takuzuEngineDefinition,
 ] as const satisfies readonly EngineGameDefinition[];
 
 export function getEngineGameDefinition(id: string): EngineGameDefinition {

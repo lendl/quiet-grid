@@ -1,9 +1,9 @@
-import { binaryDefinition } from '../../../games/binary/definition';
+import { takuzuDefinition } from '../../../games/takuzu/definition';
 import { minesweeperDefinition } from '../../../games/minesweeper/definition';
 import type { PuzzleDefinition } from './gameDefinition';
 
 export const puzzleRegistry = [
-  binaryDefinition,
+  takuzuDefinition,
   minesweeperDefinition,
 ] as const satisfies readonly PuzzleDefinition[];
 

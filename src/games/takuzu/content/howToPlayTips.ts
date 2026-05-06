@@ -18,7 +18,7 @@ export interface HowToPlayTip {
   example?: HowToPlayCellValue[][];
 }
 
-export function getBinaryHowToPlayTips(): HowToPlayTip[] {
+export function getTakuzuHowToPlayTips(): HowToPlayTip[] {
   if (getCurrentLanguage() === 'nl') {
     return [
       {

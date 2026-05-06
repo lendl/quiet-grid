@@ -1,4 +1,4 @@
-import type { BinaryActivePuzzle } from './activePuzzle';
+import type { TakuzuActivePuzzle } from './activePuzzle';
 import type { Grid, LineKey, Puzzle } from './types';
 import { formatElapsed } from '../../app/utils/format';
 import { computeAccuracyPct, computeFinalScore } from '../../app/utils/scoring';
@@ -7,7 +7,7 @@ import { isBoardSolved } from './validation';
 import { makeEmptyBooleanGrid } from '../../app/utils/activePuzzleStateStorage';
 import type { PuzzlePlayContract } from '../../app/shell/playContract';
 
-export interface BinaryPlaySession {
+export interface TakuzuPlaySession {
   puzzle: Puzzle;
   board: Grid;
   solution: Grid;
@@ -17,13 +17,13 @@ export interface BinaryPlaySession {
   penalizedLineKeys: LineKey[];
 }
 
-export interface BinaryHudState {
+export interface TakuzuHudState {
   elapsedLabel: string;
 }
 
-export type { BinaryAction, BinaryActionResult, BinaryValidationEffect } from './actions';
+export type { TakuzuAction, TakuzuActionResult, TakuzuValidationEffect } from './actions';
 
-function createBinarySession(puzzle: Puzzle): BinaryPlaySession {
+function createTakuzuSession(puzzle: Puzzle): TakuzuPlaySession {
   return {
     puzzle,
     board: decodePuzzle(puzzle.solution, puzzle.mask, puzzle.size),
@@ -35,16 +35,16 @@ function createBinarySession(puzzle: Puzzle): BinaryPlaySession {
   };
 }
 
-export const binaryPlayContract: PuzzlePlayContract<
-  BinaryPlaySession,
-  BinaryActivePuzzle,
-  BinaryHudState
+export const takuzuPlayContract: PuzzlePlayContract<
+  TakuzuPlaySession,
+  TakuzuActivePuzzle,
+  TakuzuHudState
 > = {
   createSession: ({ difficulty }) => {
     const puzzle = getRandomPuzzle(difficulty);
-    return puzzle ? createBinarySession(puzzle) : null;
+    return puzzle ? createTakuzuSession(puzzle) : null;
   },
-  canResume: (activePuzzle): activePuzzle is BinaryActivePuzzle => activePuzzle?.puzzleTypeId === 'binary',
+  canResume: (activePuzzle): activePuzzle is TakuzuActivePuzzle => activePuzzle?.puzzleTypeId === 'takuzu',
   restoreSession: (activePuzzle) => ({
     session: {
       puzzle: activePuzzle.puzzle,
@@ -58,7 +58,7 @@ export const binaryPlayContract: PuzzlePlayContract<
     elapsedSeconds: activePuzzle.elapsedSeconds,
   }),
   serializeSession: ({ session, elapsedSeconds }) => ({
-    puzzleTypeId: 'binary',
+    puzzleTypeId: 'takuzu',
     puzzle: session.puzzle,
     board: session.board,
     elapsedSeconds,
@@ -83,7 +83,7 @@ export const binaryPlayContract: PuzzlePlayContract<
     }
 
     return {
-      puzzleTypeId: 'binary',
+      puzzleTypeId: 'takuzu',
       difficulty: session.puzzle.difficulty,
       solved: true,
       score: computeFinalScore(session.puzzle.difficulty, elapsedSeconds, session.accuracyDrops),

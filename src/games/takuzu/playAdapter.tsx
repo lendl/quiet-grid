@@ -12,22 +12,22 @@ import type {
   PuzzlePlayAdapterShellArgs,
   PuzzleRenderState,
 } from '../../app/shell/games/playAdapter';
-import BinaryPuzzleGrid from './components/BinaryPuzzleGrid';
-import { getBinaryNextMoveHint } from './learningCenter';
+import TakuzuPuzzleGrid from './components/TakuzuPuzzleGrid';
+import { getTakuzuNextMoveHint } from './learningCenter';
 import type { CompletedLineState } from './validation';
 import { getTouchedLineStates } from './validation';
-import { applyBinaryAction } from './actions';
+import { applyTakuzuAction } from './actions';
 import {
-  binaryPlayContract,
-  type BinaryHudState,
-  type BinaryPlaySession,
+  takuzuPlayContract,
+  type TakuzuHudState,
+  type TakuzuPlaySession,
 } from './playContract';
 import type {
-  BinaryNextMoveHint,
+  TakuzuNextMoveHint,
   Grid,
   LineKey,
 } from './types';
-import type { BinaryActivePuzzle } from './activePuzzle';
+import type { TakuzuActivePuzzle } from './activePuzzle';
 
 const VALIDATION_DELAY_MS = 800;
 
@@ -42,18 +42,18 @@ type LineAnimationEventState = {
   colIndexes: number[];
 };
 
-function useBinaryAdapter({
+function useTakuzuAdapter({
   difficulty,
   setDialog,
   goBack,
   goHome,
-}: PuzzlePlayAdapterShellArgs): PuzzlePlayAdapterInstance<BinaryPlaySession> {
+}: PuzzlePlayAdapterShellArgs): PuzzlePlayAdapterInstance<TakuzuPlaySession> {
   const { resolvedLanguage, strings } = useLanguage();
   const { theme } = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const [lineAnimationEventState, setLineAnimationEventState] =
     useState<LineAnimationEventState | null>(null);
-  const [nextMoveHint, setNextMoveHint] = useState<BinaryNextMoveHint | null>(null);
+  const [nextMoveHint, setNextMoveHint] = useState<TakuzuNextMoveHint | null>(null);
   const [nextMoveVisible, setNextMoveVisible] = useState(false);
   const [gridContainer, setGridContainer] = useState({ width: 0, height: 0 });
 
@@ -100,7 +100,7 @@ function useBinaryAdapter({
     sessionRef,
     finishSolvedSession,
     completeExitToHome,
-  }: PuzzleRenderState<BinaryPlaySession>) => {
+  }: PuzzleRenderState<TakuzuPlaySession>) => {
     const scheduleValidation = (
       newBoard: Grid,
       lineStateEntries: [LineKey, CompletedLineState][],
@@ -133,7 +133,7 @@ function useBinaryAdapter({
           return;
         }
 
-        const result = applyBinaryAction(currentSession, {
+        const result = applyTakuzuAction(currentSession, {
           type: 'finalize-validation',
           board: pendingValidation.board,
           lineKeys: Array.from(pendingValidation.lineStates.keys()),
@@ -166,7 +166,7 @@ function useBinaryAdapter({
         return;
       }
 
-      const result = applyBinaryAction(currentSession, {
+      const result = applyTakuzuAction(currentSession, {
         type: 'press-cell',
         row,
         col,
@@ -200,7 +200,7 @@ function useBinaryAdapter({
       if (!sessionRef.current) {
         return;
       }
-      const suggestedNextMove = getBinaryNextMoveHint(sessionRef.current.board);
+      const suggestedNextMove = getTakuzuNextMoveHint(sessionRef.current.board);
       setNextMoveHint(suggestedNextMove);
       setNextMoveVisible(true);
     };
@@ -268,7 +268,7 @@ function useBinaryAdapter({
       grid: (
         <View style={styles.gridArea} onLayout={handleGridLayout}>
           {session && gridContainer.width > 0 ? (
-            <BinaryPuzzleGrid
+            <TakuzuPuzzleGrid
               board={session.board}
               isGiven={session.isGiven}
               finishedCells={session.finishedCells}
@@ -306,16 +306,16 @@ function useBinaryAdapter({
   };
 }
 
-const binaryTypedPlayAdapter = {
-  contract: binaryPlayContract,
-  useAdapter: useBinaryAdapter,
+const takuzuTypedPlayAdapter = {
+  contract: takuzuPlayContract,
+  useAdapter: useTakuzuAdapter,
 } satisfies PuzzlePlayAdapter<
-  BinaryPlaySession,
-  BinaryActivePuzzle,
-  BinaryHudState
+  TakuzuPlaySession,
+  TakuzuActivePuzzle,
+  TakuzuHudState
 >;
 
-export const binaryPlayAdapter = createPuzzlePlayAdapter(binaryTypedPlayAdapter);
+export const takuzuPlayAdapter = createPuzzlePlayAdapter(takuzuTypedPlayAdapter);
 
 const makeStyles = (theme: Theme) => StyleSheet.create({
   gridArea: {

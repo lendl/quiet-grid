@@ -5,7 +5,7 @@ import { shuffle } from './encoding';
 const MAX_BACKTRACKS = 10_000;
 
 /**
- * Generates a random valid binary puzzle solution grid of the given size.
+ * Generates a random valid takuzu puzzle solution grid of the given size.
  * Uses constraint-propagation (legal-value filtering) with backtracking.
  * Returns null if generation fails after MAX_BACKTRACKS backtracks.
  */

@@ -1,7 +1,7 @@
 import { getCurrentLanguage } from '../../../app/i18n';
 import type { Difficulty } from '../../../app/types';
 
-interface BinaryStrings {
+interface TakuzuStrings {
   title: string;
   shortTitle: string;
   tagline: string;
@@ -9,9 +9,9 @@ interface BinaryStrings {
   difficultyDescriptions: Record<Difficulty, string>;
 }
 
-const EN_STRINGS: BinaryStrings = {
-  title: 'Binary',
-  shortTitle: 'Binary',
+const EN_STRINGS: TakuzuStrings = {
+  title: 'Takuzu',
+  shortTitle: 'Takuzu',
   tagline: 'Fill grid with 0s and 1s using logic.',
   difficultyLabels: {
     easy: 'Easy',
@@ -27,9 +27,9 @@ const EN_STRINGS: BinaryStrings = {
   },
 };
 
-const NL_STRINGS: BinaryStrings = {
-  title: 'Binary',
-  shortTitle: 'Binary',
+const NL_STRINGS: TakuzuStrings = {
+  title: 'Takuzu',
+  shortTitle: 'Takuzu',
   tagline: 'Vul het rooster met 0 en 1 via logica.',
   difficultyLabels: {
     easy: 'Makkelijk',
@@ -45,6 +45,6 @@ const NL_STRINGS: BinaryStrings = {
   },
 };
 
-export function getBinaryStrings(): BinaryStrings {
+export function getTakuzuStrings(): TakuzuStrings {
   return getCurrentLanguage() === 'nl' ? NL_STRINGS : EN_STRINGS;
 }

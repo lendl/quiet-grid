@@ -1,7 +1,7 @@
 import type { LossContent } from '../../../app/shell/games/lossContent';
 import { getCurrentLanguage } from '../../../app/i18n';
 
-export function getBinaryLossContent(): LossContent {
+export function getTakuzuLossContent(): LossContent {
   if (getCurrentLanguage() === 'nl') {
     return {
       forfeit: {

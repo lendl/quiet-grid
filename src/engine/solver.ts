@@ -1,6 +1,6 @@
-import type { Grid } from '../games/binary/core';
-import { countSolutions as countBinarySolutions } from '../games/binary/core';
+import type { Grid } from '../games/takuzu/core';
+import { countSolutions as countTakuzuSolutions } from '../games/takuzu/core';
 
 export function countSolutions(puzzle: Grid, maxCount = 2): number {
-  return countBinarySolutions(puzzle, maxCount);
+  return countTakuzuSolutions(puzzle, maxCount);
 }

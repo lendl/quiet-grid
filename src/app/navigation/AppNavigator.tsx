@@ -91,7 +91,7 @@ export default function AppNavigator() {
         <Stack.Screen
           name="Tutorial"
           component={TutorialHostScreen}
-          initialParams={{ puzzleTypeId: 'binary', entry: 'startup' }}
+          initialParams={{ puzzleTypeId: 'takuzu', entry: 'startup' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

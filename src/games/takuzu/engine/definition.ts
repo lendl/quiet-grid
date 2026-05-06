@@ -20,13 +20,13 @@ import type {
 import { generateMask } from '../../../engine/mask';
 import type { Puzzle } from '../types';
 
-interface BinaryCatalogEntry extends Puzzle, EngineCatalogEntry {}
+interface TakuzuCatalogEntry extends Puzzle, EngineCatalogEntry {}
 
-function formatPuzzleEntry(puzzle: BinaryCatalogEntry): string {
+function formatPuzzleEntry(puzzle: TakuzuCatalogEntry): string {
   return `  { id: '${puzzle.id}', size: ${puzzle.size}, rows: ${puzzle.rows}, cols: ${puzzle.cols}, difficulty: '${puzzle.difficulty}', solution: '${puzzle.solution}', mask: '${puzzle.mask}' },`;
 }
 
-function normalizePuzzleEntry(puzzle: BinaryCatalogEntry): BinaryCatalogEntry {
+function normalizePuzzleEntry(puzzle: TakuzuCatalogEntry): TakuzuCatalogEntry {
   return {
     ...puzzle,
     rows: puzzle.rows ?? puzzle.size,
@@ -46,10 +46,10 @@ function getSupportedDifficultiesForSize(size: SupportedPuzzleSize): DifficultyL
   )];
 }
 
-function generateBinaryPuzzleWithDifficulty(
+function generateTakuzuPuzzleWithDifficulty(
   size: SupportedPuzzleSize,
   targetDifficulty: DifficultyLabel,
-): EngineGenerateResult<BinaryCatalogEntry> | null {
+): EngineGenerateResult<TakuzuCatalogEntry> | null {
   const grid = generateGrid(size);
   if (!grid) {
     return null;
@@ -84,9 +84,9 @@ function generateBinaryPuzzleWithDifficulty(
   };
 }
 
-export const binaryEngineDefinition: EngineGameDefinition<BinaryCatalogEntry> = {
-  id: 'binary',
-  title: 'Binary',
+export const takuzuEngineDefinition: EngineGameDefinition<TakuzuCatalogEntry> = {
+  id: 'takuzu',
+  title: 'Takuzu',
   catalogPath: path.resolve(__dirname, '../puzzles/all.ts'),
   entryIdPrefix: 'p',
   catalog: {
@@ -99,7 +99,7 @@ export const binaryEngineDefinition: EngineGameDefinition<BinaryCatalogEntry> = 
   pickTargetDifficulty: (size) => {
     const supportedSize = toSupportedPuzzleSize(size);
     if (!supportedSize) {
-      throw new Error(`Binary engine does not support size ${size}.`);
+      throw new Error(`Takuzu engine does not support size ${size}.`);
     }
 
     const difficulties = getSupportedDifficultiesForSize(supportedSize);
@@ -108,10 +108,10 @@ export const binaryEngineDefinition: EngineGameDefinition<BinaryCatalogEntry> = 
   generateOne: (size, targetDifficulty) => {
     const supportedSize = toSupportedPuzzleSize(size);
     if (!supportedSize) {
-      throw new Error(`Binary engine does not support size ${size}.`);
+      throw new Error(`Takuzu engine does not support size ${size}.`);
     }
 
-    return generateBinaryPuzzleWithDifficulty(supportedSize, targetDifficulty as DifficultyLabel);
+    return generateTakuzuPuzzleWithDifficulty(supportedSize, targetDifficulty as DifficultyLabel);
   },
   getEntryDedupeKey: (entry) => entry.solution,
   reclassifyEntries: (entries) => entries.flatMap((entry) => {

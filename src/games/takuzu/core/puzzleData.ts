@@ -1,5 +1,5 @@
 import type { PuzzleDifficulty } from '../../shared/types';
-import type { BinarySolutionGrid, CellValue, Grid, Puzzle, PuzzleSize } from './types';
+import type { TakuzuSolutionGrid, CellValue, Grid, Puzzle, PuzzleSize } from './types';
 import allPuzzles from '../puzzles/all';
 
 type PuzzleMap = Record<PuzzleDifficulty, Puzzle[]>;
@@ -48,7 +48,7 @@ function hexToBits(hex: string, total: number): number[] {
 }
 
 /** Decodes the solution hex string into a full Grid of 0s and 1s. */
-export function decodeSolution(solution: string, size: number): BinarySolutionGrid {
+export function decodeSolution(solution: string, size: number): TakuzuSolutionGrid {
   const bits = hexToBits(solution, size * size);
   return Array.from({ length: size }, (_, r) =>
     Array.from({ length: size }, (_, c) => bits[r * size + c] as 0 | 1),

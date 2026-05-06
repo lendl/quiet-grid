@@ -1,8 +1,8 @@
-import type { BinaryNextMoveRuleKey } from '../games/binary/core';
+import type { TakuzuNextMoveRuleKey } from '../games/takuzu/core';
 
-// Keep this file in sync with src/games/binary/content/howToPlayTips.ts.
+// Keep this file in sync with src/games/takuzu/content/howToPlayTips.ts.
 
-export type EngineTipKey = BinaryNextMoveRuleKey;
+export type EngineTipKey = TakuzuNextMoveRuleKey;
 
 export interface TipDefinition {
   key: EngineTipKey;

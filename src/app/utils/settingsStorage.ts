@@ -28,7 +28,7 @@ function parseSeenTutorials(value: string | null): SeenTutorialsMap {
     const tutorialMap = parsed as Record<string, unknown>;
 
     return {
-      binary: tutorialMap.binary === true ? true : undefined,
+      takuzu: tutorialMap.takuzu === true || tutorialMap.binary === true ? true : undefined,
       minesweeper: tutorialMap.minesweeper === true ? true : undefined,
     };
   } catch {

@@ -11,7 +11,7 @@ import type { Theme } from '../../../app/theme';
 import { markPuzzleTutorialSeen } from '../../../app/utils/settingsStorage';
 import { withAlpha } from '../../../app/utils/color';
 import TutorialRow from '../components/TutorialRow';
-import { getBinaryTutorialLessons } from '../content';
+import { getTakuzuTutorialLessons } from '../content';
 import { cloneGrid } from '../puzzleData';
 import type { Grid } from '../types';
 
@@ -24,7 +24,7 @@ export default function TutorialScreen({ navigation, route }: Props) {
   const { strings, resolvedLanguage } = useLanguage();
   const { theme } = useTheme();
   const s = makeStyles(theme);
-  const lessons = useMemo(() => getBinaryTutorialLessons(), [resolvedLanguage]);
+  const lessons = useMemo(() => getTakuzuTutorialLessons(), [resolvedLanguage]);
   const [lessonIndex, setLessonIndex] = useState(0);
   const [grid, setGrid] = useState<Grid>(cloneGrid(lessons[0].grid));
   const [completed, setCompleted] = useState(false);
