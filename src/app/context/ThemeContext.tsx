@@ -1,8 +1,7 @@
 import type { ReactNode } from 'react';
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import type { Theme } from '../theme';
-import { darkTheme, lightTheme } from '../theme';
-import type { ThemeMode } from '../utils/settingsStorage';
+import type { Theme, ThemeMode } from '../theme';
+import { DEFAULT_THEME_MODE, getTheme } from '../theme';
 import { loadTheme, saveTheme } from '../utils/settingsStorage';
 
 interface ThemeContextValue {
@@ -15,7 +14,7 @@ interface ThemeContextValue {
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [themeMode, setThemeModeState] = useState<ThemeMode>('dark');
+  const [themeMode, setThemeModeState] = useState<ThemeMode>(DEFAULT_THEME_MODE);
 
   useEffect(() => {
     void loadTheme().then(setThemeModeState);
@@ -29,7 +28,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const isDark = themeMode === 'dark';
 
   return (
-    <ThemeContext.Provider value={{ theme: isDark ? darkTheme : lightTheme, isDark, themeMode, setThemeMode }}>
+    <ThemeContext.Provider value={{ theme: getTheme(themeMode), isDark, themeMode, setThemeMode }}>
       {children}
     </ThemeContext.Provider>
   );

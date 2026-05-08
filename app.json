@@ -39,7 +39,7 @@
         "com.quietgrid.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
       ],
       "adaptiveIcon": {
-        "foregroundImage": "./a.assets/adaptive-icon.png",
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0d1117"
       }
     },

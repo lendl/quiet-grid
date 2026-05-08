@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { PuzzleTypeId } from '../shell/types';
+import { DEFAULT_THEME_MODE, isThemeMode } from '../theme';
 import {
   LANGUAGE_KEY,
   PUZZLE_TUTORIALS_SEEN_KEY,
@@ -8,12 +9,11 @@ import {
   WELCOME_SEEN_KEY,
 } from './storageKeys';
 
-export type ThemeMode = 'dark' | 'light';
+import type { ThemeMode } from '../theme';
 export type LanguageSetting = 'en' | 'nl';
 
 type SeenTutorialsMap = Partial<Record<PuzzleTypeId, boolean>>;
 
-const DEFAULT_THEME: ThemeMode = 'dark';
 function parseSeenTutorials(value: string | null): SeenTutorialsMap {
   if (!value) {
     return {};
@@ -39,9 +39,9 @@ function parseSeenTutorials(value: string | null): SeenTutorialsMap {
 export async function loadTheme(): Promise<ThemeMode> {
   try {
     const value = await AsyncStorage.getItem(THEME_KEY);
-    return value === 'light' ? 'light' : DEFAULT_THEME;
+    return isThemeMode(value) ? value : DEFAULT_THEME_MODE;
   } catch {
-    return DEFAULT_THEME;
+    return DEFAULT_THEME_MODE;
   }
 }
 

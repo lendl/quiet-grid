@@ -9,6 +9,7 @@ import { useTheme } from '../context/ThemeContext';
 import { returnToHome } from '../navigation/returnToHome';
 import type { RootStackParamList } from '../navigation/types';
 import type { Theme } from '../theme';
+import { getThemeOptions } from '../theme/options';
 import { withAlpha } from '../utils/color';
 import {
   loadTutorialsEnabled,
@@ -30,12 +31,6 @@ type LanguageOption = {
   label: string;
   detail: string;
   icon: string;
-};
-
-type ThemeOption = {
-  key: 'dark' | 'light';
-  label: string;
-  detail: string;
 };
 
 function Section({
@@ -94,18 +89,7 @@ export default function SettingsScreen({ navigation }: Props) {
     };
   }, []);
 
-  const themeOptions = useMemo<ThemeOption[]>(() => [
-    {
-      key: 'dark',
-      label: strings.settings.dark,
-      detail: strings.settings.darkDetail,
-    },
-    {
-      key: 'light',
-      label: strings.settings.light,
-      detail: strings.settings.lightDetail,
-    },
-  ], [strings]);
+  const themeOptions = useMemo(() => getThemeOptions(strings), [strings]);
   const selectedTheme = useMemo(
     () => themeOptions.find((option) => option.key === themeMode) ?? themeOptions[0],
     [themeMode, themeOptions],
@@ -181,7 +165,7 @@ export default function SettingsScreen({ navigation }: Props) {
             activeOpacity={0.82}
           >
             <View style={s.dropdownIconWrap}>
-              <Ionicons name="color-palette-outline" size={18} color={theme.primaryLight} />
+              <Ionicons name={selectedTheme.iconName} size={18} color={selectedTheme.iconColor} />
             </View>
             <View style={s.rowTextWrap}>
               <Text style={s.rowLabel}>{strings.settings.appearance}</Text>
@@ -200,7 +184,7 @@ export default function SettingsScreen({ navigation }: Props) {
               {themeOptions.map((option, index) => (
                 <React.Fragment key={option.key}>
                   <TouchableOpacity
-                    style={s.dropdownOptionNoIcon}
+                    style={s.dropdownOption}
                     onPress={() => {
                       setThemeMode(option.key);
                       setThemeDropdownOpen(false);
@@ -209,6 +193,9 @@ export default function SettingsScreen({ navigation }: Props) {
                     accessibilityLabel={option.label}
                     activeOpacity={0.82}
                   >
+                    <View style={s.dropdownIconWrap}>
+                      <Ionicons name={option.iconName} size={18} color={option.iconColor} />
+                    </View>
                     <View style={s.rowTextWrap}>
                       <Text style={s.rowLabel}>{option.label}</Text>
                       <Text style={s.rowDetail}>{option.detail}</Text>
@@ -388,14 +375,6 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     overflow: 'hidden',
   },
   dropdownOption: {
-    minHeight: 62,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  dropdownOptionNoIcon: {
     minHeight: 62,
     paddingHorizontal: 12,
     paddingVertical: 12,

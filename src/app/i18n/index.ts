@@ -87,8 +87,7 @@ const EN_STRINGS = {
   home: {
     openRepo: 'Open the Quiet Grid GitHub repository',
     brandMark: 'Quiet Grid mark',
-    switchToLightTheme: 'Switch to light theme',
-    switchToDarkTheme: 'Switch to dark theme',
+    changeTheme: 'Change theme',
     subtitle: 'Pure logic. No distractions.',
     activePuzzleWaiting: 'Your puzzle is waiting',
     startPuzzle: 'Start Puzzle',
@@ -129,6 +128,8 @@ const EN_STRINGS = {
     darkDetail: 'Keeps the board and menus in a darker palette.',
     light: 'Light',
     lightDetail: 'Uses a brighter palette across the app.',
+    pencil: 'Pencil',
+    pencilDetail: 'Uses a paper-like grayscale palette across the app.',
     languageSystemDetail: 'Follow your Android language setting.',
     languageEnglishDetail: 'Show the app in English.',
     languageDutchDetail: 'Show the app in Dutch.',
@@ -252,7 +253,7 @@ const EN_STRINGS = {
         {
           heading: 'What Quiet Grid includes',
           body: [
-            'Quiet Grid currently includes {games}, with local statistics, dark and light themes, and no accounts.',
+            'Quiet Grid currently includes {games}, with local statistics, dark, light, and pencil themes, and no accounts.',
           ],
         },
       ],
@@ -312,8 +313,7 @@ const NL_STRINGS: AppStrings = {
   home: {
     openRepo: 'Open de Quiet Grid GitHub-repository',
     brandMark: 'Quiet Grid-logo',
-    switchToLightTheme: 'Schakel naar licht thema',
-    switchToDarkTheme: 'Schakel naar donker thema',
+    changeTheme: 'Thema wijzigen',
     subtitle: 'Pure logica. Geen afleiding.',
     activePuzzleWaiting: 'Je puzzel wacht op je',
     startPuzzle: 'Puzzel starten',
@@ -354,6 +354,8 @@ const NL_STRINGS: AppStrings = {
     darkDetail: 'Houdt bord en menu\'s in een donker palet.',
     light: 'Licht',
     lightDetail: 'Gebruikt een lichter palet in de hele app.',
+    pencil: 'Potlood',
+    pencilDetail: 'Gebruikt een papierachtige grijsschaal in de hele app.',
     languageSystemDetail: 'Volg je Android-taalinstelling.',
     languageEnglishDetail: 'Toon de app in het Engels.',
     languageDutchDetail: 'Toon de app in het Nederlands.',

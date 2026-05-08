@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Linking, Animated } from 'react-native';
-import { Octicons } from '@expo/vector-icons';
+import { View, Text, TouchableOpacity, StyleSheet, Linking, Animated, Pressable } from 'react-native';
+import { Ionicons, Octicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import type { StackScreenProps } from '@react-navigation/stack';
 import AppDialog from '../components/AppDialog';
@@ -14,14 +14,17 @@ import { getActivePuzzleDisplay } from '../utils/activePuzzle';
 import type { AppDialogProps } from '../components/AppDialog';
 import type { RootStackParamList } from '../navigation/types';
 import type { Theme } from '../theme';
+import { getThemeOptions } from '../theme/options';
 
 type Props = StackScreenProps<RootStackParamList, 'Home'>;
 const REPO_URL = 'https://github.com/lendl/quiet-grid';
 
 export default function HomeScreen({ navigation }: Props) {
   const { strings } = useLanguage();
-  const { theme, isDark, setThemeMode } = useTheme();
+  const { theme, isDark, themeMode, setThemeMode } = useTheme();
   const [repoDialogVisible, setRepoDialogVisible] = useState(false);
+  const [themeMenuOpen, setThemeMenuOpen] = useState(false);
+  const [themeMenuMounted, setThemeMenuMounted] = useState(false);
   const {
     activePuzzle,
     dialogVisible: replaceDialogVisible,
@@ -32,11 +35,21 @@ export default function HomeScreen({ navigation }: Props) {
     dismissDialog,
   } = useActivePuzzleReplacement({ navigation });
   const s = useMemo(() => makeStyles(theme, isDark), [theme, isDark]);
+  const themeOptions = useMemo(() => getThemeOptions(strings), [strings]);
+  const currentThemeOption = useMemo(
+    () => themeOptions.find((option) => option.key === themeMode) ?? themeOptions[0],
+    [themeMode, themeOptions],
+  );
+  const quickThemeOptions = useMemo(
+    () => themeOptions.filter((option) => option.key !== themeMode),
+    [themeMode, themeOptions],
+  );
   const heroTiles = useMemo(
     () => [theme.primary, theme.primaryLight, theme.text, theme.primaryLight],
     [theme.primary, theme.primaryLight, theme.text],
   );
   const activeCardProgress = useRef(new Animated.Value(0)).current;
+  const themeMenuProgress = useRef(new Animated.Value(0)).current;
   const activePuzzleDisplay = useMemo(
     () => (activePuzzle ? getActivePuzzleDisplay(activePuzzle) : null),
     [activePuzzle],
@@ -63,6 +76,20 @@ export default function HomeScreen({ navigation }: Props) {
       navigation.navigate('PuzzleTypePicker');
     });
   }, [navigation, requestStart]);
+
+  const closeThemeMenu = useCallback(() => {
+    setThemeMenuOpen(false);
+  }, []);
+
+  const toggleThemeMenu = useCallback(() => {
+    setThemeMenuMounted(true);
+    setThemeMenuOpen((open) => !open);
+  }, []);
+
+  const handleThemeSelect = useCallback((mode: typeof themeMode) => {
+    setThemeMode(mode);
+    setThemeMenuOpen(false);
+  }, [setThemeMode]);
 
   const handleOpenRepo = useCallback(async () => {
     const supported = await Linking.canOpenURL(REPO_URL);
@@ -119,13 +146,55 @@ export default function HomeScreen({ navigation }: Props) {
     };
   }, [activeCardProgress, activePuzzle]);
 
+  useEffect(() => {
+    if (themeMenuOpen) {
+      setThemeMenuMounted(true);
+      Animated.spring(themeMenuProgress, {
+        toValue: 1,
+        damping: 16,
+        mass: 0.7,
+        stiffness: 200,
+        useNativeDriver: true,
+      }).start();
+      return undefined;
+    }
+
+    if (!themeMenuMounted) {
+      return undefined;
+    }
+
+    Animated.timing(themeMenuProgress, {
+      toValue: 0,
+      duration: 150,
+      useNativeDriver: true,
+    }).start(({ finished }) => {
+      if (finished) {
+        setThemeMenuMounted(false);
+      }
+    });
+
+    return undefined;
+  }, [themeMenuMounted, themeMenuOpen, themeMenuProgress]);
+
   const activeCardLift = useMemo(() => activeCardProgress.interpolate({
     inputRange: [0, 1],
     outputRange: [0, -4],
   }), [activeCardProgress]);
-
+  const themeMenuOpacity = useMemo(() => themeMenuProgress.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 1],
+  }), [themeMenuProgress]);
+  const themeMenuTranslateY = useMemo(() => themeMenuProgress.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-10, 0],
+  }), [themeMenuProgress]);
+  const themeMenuScale = useMemo(() => themeMenuProgress.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.92, 1],
+  }), [themeMenuProgress]);
   return (
     <AppScreen contentStyle={s.container}>
+      {themeMenuMounted ? <Pressable style={s.themeMenuOverlay} onPress={closeThemeMenu} /> : null}
       <View style={s.topActions}>
         <TouchableOpacity
           onPress={() => {
@@ -138,15 +207,41 @@ export default function HomeScreen({ navigation }: Props) {
         >
           <Octicons name="mark-github" size={24} color={theme.text} />
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => setThemeMode(isDark ? 'light' : 'dark')}
-          style={s.iconBtn}
-          accessibilityLabel={isDark ? strings.home.switchToLightTheme : strings.home.switchToDarkTheme}
-          accessibilityRole="button"
-          activeOpacity={0.8}
-        >
-          <Octicons name={isDark ? 'sun' : 'moon'} size={24} color={theme.text} />
-        </TouchableOpacity>
+        <View style={s.themeMenuAnchor}>
+          {themeMenuMounted ? (
+            <Animated.View
+              style={[
+                s.themeMenuList,
+                {
+                  opacity: themeMenuOpacity,
+                  transform: [{ translateY: themeMenuTranslateY }, { scale: themeMenuScale }],
+                },
+              ]}
+            >
+              {quickThemeOptions.map((option) => (
+                <TouchableOpacity
+                  key={option.key}
+                  onPress={() => handleThemeSelect(option.key)}
+                  style={s.themeMenuIconBtn}
+                  accessibilityLabel={option.label}
+                  accessibilityRole="button"
+                  activeOpacity={0.8}
+                >
+                  <Ionicons name={option.iconName} size={22} color={option.iconColor} />
+                </TouchableOpacity>
+              ))}
+            </Animated.View>
+          ) : null}
+          <TouchableOpacity
+            onPress={toggleThemeMenu}
+            style={s.iconBtn}
+            accessibilityLabel={`${strings.home.changeTheme}. ${strings.common.current}: ${currentThemeOption.label}`}
+            accessibilityRole="button"
+            activeOpacity={0.8}
+          >
+            <Ionicons name={currentThemeOption.iconName} size={24} color={currentThemeOption.iconColor} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View style={s.hero}>
@@ -237,9 +332,32 @@ const makeStyles = (theme: Theme, isDark: boolean) => StyleSheet.create({
     paddingHorizontal: 14,
     paddingTop: 14,
     gap: 8,
+    zIndex: 2,
   },
   iconBtn: {
     minWidth: 44,
+    minHeight: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  themeMenuOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 1,
+  },
+  themeMenuAnchor: {
+    position: 'relative',
+    minWidth: 44,
+    alignItems: 'flex-end',
+  },
+  themeMenuList: {
+    position: 'absolute',
+    top: 38,
+    right: 0,
+    gap: 8,
+    alignItems: 'center',
+  },
+  themeMenuIconBtn: {
+    minWidth: 36,
     minHeight: 36,
     alignItems: 'center',
     justifyContent: 'center',

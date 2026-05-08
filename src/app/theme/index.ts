@@ -27,6 +27,9 @@ export interface Theme {
   difficultyExpert: string;
 }
 
+export type ThemeMode = 'dark' | 'light' | 'pencil';
+export const DEFAULT_THEME_MODE: ThemeMode = 'dark';
+
 export const darkTheme: Theme = {
   background: '#0d1117',
   surface: '#161b22',
@@ -122,3 +125,19 @@ export const pencilTheme: Theme = {
   difficultyHard: '#999999',
   difficultyExpert: '#b3b3b3',
 };
+
+export function isThemeMode(value: string | null | undefined): value is ThemeMode {
+  return value === 'dark' || value === 'light' || value === 'pencil';
+}
+
+export function getTheme(mode: ThemeMode): Theme {
+  switch (mode) {
+    case 'light':
+      return lightTheme;
+    case 'pencil':
+      return pencilTheme;
+    case 'dark':
+    default:
+      return darkTheme;
+  }
+}
