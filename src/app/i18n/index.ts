@@ -87,6 +87,8 @@ const EN_STRINGS = {
   home: {
     openRepo: 'Open the Quiet Grid GitHub repository',
     brandMark: 'Quiet Grid mark',
+    switchToLightTheme: 'Switch to light theme',
+    switchToDarkTheme: 'Switch to dark theme',
     subtitle: 'Pure logic. No distractions.',
     activePuzzleWaiting: 'Your puzzle is waiting',
     startPuzzle: 'Start Puzzle',
@@ -310,6 +312,8 @@ const NL_STRINGS: AppStrings = {
   home: {
     openRepo: 'Open de Quiet Grid GitHub-repository',
     brandMark: 'Quiet Grid-logo',
+    switchToLightTheme: 'Schakel naar licht thema',
+    switchToDarkTheme: 'Schakel naar donker thema',
     subtitle: 'Pure logica. Geen afleiding.',
     activePuzzleWaiting: 'Je puzzel wacht op je',
     startPuzzle: 'Puzzel starten',

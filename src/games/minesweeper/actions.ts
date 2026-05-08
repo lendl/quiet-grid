@@ -23,7 +23,7 @@ export function applyMinesweeperAction(
   action: MinesweeperAction,
 ): MinesweeperActionResult {
   const board = action.type === 'reveal-cell'
-    ? revealMinesweeperCell(session.board, action.row, action.col)
+    ? revealMinesweeperCell(session.board, session.puzzle, action.row, action.col)
     : toggleMinesweeperFlag(session.board, action.row, action.col);
 
   if (board === session.board) {

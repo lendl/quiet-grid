@@ -59,8 +59,8 @@ function MinesweeperBoard({
   ), [nextMoveTargetCells]);
 
   function handleLayout(event: LayoutChangeEvent) {
-    const width = event.nativeEvent.layout.width;
-    setCellSize(getMinesweeperBoardCellSize(width, board.cols, MIN_CELL_SIZE, MAX_CELL_SIZE));
+    const { width, height } = event.nativeEvent.layout;
+    setCellSize(getMinesweeperBoardCellSize(width, board.cols, MIN_CELL_SIZE, MAX_CELL_SIZE, board.rows, height));
   }
 
   function getCellContent(row: number, col: number): string {

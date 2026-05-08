@@ -100,20 +100,15 @@ export default function SettingsScreen({ navigation }: Props) {
       label: strings.settings.dark,
       detail: strings.settings.darkDetail,
     },
+    {
+      key: 'light',
+      label: strings.settings.light,
+      detail: strings.settings.lightDetail,
+    },
   ], [strings]);
   const selectedTheme = useMemo(
-    () => {
-      if (themeMode === 'light') {
-        return {
-          key: 'light',
-          label: strings.settings.light,
-          detail: strings.settings.lightDetail,
-        } satisfies ThemeOption;
-      }
-
-      return themeOptions[0];
-    },
-    [strings, themeMode, themeOptions],
+    () => themeOptions.find((option) => option.key === themeMode) ?? themeOptions[0],
+    [themeMode, themeOptions],
   );
 
   const languageOptions = useMemo<LanguageOption[]>(() => ([

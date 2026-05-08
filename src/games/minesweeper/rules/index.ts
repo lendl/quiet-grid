@@ -3,7 +3,6 @@ export {
   createMinesweeperBoard,
   createMinesweeperPuzzle,
   finalizeMinesweeperBoard,
-  getDifficultyForBoard,
   getMinesweeperConfig,
   revealMinesweeperCell,
   toggleMinesweeperFlag,

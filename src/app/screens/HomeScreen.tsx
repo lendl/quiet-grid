@@ -20,7 +20,7 @@ const REPO_URL = 'https://github.com/lendl/quiet-grid';
 
 export default function HomeScreen({ navigation }: Props) {
   const { strings } = useLanguage();
-  const { theme, isDark } = useTheme();
+  const { theme, isDark, setThemeMode } = useTheme();
   const [repoDialogVisible, setRepoDialogVisible] = useState(false);
   const {
     activePuzzle,
@@ -138,6 +138,15 @@ export default function HomeScreen({ navigation }: Props) {
         >
           <Octicons name="mark-github" size={24} color={theme.text} />
         </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => setThemeMode(isDark ? 'light' : 'dark')}
+          style={s.iconBtn}
+          accessibilityLabel={isDark ? strings.home.switchToLightTheme : strings.home.switchToDarkTheme}
+          accessibilityRole="button"
+          activeOpacity={0.8}
+        >
+          <Octicons name={isDark ? 'sun' : 'moon'} size={24} color={theme.text} />
+        </TouchableOpacity>
       </View>
 
       <View style={s.hero}>
@@ -223,10 +232,11 @@ const makeStyles = (theme: Theme, isDark: boolean) => StyleSheet.create({
   container: { flex: 1, backgroundColor: theme.background },
   topActions: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 14,
     paddingTop: 14,
+    gap: 8,
   },
   iconBtn: {
     minWidth: 44,

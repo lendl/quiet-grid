@@ -84,3 +84,41 @@ export const lightTheme: Theme = {
   difficultyHard: '#fb923c',
   difficultyExpert: '#f87171',
 };
+
+
+export const pencilTheme: Theme = {
+  background: '#f7f7f7',          // soft paper white
+  surface: '#ffffff',             // pure white card/panel
+  surfaceElevated: '#f0f0f0',     // light gray for elevation
+  border: '#c8c8c8',              // pencil-outline gray
+  text: '#1a1a1a',                // near-black graphite
+  textSecondary: '#4d4d4d',       // softer pencil
+  textMuted: '#7a7a7a',           // light graphite
+
+  primary: '#000000',             // pencil black (no color)
+  primaryLight: '#4d4d4d',        // lighter graphite
+  onPrimary: '#ffffff',
+
+  filled: '#4d4d4d',              // pencil shading
+  filledBackground: '#e6e6e6',    // light shaded cell
+
+  given: '#ffffff',               // given cells look like clean paper
+  givenText: '#1a1a1a',           // strong graphite
+
+  success: '#4d4d4d',             // no green — pencil theme stays grayscale
+
+  panelSurface: '#ffffff',
+  panelSurfaceElevated: '#f0f0f0',
+
+  gridFrame: '#b3b3b3',           // grid lines like pencil
+  gridCellBackground: '#ffffff',
+  gridCellBorder: '#d0d0d0',
+
+  gridCellGivenText: '#1a1a1a',
+  gridCellEntryText: '#4d4d4d',
+
+  difficultyEasy: '#4d4d4d',      // all difficulty colors become grayscale
+  difficultyMedium: '#7a7a7a',
+  difficultyHard: '#999999',
+  difficultyExpert: '#b3b3b3',
+};

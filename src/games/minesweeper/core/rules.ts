@@ -4,6 +4,10 @@ import type {
   MinesweeperPuzzle,
 } from './types';
 import type { PuzzleDifficulty } from '../../shared/types';
+import {
+  resolveMinesweeperSizeProfile,
+  selectMinesweeperSizeProfile,
+} from './responsive';
 
 export type MinesweeperDistributionMode =
   | 'cluster-limited'
@@ -24,10 +28,10 @@ export interface MinesweeperConfig {
   retryLimit: number;
 }
 
-const MINESWEEPER_CONFIGS: Record<PuzzleDifficulty, MinesweeperConfig> = {
+type MinesweeperDifficultyRules = Omit<MinesweeperConfig, 'rows' | 'cols'>;
+
+const MINESWEEPER_DIFFICULTY_RULES: Record<PuzzleDifficulty, MinesweeperDifficultyRules> = {
   easy: {
-    rows: 12,
-    cols: 11,
     densityMin: 0.10,
     densityMax: 0.13,
     targetDensity: 0.12,
@@ -38,8 +42,6 @@ const MINESWEEPER_CONFIGS: Record<PuzzleDifficulty, MinesweeperConfig> = {
     retryLimit: 500,
   },
   medium: {
-    rows: 14,
-    cols: 11,
     densityMin: 0.15,
     densityMax: 0.18,
     targetDensity: 0.165,
@@ -50,8 +52,6 @@ const MINESWEEPER_CONFIGS: Record<PuzzleDifficulty, MinesweeperConfig> = {
     retryLimit: 500,
   },
   hard: {
-    rows: 16,
-    cols: 11,
     densityMin: 0.18,
     densityMax: 0.22,
     targetDensity: 0.20,
@@ -62,8 +62,6 @@ const MINESWEEPER_CONFIGS: Record<PuzzleDifficulty, MinesweeperConfig> = {
     retryLimit: 700,
   },
   expert: {
-    rows: 18,
-    cols: 11,
     densityMin: 0.20,
     densityMax: 0.25,
     targetDensity: 0.21,
@@ -74,6 +72,23 @@ const MINESWEEPER_CONFIGS: Record<PuzzleDifficulty, MinesweeperConfig> = {
     retryLimit: 150,
   },
 };
+
+function buildMinesweeperConfig(
+  difficulty: PuzzleDifficulty,
+  rows: number,
+  cols: number,
+): MinesweeperConfig {
+  const rules = MINESWEEPER_DIFFICULTY_RULES[difficulty];
+  if (!rules) {
+    throw new Error(`Unsupported Minesweeper difficulty: ${difficulty}`);
+  }
+
+  return {
+    ...rules,
+    rows,
+    cols,
+  };
+}
 
 function createCell(isMine: boolean): MinesweeperCell {
   return {
@@ -343,18 +358,26 @@ function meetsOpeningRules(board: MinesweeperBoard, row: number, col: number, co
   return true;
 }
 
-function finalizeGeneratedBoard(board: MinesweeperBoard, row: number, col: number): MinesweeperBoard {
+function finalizeGeneratedBoard(
+  board: MinesweeperBoard,
+  puzzle: MinesweeperPuzzle,
+  row: number,
+  col: number,
+): MinesweeperBoard {
   if (board.generated) {
     return board;
   }
 
-  const difficulty = getDifficultyForBoard(board);
-  const config = getMinesweeperConfig(difficulty);
-  const mineCount = getMineCount(config);
-  const protectedIndexes = getProtectedCoords(config.rows, config.cols, row, col, config.protectNeighbors);
+  const config = getMinesweeperConfig(puzzle.difficulty, {
+    profileId: puzzle.profileId,
+    rows: board.rows,
+    cols: board.cols,
+  });
+  const mineCount = board.mines;
+  const protectedIndexes = getProtectedCoords(board.rows, board.cols, row, col, config.protectNeighbors);
 
   for (let attempt = 0; attempt < config.retryLimit; attempt++) {
-    const mineIndexes = getRandomMineIndexes(config.rows, config.cols, mineCount, protectedIndexes);
+    const mineIndexes = getRandomMineIndexes(board.rows, board.cols, mineCount, protectedIndexes);
     const candidateBoard = createResolvedBoard(config, mineIndexes, mineCount);
 
     if (!meetsDistributionRules(candidateBoard, config, mineCount)) {
@@ -367,44 +390,51 @@ function finalizeGeneratedBoard(board: MinesweeperBoard, row: number, col: numbe
     return candidateBoard;
   }
 
-  throw new Error(`Unable to generate ${difficulty} Minesweeper board within retry limit.`);
+  throw new Error(`Unable to generate ${puzzle.difficulty} Minesweeper board within retry limit.`);
 }
 
-export function getMinesweeperConfig(difficulty: PuzzleDifficulty): MinesweeperConfig {
-  const config = MINESWEEPER_CONFIGS[difficulty];
-  if (!config) {
-    throw new Error(`Unsupported Minesweeper difficulty: ${difficulty}`);
-  }
-  return config;
-}
-
-export function getDifficultyForBoard(board: Pick<MinesweeperBoard, 'rows' | 'cols' | 'mines'>): PuzzleDifficulty {
-  for (const [difficulty, config] of Object.entries(MINESWEEPER_CONFIGS) as Array<[PuzzleDifficulty, MinesweeperConfig]>) {
-    if (
-      config.rows === board.rows
-      && config.cols === board.cols
-      && getMineCount(config) === board.mines
-    ) {
-      return difficulty;
-    }
+export function getMinesweeperConfig(
+  difficulty: PuzzleDifficulty,
+  options: {
+    availableWidth?: number;
+    profileId?: string;
+    rows?: number;
+    cols?: number;
+  } = {},
+): MinesweeperConfig {
+  if (typeof options.availableWidth === 'number') {
+    const selectedProfile = selectMinesweeperSizeProfile(difficulty, options.availableWidth);
+    return buildMinesweeperConfig(difficulty, selectedProfile.rows, selectedProfile.cols);
   }
 
-  throw new Error(`Unsupported Minesweeper board profile: ${board.rows}x${board.cols} with ${board.mines} mines`);
+  const matchedProfile = resolveMinesweeperSizeProfile(difficulty, {
+    profileId: options.profileId,
+    rows: options.rows,
+    cols: options.cols,
+  });
+  if (matchedProfile) {
+    return buildMinesweeperConfig(difficulty, matchedProfile.rows, matchedProfile.cols);
+  }
+
+  throw new Error(`Unsupported Minesweeper board profile for ${difficulty}: ${options.rows}x${options.cols}`);
 }
 
-export function createMinesweeperPuzzle(difficulty: PuzzleDifficulty): MinesweeperPuzzle {
-  const config = getMinesweeperConfig(difficulty);
+export function createMinesweeperPuzzle(
+  difficulty: PuzzleDifficulty,
+  availableWidth: number,
+): MinesweeperPuzzle {
+  const selectedProfile = selectMinesweeperSizeProfile(difficulty, availableWidth);
+  const config = getMinesweeperConfig(difficulty, { profileId: selectedProfile.id });
   return {
     difficulty,
+    profileId: selectedProfile.id,
     rows: config.rows,
     cols: config.cols,
     mines: getMineCount(config),
   };
 }
 
-export function createMinesweeperBoard(difficulty: PuzzleDifficulty): MinesweeperBoard {
-  const puzzle = createMinesweeperPuzzle(difficulty);
-
+export function createMinesweeperBoard(puzzle: MinesweeperPuzzle): MinesweeperBoard {
   return {
     rows: puzzle.rows,
     cols: puzzle.cols,
@@ -417,20 +447,30 @@ export function createMinesweeperBoard(difficulty: PuzzleDifficulty): Minesweepe
   };
 }
 
-export function finalizeMinesweeperBoard(board: MinesweeperBoard, row: number, col: number): MinesweeperBoard {
+export function finalizeMinesweeperBoard(
+  board: MinesweeperBoard,
+  puzzle: MinesweeperPuzzle,
+  row: number,
+  col: number,
+): MinesweeperBoard {
   if (!isInBounds(board, row, col) || board.status !== 'playing') {
     return board;
   }
 
-  return finalizeGeneratedBoard(board, row, col);
+  return finalizeGeneratedBoard(board, puzzle, row, col);
 }
 
-export function revealMinesweeperCell(board: MinesweeperBoard, row: number, col: number): MinesweeperBoard {
+export function revealMinesweeperCell(
+  board: MinesweeperBoard,
+  puzzle: MinesweeperPuzzle,
+  row: number,
+  col: number,
+): MinesweeperBoard {
   if (!isInBounds(board, row, col) || board.status !== 'playing') {
     return board;
   }
 
-  const preparedBoard = board.generated ? board : finalizeGeneratedBoard(board, row, col);
+  const preparedBoard = board.generated ? board : finalizeGeneratedBoard(board, puzzle, row, col);
   const currentCell = preparedBoard.cells[row][col];
   if (currentCell.state === 'flagged' || currentCell.state === 'revealed') {
     return preparedBoard;
@@ -471,8 +511,13 @@ export function countFlaggedCells(board: MinesweeperBoard): number {
   return board.cells.flat().filter((cell) => cell.state === 'flagged').length;
 }
 
-export function getOpeningCellCount(board: MinesweeperBoard, row: number, col: number): number {
-  const simulatedBoard = revealMinesweeperCell(board, row, col);
+export function getOpeningCellCount(
+  board: MinesweeperBoard,
+  puzzle: MinesweeperPuzzle,
+  row: number,
+  col: number,
+): number {
+  const simulatedBoard = revealMinesweeperCell(board, puzzle, row, col);
   return countRevealedCells(simulatedBoard);
 }
 

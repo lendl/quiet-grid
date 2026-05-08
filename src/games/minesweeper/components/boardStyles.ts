@@ -35,12 +35,27 @@ export function getMinesweeperBoardCellSize(
   cols: number,
   minCellSize: number,
   maxCellSize: number,
+  rows?: number,
+  containerHeight?: number,
 ): number {
   const safeCols = Math.max(cols, 1);
   const reservedWidth = MINESWEEPER_BOARD_RESERVED_WIDTH
     + (Math.max(safeCols - 1, 0) * MINESWEEPER_BOARD_CELL_GAP);
-  const nextCellSize = Math.floor((containerWidth - reservedWidth) / safeCols);
-  return Math.max(minCellSize, Math.min(maxCellSize, nextCellSize));
+  const widthCellSize = Math.floor((containerWidth - reservedWidth) / safeCols);
+  const heightCellSize = typeof rows === 'number' && typeof containerHeight === 'number'
+    ? Math.floor((
+      containerHeight
+      - MINESWEEPER_BOARD_RESERVED_WIDTH
+      - (Math.max(rows - 1, 0) * MINESWEEPER_BOARD_CELL_GAP)
+    ) / Math.max(rows, 1))
+    : widthCellSize;
+  const fittedCellSize = Math.min(widthCellSize, heightCellSize);
+
+  if (fittedCellSize >= minCellSize) {
+    return Math.min(maxCellSize, fittedCellSize);
+  }
+
+  return Math.max(1, Math.min(maxCellSize, fittedCellSize));
 }
 
 export function buildSharedMinesweeperBoardStyles(

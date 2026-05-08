@@ -19,6 +19,7 @@ export interface MinesweeperBoard {
 
 export interface MinesweeperPuzzle {
   difficulty: PuzzleDifficulty;
+  profileId?: string;
   rows: number;
   cols: number;
   mines: number;
