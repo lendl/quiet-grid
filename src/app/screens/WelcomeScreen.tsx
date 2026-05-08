@@ -106,7 +106,7 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     alignItems: 'center',
   },
   btnText: {
-    color: theme.background,
+    color: theme.onPrimary,
     fontSize: 17,
     fontWeight: '700',
   },

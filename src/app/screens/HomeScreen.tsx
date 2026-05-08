@@ -440,10 +440,10 @@ const makeStyles = (theme: Theme, isDark: boolean) => StyleSheet.create({
   activeGameActionText: {
     fontSize: 16,
     fontWeight: '800',
-    color: theme.text,
+    color: theme.onPrimary,
   },
   btnText: { fontSize: 16, fontWeight: '700' },
-  btnTextPrimary: { color: theme.text },
+  btnTextPrimary: { color: theme.onPrimary },
   btnTextSecondary: { color: theme.text },
   trustStrip: {
     alignItems: 'center',

@@ -398,7 +398,7 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     backgroundColor: theme.primary,
   },
   primaryButtonText: {
-    color: theme.text,
+    color: theme.onPrimary,
     fontSize: 16,
     fontWeight: '700',
   },

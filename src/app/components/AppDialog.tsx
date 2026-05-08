@@ -74,7 +74,7 @@ function btnVariantStyle(style: DialogButton['style'], theme: Theme, isDark: boo
 function btnTextStyle(style: DialogButton['style'], theme: Theme) {
   if (style === 'destructive') return { color: theme.difficultyExpert };
   if (style === 'cancel') return { color: theme.textSecondary };
-  return { color: theme.text };
+  return { color: theme.onPrimary };
 }
 
 const makeStyles = (theme: Theme, isDark: boolean) => StyleSheet.create({
