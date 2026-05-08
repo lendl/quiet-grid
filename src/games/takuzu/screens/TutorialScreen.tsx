@@ -39,13 +39,17 @@ export default function TutorialScreen({ navigation, route }: Props) {
   const progressLabel = `${resolvedLanguage === 'nl' ? 'Les' : 'Lesson'} ${lessonIndex + 1}`;
   const lessonDots = lessons.map((_, index) => index === lessonIndex);
 
-  useEffect(() => {
-    setGrid(cloneGrid(lesson.grid));
+  const resetLessonState = useCallback((nextLesson: typeof lesson) => {
+    setGrid(cloneGrid(nextLesson.grid));
     setCompleted(false);
     setMoveIndex(0);
     setSelectedAnswer(null);
     setAnswerState('idle');
-  }, [lesson]);
+  }, []);
+
+  useEffect(() => {
+    resetLessonState(lesson);
+  }, [lesson, resetLessonState]);
 
   useEffect(() => {
     return () => {
@@ -81,8 +85,15 @@ export default function TutorialScreen({ navigation, route }: Props) {
       return;
     }
 
+    const nextLesson = lessons[lessonIndex + 1];
+    if (!nextLesson) {
+      await exitTutorial();
+      return;
+    }
+
+    resetLessonState(nextLesson);
     setLessonIndex((current) => current + 1);
-  }, [exitTutorial, isLastLesson]);
+  }, [exitTutorial, isLastLesson, lessonIndex, lessons, resetLessonState]);
 
   useEffect(() => {
     if (!completed) {
@@ -106,6 +117,11 @@ export default function TutorialScreen({ navigation, route }: Props) {
       return grid;
     }
 
+    const row = grid[currentMove.row];
+    if (!row || currentMove.col < 0 || currentMove.col >= row.length) {
+      return grid;
+    }
+
     const nextGrid = cloneGrid(grid);
     nextGrid[currentMove.row][currentMove.col] = selectedAnswer;
     return nextGrid;
@@ -124,6 +140,11 @@ export default function TutorialScreen({ navigation, route }: Props) {
     }
 
     const nextGrid = cloneGrid(grid);
+    const row = nextGrid[currentMove.row];
+    if (!row || currentMove.col < 0 || currentMove.col >= row.length) {
+      return;
+    }
+
     nextGrid[currentMove.row][currentMove.col] = value;
     setGrid(nextGrid);
     setAnswerState('correct');
