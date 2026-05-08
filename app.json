@@ -2,13 +2,13 @@
   "expo": {
     "name": "Quiet Grid",
     "slug": "quiet-grid",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "icon": "./assets/icon.png",
     "android": {
       "package": "com.quietgrid.app",
-      "versionCode": 3,
+      "versionCode": 4,
       "blockedPermissions": [
         "android.permission.INTERNET",
         "android.permission.ACCESS_NETWORK_STATE",
