@@ -17,6 +17,7 @@ import PuzzleTypePickerScreen from '../screens/PuzzleTypePickerScreen';
 import PuzzleScreen          from '../screens/PuzzleScreen';
 import CompletionScreen      from '../screens/CompletionScreen';
 import LossScreen            from '../screens/LossScreen';
+import PuzzleAnalysisScreen  from '../screens/PuzzleAnalysisScreen';
 import StatsScreen           from '../screens/StatsScreen';
 import PuzzlePlayScreen      from '../screens/PuzzlePlayScreen';
 import HowToPlayScreen       from '../screens/HowToPlayScreen';
@@ -86,6 +87,7 @@ export default function AppNavigator() {
         <Stack.Screen name="PuzzlePlay"      component={PuzzlePlayScreen} />
         <Stack.Screen name="Completion"      component={CompletionScreen} />
         <Stack.Screen name="Loss"            component={LossScreen} />
+        <Stack.Screen name="Analysis"        component={PuzzleAnalysisScreen} />
         <Stack.Screen name="Stats"           component={StatsScreen} />
         <Stack.Screen name="HowToPlay"       component={HowToPlayScreen} />
         <Stack.Screen

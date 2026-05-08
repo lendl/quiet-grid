@@ -9,6 +9,7 @@ import { saveGameResult } from '../../utils/statsStorage';
 import { usePuzzleExitToHome } from './usePuzzleExitToHome';
 import { usePuzzlePlaySession } from './usePuzzlePlaySession';
 import { usePuzzleSessionOrchestration } from './usePuzzleSessionOrchestration';
+import { getPuzzleAnalysisAdapter } from '../../analysisRegistry';
 
 interface UsePuzzleControllerBootstrapArgs<TSession, THud> {
   isFocused: boolean;
@@ -114,6 +115,8 @@ export function usePuzzleControllerBootstrap<TSession, THud>({
     if (finalizedRef.current) return;
 
     const elapsedSeconds = pauseTimer();
+    const currentSession = sessionRef.current;
+    const analysisSource = getPuzzleAnalysisAdapter(puzzleTypeId)?.buildLossAnalysisSource(currentSession);
     finalizedRef.current = true;
     setRunning(false);
     await clearActivePuzzle();
@@ -130,6 +133,7 @@ export function usePuzzleControllerBootstrap<TSession, THud>({
       puzzleTypeId,
       difficulty,
       elapsedSeconds,
+      analysisSource: analysisSource ?? undefined,
     });
   }, [
     clearActivePuzzle,
@@ -138,6 +142,7 @@ export function usePuzzleControllerBootstrap<TSession, THud>({
     onShowLoss,
     pauseTimer,
     puzzleTypeId,
+    sessionRef,
     setRunning,
   ]);
 

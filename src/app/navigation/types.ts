@@ -6,6 +6,7 @@ import type {
 import type { CompletionVariant } from '../completion/types';
 import type { LossReason } from '../loss/types';
 import type { SupportInfoKey } from '../content/supportInfo';
+import type { PuzzleAnalysisPayload, PuzzleLossAnalysisSource } from '../analysis/types';
 
 export interface PuzzlePlayRouteParams {
   puzzleTypeId: PuzzleTypeId;
@@ -23,6 +24,7 @@ export interface LossRouteParams {
   puzzleTypeId: PuzzleTypeId;
   difficulty: PuzzleDifficulty;
   elapsedSeconds: number;
+  analysisSource?: PuzzleLossAnalysisSource;
 }
 
 export interface PuzzleRouteParams {
@@ -42,6 +44,7 @@ export type RootStackParamList = {
   PuzzlePlay: PuzzlePlayRouteParams;
   Completion: CompletionRouteParams;
   Loss: LossRouteParams;
+  Analysis: { analysis: PuzzleAnalysisPayload };
   Stats: { puzzleTypeId?: PuzzleTypeId } | undefined;
   HowToPlay: { puzzleTypeId: PuzzleTypeId };
   Tutorial: { puzzleTypeId: PuzzleTypeId; entry: TutorialEntryPoint };

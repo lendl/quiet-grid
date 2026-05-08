@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import type { StackScreenProps } from '@react-navigation/stack';
+import { getPuzzleAnalysisAdapter } from '../analysisRegistry';
 import AppScreen from '../components/AppScreen';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
@@ -75,14 +76,16 @@ function buildLossAccents(theme: Theme, difficultyColor: string) {
 export default function LossScreen({ route, navigation }: Props) {
   const { strings } = useLanguage();
   const { theme, isDark } = useTheme();
-  const { reason, puzzleTypeId, difficulty, elapsedSeconds } = route.params;
+  const { reason, puzzleTypeId, difficulty, elapsedSeconds, analysisSource } = route.params;
   const definition = getPuzzleDefinition(puzzleTypeId);
+  const analysisAdapter = getPuzzleAnalysisAdapter(puzzleTypeId);
   const s = useMemo(() => makeStyles(theme), [theme]);
   const copy = definition.content.loss[reason];
   const difficultyColor = getDifficultyColor(theme, difficulty);
   const difficultyLabel = formatDifficultyLabel(puzzleTypeId, difficulty);
   const elapsedLabel = formatElapsed(elapsedSeconds);
   const lossAccents = useMemo(() => buildLossAccents(theme, difficultyColor), [theme, difficultyColor]);
+  const canAnalyze = analysisAdapter?.supportsLossAnalysis(analysisSource) ?? false;
 
   const pageOpacity = useRef(new Animated.Value(0)).current;
   const contentTranslateY = useRef(new Animated.Value(20)).current;
@@ -161,6 +164,16 @@ export default function LossScreen({ route, navigation }: Props) {
   const handleGoHome = useCallback(() => {
     returnToHome(navigation);
   }, [navigation]);
+
+  const handleAnalyze = useCallback(() => {
+    if (!analysisAdapter || !analysisSource) {
+      return;
+    }
+
+    navigation.navigate('Analysis', {
+      analysis: analysisAdapter.buildAnalysis(analysisSource),
+    });
+  }, [analysisAdapter, analysisSource, navigation]);
 
   return (
     <AppScreen contentStyle={s.container}>
@@ -245,11 +258,26 @@ export default function LossScreen({ route, navigation }: Props) {
           </View>
         </View>
 
-        <View style={s.actionRow}>
-          <TouchableOpacity style={[s.actionButton, s.primaryButton]} onPress={handlePlayAgain} activeOpacity={0.82}>
+        <View style={s.primaryActionRow}>
+          <TouchableOpacity
+            style={[s.actionButton, s.primaryButton, s.fullWidthAction]}
+            onPress={handlePlayAgain}
+            activeOpacity={0.82}
+          >
             <Text style={s.primaryButtonText}>{strings.common.playAgain}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[s.actionButton, s.secondaryButton]} onPress={handleGoHome} activeOpacity={0.82}>
+        </View>
+        <View style={s.actionRow}>
+          {canAnalyze ? (
+            <TouchableOpacity style={[s.actionButton, s.secondaryButton]} onPress={handleAnalyze} activeOpacity={0.82}>
+              <Text style={s.secondaryButtonText}>{strings.analysis.analyze}</Text>
+            </TouchableOpacity>
+          ) : null}
+          <TouchableOpacity
+            style={[s.actionButton, s.secondaryButton, !canAnalyze ? s.fullWidthAction : null]}
+            onPress={handleGoHome}
+            activeOpacity={0.82}
+          >
             <Text style={s.secondaryButtonText}>{strings.common.home}</Text>
           </TouchableOpacity>
         </View>
@@ -385,8 +413,12 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   actionRow: {
     flexDirection: 'row',
     gap: 12,
-    marginTop: 28,
+    marginTop: 12,
     marginBottom: 4,
+  },
+  primaryActionRow: {
+    flexDirection: 'row',
+    marginTop: 28,
   },
   actionButton: {
     flex: 1,
@@ -411,5 +443,8 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     color: theme.text,
     fontSize: 16,
     fontWeight: '700',
+  },
+  fullWidthAction: {
+    flex: 1,
   },
 });

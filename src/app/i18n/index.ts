@@ -62,6 +62,7 @@ const EN_STRINGS = {
     home: 'Home',
     play: 'Play',
     playAgain: 'Play Again',
+    previous: 'Previous',
     next: 'Next',
     getStarted: 'Get Started',
     settings: 'Settings',
@@ -174,6 +175,15 @@ const EN_STRINGS = {
   loss: {
     difficulty: 'Difficulty',
     elapsedTime: 'Elapsed time',
+  },
+  analysis: {
+    title: 'Analysis',
+    back: 'Back to loss',
+    analyze: 'Analyze',
+    previous: 'Previous',
+    next: 'Next',
+    fastJump: 'Jump to step',
+    step: (current: number, total: number) => `Step ${current} of ${total}`,
   },
   stats: {
     headerSubtitle: 'Statistics for this puzzle type',
@@ -288,6 +298,7 @@ const NL_STRINGS: AppStrings = {
     home: 'Home',
     play: 'Spelen',
     playAgain: 'Opnieuw spelen',
+    previous: 'Vorige',
     next: 'Volgende',
     getStarted: 'Beginnen',
     settings: 'Instellingen',
@@ -400,6 +411,15 @@ const NL_STRINGS: AppStrings = {
   loss: {
     difficulty: 'Moeilijkheid',
     elapsedTime: 'Verstreken tijd',
+  },
+  analysis: {
+    title: 'Analyse',
+    back: 'Terug naar verlies',
+    analyze: 'Analyseren',
+    previous: 'Vorige',
+    next: 'Volgende',
+    fastJump: 'Spring naar stap',
+    step: (current: number, total: number) => `Stap ${current} van ${total}`,
   },
   stats: {
     headerSubtitle: 'Statistieken voor dit puzzeltype',
