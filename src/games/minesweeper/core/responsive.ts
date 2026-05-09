@@ -16,15 +16,15 @@ export interface MinesweeperProfileLookup {
 
 export const MINESWEEPER_GRID_HORIZONTAL_PADDING = 12;
 
-const MIN_RESPONSIVE_CELL_SIZE = 32;
-const MINESWEEPER_FRAME_RESERVED_WIDTH = 14;
+const MIN_RESPONSIVE_CELL_SIZE = 36;
+const MINESWEEPER_FRAME_RESERVED_WIDTH = 10;
 const MINESWEEPER_CELL_GAP = 4;
 
 const DEVICE_CAPS: Record<MinesweeperDeviceBucket, { maxCols: number; maxRows: number }> = {
   'small-phone': { maxCols: 9, maxRows: 11 },
-  'normal-phone': { maxCols: 10, maxRows: 12 },
-  'large-phone': { maxCols: 11, maxRows: 13 },
-  tablet: { maxCols: 12, maxRows: 14 },
+  'normal-phone': { maxCols: 10, maxRows: 16 },
+  'large-phone': { maxCols: 11, maxRows: 18 },
+  tablet: { maxCols: 12, maxRows: 20 },
 };
 
 const RESPONSIVE_PROFILES: Record<PuzzleDifficulty, readonly MinesweeperSizeProfile[]> = {
