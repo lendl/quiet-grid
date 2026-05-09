@@ -6,9 +6,17 @@ import type { MinesweeperStrings } from '../content/strings';
 import en from './en';
 import nl from './nl';
 
-type TutorialTextKey = 'forced-flag' | 'safe-reveal' | 'diagonals-count' | 'compare-clues' | 'guess-moments';
+export type TutorialTextKey =
+  | 'goal-and-stakes'
+  | 'core-actions'
+  | 'reading-clues'
+  | 'forced-flag'
+  | 'safe-reveal'
+  | 'compare-clues'
+  | 'advanced-patterns'
+  | 'guess-and-help';
 
-type ActionLessonText = {
+export type ActionLessonText = {
   title: string;
   body: string;
   prompt: string;
@@ -16,7 +24,7 @@ type ActionLessonText = {
   success: string;
 };
 
-type InfoLessonText = {
+export type InfoLessonText = {
   title: string;
   body: string;
   prompt: string;

@@ -1,3 +1,4 @@
+import TutorialScreen from './screens/TutorialScreen';
 import type { PuzzleDefinition } from '../../app/shell/games/gameDefinition';
 import { getMinesweeperHowToPlay } from './content/howToPlay';
 import { getMinesweeperLossContent } from './content/loss';
@@ -17,7 +18,7 @@ export const minesweeperDefinition: PuzzleDefinition = {
     return getMinesweeperStrings().tagline;
   },
   supports: {
-    tutorial: false,
+    tutorial: true,
     learning: true,
     scoring: true,
   },
@@ -41,5 +42,6 @@ export const minesweeperDefinition: PuzzleDefinition = {
     },
   },
   screens: {
+    tutorial: TutorialScreen,
   },
 };

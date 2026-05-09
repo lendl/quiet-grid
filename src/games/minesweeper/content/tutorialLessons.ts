@@ -3,7 +3,12 @@ import type {
   MinesweeperCell,
   MinesweeperCellState,
 } from '../types';
-import { getMinesweeperTutorialText } from '../i18n';
+import {
+  getMinesweeperTutorialText,
+  type ActionLessonText,
+  type InfoLessonText,
+  type TutorialTextKey,
+} from '../i18n';
 
 export type MinesweeperTutorialAction = 'reveal' | 'flag';
 
@@ -13,7 +18,7 @@ export interface MinesweeperTutorialCell {
 }
 
 interface MinesweeperTutorialLessonBase {
-  key: string;
+  key: TutorialTextKey;
   title: string;
   body: string;
 }
@@ -50,8 +55,30 @@ interface MinesweeperTutorialBoardPatchEntry {
 }
 
 interface MinesweeperTutorialActionLessonDefinition
-  extends Omit<MinesweeperTutorialActionLesson, 'resultBoard'> {
+  extends Omit<MinesweeperTutorialActionLesson, 'title' | 'body' | 'prompt' | 'retry' | 'success' | 'resultBoard'> {
   resultPatch: readonly MinesweeperTutorialBoardPatchEntry[];
+}
+
+interface MinesweeperTutorialInfoLessonDefinition {
+  kind: 'info';
+  key: TutorialTextKey;
+  board: MinesweeperBoard;
+}
+
+type TutorialTextByKey = ReturnType<typeof getMinesweeperTutorialText>;
+
+type ActionLessonKey = 'forced-flag' | 'safe-reveal' | 'compare-clues';
+
+type InfoLessonKey = Exclude<TutorialTextKey, ActionLessonKey>;
+
+interface MinesweeperTutorialActionLessonDefinitionBase
+  extends Omit<MinesweeperTutorialActionLessonDefinition, 'key'> {
+  key: ActionLessonKey;
+}
+
+interface MinesweeperTutorialInfoLessonDefinitionBase
+  extends Omit<MinesweeperTutorialInfoLessonDefinition, 'key'> {
+  key: InfoLessonKey;
 }
 
 function createCell(isMine: boolean, state: MinesweeperCellState): MinesweeperCell {
@@ -136,24 +163,90 @@ function applyBoardPatch(
 }
 
 function createActionLesson(
-  definition: MinesweeperTutorialActionLessonDefinition,
+  definition: MinesweeperTutorialActionLessonDefinitionBase,
+  text: ActionLessonText,
 ): MinesweeperTutorialActionLesson {
   const { resultPatch, ...lesson } = definition;
 
   return {
     ...lesson,
+    title: text.title,
+    body: text.body,
+    prompt: text.prompt,
+    retry: text.retry,
+    success: text.success,
     resultBoard: applyBoardPatch(lesson.initialBoard, resultPatch),
   };
 }
 
+function createInfoLesson(
+  definition: MinesweeperTutorialInfoLessonDefinitionBase,
+  text: InfoLessonText,
+): MinesweeperTutorialInfoLesson {
+  return {
+    ...definition,
+    title: text.title,
+    body: text.body,
+    prompt: text.prompt,
+    summary: text.summary,
+    continueLabel: text.continueLabel,
+  };
+}
+
+function getActionLessonText(
+  text: TutorialTextByKey,
+  key: ActionLessonKey,
+): ActionLessonText {
+  return text[key] as ActionLessonText;
+}
+
+function getInfoLessonText(
+  text: TutorialTextByKey,
+  key: InfoLessonKey,
+): InfoLessonText {
+  return text[key] as InfoLessonText;
+}
+
 const BOARD_SIZE = 5;
 
-const FLAG_LESSON = createActionLesson({
-  kind: 'action',
+const GOAL_LESSON: MinesweeperTutorialInfoLessonDefinitionBase = {
+  kind: 'info',
+  key: 'goal-and-stakes',
+  board: buildBoard({
+    rows: BOARD_SIZE,
+    cols: BOARD_SIZE,
+    mines: [[0, 1], [1, 3], [3, 1]],
+    revealed: [[2, 2], [2, 3], [3, 3], [4, 3], [4, 4]],
+    flagged: [[1, 3]],
+  }),
+};
+
+const CORE_ACTIONS_LESSON: MinesweeperTutorialInfoLessonDefinitionBase = {
+  kind: 'info',
+  key: 'core-actions',
+  board: buildBoard({
+    rows: BOARD_SIZE,
+    cols: BOARD_SIZE,
+    mines: [[1, 1], [3, 3]],
+    revealed: [[0, 0], [0, 1], [1, 0], [2, 2]],
+    flagged: [[3, 3]],
+  }),
+};
+
+const READING_CLUES_LESSON: MinesweeperTutorialInfoLessonDefinitionBase = {
+  kind: 'info',
+  key: 'reading-clues',
+  board: buildBoard({
+    rows: BOARD_SIZE,
+    cols: BOARD_SIZE,
+    mines: [[1, 1], [1, 3], [3, 1]],
+    revealed: [[0, 2], [2, 0], [2, 2], [2, 4]],
+  }),
+};
+
+const FLAG_LESSON: MinesweeperTutorialActionLessonDefinitionBase = {
   key: 'forced-flag',
-  title: 'Flag tile that must hide a mine',
-  body: 'That 1 still needs one mine, and the highlighted tile is its only hidden neighbor.',
-  prompt: 'What should you do with the highlighted tile?',
+  kind: 'action',
   expectedAction: 'flag',
   focusCell: { row: 4, col: 1 },
   initialBoard: buildBoard({
@@ -182,16 +275,11 @@ const FLAG_LESSON = createActionLesson({
     ],
   }),
   resultPatch: [{ row: 4, col: 1, state: 'flagged' }],
-  retry: 'Look at the 1 beside the highlighted tile. It still needs one mine, and no other hidden neighbor can supply it.',
-  success: 'Right. That clue still needed one mine, so the highlighted tile had to be flagged.',
-});
+};
 
-const SAFE_REVEAL_LESSON = createActionLesson({
-  kind: 'action',
+const SAFE_REVEAL_LESSON: MinesweeperTutorialActionLessonDefinitionBase = {
   key: 'safe-reveal',
-  title: 'Reveal tile that must be safe',
-  body: 'This 1 already touches its flagged mine, so the highlighted tile cannot hide another one.',
-  prompt: 'What should you do with the highlighted tile?',
+  kind: 'action',
   expectedAction: 'reveal',
   focusCell: { row: 4, col: 0 },
   initialBoard: buildBoard({
@@ -221,77 +309,35 @@ const SAFE_REVEAL_LESSON = createActionLesson({
     ],
   }),
   resultPatch: [{ row: 4, col: 0, state: 'revealed' }],
-  retry: 'That clue is already satisfied by the flagged mine. The highlighted tile is the remaining hidden neighbor, so it is safe.',
-  success: 'Right. Once that clue already has its mine, the highlighted tile can be revealed safely.',
-});
-
-const DIAGONAL_LESSON: MinesweeperTutorialActionLesson = {
-  kind: 'action',
-  key: 'diagonals-count',
-  title: 'Diagonal neighbors count too',
-  body: 'The visible clues pin down the flagged mine first. After that, the corner 1 matters because it counts diagonal neighbors too.',
-  prompt: 'What should you do with the highlighted tile?',
-  expectedAction: 'reveal',
-  focusCell: { row: 0, col: 1 },
-  initialBoard: buildBoard({
-    rows: BOARD_SIZE,
-    cols: BOARD_SIZE,
-    mines: [[1, 1]],
-    flagged: [[1, 1]],
-    revealed: [
-      [0, 0],
-      [0, 4],
-      [1, 4],
-      [2, 0],
-      [2, 1],
-      [2, 2],
-      [2, 3],
-      [2, 4],
-      [3, 1],
-      [3, 2],
-      [3, 3],
-      [3, 4],
-      [4, 0],
-      [4, 1],
-      [4, 2],
-      [4, 4],
-    ],
-  }),
-  resultBoard: buildBoard({
-    rows: BOARD_SIZE,
-    cols: BOARD_SIZE,
-    mines: [[1, 1]],
-    flagged: [[1, 1]],
-    revealed: [
-      [0, 0],
-      [0, 1],
-      [0, 4],
-      [1, 4],
-      [2, 0],
-      [2, 1],
-      [2, 2],
-      [2, 3],
-      [2, 4],
-      [3, 1],
-      [3, 2],
-      [3, 3],
-      [3, 4],
-      [4, 0],
-      [4, 1],
-      [4, 2],
-      [4, 4],
-    ],
-  }),
-  retry: 'The visible clues already force the flagged tile to be a mine. Once you include that diagonal mine in the corner 1, the highlighted tile is safe.',
-  success: 'Right. The flagged tile is a known mine, and the corner clue counts it diagonally, so the highlighted tile can be revealed.',
 };
 
-const COMPARE_CLUES_LESSON = createActionLesson({
-  kind: 'action',
+const ADVANCED_PATTERNS_LESSON: MinesweeperTutorialInfoLessonDefinitionBase = {
+  kind: 'info',
+  key: 'advanced-patterns',
+  board: buildBoard({
+    rows: BOARD_SIZE,
+    cols: BOARD_SIZE,
+    mines: [[1, 1], [0, 3]],
+    flagged: [[1, 1]],
+    revealed: [
+      [0, 0],
+      [0, 4],
+      [1, 0],
+      [1, 2],
+      [1, 3],
+      [1, 4],
+      [2, 0],
+      [2, 1],
+      [2, 2],
+      [2, 3],
+      [2, 4],
+    ],
+  }),
+};
+
+const COMPARE_CLUES_LESSON: MinesweeperTutorialActionLessonDefinitionBase = {
   key: 'compare-clues',
-  title: 'Compare two clues together',
-  body: 'These two 1 clues share hidden tiles. Once the shared pair takes one mine, the extra tile by the right 1 must be safe.',
-  prompt: 'What should you do with the highlighted tile?',
+  kind: 'action',
   expectedAction: 'reveal',
   focusCell: { row: 0, col: 2 },
   initialBoard: buildBoard({
@@ -322,19 +368,15 @@ const COMPARE_CLUES_LESSON = createActionLesson({
     ],
   }),
   resultPatch: [{ row: 0, col: 2, state: 'revealed' }],
-  retry: 'Read both 1 clues together. The shared hidden pair can contain only one mine, so the extra tile by the right clue is safe.',
-  success: 'Right. Comparing both clues shows the highlighted tile cannot hide a mine.',
-});
+};
 
-const GUESS_LESSON: MinesweeperTutorialInfoLesson = {
+const GUESS_AND_HELP_LESSON: MinesweeperTutorialInfoLessonDefinitionBase = {
   kind: 'info',
-  key: 'guess-moments',
-  title: 'Sometimes next move is a guess',
-  body: 'Not every puzzle offers a fully proved next move. On this board, the hidden top edge still supports more than one possible mine layout.',
+  key: 'guess-and-help',
   board: buildBoard({
     rows: BOARD_SIZE,
     cols: BOARD_SIZE,
-    mines: [[0, 1], [0, 3], [4, 1], [4, 3]],
+    mines: [[0, 0], [0, 3]],
     revealed: [
       [1, 0],
       [1, 1],
@@ -346,68 +388,31 @@ const GUESS_LESSON: MinesweeperTutorialInfoLesson = {
       [2, 2],
       [2, 3],
       [2, 4],
-      [3, 0],
-      [3, 1],
-      [3, 2],
-      [3, 3],
-      [3, 4],
-      [4, 0],
-      [4, 2],
-      [4, 4],
     ],
   }),
-  prompt: 'When clues do not prove one move, make the calmest guess you can.',
-  summary: 'More than one mine pattern can still fit the hidden top edge, so no single move is proved there yet.',
-  continueLabel: 'Continue',
 };
 
-const ENGLISH_LESSONS: readonly MinesweeperTutorialLesson[] = [
+const TUTORIAL_LESSONS: readonly (
+  | MinesweeperTutorialInfoLessonDefinitionBase
+  | MinesweeperTutorialActionLessonDefinitionBase
+)[] = [
+  GOAL_LESSON,
+  CORE_ACTIONS_LESSON,
+  READING_CLUES_LESSON,
   FLAG_LESSON,
   SAFE_REVEAL_LESSON,
   COMPARE_CLUES_LESSON,
-  DIAGONAL_LESSON,
-  GUESS_LESSON,
+  ADVANCED_PATTERNS_LESSON,
+  GUESS_AND_HELP_LESSON,
 ];
 
 export function getMinesweeperTutorialLessons(): readonly MinesweeperTutorialLesson[] {
   const text = getMinesweeperTutorialText();
-  return ENGLISH_LESSONS.map((lesson) => {
-    const translated = text[lesson.key as keyof typeof text];
-
+  return TUTORIAL_LESSONS.map((lesson) => {
     if (lesson.kind === 'info') {
-      const info = translated as {
-        title: string;
-        body: string;
-        prompt: string;
-        summary: string;
-        continueLabel: string;
-      };
-
-      return {
-        ...lesson,
-        title: info.title,
-        body: info.body,
-        prompt: info.prompt,
-        summary: info.summary,
-        continueLabel: info.continueLabel,
-      };
+      return createInfoLesson(lesson, getInfoLessonText(text, lesson.key));
     }
 
-    const action = translated as {
-      title: string;
-      body: string;
-      prompt: string;
-      retry: string;
-      success: string;
-    };
-
-    return {
-      ...lesson,
-      title: action.title,
-      body: action.body,
-      prompt: action.prompt,
-      retry: action.retry,
-      success: action.success,
-    };
+    return createActionLesson(lesson, getActionLessonText(text, lesson.key));
   });
 }
