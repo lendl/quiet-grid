@@ -44,7 +44,7 @@ export interface PuzzleControllerBootstrapResult<TSession, THud> {
   restoreRequestedPuzzle: () => Promise<TSession | null>;
   hudState: THud | null;
   finishSolvedSession: (solvedSession?: TSession, showCompletionScreen?: boolean) => Promise<boolean>;
-  finishLossSession: (reason: 'forfeit' | 'rule-based') => Promise<void>;
+  finishLossSession: (reason: 'forfeit' | 'rule-based', sessionOverride?: TSession | null) => Promise<void>;
   completeExitToHome: (sessionOverride?: TSession | null) => Promise<void>;
   loadFreshSession: () => Promise<TSession | null>;
 }
@@ -111,11 +111,14 @@ export function usePuzzleControllerBootstrap<TSession, THud>({
     onExit,
   });
 
-  const finishLossSession = useCallback(async (reason: LossReason) => {
+  const finishLossSession = useCallback(async (
+    reason: LossReason,
+    sessionOverride?: TSession | null,
+  ) => {
     if (finalizedRef.current) return;
 
     const elapsedSeconds = pauseTimer();
-    const currentSession = sessionRef.current;
+    const currentSession = sessionOverride ?? sessionRef.current;
     const analysisSource = getPuzzleAnalysisAdapter(puzzleTypeId)?.buildLossAnalysisSource(currentSession);
     finalizedRef.current = true;
     setRunning(false);

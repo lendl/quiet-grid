@@ -64,6 +64,7 @@ function useMinesweeperAdapter({
 
   const handleEffects = useCallback(async ({
     effects,
+    previousSession,
     finalizedRef,
     finishLossSession,
   }: PuzzleEffectHandlerArgs<MinesweeperPlaySession, MinesweeperActionEffect>) => {
@@ -71,7 +72,7 @@ function useMinesweeperAdapter({
       return;
     }
 
-    await finishLossSession('rule-based');
+    await finishLossSession('rule-based', previousSession);
   }, []);
 
   const getState = useCallback(({
@@ -129,7 +130,7 @@ function useMinesweeperAdapter({
               void runShellAction({ type: 'toggle-flag', row, col });
             }}
             nextMoveEvidenceCells={nextMoveVisible ? nextMoveHint?.evidenceCells : []}
-            nextMoveTargetCells={nextMoveVisible ? nextMoveHint?.targetCells : []}
+            nextMoveSafeTargetCells={nextMoveVisible ? nextMoveHint?.targetCells : []}
           />
         </View>
       ) : (

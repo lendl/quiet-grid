@@ -51,6 +51,15 @@ export interface MinesweeperI18n {
   strings: MinesweeperStrings;
   howToPlay: HowToPlayContent;
   loss: LossContent;
+  analysis: {
+    lossSummary(params: { safeCount: number; mineCount: number }): {
+      title: string;
+      body: string;
+    };
+    legendEvidence: string;
+    legendSafe: string;
+    legendMine: string;
+  };
   tutorialText: Record<TutorialTextKey, ActionLessonText | InfoLessonText>;
   learningCenter: {
     nextMovePattern(params: LearningCenterPatternParams): {
@@ -84,6 +93,10 @@ export function getMinesweeperHowToPlay(): HowToPlayContent {
 
 export function getMinesweeperLossContent(): LossContent {
   return getMinesweeperI18n().loss;
+}
+
+export function getMinesweeperAnalysisContent(): MinesweeperI18n['analysis'] {
+  return getMinesweeperI18n().analysis;
 }
 
 export function getMinesweeperTutorialText(): MinesweeperI18n['tutorialText'] {

@@ -23,6 +23,8 @@ interface MinesweeperBoardProps {
   onToggleFlag: (row: number, col: number) => void;
   nextMoveEvidenceCells?: Array<{ row: number; col: number }>;
   nextMoveTargetCells?: Array<{ row: number; col: number }>;
+  nextMoveSafeTargetCells?: Array<{ row: number; col: number }>;
+  nextMoveMineTargetCells?: Array<{ row: number; col: number }>;
 }
 
 const MIN_CELL_SIZE = 32;
@@ -45,6 +47,8 @@ function MinesweeperBoard({
   onToggleFlag,
   nextMoveEvidenceCells = [],
   nextMoveTargetCells = [],
+  nextMoveSafeTargetCells = nextMoveTargetCells,
+  nextMoveMineTargetCells = [],
 }: MinesweeperBoardProps) {
   const { resolvedLanguage } = useLanguage();
   const { theme, isDark } = useTheme();
@@ -54,9 +58,12 @@ function MinesweeperBoard({
   const nextMoveEvidenceKeys = useMemo(() => new Set(
     nextMoveEvidenceCells.map(({ row, col }) => `${row}:${col}`),
   ), [nextMoveEvidenceCells]);
-  const nextMoveTargetKeys = useMemo(() => new Set(
-    nextMoveTargetCells.map(({ row, col }) => `${row}:${col}`),
-  ), [nextMoveTargetCells]);
+  const nextMoveSafeTargetKeys = useMemo(() => new Set(
+    nextMoveSafeTargetCells.map(({ row, col }) => `${row}:${col}`),
+  ), [nextMoveSafeTargetCells]);
+  const nextMoveMineTargetKeys = useMemo(() => new Set(
+    nextMoveMineTargetCells.map(({ row, col }) => `${row}:${col}`),
+  ), [nextMoveMineTargetCells]);
 
   function handleLayout(event: LayoutChangeEvent) {
     const { width, height } = event.nativeEvent.layout;
@@ -75,19 +82,25 @@ function MinesweeperBoard({
   function getCellStyle(row: number, col: number) {
     const cell = board.cells[row][col];
     const key = `${row}:${col}`;
-    const nextMoveTarget = nextMoveTargetKeys.has(key);
+    const nextMoveSafeTarget = nextMoveSafeTargetKeys.has(key);
+    const nextMoveMineTarget = nextMoveMineTargetKeys.has(key);
     const nextMoveEvidence = nextMoveEvidenceKeys.has(key);
-    const highlightStyle = nextMoveTarget
+    const highlightStyle = nextMoveMineTarget
       ? {
-          backgroundColor: withAlpha(theme.primary, isDark ? 0.26 : 0.16),
-          borderColor: withAlpha(theme.primaryLight, isDark ? 0.88 : 0.72),
+          backgroundColor: withAlpha(theme.difficultyExpert, isDark ? 0.28 : 0.16),
+          borderColor: withAlpha(theme.difficultyExpert, isDark ? 0.84 : 0.68),
         }
-      : nextMoveEvidence
+      : nextMoveSafeTarget
         ? {
-            backgroundColor: withAlpha(theme.primary, isDark ? 0.14 : 0.08),
-            borderColor: withAlpha(theme.primary, isDark ? 0.62 : 0.44),
+            backgroundColor: withAlpha(theme.success, isDark ? 0.3 : 0.16),
+            borderColor: withAlpha(theme.success, isDark ? 0.86 : 0.72),
           }
-        : null;
+        : nextMoveEvidence
+          ? {
+              backgroundColor: withAlpha(theme.primary, isDark ? 0.14 : 0.08),
+              borderColor: withAlpha(theme.primary, isDark ? 0.62 : 0.44),
+            }
+          : null;
 
     if (cell.state === 'flagged') {
       return [styles.flaggedCell, highlightStyle];
@@ -104,6 +117,9 @@ function MinesweeperBoard({
 
   function getCellTextStyle(row: number, col: number) {
     const cell = board.cells[row][col];
+    const key = `${row}:${col}`;
+    if (nextMoveMineTargetKeys.has(key)) return { color: theme.difficultyExpert };
+    if (nextMoveSafeTargetKeys.has(key)) return { color: theme.success };
     if (cell.state === 'flagged') return { color: theme.primaryLight };
     if (cell.state === 'revealed' && cell.isMine) return { color: theme.difficultyExpert };
     if (cell.state === 'revealed' && cell.adjacentMines > 0) {
@@ -113,7 +129,7 @@ function MinesweeperBoard({
   }
 
   return (
-    <View onLayout={handleLayout}>
+    <View onLayout={handleLayout} style={{ width: '100%' }}>
       <View style={styles.frame}>
         {board.cells.map((row, rowIndex) => (
           <View

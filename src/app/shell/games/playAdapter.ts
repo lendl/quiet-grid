@@ -64,6 +64,7 @@ export interface PuzzleImmediateActionRunner<TSession, TAction = unknown, TEffec
 }
 
 export interface PuzzleEffectHandlerArgs<TSession, TEffect = unknown> {
+  previousSession: TSession;
   session: TSession;
   effects: readonly TEffect[];
   setSession: Dispatch<SetStateAction<TSession | null>>;
@@ -75,7 +76,7 @@ export interface PuzzleEffectHandlerArgs<TSession, TEffect = unknown> {
     solvedSession?: TSession,
     showCompletionScreen?: boolean,
   ) => Promise<boolean>;
-  finishLossSession: (reason: 'forfeit' | 'rule-based') => Promise<void>;
+  finishLossSession: (reason: 'forfeit' | 'rule-based', sessionOverride?: TSession | null) => Promise<void>;
   loadFreshSession: () => Promise<TSession | null>;
   setDialog: Dispatch<SetStateAction<DialogConfig | null>>;
   goHome: () => void;
@@ -155,6 +156,7 @@ export function createPuzzlePlayAdapter<
         handleEffects: instance.handleEffects
           ? (effectArgs) => instance.handleEffects!({
               session: effectArgs.session as TSession,
+              previousSession: effectArgs.previousSession as TSession,
               effects: effectArgs.effects as readonly TEffect[],
               setSession: effectArgs.setSession,
               sessionRef: effectArgs.sessionRef as MutableRefObject<TSession | null>,

@@ -152,6 +152,7 @@ export function usePuzzlePlayController(props: Props): PuzzlePlayLayoutState {
     }
 
     await adapterInstance.handleEffects?.({
+      previousSession: currentSession,
       session: result.session,
       effects: result.effects,
       setSession,

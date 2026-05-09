@@ -76,6 +76,31 @@ const nl = {
       icon: '💣',
     },
   },
+  analysis: {
+    lossSummary({ safeCount, mineCount }: { safeCount: number; mineCount: number }) {
+      if (safeCount > 0 && mineCount > 0) {
+        return {
+          title: 'Er waren logische zetten beschikbaar',
+          body: `Op dit bord waren al ${safeCount} veilige ${safeCount === 1 ? 'zet' : 'zetten'} om te openen en ${mineCount} zekere ${mineCount === 1 ? 'mijn' : 'mijnen'} om te markeren.`,
+        };
+      }
+
+      if (safeCount > 0) {
+        return {
+          title: 'Er waren veilige openingen beschikbaar',
+          body: `Op dit bord waren al ${safeCount} veilige ${safeCount === 1 ? 'zet' : 'zetten'} om te openen op basis van de getoonde cijfers.`,
+        };
+      }
+
+      return {
+        title: 'Er waren zekere markeringen beschikbaar',
+        body: `Op dit bord waren al ${mineCount} zekere ${mineCount === 1 ? 'mijn' : 'mijnen'} om te markeren op basis van de getoonde cijfers.`,
+      };
+    },
+    legendEvidence: 'Bewijs',
+    legendSafe: 'Veilig openen',
+    legendMine: 'Mijn markeren',
+  },
   tutorialText: {
     'forced-flag': {
       title: 'Markeer het vak dat zeker een mijn verbergt',

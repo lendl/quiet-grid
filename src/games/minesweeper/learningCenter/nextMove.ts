@@ -28,6 +28,12 @@ export interface MinesweeperNextMoveHint {
   teaching?: MinesweeperNextMoveTeaching;
 }
 
+export interface MinesweeperLogicalMoveAnalysis {
+  evidenceCells: MinesweeperNextMoveCell[];
+  safeTargetCells: MinesweeperNextMoveCell[];
+  mineTargetCells: MinesweeperNextMoveCell[];
+}
+
 interface MinesweeperClue {
   row: number;
   col: number;
@@ -47,6 +53,7 @@ interface MinesweeperAnalyzedHint {
   patternKey: MinesweeperNextMovePatternKey;
   evidenceCells: MinesweeperNextMoveCell[];
   targetCells: MinesweeperNextMoveCell[];
+  resolvedMineCells?: MinesweeperNextMoveCell[];
   primaryClueCell?: MinesweeperNextMoveCell;
   secondaryClueCell?: MinesweeperNextMoveCell;
   mineCount?: number;
@@ -150,6 +157,18 @@ function getClues(board: MinesweeperBoard): MinesweeperClue[] {
   }
 
   return clues;
+}
+
+function getTouchingClueCells(
+  board: MinesweeperBoard,
+  candidateCell: MinesweeperNextMoveCell,
+): MinesweeperNextMoveCell[] {
+  return getNeighborCells(board, candidateCell.row, candidateCell.col)
+    .filter(({ row, col }) => {
+      const clueCell = board.cells[row][col];
+      return clueCell.state === 'revealed' && clueCell.adjacentMines > 0;
+    })
+    .sort(compareCells);
 }
 
 function getClueState(
@@ -335,11 +354,11 @@ function getContradictionClues(
     .sort(compareCells);
 }
 
-function findOnlyOnePossibleMineHint(
+function findOnlyOnePossibleMineHints(
   board: MinesweeperBoard,
   clues: MinesweeperClue[],
   forcedMineKeys: Set<string>,
-): MinesweeperAnalyzedHint | null {
+): MinesweeperAnalyzedHint[] {
   const hints: MinesweeperAnalyzedHint[] = [];
 
   for (let clueIndex = 0; clueIndex < clues.length; clueIndex++) {
@@ -387,6 +406,9 @@ function findOnlyOnePossibleMineHint(
             ...supersetState.unresolvedNeighbors,
           ]),
           targetCells: extraCells,
+          resolvedMineCells: subsetState.unresolvedNeighbors.length === 1
+            ? [...subsetState.unresolvedNeighbors]
+            : undefined,
           mineCount: 1,
         });
       });
@@ -405,28 +427,37 @@ function findOnlyOnePossibleMineHint(
     return compareCells(a.primaryClueCell, b.primaryClueCell);
   });
 
-  return hints[0] ?? null;
+  return hints;
 }
 
-function findGuaranteedSafeTileHint(
+function findOnlyOnePossibleMineHint(
   board: MinesweeperBoard,
   clues: MinesweeperClue[],
   forcedMineKeys: Set<string>,
 ): MinesweeperAnalyzedHint | null {
+  return findOnlyOnePossibleMineHints(board, clues, forcedMineKeys)[0] ?? null;
+}
+
+function findGuaranteedSafeTileHints(
+  board: MinesweeperBoard,
+  clues: MinesweeperClue[],
+  forcedMineKeys: Set<string>,
+): MinesweeperAnalyzedHint[] {
   const candidates = dedupeCells(clues.flatMap((clue) => (
     getClueState(board, clue, forcedMineKeys).unresolvedNeighbors
   )));
+  const hints: MinesweeperAnalyzedHint[] = [];
 
-  for (const candidateCell of candidates) {
+  candidates.forEach((candidateCell) => {
     const contradictionClues = getContradictionClues(board, candidateCell, forcedMineKeys);
     if (contradictionClues.length === 0) {
-      continue;
+      return;
     }
 
     const primaryClueCell = contradictionClues[0];
     const primaryClue = board.cells[primaryClueCell.row][primaryClueCell.col];
 
-    return {
+    hints.push({
       patternKey: 'guaranteed-safe-tile',
       primaryClueCell,
       secondaryClueCell: contradictionClues[1],
@@ -436,17 +467,35 @@ function findGuaranteedSafeTileHint(
       ]),
       targetCells: [candidateCell],
       mineCount: primaryClue.adjacentMines,
-    };
-  }
+    });
+  });
 
-  return null;
+  return hints.sort((a, b) => {
+    if (a.targetCells.length !== b.targetCells.length) {
+      return a.targetCells.length - b.targetCells.length;
+    }
+
+    if (!a.primaryClueCell || !b.primaryClueCell) {
+      return 0;
+    }
+
+    return compareCells(a.primaryClueCell, b.primaryClueCell);
+  });
 }
 
-function findSingleMineLogicHint(
+function findGuaranteedSafeTileHint(
   board: MinesweeperBoard,
   clues: MinesweeperClue[],
   forcedMineKeys: Set<string>,
 ): MinesweeperAnalyzedHint | null {
+  return findGuaranteedSafeTileHints(board, clues, forcedMineKeys)[0] ?? null;
+}
+
+function findSingleMineLogicHints(
+  board: MinesweeperBoard,
+  clues: MinesweeperClue[],
+  forcedMineKeys: Set<string>,
+): MinesweeperAnalyzedHint[] {
   const hints: MinesweeperAnalyzedHint[] = [];
 
   clues.forEach((clue) => {
@@ -480,6 +529,7 @@ function findSingleMineLogicHint(
         ...clueState.unresolvedNeighbors,
       ]),
       targetCells,
+      resolvedMineCells: legalMineCandidates,
       mineCount: 1,
     });
   });
@@ -496,15 +546,23 @@ function findSingleMineLogicHint(
     return compareCells(a.primaryClueCell, b.primaryClueCell);
   });
 
-  return hints[0] ?? null;
+  return hints;
 }
 
-function findSatisfiedClueHint(
+function findSingleMineLogicHint(
+  board: MinesweeperBoard,
+  clues: MinesweeperClue[],
+  forcedMineKeys: Set<string>,
+): MinesweeperAnalyzedHint | null {
+  return findSingleMineLogicHints(board, clues, forcedMineKeys)[0] ?? null;
+}
+
+function findSatisfiedClueHints(
   board: MinesweeperBoard,
   clues: MinesweeperClue[],
   forcedMineReasons: Map<string, ForcedMineReason>,
   patternKey: MinesweeperNextMovePatternKey,
-): MinesweeperAnalyzedHint | null {
+): MinesweeperAnalyzedHint[] {
   const forcedMineKeys = new Set(forcedMineReasons.keys());
   const hints: MinesweeperAnalyzedHint[] = [];
 
@@ -549,7 +607,16 @@ function findSatisfiedClueHint(
     return compareCells(a.primaryClueCell, b.primaryClueCell);
   });
 
-  return hints[0] ?? null;
+  return hints;
+}
+
+function findSatisfiedClueHint(
+  board: MinesweeperBoard,
+  clues: MinesweeperClue[],
+  forcedMineReasons: Map<string, ForcedMineReason>,
+  patternKey: MinesweeperNextMovePatternKey,
+): MinesweeperAnalyzedHint | null {
+  return findSatisfiedClueHints(board, clues, forcedMineReasons, patternKey)[0] ?? null;
 }
 
 function findFullClueResolutionHint(
@@ -560,12 +627,28 @@ function findFullClueResolutionHint(
   return findSatisfiedClueHint(board, clues, forcedMineReasons, 'full-clue-resolution');
 }
 
+function findFullClueResolutionHints(
+  board: MinesweeperBoard,
+  clues: MinesweeperClue[],
+  forcedMineReasons: Map<string, ForcedMineReason>,
+): MinesweeperAnalyzedHint[] {
+  return findSatisfiedClueHints(board, clues, forcedMineReasons, 'full-clue-resolution');
+}
+
 function findAllMinesAccountedForHint(
   board: MinesweeperBoard,
   clues: MinesweeperClue[],
   forcedMineReasons: Map<string, ForcedMineReason>,
 ): MinesweeperAnalyzedHint | null {
   return findSatisfiedClueHint(board, clues, forcedMineReasons, 'all-mines-accounted-for');
+}
+
+function findAllMinesAccountedForHints(
+  board: MinesweeperBoard,
+  clues: MinesweeperClue[],
+  forcedMineReasons: Map<string, ForcedMineReason>,
+): MinesweeperAnalyzedHint[] {
+  return findSatisfiedClueHints(board, clues, forcedMineReasons, 'all-mines-accounted-for');
 }
 
 function createGuessHint(): MinesweeperNextMoveHint {
@@ -575,6 +658,54 @@ function createGuessHint(): MinesweeperNextMoveHint {
     body: guessHint.body,
     evidenceCells: [],
     targetCells: [],
+  };
+}
+
+export function analyzeMinesweeperLogicalMoves(board: MinesweeperBoard): MinesweeperLogicalMoveAnalysis | null {
+  const clues = getClues(board);
+  if (clues.length === 0) {
+    return null;
+  }
+
+  const forcedMineReasons = findForcedMineReasons(board, clues);
+  const forcedMineKeys = new Set(forcedMineReasons.keys());
+  const onlyOnePossibleMineHints = findOnlyOnePossibleMineHints(board, clues, forcedMineKeys);
+  const guaranteedSafeTileHints = findGuaranteedSafeTileHints(board, clues, forcedMineKeys);
+  const singleMineLogicHints = findSingleMineLogicHints(board, clues, forcedMineKeys);
+  const fullClueResolutionHints = findFullClueResolutionHints(board, clues, forcedMineReasons);
+  const allMinesAccountedForHints = findAllMinesAccountedForHints(board, clues, forcedMineReasons);
+  const safeHints = [
+    ...onlyOnePossibleMineHints,
+    ...guaranteedSafeTileHints,
+    ...singleMineLogicHints,
+    ...fullClueResolutionHints,
+    ...allMinesAccountedForHints,
+  ];
+  const safeTargetCells = dedupeCells(
+    safeHints
+      .flatMap((hint) => hint.targetCells)
+      .filter(({ row, col }) => board.cells[row][col].state !== 'revealed'),
+  );
+  const mineTargetCells = dedupeCells([
+    ...Array.from(forcedMineKeys, (key) => {
+      const [row, col] = key.split(':').map(Number);
+      return { row, col };
+    }),
+    ...onlyOnePossibleMineHints.flatMap((hint) => hint.resolvedMineCells ?? []),
+    ...singleMineLogicHints.flatMap((hint) => hint.resolvedMineCells ?? []),
+  ]).filter(({ row, col }) => board.cells[row][col].state === 'hidden');
+
+  if (safeTargetCells.length === 0 && mineTargetCells.length === 0) {
+    return null;
+  }
+
+  return {
+    evidenceCells: dedupeCells([
+      ...safeHints.flatMap((hint) => hint.evidenceCells),
+      ...mineTargetCells.flatMap((cell) => getTouchingClueCells(board, cell)),
+    ]),
+    safeTargetCells,
+    mineTargetCells,
   };
 }
 

@@ -76,6 +76,31 @@ const en = {
       icon: '💣',
     },
   },
+  analysis: {
+    lossSummary({ safeCount, mineCount }: { safeCount: number; mineCount: number }) {
+      if (safeCount > 0 && mineCount > 0) {
+        return {
+          title: 'Logical moves were available',
+          body: `This board already had ${safeCount} safe ${safeCount === 1 ? 'tile' : 'tiles'} to reveal and ${mineCount} certain ${mineCount === 1 ? 'mine' : 'mines'} to flag.`,
+        };
+      }
+
+      if (safeCount > 0) {
+        return {
+          title: 'Safe reveals were available',
+          body: `This board already had ${safeCount} safe ${safeCount === 1 ? 'tile' : 'tiles'} to reveal from the shown clues.`,
+        };
+      }
+
+      return {
+        title: 'Certain flags were available',
+        body: `This board already had ${mineCount} certain ${mineCount === 1 ? 'mine' : 'mines'} to flag from the shown clues.`,
+      };
+    },
+    legendEvidence: 'Evidence',
+    legendSafe: 'Safe reveal',
+    legendMine: 'Flag mine',
+  },
   tutorialText: {
     'forced-flag': {
       title: 'Flag tile that must hide a mine',
