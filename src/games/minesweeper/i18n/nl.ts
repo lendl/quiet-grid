@@ -15,6 +15,17 @@ const nl = {
       hard: 'Strakkere ruimtes die zorgvuldig markeren en aanwijzingen volgen belonen.',
       expert: 'Dichte mijnenvelden met vanaf het begin heel weinig ademruimte.',
     },
+    play: {
+      metadataLabels: {
+        size: 'Grootte',
+        difficulty: 'Niveau',
+        minesLeft: 'Mijnen',
+      },
+      helperToggle: {
+        show: 'Toon volgende zet',
+        hide: 'Verberg volgende zet',
+      },
+    },
   },
   howToPlay: {
     rules: [

@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { useLanguage } from '../../app/context/LanguageContext';
 import { useTheme } from '../../app/context/ThemeContext';
 import { createPuzzlePlayAdapter } from '../../app/shell/games/playAdapter';
 import { getMinesweeperStrings } from './content/strings';
@@ -39,8 +38,8 @@ function useMinesweeperAdapter({
   MinesweeperAction,
   MinesweeperActionEffect
 > {
-  const { resolvedLanguage } = useLanguage();
   const { theme } = useTheme();
+  const minesweeperStrings = getMinesweeperStrings();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const [nextMoveHint, setNextMoveHint] = useState<MinesweeperNextMoveHint | null>(null);
   const [nextMoveVisible, setNextMoveVisible] = useState(false);
@@ -103,17 +102,17 @@ function useMinesweeperAdapter({
       metadata: session ? [
         {
           key: 'size',
-          label: resolvedLanguage === 'nl' ? 'Grootte' : 'Size',
+          label: minesweeperStrings.play.metadataLabels.size,
           value: `${session.board.rows}x${session.board.cols}`,
         },
         {
           key: 'difficulty',
-          label: resolvedLanguage === 'nl' ? 'Niveau' : 'Difficulty',
-          value: getMinesweeperStrings().difficultyLabels[session.puzzle.difficulty],
+          label: minesweeperStrings.play.metadataLabels.difficulty,
+          value: minesweeperStrings.difficultyLabels[session.puzzle.difficulty],
         },
         {
           key: 'mines-left',
-          label: resolvedLanguage === 'nl' ? 'Mijnen' : 'Mines',
+          label: minesweeperStrings.play.metadataLabels.minesLeft,
           value: String(Math.max(0, session.board.mines - countFlaggedCells(session.board))),
         },
       ] : [],
@@ -140,8 +139,8 @@ function useMinesweeperAdapter({
         showHelperToggle: true,
         helperVisible: nextMoveVisible,
         helperToggleLabel: nextMoveVisible
-          ? (resolvedLanguage === 'nl' ? 'Verberg volgende zet' : 'Hide next move')
-          : (resolvedLanguage === 'nl' ? 'Toon volgende zet' : 'Show next move'),
+          ? minesweeperStrings.play.helperToggle.hide
+          : minesweeperStrings.play.helperToggle.show,
         onToggleHelper: handleToggleNextMove,
         footer: nextMoveVisible && nextMoveHint ? (
           <View style={styles.nextMoveCard}>
@@ -166,7 +165,7 @@ function useMinesweeperAdapter({
         ),
       },
     };
-  }, [nextMoveHint, nextMoveVisible, resolvedLanguage, styles]);
+  }, [minesweeperStrings, nextMoveHint, nextMoveVisible, styles]);
 
   return {
     onMissing: handleMissingPuzzle,

@@ -15,6 +15,33 @@ const nl = {
       hard: 'Strakkere opzetten met minder vrije informatie en sterkere patroonherkenning.',
       expert: 'Schaarse openingen met aanhoudende deductiedruk over het hele bord.',
     },
+    play: {
+      metadataLabels: {
+        size: 'Grootte',
+        difficulty: 'Niveau',
+      },
+      helperToggle: {
+        show: 'Toon volgende zet',
+        hide: 'Verberg volgende zet',
+      },
+      noPuzzlesDialog: {
+        title: 'Geen puzzels beschikbaar',
+        message: (difficultyLabel: string) => `Geen puzzels gevonden in de ${difficultyLabel}-catalogus.`,
+      },
+      tutorial: {
+        progressLabel: (step: number) => `Les ${step}`,
+        exitLabel: {
+          end: 'Tutorial beëindigen',
+          skip: 'Tutorial overslaan',
+        },
+        status: {
+          finishing: 'Tutorial wordt afgerond…',
+          nextLesson: 'Volgende les start…',
+          nextStep: 'Volgende stap start…',
+        },
+        selectAnswerLabel: (value: 0 | 1) => `Kies ${value}`,
+      },
+    },
   },
   howToPlayRules: [
     {

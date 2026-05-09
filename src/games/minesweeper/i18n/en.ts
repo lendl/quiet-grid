@@ -15,6 +15,17 @@ const en = {
       hard: 'Tighter spaces that reward careful flagging and clue tracking.',
       expert: 'Dense minefields with very little breathing room from the start.',
     },
+    play: {
+      metadataLabels: {
+        size: 'Size',
+        difficulty: 'Difficulty',
+        minesLeft: 'Mines',
+      },
+      helperToggle: {
+        show: 'Show next move',
+        hide: 'Hide next move',
+      },
+    },
   },
   howToPlay: {
     rules: [

@@ -15,6 +15,33 @@ const en = {
       hard: 'Tighter setups with less free information and stronger pattern work.',
       expert: 'Sparse openings with sustained deduction pressure across the whole puzzle.',
     },
+    play: {
+      metadataLabels: {
+        size: 'Size',
+        difficulty: 'Difficulty',
+      },
+      helperToggle: {
+        show: 'Show next move',
+        hide: 'Hide next move',
+      },
+      noPuzzlesDialog: {
+        title: 'No puzzles available',
+        message: (difficultyLabel: string) => `No puzzles found in the ${difficultyLabel} catalog.`,
+      },
+      tutorial: {
+        progressLabel: (step: number) => `Lesson ${step}`,
+        exitLabel: {
+          end: 'End tutorial',
+          skip: 'Skip tutorial',
+        },
+        status: {
+          finishing: 'Tutorial finishing…',
+          nextLesson: 'Next lesson starting…',
+          nextStep: 'Next step starting…',
+        },
+        selectAnswerLabel: (value: 0 | 1) => `Select ${value}`,
+      },
+    },
   },
   howToPlayRules: [
     {

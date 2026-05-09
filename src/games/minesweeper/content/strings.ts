@@ -7,6 +7,17 @@ export interface MinesweeperStrings {
   tagline: string;
   difficultyLabels: Record<Difficulty, string>;
   difficultyDescriptions: Record<Difficulty, string>;
+  play: {
+    metadataLabels: {
+      size: string;
+      difficulty: string;
+      minesLeft: string;
+    };
+    helperToggle: {
+      show: string;
+      hide: string;
+    };
+  };
 }
 
 export function getMinesweeperStrings(): MinesweeperStrings {

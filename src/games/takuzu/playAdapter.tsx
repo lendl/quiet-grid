@@ -49,8 +49,9 @@ function useTakuzuAdapter({
   goBack,
   goHome,
 }: PuzzlePlayAdapterShellArgs): PuzzlePlayAdapterInstance<TakuzuPlaySession> {
-  const { resolvedLanguage, strings } = useLanguage();
+  const { strings } = useLanguage();
   const { theme } = useTheme();
+  const takuzuStrings = getTakuzuStrings();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const [lineAnimationEventState, setLineAnimationEventState] =
     useState<LineAnimationEventState | null>(null);
@@ -79,14 +80,13 @@ function useTakuzuAdapter({
   }, [goBack]);
 
   const onFreshMissing = useCallback(() => {
+    const difficultyLabel = takuzuStrings.difficultyLabels[difficulty];
     setDialog({
-      title: resolvedLanguage === 'nl' ? 'Geen puzzels beschikbaar' : 'No puzzles available',
-      message: resolvedLanguage === 'nl'
-        ? `Geen puzzels gevonden in de ${difficulty}-catalogus.`
-        : `No puzzles found in the ${difficulty} catalog.`,
+      title: takuzuStrings.play.noPuzzlesDialog.title,
+      message: takuzuStrings.play.noPuzzlesDialog.message(difficultyLabel),
       buttons: [{ text: strings.common.back, onPress: handleNoPuzzlesAvailable }],
     });
-  }, [difficulty, handleNoPuzzlesAvailable, resolvedLanguage, setDialog, strings.common.back]);
+  }, [difficulty, handleNoPuzzlesAvailable, setDialog, strings.common.back, takuzuStrings]);
 
   const handleGridLayout = useCallback((e: LayoutChangeEvent) => {
     const { width, height } = e.nativeEvent.layout;
@@ -241,18 +241,18 @@ function useTakuzuAdapter({
       rows: lineAnimationEventState.rowIndexes,
       cols: lineAnimationEventState.colIndexes,
     } : null;
-    const metadata = session ? [
-      {
-        key: 'size',
-        label: resolvedLanguage === 'nl' ? 'Grootte' : 'Size',
-        value: `${session.puzzle.size}x${session.puzzle.size}`,
-      },
-      {
-        key: 'difficulty',
-        label: resolvedLanguage === 'nl' ? 'Niveau' : 'Difficulty',
-        value: getTakuzuStrings().difficultyLabels[session.puzzle.difficulty],
-      },
-    ] : [];
+      const metadata = session ? [
+        {
+          key: 'size',
+          label: takuzuStrings.play.metadataLabels.size,
+          value: `${session.puzzle.size}x${session.puzzle.size}`,
+        },
+        {
+          key: 'difficulty',
+          label: takuzuStrings.play.metadataLabels.difficulty,
+          value: takuzuStrings.difficultyLabels[session.puzzle.difficulty],
+        },
+      ] : [];
 
     return {
       loading: loading || !session,
@@ -262,8 +262,8 @@ function useTakuzuAdapter({
         showHelperToggle: true,
         helperVisible: nextMoveVisible,
         helperToggleLabel: nextMoveVisible
-          ? (resolvedLanguage === 'nl' ? 'Verberg volgende zet' : 'Hide next move')
-          : (resolvedLanguage === 'nl' ? 'Toon volgende zet' : 'Show next move'),
+          ? takuzuStrings.play.helperToggle.hide
+          : takuzuStrings.play.helperToggle.show,
         onToggleHelper: handleToggleNextMove,
         footer: nextMoveVisible && nextMoveHint ? (
           <View style={styles.nextMoveCard}>
@@ -309,7 +309,7 @@ function useTakuzuAdapter({
     handleGridLayout,
     lineAnimationEventState,
     styles,
-    resolvedLanguage,
+    takuzuStrings,
   ]);
 
   return {

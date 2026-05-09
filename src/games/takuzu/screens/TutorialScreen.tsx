@@ -12,6 +12,7 @@ import { markPuzzleTutorialSeen } from '../../../app/utils/settingsStorage';
 import { withAlpha } from '../../../app/utils/color';
 import TutorialRow from '../components/TutorialRow';
 import { getTakuzuTutorialLessons } from '../content';
+import { getTakuzuStrings } from '../content/strings';
 import { cloneGrid } from '../puzzleData';
 import type { Grid } from '../types';
 
@@ -23,6 +24,7 @@ type TutorialAnswerState = 'idle' | 'wrong' | 'correct';
 export default function TutorialScreen({ navigation, route }: Props) {
   const { strings, resolvedLanguage } = useLanguage();
   const { theme } = useTheme();
+  const takuzuStrings = getTakuzuStrings();
   const s = makeStyles(theme);
   const lessons = useMemo(() => getTakuzuTutorialLessons(), [resolvedLanguage]);
   const [lessonIndex, setLessonIndex] = useState(0);
@@ -36,7 +38,7 @@ export default function TutorialScreen({ navigation, route }: Props) {
   const lesson = lessons[lessonIndex];
   const isReplay = route.params.entry === 'howToPlay';
   const currentMove = lesson.moves[moveIndex] ?? null;
-  const progressLabel = `${resolvedLanguage === 'nl' ? 'Les' : 'Lesson'} ${lessonIndex + 1}`;
+  const progressLabel = takuzuStrings.play.tutorial.progressLabel(lessonIndex + 1);
   const lessonDots = lessons.map((_, index) => index === lessonIndex);
 
   const resetLessonState = useCallback((nextLesson: typeof lesson) => {
@@ -63,10 +65,10 @@ export default function TutorialScreen({ navigation, route }: Props) {
 
   const exitLabel = useMemo(() => {
     if (isReplay || lessonIndex > 0) {
-      return resolvedLanguage === 'nl' ? 'Tutorial beëindigen' : 'End tutorial';
+      return takuzuStrings.play.tutorial.exitLabel.end;
     }
-    return resolvedLanguage === 'nl' ? 'Tutorial overslaan' : 'Skip tutorial';
-  }, [isReplay, lessonIndex, resolvedLanguage]);
+    return takuzuStrings.play.tutorial.exitLabel.skip;
+  }, [isReplay, lessonIndex, takuzuStrings]);
 
   const exitTutorial = useCallback(async () => {
     await markPuzzleTutorialSeen(route.params.puzzleTypeId);
@@ -176,9 +178,9 @@ export default function TutorialScreen({ navigation, route }: Props) {
   const statusText = answerState === 'correct'
     ? completed
        ? (isLastLesson
-          ? (resolvedLanguage === 'nl' ? 'Tutorial wordt afgerond…' : 'Tutorial finishing…')
-          : (resolvedLanguage === 'nl' ? 'Volgende les start…' : 'Next lesson starting…'))
-       : 'Next step starting…'
+          ? takuzuStrings.play.tutorial.status.finishing
+          : takuzuStrings.play.tutorial.status.nextLesson)
+       : takuzuStrings.play.tutorial.status.nextStep
     : null;
 
   return (
@@ -239,7 +241,7 @@ export default function TutorialScreen({ navigation, route }: Props) {
               <TouchableOpacity
                 key={value}
                 accessibilityRole="button"
-                accessibilityLabel={resolvedLanguage === 'nl' ? `Kies ${value}` : `Select ${value}`}
+                accessibilityLabel={takuzuStrings.play.tutorial.selectAnswerLabel(value as 0 | 1)}
                 activeOpacity={0.82}
                 disabled={answerState === 'correct'}
                 onPress={() => handleAnswerPress(value as 0 | 1)}
