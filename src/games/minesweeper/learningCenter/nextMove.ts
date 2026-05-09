@@ -11,6 +11,7 @@ export interface MinesweeperNextMoveCell {
 }
 
 export type MinesweeperNextMovePatternKey = MinesweeperLearningCenterPatternKey;
+export type MinesweeperMineFlagReason = 'direct-local' | 'subset-difference';
 
 export interface MinesweeperNextMoveTeaching {
   patternKey: MinesweeperNextMovePatternKey;
@@ -29,9 +30,34 @@ export interface MinesweeperNextMoveHint {
 }
 
 export interface MinesweeperLogicalMoveAnalysis {
+  steps: MinesweeperLogicalMoveStep[];
+}
+
+export interface MinesweeperLogicalMoveStep {
+  moveKind: 'safe-reveal' | 'flag-mine';
   evidenceCells: MinesweeperNextMoveCell[];
-  safeTargetCells: MinesweeperNextMoveCell[];
-  mineTargetCells: MinesweeperNextMoveCell[];
+  targetCells: MinesweeperNextMoveCell[];
+  patternKey?: MinesweeperNextMovePatternKey;
+  flagReason?: MinesweeperMineFlagReason;
+  primaryClueCell?: MinesweeperNextMoveCell;
+  secondaryClueCell?: MinesweeperNextMoveCell;
+  mineCount?: number;
+}
+
+function toSafeRevealLogicalMove(hint: MinesweeperAnalyzedHint | null): MinesweeperLogicalMoveStep | null {
+  if (!hint || hint.targetCells.length === 0) {
+    return null;
+  }
+
+  return {
+    moveKind: 'safe-reveal',
+    patternKey: hint.patternKey,
+    evidenceCells: hint.evidenceCells,
+    targetCells: hint.targetCells,
+    primaryClueCell: hint.primaryClueCell,
+    secondaryClueCell: hint.secondaryClueCell,
+    mineCount: hint.mineCount,
+  };
 }
 
 interface MinesweeperClue {
@@ -50,7 +76,7 @@ interface MinesweeperClueState {
 type ForcedMineReason = 'direct-local' | 'subset-difference';
 
 interface MinesweeperAnalyzedHint {
-  patternKey: MinesweeperNextMovePatternKey;
+  patternKey?: MinesweeperNextMovePatternKey;
   evidenceCells: MinesweeperNextMoveCell[];
   targetCells: MinesweeperNextMoveCell[];
   resolvedMineCells?: MinesweeperNextMoveCell[];
@@ -211,8 +237,15 @@ function tryAddForcedMines(
   return changed;
 }
 
-function findForcedMineReasons(board: MinesweeperBoard, clues: MinesweeperClue[]): Map<string, ForcedMineReason> {
+function findForcedMineReasons(
+  board: MinesweeperBoard,
+  clues: MinesweeperClue[],
+  seedMineKeys: Set<string> = new Set(),
+): Map<string, ForcedMineReason> {
   const forcedMineReasons = new Map<string, ForcedMineReason>();
+  seedMineKeys.forEach((key) => {
+    forcedMineReasons.set(key, 'direct-local');
+  });
   let changed = true;
 
   while (changed) {
@@ -282,6 +315,118 @@ function findForcedMineReasons(board: MinesweeperBoard, clues: MinesweeperClue[]
   }
 
   return forcedMineReasons;
+}
+
+function findDirectLocalMineHints(
+  board: MinesweeperBoard,
+  clues: MinesweeperClue[],
+  knownMineKeys: Set<string>,
+): MinesweeperAnalyzedHint[] {
+  const hints: MinesweeperAnalyzedHint[] = [];
+
+  clues.forEach((clue) => {
+    const clueState = getClueState(board, clue, knownMineKeys);
+    if (
+      clueState.remainingMines <= 0
+      || clueState.remainingMines !== clueState.unresolvedNeighbors.length
+      || clueState.unresolvedNeighbors.length === 0
+    ) {
+      return;
+    }
+
+    hints.push({
+      evidenceCells: dedupeCells([
+        { row: clue.row, col: clue.col },
+        ...clueState.unresolvedNeighbors,
+      ]),
+      targetCells: clueState.unresolvedNeighbors.sort(compareCells),
+      primaryClueCell: { row: clue.row, col: clue.col },
+      mineCount: clueState.remainingMines,
+    });
+  });
+
+  return hints.sort((a, b) => {
+    if (a.targetCells.length !== b.targetCells.length) {
+      return a.targetCells.length - b.targetCells.length;
+    }
+    if (!a.primaryClueCell || !b.primaryClueCell) {
+      return 0;
+    }
+    return compareCells(a.primaryClueCell, b.primaryClueCell);
+  });
+}
+
+function findSubsetDifferenceMineHints(
+  board: MinesweeperBoard,
+  clues: MinesweeperClue[],
+  knownMineKeys: Set<string>,
+): MinesweeperAnalyzedHint[] {
+  const hints: MinesweeperAnalyzedHint[] = [];
+
+  for (let clueIndex = 0; clueIndex < clues.length; clueIndex++) {
+    for (let otherIndex = clueIndex + 1; otherIndex < clues.length; otherIndex++) {
+      const firstClue = clues[clueIndex];
+      const secondClue = clues[otherIndex];
+      const firstState = getClueState(board, firstClue, knownMineKeys);
+      const secondState = getClueState(board, secondClue, knownMineKeys);
+
+      const orderedPairs: Array<
+        [MinesweeperClue, MinesweeperClue, MinesweeperClueState, MinesweeperClueState]
+      > = [
+        [firstClue, secondClue, firstState, secondState],
+        [secondClue, firstClue, secondState, firstState],
+      ];
+
+      orderedPairs.forEach(([subsetClue, supersetClue, subsetState, supersetState]) => {
+        if (
+          subsetState.remainingMines < 0
+          || supersetState.remainingMines < 0
+          || subsetState.unresolvedNeighbors.length === 0
+          || supersetState.unresolvedNeighbors.length === 0
+          || !isSubset(subsetState.unresolvedNeighbors, supersetState.unresolvedNeighbors)
+        ) {
+          return;
+        }
+
+        const extraCells = differenceCells(
+          supersetState.unresolvedNeighbors,
+          subsetState.unresolvedNeighbors,
+        ).sort(compareCells);
+        const remainingMineDifference = supersetState.remainingMines - subsetState.remainingMines;
+
+        if (
+          remainingMineDifference <= 0
+          || remainingMineDifference !== extraCells.length
+          || extraCells.length === 0
+        ) {
+          return;
+        }
+
+        hints.push({
+          evidenceCells: dedupeCells([
+            { row: subsetClue.row, col: subsetClue.col },
+            { row: supersetClue.row, col: supersetClue.col },
+            ...subsetState.unresolvedNeighbors,
+            ...supersetState.unresolvedNeighbors,
+          ]),
+          targetCells: extraCells,
+          primaryClueCell: { row: supersetClue.row, col: supersetClue.col },
+          secondaryClueCell: { row: subsetClue.row, col: subsetClue.col },
+          mineCount: remainingMineDifference,
+        });
+      });
+    }
+  }
+
+  return hints.sort((a, b) => {
+    if (a.targetCells.length !== b.targetCells.length) {
+      return a.targetCells.length - b.targetCells.length;
+    }
+    if (!a.primaryClueCell || !b.primaryClueCell) {
+      return 0;
+    }
+    return compareCells(a.primaryClueCell, b.primaryClueCell);
+  });
 }
 
 function canCellBeMine(
@@ -661,51 +806,151 @@ function createGuessHint(): MinesweeperNextMoveHint {
   };
 }
 
-export function analyzeMinesweeperLogicalMoves(board: MinesweeperBoard): MinesweeperLogicalMoveAnalysis | null {
+function buildGroupedFlagMove(
+  directLocalMineHints: MinesweeperAnalyzedHint[],
+  subsetDifferenceMineHints: MinesweeperAnalyzedHint[],
+): MinesweeperLogicalMoveStep | null {
+  const allFlagHints = [...directLocalMineHints, ...subsetDifferenceMineHints];
+  const targetCells = dedupeCells(allFlagHints.flatMap((hint) => hint.targetCells));
+
+  if (targetCells.length === 0) {
+    return null;
+  }
+
+  return {
+    moveKind: 'flag-mine',
+    evidenceCells: dedupeCells(allFlagHints.flatMap((hint) => hint.evidenceCells)),
+    targetCells,
+    mineCount: targetCells.length,
+  };
+}
+
+export function getNextMinesweeperSafeRevealMove(
+  board: MinesweeperBoard,
+  knownMineKeys: Set<string> = new Set(),
+): MinesweeperLogicalMoveStep | null {
   const clues = getClues(board);
   if (clues.length === 0) {
     return null;
   }
 
-  const forcedMineReasons = findForcedMineReasons(board, clues);
+  const forcedMineReasons = findForcedMineReasons(board, clues, knownMineKeys);
+  const forcedMineKeys = new Set(forcedMineReasons.keys());
+
+  return toSafeRevealLogicalMove(
+    findOnlyOnePossibleMineHint(board, clues, forcedMineKeys)
+      ?? findGuaranteedSafeTileHint(board, clues, forcedMineKeys)
+      ?? findSingleMineLogicHint(board, clues, forcedMineKeys)
+      ?? findFullClueResolutionHint(board, clues, forcedMineReasons)
+      ?? findAllMinesAccountedForHint(board, clues, forcedMineReasons),
+  );
+}
+
+export function getNextMinesweeperLogicalMove(
+  board: MinesweeperBoard,
+  knownMineKeys: Set<string> = new Set(),
+): MinesweeperLogicalMoveStep | null {
+  const clues = getClues(board);
+  if (clues.length === 0) {
+    return null;
+  }
+
+  const directLocalMineHints = findDirectLocalMineHints(board, clues, knownMineKeys);
+  const subsetDifferenceMineHints = findSubsetDifferenceMineHints(board, clues, knownMineKeys);
+  const groupedFlagMove = buildGroupedFlagMove(directLocalMineHints, subsetDifferenceMineHints);
+
+  return groupedFlagMove ?? getNextMinesweeperSafeRevealMove(board, knownMineKeys);
+}
+
+export function analyzeMinesweeperLogicalMoves(
+  board: MinesweeperBoard,
+  knownMineKeys: Set<string> = new Set(),
+): MinesweeperLogicalMoveAnalysis | null {
+  const clues = getClues(board);
+  if (clues.length === 0) {
+    return null;
+  }
+
+  const directLocalMineHints = findDirectLocalMineHints(board, clues, knownMineKeys);
+  const subsetDifferenceMineHints = findSubsetDifferenceMineHints(board, clues, knownMineKeys);
+  const forcedMineReasons = findForcedMineReasons(board, clues, knownMineKeys);
   const forcedMineKeys = new Set(forcedMineReasons.keys());
   const onlyOnePossibleMineHints = findOnlyOnePossibleMineHints(board, clues, forcedMineKeys);
   const guaranteedSafeTileHints = findGuaranteedSafeTileHints(board, clues, forcedMineKeys);
   const singleMineLogicHints = findSingleMineLogicHints(board, clues, forcedMineKeys);
   const fullClueResolutionHints = findFullClueResolutionHints(board, clues, forcedMineReasons);
   const allMinesAccountedForHints = findAllMinesAccountedForHints(board, clues, forcedMineReasons);
-  const safeHints = [
-    ...onlyOnePossibleMineHints,
-    ...guaranteedSafeTileHints,
-    ...singleMineLogicHints,
-    ...fullClueResolutionHints,
-    ...allMinesAccountedForHints,
-  ];
-  const safeTargetCells = dedupeCells(
-    safeHints
-      .flatMap((hint) => hint.targetCells)
-      .filter(({ row, col }) => board.cells[row][col].state !== 'revealed'),
-  );
-  const mineTargetCells = dedupeCells([
-    ...Array.from(forcedMineKeys, (key) => {
-      const [row, col] = key.split(':').map(Number);
-      return { row, col };
-    }),
-    ...onlyOnePossibleMineHints.flatMap((hint) => hint.resolvedMineCells ?? []),
-    ...singleMineLogicHints.flatMap((hint) => hint.resolvedMineCells ?? []),
-  ]).filter(({ row, col }) => board.cells[row][col].state === 'hidden');
+  const steps: MinesweeperLogicalMoveStep[] = [
+    ...directLocalMineHints.map((hint) => ({
+      moveKind: 'flag-mine' as const,
+      flagReason: 'direct-local' as const,
+      evidenceCells: hint.evidenceCells,
+      targetCells: hint.targetCells,
+      primaryClueCell: hint.primaryClueCell,
+      mineCount: hint.mineCount,
+    })),
+    ...subsetDifferenceMineHints.map((hint) => ({
+      moveKind: 'flag-mine' as const,
+      flagReason: 'subset-difference' as const,
+      evidenceCells: hint.evidenceCells,
+      targetCells: hint.targetCells,
+      primaryClueCell: hint.primaryClueCell,
+      secondaryClueCell: hint.secondaryClueCell,
+      mineCount: hint.mineCount,
+    })),
+    ...onlyOnePossibleMineHints.map((hint) => ({
+      moveKind: 'safe-reveal' as const,
+      patternKey: hint.patternKey,
+      evidenceCells: hint.evidenceCells,
+      targetCells: hint.targetCells,
+      primaryClueCell: hint.primaryClueCell,
+      secondaryClueCell: hint.secondaryClueCell,
+      mineCount: hint.mineCount,
+    })),
+    ...guaranteedSafeTileHints.map((hint) => ({
+      moveKind: 'safe-reveal' as const,
+      patternKey: hint.patternKey,
+      evidenceCells: hint.evidenceCells,
+      targetCells: hint.targetCells,
+      primaryClueCell: hint.primaryClueCell,
+      secondaryClueCell: hint.secondaryClueCell,
+      mineCount: hint.mineCount,
+    })),
+    ...singleMineLogicHints.map((hint) => ({
+      moveKind: 'safe-reveal' as const,
+      patternKey: hint.patternKey,
+      evidenceCells: hint.evidenceCells,
+      targetCells: hint.targetCells,
+      primaryClueCell: hint.primaryClueCell,
+      secondaryClueCell: hint.secondaryClueCell,
+      mineCount: hint.mineCount,
+    })),
+    ...fullClueResolutionHints.map((hint) => ({
+      moveKind: 'safe-reveal' as const,
+      patternKey: hint.patternKey,
+      evidenceCells: hint.evidenceCells,
+      targetCells: hint.targetCells,
+      primaryClueCell: hint.primaryClueCell,
+      secondaryClueCell: hint.secondaryClueCell,
+      mineCount: hint.mineCount,
+    })),
+    ...allMinesAccountedForHints.map((hint) => ({
+      moveKind: 'safe-reveal' as const,
+      patternKey: hint.patternKey,
+      evidenceCells: hint.evidenceCells,
+      targetCells: hint.targetCells,
+      primaryClueCell: hint.primaryClueCell,
+      secondaryClueCell: hint.secondaryClueCell,
+      mineCount: hint.mineCount,
+    })),
+  ].filter((step) => step.targetCells.length > 0);
 
-  if (safeTargetCells.length === 0 && mineTargetCells.length === 0) {
+  if (steps.length === 0) {
     return null;
   }
 
   return {
-    evidenceCells: dedupeCells([
-      ...safeHints.flatMap((hint) => hint.evidenceCells),
-      ...mineTargetCells.flatMap((cell) => getTouchingClueCells(board, cell)),
-    ]),
-    safeTargetCells,
-    mineTargetCells,
+    steps,
   };
 }
 
@@ -733,7 +978,7 @@ export function getMinesweeperNextMoveHint(board: MinesweeperBoard): Minesweeper
   }
 
   const nextMoveCopy = buildPatternNextMove({
-    patternKey: analyzedHint.patternKey,
+    patternKey: analyzedHint.patternKey!,
     clueCell: analyzedHint.primaryClueCell,
     secondaryClueCell: analyzedHint.secondaryClueCell,
     targetCount: analyzedHint.targetCells.length,
@@ -743,7 +988,7 @@ export function getMinesweeperNextMoveHint(board: MinesweeperBoard): Minesweeper
   return {
     ...nextMoveCopy,
     teaching: nextMoveCopy.teaching ? {
-      patternKey: analyzedHint.patternKey,
+      patternKey: analyzedHint.patternKey!,
       ...nextMoveCopy.teaching,
     } : undefined,
     evidenceCells: analyzedHint.evidenceCells,

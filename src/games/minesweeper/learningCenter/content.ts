@@ -1,5 +1,6 @@
 import {
   getMinesweeperLearningCenterContent as getContent,
+  type MinesweeperMineFlagReason,
   type MinesweeperLearningCenterPatternKey,
 } from '../i18n';
 
@@ -10,6 +11,14 @@ interface MinesweeperCellRef {
 
 interface SafeRevealCopyParams {
   patternKey: MinesweeperLearningCenterPatternKey;
+  clueCell?: MinesweeperCellRef;
+  secondaryClueCell?: MinesweeperCellRef;
+  targetCount: number;
+  mineCount?: number;
+}
+
+interface MineFlagCopyParams {
+  reason: MinesweeperMineFlagReason;
   clueCell?: MinesweeperCellRef;
   secondaryClueCell?: MinesweeperCellRef;
   targetCount: number;
@@ -47,6 +56,24 @@ export function buildPatternNextMove(params: SafeRevealCopyParams): NextMoveCopy
   const mineLabel = pluralize(mineCount, 'mine', 'mines');
   return getContent().nextMovePattern({
     patternKey: params.patternKey,
+    clueLabel,
+    secondaryClueLabel,
+    tileLabel,
+    mineLabel,
+    mineCount,
+  });
+}
+
+export function buildFlagNextMove(params: MineFlagCopyParams): NextMoveCopy {
+  const clueLabel = params.clueCell ? formatCell(params.clueCell) : undefined;
+  const secondaryClueLabel = params.secondaryClueCell
+    ? formatCell(params.secondaryClueCell)
+    : undefined;
+  const tileLabel = pluralize(params.targetCount, 'tile', 'tiles');
+  const mineCount = params.mineCount ?? params.targetCount;
+  const mineLabel = pluralize(mineCount, 'mine', 'mines');
+  return getContent().flagMovePattern({
+    reason: params.reason,
     clueLabel,
     secondaryClueLabel,
     tileLabel,

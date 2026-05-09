@@ -1,9 +1,9 @@
 import type { PuzzleAnalysisPayload, PuzzleLossAnalysisSource } from '../../../../app/analysis/types';
 import { getMinesweeperAnalysisContent } from '../../i18n';
 import type { MinesweeperPlaySession } from '../../playContract';
-import { revealMinesweeperCell } from '../../rules';
 import type { MinesweeperBoard } from '../../types';
-import { analyzeMinesweeperLogicalMoves } from '../nextMove';
+import { buildPatternNextMove } from '../content';
+import { analyzeMinesweeperLogicalMoves, getNextMinesweeperSafeRevealMove } from '../nextMove';
 import type {
   MinesweeperAnalysisPayload,
   MinesweeperAnalysisStep,
@@ -15,6 +15,24 @@ function cloneBoard(board: MinesweeperBoard): MinesweeperBoard {
     ...board,
     cells: board.cells.map((row) => row.map((cell) => ({ ...cell }))),
   };
+}
+
+function buildFlaggedBoardState(
+  board: MinesweeperBoard,
+  targetCells: Array<{ row: number; col: number }>,
+): MinesweeperBoard {
+  const nextBoard = cloneBoard(board);
+
+  targetCells.forEach(({ row, col }) => {
+    const cell = nextBoard.cells[row]?.[col];
+    if (!cell || cell.state !== 'hidden') {
+      return;
+    }
+
+    cell.state = 'flagged';
+  });
+
+  return nextBoard;
 }
 
 function isMinesweeperBoard(value: unknown): value is MinesweeperBoard {
@@ -61,67 +79,53 @@ function isMinesweeperLossAnalysisSource(
     && isMinesweeperBoard(payload?.board);
 }
 
-function buildAfterState(source: MinesweeperLossAnalysisSource, analysis: ReturnType<typeof analyzeMinesweeperLogicalMoves>) {
-  if (!analysis) {
-    return null;
-  }
-
-  let nextBoard = cloneBoard(source.payload.board);
-  nextBoard.status = 'playing';
-
-  analysis.mineTargetCells.forEach(({ row, col }) => {
-    const cell = nextBoard.cells[row]?.[col];
-    if (!cell || cell.state !== 'hidden') {
-      return;
-    }
-
-    cell.state = 'flagged';
-  });
-
-  analysis.safeTargetCells.forEach(({ row, col }) => {
-    const cell = nextBoard.cells[row]?.[col];
-    if (!cell) {
-      return;
-    }
-
-    if (cell.state === 'flagged') {
-      cell.state = 'hidden';
-    }
-
-    nextBoard = revealMinesweeperCell(nextBoard, source.payload.puzzle, row, col);
-  });
-
-  return nextBoard;
-}
-
 function buildMinesweeperAnalysisInternal(source: MinesweeperLossAnalysisSource): MinesweeperAnalysisPayload | null {
-  const analysis = analyzeMinesweeperLogicalMoves(source.payload.board);
+  const content = getMinesweeperAnalysisContent();
+  const board = cloneBoard(source.payload.board);
+  const analysis = analyzeMinesweeperLogicalMoves(board, new Set<string>());
   if (!analysis) {
     return null;
   }
 
-  const content = getMinesweeperAnalysisContent();
-  const copy = content.lossSummary({
-    safeCount: analysis.safeTargetCells.length,
-    mineCount: analysis.mineTargetCells.length,
+  const steps: MinesweeperAnalysisStep[] = analysis.steps.map((move, index) => {
+    const copy = move.moveKind === 'flag-mine'
+      ? content.groupedFlagStep({
+          mineCount: move.targetCells.length,
+        })
+      : buildPatternNextMove({
+          patternKey: move.patternKey ?? 'all-mines-accounted-for',
+          clueCell: move.primaryClueCell,
+          secondaryClueCell: move.secondaryClueCell,
+          targetCount: move.targetCells.length,
+          mineCount: move.mineCount,
+        });
+    const beforeState = cloneBoard(board);
+    const afterState = move.moveKind === 'flag-mine'
+      ? buildFlaggedBoardState(board, move.targetCells)
+      : cloneBoard(board);
+
+    return {
+      key: `step-${index + 1}`,
+      title: copy.title,
+      body: copy.body,
+      evidenceCells: move.evidenceCells,
+      targetCells: move.targetCells,
+      highlightRows: [],
+      highlightCols: [],
+      beforeState,
+      afterState,
+      safeTargetCells: move.moveKind === 'safe-reveal' ? move.targetCells : [],
+      mineTargetCells: move.moveKind === 'flag-mine' ? move.targetCells : [],
+    };
   });
-  const step: MinesweeperAnalysisStep = {
-    key: 'step-1',
-    title: copy.title,
-    body: copy.body,
-    evidenceCells: analysis.evidenceCells,
-    targetCells: [...analysis.safeTargetCells, ...analysis.mineTargetCells],
-    highlightRows: [],
-    highlightCols: [],
-    beforeState: cloneBoard(source.payload.board),
-    afterState: buildAfterState(source, analysis) ?? cloneBoard(source.payload.board),
-    safeTargetCells: analysis.safeTargetCells,
-    mineTargetCells: analysis.mineTargetCells,
-  };
+
+  if (steps.length === 0) {
+    return null;
+  }
 
   return {
     puzzleTypeId: 'minesweeper',
-    steps: [step],
+    steps,
     payload: {
       labels: {
         evidence: content.legendEvidence,
@@ -130,6 +134,10 @@ function buildMinesweeperAnalysisInternal(source: MinesweeperLossAnalysisSource)
       },
     },
   };
+}
+
+function hasSafeRevealStep(board: MinesweeperBoard, knownMineKeys: Set<string>): boolean {
+  return getNextMinesweeperSafeRevealMove(board, knownMineKeys) !== null;
 }
 
 export function buildMinesweeperLossAnalysisSource(session: unknown): PuzzleLossAnalysisSource | null {
@@ -147,7 +155,11 @@ export function buildMinesweeperLossAnalysisSource(session: unknown): PuzzleLoss
 }
 
 export function supportsMinesweeperLossAnalysis(source: PuzzleLossAnalysisSource | undefined): boolean {
-  return isMinesweeperLossAnalysisSource(source) && buildMinesweeperAnalysisInternal(source) !== null;
+  if (!isMinesweeperLossAnalysisSource(source)) {
+    return false;
+  }
+
+  return hasSafeRevealStep(cloneBoard(source.payload.board), new Set<string>());
 }
 
 export function buildMinesweeperAnalysis(source: PuzzleLossAnalysisSource): PuzzleAnalysisPayload {

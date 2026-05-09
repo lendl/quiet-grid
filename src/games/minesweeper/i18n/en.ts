@@ -97,6 +97,12 @@ const en = {
         body: `This board already had ${mineCount} certain ${mineCount === 1 ? 'mine' : 'mines'} to flag from the shown clues.`,
       };
     },
+    groupedFlagStep({ mineCount }: { mineCount: number }) {
+      return {
+        title: 'Certain mines on this board',
+        body: `You can flag the highlighted ${mineCount === 1 ? 'tile' : 'tiles'} now. Current clues already prove these ${mineCount === 1 ? 'it is a mine' : 'tiles are mines'}.`,
+      };
+    },
     legendEvidence: 'Evidence',
     legendSafe: 'Safe reveal',
     legendMine: 'Flag mine',
@@ -207,6 +213,41 @@ const en = {
           throw new Error(`Unhandled next move pattern: ${patternKey satisfies never}`);
       }
     },
+    flagMovePattern({
+      reason,
+      clueLabel,
+      secondaryClueLabel,
+      tileLabel,
+      mineLabel,
+      mineCount,
+    }: LearningCenterMineFlagParams) {
+      switch (reason) {
+        case 'direct-local':
+          return {
+            title: `Certain mine near ${clueLabel ?? 'this clue'}`,
+            body: `Flag highlighted ${tileLabel}. ${clueLabel ?? 'This clue'} still needs ${mineCount} ${mineLabel}, and the highlighted hidden ${tileLabel} are the only places left for them.`,
+            teaching: {
+              patternTitle: 'Pattern',
+              patternLabel: 'Direct Local Mine',
+              explanationTitle: 'Explanation',
+              explanation: `This clue still needs ${mineCount} ${mineLabel}. Because only the highlighted hidden ${tileLabel} remain around it, each highlighted tile must be a mine.`,
+            },
+          };
+        case 'subset-difference':
+          return {
+            title: 'Certain mine from comparing clues',
+            body: `Flag highlighted ${tileLabel}. Comparing ${clueLabel ?? 'one clue'} with ${secondaryClueLabel ?? 'another clue'} shows the extra hidden ${tileLabel} must contain the remaining ${mineLabel}.`,
+            teaching: {
+              patternTitle: 'Pattern',
+              patternLabel: 'Subset Mine Difference',
+              explanationTitle: 'Explanation',
+              explanation: `The smaller clue's hidden tiles fit inside the larger clue's hidden tiles. After accounting for the shared mine slots, the extra hidden ${tileLabel} must contain the remaining ${mineLabel}.`,
+            },
+          };
+        default:
+          throw new Error(`Unhandled flag move pattern: ${reason satisfies never}`);
+      }
+    },
     guess: {
       title: 'No certain next move yet',
       body: 'No clue points to a certain safe reveal right now. This spot may need a guess, so trust your best read of the board and ask again after the next reveal.',
@@ -215,4 +256,4 @@ const en = {
 } as const;
 
 export default en;
-import type { LearningCenterPatternParams } from './index';
+import type { LearningCenterMineFlagParams, LearningCenterPatternParams } from './index';

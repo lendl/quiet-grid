@@ -97,6 +97,12 @@ const nl = {
         body: `Op dit bord waren al ${mineCount} zekere ${mineCount === 1 ? 'mijn' : 'mijnen'} om te markeren op basis van de getoonde cijfers.`,
       };
     },
+    groupedFlagStep({ mineCount }: { mineCount: number }) {
+      return {
+        title: 'Zekere mijnen op dit bord',
+        body: `Je kunt de gemarkeerde ${mineCount === 1 ? 'tegel' : 'tegels'} nu markeren. De huidige cijfers bewijzen al dat ${mineCount === 1 ? 'dit vak een mijn is' : 'deze vakken mijnen zijn'}.`,
+      };
+    },
     legendEvidence: 'Bewijs',
     legendSafe: 'Veilig openen',
     legendMine: 'Mijn markeren',
@@ -207,6 +213,41 @@ const nl = {
           throw new Error(`Unhandled next move pattern: ${patternKey satisfies never}`);
       }
     },
+    flagMovePattern({
+      reason,
+      clueLabel,
+      secondaryClueLabel,
+      tileLabel,
+      mineLabel,
+      mineCount,
+    }: LearningCenterMineFlagParams) {
+      switch (reason) {
+        case 'direct-local':
+          return {
+            title: `Zekere mijn bij ${clueLabel ?? 'dit cijfer'}`,
+            body: `Markeer de gemarkeerde ${tileLabel}. ${clueLabel ?? 'Dit cijfer'} heeft nog ${mineCount} ${mineLabel} nodig, en de gemarkeerde verborgen ${tileLabel} zijn de enige plekken die over zijn.`,
+            teaching: {
+              patternTitle: 'Patroon',
+              patternLabel: 'Direct lokaal mijnpatroon',
+              explanationTitle: 'Uitleg',
+              explanation: `Dit cijfer heeft nog ${mineCount} ${mineLabel} nodig. Omdat alleen de gemarkeerde verborgen ${tileLabel} ernaast overblijven, moet elk gemarkeerd vak een mijn zijn.`,
+            },
+          };
+        case 'subset-difference':
+          return {
+            title: 'Zekere mijn door cijfers te vergelijken',
+            body: `Markeer de gemarkeerde ${tileLabel}. Door ${clueLabel ?? 'deze aanwijzing'} met ${secondaryClueLabel ?? 'de andere aanwijzing'} te vergelijken zie je dat de extra verborgen ${tileLabel} de overblijvende ${mineLabel} moeten bevatten.`,
+            teaching: {
+              patternTitle: 'Patroon',
+              patternLabel: 'Subset-mijnverschil',
+              explanationTitle: 'Uitleg',
+              explanation: `De verborgen vakken van het kleinere cijfer passen binnen die van het grotere cijfer. Na de gedeelde mijnplekken blijven de extra verborgen ${tileLabel} over als plaats voor de resterende ${mineLabel}.`,
+            },
+          };
+        default:
+          throw new Error(`Unhandled flag move pattern: ${reason satisfies never}`);
+      }
+    },
     guess: {
       title: 'Nog geen zekere volgende zet',
       body: 'Geen aanwijzing wijst nu op een zekere veilige zet. Hier kan een gok nodig zijn, dus vertrouw op je beste lezing van het bord en vraag opnieuw na de volgende onthulling.',
@@ -215,4 +256,4 @@ const nl = {
 } as const;
 
 export default nl;
-import type { LearningCenterPatternParams } from './index';
+import type { LearningCenterMineFlagParams, LearningCenterPatternParams } from './index';

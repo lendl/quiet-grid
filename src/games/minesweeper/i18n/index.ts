@@ -31,8 +31,21 @@ export type MinesweeperLearningCenterPatternKey =
   | 'guaranteed-safe-tile'
   | 'full-clue-resolution';
 
+export type MinesweeperMineFlagReason =
+  | 'direct-local'
+  | 'subset-difference';
+
 export type LearningCenterPatternParams = {
   patternKey: MinesweeperLearningCenterPatternKey;
+  clueLabel?: string;
+  secondaryClueLabel?: string;
+  tileLabel: string;
+  mineLabel: string;
+  mineCount: number;
+};
+
+export type LearningCenterMineFlagParams = {
+  reason: MinesweeperMineFlagReason;
   clueLabel?: string;
   secondaryClueLabel?: string;
   tileLabel: string;
@@ -56,6 +69,10 @@ export interface MinesweeperI18n {
       title: string;
       body: string;
     };
+    groupedFlagStep(params: { mineCount: number }): {
+      title: string;
+      body: string;
+    };
     legendEvidence: string;
     legendSafe: string;
     legendMine: string;
@@ -63,6 +80,11 @@ export interface MinesweeperI18n {
   tutorialText: Record<TutorialTextKey, ActionLessonText | InfoLessonText>;
   learningCenter: {
     nextMovePattern(params: LearningCenterPatternParams): {
+      title: string;
+      body: string;
+      teaching: LearningCenterTeachingText;
+    };
+    flagMovePattern(params: LearningCenterMineFlagParams): {
       title: string;
       body: string;
       teaching: LearningCenterTeachingText;
