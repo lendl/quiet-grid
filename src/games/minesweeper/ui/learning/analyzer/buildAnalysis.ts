@@ -1,9 +1,9 @@
-import type { PuzzleAnalysisPayload, PuzzleLossAnalysisSource } from '../../../../app/analysis/types';
-import { getMinesweeperAnalysisContent } from '../../i18n';
-import type { MinesweeperPlaySession } from '../../playContract';
-import type { MinesweeperBoard } from '../../types';
-import { buildPatternNextMove } from '../content';
-import { analyzeMinesweeperLogicalMoves, getNextMinesweeperSafeRevealMove } from '../nextMove';
+import type { PuzzleAnalysisPayload, PuzzleLossAnalysisSource } from '../../../../../app/analysis/types';
+import { getMinesweeperAnalysisContent } from '../../../i18n';
+import type { MinesweeperPlaySession } from '../../../gameplay/playContract';
+import type { MinesweeperBoard } from '../../../types';
+import { buildPatternNextMove } from '../../../gameplay/analysis/content';
+import { analyzeMinesweeperLogicalMoves, getNextMinesweeperSafeRevealMove } from '../../../gameplay/analysis/nextMove';
 import type {
   MinesweeperAnalysisPayload,
   MinesweeperAnalysisStep,

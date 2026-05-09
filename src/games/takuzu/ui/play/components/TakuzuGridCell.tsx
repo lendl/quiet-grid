@@ -7,9 +7,9 @@ import {
   View,
   Text,
 } from 'react-native';
-import { useTheme } from '../../../app/context/ThemeContext';
-import type { CellValue } from '../types';
-import { withAlpha } from '../../../app/utils/color';
+import { useTheme } from '../../../../../app/context/ThemeContext';
+import type { CellValue } from '../../../types';
+import { withAlpha } from '../../../../../app/utils/color';
 
 interface GridCellProps {
   value: CellValue;

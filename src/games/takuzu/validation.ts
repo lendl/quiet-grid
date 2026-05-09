@@ -1,1 +1,1 @@
-export * from './core/validation';
+export * from './gameplay/rules/validation';

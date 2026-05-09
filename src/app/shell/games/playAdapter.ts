@@ -15,12 +15,12 @@ export interface PuzzleMetaItem {
   value: string;
 }
 
-export interface PuzzleHelperState {
-  showHelperToggle: boolean;
-  helperVisible: boolean;
-  helperToggleLabel?: string;
-  onToggleHelper?: () => void;
-  footer: ReactNode;
+export interface PuzzleHeaderAction {
+  key: string;
+  accessibilityLabel: string;
+  iconName: 'bulb' | 'bulb-outline';
+  active?: boolean;
+  onPress: () => void;
 }
 
 export interface PuzzlePlayAdapterShellArgs {
@@ -86,9 +86,10 @@ export interface PuzzlePlayAdapterState {
   loading?: boolean;
   loadingLabel?: string;
   exitToHome?: () => Promise<void>;
-  metadata?: PuzzleMetaItem[];
-  helperState?: PuzzleHelperState;
-  grid: ReactNode;
+  headerActions?: readonly PuzzleHeaderAction[];
+  headerMeta?: readonly PuzzleMetaItem[];
+  main: ReactNode;
+  footer?: ReactNode;
 }
 
 export interface PuzzlePlayAdapterInstance<TSession = unknown, TAction = unknown, TEffect = unknown> {

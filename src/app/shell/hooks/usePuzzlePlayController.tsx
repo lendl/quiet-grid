@@ -213,14 +213,11 @@ export function usePuzzlePlayController(props: Props): PuzzlePlayLayoutState {
     elapsedSeconds: renderState.elapsedSeconds,
     dialog,
     onDismissDialog: () => setDialog(null),
-    showHelperToggle: adapterState.helperState?.showHelperToggle ?? false,
-    helperVisible: adapterState.helperState?.helperVisible ?? false,
-    helperToggleLabel: adapterState.helperState?.helperToggleLabel,
-    onToggleHelper: adapterState.helperState?.onToggleHelper,
     exitToHome,
     onForfeit: handleForfeit,
-    metadata: adapterState.metadata ?? [],
-    grid: adapterState.grid,
-    footer: adapterState.helperState?.footer ?? null,
+    headerActions: adapterState.headerActions ?? [],
+    headerMeta: adapterState.headerMeta ?? [],
+    main: adapterState.main,
+    footer: adapterState.footer ?? null,
   };
 }

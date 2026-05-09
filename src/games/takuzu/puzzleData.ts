@@ -1,3 +1,1 @@
-export * from './core/puzzleData';
-
-
+export * from './platform/puzzleData';

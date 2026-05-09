@@ -45,21 +45,22 @@ export default function PuzzlePlayScreen(props: Props) {
               <View style={s.timerPill}>
                 <Text style={s.timerText}>{elapsedLabel}</Text>
               </View>
-              {layout.showHelperToggle ? (
+              {layout.headerActions.map((action) => (
                 <TouchableOpacity
+                  key={action.key}
                   accessibilityRole="button"
-                  accessibilityLabel={layout.helperToggleLabel}
-                  onPress={layout.onToggleHelper}
-                  style={[s.iconButton, layout.helperVisible ? s.helperActive : null]}
+                  accessibilityLabel={action.accessibilityLabel}
+                  onPress={action.onPress}
+                  style={[s.iconButton, action.active ? s.helperActive : null]}
                   activeOpacity={0.8}
                 >
                   <Ionicons
-                    name={layout.helperVisible ? 'bulb' : 'bulb-outline'}
+                    name={action.iconName}
                     size={18}
-                    color={layout.helperVisible ? theme.primaryLight : theme.text}
+                    color={action.active ? theme.primaryLight : theme.text}
                   />
                 </TouchableOpacity>
-              ) : null}
+              ))}
               <TouchableOpacity
                 accessibilityRole="button"
                 accessibilityLabel={strings.common.endPuzzle}
@@ -75,9 +76,9 @@ export default function PuzzlePlayScreen(props: Props) {
               </TouchableOpacity>
             </View>
           </View>
-          {layout.metadata.length > 0 ? (
+          {layout.headerMeta.length > 0 ? (
             <View style={s.metadataRow}>
-              {layout.metadata.map((item) => (
+              {layout.headerMeta.map((item) => (
                 <View key={item.key} style={s.metadataPill}>
                   <Text style={s.metadataLabel}>{item.label}</Text>
                   <Text style={s.metadataValue}>{item.value}</Text>
@@ -87,7 +88,7 @@ export default function PuzzlePlayScreen(props: Props) {
           ) : null}
         </View>
       )}
-      grid={layout.grid}
+      main={layout.main}
       footer={layout.footer}
     />
   );

@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import type { Grid } from '../types';
-import { useTheme } from '../../../app/context/ThemeContext';
-import type { Theme } from '../../../app/theme';
-import { withAlpha } from '../../../app/utils/color';
+import type { Grid } from '../../../types';
+import { useTheme } from '../../../../../app/context/ThemeContext';
+import type { Theme } from '../../../../../app/theme';
+import { withAlpha } from '../../../../../app/utils/color';
 
 interface TutorialRowProps {
   grid: Grid;

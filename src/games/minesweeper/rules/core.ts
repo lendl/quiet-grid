@@ -1,1 +1,1 @@
-export * from '../core/rules';
+export * from '../gameplay/rules/core';

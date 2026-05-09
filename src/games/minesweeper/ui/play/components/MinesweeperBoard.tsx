@@ -6,11 +6,11 @@ import {
   Text,
   View,
 } from 'react-native';
-import type { MinesweeperBoard as MinesweeperBoardState } from '../types';
-import { useLanguage } from '../../../app/context/LanguageContext';
-import { useTheme } from '../../../app/context/ThemeContext';
-import type { Theme } from '../../../app/theme';
-import { withAlpha } from '../../../app/utils/color';
+import type { MinesweeperBoard as MinesweeperBoardState } from '../../../types';
+import { useLanguage } from '../../../../../app/context/LanguageContext';
+import { useTheme } from '../../../../../app/context/ThemeContext';
+import type { Theme } from '../../../../../app/theme';
+import { withAlpha } from '../../../../../app/utils/color';
 import {
   buildSharedMinesweeperBoardStyles,
   getMinesweeperBoardCellSize,

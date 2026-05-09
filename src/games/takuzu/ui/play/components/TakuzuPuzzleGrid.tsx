@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
 import { View, StyleSheet } from 'react-native';
-import type { TakuzuNextMoveCell, TakuzuNextMoveTargetCell, Grid } from '../types';
+import type { TakuzuNextMoveCell, TakuzuNextMoveTargetCell, Grid } from '../../../types';
 import TakuzuGridCell from './TakuzuGridCell';
-import { useTheme } from '../../../app/context/ThemeContext';
-import type { Theme } from '../../../app/theme';
-import { withAlpha } from '../../../app/utils/color';
+import { useTheme } from '../../../../../app/context/ThemeContext';
+import type { Theme } from '../../../../../app/theme';
+import { withAlpha } from '../../../../../app/utils/color';
 
 const GAP = 1;
 const FRAME_PADDING = 6;

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
-import type { PuzzleAnalysisRendererArgs } from '../../../../app/analysis/types';
-import { makeEmptyBooleanGrid } from '../../../../app/utils/activePuzzleStateStorage';
-import TakuzuPuzzleGrid from '../../components/TakuzuPuzzleGrid';
+import type { PuzzleAnalysisRendererArgs } from '../../../../../app/analysis/types';
+import { makeEmptyBooleanGrid } from '../../../../../app/utils/activePuzzleStateStorage';
+import TakuzuPuzzleGrid from '../../play/components/TakuzuPuzzleGrid';
 import type { TakuzuAnalysisPayload } from './types';
 
 function noop() {}

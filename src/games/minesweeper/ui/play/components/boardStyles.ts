@@ -1,6 +1,6 @@
 import type { TextStyle, ViewStyle } from 'react-native';
-import type { Theme } from '../../../app/theme';
-import { withAlpha } from '../../../app/utils/color';
+import type { Theme } from '../../../../../app/theme';
+import { withAlpha } from '../../../../../app/utils/color';
 
 const FRAME_BORDER_WIDTH = 3;
 const FRAME_PADDING = 4;

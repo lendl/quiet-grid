@@ -6,15 +6,15 @@ import {
   Text,
   View,
 } from 'react-native';
-import type { MinesweeperBoard } from '../types';
-import { useLanguage } from '../../../app/context/LanguageContext';
-import { useTheme } from '../../../app/context/ThemeContext';
-import type { Theme } from '../../../app/theme';
+import type { MinesweeperBoard } from '../../../types';
+import { useLanguage } from '../../../../../app/context/LanguageContext';
+import { useTheme } from '../../../../../app/context/ThemeContext';
+import type { Theme } from '../../../../../app/theme';
 import {
   buildSharedMinesweeperBoardStyles,
   getMinesweeperBoardCellSize,
   getMinesweeperNumberColor,
-} from './boardStyles';
+} from '../../play/components/boardStyles';
 
 interface FocusCell {
   row: number;

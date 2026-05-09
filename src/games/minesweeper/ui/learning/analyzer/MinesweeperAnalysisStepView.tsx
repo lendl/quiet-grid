@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import type { PuzzleAnalysisRendererArgs } from '../../../../app/analysis/types';
-import { useTheme } from '../../../../app/context/ThemeContext';
-import type { Theme } from '../../../../app/theme';
-import { withAlpha } from '../../../../app/utils/color';
-import MinesweeperBoard from '../../components/MinesweeperBoard';
+import type { PuzzleAnalysisRendererArgs } from '../../../../../app/analysis/types';
+import { useTheme } from '../../../../../app/context/ThemeContext';
+import type { Theme } from '../../../../../app/theme';
+import { withAlpha } from '../../../../../app/utils/color';
+import MinesweeperBoard from '../../play/components/MinesweeperBoard';
 import type { MinesweeperAnalysisPayload } from './types';
 
 function noop() {}

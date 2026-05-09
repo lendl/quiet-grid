@@ -12,7 +12,7 @@ interface PuzzlePlayScaffoldProps {
   dialog?: DialogConfig | null;
   onDismissDialog: () => void;
   header: React.ReactNode;
-  grid: React.ReactNode;
+  main: React.ReactNode;
   footer: React.ReactNode;
 }
 
@@ -22,7 +22,7 @@ export default function PuzzlePlayScaffold({
   dialog = null,
   onDismissDialog,
   header,
-  grid,
+  main,
   footer,
 }: PuzzlePlayScaffoldProps) {
   const { theme } = useTheme();
@@ -35,13 +35,13 @@ export default function PuzzlePlayScaffold({
           <ActivityIndicator size="large" color={theme.primary} />
           {loadingLabel ? <Text style={s.loadingText}>{loadingLabel}</Text> : null}
         </View>
-      ) : (
-        <>
-          <View style={s.headerRegion}>{header}</View>
-          <View style={s.gridRegion}>{grid}</View>
-          <View style={s.footerRegion}>{footer}</View>
-        </>
-      )}
+        ) : (
+          <>
+            <View style={s.headerRegion}>{header}</View>
+            <View style={s.mainRegion}>{main}</View>
+            <View style={s.footerRegion}>{footer}</View>
+          </>
+        )}
       {dialog ? (
         <AppDialog
           visible
@@ -73,11 +73,11 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   headerRegion: {
     paddingTop: 6,
   },
-  gridRegion: {
+  mainRegion: {
     flex: 1,
   },
   footerRegion: {
-    height: 112,
+    minHeight: 112,
     flexShrink: 0,
     paddingHorizontal: 10,
     paddingTop: 8,

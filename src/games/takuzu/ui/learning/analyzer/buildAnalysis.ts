@@ -1,8 +1,8 @@
-import type { PuzzleAnalysisPayload, PuzzleLossAnalysisSource } from '../../../../app/analysis/types';
-import { cloneGrid, decodeMask, decodeSolution } from '../../core/puzzleData';
-import { isBoardSolved } from '../../core/validation';
-import type { TakuzuPlaySession } from '../../playContract';
-import { getTakuzuNextMoveHint } from '../nextMove';
+import type { PuzzleAnalysisPayload, PuzzleLossAnalysisSource } from '../../../../../app/analysis/types';
+import { cloneGrid, decodeMask, decodeSolution } from '../../../core/puzzleData';
+import { isBoardSolved } from '../../../core/validation';
+import type { TakuzuPlaySession } from '../../../gameplay/playContract';
+import { getTakuzuNextMoveHint } from '../../../gameplay/analysis/nextMove';
 import type {
   TakuzuAnalysisPayload,
   TakuzuAnalysisStep,

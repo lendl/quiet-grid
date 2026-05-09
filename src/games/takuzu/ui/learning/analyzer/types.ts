@@ -1,5 +1,5 @@
-import type { PuzzleAnalysisPayload, PuzzleAnalysisStep, PuzzleLossAnalysisSource } from '../../../../app/analysis/types';
-import type { Grid, Puzzle, TakuzuNextMoveRuleKey } from '../../types';
+import type { PuzzleAnalysisPayload, PuzzleAnalysisStep, PuzzleLossAnalysisSource } from '../../../../../app/analysis/types';
+import type { Grid, Puzzle, TakuzuNextMoveRuleKey } from '../../../types';
 
 export interface TakuzuLossAnalysisPayload {
   puzzle: Puzzle;
