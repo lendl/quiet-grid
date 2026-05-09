@@ -19,6 +19,11 @@ export interface MinesweeperHudState {
 
 export type { MinesweeperAction, MinesweeperActionEffect, MinesweeperActionResult } from './actions';
 
+function hasMinesweeperMeaningfulProgress(session: MinesweeperPlaySession): boolean {
+  return session.board.generated
+    || session.board.cells.some((row) => row.some((cell) => cell.state !== 'hidden'));
+}
+
 export const minesweeperPlayContract: PuzzlePlayContract<
   MinesweeperPlaySession,
   MinesweeperActivePuzzle,
@@ -72,4 +77,5 @@ export const minesweeperPlayContract: PuzzlePlayContract<
     };
   },
   isInProgress: (session) => session.board.status === 'playing',
+  hasMeaningfulProgress: hasMinesweeperMeaningfulProgress,
 };

@@ -57,7 +57,7 @@ export function usePuzzlePlaySession<TSession, THud>({
   const { setElapsedBeforeSession } = timer;
 
   usePersistedPuzzleSession({
-    enabled: persistEnabled && session !== null,
+    enabled: persistEnabled && session !== null && contract.hasMeaningfulProgress(session),
     value: session ? contract.serializeSession({ session, elapsedSeconds }) : null,
     changeKey: () => (session ? contract.getPersistenceKey({
       session,

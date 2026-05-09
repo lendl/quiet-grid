@@ -35,6 +35,22 @@ function createTakuzuSession(puzzle: Puzzle): TakuzuPlaySession {
   };
 }
 
+function hasBoardDifference(a: Grid, b: Grid): boolean {
+  return a.some((row, rowIndex) => row.some((value, colIndex) => value !== b[rowIndex][colIndex]));
+}
+
+function hasFinishedCells(session: TakuzuPlaySession): boolean {
+  return session.finishedCells.some((row) => row.some(Boolean));
+}
+
+function hasTakuzuMeaningfulProgress(session: TakuzuPlaySession): boolean {
+  const initialBoard = decodePuzzle(session.puzzle.solution, session.puzzle.mask, session.puzzle.size);
+  return hasBoardDifference(session.board, initialBoard)
+    || hasFinishedCells(session)
+    || session.accuracyDrops > 0
+    || session.penalizedLineKeys.length > 0;
+}
+
 export const takuzuPlayContract: PuzzlePlayContract<
   TakuzuPlaySession,
   TakuzuActivePuzzle,
@@ -92,4 +108,5 @@ export const takuzuPlayContract: PuzzlePlayContract<
     };
   },
   isInProgress: (session) => !isBoardSolved(session.board, session.solution),
+  hasMeaningfulProgress: hasTakuzuMeaningfulProgress,
 };

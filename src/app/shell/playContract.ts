@@ -19,6 +19,7 @@ export interface PuzzlePlayContractBase<TSession = unknown, THud = unknown> {
   getHudState(input: { session: TSession; elapsedSeconds: number }): THud;
   getSolvedState(input: { session: TSession; elapsedSeconds: number }): PuzzleSolvedState | null;
   isInProgress(session: TSession): boolean;
+  hasMeaningfulProgress(session: TSession): boolean;
 }
 
 export interface PuzzlePlayContract<TSession, TActivePuzzle extends ActivePuzzle, THud>

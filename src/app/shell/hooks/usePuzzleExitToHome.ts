@@ -24,7 +24,11 @@ export function usePuzzleExitToHome<TSession, THud>({
     const currentSession = sessionOverride ?? sessionRef.current;
     const elapsedSeconds = pauseTimer();
 
-    if (currentSession && contract.isInProgress(currentSession)) {
+    if (
+      currentSession
+      && contract.isInProgress(currentSession)
+      && contract.hasMeaningfulProgress(currentSession)
+    ) {
       await saveActivePuzzle(contract.serializeSession({ session: currentSession, elapsedSeconds }));
     }
 
