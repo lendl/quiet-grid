@@ -3,13 +3,13 @@ import type { PuzzleAnalysisAdapter } from '../../../../../app/analysis/types';
 import MinesweeperAnalysisStepView from './MinesweeperAnalysisStepView';
 import {
   buildMinesweeperAnalysis,
-  buildMinesweeperLossAnalysisSource,
-  supportsMinesweeperLossAnalysis,
+  buildMinesweeperAnalysisSource,
+  supportsMinesweeperAnalysis,
 } from './buildAnalysis';
 
 export const minesweeperAnalysisAdapter: PuzzleAnalysisAdapter = {
-  buildLossAnalysisSource: buildMinesweeperLossAnalysisSource,
-  supportsLossAnalysis: supportsMinesweeperLossAnalysis,
+  buildAnalysisSource: buildMinesweeperAnalysisSource,
+  supportsAnalysis: supportsMinesweeperAnalysis,
   buildAnalysis: buildMinesweeperAnalysis,
   renderAnalysisStep: (args) => React.createElement(MinesweeperAnalysisStepView, args),
 };

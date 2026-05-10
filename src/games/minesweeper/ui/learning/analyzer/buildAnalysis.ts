@@ -1,4 +1,4 @@
-import type { PuzzleAnalysisPayload, PuzzleLossAnalysisSource } from '../../../../../app/analysis/types';
+import type { PuzzleAnalysisPayload, PuzzleAnalysisSource } from '../../../../../app/analysis/types';
 import { getMinesweeperAnalysisContent } from '../../../i18n';
 import type { MinesweeperPlaySession } from '../../../gameplay/playContract';
 import type { MinesweeperBoard } from '../../../types';
@@ -7,7 +7,7 @@ import { analyzeMinesweeperLogicalMoves, getNextMinesweeperSafeRevealMove } from
 import type {
   MinesweeperAnalysisPayload,
   MinesweeperAnalysisStep,
-  MinesweeperLossAnalysisSource,
+  MinesweeperAnalysisSource,
 } from './types';
 
 function cloneBoard(board: MinesweeperBoard): MinesweeperBoard {
@@ -63,14 +63,14 @@ function isMinesweeperPlaySession(value: unknown): value is MinesweeperPlaySessi
     && isMinesweeperBoard(candidate.board);
 }
 
-function isMinesweeperLossAnalysisSource(
-  source: PuzzleLossAnalysisSource | undefined,
-): source is MinesweeperLossAnalysisSource {
+function isMinesweeperAnalysisSource(
+  source: PuzzleAnalysisSource | undefined,
+): source is MinesweeperAnalysisSource {
   if (!source || source.puzzleTypeId !== 'minesweeper') {
     return false;
   }
 
-  const payload = source.payload as Partial<MinesweeperLossAnalysisSource['payload']> | undefined;
+  const payload = source.payload as Partial<MinesweeperAnalysisSource['payload']> | undefined;
   return Boolean(payload?.puzzle)
     && typeof payload?.puzzle?.difficulty === 'string'
     && typeof payload?.puzzle?.rows === 'number'
@@ -79,7 +79,7 @@ function isMinesweeperLossAnalysisSource(
     && isMinesweeperBoard(payload?.board);
 }
 
-function buildMinesweeperAnalysisInternal(source: MinesweeperLossAnalysisSource): MinesweeperAnalysisPayload | null {
+function buildMinesweeperAnalysisInternal(source: MinesweeperAnalysisSource): MinesweeperAnalysisPayload | null {
   const content = getMinesweeperAnalysisContent();
   const board = cloneBoard(source.payload.board);
   const analysis = analyzeMinesweeperLogicalMoves(board, new Set<string>());
@@ -140,7 +140,7 @@ function hasSafeRevealStep(board: MinesweeperBoard, knownMineKeys: Set<string>):
   return getNextMinesweeperSafeRevealMove(board, knownMineKeys) !== null;
 }
 
-export function buildMinesweeperLossAnalysisSource(session: unknown): PuzzleLossAnalysisSource | null {
+export function buildMinesweeperAnalysisSource(session: unknown): PuzzleAnalysisSource | null {
   if (!isMinesweeperPlaySession(session)) {
     return null;
   }
@@ -154,16 +154,16 @@ export function buildMinesweeperLossAnalysisSource(session: unknown): PuzzleLoss
   };
 }
 
-export function supportsMinesweeperLossAnalysis(source: PuzzleLossAnalysisSource | undefined): boolean {
-  if (!isMinesweeperLossAnalysisSource(source)) {
+export function supportsMinesweeperAnalysis(source: PuzzleAnalysisSource | undefined): boolean {
+  if (!isMinesweeperAnalysisSource(source)) {
     return false;
   }
 
   return hasSafeRevealStep(cloneBoard(source.payload.board), new Set<string>());
 }
 
-export function buildMinesweeperAnalysis(source: PuzzleLossAnalysisSource): PuzzleAnalysisPayload {
-  if (!isMinesweeperLossAnalysisSource(source)) {
+export function buildMinesweeperAnalysis(source: PuzzleAnalysisSource): PuzzleAnalysisPayload {
+  if (!isMinesweeperAnalysisSource(source)) {
     throw new Error('Minesweeper analysis source is invalid.');
   }
 

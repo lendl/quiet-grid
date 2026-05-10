@@ -1,4 +1,4 @@
-import type { PuzzleAnalysisPayload, PuzzleLossAnalysisSource } from '../../../../../app/analysis/types';
+import type { PuzzleAnalysisPayload, PuzzleAnalysisSource } from '../../../../../app/analysis/types';
 import { getNonogramAnalysisContent } from '../../../content/i18n';
 import type { NonogramPlaySession } from '../../../gameplay/activePuzzle';
 import { describeNonogramDeduction } from '../../../gameplay/analysis/content';
@@ -6,7 +6,7 @@ import { findNextNonogramDeduction, applyDeduction } from '../../../gameplay/rul
 import type {
   NonogramAnalysisPayload,
   NonogramAnalysisStep,
-  NonogramLossAnalysisSource,
+  NonogramAnalysisSource,
 } from './types';
 
 function isNonogramPlaySession(value: unknown): value is NonogramPlaySession {
@@ -23,18 +23,18 @@ function isNonogramPlaySession(value: unknown): value is NonogramPlaySession {
     && Array.isArray(candidate.puzzle?.colClues);
 }
 
-function isNonogramLossAnalysisSource(
-  source: PuzzleLossAnalysisSource | undefined,
-): source is NonogramLossAnalysisSource {
+function isNonogramAnalysisSource(
+  source: PuzzleAnalysisSource | undefined,
+): source is NonogramAnalysisSource {
   if (!source || source.puzzleTypeId !== 'nonogram') {
     return false;
   }
 
-  const payload = source.payload as Partial<NonogramLossAnalysisSource['payload']> | undefined;
+  const payload = source.payload as Partial<NonogramAnalysisSource['payload']> | undefined;
   return Boolean(payload?.puzzle) && Array.isArray(payload?.cells);
 }
 
-function buildNonogramAnalysisInternal(source: NonogramLossAnalysisSource): NonogramAnalysisPayload | null {
+function buildNonogramAnalysisInternal(source: NonogramAnalysisSource): NonogramAnalysisPayload | null {
   const content = getNonogramAnalysisContent();
   let currentCells = [...source.payload.cells];
   const steps: NonogramAnalysisStep[] = [];
@@ -81,7 +81,7 @@ function buildNonogramAnalysisInternal(source: NonogramLossAnalysisSource): Nono
   };
 }
 
-export function buildNonogramLossAnalysisSource(session: unknown): PuzzleLossAnalysisSource | null {
+export function buildNonogramAnalysisSource(session: unknown): PuzzleAnalysisSource | null {
   if (!isNonogramPlaySession(session)) {
     return null;
   }
@@ -95,16 +95,16 @@ export function buildNonogramLossAnalysisSource(session: unknown): PuzzleLossAna
   };
 }
 
-export function supportsNonogramLossAnalysis(source: PuzzleLossAnalysisSource | undefined): boolean {
-  if (!isNonogramLossAnalysisSource(source)) {
+export function supportsNonogramAnalysis(source: PuzzleAnalysisSource | undefined): boolean {
+  if (!isNonogramAnalysisSource(source)) {
     return false;
   }
 
   return findNextNonogramDeduction(source.payload.puzzle, source.payload.cells) !== null;
 }
 
-export function buildNonogramAnalysis(source: PuzzleLossAnalysisSource): PuzzleAnalysisPayload {
-  if (!isNonogramLossAnalysisSource(source)) {
+export function buildNonogramAnalysis(source: PuzzleAnalysisSource): PuzzleAnalysisPayload {
+  if (!isNonogramAnalysisSource(source)) {
     throw new Error('Nonogram analysis source is invalid.');
   }
 

@@ -1,15 +1,15 @@
-import type { PuzzleAnalysisPayload, PuzzleAnalysisStep, PuzzleLossAnalysisSource } from '../../../../../app/analysis/types';
+import type { PuzzleAnalysisPayload, PuzzleAnalysisStep, PuzzleAnalysisSource } from '../../../../../app/analysis/types';
 import type { MinesweeperBoard, MinesweeperPuzzle } from '../../../types';
 import type { MinesweeperNextMoveCell } from '../../../gameplay/analysis/nextMove';
 
-export interface MinesweeperLossAnalysisPayload {
+export interface MinesweeperAnalysisSourcePayload {
   puzzle: MinesweeperPuzzle;
   board: MinesweeperBoard;
 }
 
-export interface MinesweeperLossAnalysisSource extends PuzzleLossAnalysisSource {
+export interface MinesweeperAnalysisSource extends PuzzleAnalysisSource {
   puzzleTypeId: 'minesweeper';
-  payload: MinesweeperLossAnalysisPayload;
+  payload: MinesweeperAnalysisSourcePayload;
 }
 
 export interface MinesweeperAnalysisStep extends PuzzleAnalysisStep {

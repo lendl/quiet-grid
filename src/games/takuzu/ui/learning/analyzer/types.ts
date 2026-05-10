@@ -1,14 +1,14 @@
-import type { PuzzleAnalysisPayload, PuzzleAnalysisStep, PuzzleLossAnalysisSource } from '../../../../../app/analysis/types';
+import type { PuzzleAnalysisPayload, PuzzleAnalysisStep, PuzzleAnalysisSource } from '../../../../../app/analysis/types';
 import type { Grid, Puzzle, TakuzuNextMoveRuleKey } from '../../../types';
 
-export interface TakuzuLossAnalysisPayload {
+export interface TakuzuAnalysisSourcePayload {
   puzzle: Puzzle;
   board: Grid;
 }
 
-export interface TakuzuLossAnalysisSource extends PuzzleLossAnalysisSource {
+export interface TakuzuAnalysisSource extends PuzzleAnalysisSource {
   puzzleTypeId: 'takuzu';
-  payload: TakuzuLossAnalysisPayload;
+  payload: TakuzuAnalysisSourcePayload;
 }
 
 export interface TakuzuAnalysisStep extends PuzzleAnalysisStep {

@@ -119,7 +119,7 @@ export function usePuzzleControllerBootstrap<TSession, THud>({
 
     const elapsedSeconds = pauseTimer();
     const currentSession = sessionOverride ?? sessionRef.current;
-    const analysisSource = getPuzzleAnalysisAdapter(puzzleTypeId)?.buildLossAnalysisSource(currentSession);
+    const analysisSource = getPuzzleAnalysisAdapter(puzzleTypeId)?.buildAnalysisSource(currentSession);
     finalizedRef.current = true;
     setRunning(false);
     await clearActivePuzzle();

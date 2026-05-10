@@ -1,19 +1,19 @@
 import type {
   PuzzleAnalysisPayload,
   PuzzleAnalysisStep,
-  PuzzleLossAnalysisSource,
+  PuzzleAnalysisSource,
 } from '../../../../../app/analysis/types';
 import type { NonogramCellState, NonogramPuzzle } from '../../../types';
 import type { NonogramCellRef } from '../../../types';
 
-export interface NonogramLossAnalysisPayload {
+export interface NonogramAnalysisSourcePayload {
   puzzle: NonogramPuzzle;
   cells: NonogramCellState[];
 }
 
-export interface NonogramLossAnalysisSource extends PuzzleLossAnalysisSource {
+export interface NonogramAnalysisSource extends PuzzleAnalysisSource {
   puzzleTypeId: 'nonogram';
-  payload: NonogramLossAnalysisPayload;
+  payload: NonogramAnalysisSourcePayload;
 }
 
 export interface NonogramAnalysisStep extends PuzzleAnalysisStep {

@@ -6,7 +6,7 @@ import type {
 import type { CompletionVariant } from '../completion/types';
 import type { LossReason } from '../loss/types';
 import type { SupportInfoKey } from '../content/supportInfo';
-import type { PuzzleAnalysisPayload, PuzzleLossAnalysisSource } from '../analysis/types';
+import type { PuzzleAnalysisPayload, PuzzleAnalysisSource } from '../analysis/types';
 
 export interface PuzzlePlayRouteParams {
   puzzleTypeId: PuzzleTypeId;
@@ -24,7 +24,7 @@ export interface LossRouteParams {
   puzzleTypeId: PuzzleTypeId;
   difficulty: PuzzleDifficulty;
   elapsedSeconds: number;
-  analysisSource?: PuzzleLossAnalysisSource;
+  analysisSource?: PuzzleAnalysisSource;
 }
 
 export interface PuzzleRouteParams {

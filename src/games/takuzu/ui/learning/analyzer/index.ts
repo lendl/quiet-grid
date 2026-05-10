@@ -3,13 +3,13 @@ import type { PuzzleAnalysisAdapter } from '../../../../../app/analysis/types';
 import TakuzuAnalysisStepView from './TakuzuAnalysisStepView';
 import {
   buildTakuzuAnalysis,
-  buildTakuzuLossAnalysisSource,
-  supportsTakuzuLossAnalysis,
+  buildTakuzuAnalysisSource,
+  supportsTakuzuAnalysis,
 } from './buildAnalysis';
 
 export const takuzuAnalysisAdapter: PuzzleAnalysisAdapter = {
-  buildLossAnalysisSource: buildTakuzuLossAnalysisSource,
-  supportsLossAnalysis: supportsTakuzuLossAnalysis,
+  buildAnalysisSource: buildTakuzuAnalysisSource,
+  supportsAnalysis: supportsTakuzuAnalysis,
   buildAnalysis: buildTakuzuAnalysis,
   renderAnalysisStep: (args) => React.createElement(TakuzuAnalysisStepView, args),
 };

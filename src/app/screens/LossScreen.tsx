@@ -85,7 +85,7 @@ export default function LossScreen({ route, navigation }: Props) {
   const difficultyLabel = formatDifficultyLabel(puzzleTypeId, difficulty);
   const elapsedLabel = formatElapsed(elapsedSeconds);
   const lossAccents = useMemo(() => buildLossAccents(theme, difficultyColor), [theme, difficultyColor]);
-  const canAnalyze = analysisAdapter?.supportsLossAnalysis(analysisSource) ?? false;
+  const canAnalyze = analysisAdapter?.supportsAnalysis(analysisSource) ?? false;
 
   const pageOpacity = useRef(new Animated.Value(0)).current;
   const contentTranslateY = useRef(new Animated.Value(20)).current;

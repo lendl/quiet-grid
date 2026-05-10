@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import type { PuzzleTypeId } from '../shell/types';
 
-export interface PuzzleLossAnalysisSource {
+export interface PuzzleAnalysisSource {
   puzzleTypeId: PuzzleTypeId;
   payload: unknown;
 }
@@ -33,8 +33,8 @@ export interface PuzzleAnalysisRendererArgs {
 }
 
 export interface PuzzleAnalysisAdapter {
-  buildLossAnalysisSource: (session: unknown) => PuzzleLossAnalysisSource | null;
-  supportsLossAnalysis: (source: PuzzleLossAnalysisSource | undefined) => boolean;
-  buildAnalysis: (source: PuzzleLossAnalysisSource) => PuzzleAnalysisPayload;
+  buildAnalysisSource: (session: unknown) => PuzzleAnalysisSource | null;
+  supportsAnalysis: (source: PuzzleAnalysisSource | undefined) => boolean;
+  buildAnalysis: (source: PuzzleAnalysisSource) => PuzzleAnalysisPayload;
   renderAnalysisStep: (args: PuzzleAnalysisRendererArgs) => ReactNode;
 }

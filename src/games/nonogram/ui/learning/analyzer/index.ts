@@ -3,13 +3,13 @@ import type { PuzzleAnalysisAdapter } from '../../../../../app/analysis/types';
 import NonogramAnalysisStepView from './NonogramAnalysisStepView';
 import {
   buildNonogramAnalysis,
-  buildNonogramLossAnalysisSource,
-  supportsNonogramLossAnalysis,
+  buildNonogramAnalysisSource,
+  supportsNonogramAnalysis,
 } from './buildAnalysis';
 
 export const nonogramAnalysisAdapter: PuzzleAnalysisAdapter = {
-  buildLossAnalysisSource: buildNonogramLossAnalysisSource,
-  supportsLossAnalysis: supportsNonogramLossAnalysis,
+  buildAnalysisSource: buildNonogramAnalysisSource,
+  supportsAnalysis: supportsNonogramAnalysis,
   buildAnalysis: buildNonogramAnalysis,
   renderAnalysisStep: (args) => React.createElement(NonogramAnalysisStepView, args),
 };

@@ -6,6 +6,7 @@ import { decodeMask, decodePuzzle, decodeSolution, getRandomPuzzle } from '../pl
 import { isBoardSolved } from './rules/validation';
 import { makeEmptyBooleanGrid } from '../../../app/utils/activePuzzleStateStorage';
 import type { PuzzlePlayContract } from '../../../app/shell/playContract';
+import type { PuzzleOutcome } from '../../../app/shell/types';
 
 export interface TakuzuPlaySession {
   puzzle: Puzzle;
@@ -49,6 +50,25 @@ function hasTakuzuMeaningfulProgress(session: TakuzuPlaySession): boolean {
     || hasFinishedCells(session)
     || session.accuracyDrops > 0
     || session.penalizedLineKeys.length > 0;
+}
+
+export function buildTakuzuOutcome(
+  session: TakuzuPlaySession,
+  elapsedSeconds = 0,
+): PuzzleOutcome {
+  const solved = isBoardSolved(session.board, session.solution);
+
+  return {
+    puzzleTypeId: 'takuzu',
+    difficulty: session.puzzle.difficulty,
+    solved,
+    score: solved
+      ? computeFinalScore(session.puzzle.difficulty, elapsedSeconds, session.accuracyDrops)
+      : 0,
+    accuracy: computeAccuracyPct(session.accuracyDrops),
+    elapsedSeconds,
+    streak: 0,
+  };
 }
 
 export const takuzuPlayContract: PuzzlePlayContract<

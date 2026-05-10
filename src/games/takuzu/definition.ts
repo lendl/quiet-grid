@@ -4,8 +4,11 @@ import { getTakuzuHowToPlay } from './content/howToPlay';
 import { getTakuzuLossContent } from './content/loss';
 import { getTakuzuStrings } from './content/strings';
 import { takuzuPlayAdapter } from './playAdapter';
+import { buildTakuzuOutcome, type TakuzuPlaySession } from './playContract';
 
-export const takuzuDefinition: PuzzleDefinition = {
+export { takuzuGameSemantics } from './gameplay/semantics';
+
+export const takuzuDefinition: PuzzleDefinition<TakuzuPlaySession> = {
   id: 'takuzu',
   get title() {
     return getTakuzuStrings().title;
@@ -23,9 +26,7 @@ export const takuzuDefinition: PuzzleDefinition = {
     scoring: true,
   },
   difficulties: ['easy', 'medium', 'hard', 'expert'],
-  createOutcome: () => {
-    throw new Error('Takuzu outcome adapter not wired yet.');
-  },
+  createOutcome: (session) => buildTakuzuOutcome(session),
   playAdapter: takuzuPlayAdapter,
   content: {
     get howToPlay() {

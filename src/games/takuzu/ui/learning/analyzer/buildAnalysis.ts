@@ -1,4 +1,4 @@
-import type { PuzzleAnalysisPayload, PuzzleLossAnalysisSource } from '../../../../../app/analysis/types';
+import type { PuzzleAnalysisPayload, PuzzleAnalysisSource } from '../../../../../app/analysis/types';
 import { cloneGrid, decodeMask, decodeSolution } from '../../../core/puzzleData';
 import { isBoardSolved } from '../../../core/validation';
 import type { TakuzuPlaySession } from '../../../gameplay/playContract';
@@ -6,7 +6,7 @@ import { getTakuzuNextMoveHint } from '../../../gameplay/analysis/nextMove';
 import type {
   TakuzuAnalysisPayload,
   TakuzuAnalysisStep,
-  TakuzuLossAnalysisSource,
+  TakuzuAnalysisSource,
 } from './types';
 
 function isGrid(value: unknown): value is TakuzuPlaySession['board'] {
@@ -26,11 +26,11 @@ function isTakuzuPlaySession(value: unknown): value is TakuzuPlaySession {
     && typeof candidate.puzzle?.size === 'number';
 }
 
-function isTakuzuLossAnalysisSource(source: PuzzleLossAnalysisSource | undefined): source is TakuzuLossAnalysisSource {
+function isTakuzuAnalysisSource(source: PuzzleAnalysisSource | undefined): source is TakuzuAnalysisSource {
   if (!source || source.puzzleTypeId !== 'takuzu') {
     return false;
   }
-  const payload = source.payload as Partial<TakuzuLossAnalysisSource['payload']> | undefined;
+  const payload = source.payload as Partial<TakuzuAnalysisSource['payload']> | undefined;
   return Boolean(payload?.puzzle)
     && isGrid(payload?.board)
     && typeof payload?.puzzle?.solution === 'string'
@@ -38,7 +38,7 @@ function isTakuzuLossAnalysisSource(source: PuzzleLossAnalysisSource | undefined
     && typeof payload?.puzzle?.size === 'number';
 }
 
-function buildTakuzuAnalysisInternal(source: TakuzuLossAnalysisSource): TakuzuAnalysisPayload | null {
+function buildTakuzuAnalysisInternal(source: TakuzuAnalysisSource): TakuzuAnalysisPayload | null {
   const puzzle = source.payload.puzzle;
   const isGiven = decodeMask(puzzle.mask, puzzle.size);
   const solution = decodeSolution(puzzle.solution, puzzle.size);
@@ -108,7 +108,7 @@ function buildTakuzuAnalysisInternal(source: TakuzuLossAnalysisSource): TakuzuAn
   };
 }
 
-export function buildTakuzuLossAnalysisSource(session: unknown): PuzzleLossAnalysisSource | null {
+export function buildTakuzuAnalysisSource(session: unknown): PuzzleAnalysisSource | null {
   if (!isTakuzuPlaySession(session)) {
     return null;
   }
@@ -122,18 +122,18 @@ export function buildTakuzuLossAnalysisSource(session: unknown): PuzzleLossAnaly
   };
 }
 
-export function supportsTakuzuLossAnalysis(source: PuzzleLossAnalysisSource | undefined): boolean {
-  return isTakuzuLossAnalysisSource(source) && buildTakuzuAnalysisInternal(source) !== null;
+export function supportsTakuzuAnalysis(source: PuzzleAnalysisSource | undefined): boolean {
+  return isTakuzuAnalysisSource(source) && buildTakuzuAnalysisInternal(source) !== null;
 }
 
-export function buildTakuzuAnalysis(source: PuzzleLossAnalysisSource): PuzzleAnalysisPayload {
-  if (!isTakuzuLossAnalysisSource(source)) {
+export function buildTakuzuAnalysis(source: PuzzleAnalysisSource): PuzzleAnalysisPayload {
+  if (!isTakuzuAnalysisSource(source)) {
     throw new Error('Takuzu analysis source is invalid.');
   }
 
   const analysis = buildTakuzuAnalysisInternal(source);
   if (!analysis) {
-    throw new Error('Takuzu analysis is unavailable for this loss state.');
+    throw new Error('Takuzu analysis is unavailable for this puzzle state.');
   }
 
   return analysis;
