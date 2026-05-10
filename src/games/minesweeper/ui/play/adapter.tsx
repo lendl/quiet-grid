@@ -1,7 +1,8 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../../../../app/context/ThemeContext';
 import { createPuzzlePlayAdapter } from '../../../../app/shell/games/playAdapter';
+import { useNextMoveHelper } from '../../../../app/shell/games/useNextMoveHelper';
 import { getMinesweeperStrings } from '../../content/strings';
 import {
   clearActivePuzzleState,
@@ -17,10 +18,7 @@ import type {
   PuzzleRenderState,
 } from '../../../../app/shell/games/playAdapter';
 import MinesweeperBoard from './components/MinesweeperBoard';
-import {
-  getMinesweeperNextMoveHint,
-  type MinesweeperNextMoveHint,
-} from '../../learningCenter';
+import { getMinesweeperNextMoveHint } from '../../learningCenter';
 import { applyMinesweeperAction } from '../../actions';
 import {
   minesweeperPlayContract,
@@ -42,13 +40,13 @@ function useMinesweeperAdapter({
   const { theme } = useTheme();
   const minesweeperStrings = getMinesweeperStrings();
   const styles = useMemo(() => makeStyles(theme), [theme]);
-  const [nextMoveHint, setNextMoveHint] = useState<MinesweeperNextMoveHint | null>(null);
-  const [nextMoveVisible, setNextMoveVisible] = useState(false);
+  const nextMove = useNextMoveHelper((session: MinesweeperPlaySession) => (
+    getMinesweeperNextMoveHint(session.board)
+  ));
 
   const resetHelperState = useCallback(() => {
-    setNextMoveHint(null);
-    setNextMoveVisible(false);
-  }, []);
+    nextMove.reset();
+  }, [nextMove.reset]);
 
   const handleMissingPuzzle = useCallback(async () => {
     resetHelperState();
@@ -81,30 +79,19 @@ function useMinesweeperAdapter({
     runImmediateAction: runShellAction,
   }: PuzzleRenderState<MinesweeperPlaySession, MinesweeperAction>) => {
     const resetNextMove = () => {
-      setNextMoveHint(null);
-      setNextMoveVisible(false);
+      nextMove.reset();
     };
 
     const handleToggleNextMove = () => {
-      if (nextMoveVisible) {
-        setNextMoveVisible(false);
-        return;
-      }
-
-      if (!sessionRef.current) {
-        return;
-      }
-
-      setNextMoveHint(getMinesweeperNextMoveHint(sessionRef.current.board));
-      setNextMoveVisible(true);
+      nextMove.toggle(sessionRef.current);
     };
     const nextMoveHeaderAction: PuzzleHeaderAction = {
       key: 'next-move',
-      accessibilityLabel: nextMoveVisible
+      accessibilityLabel: nextMove.visible
         ? minesweeperStrings.play.helperToggle.hide
         : minesweeperStrings.play.helperToggle.show,
-      iconName: nextMoveVisible ? 'bulb' : 'bulb-outline',
-      active: nextMoveVisible,
+      iconName: nextMove.visible ? 'bulb' : 'bulb-outline',
+      active: nextMove.visible,
       onPress: handleToggleNextMove,
     };
 
@@ -139,28 +126,28 @@ function useMinesweeperAdapter({
               resetNextMove();
               void runShellAction({ type: 'toggle-flag', row, col });
             }}
-            nextMoveEvidenceCells={nextMoveVisible ? nextMoveHint?.evidenceCells : []}
-            nextMoveSafeTargetCells={nextMoveVisible ? nextMoveHint?.targetCells : []}
+            nextMoveEvidenceCells={nextMove.hint?.evidenceCells ?? []}
+            nextMoveSafeTargetCells={nextMove.hint?.targetCells ?? []}
           />
         </View>
       ) : (
         <View style={styles.gridArea} />
       ),
-      footer: nextMoveVisible && nextMoveHint ? (
+      footer: nextMove.visible && nextMove.hint ? (
         <View style={styles.nextMoveCard}>
           <View style={styles.nextMoveCardHeader}>
             <View style={styles.nextMoveCardBadge}>
               <Text style={styles.nextMoveCardBadgeText}>i</Text>
             </View>
-            <Text style={styles.nextMoveCardTitle}>{nextMoveHint.title}</Text>
+            <Text style={styles.nextMoveCardTitle}>{nextMove.hint.title}</Text>
           </View>
-          <Text style={styles.nextMoveCardBody}>{nextMoveHint.body}</Text>
-          {nextMoveHint.teaching ? (
+          <Text style={styles.nextMoveCardBody}>{nextMove.hint.body}</Text>
+          {nextMove.hint.teaching ? (
             <>
-              <Text style={styles.nextMoveCardLabel}>{nextMoveHint.teaching.patternTitle}</Text>
-              <Text style={styles.nextMoveCardPattern}>{nextMoveHint.teaching.patternLabel}</Text>
-              <Text style={styles.nextMoveCardLabel}>{nextMoveHint.teaching.explanationTitle}</Text>
-              <Text style={styles.nextMoveCardBody}>{nextMoveHint.teaching.explanation}</Text>
+              <Text style={styles.nextMoveCardLabel}>{nextMove.hint.teaching.patternTitle}</Text>
+              <Text style={styles.nextMoveCardPattern}>{nextMove.hint.teaching.patternLabel}</Text>
+              <Text style={styles.nextMoveCardLabel}>{nextMove.hint.teaching.explanationTitle}</Text>
+              <Text style={styles.nextMoveCardBody}>{nextMove.hint.teaching.explanation}</Text>
             </>
           ) : null}
         </View>
@@ -168,7 +155,7 @@ function useMinesweeperAdapter({
         <View style={styles.emptyFooter} />
       ),
     };
-  }, [minesweeperStrings, nextMoveHint, nextMoveVisible, styles]);
+  }, [minesweeperStrings, nextMove, styles]);
 
   return {
     onMissing: handleMissingPuzzle,

@@ -19,6 +19,7 @@
 - Tutorial should use a valid example grid for each lesson when tutorial exists.
 - Tutorial should not compare difficulty levels.
 - Next move should explain one valid move from the current puzzle state.
+- Next move should present one stored move suggestion at a time, not a continuously recomputed helper stream.
 - Analyzer mode depends on game type:
   - engine-backed games: teach full solve path
   - non-engine games: analyze loss-state decisions

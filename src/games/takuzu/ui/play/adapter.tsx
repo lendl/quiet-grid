@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useLanguage } from '../../../../app/context/LanguageContext';
 import { useTheme } from '../../../../app/context/ThemeContext';
 import { createPuzzlePlayAdapter } from '../../../../app/shell/games/playAdapter';
+import { useNextMoveHelper } from '../../../../app/shell/games/useNextMoveHelper';
 import type { Theme } from '../../../../app/theme';
 import { withAlpha } from '../../../../app/utils/color';
 import type {
@@ -56,8 +57,9 @@ function useTakuzuAdapter({
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const [lineAnimationEventState, setLineAnimationEventState] =
     useState<LineAnimationEventState | null>(null);
-  const [nextMoveHint, setNextMoveHint] = useState<TakuzuNextMoveHint | null>(null);
-  const [nextMoveVisible, setNextMoveVisible] = useState(false);
+  const nextMove = useNextMoveHelper((session: TakuzuPlaySession) => (
+    getTakuzuNextMoveHint(session.board)
+  ));
   const [gridContainer, setGridContainer] = useState({ width: 0, height: 0 });
 
   const validationRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -65,8 +67,7 @@ function useTakuzuAdapter({
   const lineAnimationTokenRef = useRef(0);
 
   const resetAdapterState = useCallback(() => {
-    setNextMoveHint(null);
-    setNextMoveVisible(false);
+    nextMove.reset();
     setLineAnimationEventState(null);
     pendingValidationRef.current = null;
     lineAnimationTokenRef.current = 0;
@@ -74,7 +75,7 @@ function useTakuzuAdapter({
       clearTimeout(validationRef.current);
       validationRef.current = null;
     }
-  }, []);
+  }, [nextMove.reset]);
 
   const handleNoPuzzlesAvailable = useCallback(() => {
     goBack();
@@ -179,8 +180,7 @@ function useTakuzuAdapter({
 
       sessionRef.current = result.session;
       setSession(result.session);
-      setNextMoveHint(null);
-      setNextMoveVisible(false);
+      nextMove.reset();
 
       const { rowState, colState } = getTouchedLineStates(
         currentSession.board,
@@ -195,16 +195,7 @@ function useTakuzuAdapter({
     };
 
     const handleToggleNextMove = () => {
-      if (nextMoveVisible) {
-        setNextMoveVisible(false);
-        return;
-      }
-      if (!sessionRef.current) {
-        return;
-      }
-      const suggestedNextMove = getTakuzuNextMoveHint(sessionRef.current.board);
-      setNextMoveHint(suggestedNextMove);
-      setNextMoveVisible(true);
+      nextMove.toggle(sessionRef.current);
     };
 
     const exitToHome = async () => {
@@ -256,11 +247,11 @@ function useTakuzuAdapter({
     ] : [];
     const nextMoveHeaderAction: PuzzleHeaderAction = {
       key: 'next-move',
-      accessibilityLabel: nextMoveVisible
+      accessibilityLabel: nextMove.visible
         ? takuzuStrings.play.helperToggle.hide
         : takuzuStrings.play.helperToggle.show,
-      iconName: nextMoveVisible ? 'bulb' : 'bulb-outline',
-      active: nextMoveVisible,
+      iconName: nextMove.visible ? 'bulb' : 'bulb-outline',
+      active: nextMove.visible,
       onPress: handleToggleNextMove,
     };
 
@@ -269,15 +260,15 @@ function useTakuzuAdapter({
       exitToHome,
       headerActions: [nextMoveHeaderAction],
       headerMeta: metadata,
-      footer: nextMoveVisible && nextMoveHint ? (
+      footer: nextMove.visible && nextMove.hint ? (
         <View style={styles.nextMoveCard}>
           <View style={styles.nextMoveCardHeader}>
             <View style={styles.nextMoveCardBadge}>
               <Text style={styles.nextMoveCardBadgeText}>i</Text>
             </View>
-            <Text style={styles.nextMoveCardTitle}>{nextMoveHint.title}</Text>
+            <Text style={styles.nextMoveCardTitle}>{nextMove.hint.title}</Text>
           </View>
-          <Text style={styles.nextMoveCardBody}>{nextMoveHint.body}</Text>
+          <Text style={styles.nextMoveCardBody}>{nextMove.hint.body}</Text>
         </View>
       ) : (
         <View style={styles.footerSpacer} />
@@ -290,10 +281,10 @@ function useTakuzuAdapter({
               isGiven={session.isGiven}
               finishedCells={session.finishedCells}
               lineAnimationEvent={lineAnimationEvent}
-              nextMoveEvidenceCells={nextMoveVisible ? nextMoveHint?.evidenceCells : []}
-              nextMoveTargetCells={nextMoveVisible ? nextMoveHint?.targetCells : []}
-              nextMoveHighlightRows={nextMoveVisible ? nextMoveHint?.highlightRows : []}
-              nextMoveHighlightCols={nextMoveVisible ? nextMoveHint?.highlightCols : []}
+              nextMoveEvidenceCells={nextMove.hint?.evidenceCells ?? []}
+              nextMoveTargetCells={nextMove.hint?.targetCells ?? []}
+              nextMoveHighlightRows={nextMove.hint?.highlightRows ?? []}
+              nextMoveHighlightCols={nextMove.hint?.highlightCols ?? []}
               size={session.puzzle.size}
               onCellPress={handleCellPress}
               containerWidth={gridContainer.width}
@@ -304,8 +295,7 @@ function useTakuzuAdapter({
       ),
     };
   }, [
-    nextMoveHint,
-    nextMoveVisible,
+    nextMove,
     goHome,
     gridContainer.height,
     gridContainer.width,

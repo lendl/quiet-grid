@@ -47,5 +47,5 @@ All game-facing copy belongs in `content/i18n/`, including:
 ## Learning Center rule
 
 - Tutorial teaches interaction and core moves.
-- Next move explains one valid move.
+- Next move explains one valid stored move suggestion at a time.
 - Analyzer reflects either full solution teaching or loss-state analysis, based on engine mode.

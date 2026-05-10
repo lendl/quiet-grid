@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useLanguage } from '../../../../app/context/LanguageContext';
 import { useTheme } from '../../../../app/context/ThemeContext';
@@ -13,6 +13,7 @@ import {
   type PuzzlePlayAdapterShellArgs,
   type PuzzleRenderState,
 } from '../../../../app/shell/games/playAdapter';
+import { useNextMoveHelper } from '../../../../app/shell/games/useNextMoveHelper';
 import type {
   NonogramActivePuzzle,
   NonogramHudState,
@@ -72,11 +73,11 @@ function useNonogramAdapter({
   const { theme } = useTheme();
   const nonogramStrings = getNonogramStrings();
   const styles = useMemo(() => makeStyles(theme), [theme]);
-  const [nextMoveVisible, setNextMoveVisible] = useState(false);
+  const nextMove = useNextMoveHelper(getNonogramNextMoveHint);
 
   const resetHelperState = useCallback(() => {
-    setNextMoveVisible(false);
-  }, []);
+    nextMove.reset();
+  }, [nextMove.reset]);
 
   const handleMissingPuzzle = useCallback(async () => {
     resetHelperState();
@@ -103,22 +104,17 @@ function useNonogramAdapter({
     sessionRef,
     runImmediateAction: runShellAction,
   }: PuzzleRenderState<NonogramPlaySession, NonogramAction>) => {
-    const hint = session && nextMoveVisible ? getNonogramNextMoveHint(session) : null;
-
     const toggleNextMove = () => {
-      if (!sessionRef.current) {
-        return;
-      }
-      setNextMoveVisible((current) => !current);
+      nextMove.toggle(sessionRef.current);
     };
 
     const nextMoveHeaderAction: PuzzleHeaderAction = {
       key: 'next-move',
-      accessibilityLabel: nextMoveVisible
+      accessibilityLabel: nextMove.visible
         ? nonogramStrings.play.helperToggle.hide
         : nonogramStrings.play.helperToggle.show,
-      iconName: nextMoveVisible ? 'bulb' : 'bulb-outline',
-      active: nextMoveVisible,
+      iconName: nextMove.visible ? 'bulb' : 'bulb-outline',
+      active: nextMove.visible,
       onPress: toggleNextMove,
     };
 
@@ -142,27 +138,28 @@ function useNonogramAdapter({
             puzzle={session.puzzle}
             cells={session.cells}
             onToggleCell={(index) => {
+              nextMove.reset();
               void runShellAction({ type: 'toggle-cell', index });
             }}
-            nextMoveEvidenceCells={hint?.evidenceCells ?? []}
-            nextMoveTargetCells={hint?.targetCells ?? []}
-            nextMoveHighlightRows={hint?.highlightRows ?? []}
-            nextMoveHighlightCols={hint?.highlightCols ?? []}
+            nextMoveEvidenceCells={nextMove.hint?.evidenceCells ?? []}
+            nextMoveTargetCells={nextMove.hint?.targetCells ?? []}
+            nextMoveHighlightRows={nextMove.hint?.highlightRows ?? []}
+            nextMoveHighlightCols={nextMove.hint?.highlightCols ?? []}
           />
         </View>
       ) : (
         <View style={styles.gridArea} />
       ),
-      footer: nextMoveVisible && hint ? (
+      footer: nextMove.visible && nextMove.hint ? (
         <View style={styles.hintCard}>
-          <Text style={styles.hintTitle}>{hint.title}</Text>
-          <Text style={styles.hintBody}>{hint.body}</Text>
+          <Text style={styles.hintTitle}>{nextMove.hint.title}</Text>
+          <Text style={styles.hintBody}>{nextMove.hint.body}</Text>
         </View>
       ) : (
         <View style={styles.emptyFooter} />
       ),
     };
-  }, [nextMoveVisible, nonogramStrings, styles]);
+  }, [nextMove, nonogramStrings, styles]);
 
   return {
     onMissing: handleMissingPuzzle,
