@@ -1,0 +1,27 @@
+# New Game Checklist
+
+- [ ] Game fits Quiet Grid eligibility rules.
+- [ ] User approved the important game-design choices.
+- [ ] Canonical moves are defined.
+- [ ] Support actions are separated from canonical moves.
+- [ ] Mistake policy is defined.
+- [ ] Loss condition is defined separately if applicable.
+- [ ] Existing feedback effects are selected.
+- [ ] Missing reusable effects were split into a separate change.
+- [ ] All four difficulty levels are playable:
+  - [ ] easy
+  - [ ] medium
+  - [ ] hard
+  - [ ] expert
+- [ ] Difficulty separation is meaningful.
+- [ ] Engine-backed vs non-engine mode is explicit.
+- [ ] Analyzer mode is explicit.
+- [ ] App game registry is updated.
+- [ ] Engine registry is updated if applicable.
+- [ ] Persistence shape is defined.
+- [ ] App storage normalization is updated if needed.
+- [ ] All game-facing copy is in `content/i18n/`.
+- [ ] Tutorial uses valid example grids when applicable.
+- [ ] `npm run lint`
+- [ ] `npm run typecheck:app`
+- [ ] `npm run typecheck:engine` when engine touched

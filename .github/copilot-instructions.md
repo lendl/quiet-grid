@@ -16,6 +16,24 @@
 
 There is no automated test script or committed `*.test.*` / `*.spec.*` suite in this repository today, so validate changes with lint plus the relevant type-check command(s).
 
+## AI task entrypoints
+
+- Start at `docs/ai/README.md` for the split AI doc system.
+- For new games, load:
+  - `docs/ai/workflows/new-game.md`
+  - `docs/ai/workflows/new-game-blueprint.md`
+  - `docs/ai/workflows/new-game-checklist.md`
+- For reusable game rules and Learning Center context, load the relevant files under `docs/ai/context/`.
+- For starter code shape, use `docs/ai/scaffolds/base-game/` and add `docs/ai/scaffolds/engine-addon/` only when the game uses the engine.
+- Keep these concepts explicit when adding or changing games:
+  - canonical moves
+  - support actions
+  - mistake policy
+  - loss condition
+  - feedback effects
+- If a new reusable feedback effect is needed, create that effect in a separate change before adding the game.
+- All game-facing copy belongs in `src/games/<id>/content/i18n/`.
+
 ## High-level architecture
 
 - `App.tsx` is a thin provider shell only. It mounts `LanguageProvider`, `ThemeProvider`, and `AppNavigator`; app-wide behavior usually lives under `src/app/`, not in `App.tsx`.
@@ -24,7 +42,7 @@ There is no automated test script or committed `*.test.*` / `*.spec.*` suite in 
 - Shared puzzle play flow lives in `src/app/shell/`. `usePuzzlePlayController()` drives loading, persistence, dialogs, completion/loss routing, and delegates game-specific behavior to the selected adapter through the generic `PuzzlePlayAdapter` contract in `src/app/shell/games/playAdapter.ts`.
 - Localization has two layers:
   - `src/app/i18n/index.ts` contains global app chrome strings and current-language state.
-  - Each game owns its own localized content under `src/games/<id>/i18n/`, resolved with `resolveGameContent()` from `src/app/i18n/gameContent.ts`.
+  - Each game owns its own localized content under `src/games/<id>/content/i18n/`, resolved with `resolveGameContent()` from `src/app/i18n/gameContent.ts`.
 - Active puzzle persistence is versioned and normalized in `src/app/utils/activePuzzleStateStorage.ts`. That file is responsible for shape validation, legacy migrations (`binary` -> `takuzu`), and save/load envelopes before anything reaches storage helpers.
 - The offline generator in `src/engine/` is separate from Expo app runtime. `src/engine/index.ts` loads an `EngineGameDefinition` from `src/engine/gameRegistry.ts`, generates catalog entries, and deduplicates them through the local SQLite DB in `src/engine/puzzles.db`. Takuzu and Nonogram are both registered as engine-capable games.
 

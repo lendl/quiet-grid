@@ -1,0 +1,33 @@
+# New Game Workflow
+
+1. Confirm the game fits Quiet Grid:
+   - logic grid puzzle
+   - offline only
+   - no bot requirement
+   - no internet requirement
+2. If AI already knows the puzzle, propose defaults but require user approval.
+3. Define canonical moves.
+4. Define support actions separately.
+5. Define mistake policy.
+6. Choose existing feedback effects.
+7. If a required effect does not exist, split that effect into its own change before adding the game.
+8. Define the full difficulty ladder:
+   - easy
+   - medium
+   - hard
+   - expert
+9. Validate that the difficulty ladder is meaningful and separable.
+10. Decide engine-backed vs non-engine.
+11. Decide Learning Center scope:
+   - tutorial
+   - next move
+   - analyzer
+12. Choose analyzer mode:
+   - engine-backed: full-solution teaching
+   - non-engine: loss-state reflection
+13. Apply the base scaffold.
+14. Add engine add-on only if needed.
+15. Wire registries and persistence.
+16. Keep all game-facing copy in `content/i18n/`.
+17. Validate with lint and typechecks.
+18. Review against the new-game checklist.
