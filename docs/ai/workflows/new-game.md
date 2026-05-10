@@ -19,6 +19,10 @@
 9. Validate that the difficulty ladder is meaningful and separable.
 10. Decide engine-backed vs non-engine.
 11. Decide Learning Center scope:
+   - Learning Center is the umbrella for all teaching surfaces
+   - define explicit user goal for tutorial
+   - define explicit user goal for next move
+   - define explicit user goal for analyzer
    - tutorial
    - next move
    - analyzer
