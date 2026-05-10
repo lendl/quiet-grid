@@ -39,13 +39,10 @@ Use these packets when AI is editing one subsystem and should not load the whole
 
 ### User goal
 - Teach interaction, moves, and improvement.
-- Tutorial: teach the rules, interaction model, and core moves safely.
-- Next Move: give one valid live suggestion while keeping the player in control.
-- Analyzer: explain past decisions so the player can improve future play.
 
 ### Architecture goal
 - Learning Center is the umbrella subsystem for tutorial, next move, and analyzer.
-- Keep tutorial, next move, and analyzer aligned with game move logic.
+- Load `docs/ai/context/learning-center.md` for the canonical Learning Center rules and surface-specific guidance.
 
 ### File map
 - `src/games/<id>/ui/tutorial/`
@@ -54,7 +51,7 @@ Use these packets when AI is editing one subsystem and should not load the whole
 - `src/games/<id>/content/i18n/`
 
 ### Mistakes to avoid
-- Do not teach unsupported moves or invalid lesson boards.
+- Do not treat this summary as the rule source when `docs/ai/context/learning-center.md` exists.
 
 ## Content and i18n
 

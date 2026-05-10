@@ -30,8 +30,12 @@ Learning Center is the umbrella teaching system for a game. It includes all thre
 
 - Shared Learning Center rules apply to tutorial, next move, and analyzer unless a rule below names only one surface.
 - Keep all Learning Center surfaces aligned with the same canonical move language and puzzle semantics.
+- Tutorial should introduce the player goal and win condition before or alongside move teaching.
 - Tutorial should explain how the user can interact with the puzzle.
+- Tutorial should explain the real live-play control mapping, not only tutorial-specific controls.
+- Tutorial should explicitly call out when tutorial controls differ from live puzzle controls.
 - Tutorial should use a valid example grid for each lesson when tutorial exists.
+- Tutorial example grids should be valid puzzle states that obey the game rules and the lesson claim being taught.
 - Tutorial should not compare difficulty levels.
 - Next move should explain one valid move from the current puzzle state.
 - Next move should present one stored move suggestion at a time, not a continuously recomputed helper stream.
@@ -57,5 +61,6 @@ Learning Center is the umbrella teaching system for a game. It includes all thre
 
 - Do not hardcode game-facing copy in screens or components.
 - Do not use invalid or rule-breaking tutorial boards.
+- Do not use tutorial-only controls without explaining how they map to real play.
 - Do not let tutorial drift into difficulty comparison.
 - Do not invent analyzer logic separate from the game’s move logic.

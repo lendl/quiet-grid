@@ -47,10 +47,4 @@ All game-facing copy belongs in `content/i18n/`, including:
 ## Learning Center rule
 
 - Learning Center is the umbrella subsystem for tutorial, next move, and analyzer.
-- Unless explicitly scoped narrower, Learning Center guidance applies to all three surfaces.
-- Tutorial user goal: teach the player the rules, interaction model, and core moves safely.
-- Next move user goal: give the player one valid live suggestion while keeping the player in control.
-- Analyzer user goal: help the player reflect on outcomes and improve future decisions.
-- Tutorial teaches interaction and core moves.
-- Next move explains one valid stored move suggestion at a time.
-- Analyzer reflects either full solution teaching or loss-state analysis, based on engine mode.
+- Load `docs/ai/context/learning-center.md` and follow it as the single source of truth for Learning Center user goals, rules, and architecture guidance.
