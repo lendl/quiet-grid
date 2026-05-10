@@ -200,7 +200,7 @@ export default function TutorialScreen({ navigation, route }: Props) {
         void exitTutorial();
       }}
       statusText={statusText}
-      title={lesson.prompt}
+      title={lesson.title}
       body={lesson.body}
       lessonCount={lessons.length}
       activeLessonIndex={lessonIndex}
@@ -214,6 +214,11 @@ export default function TutorialScreen({ navigation, route }: Props) {
       )}
       footer={(
         <>
+          {lessonIndex === 0 ? (
+            <View style={s.introCard}>
+              <Text style={s.introText}>{takuzuStrings.play.tutorial.introNote}</Text>
+            </View>
+          ) : null}
           <View style={s.feedbackSlot}>
             {feedbackText ? (
               <View style={s.feedbackCard}>
@@ -263,6 +268,20 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     minHeight: 52,
     justifyContent: 'center',
     gap: 12,
+  },
+  introCard: {
+    borderRadius: 14,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    backgroundColor: withAlpha(theme.primary, 0.08),
+    borderWidth: 1,
+    borderColor: withAlpha(theme.primary, 0.2),
+  },
+  introText: {
+    fontSize: 14,
+    lineHeight: 21,
+    color: theme.textSecondary,
+    textAlign: 'center',
   },
   feedbackCard: {
     borderRadius: 14,

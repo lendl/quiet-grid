@@ -33,6 +33,7 @@ const en: NonogramI18n = {
     },
     tutorial: {
       progressLabel: (step, total) => `Lesson ${step} of ${total}`,
+      introNote: 'Goal: complete the picture so every row and column matches its clues. In live play, tap a board cell to cycle empty, filled, X, then empty again. In this tutorial, use the action buttons below instead of tapping the board.',
       exitLabel: {
         end: 'End',
         skip: 'Skip',
@@ -107,16 +108,16 @@ const en: NonogramI18n = {
     'read-clues': {
       title: 'Read the line clue',
       body: 'A clue of 3 means these three cells must be one filled block.',
-      prompt: 'Tap the cells that must be filled.',
+      prompt: 'Fill the highlighted cells.',
       retry: 'Not quite. The 3-cell block still has one forced position.',
       success: 'Exactly. Those cells belong to the only 3-cell block.',
     },
     'forced-fill': {
       title: 'Find the forced fill',
-      body: 'This row clue is so large that the center cells must be filled.',
-      prompt: 'Fill the forced cells.',
-      retry: 'Try the cells that every valid placement shares.',
-      success: 'Right. Those middle cells overlap in every placement.',
+      body: 'This row needs one block of 4, and the last column clue says that final cell must stay empty.',
+      prompt: 'Fill the highlighted cells.',
+      retry: 'The last column must stay empty, so the 4-block has to cover the highlighted cells.',
+      success: 'Right. Once the last cell is ruled out, the 4-block can only cover those highlighted cells.',
     },
     'forced-mark': {
       title: 'Mark impossible cells',
@@ -134,7 +135,7 @@ const en: NonogramI18n = {
     },
     'tap-cycle': {
       title: 'Use the tap cycle',
-      body: 'Tap once to fill, again to mark with X, and once more to clear.',
+      body: 'In live play, tap once to fill, again to mark with X, and once more to clear. In this tutorial, use the buttons below to choose the same result.',
       prompt: 'Mark the cell with X.',
       retry: 'This move needs an X, not a filled square.',
       success: 'Perfect. You can switch between fill, X, and clear.',

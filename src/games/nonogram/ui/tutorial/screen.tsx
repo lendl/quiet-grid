@@ -22,7 +22,7 @@ type TutorialAnswerState = 'idle' | 'wrong' | 'correct';
 const ADVANCE_DELAY_MS = 1200;
 
 function makeStyles(theme: Theme) {
-  return StyleSheet.create({
+    return StyleSheet.create({
     backButton: {
       alignSelf: 'flex-start',
       marginBottom: 6,
@@ -31,11 +31,25 @@ function makeStyles(theme: Theme) {
       alignItems: 'center',
       justifyContent: 'center',
     },
-    answerTray: {
-      gap: 12,
-    },
-    feedbackCard: {
-      minHeight: 54,
+      answerTray: {
+        gap: 12,
+      },
+      introCard: {
+        minHeight: 54,
+        paddingHorizontal: 14,
+        justifyContent: 'center',
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: withAlpha(theme.primaryLight, 0.35),
+        backgroundColor: withAlpha(theme.primary, 0.08),
+      },
+      introText: {
+        color: theme.textSecondary,
+        fontSize: 14,
+        lineHeight: 20,
+      },
+      feedbackCard: {
+        minHeight: 54,
       paddingHorizontal: 14,
       justifyContent: 'center',
       borderRadius: 16,
@@ -220,6 +234,11 @@ export default function NonogramTutorialScreen({ navigation, route }: Props) {
       board={<NonogramTutorialBoard lesson={lesson} cells={cells} />}
       footer={(
         <View style={styles.answerTray}>
+          {lessonIndex === 0 ? (
+            <View style={styles.introCard}>
+              <Text style={styles.introText}>{nonogramStrings.tutorial.introNote}</Text>
+            </View>
+          ) : null}
           <Text style={styles.actionPrompt}>{lesson.prompt}</Text>
           {feedbackText ? (
             <View style={styles.feedbackCard}>

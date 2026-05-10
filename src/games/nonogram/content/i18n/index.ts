@@ -47,6 +47,7 @@ export interface NonogramStrings {
   };
   tutorial: {
     progressLabel(step: number, total: number): string;
+    introNote: string;
     exitLabel: {
       end: string;
       skip: string;

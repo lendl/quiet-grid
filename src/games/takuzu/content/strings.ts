@@ -22,6 +22,7 @@ export interface TakuzuStrings {
     };
     tutorial: {
       progressLabel(step: number): string;
+      introNote: string;
       exitLabel: {
         end: string;
         skip: string;

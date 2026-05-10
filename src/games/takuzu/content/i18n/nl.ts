@@ -30,6 +30,7 @@ const nl = {
       },
       tutorial: {
         progressLabel: (step: number) => `Les ${step}`,
+        introNote: 'Doel: vul het hele rooster zodat elke rij en kolom in balans blijft, uniek is en geen trio\'s bevat. In het echte spel tik je op de gemarkeerde cel om te wisselen tussen leeg, 0, 1 en weer leeg. In deze tutorial gebruik je de knoppen 0 en 1 hieronder.',
         exitLabel: {
           end: 'Tutorial beëindigen',
           skip: 'Tutorial overslaan',

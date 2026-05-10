@@ -29,10 +29,10 @@ const LESSONS: Record<NonogramTutorialLessonKey, LessonConfig> = {
       rows: 1,
       cols: 5,
       rowClues: [[4]],
-      colClues: [[0], [1], [1], [1], [0]],
+      colClues: [[1], [1], [1], [1], [0]],
     },
     initialCells: board(1, 5),
-    targetCells: [{ row: 0, col: 1 }, { row: 0, col: 2 }, { row: 0, col: 3 }],
+    targetCells: [{ row: 0, col: 0 }, { row: 0, col: 1 }, { row: 0, col: 2 }, { row: 0, col: 3 }],
     action: 'filled',
   },
   'forced-mark': {

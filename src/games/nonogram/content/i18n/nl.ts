@@ -33,6 +33,7 @@ const nl: NonogramI18n = {
     },
     tutorial: {
       progressLabel: (step, total) => `Les ${step} van ${total}`,
+      introNote: 'Doel: maak het plaatje af zodat elke rij en kolom overeenkomt met zijn aanwijzingen. In het echte spel tik je op een bordcel om te wisselen tussen leeg, gevuld, X en weer leeg. In deze tutorial gebruik je de actieknoppen hieronder in plaats van op het bord te tikken.',
       exitLabel: {
         end: 'Stoppen',
         skip: 'Overslaan',
@@ -107,16 +108,16 @@ const nl: NonogramI18n = {
     'read-clues': {
       title: 'Lees de lijn-aanwijzing',
       body: 'Een aanwijzing van 3 betekent dat deze drie cellen samen een gevuld blok vormen.',
-      prompt: 'Tik op de cellen die zeker gevuld moeten zijn.',
+      prompt: 'Vul de gemarkeerde cellen.',
       retry: 'Nog niet. Het blok van 3 heeft nog steeds maar één gedwongen overlap.',
       success: 'Precies. Die cellen horen bij het enige blok van 3.',
     },
     'forced-fill': {
       title: 'Vind de geforceerde vulling',
-      body: 'Deze rij-aanwijzing is zo groot dat de middelste cellen zeker gevuld zijn.',
-      prompt: 'Vul de geforceerde cellen.',
-      retry: 'Kijk naar de cellen die in elke geldige plaatsing terugkomen.',
-      success: 'Juist. Die middelste cellen overlappen altijd.',
+      body: 'Deze rij heeft één blok van 4 nodig, en de aanwijzing van de laatste kolom zegt dat die eindcel leeg moet blijven.',
+      prompt: 'Vul de gemarkeerde cellen.',
+      retry: 'De laatste kolom moet leeg blijven, dus het blok van 4 moet over de gemarkeerde cellen lopen.',
+      success: 'Juist. Zodra de laatste cel afvalt, kan het blok van 4 alleen nog over die gemarkeerde cellen lopen.',
     },
     'forced-mark': {
       title: 'Markeer onmogelijke cellen',
@@ -134,7 +135,7 @@ const nl: NonogramI18n = {
     },
     'tap-cycle': {
       title: 'Gebruik de tik-cyclus',
-      body: 'Tik eenmaal om te vullen, nog eens voor een X, en nog eens om te wissen.',
+      body: 'In het echte spel tik je eenmaal om te vullen, nog eens voor een X, en nog eens om te wissen. In deze tutorial gebruik je de knoppen hieronder om hetzelfde resultaat te kiezen.',
       prompt: 'Markeer de cel met een X.',
       retry: 'Deze zet vraagt om een X, niet om een vulling.',
       success: 'Perfect. Zo wissel je tussen vullen, X en wissen.',
