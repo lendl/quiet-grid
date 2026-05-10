@@ -30,6 +30,7 @@ function parseSeenTutorials(value: string | null): SeenTutorialsMap {
     return {
       takuzu: tutorialMap.takuzu === true || tutorialMap.binary === true ? true : undefined,
       minesweeper: tutorialMap.minesweeper === true ? true : undefined,
+      nonogram: tutorialMap.nonogram === true ? true : undefined,
     };
   } catch {
     return {};

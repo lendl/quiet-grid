@@ -1,8 +1,10 @@
 import { takuzuEngineDefinition } from '../games/takuzu/engine/definition';
+import { nonogramEngineDefinition } from '../games/nonogram/engine/definition';
 import type { EngineGameDefinition } from './gameDefinition';
 
 export const engineGameRegistry = [
   takuzuEngineDefinition,
+  nonogramEngineDefinition,
 ] as const satisfies readonly EngineGameDefinition[];
 
 export function getEngineGameDefinition(id: string): EngineGameDefinition {

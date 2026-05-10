@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import type { StackScreenProps } from '@react-navigation/stack';
-import AppScreen from '../../../../app/components/AppScreen';
 import GridHomeIcon from '../../../../app/components/GridHomeIcon';
+import PuzzleTutorialScaffold from '../../../../app/components/PuzzleTutorialScaffold';
 import { useLanguage } from '../../../../app/context/LanguageContext';
 import { useTheme } from '../../../../app/context/ThemeContext';
 import { returnToHome } from '../../../../app/navigation/returnToHome';
@@ -39,7 +39,6 @@ export default function TutorialScreen({ navigation, route }: Props) {
   const isReplay = route.params.entry === 'howToPlay';
   const currentMove = lesson.moves[moveIndex] ?? null;
   const progressLabel = takuzuStrings.play.tutorial.progressLabel(lessonIndex + 1);
-  const lessonDots = lessons.map((_, index) => index === lessonIndex);
 
   const resetLessonState = useCallback((nextLesson: typeof lesson) => {
     setGrid(cloneGrid(nextLesson.grid));
@@ -184,8 +183,8 @@ export default function TutorialScreen({ navigation, route }: Props) {
     : null;
 
   return (
-    <AppScreen contentStyle={s.container}>
-      {isReplay ? (
+    <PuzzleTutorialScaffold
+      backButton={isReplay ? (
         <TouchableOpacity
           style={s.backButton}
           onPress={() => returnToHome(navigation)}
@@ -194,79 +193,64 @@ export default function TutorialScreen({ navigation, route }: Props) {
         >
           <GridHomeIcon />
         </TouchableOpacity>
-      ) : null}
-      <View style={s.header}>
-        <Text style={s.progress}>{progressLabel}</Text>
-        <TouchableOpacity onPress={() => void exitTutorial()} activeOpacity={0.8}>
-          <Text style={s.exitText}>{exitLabel}</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={s.statusRow}>
-        {statusText ? <Text style={s.statusText}>{statusText}</Text> : null}
-      </View>
-
-      <View style={s.mainContent}>
-        <Text style={s.promptText}>{lesson.prompt}</Text>
-        {lesson.body ? <Text style={s.body}>{lesson.body}</Text> : null}
-
-        <View style={s.rowWrap}>
-          <TutorialRow
-            grid={displayGrid}
-            focusCell={currentMove ? { row: currentMove.row, col: currentMove.col } : null}
-            answerState={answerState}
-          />
-        </View>
-
-        <View style={s.dots}>
-          {lessonDots.map((isActive, index) => (
-            <View key={index} style={[s.dot, isActive ? s.dotActive : null]} />
-          ))}
-        </View>
-      </View>
-
-      <View style={s.answerTray}>
-        <View style={s.feedbackSlot}>
-          {feedbackText ? (
-            <View style={s.feedbackCard}>
-              <Text style={s.feedbackText}>{feedbackText}</Text>
-            </View>
-          ) : (
-            <View style={s.feedbackPlaceholder} />
-          )}
-        </View>
-        <View style={s.answerButtons}>
-          {[1, 0].map((value) => {
-            const isSelected = selectedAnswer === value;
-            return (
-              <TouchableOpacity
-                key={value}
-                accessibilityRole="button"
-                accessibilityLabel={takuzuStrings.play.tutorial.selectAnswerLabel(value as 0 | 1)}
-                activeOpacity={0.82}
-                disabled={answerState === 'correct'}
-                onPress={() => handleAnswerPress(value as 0 | 1)}
-                style={[
-                  s.answerButton,
-                  isSelected ? s.answerButtonSelected : null,
-                ]}
-              >
-                <Text style={s.answerButtonText}>{value}</Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-      </View>
-    </AppScreen>
+      ) : undefined}
+      progressLabel={progressLabel}
+      exitLabel={exitLabel}
+      onExit={() => {
+        void exitTutorial();
+      }}
+      statusText={statusText}
+      title={lesson.prompt}
+      body={lesson.body}
+      lessonCount={lessons.length}
+      activeLessonIndex={lessonIndex}
+      boardMinHeight={132}
+      board={(
+        <TutorialRow
+          grid={displayGrid}
+          focusCell={currentMove ? { row: currentMove.row, col: currentMove.col } : null}
+          answerState={answerState}
+        />
+      )}
+      footer={(
+        <>
+          <View style={s.feedbackSlot}>
+            {feedbackText ? (
+              <View style={s.feedbackCard}>
+                <Text style={s.feedbackText}>{feedbackText}</Text>
+              </View>
+            ) : (
+              <View style={s.feedbackPlaceholder} />
+            )}
+          </View>
+          <View style={s.answerButtons}>
+            {[1, 0].map((value) => {
+              const isSelected = selectedAnswer === value;
+              return (
+                <TouchableOpacity
+                  key={value}
+                  accessibilityRole="button"
+                  accessibilityLabel={takuzuStrings.play.tutorial.selectAnswerLabel(value as 0 | 1)}
+                  activeOpacity={0.82}
+                  disabled={answerState === 'correct'}
+                  onPress={() => handleAnswerPress(value as 0 | 1)}
+                  style={[
+                    s.answerButton,
+                    isSelected ? s.answerButtonSelected : null,
+                  ]}
+                >
+                  <Text style={s.answerButtonText}>{value}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </>
+      )}
+    />
   );
 }
 
 const makeStyles = (theme: Theme) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.background,
-    padding: 20,
-    gap: 20,
-  },
   backButton: {
     alignSelf: 'flex-start',
     marginBottom: 6,
@@ -274,77 +258,6 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     minHeight: 36,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  statusRow: {
-    minHeight: 20,
-    alignItems: 'flex-end',
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: theme.textSecondary,
-  },
-  progress: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: theme.primaryLight,
-    letterSpacing: 0.5,
-  },
-  exitText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: theme.textSecondary,
-  },
-  mainContent: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 18,
-  },
-  body: {
-    maxWidth: 280,
-    fontSize: 15,
-    lineHeight: 23,
-    color: theme.textSecondary,
-    textAlign: 'center',
-  },
-  rowWrap: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 132,
-  },
-  dots: {
-    flexDirection: 'row',
-    gap: 8,
-    alignItems: 'center',
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 999,
-    backgroundColor: theme.border,
-  },
-  dotActive: {
-    width: 20,
-    backgroundColor: theme.primary,
-  },
-  promptText: {
-    maxWidth: 260,
-    fontSize: 28,
-    lineHeight: 34,
-    color: theme.text,
-    fontWeight: '800',
-    textAlign: 'center',
-  },
-  answerTray: {
-    gap: 14,
-    paddingTop: 8,
-    paddingBottom: 8,
   },
   feedbackSlot: {
     minHeight: 52,

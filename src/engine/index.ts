@@ -1,3 +1,4 @@
+import type { PuzzleDifficulty } from '../games/shared/types';
 import { openDb, hashDedupeKey, hasTried, recordTried } from './db';
 import { getEngineGameDefinition } from './gameRegistry';
 import {
@@ -34,6 +35,19 @@ function parseSizeArg(): number | null {
   return Number(rawSize);
 }
 
+function parseDifficultyArg(): PuzzleDifficulty | null {
+  const difficultyIndex = process.argv.findIndex((arg) => arg === '--difficulty');
+  const pairedArg = difficultyIndex >= 0 ? process.argv[difficultyIndex + 1] : null;
+  const inlineArg = process.argv.find((arg) => arg.startsWith('--difficulty='))?.split('=')[1];
+  const rawDifficulty = inlineArg ?? pairedArg;
+  return rawDifficulty === 'easy'
+    || rawDifficulty === 'medium'
+    || rawDifficulty === 'hard'
+    || rawDifficulty === 'expert'
+    ? rawDifficulty
+    : null;
+}
+
 function formatSizeLabel(sizes: readonly number[]): string {
   return sizes.map((size) => `${size}x${size}`).join('/');
 }
@@ -57,12 +71,23 @@ function main(): void {
   const replaceCatalog = process.argv.includes('--replace');
   const reclassifyExisting = process.argv.includes('--reclassify-existing');
   const forcedSize = parseSizeArg();
+  const forcedDifficulty = parseDifficultyArg();
   const allowedSizes = game.listAllowedSizes();
 
   if (forcedSize !== null && !allowedSizes.includes(forcedSize)) {
     throw new Error(
       `Game ${game.id} does not support size ${forcedSize}. Allowed sizes: ${allowedSizes.join(', ')}`,
     );
+  }
+
+  if (forcedDifficulty !== null) {
+    const difficultyAllowed = (forcedSize === null ? allowedSizes : [forcedSize])
+      .some((size) => game.listAllowedDifficulties(size).includes(forcedDifficulty));
+    if (!difficultyAllowed) {
+      throw new Error(
+        `Game ${game.id} does not support difficulty ${forcedDifficulty} for the selected size filter.`,
+      );
+    }
   }
 
   const selectedSizes = forcedSize === null ? [...allowedSizes] : [forcedSize];
@@ -87,7 +112,7 @@ function main(): void {
 
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
       const puzzleSize = selectedSizes[Math.floor(Math.random() * selectedSizes.length)];
-      const targetDifficulty = game.pickTargetDifficulty(puzzleSize);
+      const targetDifficulty = forcedDifficulty ?? game.pickTargetDifficulty(puzzleSize);
       const generatedPuzzle = game.generateOne(puzzleSize, targetDifficulty);
       if (!generatedPuzzle) {
         console.log(`  [skip] ${game.title} generator hit backtrack limit (attempt ${attempt})`);

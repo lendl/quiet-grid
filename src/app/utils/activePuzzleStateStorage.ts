@@ -2,6 +2,7 @@ import type {
   ActivePuzzle,
   TakuzuActivePuzzle,
   MinesweeperActivePuzzle,
+  NonogramActivePuzzle,
 } from '../shell/activePuzzleTypes';
 import type { Difficulty } from '../types';
 import {
@@ -13,6 +14,7 @@ import type { PuzzleSessionEnvelope } from '../shell/types';
 
 type LineKey = TakuzuActivePuzzle['penalizedLineKeys'][number];
 type MinesweeperPuzzle = MinesweeperActivePuzzle['puzzle'];
+type NonogramPuzzle = NonogramActivePuzzle['puzzle'];
 
 const HEX_PATTERN = /^[\da-f]+$/i;
 
@@ -53,11 +55,15 @@ function isHexPuzzleData(value: unknown, size: number): value is string {
   return typeof value === 'string' && value.length === encodedLength && HEX_PATTERN.test(value);
 }
 
-function getPuzzleTypeId(value: Record<string, unknown>): 'takuzu' | 'minesweeper' | null {
+function getPuzzleTypeId(value: Record<string, unknown>): 'takuzu' | 'minesweeper' | 'nonogram' | null {
   if (value.puzzleTypeId === 'binary') {
     return 'takuzu';
   }
-  if (value.puzzleTypeId === 'takuzu' || value.puzzleTypeId === 'minesweeper') {
+  if (
+    value.puzzleTypeId === 'takuzu'
+    || value.puzzleTypeId === 'minesweeper'
+    || value.puzzleTypeId === 'nonogram'
+  ) {
     return value.puzzleTypeId;
   }
   return null;
@@ -177,11 +183,55 @@ function isMinesweeperActivePuzzle(value: unknown): value is MinesweeperActivePu
     && isFiniteNonNegativeNumber(obj.elapsedSeconds);
 }
 
+function isClueLine(value: unknown): boolean {
+  return Array.isArray(value)
+    && value.every((entry) => Number.isInteger(entry) && (entry as number) >= 0);
+}
+
+function isNonogramPuzzle(value: unknown): value is NonogramPuzzle {
+  if (!value || typeof value !== 'object') return false;
+  const puzzle = value as Record<string, unknown>;
+  const rows = puzzle.rows;
+  const cols = puzzle.cols;
+  return typeof puzzle.id === 'string'
+    && (puzzle.size === 5 || puzzle.size === 10)
+    && Number.isInteger(rows)
+    && Number.isInteger(cols)
+    && rows === puzzle.size
+    && cols === puzzle.size
+    && isDifficulty(puzzle.difficulty)
+    && isHexPuzzleData(puzzle.solution, (rows as number))
+    && Array.isArray(puzzle.rowClues)
+    && Array.isArray(puzzle.colClues)
+    && (puzzle.rowClues as unknown[]).every(isClueLine)
+    && (puzzle.colClues as unknown[]).every(isClueLine);
+}
+
+function isNonogramCellState(value: unknown): boolean {
+  return value === 'empty' || value === 'filled' || value === 'marked';
+}
+
+function isNonogramCells(value: unknown, total: number): boolean {
+  return Array.isArray(value) && value.length === total && value.every(isNonogramCellState);
+}
+
+function isNonogramActivePuzzle(value: unknown): value is NonogramActivePuzzle {
+  if (!value || typeof value !== 'object') return false;
+  const obj = value as Record<string, unknown>;
+  if (getPuzzleTypeId(obj) !== 'nonogram' || !isNonogramPuzzle(obj.puzzle)) {
+    return false;
+  }
+
+  return isNonogramCells(obj.cells, obj.puzzle.rows * obj.puzzle.cols)
+    && isFiniteNonNegativeNumber(obj.elapsedSeconds);
+}
+
 function isActivePuzzle(value: unknown): value is ActivePuzzle {
   if (!value || typeof value !== 'object') return false;
   const activePuzzle = value as Record<string, unknown>;
   if (getPuzzleTypeId(activePuzzle) === 'takuzu') return isTakuzuActivePuzzle(activePuzzle);
   if (getPuzzleTypeId(activePuzzle) === 'minesweeper') return isMinesweeperActivePuzzle(activePuzzle);
+  if (getPuzzleTypeId(activePuzzle) === 'nonogram') return isNonogramActivePuzzle(activePuzzle);
   return false;
 }
 
@@ -228,6 +278,23 @@ function normalizeMinesweeperActivePuzzle(raw: MinesweeperActivePuzzle): Mineswe
   };
 }
 
+function normalizeNonogramPuzzle(puzzle: NonogramPuzzle): NonogramPuzzle {
+  return {
+    ...puzzle,
+    rows: puzzle.size,
+    cols: puzzle.size,
+  };
+}
+
+function normalizeNonogramActivePuzzle(raw: NonogramActivePuzzle): NonogramActivePuzzle {
+  return {
+    ...raw,
+    puzzleTypeId: 'nonogram',
+    puzzle: normalizeNonogramPuzzle(raw.puzzle),
+    cells: [...raw.cells],
+  };
+}
+
 export function makeEmptyBooleanGrid(size: number): boolean[][] {
   return Array.from({ length: size }, (): boolean[] => Array.from({ length: size }, () => false));
 }
@@ -245,6 +312,9 @@ export async function loadActivePuzzleState(): Promise<ActivePuzzle | null> {
       if (getPuzzleTypeId(parsed as unknown as Record<string, unknown>) === 'takuzu') {
         return normalizeTakuzuActivePuzzle(parsed as TakuzuActivePuzzle);
       }
+      if (getPuzzleTypeId(parsed as unknown as Record<string, unknown>) === 'nonogram') {
+        return normalizeNonogramActivePuzzle(parsed as NonogramActivePuzzle);
+      }
       return normalizeMinesweeperActivePuzzle(parsed as MinesweeperActivePuzzle);
     }
     if (isLegacyTakuzuActivePuzzle(parsed)) {
@@ -261,7 +331,9 @@ export async function loadActivePuzzleState(): Promise<ActivePuzzle | null> {
 export async function saveActivePuzzleState(activePuzzle: ActivePuzzle): Promise<void> {
   const normalizedActivePuzzle = activePuzzle.puzzleTypeId === 'takuzu'
     ? normalizeTakuzuActivePuzzle(activePuzzle)
-    : normalizeMinesweeperActivePuzzle(activePuzzle);
+    : activePuzzle.puzzleTypeId === 'nonogram'
+      ? normalizeNonogramActivePuzzle(activePuzzle)
+      : normalizeMinesweeperActivePuzzle(activePuzzle);
 
   await saveStoredActivePuzzle({
     puzzleTypeId: normalizedActivePuzzle.puzzleTypeId,
@@ -281,9 +353,10 @@ function isPuzzleSessionEnvelope(value: unknown): value is PuzzleSessionEnvelope
 
   const envelope = value as Record<string, unknown>;
   return (
-    (envelope.puzzleTypeId === 'binary'
-      || envelope.puzzleTypeId === 'takuzu'
-      || envelope.puzzleTypeId === 'minesweeper')
+     (envelope.puzzleTypeId === 'binary'
+       || envelope.puzzleTypeId === 'takuzu'
+       || envelope.puzzleTypeId === 'minesweeper'
+       || envelope.puzzleTypeId === 'nonogram')
     && Number.isInteger(envelope.version)
     && 'payload' in envelope
   );

@@ -20,6 +20,7 @@ export interface EngineGameDefinition<TEntry extends EngineCatalogEntry = Engine
   entryIdPrefix: string;
   catalog: CatalogFileOptions<TEntry>;
   listAllowedSizes(): readonly number[];
+  listAllowedDifficulties(size: number): readonly PuzzleDifficulty[];
   pickTargetDifficulty(size: number): PuzzleDifficulty;
   generateOne(size: number, targetDifficulty: PuzzleDifficulty): EngineGenerateResult<TEntry> | null;
   getEntryDedupeKey(entry: TEntry | Omit<TEntry, 'id'>): string;

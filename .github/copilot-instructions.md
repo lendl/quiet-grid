@@ -11,6 +11,8 @@
 - Type-check engine CLI: `npm run typecheck:engine`
 - Run Takuzu engine CLI: `npm run engine -- --game=takuzu`
 - Generate one Takuzu size bucket: `npm run engine -- --game=takuzu --size=8`
+- Run Nonogram engine CLI: `npm run engine -- --game=nonogram`
+- Generate one Nonogram bucket: `npm run engine -- --game=nonogram --size=5 --difficulty=easy 25`
 
 There is no automated test script or committed `*.test.*` / `*.spec.*` suite in this repository today, so validate changes with lint plus the relevant type-check command(s).
 
@@ -18,13 +20,13 @@ There is no automated test script or committed `*.test.*` / `*.spec.*` suite in 
 
 - `App.tsx` is a thin provider shell only. It mounts `LanguageProvider`, `ThemeProvider`, and `AppNavigator`; app-wide behavior usually lives under `src/app/`, not in `App.tsx`.
 - Navigation is centralized in `src/app/navigation/AppNavigator.tsx`. Shared screens route by `puzzleTypeId`, then resolve the active game through the shell registry instead of importing game logic directly into screens.
-- Puzzle games are plugin-like modules under `src/games/<id>/`. Each game keeps `definition.ts` at package root as the shell entrypoint, while internal code is split by responsibility: `gameplay/` for rules and session logic, `ui/` for React rendering and adapter glue, `content/` for localized copy, `platform/` for storage/runtime integration, and `engine/` for generator support. The shell registry in `src/app/shell/games/gameRegistry.ts` is the source of truth for installed app games.
+- Puzzle games are plugin-like modules under `src/games/<id>/`. Each game keeps `definition.ts` at package root as the shell entrypoint, while internal code is split by responsibility: `gameplay/` for rules and session logic, `ui/` for React rendering and adapter glue, `content/` for localized copy, `platform/` for storage/runtime integration, and `engine/` for generator support. The shell registry in `src/app/shell/games/gameRegistry.ts` is the source of truth for installed app games, and it currently includes Takuzu, Minesweeper, and Nonogram.
 - Shared puzzle play flow lives in `src/app/shell/`. `usePuzzlePlayController()` drives loading, persistence, dialogs, completion/loss routing, and delegates game-specific behavior to the selected adapter through the generic `PuzzlePlayAdapter` contract in `src/app/shell/games/playAdapter.ts`.
 - Localization has two layers:
   - `src/app/i18n/index.ts` contains global app chrome strings and current-language state.
   - Each game owns its own localized content under `src/games/<id>/i18n/`, resolved with `resolveGameContent()` from `src/app/i18n/gameContent.ts`.
 - Active puzzle persistence is versioned and normalized in `src/app/utils/activePuzzleStateStorage.ts`. That file is responsible for shape validation, legacy migrations (`binary` -> `takuzu`), and save/load envelopes before anything reaches storage helpers.
-- The offline generator in `src/engine/` is separate from Expo app runtime. `src/engine/index.ts` loads an `EngineGameDefinition` from `src/engine/gameRegistry.ts`, generates catalog entries, and deduplicates them through the local SQLite DB in `src/engine/puzzles.db`. Today only Takuzu is registered as an engine-capable game.
+- The offline generator in `src/engine/` is separate from Expo app runtime. `src/engine/index.ts` loads an `EngineGameDefinition` from `src/engine/gameRegistry.ts`, generates catalog entries, and deduplicates them through the local SQLite DB in `src/engine/puzzles.db`. Takuzu and Nonogram are both registered as engine-capable games.
 
 ## Key conventions
 

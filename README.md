@@ -5,10 +5,11 @@ A lightweight, privacy-first logic puzzle game for **Android**, built with React
 
 ## What is Quiet Grid?
 
-Quiet Grid currently includes two offline puzzle types:
+Quiet Grid currently includes three offline puzzle types:
 
 1. **Takuzu** — fill a grid with 0s and 1s using logic
 2. **Minesweeper** — clear the grid without opening a mine
+3. **Nonogram** — reveal the picture from row and column clues
 
 ## Features
 
@@ -18,6 +19,7 @@ Quiet Grid currently includes two offline puzzle types:
   - Hard: 8x8 and 10x10
   - Expert: 10x10
 - Minesweeper offers 4 difficulty levels with board profiles tuned per level
+- Nonogram offers 5x5 and 10x10 puzzles across easy and medium difficulty
 - Real-time line feedback (with 800ms grace period after each tap)
 - Per-row and per-column live status indicators
 - Undo history, 3 hints per puzzle, reset
@@ -44,10 +46,22 @@ src/
   games/                    # Puzzle-type modules
     shared/                 #   Engine-safe puzzle primitives used by game packages
     takuzu/                 #   Takuzu puzzle package
-      core/                 #     Engine-safe takuzu types, decoding, validation
+      gameplay/             #     Play state, rules, and analysis logic
+      ui/                   #     Play, tutorial, and analyzer React UI
+      content/              #     Game-localized copy
+      platform/             #     Runtime loading and codecs
       engine/               #     Takuzu engine plugin for shared CLI runner
     minesweeper/            #   Minesweeper puzzle package
-      core/                 #     Engine-safe minesweeper types and rules
+      gameplay/             #     Play state, rules, and analysis logic
+      ui/                   #     Play, tutorial, and analyzer React UI
+      content/              #     Game-localized copy
+      platform/             #     Runtime loading and codecs
+    nonogram/               #   Nonogram puzzle package
+      gameplay/             #     Play state, rules, and analysis logic
+      ui/                   #     Play, tutorial, and analyzer React UI
+      content/              #     Game-localized copy
+      platform/             #     Runtime loading and codecs
+      engine/               #     Nonogram engine plugin for shared CLI runner
   engine/                   # Offline puzzle generator CLI (Node.js)
     gameDefinition.ts       #   Shared contract for engine-capable games
     gameRegistry.ts         #   Registry of installed engine plugins
@@ -86,13 +100,15 @@ npm run android
 
 The app will launch automatically in the running emulator. On a physical device, scan the QR code shown in the terminal with Expo Go.
 
-## Generating takuzu puzzles
+## Generating puzzles
 
-The engine uses a shared CLI runner in `src/engine/` plus game-owned engine plugins in `src/games/<id>/engine/`. Takuzu is the first engine-capable game today, and its generator appends puzzles to `src/games/takuzu/puzzles/all.ts`. Everything runs entirely offline — no network access, no external services.
+The engine uses a shared CLI runner in `src/engine/` plus game-owned engine plugins in `src/games/<id>/engine/`. Takuzu and Nonogram both register engine definitions today, and each generator appends puzzles to its game-owned catalog under `src/games/<id>/puzzles/all.ts`. Everything runs entirely offline — no network access, no external services.
 
 ```bash
 npm run engine -- --game=takuzu
 npm run engine -- --game=takuzu --size=8
+npm run engine -- --game=nonogram
+npm run engine -- --game=nonogram --size=5 --difficulty=easy 25
 ```
 
 Each run uses the selected game's engine plugin. Previously seen dedupe keys are tracked in `src/engine/puzzles.db` (local SQLite, gitignored) so duplicate generated puzzles are not written.

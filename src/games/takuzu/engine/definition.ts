@@ -96,6 +96,14 @@ export const takuzuEngineDefinition: EngineGameDefinition<TakuzuCatalogEntry> = 
     normalizeParsedEntry: normalizePuzzleEntry,
   },
   listAllowedSizes: () => SUPPORTED_PUZZLE_SIZES,
+  listAllowedDifficulties: (size) => {
+    const supportedSize = toSupportedPuzzleSize(size);
+    if (!supportedSize) {
+      throw new Error(`Takuzu engine does not support size ${size}.`);
+    }
+
+    return getSupportedDifficultiesForSize(supportedSize);
+  },
   pickTargetDifficulty: (size) => {
     const supportedSize = toSupportedPuzzleSize(size);
     if (!supportedSize) {
