@@ -39,22 +39,19 @@ interface NextMoveCopy {
 }
 
 function formatCell({ row, col }: MinesweeperCellRef): string {
-  return `row ${row + 1}, column ${col + 1}`;
-}
-
-function pluralize(count: number, singular: string, plural: string): string {
-  return count === 1 ? singular : plural;
+  return getContent().formatCellLabel({ row, col });
 }
 
 export function buildPatternNextMove(params: SafeRevealCopyParams): NextMoveCopy {
+  const content = getContent();
   const clueLabel = params.clueCell ? formatCell(params.clueCell) : undefined;
   const secondaryClueLabel = params.secondaryClueCell
     ? formatCell(params.secondaryClueCell)
     : undefined;
-  const tileLabel = pluralize(params.targetCount, 'tile', 'tiles');
+  const tileLabel = content.tileLabel(params.targetCount);
   const mineCount = params.mineCount ?? 1;
-  const mineLabel = pluralize(mineCount, 'mine', 'mines');
-  return getContent().nextMovePattern({
+  const mineLabel = content.mineLabel(mineCount);
+  return content.nextMovePattern({
     patternKey: params.patternKey,
     clueLabel,
     secondaryClueLabel,
@@ -65,14 +62,15 @@ export function buildPatternNextMove(params: SafeRevealCopyParams): NextMoveCopy
 }
 
 export function buildFlagNextMove(params: MineFlagCopyParams): NextMoveCopy {
+  const content = getContent();
   const clueLabel = params.clueCell ? formatCell(params.clueCell) : undefined;
   const secondaryClueLabel = params.secondaryClueCell
     ? formatCell(params.secondaryClueCell)
     : undefined;
-  const tileLabel = pluralize(params.targetCount, 'tile', 'tiles');
+  const tileLabel = content.tileLabel(params.targetCount);
   const mineCount = params.mineCount ?? params.targetCount;
-  const mineLabel = pluralize(mineCount, 'mine', 'mines');
-  return getContent().flagMovePattern({
+  const mineLabel = content.mineLabel(mineCount);
+  return content.flagMovePattern({
     reason: params.reason,
     clueLabel,
     secondaryClueLabel,

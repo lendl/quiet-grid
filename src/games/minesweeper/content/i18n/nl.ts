@@ -177,6 +177,15 @@ const nl = {
     },
   },
   learningCenter: {
+    formatCellLabel({ row, col }: { row: number; col: number }) {
+      return `rij ${row + 1}, kolom ${col + 1}`;
+    },
+    tileLabel(count: number) {
+      return count === 1 ? 'vak' : 'vakken';
+    },
+    mineLabel(count: number) {
+      return count === 1 ? 'mijn' : 'mijnen';
+    },
     nextMovePattern({
       patternKey,
       clueLabel,

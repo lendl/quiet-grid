@@ -87,6 +87,9 @@ export interface MinesweeperI18n {
   };
   tutorialText: Record<TutorialTextKey, ActionLessonText | InfoLessonText>;
   learningCenter: {
+    formatCellLabel(cell: { row: number; col: number }): string;
+    tileLabel(count: number): string;
+    mineLabel(count: number): string;
     nextMovePattern(params: LearningCenterPatternParams): {
       title: string;
       body: string;
