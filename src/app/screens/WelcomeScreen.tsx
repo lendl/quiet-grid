@@ -42,7 +42,7 @@ export default function WelcomeScreen({ navigation }: Props) {
       return;
     }
     await markWelcomeSeen();
-    navigation.replace('Home');
+    navigation.replace('MainTabs');
   };
 
   return (

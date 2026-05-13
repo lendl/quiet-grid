@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
-import type { StackNavigationProp } from '@react-navigation/stack';
+import type { NavigationProp } from '@react-navigation/native';
 import type { ActivePuzzle } from '../shell/activePuzzleTypes';
 import type { RootStackParamList } from '../navigation/types';
 import { clearActivePuzzleState, loadActivePuzzleState } from '../utils/activePuzzleStateStorage';
@@ -7,7 +7,7 @@ import { resumeActivePuzzle } from '../utils/gameNavigation';
 import { saveGameResult } from '../utils/statsStorage';
 import { getActivePuzzleDifficulty } from '../utils/activePuzzle';
 
-type RootNavigation = StackNavigationProp<RootStackParamList>;
+type RootNavigation = NavigationProp<RootStackParamList>;
 type PendingAction = (() => void) | null;
 
 interface UseActivePuzzleReplacementOptions {

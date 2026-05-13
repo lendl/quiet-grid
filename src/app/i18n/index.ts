@@ -56,10 +56,11 @@ interface SupportInfoContent {
 
 const EN_STRINGS = {
   common: {
-    goHome: 'Go to Home',
+    goHome: 'Go to Games',
     goBack: 'Go back',
     back: 'Back',
-    home: 'Home',
+    home: 'Games',
+    game: 'Game',
     play: 'Play',
     playAgain: 'Play Again',
     previous: 'Previous',
@@ -84,6 +85,14 @@ const EN_STRINGS = {
     endPuzzle: 'End puzzle',
     continuePuzzle: 'Continue Puzzle',
     startNewPuzzle: 'Start New Puzzle',
+  },
+  tabs: {
+    games: 'Games',
+    stats: 'Stats',
+    settings: 'Settings',
+  },
+  games: {
+    subtitle: 'Choose a puzzle and keep your active run close.',
   },
   home: {
     openRepo: 'Open the Quiet Grid GitHub repository',
@@ -294,10 +303,11 @@ const EN_STRINGS = {
 
 const NL_STRINGS: AppStrings = {
   common: {
-    goHome: 'Ga naar home',
+    goHome: 'Ga naar spellen',
     goBack: 'Ga terug',
     back: 'Terug',
-    home: 'Home',
+    home: 'Spellen',
+    game: 'Spel',
     play: 'Spelen',
     playAgain: 'Opnieuw spelen',
     previous: 'Vorige',
@@ -322,6 +332,14 @@ const NL_STRINGS: AppStrings = {
     endPuzzle: 'Puzzel beëindigen',
     continuePuzzle: 'Puzzel hervatten',
     startNewPuzzle: 'Nieuwe puzzel starten',
+  },
+  tabs: {
+    games: 'Spellen',
+    stats: 'Statistieken',
+    settings: 'Instellingen',
+  },
+  games: {
+    subtitle: 'Kies een puzzel en houd je actieve spel dichtbij.',
   },
   home: {
     openRepo: 'Open de Quiet Grid GitHub-repository',

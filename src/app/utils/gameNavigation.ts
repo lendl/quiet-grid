@@ -1,10 +1,10 @@
-import type { StackNavigationProp } from '@react-navigation/stack';
+import { StackActions, type NavigationProp } from '@react-navigation/native';
 import type { ActivePuzzle } from '../shell/activePuzzleTypes';
 import type { RootStackParamList } from '../navigation/types';
 import type { Difficulty, PuzzleTypeId } from '../types';
 import { getActivePuzzleDifficulty } from './activePuzzle';
 
-type RootNavigation = StackNavigationProp<RootStackParamList>;
+type RootNavigation = NavigationProp<RootStackParamList>;
 
 export function startGame(
   navigation: RootNavigation,
@@ -15,7 +15,7 @@ export function startGame(
   const params = { puzzleTypeId, difficulty };
 
   if (replace) {
-    navigation.replace('PuzzlePlay', params);
+    navigation.dispatch(StackActions.replace('PuzzlePlay', params));
     return;
   }
 

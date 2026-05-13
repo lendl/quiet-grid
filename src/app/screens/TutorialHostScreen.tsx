@@ -16,6 +16,13 @@ export default function TutorialHostScreen({ navigation, route }: Props) {
   const { theme } = useTheme();
   const definition = getPuzzleDefinition(route.params.puzzleTypeId);
 
+  const tutorialNavigation = {
+    ...navigation,
+    goBack: () => {
+      navigation.navigate('Puzzle', { puzzleTypeId: route.params.puzzleTypeId });
+    },
+  };
+
   if (!definition.screens.tutorial) {
     const s = makeStyles(theme);
     return (
@@ -28,7 +35,7 @@ export default function TutorialHostScreen({ navigation, route }: Props) {
     );
   }
 
-  const screenProps = { navigation, route };
+  const screenProps = { navigation: tutorialNavigation, route };
   const Screen = definition.screens.tutorial as ComponentType<typeof screenProps>;
 
   return <Screen {...screenProps} />;

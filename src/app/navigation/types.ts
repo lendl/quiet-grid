@@ -1,3 +1,4 @@
+import type { NavigatorScreenParams } from '@react-navigation/native';
 import type {
   PuzzleDifficulty,
   PuzzleOutcome,
@@ -33,19 +34,30 @@ export interface PuzzleRouteParams {
 
 export type TutorialEntryPoint = 'startup' | 'howToPlay';
 
+export type MainTabParamList = {
+  Games: undefined;
+  Stats: { puzzleTypeId?: PuzzleTypeId } | undefined;
+  Settings: undefined;
+};
+
+export type PuzzleTabParamList = {
+  Game: { puzzleTypeId: PuzzleTypeId };
+  Stats: { puzzleTypeId: PuzzleTypeId };
+  Rules: { puzzleTypeId: PuzzleTypeId };
+  Tutorial: { puzzleTypeId: PuzzleTypeId };
+  Settings: { puzzleTypeId: PuzzleTypeId };
+};
+
 export type RootStackParamList = {
   Welcome: undefined;
-  Home: undefined;
-  Settings: undefined;
+  MainTabs: NavigatorScreenParams<MainTabParamList> | undefined;
   Support: undefined;
   SupportInfo: { infoKey: SupportInfoKey };
-  PuzzleTypePicker: undefined;
   Puzzle: PuzzleRouteParams;
   PuzzlePlay: PuzzlePlayRouteParams;
   Completion: CompletionRouteParams;
   Loss: LossRouteParams;
   Analysis: { analysis: PuzzleAnalysisPayload };
-  Stats: { puzzleTypeId?: PuzzleTypeId } | undefined;
   HowToPlay: { puzzleTypeId: PuzzleTypeId };
   Tutorial: { puzzleTypeId: PuzzleTypeId; entry: TutorialEntryPoint };
 };

@@ -52,7 +52,7 @@ export function usePuzzlePlayController(props: Props): PuzzlePlayLayoutState {
       await onMissing();
       return;
     }
-    props.navigation.replace('Home');
+    props.navigation.replace('MainTabs');
   }, [onMissing, props.navigation]);
 
   const handleBeforeLoad = useCallback(() => {

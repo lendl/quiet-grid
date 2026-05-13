@@ -1,19 +1,17 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import type { StackScreenProps } from '@react-navigation/stack';
+import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { useFocusEffect } from '@react-navigation/native';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import AppScreen from '../components/AppScreen';
 import AppDialog from '../components/AppDialog';
-import GridHomeIcon from '../components/GridHomeIcon';
-import { returnToHome } from '../navigation/returnToHome';
 import { getPuzzleDefinition, puzzleRegistry } from '../shell/games/gameRegistry';
 import { getDifficultyColor } from '../utils/format';
 import { withAlpha } from '../utils/color';
 import { loadStats, clearPlayerData } from '../utils/statsStorage';
 import { getPuzzleStats, getPuzzleStreak } from '../utils/statsUtils';
-import type { RootStackParamList } from '../navigation/types';
+import type { MainTabParamList } from '../navigation/types';
 import type { AppStats, Difficulty, PuzzleTypeId } from '../types';
 import type { Theme } from '../theme';
 
@@ -38,7 +36,7 @@ function getPuzzleSummary(stats: AppStats, puzzleTypeId: PuzzleTypeId) {
   };
 }
 
-type Props = StackScreenProps<RootStackParamList, 'Stats'>;
+type Props = BottomTabScreenProps<MainTabParamList, 'Stats'>;
 
 export default function StatsScreen({ navigation, route }: Props) {
   const { strings } = useLanguage();
@@ -49,6 +47,11 @@ export default function StatsScreen({ navigation, route }: Props) {
   const scopedPuzzleTypeId = route.params?.puzzleTypeId;
   const scopedDefinition = scopedPuzzleTypeId ? getPuzzleDefinition(scopedPuzzleTypeId) : null;
   const visibleDefinitions = scopedDefinition ? [scopedDefinition] : puzzleRegistry;
+  const clearScope = useCallback(() => {
+    navigation.setParams({
+      puzzleTypeId: undefined,
+    });
+  }, [navigation]);
 
   useFocusEffect(useCallback(() => {
     void loadStats().then(setStats);
@@ -65,14 +68,16 @@ export default function StatsScreen({ navigation, route }: Props) {
   return (
     <AppScreen contentStyle={s.container}>
       <ScrollView contentContainerStyle={s.scroll}>
-        <TouchableOpacity
-          style={s.backButton}
-          onPress={() => returnToHome(navigation)}
-          accessibilityLabel={strings.common.goHome}
-          activeOpacity={0.8}
-        >
-          <GridHomeIcon />
-        </TouchableOpacity>
+        {scopedDefinition ? (
+          <TouchableOpacity
+            style={s.backButton}
+            onPress={clearScope}
+            accessibilityLabel={strings.common.goBack}
+            activeOpacity={0.8}
+          >
+            <Text style={s.backButtonText}>{strings.common.back}</Text>
+          </TouchableOpacity>
+        ) : null}
 
         {scopedDefinition ? (
           <View style={s.header}>
@@ -175,11 +180,14 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   scroll:       { padding: 20, gap: 0 },
   backButton: {
     alignSelf: 'flex-start',
-    minWidth: 44,
     minHeight: 36,
-    alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 6,
+  },
+  backButtonText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: theme.textSecondary,
   },
   header: {
     marginBottom: 10,

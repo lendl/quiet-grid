@@ -1,12 +1,10 @@
 import React, { useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import type { StackScreenProps } from '@react-navigation/stack';
+import { useNavigation, type NavigationProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import AppScreen from '../components/AppScreen';
-import GridHomeIcon from '../components/GridHomeIcon';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
-import { returnToHome } from '../navigation/returnToHome';
 import type { RootStackParamList } from '../navigation/types';
 import type { Theme } from '../theme';
 import { getThemeOptions } from '../theme/options';
@@ -17,8 +15,6 @@ import {
   saveShowTimerInPlay,
   saveTutorialsEnabled,
 } from '../utils/settingsStorage';
-
-type Props = StackScreenProps<RootStackParamList, 'Settings'>;
 
 type SettingsRow = {
   key: string;
@@ -69,9 +65,10 @@ function Section({
   );
 }
 
-export default function SettingsScreen({ navigation }: Props) {
+export default function SettingsScreen() {
   const { strings, resolvedLanguage, setLanguageSetting } = useLanguage();
   const { theme, themeMode, setThemeMode } = useTheme();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [showTimerInPlay, setShowTimerInPlay] = React.useState(true);
   const [tutorialsEnabled, setTutorialsEnabled] = React.useState(true);
   const [themeDropdownOpen, setThemeDropdownOpen] = React.useState(false);
@@ -145,19 +142,18 @@ export default function SettingsScreen({ navigation }: Props) {
       },
     },
   ], [showTimerInPlay, strings, tutorialsEnabled]);
+  const supportRows = useMemo<SettingsRow[]>(() => [
+    {
+      key: 'support',
+      label: strings.common.support,
+      detail: strings.support.subtitle,
+      onPress: () => navigation.navigate('Support'),
+    },
+  ], [navigation, strings.common.support, strings.support.subtitle]);
 
   return (
     <AppScreen contentStyle={s.container}>
       <ScrollView contentContainerStyle={s.scroll}>
-        <TouchableOpacity
-          style={s.homeButton}
-          onPress={() => returnToHome(navigation)}
-          accessibilityLabel={strings.common.goHome}
-          activeOpacity={0.8}
-        >
-          <GridHomeIcon />
-        </TouchableOpacity>
-
         <View style={s.header}>
           <Text style={s.title}>{strings.settings.title}</Text>
           <Text style={s.subtitle}>
@@ -292,6 +288,7 @@ export default function SettingsScreen({ navigation }: Props) {
           <Text style={s.disclaimerText}>{strings.settings.languageAiDisclaimer}</Text>
         </View>
         <Section title={strings.settings.tutorials} rows={tutorialRows} styles={s} />
+        <Section title={strings.common.support} rows={supportRows} styles={s} />
       </ScrollView>
     </AppScreen>
   );
@@ -305,14 +302,6 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   scroll: {
     padding: 20,
     gap: 22,
-  },
-  homeButton: {
-    alignSelf: 'flex-start',
-    minWidth: 44,
-    minHeight: 36,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 2,
   },
   header: {
     gap: 8,
