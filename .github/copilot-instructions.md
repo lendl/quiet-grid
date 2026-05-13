@@ -5,6 +5,7 @@
 - Install dependencies: `npm install`
 - Run app on Android: `npm run android`
 - Start Expo dev server: `npm run start`
+- Check Expo project health: `npx expo-doctor`
 - Lint app code: `npm run lint`
 - Lint one file: `npx eslint App.tsx` or `npx eslint src\path\to\file.ts`
 - Type-check Expo app: `npm run typecheck:app`
@@ -14,7 +15,7 @@
 - Run Nonogram engine CLI: `npm run engine -- --game=nonogram`
 - Generate one Nonogram bucket: `npm run engine -- --game=nonogram --size=5 --difficulty=easy 25`
 
-There is no automated test script or committed `*.test.*` / `*.spec.*` suite in this repository today, so validate changes with lint plus the relevant type-check command(s).
+There is no automated test script or committed `*.test.*` / `*.spec.*` suite in this repository today, so validate changes with `npx expo-doctor`, lint, and the relevant type-check command(s).
 
 ## AI task entrypoints
 
