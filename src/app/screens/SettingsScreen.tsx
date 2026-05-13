@@ -12,7 +12,9 @@ import type { Theme } from '../theme';
 import { getThemeOptions } from '../theme/options';
 import { withAlpha } from '../utils/color';
 import {
+  loadShowTimerInPlay,
   loadTutorialsEnabled,
+  saveShowTimerInPlay,
   saveTutorialsEnabled,
 } from '../utils/settingsStorage';
 
@@ -70,6 +72,7 @@ function Section({
 export default function SettingsScreen({ navigation }: Props) {
   const { strings, resolvedLanguage, setLanguageSetting } = useLanguage();
   const { theme, themeMode, setThemeMode } = useTheme();
+  const [showTimerInPlay, setShowTimerInPlay] = React.useState(true);
   const [tutorialsEnabled, setTutorialsEnabled] = React.useState(true);
   const [themeDropdownOpen, setThemeDropdownOpen] = React.useState(false);
   const [languageDropdownOpen, setLanguageDropdownOpen] = React.useState(false);
@@ -78,9 +81,13 @@ export default function SettingsScreen({ navigation }: Props) {
   React.useEffect(() => {
     let mounted = true;
 
-    void loadTutorialsEnabled().then((enabled) => {
+    void Promise.all([
+      loadTutorialsEnabled(),
+      loadShowTimerInPlay(),
+    ]).then(([tutorials, showTimer]) => {
       if (mounted) {
-        setTutorialsEnabled(enabled);
+        setTutorialsEnabled(tutorials);
+        setShowTimerInPlay(showTimer);
       }
     });
 
@@ -116,6 +123,17 @@ export default function SettingsScreen({ navigation }: Props) {
 
   const tutorialRows = useMemo<SettingsRow[]>(() => [
     {
+      key: 'showTimerInPlay',
+      label: strings.settings.showTimerInPlayLabel,
+      detail: strings.settings.showTimerInPlayDetail,
+      value: showTimerInPlay ? strings.common.on : strings.common.off,
+      onPress: () => {
+        const next = !showTimerInPlay;
+        setShowTimerInPlay(next);
+        void saveShowTimerInPlay(next);
+      },
+    },
+    {
       key: 'tutorials',
       label: strings.settings.tutorialsLabel,
       detail: strings.settings.tutorialsDetail,
@@ -126,7 +144,7 @@ export default function SettingsScreen({ navigation }: Props) {
         void saveTutorialsEnabled(next);
       },
     },
-  ], [strings, tutorialsEnabled]);
+  ], [showTimerInPlay, strings, tutorialsEnabled]);
 
   return (
     <AppScreen contentStyle={s.container}>

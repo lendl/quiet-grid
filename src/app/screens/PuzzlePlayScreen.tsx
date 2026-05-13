@@ -11,6 +11,7 @@ import { usePuzzlePlayController } from '../shell/hooks/usePuzzlePlayController'
 import type { Theme } from '../theme';
 import { withAlpha } from '../utils/color';
 import { formatElapsed } from '../utils/formatElapsed';
+import { loadShowTimerInPlay } from '../utils/settingsStorage';
 
 type Props = StackScreenProps<RootStackParamList, 'PuzzlePlay'>;
 
@@ -20,6 +21,21 @@ export default function PuzzlePlayScreen(props: Props) {
   const s = useMemo(() => makeStyles(theme), [theme]);
   const layout = usePuzzlePlayController(props);
   const elapsedLabel = formatElapsed(layout.elapsedSeconds);
+  const [showTimerInPlay, setShowTimerInPlay] = React.useState(true);
+
+  React.useEffect(() => {
+    let mounted = true;
+
+    void loadShowTimerInPlay().then((enabled) => {
+      if (mounted) {
+        setShowTimerInPlay(enabled);
+      }
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   return (
     <PuzzlePlayScaffold
@@ -42,9 +58,11 @@ export default function PuzzlePlayScreen(props: Props) {
               <GridHomeIcon />
             </TouchableOpacity>
             <View style={s.headerActions}>
-              <View style={s.timerPill}>
-                <Text style={s.timerText}>{elapsedLabel}</Text>
-              </View>
+              {showTimerInPlay ? (
+                <View style={s.timerPill}>
+                  <Text style={s.timerText}>{elapsedLabel}</Text>
+                </View>
+              ) : null}
               {layout.headerActions.map((action) => (
                 <TouchableOpacity
                   key={action.key}

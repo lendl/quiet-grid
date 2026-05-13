@@ -4,6 +4,7 @@ import { DEFAULT_THEME_MODE, isThemeMode } from '../theme';
 import {
   LANGUAGE_KEY,
   PUZZLE_TUTORIALS_SEEN_KEY,
+  SHOW_TIMER_IN_PLAY_KEY,
   THEME_KEY,
   TUTORIALS_ENABLED_KEY,
   WELCOME_SEEN_KEY,
@@ -68,6 +69,23 @@ export async function saveLanguageSetting(setting: LanguageSetting): Promise<voi
     await AsyncStorage.setItem(LANGUAGE_KEY, setting);
   } catch {
     // Keep app stable if language save fails.
+  }
+}
+
+export async function loadShowTimerInPlay(): Promise<boolean> {
+  try {
+    const value = await AsyncStorage.getItem(SHOW_TIMER_IN_PLAY_KEY);
+    return value !== 'false';
+  } catch {
+    return true;
+  }
+}
+
+export async function saveShowTimerInPlay(enabled: boolean): Promise<void> {
+  try {
+    await AsyncStorage.setItem(SHOW_TIMER_IN_PLAY_KEY, String(enabled));
+  } catch {
+    // Keep app stable if timer preference save fails.
   }
 }
 
