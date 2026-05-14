@@ -19,8 +19,3 @@
 
 - `scaffolds/base-game/`
 - `scaffolds/engine-addon/`
-
-## Specs and plans
-
-- `specs/`
-- `plans/`
