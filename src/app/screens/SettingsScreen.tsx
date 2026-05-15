@@ -150,7 +150,6 @@ export default function SettingsScreen() {
       onPress: () => navigation.navigate('Support'),
     },
   ], [navigation, strings.common.support, strings.support.subtitle]);
-
   return (
     <AppScreen contentStyle={s.container}>
       <ScrollView contentContainerStyle={s.scroll}>

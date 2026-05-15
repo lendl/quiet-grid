@@ -4,7 +4,7 @@ import type { Theme, ThemeMode } from '../theme';
 import { DEFAULT_THEME_MODE, getTheme } from '../theme';
 import { loadTheme, saveTheme } from '../utils/settingsStorage';
 
-interface ThemeContextValue {
+export interface ThemeContextValue {
   theme: Theme;
   isDark: boolean;
   themeMode: ThemeMode;

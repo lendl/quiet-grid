@@ -262,35 +262,3 @@ export function getNonogramCellRect(
     height: layout.cellSize,
   };
 }
-
-export function getNonogramRowClueRect(
-  layout: Pick<
-  NonogramBoardLayout,
-  'rowRailX' | 'gridY' | 'rowClueSlotSize' | 'rowClueValueGap' | 'cellSize' | 'cellGap'
-  >,
-  rowIndex: number,
-  clueIndex: number,
-): GridCellRect {
-  return {
-    x: layout.rowRailX + clueIndex * (layout.rowClueSlotSize + layout.rowClueValueGap),
-    y: layout.gridY + rowIndex * (layout.cellSize + layout.cellGap),
-    width: layout.rowClueSlotSize,
-    height: layout.cellSize,
-  };
-}
-
-export function getNonogramColClueRect(
-  layout: Pick<
-  NonogramBoardLayout,
-  'colRailY' | 'gridX' | 'colClueSlotSize' | 'colClueValueGap' | 'cellSize' | 'cellGap'
-  >,
-  colIndex: number,
-  clueIndex: number,
-): GridCellRect {
-  return {
-    x: layout.gridX + colIndex * (layout.cellSize + layout.cellGap),
-    y: layout.colRailY + clueIndex * (layout.colClueSlotSize + layout.colClueValueGap),
-    width: layout.cellSize,
-    height: layout.colClueSlotSize,
-  };
-}
