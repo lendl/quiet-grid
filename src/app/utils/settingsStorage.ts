@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { PuzzleTypeId } from '../shell/types';
+import { puzzleTypeIds } from '../../games/shared/types';
 import { DEFAULT_THEME_MODE, isThemeMode } from '../theme';
 import {
   LANGUAGE_KEY,
@@ -27,12 +28,17 @@ function parseSeenTutorials(value: string | null): SeenTutorialsMap {
     }
 
     const tutorialMap = parsed as Record<string, unknown>;
+    const seenTutorials: SeenTutorialsMap = {};
+    puzzleTypeIds.forEach((puzzleTypeId) => {
+      if (tutorialMap[puzzleTypeId] === true) {
+        seenTutorials[puzzleTypeId] = true;
+      }
+    });
+    if (tutorialMap.binary === true) {
+      seenTutorials.takuzu = true;
+    }
 
-    return {
-      takuzu: tutorialMap.takuzu === true || tutorialMap.binary === true ? true : undefined,
-      minesweeper: tutorialMap.minesweeper === true ? true : undefined,
-      nonogram: tutorialMap.nonogram === true ? true : undefined,
-    };
+    return seenTutorials;
   } catch {
     return {};
   }

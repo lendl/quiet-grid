@@ -9,10 +9,7 @@ function isStoredPuzzleSessionEnvelope(value: unknown): boolean {
 
   const envelope = value as Record<string, unknown>;
   return (
-     (envelope.puzzleTypeId === 'binary'
-       || envelope.puzzleTypeId === 'takuzu'
-       || envelope.puzzleTypeId === 'minesweeper'
-       || envelope.puzzleTypeId === 'nonogram')
+    typeof envelope.puzzleTypeId === 'string'
     && Number.isInteger(envelope.version)
     && 'payload' in envelope
   );

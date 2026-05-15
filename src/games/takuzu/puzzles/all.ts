@@ -7390,6 +7390,7 @@ const chunk15: Puzzle[] = [
   { id: 'p10465', size: 6, rows: 6, cols: 6, difficulty: 'medium', solution: '58bd256a9', mask: '5a2040848' },
   { id: 'p10466', size: 10, rows: 10, cols: 10, difficulty: 'hard', solution: '2d73452c9bd90abb53524aecc', mask: '2a21030d08980c0a402d01200' },
   { id: 'p10467', size: 8, rows: 8, cols: 8, difficulty: 'hard', solution: '369a4db44bd2a569', mask: '0060a210018aa821' },
+  { id: 'p10468', size: 6, rows: 6, cols: 6, difficulty: 'medium', solution: 'c8bb344cd', mask: '14a470800' },
 ];
 
 
