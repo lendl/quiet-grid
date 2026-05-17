@@ -1,7 +1,8 @@
 // src/app/screens/WelcomeScreen.tsx
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import type { StackScreenProps } from '@react-navigation/stack';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import AppScreen from '../components/AppScreen';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
@@ -11,11 +12,17 @@ import { markWelcomeSeen } from '../utils/settingsStorage';
 import type { Theme } from '../theme';
 
 type Props = StackScreenProps<RootStackParamList, 'Welcome'>;
+const SWIPE_DISTANCE_THRESHOLD = 48;
+const SWIPE_VELOCITY_THRESHOLD = 420;
 
 interface Slide {
   emoji: string;
   title: string;
   body: string;
+}
+
+function clampIndex(value: number, max: number): number {
+  return Math.max(0, Math.min(max, value));
 }
 
 export default function WelcomeScreen({ navigation }: Props) {
@@ -35,33 +42,61 @@ export default function WelcomeScreen({ navigation }: Props) {
   const [index, setIndex] = useState(0);
   const slide = slides[index];
   const isLast = index === slides.length - 1;
+  const goToPreviousSlide = useCallback(() => {
+    setIndex((current) => clampIndex(current - 1, slides.length - 1));
+  }, [slides.length]);
+  const goToNextSlide = useCallback(() => {
+    setIndex((current) => clampIndex(current + 1, slides.length - 1));
+  }, [slides.length]);
 
-  const handleNext = async () => {
+  const handleNext = useCallback(async () => {
     if (!isLast) {
-      setIndex(index + 1);
+      goToNextSlide();
       return;
     }
+
     await markWelcomeSeen();
     navigation.replace('MainTabs');
-  };
+  }, [goToNextSlide, isLast, navigation]);
+  const swipeGesture = useMemo(() => Gesture.Pan()
+    .runOnJS(true)
+    .activeOffsetX([-16, 16])
+    .failOffsetY([-20, 20])
+    .onEnd((event) => {
+      const shouldGoNext = event.translationX <= -SWIPE_DISTANCE_THRESHOLD
+        || event.velocityX <= -SWIPE_VELOCITY_THRESHOLD;
+      const shouldGoPrevious = event.translationX >= SWIPE_DISTANCE_THRESHOLD
+        || event.velocityX >= SWIPE_VELOCITY_THRESHOLD;
+
+      if (shouldGoNext) {
+        goToNextSlide();
+        return;
+      }
+
+      if (shouldGoPrevious) {
+        goToPreviousSlide();
+      }
+    }), [goToNextSlide, goToPreviousSlide]);
 
   return (
     <AppScreen contentStyle={s.container}>
-      <View style={s.content}>
-        <Text style={s.emoji}>{slide.emoji}</Text>
-        <Text style={s.title}>{slide.title}</Text>
-        <Text style={s.body}>{slide.body}</Text>
+      <GestureDetector gesture={swipeGesture}>
+        <View style={s.content}>
+          <Text style={s.emoji}>{slide.emoji}</Text>
+          <Text style={s.title}>{slide.title}</Text>
+          <Text style={s.body}>{slide.body}</Text>
 
-        <View style={s.dots}>
-          {slides.map((_, i) => (
-            <View key={i} style={[s.dot, i === index && s.dotActive]} />
-          ))}
+          <View style={s.dots}>
+            {slides.map((_, i) => (
+              <View key={i} style={[s.dot, i === index && s.dotActive]} />
+            ))}
+          </View>
+
+          <TouchableOpacity style={s.btn} onPress={() => { void handleNext(); }} activeOpacity={0.8}>
+            <Text style={s.btnText}>{isLast ? strings.common.getStarted : strings.common.next}</Text>
+          </TouchableOpacity>
         </View>
-
-        <TouchableOpacity style={s.btn} onPress={() => { void handleNext(); }} activeOpacity={0.8}>
-          <Text style={s.btnText}>{isLast ? strings.common.getStarted : strings.common.next}</Text>
-        </TouchableOpacity>
-      </View>
+      </GestureDetector>
     </AppScreen>
   );
 }

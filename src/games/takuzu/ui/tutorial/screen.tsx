@@ -87,6 +87,20 @@ export default function TutorialScreen({ navigation, route }: Props) {
     setLessonIndex((current) => current + 1);
   }, [exitTutorial, isLastLesson, lessonIndex, lessons, resetLessonState]);
 
+  const goToPreviousLesson = useCallback(() => {
+    if (lessonIndex <= 0) {
+      return;
+    }
+
+    const previousLesson = lessons[lessonIndex - 1];
+    if (!previousLesson) {
+      return;
+    }
+
+    resetLessonState(previousLesson);
+    setLessonIndex((current) => current - 1);
+  }, [lessonIndex, lessons, resetLessonState]);
+
   useEffect(() => {
     if (!completed) {
       return;
@@ -182,6 +196,10 @@ export default function TutorialScreen({ navigation, route }: Props) {
       lessonCount={lessons.length}
       activeLessonIndex={lessonIndex}
       boardMinHeight={132}
+      onNextLesson={() => {
+        void advanceLesson();
+      }}
+      onPreviousLesson={goToPreviousLesson}
       board={(
         <TutorialRow
           grid={displayGrid}

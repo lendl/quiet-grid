@@ -72,6 +72,16 @@ export default function TutorialScreen({ navigation, route }: Props) {
     setLessonIndex((current) => current + 1);
   }, [exitTutorial, isLastLesson]);
 
+  const goToPreviousLesson = useCallback(() => {
+    if (lessonIndex <= 0) {
+      return;
+    }
+
+    setSelectedAction(null);
+    setAnswerState('idle');
+    setLessonIndex((current) => current - 1);
+  }, [lessonIndex]);
+
   const submitAction = useCallback((action: MinesweeperTutorialAction) => {
     if (!actionLesson || answerState === 'correct') {
       return;
@@ -127,6 +137,10 @@ export default function TutorialScreen({ navigation, route }: Props) {
       lessonCount={lessons.length}
       activeLessonIndex={lessonIndex}
       boardMinHeight={184}
+      onNextLesson={() => {
+        void advanceLesson();
+      }}
+      onPreviousLesson={goToPreviousLesson}
       board={(
         <MinesweeperTutorialBoard
           board={board}

@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import type { StackScreenProps } from '@react-navigation/stack';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import GamePageShell from '../components/GamePageShell';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
@@ -18,6 +19,8 @@ import type { Theme } from '../theme';
 import { getPuzzleAnalysisAdapter } from '../analysisRegistry';
 
 type Props = StackScreenProps<RootStackParamList, 'Analysis'>;
+const SWIPE_DISTANCE_THRESHOLD = 48;
+const SWIPE_VELOCITY_THRESHOLD = 420;
 
 function clampIndex(stepIndex: number, stepCount: number): number {
   if (stepCount <= 1) {
@@ -48,17 +51,44 @@ export default function PuzzleAnalysisScreen({ navigation, route }: Props) {
     setScrubberWidth(event.nativeEvent.layout.width);
   }, []);
 
-  const updateStepFromLocation = (locationX: number, width: number) => {
+  const goToPreviousStep = useCallback(() => {
+    setStepIndex((current) => clampIndex(current - 1, stepCount));
+  }, [stepCount]);
+
+  const goToNextStep = useCallback(() => {
+    setStepIndex((current) => clampIndex(current + 1, stepCount));
+  }, [stepCount]);
+
+  const updateStepFromLocation = useCallback((locationX: number, width: number) => {
     if (stepCount <= 1 || width <= 0) {
       return;
     }
     const ratio = Math.min(Math.max(locationX / width, 0), 1);
     setStepIndex(Math.round(ratio * (stepCount - 1)));
-  };
+  }, [stepCount]);
 
-  const handleScrubberLayout = (event: GestureResponderEvent) => {
+  const handleScrubberLayout = useCallback((event: GestureResponderEvent) => {
     updateStepFromLocation(event.nativeEvent.locationX, scrubberWidth);
-  };
+  }, [scrubberWidth, updateStepFromLocation]);
+  const swipeGesture = useMemo(() => Gesture.Pan()
+    .runOnJS(true)
+    .activeOffsetX([-16, 16])
+    .failOffsetY([-20, 20])
+    .onEnd((event) => {
+      const shouldGoNext = event.translationX <= -SWIPE_DISTANCE_THRESHOLD
+        || event.velocityX <= -SWIPE_VELOCITY_THRESHOLD;
+      const shouldGoPrevious = event.translationX >= SWIPE_DISTANCE_THRESHOLD
+        || event.velocityX >= SWIPE_VELOCITY_THRESHOLD;
+
+      if (shouldGoNext && stepIndex < stepCount - 1) {
+        goToNextStep();
+        return;
+      }
+
+      if (shouldGoPrevious && stepIndex > 0) {
+        goToPreviousStep();
+      }
+    }), [goToNextStep, goToPreviousStep, stepCount, stepIndex]);
 
   const boardSize = boardWidth > 0 ? Math.min(boardWidth, 420) : 0;
 
@@ -84,71 +114,73 @@ export default function PuzzleAnalysisScreen({ navigation, route }: Props) {
 
   return (
     <GamePageShell activeTab="Games" headerMode="brand">
-      <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
-        <TouchableOpacity
-          style={s.backButton}
-          onPress={() => navigation.goBack()}
-          accessibilityRole="button"
-          accessibilityLabel={strings.common.goBack}
-          activeOpacity={0.8}
-        >
-          <Text style={s.backButtonText}>{strings.analysis.back}</Text>
-        </TouchableOpacity>
-
-        <View style={s.header}>
-          <Text style={s.title}>{strings.analysis.title}</Text>
-          <Text style={s.subtitle}>{definition.shortTitle}</Text>
-          <Text style={s.stepCounter}>{strings.analysis.step(stepIndex + 1, stepCount)}</Text>
-        </View>
-
-        <View style={s.boardSection} onLayout={handleBoardLayout}>
-          {boardSize > 0 ? adapter.renderAnalysisStep({
-            analysis,
-            stepIndex,
-            containerWidth: boardSize,
-            containerHeight: boardSize,
-          }) : null}
-        </View>
-
-        <View style={s.card}>
-          <Text style={s.cardTitle}>{currentStep.title}</Text>
-          <Text style={s.cardBody}>{currentStep.body}</Text>
-        </View>
-
-        <View style={s.scrubberSection}>
-          <Text style={s.scrubberLabel}>{strings.analysis.fastJump}</Text>
-          <View
-            style={s.scrubberTrack}
-            onLayout={handleScrubberTrackLayout}
-            onStartShouldSetResponder={() => true}
-            onResponderGrant={handleScrubberLayout}
-            onResponderMove={handleScrubberLayout}
+      <GestureDetector gesture={swipeGesture}>
+        <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
+          <TouchableOpacity
+            style={s.backButton}
+            onPress={() => navigation.goBack()}
+            accessibilityRole="button"
+            accessibilityLabel={strings.common.goBack}
+            activeOpacity={0.8}
           >
-            <View style={s.scrubberTrackBase} />
-            <View style={[s.scrubberFill, { width: `${scrubberProgress * 100}%` }]} />
-            <View style={[s.scrubberThumb, { left: `${scrubberProgress * 100}%` }]} />
+            <Text style={s.backButtonText}>{strings.analysis.back}</Text>
+          </TouchableOpacity>
+
+          <View style={s.header}>
+            <Text style={s.title}>{strings.analysis.title}</Text>
+            <Text style={s.subtitle}>{definition.shortTitle}</Text>
+            <Text style={s.stepCounter}>{strings.analysis.step(stepIndex + 1, stepCount)}</Text>
           </View>
-        </View>
 
-        <View style={s.controls}>
-          <TouchableOpacity
-            style={[s.controlButton, stepIndex === 0 ? s.controlButtonDisabled : null]}
-            onPress={() => setStepIndex((current) => clampIndex(current - 1, stepCount))}
-            disabled={stepIndex === 0}
-            activeOpacity={0.82}
-          >
-            <Text style={s.controlButtonText}>{strings.analysis.previous}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[s.controlButton, stepIndex === stepCount - 1 ? s.controlButtonDisabled : null]}
-            onPress={() => setStepIndex((current) => clampIndex(current + 1, stepCount))}
-            disabled={stepIndex === stepCount - 1}
-            activeOpacity={0.82}
-          >
-            <Text style={s.controlButtonText}>{strings.analysis.next}</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+          <View style={s.boardSection} onLayout={handleBoardLayout}>
+            {boardSize > 0 ? adapter.renderAnalysisStep({
+              analysis,
+              stepIndex,
+              containerWidth: boardSize,
+              containerHeight: boardSize,
+            }) : null}
+          </View>
+
+          <View style={s.card}>
+            <Text style={s.cardTitle}>{currentStep.title}</Text>
+            <Text style={s.cardBody}>{currentStep.body}</Text>
+          </View>
+
+          <View style={s.scrubberSection}>
+            <Text style={s.scrubberLabel}>{strings.analysis.fastJump}</Text>
+            <View
+              style={s.scrubberTrack}
+              onLayout={handleScrubberTrackLayout}
+              onStartShouldSetResponder={() => true}
+              onResponderGrant={handleScrubberLayout}
+              onResponderMove={handleScrubberLayout}
+            >
+              <View style={s.scrubberTrackBase} />
+              <View style={[s.scrubberFill, { width: `${scrubberProgress * 100}%` }]} />
+              <View style={[s.scrubberThumb, { left: `${scrubberProgress * 100}%` }]} />
+            </View>
+          </View>
+
+          <View style={s.controls}>
+            <TouchableOpacity
+              style={[s.controlButton, stepIndex === 0 ? s.controlButtonDisabled : null]}
+              onPress={goToPreviousStep}
+              disabled={stepIndex === 0}
+              activeOpacity={0.82}
+            >
+              <Text style={s.controlButtonText}>{strings.analysis.previous}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[s.controlButton, stepIndex === stepCount - 1 ? s.controlButtonDisabled : null]}
+              onPress={goToNextStep}
+              disabled={stepIndex === stepCount - 1}
+              activeOpacity={0.82}
+            >
+              <Text style={s.controlButtonText}>{strings.analysis.next}</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </GestureDetector>
     </GamePageShell>
   );
 }

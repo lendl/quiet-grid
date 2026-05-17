@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { useTheme } from '../context/ThemeContext';
 import type { Theme } from '../theme';
 import { withAlpha } from '../utils/color';
+
+const SWIPE_DISTANCE_THRESHOLD = 48;
+const SWIPE_VELOCITY_THRESHOLD = 420;
 
 interface PuzzleTutorialScaffoldProps {
   backButton?: React.ReactNode;
@@ -15,6 +19,8 @@ interface PuzzleTutorialScaffoldProps {
   activeLessonIndex: number;
   footer: React.ReactNode;
   boardMinHeight?: number;
+  onNextLesson: () => void;
+  onPreviousLesson: () => void;
 }
 
 export default function PuzzleTutorialScaffold({
@@ -28,42 +34,65 @@ export default function PuzzleTutorialScaffold({
   activeLessonIndex,
   footer,
   boardMinHeight = 184,
+  onNextLesson,
+  onPreviousLesson,
 }: PuzzleTutorialScaffoldProps) {
   const { theme } = useTheme();
   const s = makeStyles(theme);
+  const swipeGesture = useMemo(() => Gesture.Pan()
+    .runOnJS(true)
+    .activeOffsetX([-16, 16])
+    .failOffsetY([-20, 20])
+    .onEnd((event) => {
+      const shouldGoNext = event.translationX <= -SWIPE_DISTANCE_THRESHOLD
+        || event.velocityX <= -SWIPE_VELOCITY_THRESHOLD;
+      const shouldGoPrevious = event.translationX >= SWIPE_DISTANCE_THRESHOLD
+        || event.velocityX >= SWIPE_VELOCITY_THRESHOLD;
+
+      if (shouldGoNext && activeLessonIndex < lessonCount - 1) {
+        onNextLesson();
+        return;
+      }
+
+      if (shouldGoPrevious && activeLessonIndex > 0) {
+        onPreviousLesson();
+      }
+    }), [activeLessonIndex, lessonCount, onNextLesson, onPreviousLesson]);
 
   return (
-    <View style={s.container}>
-      {backButton}
+    <GestureDetector gesture={swipeGesture}>
+      <View style={s.container}>
+        {backButton}
 
-      <View style={s.header}>
-        <Text style={s.progress}>{progressLabel}</Text>
-      </View>
-
-      <View style={s.statusRow}>
-        {statusText ? <Text style={s.statusText}>{statusText}</Text> : null}
-      </View>
-
-      <View style={s.mainContent}>
-        <Text style={s.title}>{title}</Text>
-        {body ? <Text style={s.body}>{body}</Text> : null}
-
-        <View style={[s.boardWrap, { minHeight: boardMinHeight }]}>
-          {board}
+        <View style={s.header}>
+          <Text style={s.progress}>{progressLabel}</Text>
         </View>
 
-        <View style={s.dots}>
-          {Array.from({ length: lessonCount }, (_, index) => (
-            <View
-              key={`dot-${index}`}
-              style={[s.dot, index === activeLessonIndex ? s.dotActive : null]}
-            />
-          ))}
+        <View style={s.statusRow}>
+          {statusText ? <Text style={s.statusText}>{statusText}</Text> : null}
         </View>
-      </View>
 
-      <View style={s.footerRegion}>{footer}</View>
-    </View>
+        <View style={s.mainContent}>
+          <Text style={s.title}>{title}</Text>
+          {body ? <Text style={s.body}>{body}</Text> : null}
+
+          <View style={[s.boardWrap, { minHeight: boardMinHeight }]}>
+            {board}
+          </View>
+
+          <View style={s.dots}>
+            {Array.from({ length: lessonCount }, (_, index) => (
+              <View
+                key={`dot-${index}`}
+                style={[s.dot, index === activeLessonIndex ? s.dotActive : null]}
+              />
+            ))}
+          </View>
+        </View>
+
+        <View style={s.footerRegion}>{footer}</View>
+      </View>
+    </GestureDetector>
   );
 }
 
