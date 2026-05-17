@@ -3,7 +3,7 @@ import { StackActions } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import type { StackScreenProps } from '@react-navigation/stack';
-import AppTopBar from '../components/AppTopBar';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import GlobalBottomNav from '../components/GlobalBottomNav';
 import PuzzlePlayScaffold from '../components/PuzzlePlayScaffold';
 import { useLanguage } from '../context/LanguageContext';
@@ -20,9 +20,14 @@ type Props = StackScreenProps<RootStackParamList, 'PuzzlePlay'>;
 export default function PuzzlePlayScreen(props: Props) {
   const { strings } = useLanguage();
   const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
   const s = useMemo(() => makeStyles(theme), [theme]);
   const layout = usePuzzlePlayController(props);
   const elapsedLabel = formatElapsed(layout.elapsedSeconds);
+  const visibleHeaderMeta = useMemo(
+    () => layout.headerMeta.filter((item) => item.key !== 'difficulty'),
+    [layout.headerMeta],
+  );
   const [showTimerInPlay, setShowTimerInPlay] = React.useState(true);
 
   React.useEffect(() => {
@@ -51,10 +56,18 @@ export default function PuzzlePlayScreen(props: Props) {
       loadingLabel={layout.loadingLabel}
       dialog={layout.dialog}
       onDismissDialog={layout.onDismissDialog}
-      topSlot={<AppTopBar mode="back" onBack={handleBackToDifficulty} />}
-      header={(
-        <View style={s.header}>
-          <View style={s.headerMainRow}>
+      topSlot={(
+        <View style={s.topBar}>
+          <View style={[s.topBarInner, { paddingTop: insets.top + 12 }]}>
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel={strings.common.goBack}
+              onPress={handleBackToDifficulty}
+              style={s.backButton}
+              activeOpacity={0.82}
+            >
+              <Ionicons name="arrow-back" size={20} color={theme.text} />
+            </TouchableOpacity>
             <View style={s.headerActions}>
               {showTimerInPlay ? (
                 <View style={s.timerPill}>
@@ -84,26 +97,22 @@ export default function PuzzlePlayScreen(props: Props) {
                 style={s.iconButton}
                 activeOpacity={0.8}
               >
-                <Ionicons
-                  name="flag-outline"
-                  size={18}
-                  color={theme.text}
-                />
+                <Ionicons name="flag-outline" size={18} color={theme.text} />
               </TouchableOpacity>
             </View>
           </View>
-          {layout.headerMeta.length > 0 ? (
-            <View style={s.metadataRow}>
-              {layout.headerMeta.map((item) => (
-                <View key={item.key} style={s.metadataPill}>
-                  <Text style={s.metadataLabel}>{item.label}</Text>
-                  <Text style={s.metadataValue}>{item.value}</Text>
-                </View>
-              ))}
-            </View>
-          ) : null}
         </View>
       )}
+      header={visibleHeaderMeta.length > 0 ? (
+        <View style={s.metadataRow}>
+          {visibleHeaderMeta.map((item) => (
+            <View key={item.key} style={s.metadataPill}>
+              <Text style={s.metadataLabel}>{item.label}</Text>
+              <Text style={s.metadataValue}>{item.value}</Text>
+            </View>
+          ))}
+        </View>
+      ) : null}
       main={layout.main}
       footer={layout.footer}
       bottomSlot={<GlobalBottomNav activeTab="Games" />}
@@ -112,21 +121,31 @@ export default function PuzzlePlayScreen(props: Props) {
 }
 
 const makeStyles = (theme: Theme) => StyleSheet.create({
-  header: {
-    paddingHorizontal: 10,
-    paddingTop: 6,
+  topBar: {
+    paddingHorizontal: 16,
     paddingBottom: 6,
-    gap: 8,
   },
-  headerMainRow: {
+  topBarInner: {
+    minHeight: 56,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
+    gap: 12,
   },
   headerActions: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'flex-end',
     gap: 8,
+    flexShrink: 1,
+  },
+  backButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 999,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.surfaceElevated,
   },
   iconButton: {
     width: 36,
@@ -162,6 +181,9 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
+    paddingHorizontal: 10,
+    paddingTop: 2,
+    paddingBottom: 6,
   },
   metadataPill: {
     flexDirection: 'row',

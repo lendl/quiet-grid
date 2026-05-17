@@ -14,7 +14,7 @@ interface PuzzlePlayScaffoldProps {
   dialog?: DialogConfig | null;
   onDismissDialog: () => void;
   topSlot?: React.ReactNode;
-  header: React.ReactNode;
+  header?: React.ReactNode;
   main: React.ReactNode;
   footer: React.ReactNode;
   bottomSlot?: React.ReactNode;
@@ -26,7 +26,7 @@ export default function PuzzlePlayScaffold({
   dialog = null,
   onDismissDialog,
   topSlot = null,
-  header,
+  header = null,
   main,
   footer,
   bottomSlot = null,
@@ -48,7 +48,7 @@ export default function PuzzlePlayScaffold({
         </View>
         ) : (
         <>
-          <View style={s.headerRegion}>{header}</View>
+          {header ? <View style={s.headerRegion}>{header}</View> : null}
           <View style={s.mainRegion}>{main}</View>
           <View style={s.footerRegion}>{footer}</View>
         </>
