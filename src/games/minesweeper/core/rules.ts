@@ -5,9 +5,9 @@ import type {
 } from './types';
 import type { PuzzleDifficulty } from '../../shared/types';
 import {
+  getMinesweeperSizeProfile,
   resolveMinesweeperSizeProfile,
-  selectMinesweeperSizeProfile,
-} from './responsive';
+} from './sizeProfiles';
 
 export type MinesweeperDistributionMode =
   | 'cluster-limited'
@@ -396,17 +396,11 @@ function finalizeGeneratedBoard(
 export function getMinesweeperConfig(
   difficulty: PuzzleDifficulty,
   options: {
-    availableWidth?: number;
     profileId?: string;
     rows?: number;
     cols?: number;
   } = {},
 ): MinesweeperConfig {
-  if (typeof options.availableWidth === 'number') {
-    const selectedProfile = selectMinesweeperSizeProfile(difficulty, options.availableWidth);
-    return buildMinesweeperConfig(difficulty, selectedProfile.rows, selectedProfile.cols);
-  }
-
   const matchedProfile = resolveMinesweeperSizeProfile(difficulty, {
     profileId: options.profileId,
     rows: options.rows,
@@ -421,10 +415,9 @@ export function getMinesweeperConfig(
 
 export function createMinesweeperPuzzle(
   difficulty: PuzzleDifficulty,
-  availableWidth: number,
 ): MinesweeperPuzzle {
-  const selectedProfile = selectMinesweeperSizeProfile(difficulty, availableWidth);
-  const config = getMinesweeperConfig(difficulty, { profileId: selectedProfile.id });
+  const selectedProfile = getMinesweeperSizeProfile(difficulty);
+  const config = buildMinesweeperConfig(difficulty, selectedProfile.rows, selectedProfile.cols);
   return {
     difficulty,
     profileId: selectedProfile.id,

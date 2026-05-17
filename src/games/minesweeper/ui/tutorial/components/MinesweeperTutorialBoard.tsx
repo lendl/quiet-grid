@@ -15,6 +15,7 @@ import {
   getMinesweeperBoardCellSize,
   getMinesweeperNumberColor,
 } from '../../play/components/boardStyles';
+import { MINESWEEPER_MINE_GLYPH } from '../../shared/mineGlyph';
 
 interface FocusCell {
   row: number;
@@ -53,7 +54,7 @@ function getCellLabel(board: MinesweeperBoard, row: number, col: number): string
   const cell = board.cells[row][col];
   if (cell.state === 'flagged') return '🚩';
   if (cell.state === 'hidden') return '';
-  if (cell.isMine) return '💣';
+  if (cell.isMine) return MINESWEEPER_MINE_GLYPH;
   if (cell.adjacentMines === 0) return '';
   return String(cell.adjacentMines);
 }

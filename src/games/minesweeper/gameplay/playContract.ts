@@ -1,8 +1,6 @@
-import { Dimensions } from 'react-native';
 import type { MinesweeperActivePuzzle } from './activePuzzle';
 import type { MinesweeperBoard, MinesweeperPuzzle } from '../types';
 import { countFlaggedCells, createMinesweeperBoard, createMinesweeperPuzzle } from './rules';
-import { estimateMinesweeperPlayWidth } from '../core/responsive';
 import { formatElapsed } from '../../../app/utils/formatElapsed';
 import { computeAccuracyPct, computeFinalScore } from '../../../app/utils/scoring';
 import type { PuzzlePlayContract } from '../../../app/shell/playContract';
@@ -30,8 +28,7 @@ export const minesweeperPlayContract: PuzzlePlayContract<
   MinesweeperHudState
 > = {
   createSession: ({ difficulty }) => {
-    const availableWidth = estimateMinesweeperPlayWidth(Dimensions.get('window').width);
-    const puzzle = createMinesweeperPuzzle(difficulty, availableWidth);
+    const puzzle = createMinesweeperPuzzle(difficulty);
     return {
       puzzle,
       board: createMinesweeperBoard(puzzle),

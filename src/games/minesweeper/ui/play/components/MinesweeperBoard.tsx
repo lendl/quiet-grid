@@ -17,6 +17,7 @@ import {
   MINESWEEPER_FRAME_BORDER_WIDTH,
   MINESWEEPER_FRAME_PADDING,
 } from './boardStyles';
+import MinesweeperMineGlyph from '../../shared/mineGlyph';
 
 interface MinesweeperBoardProps {
   board: MinesweeperBoardState;
@@ -181,26 +182,15 @@ function MinesweeperBoard({
                   </View>
                 ) : null}
                 {cell.state === 'revealed' && cell.isMine ? (
-                  <View style={styles.mineWrap}>
-                    <View
-                      style={[
-                        styles.mineCore,
-                        { backgroundColor: mineTargetKeys.has(key) ? theme.difficultyExpert : tokens.danger },
-                      ]}
-                    />
-                    <View
-                      style={[
-                        styles.mineHorizontal,
-                        { backgroundColor: mineTargetKeys.has(key) ? theme.difficultyExpert : tokens.danger },
-                      ]}
-                    />
-                    <View
-                      style={[
-                        styles.mineVertical,
-                        { backgroundColor: mineTargetKeys.has(key) ? theme.difficultyExpert : tokens.danger },
-                      ]}
-                    />
-                  </View>
+                  <MinesweeperMineGlyph
+                    style={[
+                      styles.mineGlyph,
+                      {
+                        color: mineTargetKeys.has(key) ? theme.difficultyExpert : tokens.danger,
+                        fontSize: layout.cellSize * 0.52,
+                      },
+                    ]}
+                  />
                 ) : null}
                 {cell.state === 'revealed' && !cell.isMine && cell.adjacentMines > 0 ? (
                   <Text
@@ -306,6 +296,9 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     textAlign: 'center',
   },
+  mineGlyph: {
+    textAlign: 'center',
+  },
   flagWrap: {
     width: '70%',
     height: '70%',
@@ -330,30 +323,6 @@ const styles = StyleSheet.create({
     borderLeftWidth: 10,
     borderTopColor: 'transparent',
     borderBottomColor: 'transparent',
-  },
-  mineWrap: {
-    width: '72%',
-    height: '72%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  mineCore: {
-    position: 'absolute',
-    width: '34%',
-    height: '34%',
-    borderRadius: 999,
-  },
-  mineHorizontal: {
-    position: 'absolute',
-    width: '72%',
-    height: 2,
-    borderRadius: 1,
-  },
-  mineVertical: {
-    position: 'absolute',
-    width: 2,
-    height: '72%',
-    borderRadius: 1,
   },
   hitCell: {
     position: 'absolute',
