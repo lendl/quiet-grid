@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import AppScreen from '../../components/AppScreen';
+import GamePageShell from '../../components/GamePageShell';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
 import type { PuzzleTabParamList } from '../../navigation/types';
@@ -36,7 +36,18 @@ export default function PuzzleStatsTab({ route }: Props) {
   }, []));
 
   if (!stats) {
-    return <AppScreen contentStyle={s.container} />;
+    return (
+      <GamePageShell
+        activeTab="Games"
+        headerMode="brand"
+        contentTransitionDirection="forward"
+        puzzleNav={{
+          context: 'tabs',
+          activeTab: 'Stats',
+          puzzleTypeId: route.params.puzzleTypeId,
+        }}
+      />
+    );
   }
 
   const gameStats = getPuzzleStats(stats, route.params.puzzleTypeId);
@@ -46,7 +57,16 @@ export default function PuzzleStatsTab({ route }: Props) {
   const streak = getPuzzleStreak(stats, route.params.puzzleTypeId);
 
   return (
-    <AppScreen contentStyle={s.container}>
+    <GamePageShell
+      activeTab="Games"
+      headerMode="brand"
+      contentTransitionDirection="forward"
+      puzzleNav={{
+        context: 'tabs',
+        activeTab: 'Stats',
+        puzzleTypeId: route.params.puzzleTypeId,
+      }}
+    >
       <ScrollView contentContainerStyle={s.scroll}>
         <View style={s.header}>
           <Text style={s.headerTitle}>{definition.shortTitle}</Text>
@@ -96,12 +116,11 @@ export default function PuzzleStatsTab({ route }: Props) {
           );
         })}
       </ScrollView>
-    </AppScreen>
+    </GamePageShell>
   );
 }
 
 const makeStyles = (theme: Theme) => StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.background },
   scroll: { padding: 20, gap: 0 },
   header: {
     marginBottom: 10,

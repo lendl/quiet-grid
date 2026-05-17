@@ -18,7 +18,6 @@ import LossScreen            from '../screens/LossScreen';
 import PuzzleAnalysisScreen  from '../screens/PuzzleAnalysisScreen';
 import PuzzlePlayScreen      from '../screens/PuzzlePlayScreen';
 import HowToPlayScreen       from '../screens/HowToPlayScreen';
-import SupportScreen         from '../screens/SupportScreen';
 import SupportInfoScreen     from '../screens/SupportInfoScreen';
 import TutorialHostScreen    from '../screens/TutorialHostScreen';
 
@@ -76,7 +75,6 @@ export default function AppNavigator() {
       >
         <Stack.Screen name="Welcome"         component={WelcomeScreen} />
         <Stack.Screen name="MainTabs"        component={MainTabs} />
-        <Stack.Screen name="Support"         component={SupportScreen} />
         <Stack.Screen name="SupportInfo"     component={SupportInfoScreen} />
         <Stack.Screen name="Puzzle"          component={PuzzleScreen} />
         <Stack.Screen name="PuzzlePlay"      component={PuzzlePlayScreen} />

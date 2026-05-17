@@ -1,8 +1,10 @@
 import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { DialogConfig } from './AppDialog';
 import AppDialog from './AppDialog';
 import AppScreen from './AppScreen';
+import TopBackgroundEffect from './TopBackgroundEffect';
 import { useTheme } from '../context/ThemeContext';
 import type { Theme } from '../theme';
 
@@ -11,9 +13,11 @@ interface PuzzlePlayScaffoldProps {
   loadingLabel?: string;
   dialog?: DialogConfig | null;
   onDismissDialog: () => void;
+  topSlot?: React.ReactNode;
   header: React.ReactNode;
   main: React.ReactNode;
   footer: React.ReactNode;
+  bottomSlot?: React.ReactNode;
 }
 
 export default function PuzzlePlayScaffold({
@@ -21,27 +25,35 @@ export default function PuzzlePlayScaffold({
   loadingLabel,
   dialog = null,
   onDismissDialog,
+  topSlot = null,
   header,
   main,
   footer,
+  bottomSlot = null,
 }: PuzzlePlayScaffoldProps) {
   const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
   const s = makeStyles(theme);
 
   return (
-    <AppScreen contentStyle={s.container}>
+    <AppScreen edges={['left', 'right']} overlay={false} includeBottomInset={false} contentStyle={s.container}>
+      <TopBackgroundEffect topOffset={-insets.top} />
+      {topSlot}
       {loading ? (
+        <View style={s.loadingRegion}>
         <View style={s.loadingContainer}>
           <ActivityIndicator size="large" color={theme.primary} />
           {loadingLabel ? <Text style={s.loadingText}>{loadingLabel}</Text> : null}
         </View>
+        </View>
         ) : (
-          <>
-            <View style={s.headerRegion}>{header}</View>
-            <View style={s.mainRegion}>{main}</View>
-            <View style={s.footerRegion}>{footer}</View>
-          </>
+        <>
+          <View style={s.headerRegion}>{header}</View>
+          <View style={s.mainRegion}>{main}</View>
+          <View style={s.footerRegion}>{footer}</View>
+        </>
         )}
+      {bottomSlot}
       {dialog ? (
         <AppDialog
           visible
@@ -64,6 +76,9 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  loadingRegion: {
+    flex: 1,
   },
   loadingText: {
     marginTop: 12,

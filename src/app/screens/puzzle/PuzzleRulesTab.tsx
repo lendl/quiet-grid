@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import AppScreen from '../../components/AppScreen';
+import GamePageShell from '../../components/GamePageShell';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
 import type { PuzzleTabParamList } from '../../navigation/types';
@@ -60,7 +60,16 @@ export default function PuzzleRulesTab({ route }: Props) {
   const s = makeStyles(theme);
 
   return (
-    <AppScreen contentStyle={s.container}>
+    <GamePageShell
+      activeTab="Games"
+      headerMode="brand"
+      contentTransitionDirection="forward"
+      puzzleNav={{
+        context: 'tabs',
+        activeTab: 'Rules',
+        puzzleTypeId: route.params.puzzleTypeId,
+      }}
+    >
       <ScrollView contentContainerStyle={s.scroll}>
         <Text style={s.sectionTitle}>{strings.howToPlay.rulesTitle(definition.shortTitle)}</Text>
         {howToPlay.rules.map((rule) => (
@@ -82,12 +91,11 @@ export default function PuzzleRulesTab({ route }: Props) {
           </View>
         ))}
       </ScrollView>
-    </AppScreen>
+    </GamePageShell>
   );
 }
 
 const makeStyles = (theme: Theme) => StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.background },
   scroll: { padding: 20, gap: 12 },
   sectionTitle: { fontSize: 20, fontWeight: '800', color: theme.text, marginBottom: 4 },
   ruleCard: {

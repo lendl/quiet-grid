@@ -1,0 +1,263 @@
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { StackActions, useNavigation, useNavigationState } from '@react-navigation/native';
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import type { StackNavigationProp } from '@react-navigation/stack';
+import { Animated, Easing, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useLanguage } from '../context/LanguageContext';
+import { useTheme } from '../context/ThemeContext';
+import type {
+  PuzzleTabParamList,
+  RootStackParamList,
+  TransitionDirection,
+  TutorialEntryPoint,
+} from '../navigation/types';
+import type { PuzzleTypeId } from '../shell/types';
+import type { Theme } from '../theme';
+import { withAlpha } from '../utils/color';
+
+type PuzzleTabName = keyof PuzzleTabParamList;
+
+type BaseProps = {
+  activeTab: PuzzleTabName;
+  puzzleTypeId: PuzzleTypeId;
+};
+
+type TabContextProps = BaseProps & {
+  context: 'tabs';
+};
+
+type RootContextProps = BaseProps & {
+  context: 'root';
+  tutorialEntry?: TutorialEntryPoint;
+};
+
+type Props = TabContextProps | RootContextProps;
+
+type NavItem = {
+  key: PuzzleTabName;
+  label: string;
+};
+
+export default function PuzzlePageNav(props: Props) {
+  const { strings } = useLanguage();
+  const { theme } = useTheme();
+  const s = useMemo(() => makeStyles(theme), [theme]);
+  const tabNavigation = useNavigation<BottomTabNavigationProp<PuzzleTabParamList>>();
+  const rootNavigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const items = useMemo<NavItem[]>(() => {
+    return [
+      { key: 'Game', label: strings.common.play },
+      { key: 'Rules', label: strings.common.rules },
+      { key: 'Tutorial', label: strings.common.tutorial },
+      { key: 'Stats', label: strings.common.stats },
+    ];
+  }, [strings]);
+  const resolvedActiveTab = useNavigationState((state) => {
+    const routeName = state.routeNames[state.index];
+    return items.some((item) => item.key === routeName)
+      ? routeName as PuzzleTabName
+      : props.activeTab;
+  });
+  const [rowWidth, setRowWidth] = useState(0);
+  const [labelLayouts, setLabelLayouts] = useState<Record<string, { width: number; x: number }>>({});
+  const activeIndex = useMemo(
+    () => items.findIndex((item) => item.key === resolvedActiveTab),
+    [items, resolvedActiveTab],
+  );
+  const indicatorX = useRef(new Animated.Value(0)).current;
+  const indicatorWidth = useRef(new Animated.Value(0)).current;
+  const indicatorAnimation = useRef<Animated.CompositeAnimation | null>(null);
+  const navigationAttempt = useRef(0);
+
+  const segmentWidth = rowWidth > 0 ? rowWidth / items.length : 0;
+
+  const getIndicatorMetrics = useCallback((index: number) => {
+    if (index < 0 || segmentWidth <= 0) {
+      return null;
+    }
+
+    const item = items[index];
+    const labelLayout = item ? labelLayouts[item.key] : undefined;
+    const textWidth = labelLayout?.width ?? 0;
+    const width = Math.max(28, textWidth + 12);
+    const defaultTextX = (segmentWidth - textWidth) / 2;
+    const textX = labelLayout?.x ?? defaultTextX;
+    const x = (index * segmentWidth) + textX - 6;
+
+    return { x, width };
+  }, [items, labelLayouts, segmentWidth]);
+
+  useEffect(() => {
+    indicatorAnimation.current?.stop();
+    navigationAttempt.current += 1;
+
+    const metrics = getIndicatorMetrics(activeIndex);
+    if (!metrics) {
+      return;
+    }
+
+    indicatorX.setValue(metrics.x);
+    indicatorWidth.setValue(metrics.width);
+  }, [activeIndex, getIndicatorMetrics, indicatorWidth, indicatorX]);
+
+  useEffect(() => {
+    return () => {
+      indicatorAnimation.current?.stop();
+    };
+  }, []);
+
+  const navigateTo = (target: PuzzleTabName, direction: TransitionDirection) => {
+    if (target === resolvedActiveTab) {
+      return;
+    }
+
+    if (props.context === 'tabs') {
+      tabNavigation.navigate(target, {
+        puzzleTypeId: props.puzzleTypeId,
+        transitionDirection: direction,
+      });
+      return;
+    }
+
+    rootNavigation.dispatch(StackActions.replace('Puzzle', {
+      puzzleTypeId: props.puzzleTypeId,
+      initialTab: target,
+      initialDirection: direction,
+    }));
+  };
+
+  const handlePress = (target: PuzzleTabName) => {
+    const targetIndex = items.findIndex((item) => item.key === target);
+    if (targetIndex < 0 || target === resolvedActiveTab) {
+      return;
+    }
+    const direction: TransitionDirection = targetIndex > activeIndex ? 'forward' : 'backward';
+
+    const metrics = getIndicatorMetrics(targetIndex);
+    if (!metrics) {
+      navigateTo(target, direction);
+      return;
+    }
+
+    navigationAttempt.current += 1;
+    const attempt = navigationAttempt.current;
+    indicatorAnimation.current?.stop();
+
+    const animation = Animated.parallel([
+      Animated.timing(indicatorX, {
+        toValue: metrics.x,
+        duration: 180,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: false,
+      }),
+      Animated.timing(indicatorWidth, {
+        toValue: metrics.width,
+        duration: 180,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: false,
+      }),
+    ]);
+
+    indicatorAnimation.current = animation;
+    animation.start(({ finished }) => {
+      if (finished && attempt === navigationAttempt.current) {
+        navigateTo(target, direction);
+      }
+    });
+  };
+
+  return (
+    <View style={s.container}>
+      <View style={s.row} onLayout={(event) => setRowWidth(event.nativeEvent.layout.width)}>
+        <View style={s.baseLine} />
+        {segmentWidth > 0 ? (
+          <Animated.View
+            style={[
+              s.activeIndicator,
+              {
+                width: indicatorWidth,
+                transform: [{ translateX: indicatorX }],
+              },
+            ]}
+          />
+        ) : null}
+        {items.map((item) => {
+          const focused = item.key === resolvedActiveTab;
+
+          return (
+            <TouchableOpacity
+              key={item.key}
+              accessibilityRole="button"
+              accessibilityLabel={item.label}
+              onPress={() => handlePress(item.key)}
+              style={s.badge}
+              activeOpacity={0.82}
+            >
+              <Text
+                style={[s.badgeText, focused ? s.badgeTextActive : null]}
+                onLayout={(event) => {
+                  const { width, x } = event.nativeEvent.layout;
+                  setLabelLayouts((current) => {
+                    const previous = current[item.key];
+                    if (previous && previous.width === width && previous.x === x) {
+                      return current;
+                    }
+
+                    return {
+                      ...current,
+                      [item.key]: { width, x },
+                    };
+                  });
+                }}
+              >
+                {item.label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    </View>
+  );
+}
+
+const makeStyles = (theme: Theme) => StyleSheet.create({
+  container: {
+    paddingHorizontal: 16,
+    paddingBottom: 10,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    position: 'relative',
+    paddingBottom: 10,
+  },
+  baseLine: {
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    left: 0,
+    height: 1,
+    backgroundColor: withAlpha(theme.border, 0.72),
+  },
+  activeIndicator: {
+    position: 'absolute',
+    bottom: 0,
+    height: 3,
+    backgroundColor: theme.primary,
+  },
+  badge: {
+    flex: 1,
+    minHeight: 34,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 8,
+  },
+  badgeText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: theme.textSecondary,
+  },
+  badgeTextActive: {
+    color: theme.primary,
+  },
+});

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import type { StackScreenProps } from '@react-navigation/stack';
-import AppScreen from '../components/AppScreen';
+import GlobalPageShell from '../components/GlobalPageShell';
 import { getLocalizedSupportInfoContent } from '../content/supportInfo';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
@@ -17,7 +17,7 @@ export default function SupportInfoScreen({ navigation, route }: Props) {
   const info = getLocalizedSupportInfoContent()[route.params.infoKey];
 
   return (
-    <AppScreen contentStyle={s.container}>
+    <GlobalPageShell activeTab="Support" contentStyle={s.container}>
       <ScrollView contentContainerStyle={s.scroll}>
         <TouchableOpacity
           style={s.backButton}
@@ -44,7 +44,7 @@ export default function SupportInfoScreen({ navigation, route }: Props) {
           </View>
         ))}
       </ScrollView>
-    </AppScreen>
+    </GlobalPageShell>
   );
 }
 

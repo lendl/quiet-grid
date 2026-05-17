@@ -13,6 +13,7 @@ import { getPuzzleAnalysisAdapter } from '../../analysisRegistry';
 
 interface UsePuzzleControllerBootstrapArgs<TSession, THud> {
   isFocused: boolean;
+  menuOpen: boolean;
   puzzleTypeId: PuzzleTypeId;
   difficulty: PuzzleDifficulty;
   resumeRequested: boolean;
@@ -51,6 +52,7 @@ export interface PuzzleControllerBootstrapResult<TSession, THud> {
 
 export function usePuzzleControllerBootstrap<TSession, THud>({
   isFocused,
+  menuOpen,
   puzzleTypeId,
   difficulty,
   resumeRequested,
@@ -84,6 +86,7 @@ export function usePuzzleControllerBootstrap<TSession, THud>({
     isFocused,
     running,
     loading,
+    menuOpen,
     difficulty,
     session,
     contract,

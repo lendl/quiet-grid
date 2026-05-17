@@ -4,8 +4,8 @@ import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { useFocusEffect } from '@react-navigation/native';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
-import AppScreen from '../components/AppScreen';
 import AppDialog from '../components/AppDialog';
+import GlobalPageShell from '../components/GlobalPageShell';
 import { getPuzzleDefinition, puzzleRegistry } from '../shell/games/gameRegistry';
 import { getDifficultyColor } from '../utils/format';
 import { withAlpha } from '../utils/color';
@@ -59,14 +59,14 @@ export default function StatsScreen({ navigation, route }: Props) {
 
   if (!stats) {
     return (
-      <AppScreen contentStyle={s.container} />
+      <GlobalPageShell activeTab="Stats" />
     );
   }
 
   const handleClear = () => setClearDialogVisible(true);
 
   return (
-    <AppScreen contentStyle={s.container}>
+    <GlobalPageShell activeTab="Stats">
       <ScrollView contentContainerStyle={s.scroll}>
         {scopedDefinition ? (
           <TouchableOpacity
@@ -171,7 +171,7 @@ export default function StatsScreen({ navigation, route }: Props) {
         ]}
         onDismiss={() => setClearDialogVisible(false)}
       />
-    </AppScreen>
+    </GlobalPageShell>
   );
 }
 

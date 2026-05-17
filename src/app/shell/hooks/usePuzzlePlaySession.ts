@@ -12,6 +12,7 @@ interface UsePuzzlePlaySessionArgs<TSession, THud> {
   isFocused: boolean;
   running: boolean;
   loading: boolean;
+  menuOpen: boolean;
   difficulty: PuzzleDifficulty;
   session: TSession | null;
   contract: PuzzlePlayContractBase<TSession, THud>;
@@ -43,6 +44,7 @@ export function usePuzzlePlaySession<TSession, THud>({
   isFocused,
   running,
   loading,
+  menuOpen,
   difficulty,
   session,
   contract,
@@ -51,7 +53,7 @@ export function usePuzzlePlaySession<TSession, THud>({
   persistEnabled,
   save,
 }: UsePuzzlePlaySessionArgs<TSession, THud>): PuzzlePlaySessionResult<TSession, THud> {
-  const timer = useGameTimer({ enabled: isFocused && running && !loading });
+  const timer = useGameTimer({ enabled: isFocused && running && !loading && !menuOpen });
   const buildCompletionParams = usePuzzleOutcome();
   const elapsedSeconds = typeof timer.elapsed === 'number' ? timer.elapsed : 0;
   const { setElapsedBeforeSession } = timer;

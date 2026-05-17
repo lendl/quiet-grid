@@ -3,12 +3,10 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 import { useFocusEffect, useNavigation, type NavigationProp } from '@react-navigation/native';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import ActivePuzzleReplaceDialog from '../../components/ActivePuzzleReplaceDialog';
-import AppScreen from '../../components/AppScreen';
-import GridHomeIcon from '../../components/GridHomeIcon';
+import GamePageShell from '../../components/GamePageShell';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useActivePuzzleReplacement } from '../../hooks/useActivePuzzleReplacement';
-import { returnToHome } from '../../navigation/returnToHome';
 import type { PuzzleTabParamList, RootStackParamList } from '../../navigation/types';
 import { getPuzzleDefinition } from '../../shell/games/gameRegistry';
 import type { Theme } from '../../theme';
@@ -53,19 +51,18 @@ export default function PuzzleGameTab({ route }: Props) {
   }));
 
   return (
-    <AppScreen contentStyle={s.container}>
+    <GamePageShell
+      activeTab="Games"
+      headerMode="brand"
+      contentTransitionDirection="forward"
+      puzzleNav={{
+        context: 'tabs',
+        activeTab: 'Game',
+        puzzleTypeId,
+      }}
+    >
       <ScrollView contentContainerStyle={s.scroll}>
-        <TouchableOpacity
-          style={s.backButton}
-          onPress={() => returnToHome(navigation)}
-          accessibilityLabel={strings.common.goHome}
-          activeOpacity={0.8}
-        >
-          <GridHomeIcon />
-        </TouchableOpacity>
-
         <View style={s.header}>
-          <Text style={s.title}>{definition.shortTitle}</Text>
           <Text style={s.tagline}>{definition.tagline}</Text>
         </View>
 
@@ -96,21 +93,12 @@ export default function PuzzleGameTab({ route }: Props) {
         onStartNew={handleGiveUpAndStartNew}
         onDismiss={dismissDialog}
       />
-    </AppScreen>
+    </GamePageShell>
   );
 }
 
 const makeStyles = (theme: Theme) => StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.background },
   scroll: { padding: 20, gap: 0 },
-  backButton: {
-    alignSelf: 'flex-start',
-    minWidth: 44,
-    minHeight: 36,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 8,
-  },
   header: {
     gap: 6,
   },

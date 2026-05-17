@@ -15,6 +15,8 @@ export interface PuzzlePlayRouteParams {
   resume?: boolean;
 }
 
+export type TransitionDirection = 'forward' | 'backward' | 'none';
+
 export interface CompletionRouteParams {
   variant: CompletionVariant;
   outcome: PuzzleOutcome;
@@ -30,6 +32,8 @@ export interface LossRouteParams {
 
 export interface PuzzleRouteParams {
   puzzleTypeId: PuzzleTypeId;
+  initialTab?: keyof PuzzleTabParamList;
+  initialDirection?: TransitionDirection;
 }
 
 export type TutorialEntryPoint = 'startup' | 'howToPlay';
@@ -38,20 +42,19 @@ export type MainTabParamList = {
   Games: undefined;
   Stats: { puzzleTypeId?: PuzzleTypeId } | undefined;
   Settings: undefined;
+  Support: undefined;
 };
 
 export type PuzzleTabParamList = {
-  Game: { puzzleTypeId: PuzzleTypeId };
-  Stats: { puzzleTypeId: PuzzleTypeId };
-  Rules: { puzzleTypeId: PuzzleTypeId };
-  Tutorial: { puzzleTypeId: PuzzleTypeId };
-  Settings: { puzzleTypeId: PuzzleTypeId };
+  Game: { puzzleTypeId: PuzzleTypeId; transitionDirection?: TransitionDirection };
+  Stats: { puzzleTypeId: PuzzleTypeId; transitionDirection?: TransitionDirection };
+  Rules: { puzzleTypeId: PuzzleTypeId; transitionDirection?: TransitionDirection };
+  Tutorial: { puzzleTypeId: PuzzleTypeId; transitionDirection?: TransitionDirection };
 };
 
 export type RootStackParamList = {
   Welcome: undefined;
   MainTabs: NavigatorScreenParams<MainTabParamList> | undefined;
-  Support: undefined;
   SupportInfo: { infoKey: SupportInfoKey };
   Puzzle: PuzzleRouteParams;
   PuzzlePlay: PuzzlePlayRouteParams;

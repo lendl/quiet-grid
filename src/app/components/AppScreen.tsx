@@ -18,6 +18,8 @@ interface AppScreenProps {
   contentStyle?: StyleProp<ViewStyle>;
   edges?: Edge[];
   overlay?: boolean;
+  backgroundColor?: string;
+  includeBottomInset?: boolean;
 }
 
 function getBaseBottomPadding(style: StyleProp<ViewStyle>): number {
@@ -42,15 +44,18 @@ export default function AppScreen({
   contentStyle,
   edges = ['top', 'left', 'right'],
   overlay = true,
+  backgroundColor,
+  includeBottomInset = true,
 }: AppScreenProps) {
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
   const baseBottomPadding = getBaseBottomPadding(contentStyle);
+  const resolvedBackgroundColor = backgroundColor ?? theme.background;
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]} edges={edges}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: resolvedBackgroundColor }]} edges={edges}>
       {overlay ? <ScreenOverlay /> : null}
-      <View style={[styles.content, contentStyle, { paddingBottom: baseBottomPadding + insets.bottom }]}>
+      <View style={[styles.content, contentStyle, { paddingBottom: baseBottomPadding + (includeBottomInset ? insets.bottom : 0) }]}>
         {children}
       </View>
     </SafeAreaView>

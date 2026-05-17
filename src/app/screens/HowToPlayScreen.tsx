@@ -1,11 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import type { StackScreenProps } from '@react-navigation/stack';
-import AppScreen from '../components/AppScreen';
-import GridHomeIcon from '../components/GridHomeIcon';
+import GamePageShell from '../components/GamePageShell';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
-import { returnToHome } from '../navigation/returnToHome';
 import { getPuzzleDefinition } from '../shell/games/gameRegistry';
 import type { HowToPlayCellValue } from '../shell/games/howToPlayContent';
 import type { RootStackParamList } from '../navigation/types';
@@ -48,7 +46,7 @@ function MiniGrid({ rows }: { rows: readonly (readonly HowToPlayCellValue[])[] }
   );
 }
 
-export default function HowToPlayScreen({ navigation, route }: Props) {
+export default function HowToPlayScreen({ route }: Props) {
   const { strings } = useLanguage();
   const { theme } = useTheme();
   const definition = getPuzzleDefinition(route.params.puzzleTypeId);
@@ -56,17 +54,17 @@ export default function HowToPlayScreen({ navigation, route }: Props) {
   const s = makeStyles(theme);
 
   return (
-    <AppScreen contentStyle={s.container}>
-      <ScrollView contentContainerStyle={s.scroll}>
-        <TouchableOpacity
-          style={s.backButton}
-          onPress={() => returnToHome(navigation)}
-          accessibilityLabel={strings.common.goHome}
-          activeOpacity={0.8}
-        >
-          <GridHomeIcon />
-        </TouchableOpacity>
-
+  <GamePageShell
+    activeTab="Games"
+    headerMode="brand"
+    contentTransitionDirection="forward"
+    puzzleNav={{
+      context: 'root',
+      activeTab: 'Rules',
+      puzzleTypeId: route.params.puzzleTypeId,
+    }}
+  >
+    <ScrollView contentContainerStyle={s.scroll}>
         <Text style={s.sectionTitle}>{strings.howToPlay.rulesTitle(definition.shortTitle)}</Text>
         {howToPlay.rules.map(rule => (
           <View key={rule.num} style={s.ruleCard}>
@@ -88,21 +86,12 @@ export default function HowToPlayScreen({ navigation, route }: Props) {
         ))}
 
       </ScrollView>
-    </AppScreen>
+    </GamePageShell>
   );
 }
 
 const makeStyles = (theme: Theme) => StyleSheet.create({
-  container:    { flex: 1, backgroundColor: theme.background },
   scroll:       { padding: 20, gap: 12 },
-  backButton: {
-    alignSelf: 'flex-start',
-    marginBottom: 6,
-    minWidth: 44,
-    minHeight: 36,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   sectionTitle: { fontSize: 20, fontWeight: '800', color: theme.text, marginBottom: 4 },
   replayButton: {
     marginBottom: 10,

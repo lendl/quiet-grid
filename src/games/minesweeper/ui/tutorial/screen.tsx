@@ -1,11 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import type { StackScreenProps } from '@react-navigation/stack';
-import GridHomeIcon from '../../../../app/components/GridHomeIcon';
 import PuzzleTutorialScaffold from '../../../../app/components/PuzzleTutorialScaffold';
 import { useLanguage } from '../../../../app/context/LanguageContext';
 import { useTheme } from '../../../../app/context/ThemeContext';
-import { returnToHome } from '../../../../app/navigation/returnToHome';
 import type { RootStackParamList } from '../../../../app/navigation/types';
 import type { Theme } from '../../../../app/theme';
 import { markPuzzleTutorialSeen } from '../../../../app/utils/settingsStorage';
@@ -51,13 +49,6 @@ export default function TutorialScreen({ navigation, route }: Props) {
       }
     };
   }, []);
-
-  const exitLabel = useMemo(() => {
-    if (isReplay || lessonIndex > 0) {
-      return resolvedLanguage === 'nl' ? 'Tutorial beëindigen' : 'End tutorial';
-    }
-    return resolvedLanguage === 'nl' ? 'Tutorial overslaan' : 'Skip tutorial';
-  }, [isReplay, lessonIndex, resolvedLanguage]);
 
   const exitTutorial = useCallback(async () => {
     await markPuzzleTutorialSeen(route.params.puzzleTypeId);
@@ -129,21 +120,7 @@ export default function TutorialScreen({ navigation, route }: Props) {
 
   return (
     <PuzzleTutorialScaffold
-      backButton={isReplay ? (
-        <TouchableOpacity
-          style={s.backButton}
-          onPress={() => returnToHome(navigation)}
-          accessibilityLabel={strings.common.goHome}
-          activeOpacity={0.8}
-        >
-          <GridHomeIcon />
-        </TouchableOpacity>
-      ) : undefined}
       progressLabel={`${resolvedLanguage === 'nl' ? 'Les' : 'Lesson'} ${lessonIndex + 1}`}
-      exitLabel={exitLabel}
-      onExit={() => {
-        void exitTutorial();
-      }}
       statusText={statusText}
       title={lesson.title}
       body={lesson.body}
@@ -209,14 +186,6 @@ export default function TutorialScreen({ navigation, route }: Props) {
 }
 
 const makeStyles = (theme: Theme) => StyleSheet.create({
-  backButton: {
-    alignSelf: 'flex-start',
-    marginBottom: 6,
-    minWidth: 44,
-    minHeight: 36,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   actionPrompt: {
     fontSize: 16,
     lineHeight: 24,

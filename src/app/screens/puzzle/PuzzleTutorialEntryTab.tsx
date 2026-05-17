@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useNavigation, type RouteProp } from '@react-navigation/native';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import type { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
-import AppScreen from '../../components/AppScreen';
+import GamePageShell from '../../components/GamePageShell';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
 import type { PuzzleTabParamList, RootStackParamList } from '../../navigation/types';
@@ -19,6 +19,7 @@ export default function PuzzleTutorialEntryTab({ route }: Props) {
   const { theme } = useTheme();
   const rootNavigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const definition = getPuzzleDefinition(route.params.puzzleTypeId);
+  const s = useMemo(() => makeStyles(theme), [theme]);
 
   const tutorialRoute = useMemo<RouteProp<RootStackParamList, 'Tutorial'>>(() => ({
     key: `Tutorial-${route.params.puzzleTypeId}`,
@@ -51,33 +52,46 @@ export default function PuzzleTutorialEntryTab({ route }: Props) {
   }, [rootNavigation, route.params.puzzleTypeId]);
 
   if (!definition.screens.tutorial) {
-    const s = makeStyles(theme);
-
     return (
-      <AppScreen contentStyle={s.container}>
+      <GamePageShell
+        activeTab="Games"
+        headerMode="brand"
+        contentTransitionDirection="forward"
+        puzzleNav={{
+          context: 'tabs',
+          activeTab: 'Tutorial',
+          puzzleTypeId: route.params.puzzleTypeId,
+        }}
+      >
         <View style={s.content}>
           <Text style={s.title}>{strings.tutorialHost.unavailableTitle}</Text>
           <Text style={s.body}>{strings.tutorialHost.unavailableBody}</Text>
         </View>
-      </AppScreen>
+      </GamePageShell>
     );
   }
-
   const Screen = definition.screens.tutorial as ComponentType<TutorialScreenProps>;
 
   return (
-    <Screen
-      navigation={tutorialNavigation}
-      route={tutorialRoute}
-    />
+    <GamePageShell
+      activeTab="Games"
+      headerMode="brand"
+      contentTransitionDirection="forward"
+      puzzleNav={{
+        context: 'tabs',
+        activeTab: 'Tutorial',
+        puzzleTypeId: route.params.puzzleTypeId,
+      }}
+    >
+      <Screen
+        navigation={tutorialNavigation}
+        route={tutorialRoute}
+      />
+    </GamePageShell>
   );
 }
 
 const makeStyles = (theme: Theme) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.background,
-  },
   content: {
     flex: 1,
     alignItems: 'center',

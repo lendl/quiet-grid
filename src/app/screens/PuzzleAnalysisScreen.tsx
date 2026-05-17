@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import type { StackScreenProps } from '@react-navigation/stack';
-import AppScreen from '../components/AppScreen';
+import GamePageShell from '../components/GamePageShell';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import type { RootStackParamList } from '../navigation/types';
@@ -64,7 +64,7 @@ export default function PuzzleAnalysisScreen({ navigation, route }: Props) {
 
   if (!adapter || !currentStep) {
     return (
-      <AppScreen contentStyle={s.container}>
+      <GamePageShell activeTab="Games" headerMode="brand">
         <View style={s.emptyState}>
           <TouchableOpacity
             style={s.backButton}
@@ -78,12 +78,12 @@ export default function PuzzleAnalysisScreen({ navigation, route }: Props) {
           <Text style={s.title}>{strings.analysis.title}</Text>
           <Text style={s.subtitle}>{definition.shortTitle}</Text>
         </View>
-      </AppScreen>
+      </GamePageShell>
     );
   }
 
   return (
-    <AppScreen contentStyle={s.container}>
+    <GamePageShell activeTab="Games" headerMode="brand">
       <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
         <TouchableOpacity
           style={s.backButton}
@@ -149,15 +149,11 @@ export default function PuzzleAnalysisScreen({ navigation, route }: Props) {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </AppScreen>
+    </GamePageShell>
   );
 }
 
 const makeStyles = (theme: Theme) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.background,
-  },
   scroll: {
     padding: 20,
     gap: 20,

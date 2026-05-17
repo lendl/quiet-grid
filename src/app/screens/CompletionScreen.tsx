@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import type { StackScreenProps } from '@react-navigation/stack';
-import AppScreen from '../components/AppScreen';
+import GamePageShell from '../components/GamePageShell';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import { returnToHome } from '../navigation/returnToHome';
@@ -365,7 +365,7 @@ export default function CompletionScreen({ route, navigation }: Props) {
   }, [navigation]);
 
   return (
-    <AppScreen contentStyle={s.container}>
+    <GamePageShell activeTab="Games" headerMode="back" backToPuzzleTypeId={puzzleTypeId}>
       <Animated.View
         style={[
           s.content,
@@ -480,7 +480,7 @@ export default function CompletionScreen({ route, navigation }: Props) {
           </TouchableOpacity>
         </View>
       </Animated.View>
-    </AppScreen>
+    </GamePageShell>
   );
 }
 

@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation, type NavigationProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import AppScreen from '../components/AppScreen';
+import GlobalPageShell from '../components/GlobalPageShell';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import type { RootStackParamList } from '../navigation/types';
@@ -147,14 +147,13 @@ export default function SettingsScreen() {
       key: 'support',
       label: strings.common.support,
       detail: strings.support.subtitle,
-      onPress: () => navigation.navigate('Support'),
+      onPress: () => navigation.navigate('MainTabs', { screen: 'Support' }),
     },
   ], [navigation, strings.common.support, strings.support.subtitle]);
   return (
-    <AppScreen contentStyle={s.container}>
+    <GlobalPageShell activeTab="Settings">
       <ScrollView contentContainerStyle={s.scroll}>
         <View style={s.header}>
-          <Text style={s.title}>{strings.settings.title}</Text>
           <Text style={s.subtitle}>
             {strings.settings.subtitle}
           </Text>
@@ -289,7 +288,7 @@ export default function SettingsScreen() {
         <Section title={strings.settings.tutorials} rows={tutorialRows} styles={s} />
         <Section title={strings.common.support} rows={supportRows} styles={s} />
       </ScrollView>
-    </AppScreen>
+    </GlobalPageShell>
   );
 }
 
@@ -304,11 +303,6 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   },
   header: {
     gap: 8,
-  },
-  title: {
-    fontSize: 30,
-    fontWeight: '900',
-    color: theme.text,
   },
   subtitle: {
     fontSize: 15,

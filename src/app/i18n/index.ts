@@ -90,6 +90,7 @@ const EN_STRINGS = {
     games: 'Games',
     stats: 'Stats',
     settings: 'Settings',
+    support: 'Support',
   },
   games: {
     subtitle: 'Choose a puzzle and keep your active run close.',
@@ -337,6 +338,7 @@ const NL_STRINGS: AppStrings = {
     games: 'Spellen',
     stats: 'Statistieken',
     settings: 'Instellingen',
+    support: 'Ondersteuning',
   },
   games: {
     subtitle: 'Kies een puzzel en houd je actieve spel dichtbij.',

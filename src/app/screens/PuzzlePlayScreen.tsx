@@ -1,9 +1,11 @@
 import React, { useMemo } from 'react';
+import { StackActions } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import type { StackScreenProps } from '@react-navigation/stack';
+import AppTopBar from '../components/AppTopBar';
+import GlobalBottomNav from '../components/GlobalBottomNav';
 import PuzzlePlayScaffold from '../components/PuzzlePlayScaffold';
-import GridHomeIcon from '../components/GridHomeIcon';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import type { RootStackParamList } from '../navigation/types';
@@ -37,26 +39,22 @@ export default function PuzzlePlayScreen(props: Props) {
     };
   }, []);
 
+  const handleBackToDifficulty = React.useCallback(() => {
+    props.navigation.dispatch(StackActions.replace('Puzzle', {
+      puzzleTypeId: props.route.params.puzzleTypeId,
+    }));
+  }, [props.navigation, props.route.params.puzzleTypeId]);
+
   return (
     <PuzzlePlayScaffold
       loading={layout.loading}
       loadingLabel={layout.loadingLabel}
       dialog={layout.dialog}
       onDismissDialog={layout.onDismissDialog}
+      topSlot={<AppTopBar mode="back" onBack={handleBackToDifficulty} />}
       header={(
         <View style={s.header}>
           <View style={s.headerMainRow}>
-            <TouchableOpacity
-              accessibilityRole="button"
-              accessibilityLabel={strings.common.goHome}
-              onPress={() => {
-                void layout.exitToHome();
-              }}
-              style={s.iconButton}
-              activeOpacity={0.8}
-            >
-              <GridHomeIcon />
-            </TouchableOpacity>
             <View style={s.headerActions}>
               {showTimerInPlay ? (
                 <View style={s.timerPill}>
@@ -108,6 +106,7 @@ export default function PuzzlePlayScreen(props: Props) {
       )}
       main={layout.main}
       footer={layout.footer}
+      bottomSlot={<GlobalBottomNav activeTab="Games" />}
     />
   );
 }
@@ -122,7 +121,7 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   headerMainRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
   },
   headerActions: {
     flexDirection: 'row',

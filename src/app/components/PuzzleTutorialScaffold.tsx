@@ -1,6 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import AppScreen from './AppScreen';
+import { StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 import type { Theme } from '../theme';
 import { withAlpha } from '../utils/color';
@@ -8,8 +7,6 @@ import { withAlpha } from '../utils/color';
 interface PuzzleTutorialScaffoldProps {
   backButton?: React.ReactNode;
   progressLabel: string;
-  exitLabel: string;
-  onExit: () => void;
   statusText?: string | null;
   title: string;
   body?: string | null;
@@ -23,8 +20,6 @@ interface PuzzleTutorialScaffoldProps {
 export default function PuzzleTutorialScaffold({
   backButton,
   progressLabel,
-  exitLabel,
-  onExit,
   statusText = null,
   title,
   body = null,
@@ -38,14 +33,11 @@ export default function PuzzleTutorialScaffold({
   const s = makeStyles(theme);
 
   return (
-    <AppScreen contentStyle={s.container}>
+    <View style={s.container}>
       {backButton}
 
       <View style={s.header}>
         <Text style={s.progress}>{progressLabel}</Text>
-        <TouchableOpacity onPress={onExit} activeOpacity={0.8}>
-          <Text style={s.exitText}>{exitLabel}</Text>
-        </TouchableOpacity>
       </View>
 
       <View style={s.statusRow}>
@@ -71,7 +63,7 @@ export default function PuzzleTutorialScaffold({
       </View>
 
       <View style={s.footerRegion}>{footer}</View>
-    </AppScreen>
+    </View>
   );
 }
 
@@ -84,7 +76,6 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
   },
   progress: {
@@ -92,11 +83,6 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     fontWeight: '700',
     color: theme.primaryLight,
     letterSpacing: 0.5,
-  },
-  exitText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: theme.textSecondary,
   },
   statusRow: {
     minHeight: 20,

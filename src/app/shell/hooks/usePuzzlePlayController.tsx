@@ -16,7 +16,7 @@ import { usePuzzleControllerBootstrap } from './usePuzzleControllerBootstrap';
 
 type Props = StackScreenProps<RootStackParamList, 'PuzzlePlay'>;
 
-export function usePuzzlePlayController(props: Props): PuzzlePlayLayoutState {
+export function usePuzzlePlayController(props: Props, menuOpen = false): PuzzlePlayLayoutState {
   const strings = getAppStrings();
   const definition = getPuzzleDefinition(props.route.params.puzzleTypeId);
   const adapter = definition.playAdapter;
@@ -75,6 +75,7 @@ export function usePuzzlePlayController(props: Props): PuzzlePlayLayoutState {
 
   const bootstrap = usePuzzleControllerBootstrap({
     isFocused,
+    menuOpen,
     puzzleTypeId: props.route.params.puzzleTypeId,
     difficulty,
     resumeRequested,

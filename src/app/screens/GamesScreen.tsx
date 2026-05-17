@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 import { useFocusEffect, useNavigation, type NavigationProp } from '@react-navigation/native';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import ActivePuzzleReplaceDialog from '../components/ActivePuzzleReplaceDialog';
-import AppScreen from '../components/AppScreen';
+import GlobalPageShell from '../components/GlobalPageShell';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import { useActivePuzzleReplacement } from '../hooks/useActivePuzzleReplacement';
@@ -46,7 +46,7 @@ export default function GamesScreen(_: Props) {
         const puzzleType = puzzleRegistry.find((definition) => definition.id === puzzleTypeId);
 
         if (puzzleType?.supports.tutorial && await shouldAutoShowTutorial(puzzleTypeId)) {
-          navigation.navigate('Tutorial', { puzzleTypeId, entry: 'startup' });
+          navigation.navigate('Puzzle', { puzzleTypeId, initialTab: 'Tutorial' });
           return;
         }
 
@@ -56,10 +56,9 @@ export default function GamesScreen(_: Props) {
   }, [navigation, requestStart]);
 
   return (
-    <AppScreen contentStyle={s.container}>
+    <GlobalPageShell activeTab="Games">
       <ScrollView contentContainerStyle={s.scroll}>
         <View style={s.header}>
-          <Text style={s.title}>{strings.tabs.games}</Text>
           <Text style={s.subtitle}>{strings.games.subtitle}</Text>
         </View>
 
@@ -104,7 +103,7 @@ export default function GamesScreen(_: Props) {
         onStartNew={handleGiveUpAndStartNew}
         onDismiss={dismissDialog}
       />
-    </AppScreen>
+    </GlobalPageShell>
   );
 }
 
@@ -120,11 +119,7 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   header: {
     gap: 8,
   },
-  title: {
-    fontSize: 30,
-    fontWeight: '900',
-    color: theme.text,
-  },
+
   subtitle: {
     fontSize: 15,
     lineHeight: 22,

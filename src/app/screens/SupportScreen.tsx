@@ -1,10 +1,9 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import type { StackScreenProps } from '@react-navigation/stack';
+import { useNavigation, type NavigationProp } from '@react-navigation/native';
 import appConfig from '../../../app.json';
 import AppDialog from '../components/AppDialog';
-import AppScreen from '../components/AppScreen';
-import GridHomeIcon from '../components/GridHomeIcon';
+import GlobalPageShell from '../components/GlobalPageShell';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import {
@@ -15,12 +14,9 @@ import {
   openRepo,
   openSupportEmail,
 } from '../utils/supportLinks';
-import { returnToHome } from '../navigation/returnToHome';
 import { withAlpha } from '../utils/color';
 import type { RootStackParamList } from '../navigation/types';
 import type { Theme } from '../theme';
-
-type Props = StackScreenProps<RootStackParamList, 'Support'>;
 
 type SupportRow = {
   key: string;
@@ -66,9 +62,10 @@ function Section({
   );
 }
 
-export default function SupportScreen({ navigation }: Props) {
+export default function SupportScreen() {
   const { strings } = useLanguage();
   const { theme } = useTheme();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const s = useMemo(() => makeStyles(theme), [theme]);
   const [openErrorVisible, setOpenErrorVisible] = useState(false);
 
@@ -160,19 +157,9 @@ export default function SupportScreen({ navigation }: Props) {
   ], [handleRateApp, navigation, strings]);
 
   return (
-    <AppScreen contentStyle={s.container}>
+    <GlobalPageShell activeTab="Support">
       <ScrollView contentContainerStyle={s.scroll}>
-        <TouchableOpacity
-          style={s.homeButton}
-          onPress={() => returnToHome(navigation)}
-          accessibilityLabel={strings.common.goHome}
-          activeOpacity={0.8}
-        >
-          <GridHomeIcon />
-        </TouchableOpacity>
-
         <View style={s.header}>
-          <Text style={s.title}>{strings.support.title}</Text>
           <Text style={s.subtitle}>
             {strings.support.subtitle}
           </Text>
@@ -199,7 +186,7 @@ export default function SupportScreen({ navigation }: Props) {
         ]}
         onDismiss={() => setOpenErrorVisible(false)}
       />
-    </AppScreen>
+    </GlobalPageShell>
   );
 }
 
@@ -212,21 +199,8 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     padding: 20,
     gap: 22,
   },
-  homeButton: {
-    alignSelf: 'flex-start',
-    minWidth: 44,
-    minHeight: 36,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 2,
-  },
   header: {
     gap: 8,
-  },
-  title: {
-    fontSize: 30,
-    fontWeight: '900',
-    color: theme.text,
   },
   subtitle: {
     fontSize: 15,
