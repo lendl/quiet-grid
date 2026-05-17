@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../../../../app/context/ThemeContext';
 import { createPuzzlePlayAdapter } from '../../../../app/shell/games/playAdapter';
@@ -9,6 +9,7 @@ import {
 } from '../../../../app/utils/activePuzzleStateStorage';
 import type { Theme } from '../../../../app/theme';
 import { withAlpha } from '../../../../app/utils/color';
+import ZoomableBoardSurface from '../../../../app/components/ZoomableBoardSurface';
 import type {
   PuzzleEffectHandlerArgs,
   PuzzleHeaderAction,
@@ -43,9 +44,13 @@ function useMinesweeperAdapter({
   const nextMove = useNextMoveHelper((session: MinesweeperPlaySession) => (
     getMinesweeperNextMoveHint(session.board)
   ));
+  const [isBoardZoomed, setIsBoardZoomed] = useState(false);
+  const resetBoardZoomRef = useRef<(() => void) | null>(null);
 
   const resetHelperState = useCallback(() => {
     nextMove.reset();
+    setIsBoardZoomed(false);
+    resetBoardZoomRef.current = null;
   }, [nextMove.reset]);
 
   const handleMissingPuzzle = useCallback(async () => {
@@ -85,6 +90,9 @@ function useMinesweeperAdapter({
     const handleToggleNextMove = () => {
       nextMove.toggle(sessionRef.current);
     };
+    const handleResetZoom = () => {
+      resetBoardZoomRef.current?.();
+    };
     const nextMoveHeaderAction: PuzzleHeaderAction = {
       key: 'next-move',
       accessibilityLabel: nextMove.visible
@@ -94,9 +102,17 @@ function useMinesweeperAdapter({
       active: nextMove.visible,
       onPress: handleToggleNextMove,
     };
+    const resetZoomHeaderAction: PuzzleHeaderAction = {
+      key: 'reset-zoom',
+      accessibilityLabel: 'Reset zoom',
+      iconName: 'refresh-outline',
+      onPress: handleResetZoom,
+    };
 
     return {
-      headerActions: [nextMoveHeaderAction],
+      headerActions: isBoardZoomed
+        ? [resetZoomHeaderAction, nextMoveHeaderAction]
+        : [nextMoveHeaderAction],
       headerMeta: session ? [
         {
           key: 'size',
@@ -116,19 +132,26 @@ function useMinesweeperAdapter({
       ] : [],
       main: session ? (
         <View style={styles.gridArea}>
-          <MinesweeperBoard
-            board={session.board}
-            onReveal={(row, col) => {
-              resetNextMove();
-              void runShellAction({ type: 'reveal-cell', row, col });
+          <ZoomableBoardSurface
+            onZoomStateChange={setIsBoardZoomed}
+            onRegisterReset={(reset) => {
+              resetBoardZoomRef.current = reset;
             }}
-            onToggleFlag={(row, col) => {
-              resetNextMove();
-              void runShellAction({ type: 'toggle-flag', row, col });
-            }}
-            nextMoveEvidenceCells={nextMove.hint?.evidenceCells ?? []}
-            nextMoveSafeTargetCells={nextMove.hint?.targetCells ?? []}
-          />
+          >
+            <MinesweeperBoard
+              board={session.board}
+              onReveal={(row, col) => {
+                resetNextMove();
+                void runShellAction({ type: 'reveal-cell', row, col });
+              }}
+              onToggleFlag={(row, col) => {
+                resetNextMove();
+                void runShellAction({ type: 'toggle-flag', row, col });
+              }}
+              nextMoveEvidenceCells={nextMove.hint?.evidenceCells ?? []}
+              nextMoveSafeTargetCells={nextMove.hint?.targetCells ?? []}
+            />
+          </ZoomableBoardSurface>
         </View>
       ) : (
         <View style={styles.gridArea} />
@@ -155,7 +178,7 @@ function useMinesweeperAdapter({
         <View style={styles.emptyFooter} />
       ),
     };
-  }, [minesweeperStrings, nextMove, styles]);
+  }, [isBoardZoomed, minesweeperStrings, nextMove, styles]);
 
   return {
     onMissing: handleMissingPuzzle,

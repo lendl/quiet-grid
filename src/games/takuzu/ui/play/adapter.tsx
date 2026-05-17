@@ -7,6 +7,7 @@ import { createPuzzlePlayAdapter } from '../../../../app/shell/games/playAdapter
 import { useNextMoveHelper } from '../../../../app/shell/games/useNextMoveHelper';
 import type { Theme } from '../../../../app/theme';
 import { withAlpha } from '../../../../app/utils/color';
+import ZoomableBoardSurface from '../../../../app/components/ZoomableBoardSurface';
 import type {
   PuzzleHeaderAction,
   PuzzlePlayAdapter,
@@ -61,6 +62,8 @@ function useTakuzuAdapter({
     getTakuzuNextMoveHint(session.board)
   ));
   const [gridContainer, setGridContainer] = useState({ width: 0, height: 0 });
+  const [isBoardZoomed, setIsBoardZoomed] = useState(false);
+  const resetBoardZoomRef = useRef<(() => void) | null>(null);
 
   const validationRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingValidationRef = useRef<PendingValidation | null>(null);
@@ -69,6 +72,8 @@ function useTakuzuAdapter({
   const resetAdapterState = useCallback(() => {
     nextMove.reset();
     setLineAnimationEventState(null);
+    setIsBoardZoomed(false);
+    resetBoardZoomRef.current = null;
     pendingValidationRef.current = null;
     lineAnimationTokenRef.current = 0;
     if (validationRef.current) {
@@ -197,6 +202,9 @@ function useTakuzuAdapter({
     const handleToggleNextMove = () => {
       nextMove.toggle(sessionRef.current);
     };
+    const handleResetZoom = () => {
+      resetBoardZoomRef.current?.();
+    };
 
     const exitToHome = async () => {
       const currentSession = sessionRef.current;
@@ -254,11 +262,19 @@ function useTakuzuAdapter({
       active: nextMove.visible,
       onPress: handleToggleNextMove,
     };
+    const resetZoomHeaderAction: PuzzleHeaderAction = {
+      key: 'reset-zoom',
+      accessibilityLabel: 'Reset zoom',
+      iconName: 'refresh-outline',
+      onPress: handleResetZoom,
+    };
 
     return {
       loading: loading || !session,
       exitToHome,
-      headerActions: [nextMoveHeaderAction],
+      headerActions: isBoardZoomed
+        ? [resetZoomHeaderAction, nextMoveHeaderAction]
+        : [nextMoveHeaderAction],
       headerMeta: metadata,
       footer: nextMove.visible && nextMove.hint ? (
         <View style={styles.nextMoveCard}>
@@ -276,25 +292,33 @@ function useTakuzuAdapter({
       main: (
         <View style={styles.gridArea} onLayout={handleGridLayout}>
           {session && gridContainer.width > 0 ? (
-            <TakuzuPuzzleGrid
-              board={session.board}
-              isGiven={session.isGiven}
-              finishedCells={session.finishedCells}
-              lineAnimationEvent={lineAnimationEvent}
-              nextMoveEvidenceCells={nextMove.hint?.evidenceCells ?? []}
-              nextMoveTargetCells={nextMove.hint?.targetCells ?? []}
-              nextMoveHighlightRows={nextMove.hint?.highlightRows ?? []}
-              nextMoveHighlightCols={nextMove.hint?.highlightCols ?? []}
-              size={session.puzzle.size}
-              onCellPress={handleCellPress}
-              containerWidth={gridContainer.width}
-              containerHeight={gridContainer.height}
-            />
+            <ZoomableBoardSurface
+              onZoomStateChange={setIsBoardZoomed}
+              onRegisterReset={(reset) => {
+                resetBoardZoomRef.current = reset;
+              }}
+            >
+              <TakuzuPuzzleGrid
+                board={session.board}
+                isGiven={session.isGiven}
+                finishedCells={session.finishedCells}
+                lineAnimationEvent={lineAnimationEvent}
+                nextMoveEvidenceCells={nextMove.hint?.evidenceCells ?? []}
+                nextMoveTargetCells={nextMove.hint?.targetCells ?? []}
+                nextMoveHighlightRows={nextMove.hint?.highlightRows ?? []}
+                nextMoveHighlightCols={nextMove.hint?.highlightCols ?? []}
+                size={session.puzzle.size}
+                onCellPress={handleCellPress}
+                containerWidth={gridContainer.width}
+                containerHeight={gridContainer.height}
+              />
+            </ZoomableBoardSurface>
           ) : null}
         </View>
       ),
     };
   }, [
+    isBoardZoomed,
     nextMove,
     goHome,
     gridContainer.height,

@@ -18,7 +18,7 @@ export interface PuzzleMetaItem {
 export interface PuzzleHeaderAction {
   key: string;
   accessibilityLabel: string;
-  iconName: 'bulb' | 'bulb-outline';
+  iconName: 'bulb' | 'bulb-outline' | 'refresh-outline';
   active?: boolean;
   onPress: () => void;
 }
