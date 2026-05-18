@@ -20,6 +20,7 @@ export interface TakuzuStrings {
       title: string;
       message(difficultyLabel: string): string;
     };
+    cellLabel: string;
     tutorial: {
       progressLabel(step: number): string;
       introNote: string;

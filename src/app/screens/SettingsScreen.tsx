@@ -25,7 +25,7 @@ type SettingsRow = {
 };
 
 type LanguageOption = {
-  key: 'en' | 'nl';
+  key: 'en' | 'nl' | 'de' | 'fr' | 'es';
   label: string;
   detail: string;
   icon: string;
@@ -111,6 +111,24 @@ export default function SettingsScreen() {
       label: strings.common.dutch,
       detail: strings.settings.languageDutchDetail,
       icon: '🇳🇱',
+    },
+    {
+      key: 'de',
+      label: strings.common.german,
+      detail: strings.settings.languageGermanDetail,
+      icon: '🇩🇪',
+    },
+    {
+      key: 'fr',
+      label: strings.common.french,
+      detail: strings.settings.languageFrenchDetail,
+      icon: '🇫🇷',
+    },
+    {
+      key: 'es',
+      label: strings.common.spanish,
+      detail: strings.settings.languageSpanishDetail,
+      icon: '🇪🇸',
     },
   ]), [strings]);
   const selectedLanguage = useMemo(

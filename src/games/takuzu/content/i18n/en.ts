@@ -28,6 +28,7 @@ const en = {
         title: 'No puzzles available',
         message: (difficultyLabel: string) => `No puzzles found in the ${difficultyLabel} catalog.`,
       },
+      cellLabel: 'Cell',
       tutorial: {
         progressLabel: (step: number) => `Lesson ${step}`,
         introNote: 'Goal: fill the whole grid so each row and column stays balanced, unique, and free of triples. In live play, tap the highlighted cell to cycle empty, 0, 1, then empty again. In this tutorial, use the 0 and 1 buttons below.',

@@ -12,7 +12,7 @@ import {
 } from './storageKeys';
 
 import type { ThemeMode } from '../theme';
-export type LanguageSetting = 'en' | 'nl';
+export type LanguageSetting = 'en' | 'nl' | 'de' | 'fr' | 'es';
 
 type SeenTutorialsMap = Partial<Record<PuzzleTypeId, boolean>>;
 
@@ -64,7 +64,13 @@ export async function saveTheme(theme: ThemeMode): Promise<void> {
 export async function loadLanguageSetting(): Promise<LanguageSetting | null> {
   try {
     const value = await AsyncStorage.getItem(LANGUAGE_KEY);
-    return value === 'en' || value === 'nl' ? value : null;
+    return value === 'en'
+      || value === 'nl'
+      || value === 'de'
+      || value === 'fr'
+      || value === 'es'
+      ? value
+      : null;
   } catch {
     return null;
   }

@@ -6,6 +6,9 @@ import type { TakuzuStrings } from '../strings';
 import type { HowToPlayTip } from '../howToPlayTips';
 import en from './en';
 import nl from './nl';
+import de from './de';
+import fr from './fr';
+import es from './es';
 
 export type TakuzuTutorialLessonKey =
   | 'find-pairs'
@@ -80,6 +83,9 @@ export interface TakuzuI18n {
 const CONTENT: LocalizedGameContent<TakuzuI18n> = {
   en,
   nl,
+  de,
+  fr,
+  es,
 };
 
 export function getTakuzuI18n(): TakuzuI18n {

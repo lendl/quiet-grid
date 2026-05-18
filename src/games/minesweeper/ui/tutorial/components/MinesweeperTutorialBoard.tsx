@@ -10,6 +10,7 @@ import type { MinesweeperBoard } from '../../../types';
 import { useLanguage } from '../../../../../app/context/LanguageContext';
 import { useTheme } from '../../../../../app/context/ThemeContext';
 import type { Theme } from '../../../../../app/theme';
+import { getMinesweeperI18n } from '../../../content/i18n';
 import {
   buildSharedMinesweeperBoardStyles,
   getMinesweeperBoardCellSize,
@@ -69,6 +70,7 @@ export default function MinesweeperTutorialBoard({
   const { theme } = useTheme();
   const [cellSize, setCellSize] = useState(MIN_CELL_SIZE);
   const styles = useMemo(() => makeStyles(theme, cellSize), [theme, cellSize]);
+  const tutorialUi = useMemo(() => getMinesweeperI18n().tutorialUi, [resolvedLanguage]);
 
   function handleLayout(event: LayoutChangeEvent) {
     const { width, height } = event.nativeEvent.layout;
@@ -99,9 +101,7 @@ export default function MinesweeperTutorialBoard({
                 <Pressable
                   key={`${rowIndex}-${colIndex}`}
                   accessibilityRole={isFocus ? 'button' : undefined}
-                   accessibilityLabel={isFocus
-                     ? (resolvedLanguage === 'nl' ? 'Gemarkeerd tutorialvak' : 'Highlighted tutorial tile')
-                     : undefined}
+                   accessibilityLabel={isFocus ? tutorialUi.highlightedTile : undefined}
                   onPress={isFocus ? onPressFocus : undefined}
                   style={[
                     styles.cell,

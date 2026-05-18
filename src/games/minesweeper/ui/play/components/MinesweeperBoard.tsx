@@ -10,6 +10,7 @@ import {
 } from '../../../../../app/shell/boardLayout';
 import { createSharedBoardRenderTokens } from '../../../../../app/shell/renderTokens';
 import { withAlpha } from '../../../../../app/utils/color';
+import { getMinesweeperLearningCenterContent } from '../../../content/i18n';
 import {
   getMinesweeperBoardCellSize,
   getMinesweeperNumberColor,
@@ -56,6 +57,7 @@ function MinesweeperBoard({
   const { resolvedLanguage } = useLanguage();
   const { theme, isDark } = useTheme();
   const tokens = useMemo(() => createSharedBoardRenderTokens(theme, isDark), [theme, isDark]);
+  const lc = useMemo(() => getMinesweeperLearningCenterContent(), [resolvedLanguage]);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const cellSize = useMemo(() => {
     if (containerSize.width <= 0) {
@@ -233,9 +235,7 @@ function MinesweeperBoard({
                 onLongPress={() => onToggleFlag(rowIndex, colIndex)}
                 delayLongPress={180}
                 accessibilityRole="button"
-                accessibilityLabel={resolvedLanguage === 'nl'
-                  ? `Cel ${rowIndex + 1}-${colIndex + 1}`
-                  : `Cell ${rowIndex + 1}-${colIndex + 1}`}
+                accessibilityLabel={lc.formatCellLabel({ row: rowIndex, col: colIndex })}
               />
             );
           }))}

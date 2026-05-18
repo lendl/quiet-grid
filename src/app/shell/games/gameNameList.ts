@@ -1,4 +1,4 @@
-import { getCurrentLanguage } from '../../i18n';
+import { getAppStrings } from '../../i18n';
 import { puzzleRegistry } from './gameRegistry';
 
 export function getLocalizedPuzzleNameList(): string {
@@ -12,11 +12,13 @@ export function getLocalizedPuzzleNameList(): string {
     return titles[0];
   }
 
+  const connector = getAppStrings().common.and;
+
   if (titles.length === 2) {
-    return `${titles[0]} ${getCurrentLanguage() === 'nl' ? 'en' : 'and'} ${titles[1]}`;
+    return `${titles[0]} ${connector} ${titles[1]}`;
   }
 
   const head = titles.slice(0, -1).join(', ');
   const tail = titles[titles.length - 1];
-  return `${head}, ${getCurrentLanguage() === 'nl' ? 'en' : 'and'} ${tail}`;
+  return `${head}, ${connector} ${tail}`;
 }

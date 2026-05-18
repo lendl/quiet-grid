@@ -9,6 +9,7 @@ import type { Theme } from '../../../../app/theme';
 import { markPuzzleTutorialSeen } from '../../../../app/utils/settingsStorage';
 import { withAlpha } from '../../../../app/utils/color';
 import MinesweeperTutorialBoard from './components/MinesweeperTutorialBoard';
+import { getMinesweeperI18n } from '../../content/i18n';
 import {
   getMinesweeperTutorialLessons,
   type MinesweeperTutorialAction,
@@ -24,6 +25,7 @@ export default function TutorialScreen({ navigation, route }: Props) {
   const { theme } = useTheme();
   const s = useMemo(() => makeStyles(theme), [theme]);
   const lessons = useMemo(() => getMinesweeperTutorialLessons(), [resolvedLanguage]);
+  const tutorialUi = useMemo(() => getMinesweeperI18n().tutorialUi, [resolvedLanguage]);
   const [lessonIndex, setLessonIndex] = useState(0);
   const [selectedAction, setSelectedAction] = useState<MinesweeperTutorialAction | null>(null);
   const [answerState, setAnswerState] = useState<TutorialAnswerState>('idle');
@@ -114,9 +116,7 @@ export default function TutorialScreen({ navigation, route }: Props) {
   }, [selectedAction, submitAction]);
 
   const statusText = lesson.kind === 'action' && answerState === 'correct'
-     ? (isLastLesson
-        ? (resolvedLanguage === 'nl' ? 'Tutorial wordt afgerond…' : 'Tutorial finishing…')
-        : (resolvedLanguage === 'nl' ? 'Volgende les start…' : 'Next lesson starting…'))
+     ? (isLastLesson ? tutorialUi.status.finishing : tutorialUi.status.nextLesson)
      : null;
   const feedbackText = lesson.kind === 'info'
     ? lesson.summary
@@ -130,7 +130,7 @@ export default function TutorialScreen({ navigation, route }: Props) {
 
   return (
     <PuzzleTutorialScaffold
-      progressLabel={`${resolvedLanguage === 'nl' ? 'Les' : 'Lesson'} ${lessonIndex + 1}`}
+      progressLabel={tutorialUi.progressLabel(lessonIndex + 1)}
       statusText={statusText}
       title={lesson.title}
       body={lesson.body}

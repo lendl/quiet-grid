@@ -294,6 +294,14 @@ const nl = {
       body: 'Geen aanwijzing wijst nu op een zekere veilige zet. Hier kan een gok nodig zijn, dus vertrouw op je beste lezing van het bord en vraag opnieuw na de volgende onthulling.',
     },
   },
+  tutorialUi: {
+    progressLabel: (step: number) => `Les ${step}`,
+    status: {
+      finishing: 'Tutorial wordt afgerond\u2026',
+      nextLesson: 'Volgende les start\u2026',
+    },
+    highlightedTile: 'Gemarkeerd tutorialvak',
+  },
 } as const;
 
 export default nl;

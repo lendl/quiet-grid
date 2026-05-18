@@ -294,6 +294,14 @@ const en = {
       body: 'No clue points to a certain safe reveal right now. This spot may need a guess, so trust your best read of the board and ask again after the next reveal.',
     },
   },
+  tutorialUi: {
+    progressLabel: (step: number) => `Lesson ${step}`,
+    status: {
+      finishing: 'Tutorial finishing\u2026',
+      nextLesson: 'Next lesson starting\u2026',
+    },
+    highlightedTile: 'Highlighted tutorial tile',
+  },
 } as const;
 
 export default en;

@@ -15,6 +15,7 @@ import {
 } from '../../../../../app/shell/boardLayout';
 import { createSharedBoardRenderTokens } from '../../../../../app/shell/renderTokens';
 import { withAlpha } from '../../../../../app/utils/color';
+import { getTakuzuStrings } from '../../../content/i18n';
 import type {
   Grid,
   TakuzuNextMoveCell,
@@ -96,6 +97,7 @@ function TakuzuPuzzleGrid({
 }: PuzzleGridProps) {
   const { resolvedLanguage } = useLanguage();
   const { theme, isDark } = useTheme();
+  const takuzuStrings = useMemo(() => getTakuzuStrings(), [resolvedLanguage]);
   const tokens = useMemo(() => createSharedBoardRenderTokens(theme, isDark), [theme, isDark]);
   const layout = useMemo(() => createBoundedGridLayout({
     containerWidth,
@@ -300,9 +302,7 @@ function TakuzuPuzzleGrid({
                     },
                   ]}
                   accessibilityRole="button"
-                  accessibilityLabel={resolvedLanguage === 'nl'
-                    ? `Cel ${rowIndex + 1}-${colIndex + 1}`
-                    : `Cell ${rowIndex + 1}-${colIndex + 1}`}
+                  accessibilityLabel={`${takuzuStrings.play.cellLabel} ${rowIndex + 1}-${colIndex + 1}`}
                   onPress={() => onCellPress(rowIndex, colIndex)}
                 />
                 {showSpin ? (

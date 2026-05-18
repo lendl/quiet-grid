@@ -5,6 +5,9 @@ import type { HowToPlayContent } from '../../../../app/shell/games/howToPlayCont
 import type { MinesweeperStrings } from '../strings';
 import en from './en';
 import nl from './nl';
+import de from './de';
+import fr from './fr';
+import es from './es';
 
 export type TutorialTextKey =
   | 'goal-and-stakes'
@@ -86,6 +89,14 @@ export interface MinesweeperI18n {
     legendMine: string;
   };
   tutorialText: Record<TutorialTextKey, ActionLessonText | InfoLessonText>;
+  tutorialUi: {
+    progressLabel: (step: number) => string;
+    status: {
+      finishing: string;
+      nextLesson: string;
+    };
+    highlightedTile: string;
+  };
   learningCenter: {
     formatCellLabel(cell: { row: number; col: number }): string;
     tileLabel(count: number): string;
@@ -110,6 +121,9 @@ export interface MinesweeperI18n {
 const CONTENT: LocalizedGameContent<MinesweeperI18n> = {
   en,
   nl,
+  de,
+  fr,
+  es,
 };
 
 export function getMinesweeperI18n(): MinesweeperI18n {
@@ -130,6 +144,10 @@ export function getMinesweeperLossContent(): LossContent {
 
 export function getMinesweeperAnalysisContent(): MinesweeperI18n['analysis'] {
   return getMinesweeperI18n().analysis;
+}
+
+export function getMinesweeperTutorialUi(): MinesweeperI18n['tutorialUi'] {
+  return getMinesweeperI18n().tutorialUi;
 }
 
 export function getMinesweeperTutorialText(): MinesweeperI18n['tutorialText'] {
