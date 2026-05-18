@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
+import type { LayoutChangeEvent } from 'react-native';
 import { StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../../../../app/context/ThemeContext';
 import { createPuzzlePlayAdapter } from '../../../../app/shell/games/playAdapter';
@@ -31,6 +32,9 @@ import {
 import type { MinesweeperActivePuzzle } from '../../activePuzzle';
 import { countFlaggedCells } from '../../rules';
 
+const GRID_HORIZONTAL_PADDING = 12;
+const GRID_BOTTOM_PADDING = 24;
+
 function useMinesweeperAdapter({
   goHome,
 }: PuzzlePlayAdapterShellArgs): PuzzlePlayAdapterInstance<
@@ -46,6 +50,7 @@ function useMinesweeperAdapter({
   ));
   const [isBoardZoomed, setIsBoardZoomed] = useState(false);
   const resetBoardZoomRef = useRef<(() => void) | null>(null);
+  const [gridContainer, setGridContainer] = useState({ width: 0, height: 0 });
 
   const resetHelperState = useCallback(() => {
     nextMove.reset();
@@ -76,6 +81,14 @@ function useMinesweeperAdapter({
     }
 
     await finishLossSession('rule-based', previousSession);
+  }, []);
+
+  const handleGridLayout = useCallback((event: LayoutChangeEvent) => {
+    const { width, height } = event.nativeEvent.layout;
+    setGridContainer({
+      width: Math.max(0, width - GRID_HORIZONTAL_PADDING * 2),
+      height: Math.max(0, height - GRID_BOTTOM_PADDING),
+    });
   }, []);
 
   const getState = useCallback(({
@@ -131,27 +144,31 @@ function useMinesweeperAdapter({
         },
       ] : [],
       main: session ? (
-        <View style={styles.gridArea}>
-          <ZoomableBoardSurface
-            onZoomStateChange={setIsBoardZoomed}
-            onRegisterReset={(reset) => {
-              resetBoardZoomRef.current = reset;
-            }}
-          >
-            <MinesweeperBoard
-              board={session.board}
-              onReveal={(row, col) => {
-                resetNextMove();
-                void runShellAction({ type: 'reveal-cell', row, col });
+        <View style={styles.gridArea} onLayout={handleGridLayout}>
+          {gridContainer.width > 0 && gridContainer.height > 0 ? (
+            <ZoomableBoardSurface
+              onZoomStateChange={setIsBoardZoomed}
+              onRegisterReset={(reset) => {
+                resetBoardZoomRef.current = reset;
               }}
-              onToggleFlag={(row, col) => {
-                resetNextMove();
-                void runShellAction({ type: 'toggle-flag', row, col });
-              }}
-              nextMoveEvidenceCells={nextMove.hint?.evidenceCells ?? []}
-              nextMoveSafeTargetCells={nextMove.hint?.targetCells ?? []}
-            />
-          </ZoomableBoardSurface>
+            >
+              <MinesweeperBoard
+                board={session.board}
+                containerWidth={gridContainer.width}
+                containerHeight={gridContainer.height}
+                onReveal={(row, col) => {
+                  resetNextMove();
+                  void runShellAction({ type: 'reveal-cell', row, col });
+                }}
+                onToggleFlag={(row, col) => {
+                  resetNextMove();
+                  void runShellAction({ type: 'toggle-flag', row, col });
+                }}
+                nextMoveEvidenceCells={nextMove.hint?.evidenceCells ?? []}
+                nextMoveSafeTargetCells={nextMove.hint?.targetCells ?? []}
+              />
+            </ZoomableBoardSurface>
+          ) : null}
         </View>
       ) : (
         <View style={styles.gridArea} />
@@ -178,7 +195,7 @@ function useMinesweeperAdapter({
         <View style={styles.emptyFooter} />
       ),
     };
-  }, [isBoardZoomed, minesweeperStrings, nextMove, styles]);
+  }, [gridContainer.height, gridContainer.width, handleGridLayout, isBoardZoomed, minesweeperStrings, nextMove, styles]);
 
   return {
     onMissing: handleMissingPuzzle,
@@ -208,8 +225,8 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   gridArea: {
     flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: 12,
-    paddingBottom: 24,
+    paddingHorizontal: GRID_HORIZONTAL_PADDING,
+    paddingBottom: GRID_BOTTOM_PADDING,
   },
   nextMoveCard: {
     flex: 1,

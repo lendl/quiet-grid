@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef } from 'react';
+
 import { StyleSheet, View } from 'react-native';
 import {
   Gesture,
@@ -52,6 +53,7 @@ export default function ZoomableBoardSurface({
   const lastReportedZoomed = useSharedValue(false);
   const onZoomStateChangeRef = useRef(onZoomStateChange);
   const resetTransformFromJsRef = useRef<() => void>(() => undefined);
+  const lastViewportSizeRef = useRef({ width: 0, height: 0 });
 
   useEffect(() => {
     onZoomStateChangeRef.current = onZoomStateChange;
@@ -59,6 +61,10 @@ export default function ZoomableBoardSurface({
 
   const notifyZoomStateChange = useCallback((nextZoomed: boolean) => {
     onZoomStateChangeRef.current?.(nextZoomed);
+  }, []);
+
+  const resetFromJs = useCallback(() => {
+    resetTransformFromJsRef.current();
   }, []);
 
   const bounds = useDerivedValue<Bounds>(() => {
@@ -184,6 +190,16 @@ export default function ZoomableBoardSurface({
           const { width, height } = event.nativeEvent.layout;
           viewportWidth.value = width;
           viewportHeight.value = height;
+
+          const previousViewport = lastViewportSizeRef.current;
+          const viewportChanged = previousViewport.width > 0
+            && previousViewport.height > 0
+            && (previousViewport.width !== width || previousViewport.height !== height);
+          lastViewportSizeRef.current = { width, height };
+
+          if (viewportChanged) {
+            resetFromJs();
+          }
         }}
       >
         <Animated.View style={animatedStyle}>

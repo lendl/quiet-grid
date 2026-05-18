@@ -5,6 +5,7 @@ import type { MinesweeperBoard as MinesweeperBoardState } from '../../../types';
 import { useLanguage } from '../../../../../app/context/LanguageContext';
 import { useTheme } from '../../../../../app/context/ThemeContext';
 import {
+  createBoundedGridLayout,
   createFixedGridLayout,
   getGridCellRect,
 } from '../../../../../app/shell/boardLayout';
@@ -12,7 +13,6 @@ import { createSharedBoardRenderTokens } from '../../../../../app/shell/renderTo
 import { withAlpha } from '../../../../../app/utils/color';
 import { getMinesweeperLearningCenterContent } from '../../../content/i18n';
 import {
-  getMinesweeperBoardCellSize,
   getMinesweeperNumberColor,
   MINESWEEPER_BOARD_CELL_GAP,
   MINESWEEPER_FRAME_BORDER_WIDTH,
@@ -22,6 +22,10 @@ import MinesweeperMineGlyph from '../../shared/mineGlyph';
 
 interface MinesweeperBoardProps {
   board: MinesweeperBoardState;
+  /** Measured viewport width from the play adapter for fit-first sizing. */
+  containerWidth?: number;
+  /** Measured viewport height from the play adapter for fit-first sizing. */
+  containerHeight?: number;
   onReveal: (row: number, col: number) => void;
   onToggleFlag: (row: number, col: number) => void;
   nextMoveEvidenceCells?: Array<{ row: number; col: number }>;
@@ -30,8 +34,6 @@ interface MinesweeperBoardProps {
   nextMoveMineTargetCells?: Array<{ row: number; col: number }>;
 }
 
-const MIN_CELL_SIZE = 32;
-const MAX_CELL_SIZE = 40;
 const SHELL_INSET = 2;
 const SHELL_RADIUS = 8;
 const SHELL_INNER_RADIUS = 6;
@@ -47,6 +49,8 @@ function buildCellKeySet(cells: ReadonlyArray<{ row: number; col: number }>): Se
 
 function MinesweeperBoard({
   board,
+  containerWidth,
+  containerHeight,
   onReveal,
   onToggleFlag,
   nextMoveEvidenceCells = [],
@@ -58,40 +62,46 @@ function MinesweeperBoard({
   const { theme, isDark } = useTheme();
   const tokens = useMemo(() => createSharedBoardRenderTokens(theme, isDark), [theme, isDark]);
   const lc = useMemo(() => getMinesweeperLearningCenterContent(), [resolvedLanguage]);
-  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
-  const cellSize = useMemo(() => {
-    if (containerSize.width <= 0) {
-      return MIN_CELL_SIZE;
+  // Self-measure only when the caller does not provide viewport dimensions (e.g. analysis boards).
+  const [selfMeasured, setSelfMeasured] = useState({ width: 0, height: 0 });
+  const effectiveWidth = containerWidth ?? selfMeasured.width;
+  const effectiveHeight = containerHeight ?? selfMeasured.height;
+  const layout = useMemo(() => {
+    if (effectiveWidth > 0 && effectiveHeight > 0) {
+      return createBoundedGridLayout({
+        containerWidth: effectiveWidth,
+        containerHeight: effectiveHeight,
+        rows: board.rows,
+        cols: board.cols,
+        gap: MINESWEEPER_BOARD_CELL_GAP,
+        padding: MINESWEEPER_FRAME_PADDING,
+        borderWidth: MINESWEEPER_FRAME_BORDER_WIDTH,
+        minCellSize: 1,
+        maxCellSize: Number.MAX_SAFE_INTEGER,
+      });
     }
 
-    return getMinesweeperBoardCellSize(
-      containerSize.width,
-      board.cols,
-      MIN_CELL_SIZE,
-      MAX_CELL_SIZE,
-      board.rows,
-      containerSize.height > 0 ? containerSize.height : undefined,
-    );
-  }, [board.cols, board.rows, containerSize.height, containerSize.width]);
-  const layout = useMemo(() => createFixedGridLayout({
-    rows: board.rows,
-    cols: board.cols,
-    cellSize,
-    gap: MINESWEEPER_BOARD_CELL_GAP,
-    padding: MINESWEEPER_FRAME_PADDING,
-    borderWidth: MINESWEEPER_FRAME_BORDER_WIDTH,
-  }), [board.cols, board.rows, cellSize]);
+    return createFixedGridLayout({
+      rows: board.rows,
+      cols: board.cols,
+      cellSize: 1,
+      gap: MINESWEEPER_BOARD_CELL_GAP,
+      padding: MINESWEEPER_FRAME_PADDING,
+      borderWidth: MINESWEEPER_FRAME_BORDER_WIDTH,
+    });
+  }, [board.cols, board.rows, effectiveHeight, effectiveWidth]);
   const evidenceKeys = useMemo(() => buildCellKeySet(nextMoveEvidenceCells), [nextMoveEvidenceCells]);
   const safeTargetKeys = useMemo(() => buildCellKeySet(nextMoveSafeTargetCells), [nextMoveSafeTargetCells]);
   const mineTargetKeys = useMemo(() => buildCellKeySet(nextMoveMineTargetCells), [nextMoveMineTargetCells]);
 
-  function handleLayout(event: LayoutChangeEvent) {
-    const { width, height } = event.nativeEvent.layout;
-    setContainerSize({ width, height });
-  }
-
   return (
-    <View style={styles.shell} onLayout={handleLayout}>
+    <View
+      style={styles.shell}
+      onLayout={containerWidth === undefined ? (event: LayoutChangeEvent) => {
+        const { width, height } = event.nativeEvent.layout;
+        setSelfMeasured({ width, height });
+      } : undefined}
+    >
       <View
         style={[
           styles.boardFrame,
