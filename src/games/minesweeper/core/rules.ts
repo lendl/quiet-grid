@@ -66,10 +66,10 @@ const MINESWEEPER_DIFFICULTY_RULES: Record<PuzzleDifficulty, MinesweeperDifficul
     densityMax: 0.25,
     targetDensity: 0.21,
     distribution: 'clustered',
-    openingMinRatio: 0.02,
-    openingMaxRatio: 0.05,
-    protectNeighbors: false,
-    retryLimit: 150,
+    openingMinRatio: 0.03,
+    openingMaxRatio: null,
+    protectNeighbors: true,
+    retryLimit: 120,
   },
 };
 
@@ -358,6 +358,45 @@ function meetsOpeningRules(board: MinesweeperBoard, row: number, col: number, co
   return true;
 }
 
+function countOpeningFrontier(board: MinesweeperBoard): number {
+  let frontier = 0;
+
+  for (let row = 0; row < board.rows; row++) {
+    for (let col = 0; col < board.cols; col++) {
+      const cell = board.cells[row][col];
+      if (cell.state !== 'revealed' || cell.adjacentMines === 0) {
+        continue;
+      }
+
+      const touchesHiddenNeighbor = getNeighborCoords(board, row, col)
+        .some(([nextRow, nextCol]) => board.cells[nextRow][nextCol].state === 'hidden');
+
+      if (touchesHiddenNeighbor) {
+        frontier += 1;
+      }
+    }
+  }
+
+  return frontier;
+}
+
+function meetsOpeningQualityRules(
+  board: MinesweeperBoard,
+  row: number,
+  col: number,
+  config: MinesweeperConfig,
+): boolean {
+  if (config.distribution !== 'clustered') {
+    return true;
+  }
+
+  const simulatedBoard = cloneBoard(board);
+  revealSafeArea(simulatedBoard, row, col);
+
+  const frontier = countOpeningFrontier(simulatedBoard);
+  return frontier >= 3;
+}
+
 function finalizeGeneratedBoard(
   board: MinesweeperBoard,
   puzzle: MinesweeperPuzzle,
@@ -384,6 +423,9 @@ function finalizeGeneratedBoard(
       continue;
     }
     if (!meetsOpeningRules(candidateBoard, row, col, config)) {
+      continue;
+    }
+    if (!meetsOpeningQualityRules(candidateBoard, row, col, config)) {
       continue;
     }
 
