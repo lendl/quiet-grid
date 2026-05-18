@@ -3,6 +3,8 @@ import type { AppStats, Difficulty, DiffStats } from '../types';
 
 const DEFAULT_DIFF_STATS: DiffStats = { played: 0, solved: 0, bestScore: null };
 
+export const STATS_DIFFICULTIES: Difficulty[] = ['easy', 'medium', 'hard', 'expert'];
+
 function emptyGameStats(): Record<Difficulty, DiffStats> {
   return {
     easy:   { ...DEFAULT_DIFF_STATS },
@@ -136,8 +138,51 @@ export function getPuzzleStats(stats: AppStats, puzzleTypeId: string): Record<Di
   return stats.puzzles[puzzleTypeId] ?? emptyGameStats();
 }
 
+export function getMergedPuzzleStats(
+  stats: AppStats,
+  puzzleTypeIds: string[],
+): Record<Difficulty, DiffStats> {
+  const merged = emptyGameStats();
+
+  for (const puzzleTypeId of puzzleTypeIds) {
+    const gameStats = getPuzzleStats(stats, puzzleTypeId);
+
+    for (const difficulty of STATS_DIFFICULTIES) {
+      merged[difficulty].played += gameStats[difficulty].played;
+      merged[difficulty].solved += gameStats[difficulty].solved;
+      merged[difficulty].bestScore = merged[difficulty].bestScore === null
+        ? gameStats[difficulty].bestScore
+        : gameStats[difficulty].bestScore === null
+          ? merged[difficulty].bestScore
+          : Math.max(merged[difficulty].bestScore, gameStats[difficulty].bestScore);
+    }
+  }
+
+  return merged;
+}
+
 export function getPuzzleStreak(stats: AppStats, puzzleTypeId: string): number {
   return stats.streaks[puzzleTypeId] ?? 0;
+}
+
+export function getMergedPuzzleStreak(stats: AppStats, puzzleTypeIds: string[]): number {
+  return puzzleTypeIds.reduce((sum, puzzleTypeId) => sum + getPuzzleStreak(stats, puzzleTypeId), 0);
+}
+
+export function getStatsSummary(gameStats: Record<Difficulty, DiffStats>): {
+  totalPlayed: number;
+  totalSolved: number;
+  winRate: number;
+} {
+  const totalPlayed = STATS_DIFFICULTIES.reduce((sum, difficulty) => sum + gameStats[difficulty].played, 0);
+  const totalSolved = STATS_DIFFICULTIES.reduce((sum, difficulty) => sum + gameStats[difficulty].solved, 0);
+  const winRate = totalPlayed > 0 ? Math.round((totalSolved / totalPlayed) * 100) : 0;
+
+  return {
+    totalPlayed,
+    totalSolved,
+    winRate,
+  };
 }
 
 export function ensurePuzzleStats(stats: AppStats, puzzleTypeId: string): Record<Difficulty, DiffStats> {

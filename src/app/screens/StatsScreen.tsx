@@ -6,35 +6,28 @@ import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import AppDialog from '../components/AppDialog';
 import GlobalPageShell from '../components/GlobalPageShell';
-import { getPuzzleDefinition, puzzleRegistry } from '../shell/games/gameRegistry';
+import { puzzleRegistry } from '../shell/games/gameRegistry';
 import { getDifficultyColor } from '../utils/format';
 import { withAlpha } from '../utils/color';
 import { loadStats, clearPlayerData } from '../utils/statsStorage';
-import { getPuzzleStats, getPuzzleStreak } from '../utils/statsUtils';
+import {
+  STATS_DIFFICULTIES,
+  getMergedPuzzleStats,
+  getMergedPuzzleStreak,
+  getPuzzleStats,
+  getPuzzleStreak,
+  getStatsSummary,
+} from '../utils/statsUtils';
 import type { MainTabParamList } from '../navigation/types';
-import type { AppStats, Difficulty, PuzzleTypeId } from '../types';
+import type { AppStats, PuzzleTypeId } from '../types';
 import type { Theme } from '../theme';
-
-const DIFFS: Difficulty[]  = ['easy', 'medium', 'hard', 'expert'];
 
 function fmtScore(n: number | null): string {
   if (n === null) return '—';
   return String(n);
 }
 
-function getPuzzleSummary(stats: AppStats, puzzleTypeId: PuzzleTypeId) {
-  const gameStats = getPuzzleStats(stats, puzzleTypeId);
-  const totalPlayed = DIFFS.reduce((sum, difficulty) => sum + gameStats[difficulty].played, 0);
-  const totalSolved = DIFFS.reduce((sum, difficulty) => sum + gameStats[difficulty].solved, 0);
-  const winRate = totalPlayed > 0 ? Math.round((totalSolved / totalPlayed) * 100) : 0;
-
-  return {
-    totalPlayed,
-    totalSolved,
-    winRate,
-    streak: getPuzzleStreak(stats, puzzleTypeId),
-  };
-}
+type GlobalStatsFilter = 'all' | PuzzleTypeId;
 
 type Props = BottomTabScreenProps<MainTabParamList, 'Stats'>;
 
@@ -44,9 +37,9 @@ export default function StatsScreen({ navigation, route }: Props) {
   const s = useMemo(() => makeStyles(theme), [theme]);
   const [stats, setStats] = useState<AppStats | null>(null);
   const [clearDialogVisible, setClearDialogVisible] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<GlobalStatsFilter>('all');
   const scopedPuzzleTypeId = route.params?.puzzleTypeId;
-  const scopedDefinition = scopedPuzzleTypeId ? getPuzzleDefinition(scopedPuzzleTypeId) : null;
-  const visibleDefinitions = scopedDefinition ? [scopedDefinition] : puzzleRegistry;
+  const scopedDefinition = scopedPuzzleTypeId ? puzzleRegistry.find((d) => d.id === scopedPuzzleTypeId) ?? null : null;
   const clearScope = useCallback(() => {
     navigation.setParams({
       puzzleTypeId: undefined,
@@ -54,6 +47,7 @@ export default function StatsScreen({ navigation, route }: Props) {
   }, [navigation]);
 
   useFocusEffect(useCallback(() => {
+    setActiveFilter('all');
     void loadStats().then(setStats);
   }, []));
 
@@ -64,6 +58,33 @@ export default function StatsScreen({ navigation, route }: Props) {
   }
 
   const handleClear = () => setClearDialogVisible(true);
+
+  const availableDefinitions = puzzleRegistry;
+  const hasActiveDefinition = activeFilter === 'all'
+    || availableDefinitions.some((definition) => definition.id === activeFilter);
+  const effectiveFilter: GlobalStatsFilter = scopedDefinition
+    ? scopedDefinition.id
+    : hasActiveDefinition
+      ? activeFilter
+      : 'all';
+
+  const filteredPuzzleTypeIds = effectiveFilter === 'all'
+    ? availableDefinitions.map((definition) => definition.id)
+    : [effectiveFilter];
+
+  const filteredDefinition = effectiveFilter === 'all'
+    ? null
+    : availableDefinitions.find((d) => d.id === effectiveFilter) ?? null;
+  const mergedDifficultyLabels = availableDefinitions[0]?.content.difficultyLabels ?? null;
+
+  const activeGameStats = effectiveFilter === 'all'
+    ? getMergedPuzzleStats(stats, filteredPuzzleTypeIds)
+    : getPuzzleStats(stats, effectiveFilter);
+
+  const summary = getStatsSummary(activeGameStats);
+  const streak = effectiveFilter === 'all'
+    ? getMergedPuzzleStreak(stats, filteredPuzzleTypeIds)
+    : getPuzzleStreak(stats, effectiveFilter);
 
   return (
     <GlobalPageShell activeTab="Stats">
@@ -79,64 +100,95 @@ export default function StatsScreen({ navigation, route }: Props) {
           </TouchableOpacity>
         ) : null}
 
-        {scopedDefinition ? (
-          <View style={s.header}>
-            <Text style={s.headerTitle}>{scopedDefinition.shortTitle}</Text>
-            <Text style={s.headerSubtitle}>{strings.stats.headerSubtitle}</Text>
-          </View>
-        ) : null}
+        {scopedDefinition ? null : (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={s.badgeRow}
+            style={s.badgeScroller}
+          >
+            <TouchableOpacity
+              style={[s.filterBadge, effectiveFilter === 'all' && s.filterBadgeActive]}
+              onPress={() => setActiveFilter('all')}
+              activeOpacity={0.82}
+              accessibilityRole="button"
+            >
+              <Text style={[s.filterBadgeText, effectiveFilter === 'all' && s.filterBadgeTextActive]}>
+                {strings.common.all}
+              </Text>
+            </TouchableOpacity>
 
-        {visibleDefinitions.map((definition) => {
-          const puzzleTypeId: PuzzleTypeId = definition.id;
-          const summary = getPuzzleSummary(stats, puzzleTypeId);
+            {availableDefinitions.map((definition) => {
+              const selected = effectiveFilter === definition.id;
+
+              return (
+                <TouchableOpacity
+                  key={definition.id}
+                  style={[s.filterBadge, selected && s.filterBadgeActive]}
+                  onPress={() => setActiveFilter(definition.id)}
+                  activeOpacity={0.82}
+                  accessibilityRole="button"
+                >
+                  <Text style={[s.filterBadgeText, selected && s.filterBadgeTextActive]}>
+                    {definition.shortTitle}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        )}
+
+        <View style={s.header}>
+          <Text style={s.headerTitle}>
+            {filteredDefinition ? filteredDefinition.shortTitle : strings.common.stats}
+          </Text>
+          <Text style={s.headerSubtitle}>{strings.stats.headerSubtitle}</Text>
+        </View>
+
+        <View style={s.summaryBand}>
+          {([
+            [strings.stats.solved, summary.totalSolved],
+            [strings.stats.streak, streak],
+            [strings.stats.winRate, `${summary.winRate}%`],
+          ] as [string, number | string][]).map(([label, value], index) => (
+            <React.Fragment key={label}>
+              <View style={s.summaryMetric}>
+                <Text style={s.summaryValue}>{value}</Text>
+                <Text style={s.summaryLabel}>{label}</Text>
+              </View>
+              {index < 2 ? <View style={s.summaryDivider} /> : null}
+            </React.Fragment>
+          ))}
+        </View>
+
+        <Text style={s.subsectionLabel}>{strings.stats.byDifficulty}</Text>
+
+        {STATS_DIFFICULTIES.map((key, index) => {
+          const difficultyStats = activeGameStats[key];
+          const rate = difficultyStats.played > 0
+            ? Math.round((difficultyStats.solved / difficultyStats.played) * 100)
+            : 0;
+
+          const difficultyLabel = filteredDefinition?.content.difficultyLabels[key]
+            ?? mergedDifficultyLabels?.[key]
+            ?? key.charAt(0).toUpperCase() + key.slice(1);
 
           return (
-            <View key={puzzleTypeId} style={s.gameSection}>
-              <Text style={s.sectionLabel}>{definition.title}</Text>
-
-              <View style={s.summaryBand}>
-                {([
-                  [strings.stats.solved, summary.totalSolved],
-                  [strings.stats.streak, summary.streak],
-                  [strings.stats.winRate, `${summary.winRate}%`],
-                ] as [string, number | string][]).map(([label, val], index) => (
-                  <React.Fragment key={`${puzzleTypeId}-${label}`}>
-                    <View style={s.summaryMetric}>
-                      <Text style={s.summaryValue}>{val}</Text>
-                      <Text style={s.summaryLabel}>{label}</Text>
-                    </View>
-                    {index < 2 ? <View style={s.summaryDivider} /> : null}
-                  </React.Fragment>
-                ))}
+            <React.Fragment key={key}>
+              <View style={s.diffRow}>
+                <View style={[s.diffMarker, { backgroundColor: getDifficultyColor(theme, key) }]} />
+                <View style={s.diffInfo}>
+                  <Text style={s.diffName}>{difficultyLabel}</Text>
+                  <Text style={s.diffDetail}>{strings.stats.solvedOutOfPlayed(difficultyStats.solved, difficultyStats.played)}</Text>
+                  <Text style={s.diffDetail}>{strings.stats.winRateDetail(rate)}</Text>
+                </View>
+                <View style={s.diffRight}>
+                  <Text style={s.bestLabel}>{strings.stats.bestScore}</Text>
+                  <Text style={s.bestValue}>{fmtScore(difficultyStats.bestScore)}</Text>
+                </View>
               </View>
-
-              <Text style={s.subsectionLabel}>{strings.stats.byDifficulty}</Text>
-
-              {DIFFS.map((key, index) => {
-                const difficultyStats = getPuzzleStats(stats, puzzleTypeId)[key];
-                const rate = difficultyStats.played > 0
-                  ? Math.round((difficultyStats.solved / difficultyStats.played) * 100)
-                  : 0;
-
-                return (
-                  <React.Fragment key={`${puzzleTypeId}-${key}`}>
-                    <View style={s.diffRow}>
-                      <View style={[s.diffMarker, { backgroundColor: getDifficultyColor(theme, key) }]} />
-                      <View style={s.diffInfo}>
-                        <Text style={s.diffName}>{definition.content.difficultyLabels[key]}</Text>
-                        <Text style={s.diffDetail}>{strings.stats.solvedOutOfPlayed(difficultyStats.solved, difficultyStats.played)}</Text>
-                        <Text style={s.diffDetail}>{strings.stats.winRateDetail(rate)}</Text>
-                      </View>
-                      <View style={s.diffRight}>
-                        <Text style={s.bestLabel}>{strings.stats.bestScore}</Text>
-                        <Text style={s.bestValue}>{fmtScore(difficultyStats.bestScore)}</Text>
-                      </View>
-                    </View>
-                    {index < DIFFS.length - 1 ? <View style={s.rowDivider} /> : null}
-                  </React.Fragment>
-                );
-              })}
-            </View>
+              {index < STATS_DIFFICULTIES.length - 1 ? <View style={s.rowDivider} /> : null}
+            </React.Fragment>
           );
         })}
 
@@ -231,14 +283,6 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     textTransform: 'uppercase',
     color: theme.textSecondary,
   },
-  sectionLabel: {
-    marginTop: 22,
-    fontSize: 13,
-    fontWeight: '700',
-    letterSpacing: 0.8,
-    textTransform: 'uppercase',
-    color: theme.textSecondary,
-  },
   subsectionLabel: {
     marginTop: 10,
     fontSize: 12,
@@ -247,8 +291,31 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     textTransform: 'uppercase',
     color: theme.textMuted,
   },
-  gameSection: {
-    marginTop: 10,
+  badgeScroller: {
+    marginBottom: 12,
+  },
+  badgeRow: {
+    gap: 10,
+    paddingRight: 6,
+  },
+  filterBadge: {
+    minHeight: 34,
+    paddingHorizontal: 14,
+    borderRadius: 999,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: withAlpha(theme.textSecondary, 0.12),
+  },
+  filterBadgeActive: {
+    backgroundColor: theme.text,
+  },
+  filterBadgeText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: theme.text,
+  },
+  filterBadgeTextActive: {
+    color: theme.background,
   },
   diffRow: {
     flexDirection: 'row',
