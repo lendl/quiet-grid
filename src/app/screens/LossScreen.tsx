@@ -5,7 +5,6 @@ import { getPuzzleAnalysisAdapter } from '../analysisRegistry';
 import GamePageShell from '../components/GamePageShell';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
-import { returnToHome } from '../navigation/returnToHome';
 import { getPuzzleDefinition } from '../shell/games/gameRegistry';
 import { withAlpha } from '../utils/color';
 import { formatDifficultyLabel, getDifficultyColor } from '../utils/format';
@@ -161,10 +160,6 @@ export default function LossScreen({ route, navigation }: Props) {
     startGame(navigation, puzzleTypeId, difficulty, true);
   }, [difficulty, navigation, puzzleTypeId]);
 
-  const handleGoHome = useCallback(() => {
-    returnToHome(navigation);
-  }, [navigation]);
-
   const handleAnalyze = useCallback(() => {
     if (!analysisAdapter || !analysisSource) {
       return;
@@ -273,13 +268,6 @@ export default function LossScreen({ route, navigation }: Props) {
               <Text style={s.secondaryButtonText}>{strings.analysis.analyze}</Text>
             </TouchableOpacity>
           ) : null}
-          <TouchableOpacity
-            style={[s.actionButton, s.secondaryButton, !canAnalyze ? s.fullWidthAction : null]}
-            onPress={handleGoHome}
-            activeOpacity={0.82}
-          >
-            <Text style={s.secondaryButtonText}>{strings.common.home}</Text>
-          </TouchableOpacity>
         </View>
       </Animated.View>
     </GamePageShell>
@@ -287,16 +275,12 @@ export default function LossScreen({ route, navigation }: Props) {
 }
 
 const makeStyles = (theme: Theme) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.background,
-    paddingHorizontal: 24,
-    paddingVertical: 24,
-  },
   content: {
     flex: 1,
     position: 'relative',
     justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 24,
   },
   badgeRow: {
     flexDirection: 'row',

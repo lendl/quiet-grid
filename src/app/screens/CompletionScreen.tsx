@@ -4,7 +4,6 @@ import type { StackScreenProps } from '@react-navigation/stack';
 import GamePageShell from '../components/GamePageShell';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
-import { returnToHome } from '../navigation/returnToHome';
 import { withAlpha } from '../utils/color';
 import { formatDifficultyLabel, getDifficultyColor } from '../utils/format';
 import { formatElapsed } from '../utils/formatElapsed';
@@ -360,10 +359,6 @@ export default function CompletionScreen({ route, navigation }: Props) {
     startGame(navigation, puzzleTypeId, difficulty, true);
   }, [difficulty, navigation, puzzleTypeId]);
 
-  const handleGoHome = useCallback(() => {
-    returnToHome(navigation);
-  }, [navigation]);
-
   return (
     <GamePageShell activeTab="Games" headerMode="back" backToPuzzleTypeId={puzzleTypeId}>
       <Animated.View
@@ -475,9 +470,6 @@ export default function CompletionScreen({ route, navigation }: Props) {
           <TouchableOpacity style={[s.actionButton, s.primaryButton]} onPress={handlePlayAgain} activeOpacity={0.82}>
             <Text style={s.primaryButtonText}>{strings.common.playAgain}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[s.actionButton, s.secondaryButton]} onPress={handleGoHome} activeOpacity={0.82}>
-            <Text style={s.secondaryButtonText}>{strings.common.home}</Text>
-          </TouchableOpacity>
         </View>
       </Animated.View>
     </GamePageShell>
@@ -485,16 +477,12 @@ export default function CompletionScreen({ route, navigation }: Props) {
 }
 
 const makeStyles = (theme: Theme) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.background,
-    paddingHorizontal: 24,
-    paddingVertical: 24
-  },
   content: {
     flex: 1,
     position: 'relative',
     justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 24,
   },
   badgeRow: {
     flexDirection: 'row',
