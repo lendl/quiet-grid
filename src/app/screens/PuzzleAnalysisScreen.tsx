@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   type GestureResponderEvent,
   type LayoutChangeEvent,
@@ -8,13 +8,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { StackActions } from '@react-navigation/native';
 import type { StackScreenProps } from '@react-navigation/stack';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import GamePageShell from '../components/GamePageShell';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import type { RootStackParamList } from '../navigation/types';
-import { getPuzzleDefinition } from '../shell/games/gameRegistry';
 import type { Theme } from '../theme';
 import { getPuzzleAnalysisAdapter } from '../analysisRegistry';
 
@@ -34,7 +34,6 @@ export default function PuzzleAnalysisScreen({ navigation, route }: Props) {
   const { theme } = useTheme();
   const s = useMemo(() => makeStyles(theme), [theme]);
   const { analysis } = route.params;
-  const definition = getPuzzleDefinition(analysis.puzzleTypeId);
   const adapter = getPuzzleAnalysisAdapter(analysis.puzzleTypeId);
   const [stepIndex, setStepIndex] = useState(0);
   const [boardWidth, setBoardWidth] = useState(0);
@@ -58,6 +57,10 @@ export default function PuzzleAnalysisScreen({ navigation, route }: Props) {
   const goToNextStep = useCallback(() => {
     setStepIndex((current) => clampIndex(current + 1, stepCount));
   }, [stepCount]);
+
+  const returnToPuzzle = useCallback(() => {
+    navigation.dispatch(StackActions.replace('Puzzle', { puzzleTypeId: analysis.puzzleTypeId }));
+  }, [analysis.puzzleTypeId, navigation]);
 
   const updateStepFromLocation = useCallback((locationX: number, width: number) => {
     if (stepCount <= 1 || width <= 0) {
@@ -92,43 +95,21 @@ export default function PuzzleAnalysisScreen({ navigation, route }: Props) {
 
   const boardSize = boardWidth > 0 ? Math.min(boardWidth, 420) : 0;
 
+  useEffect(() => {
+    if (!adapter || !currentStep) {
+      returnToPuzzle();
+    }
+  }, [adapter, currentStep, returnToPuzzle]);
+
   if (!adapter || !currentStep) {
-    return (
-      <GamePageShell activeTab="Games" headerMode="brand">
-        <View style={s.emptyState}>
-          <TouchableOpacity
-            style={s.backButton}
-            onPress={() => navigation.goBack()}
-            accessibilityRole="button"
-            accessibilityLabel={strings.common.goBack}
-            activeOpacity={0.8}
-          >
-            <Text style={s.backButtonText}>{strings.analysis.back}</Text>
-          </TouchableOpacity>
-          <Text style={s.title}>{strings.analysis.title}</Text>
-          <Text style={s.subtitle}>{definition.shortTitle}</Text>
-        </View>
-      </GamePageShell>
-    );
+    return null;
   }
 
   return (
-    <GamePageShell activeTab="Games" headerMode="brand">
+    <GamePageShell activeTab="Games" headerMode="back" backToPuzzleTypeId={analysis.puzzleTypeId}>
       <GestureDetector gesture={swipeGesture}>
         <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
-          <TouchableOpacity
-            style={s.backButton}
-            onPress={() => navigation.goBack()}
-            accessibilityRole="button"
-            accessibilityLabel={strings.common.goBack}
-            activeOpacity={0.8}
-          >
-            <Text style={s.backButtonText}>{strings.analysis.back}</Text>
-          </TouchableOpacity>
-
           <View style={s.header}>
-            <Text style={s.title}>{strings.analysis.title}</Text>
-            <Text style={s.subtitle}>{definition.shortTitle}</Text>
             <Text style={s.stepCounter}>{strings.analysis.step(stepIndex + 1, stepCount)}</Text>
           </View>
 
@@ -190,32 +171,8 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     padding: 20,
     gap: 20,
   },
-  emptyState: {
-    flex: 1,
-    padding: 20,
-    gap: 12,
-  },
-  backButton: {
-    alignSelf: 'flex-start',
-    minHeight: 32,
-    justifyContent: 'center',
-  },
-  backButtonText: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: theme.textSecondary,
-  },
   header: {
     gap: 6,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '900',
-    color: theme.text,
-  },
-  subtitle: {
-    fontSize: 15,
-    color: theme.textSecondary,
   },
   stepCounter: {
     fontSize: 13,
