@@ -1,11 +1,9 @@
 import React, { useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useNavigation, type NavigationProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import GlobalPageShell from '../components/GlobalPageShell';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
-import type { RootStackParamList } from '../navigation/types';
 import type { Theme } from '../theme';
 import { getThemeOptions } from '../theme/options';
 import { withAlpha } from '../utils/color';
@@ -68,7 +66,6 @@ function Section({
 export default function SettingsScreen() {
   const { strings, resolvedLanguage, setLanguageSetting } = useLanguage();
   const { theme, themeMode, setThemeMode } = useTheme();
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [showTimerInPlay, setShowTimerInPlay] = React.useState(true);
   const [tutorialsEnabled, setTutorialsEnabled] = React.useState(true);
   const [themeDropdownOpen, setThemeDropdownOpen] = React.useState(false);
@@ -136,7 +133,7 @@ export default function SettingsScreen() {
     [languageOptions, resolvedLanguage],
   );
 
-  const tutorialRows = useMemo<SettingsRow[]>(() => [
+  const timerRows = useMemo<SettingsRow[]>(() => [
     {
       key: 'showTimerInPlay',
       label: strings.settings.showTimerInPlayLabel,
@@ -148,6 +145,9 @@ export default function SettingsScreen() {
         void saveShowTimerInPlay(next);
       },
     },
+  ], [showTimerInPlay, strings]);
+
+  const tutorialRows = useMemo<SettingsRow[]>(() => [
     {
       key: 'tutorials',
       label: strings.settings.tutorialsLabel,
@@ -159,15 +159,7 @@ export default function SettingsScreen() {
         void saveTutorialsEnabled(next);
       },
     },
-  ], [showTimerInPlay, strings, tutorialsEnabled]);
-  const supportRows = useMemo<SettingsRow[]>(() => [
-    {
-      key: 'support',
-      label: strings.common.support,
-      detail: strings.support.subtitle,
-      onPress: () => navigation.navigate('MainTabs', { screen: 'Support' }),
-    },
-  ], [navigation, strings.common.support, strings.support.subtitle]);
+  ], [tutorialsEnabled, strings]);
   return (
     <GlobalPageShell activeTab="Settings">
       <ScrollView contentContainerStyle={s.scroll}>
@@ -191,14 +183,14 @@ export default function SettingsScreen() {
               });
             }}
             accessibilityRole="button"
-            accessibilityLabel={strings.settings.appearance}
+            accessibilityLabel={strings.settings.theme}
             activeOpacity={0.82}
           >
             <View style={s.dropdownIconWrap}>
               <Ionicons name={selectedTheme.iconName} size={18} color={selectedTheme.iconColor} />
             </View>
             <View style={s.rowTextWrap}>
-              <Text style={s.rowLabel}>{strings.settings.appearance}</Text>
+              <Text style={s.rowLabel}>{strings.settings.theme}</Text>
             </View>
             <View style={s.dropdownValueWrap}>
               <Text style={s.rowValue}>{selectedTheme.label}</Text>
@@ -239,9 +231,7 @@ export default function SettingsScreen() {
               ))}
             </View>
           ) : null}
-        </View>
-        <View style={s.section}>
-          <Text style={s.sectionTitle}>{strings.settings.language}</Text>
+          <View style={s.rowDivider} />
           <TouchableOpacity
             style={s.dropdownTrigger}
             onPress={() => {
@@ -302,9 +292,25 @@ export default function SettingsScreen() {
             </View>
           ) : null}
           <Text style={s.disclaimerText}>{strings.settings.languageAiDisclaimer}</Text>
+          <View style={s.rowDivider} />
+          {timerRows.map((row) => (
+            <TouchableOpacity
+              key={row.key}
+              style={s.row}
+              onPress={row.onPress}
+              accessibilityRole="button"
+              accessibilityLabel={row.label}
+              activeOpacity={0.82}
+            >
+              <View style={s.rowTextWrap}>
+                <Text style={s.rowLabel}>{row.label}</Text>
+                {row.detail ? <Text style={s.rowDetail}>{row.detail}</Text> : null}
+              </View>
+              {row.value ? <Text style={s.rowValue}>{row.value}</Text> : null}
+            </TouchableOpacity>
+          ))}
         </View>
         <Section title={strings.settings.tutorials} rows={tutorialRows} styles={s} />
-        <Section title={strings.common.support} rows={supportRows} styles={s} />
       </ScrollView>
     </GlobalPageShell>
   );
