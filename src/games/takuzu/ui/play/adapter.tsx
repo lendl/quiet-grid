@@ -5,6 +5,10 @@ import { useLanguage } from '../../../../app/context/LanguageContext';
 import { useTheme } from '../../../../app/context/ThemeContext';
 import { createPuzzlePlayAdapter } from '../../../../app/shell/games/playAdapter';
 import { useNextMoveHelper } from '../../../../app/shell/games/useNextMoveHelper';
+import {
+  buildBoardFeedbackCellsFromLines,
+  type BoardFeedbackEffect,
+} from '../../../../app/shell/boardFeedback';
 import type { Theme } from '../../../../app/theme';
 import { withAlpha } from '../../../../app/utils/color';
 import ZoomableBoardSurface from '../../../../app/components/ZoomableBoardSurface';
@@ -40,12 +44,6 @@ type PendingValidation = {
   lineStates: Map<LineKey, CompletedLineState>;
 };
 
-type LineAnimationEventState = {
-  token: number;
-  rowIndexes: number[];
-  colIndexes: number[];
-};
-
 function useTakuzuAdapter({
   difficulty,
   setDialog,
@@ -56,8 +54,8 @@ function useTakuzuAdapter({
   const { theme } = useTheme();
   const takuzuStrings = getTakuzuStrings();
   const styles = useMemo(() => makeStyles(theme), [theme]);
-  const [lineAnimationEventState, setLineAnimationEventState] =
-    useState<LineAnimationEventState | null>(null);
+  const [boardFeedbackEffects, setBoardFeedbackEffects] =
+   useState<BoardFeedbackEffect[] | null>(null);
   const nextMove = useNextMoveHelper((session: TakuzuPlaySession) => (
     getTakuzuNextMoveHint(session.board)
   ));
@@ -67,15 +65,15 @@ function useTakuzuAdapter({
 
   const validationRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingValidationRef = useRef<PendingValidation | null>(null);
-  const lineAnimationTokenRef = useRef(0);
+  const boardFeedbackEffectTokenRef = useRef(0);
 
   const resetAdapterState = useCallback(() => {
     nextMove.reset();
-    setLineAnimationEventState(null);
+    setBoardFeedbackEffects(null);
     setIsBoardZoomed(false);
     resetBoardZoomRef.current = null;
     pendingValidationRef.current = null;
-    lineAnimationTokenRef.current = 0;
+    boardFeedbackEffectTokenRef.current = 0;
     if (validationRef.current) {
       clearTimeout(validationRef.current);
       validationRef.current = null;
@@ -148,18 +146,41 @@ function useTakuzuAdapter({
         });
         const validationEffect = result.effects.find((effect) => effect.type === 'validated-lines');
 
-        if (
-          validationEffect
-          && (validationEffect.correctRowIndexes.length > 0
-            || validationEffect.correctColIndexes.length > 0)
-        ) {
-          lineAnimationTokenRef.current += 1;
-          setLineAnimationEventState({
-            token: lineAnimationTokenRef.current,
-            rowIndexes: validationEffect.correctRowIndexes,
-            colIndexes: validationEffect.correctColIndexes,
-          });
+        const nextBoardFeedbackEffects: BoardFeedbackEffect[] = [];
+
+        if (validationEffect) {
+          const spinCells = buildBoardFeedbackCellsFromLines(
+            validationEffect.correctRowIndexes,
+            validationEffect.correctColIndexes,
+            result.session.puzzle.size,
+          );
+
+          if (spinCells.length > 0) {
+            boardFeedbackEffectTokenRef.current += 1;
+            nextBoardFeedbackEffects.push({
+              id: `spin-${boardFeedbackEffectTokenRef.current}`,
+              kind: 'spin',
+              cells: spinCells,
+            });
+          }
+
+          const shakeCells = buildBoardFeedbackCellsFromLines(
+            validationEffect.incorrectRowIndexes,
+            validationEffect.incorrectColIndexes,
+            result.session.puzzle.size,
+          );
+
+          if (shakeCells.length > 0) {
+            boardFeedbackEffectTokenRef.current += 1;
+            nextBoardFeedbackEffects.push({
+              id: `shake-${boardFeedbackEffectTokenRef.current}`,
+              kind: 'shake',
+              cells: shakeCells,
+            });
+          }
         }
+
+        setBoardFeedbackEffects(nextBoardFeedbackEffects.length > 0 ? nextBoardFeedbackEffects : null);
 
         sessionRef.current = result.session;
         setSession(result.session);
@@ -236,11 +257,6 @@ function useTakuzuAdapter({
       goHome();
     };
 
-    const lineAnimationEvent = lineAnimationEventState ? {
-      id: lineAnimationEventState.token,
-      rows: lineAnimationEventState.rowIndexes,
-      cols: lineAnimationEventState.colIndexes,
-    } : null;
     const metadata = session ? [
       {
         key: 'size',
@@ -302,7 +318,7 @@ function useTakuzuAdapter({
                 board={session.board}
                 isGiven={session.isGiven}
                 finishedCells={session.finishedCells}
-                lineAnimationEvent={lineAnimationEvent}
+                boardFeedbackEffects={boardFeedbackEffects}
                 nextMoveEvidenceCells={nextMove.hint?.evidenceCells ?? []}
                 nextMoveTargetCells={nextMove.hint?.targetCells ?? []}
                 nextMoveHighlightRows={nextMove.hint?.highlightRows ?? []}
@@ -324,7 +340,7 @@ function useTakuzuAdapter({
     gridContainer.height,
     gridContainer.width,
     handleGridLayout,
-    lineAnimationEventState,
+    boardFeedbackEffects,
     styles,
     takuzuStrings,
   ]);

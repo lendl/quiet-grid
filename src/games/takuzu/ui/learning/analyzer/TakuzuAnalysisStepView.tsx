@@ -28,7 +28,7 @@ export default function TakuzuAnalysisStepView({
       board={step.afterState}
       isGiven={takuzuAnalysis.payload.isGiven}
       finishedCells={finishedCells}
-      lineAnimationEvent={null}
+      boardFeedbackEffects={null}
       nextMoveEvidenceCells={step.evidenceCells}
       nextMoveTargetCells={step.targetCells}
       nextMoveHighlightRows={step.highlightRows}

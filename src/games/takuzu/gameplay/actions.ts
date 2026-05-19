@@ -13,6 +13,8 @@ export interface TakuzuValidationEffect {
   type: 'validated-lines';
   correctRowIndexes: number[];
   correctColIndexes: number[];
+  incorrectRowIndexes: number[];
+  incorrectColIndexes: number[];
   newPenaltyCount: number;
 }
 
@@ -95,6 +97,14 @@ export function applyTakuzuAction(
     .filter((lineKey) => lineKey.startsWith('c'))
     .filter((lineKey) => getCompletedLineStateForKey(action.board, session.solution, lineKey) === 'correct')
     .map((lineKey) => Number(lineKey.slice(1)));
+  const incorrectRowIndexes = completedLineKeys
+    .filter((lineKey) => lineKey.startsWith('r'))
+    .filter((lineKey) => getCompletedLineStateForKey(action.board, session.solution, lineKey) === 'incorrect')
+    .map((lineKey) => Number(lineKey.slice(1)));
+  const incorrectColIndexes = completedLineKeys
+    .filter((lineKey) => lineKey.startsWith('c'))
+    .filter((lineKey) => getCompletedLineStateForKey(action.board, session.solution, lineKey) === 'incorrect')
+    .map((lineKey) => Number(lineKey.slice(1)));
 
   return {
     session: {
@@ -115,6 +125,8 @@ export function applyTakuzuAction(
       type: 'validated-lines',
       correctRowIndexes,
       correctColIndexes,
+      incorrectRowIndexes,
+      incorrectColIndexes,
       newPenaltyCount,
     }],
   };

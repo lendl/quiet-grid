@@ -142,10 +142,8 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   backButton: {
     width: 36,
     height: 36,
-    borderRadius: 999,
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: theme.surfaceElevated,
+    justifyContent: 'center'
   },
   iconButton: {
     width: 36,

@@ -1,7 +1,6 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useMemo } from 'react';
 import {
   Animated,
-  Easing,
   Pressable,
   StyleSheet,
   Text,
@@ -13,7 +12,9 @@ import {
   createBoundedGridLayout,
   getGridCellRect,
 } from '../../../../../app/shell/boardLayout';
+import type { BoardFeedbackEffect } from '../../../../../app/shell/boardFeedback';
 import { createSharedBoardRenderTokens } from '../../../../../app/shell/renderTokens';
+import { useBoardFeedbackAnimation } from '../../../../../app/shell/useBoardFeedbackAnimation';
 import { withAlpha } from '../../../../../app/utils/color';
 import { getTakuzuStrings } from '../../../content/i18n';
 import type {
@@ -25,7 +26,6 @@ import type {
 const FRAME_PADDING = 6;
 const GRID_PADDING = 1;
 const GAP = 1;
-const SPIN_DURATION_MS = 420;
 const SHELL_INSET = 2;
 const SHELL_RADIUS = 8;
 const SHELL_INNER_RADIUS = 6;
@@ -35,17 +35,11 @@ const BOARD_SURFACE_RADIUS = 4;
 const CELL_RADIUS = 4;
 const CELL_FACE_INSET = 1;
 
-interface LineAnimationEvent {
-  id: number;
-  rows: number[];
-  cols: number[];
-}
-
 interface PuzzleGridProps {
   board: Grid;
   isGiven: boolean[][];
   finishedCells: boolean[][];
-  lineAnimationEvent: LineAnimationEvent | null;
+  boardFeedbackEffects?: readonly BoardFeedbackEffect[] | null;
   nextMoveEvidenceCells?: TakuzuNextMoveCell[];
   nextMoveTargetCells?: TakuzuNextMoveTargetCell[];
   nextMoveHighlightRows?: number[];
@@ -56,27 +50,6 @@ interface PuzzleGridProps {
   containerHeight: number;
 }
 
-function buildSpinningKeys(event: LineAnimationEvent | null, size: number): Set<string> {
-  const keys = new Set<string>();
-  if (!event) {
-    return keys;
-  }
-
-  event.rows.forEach((rowIndex) => {
-    for (let colIndex = 0; colIndex < size; colIndex += 1) {
-      keys.add(`${rowIndex}:${colIndex}`);
-    }
-  });
-
-  event.cols.forEach((colIndex) => {
-    for (let rowIndex = 0; rowIndex < size; rowIndex += 1) {
-      keys.add(`${rowIndex}:${colIndex}`);
-    }
-  });
-
-  return keys;
-}
-
 function buildCellKeySet(cells: ReadonlyArray<{ row: number; col: number }>): Set<string> {
   return new Set(cells.map(({ row, col }) => `${row}:${col}`));
 }
@@ -85,7 +58,7 @@ function TakuzuPuzzleGrid({
   board,
   isGiven,
   finishedCells,
-  lineAnimationEvent,
+  boardFeedbackEffects,
   nextMoveEvidenceCells = [],
   nextMoveTargetCells = [],
   nextMoveHighlightRows = [],
@@ -109,71 +82,15 @@ function TakuzuPuzzleGrid({
     minCellSize: 1,
     maxCellSize: Number.MAX_SAFE_INTEGER,
   }), [containerHeight, containerWidth, size]);
-  const rotation = useRef(new Animated.Value(0)).current;
-  const spinTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const handledLineAnimationIdRef = useRef<number | null>(null);
-  const [activeSpin, setActiveSpin] = useState<{
-    id: number;
-    keys: string[];
-  } | null>(null);
-  const rotate = useMemo(() => rotation.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '360deg'],
-  }), [rotation]);
-
-  useEffect(() => {
-    if (!lineAnimationEvent) {
-      handledLineAnimationIdRef.current = null;
-      return undefined;
-    }
-    if (handledLineAnimationIdRef.current === lineAnimationEvent.id) {
-      return undefined;
-    }
-
-    const keys = Array.from(buildSpinningKeys(lineAnimationEvent, size));
-    if (keys.length === 0) {
-      return undefined;
-    }
-
-    handledLineAnimationIdRef.current = lineAnimationEvent.id;
-    setActiveSpin({
-      id: lineAnimationEvent.id,
-      keys,
-    });
-    if (spinTimeoutRef.current) {
-      clearTimeout(spinTimeoutRef.current);
-      spinTimeoutRef.current = null;
-    }
-    rotation.stopAnimation();
-    rotation.setValue(0);
-    const animation = Animated.timing(rotation, {
-      toValue: 1,
-      duration: SPIN_DURATION_MS,
-      easing: Easing.inOut(Easing.ease),
-      useNativeDriver: true,
-    });
-
-    animation.start();
-    spinTimeoutRef.current = setTimeout(() => {
-      setActiveSpin((current) => (current?.id === lineAnimationEvent.id ? null : current));
-      rotation.stopAnimation();
-      rotation.setValue(0);
-      spinTimeoutRef.current = null;
-    }, SPIN_DURATION_MS);
-
-    return () => {
-      animation.stop();
-      if (spinTimeoutRef.current) {
-        clearTimeout(spinTimeoutRef.current);
-        spinTimeoutRef.current = null;
-      }
-    };
-  }, [lineAnimationEvent, rotation, size]);
-
-  const activeSpinKeys = useMemo(
-    () => new Set(activeSpin?.keys ?? []),
-    [activeSpin],
-  );
+  const {
+    activeSpinKeys,
+    activeShakeKeys,
+    rotate,
+    shakeTranslateX,
+  } = useBoardFeedbackAnimation({
+    effects: boardFeedbackEffects,
+    cellSize: layout.cellSize,
+  });
   const evidenceKeys = useMemo(() => buildCellKeySet(nextMoveEvidenceCells), [nextMoveEvidenceCells]);
   const targetKeys = useMemo(() => buildCellKeySet(nextMoveTargetCells), [nextMoveTargetCells]);
   const highlightedRows = useMemo(() => new Set(nextMoveHighlightRows), [nextMoveHighlightRows]);
@@ -222,6 +139,7 @@ function TakuzuPuzzleGrid({
             const showTarget = targetKeys.has(key);
             const showEvidence = evidenceKeys.has(key);
             const showHighlight = highlightedRows.has(rowIndex) || highlightedCols.has(colIndex);
+            const showShake = activeShakeKeys.has(key) && value !== null;
 
             return (
               <View
@@ -263,7 +181,7 @@ function TakuzuPuzzleGrid({
                     <Text style={[styles.infoBadgeText, { color: tokens.onPrimary }]}>i</Text>
                   </View>
                 ) : null}
-                {value !== null && !activeSpinKeys.has(key) ? (
+                {value !== null && !activeSpinKeys.has(key) && !showShake ? (
                   <Text
                     style={[
                       styles.cellValue,
@@ -287,6 +205,7 @@ function TakuzuPuzzleGrid({
             const rect = getGridCellRect(layout, rowIndex, colIndex);
             const locked = isGiven[rowIndex][colIndex] || finishedCells[rowIndex][colIndex];
             const showSpin = activeSpinKeys.has(key) && value !== null;
+            const showShake = activeShakeKeys.has(key) && value !== null;
 
             return (
               <React.Fragment key={key}>
@@ -305,23 +224,25 @@ function TakuzuPuzzleGrid({
                   accessibilityLabel={`${takuzuStrings.play.cellLabel} ${rowIndex + 1}-${colIndex + 1}`}
                   onPress={() => onCellPress(rowIndex, colIndex)}
                 />
-                {showSpin ? (
+                {showSpin || showShake ? (
                   <Animated.View
                     pointerEvents="none"
                     style={[
-                      styles.spinOverlay,
+                      styles.valueOverlay,
                       {
                         left: rect.x,
                         top: rect.y,
                         width: rect.width,
                         height: rect.height,
-                        transform: [{ rotate }],
+                        transform: showShake ? [{ translateX: shakeTranslateX }] : [{ rotate }],
                       },
                     ]}
                   >
                     <Animated.Text
                       style={{
-                        color: withAlpha(theme.text, isDark ? 0.98 : 0.88),
+                        color: showShake
+                          ? withAlpha(theme.difficultyExpert, isDark ? 0.98 : 0.9)
+                          : withAlpha(theme.text, isDark ? 0.98 : 0.88),
                         fontWeight: locked ? '800' : '700',
                         fontSize: layout.cellSize * 0.46,
                         fontFamily: 'monospace',
@@ -409,7 +330,7 @@ const styles = StyleSheet.create({
   hitCell: {
     position: 'absolute',
   },
-  spinOverlay: {
+  valueOverlay: {
     position: 'absolute',
     alignItems: 'center',
     justifyContent: 'center',

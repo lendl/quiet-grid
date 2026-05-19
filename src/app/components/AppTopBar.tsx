@@ -18,6 +18,7 @@ type BrandProps = {
 type BackProps = {
   mode: 'back';
   onBack: () => void;
+  rightSlot?: React.ReactNode;
 };
 
 type Props = BrandProps | BackProps;
@@ -43,16 +44,19 @@ export default function AppTopBar(props: Props) {
       <View style={s.container}>
         <View style={[s.inner, { paddingTop: insets.top + 12 }]}>
           {props.mode === 'back' ? (
-            <TouchableOpacity
-              accessibilityRole="button"
-            accessibilityLabel={strings.common.goBack}
-            onPress={props.onBack}
-            style={s.backButton}
-            activeOpacity={0.82}
-          >
-            <Ionicons name="arrow-back" size={20} color={theme.text} />
-          </TouchableOpacity>
-        ) : (
+            <>
+              <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityLabel={strings.common.goBack}
+                onPress={props.onBack}
+                style={s.backButton}
+                activeOpacity={0.82}
+              >
+                <Ionicons name="arrow-back" size={20} color={theme.text} />
+              </TouchableOpacity>
+              <View style={s.backRightSlot}>{props.rightSlot}</View>
+            </>
+          ) : (
           <>
             <View style={s.brandWrap}>
               <AppBrand compact />
@@ -136,18 +140,19 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   iconButton: {
     width: 32,
     height: 32,
-    borderRadius: 999,
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: theme.surfaceElevated,
+    justifyContent: 'center'
   },
   backButton: {
     width: 36,
     height: 36,
-    borderRadius: 999,
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: theme.surfaceElevated,
+    justifyContent: 'center'
+  },
+  backRightSlot: {
+    flex: 1,
+    minWidth: 0,
+    alignItems: 'flex-end',
   },
   playButton: {
     backgroundColor: theme.primary,

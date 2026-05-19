@@ -1,6 +1,6 @@
 // src/app/screens/WelcomeScreen.tsx
 import React, { useCallback, useMemo, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, useWindowDimensions } from 'react-native';
 import type { StackScreenProps } from '@react-navigation/stack';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import AppScreen from '../components/AppScreen';
@@ -8,6 +8,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import type { RootStackParamList } from '../navigation/types';
 import { getLocalizedPuzzleNameList } from '../shell/games/gameNameList';
+import { withAlpha } from '../utils/color';
 import { markWelcomeSeen } from '../utils/settingsStorage';
 import type { Theme } from '../theme';
 
@@ -21,6 +22,76 @@ interface Slide {
   body: string;
 }
 
+type WelcomeLayoutMetrics = {
+  contentMaxWidth: number;
+  paddingHorizontal: number;
+  paddingVertical: number;
+  sectionGap: number;
+  heroBadgeSize: number;
+  heroIconSize: number;
+  titleFontSize: number;
+  titleLineHeight: number;
+  bodyFontSize: number;
+  bodyLineHeight: number;
+  dotsMarginTop: number;
+  buttonMarginTop: number;
+  buttonWidth: number;
+};
+
+function getWelcomeLayoutMetrics(windowHeight: number): WelcomeLayoutMetrics {
+  if (windowHeight <= 700) {
+    return {
+      contentMaxWidth: 400,
+      paddingHorizontal: 20,
+      paddingVertical: 20,
+      sectionGap: 16,
+      heroBadgeSize: 88,
+      heroIconSize: 40,
+      titleFontSize: 24,
+      titleLineHeight: 30,
+      bodyFontSize: 15,
+      bodyLineHeight: 22,
+      dotsMarginTop: 4,
+      buttonMarginTop: 10,
+      buttonWidth: 220,
+    };
+  }
+
+  if (windowHeight <= 820) {
+    return {
+      contentMaxWidth: 420,
+      paddingHorizontal: 24,
+      paddingVertical: 24,
+      sectionGap: 18,
+      heroBadgeSize: 96,
+      heroIconSize: 44,
+      titleFontSize: 26,
+      titleLineHeight: 32,
+      bodyFontSize: 16,
+      bodyLineHeight: 23,
+      dotsMarginTop: 6,
+      buttonMarginTop: 12,
+      buttonWidth: 232,
+    };
+  }
+
+  return {
+    contentMaxWidth: 440,
+    paddingHorizontal: 32,
+    paddingVertical: 28,
+    sectionGap: 20,
+    heroBadgeSize: 104,
+    heroIconSize: 48,
+    titleFontSize: 28,
+    titleLineHeight: 34,
+    bodyFontSize: 16,
+    bodyLineHeight: 24,
+    dotsMarginTop: 8,
+    buttonMarginTop: 14,
+    buttonWidth: 244,
+  };
+}
+
 function clampIndex(value: number, max: number): number {
   return Math.max(0, Math.min(max, value));
 }
@@ -28,7 +99,9 @@ function clampIndex(value: number, max: number): number {
 export default function WelcomeScreen({ navigation }: Props) {
   const { strings } = useLanguage();
   const { theme } = useTheme();
-  const s = useMemo(() => makeStyles(theme), [theme]);
+  const { height: windowHeight } = useWindowDimensions();
+  const layout = useMemo(() => getWelcomeLayoutMetrics(windowHeight), [windowHeight]);
+  const s = useMemo(() => makeStyles(theme, layout), [theme, layout]);
   const puzzleNames = getLocalizedPuzzleNameList();
   const slides = useMemo<Slide[]>(() => ([
     { emoji: '🧩', ...strings.welcome.slides[0] },
@@ -81,50 +154,73 @@ export default function WelcomeScreen({ navigation }: Props) {
   return (
     <AppScreen contentStyle={s.container}>
       <GestureDetector gesture={swipeGesture}>
-        <View style={s.content}>
-          <Text style={s.emoji}>{slide.emoji}</Text>
-          <Text style={s.title}>{slide.title}</Text>
-          <Text style={s.body}>{slide.body}</Text>
+        <ScrollView contentContainerStyle={s.scrollContent} showsVerticalScrollIndicator={false}>
+          <View style={s.content}>
+            <View style={s.heroBadge}>
+              <Text style={s.heroEmoji}>{slide.emoji}</Text>
+            </View>
 
-          <View style={s.dots}>
-            {slides.map((_, i) => (
-              <View key={i} style={[s.dot, i === index && s.dotActive]} />
-            ))}
+            <Text style={s.title}>{slide.title}</Text>
+            <Text style={s.body}>{slide.body}</Text>
+
+            <View style={s.dots}>
+              {slides.map((_, i) => (
+                <View key={i} style={[s.dot, i === index && s.dotActive]} />
+              ))}
+            </View>
+
+            <TouchableOpacity style={s.btn} onPress={() => { void handleNext(); }} activeOpacity={0.8}>
+              <Text style={s.btnText}>{isLast ? strings.common.getStarted : strings.common.next}</Text>
+            </TouchableOpacity>
           </View>
-
-          <TouchableOpacity style={s.btn} onPress={() => { void handleNext(); }} activeOpacity={0.8}>
-            <Text style={s.btnText}>{isLast ? strings.common.getStarted : strings.common.next}</Text>
-          </TouchableOpacity>
-        </View>
+        </ScrollView>
       </GestureDetector>
     </AppScreen>
   );
 }
 
-const makeStyles = (theme: Theme) => StyleSheet.create({
+const makeStyles = (theme: Theme, layout: WelcomeLayoutMetrics) => StyleSheet.create({
   container: { flex: 1, backgroundColor: theme.background },
+  scrollContent: {
+    flexGrow: 1,
+  },
   content: {
-    flex: 1,
+    width: '100%',
+    maxWidth: layout.contentMaxWidth,
+    alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 32,
-    gap: 20,
+    paddingHorizontal: layout.paddingHorizontal,
+    paddingVertical: layout.paddingVertical,
+    gap: layout.sectionGap,
   },
-  emoji: { fontSize: 64 },
+  heroBadge: {
+    width: layout.heroBadgeSize,
+    height: layout.heroBadgeSize,
+    borderRadius: layout.heroBadgeSize / 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: withAlpha(theme.primary, 0.12),
+    borderWidth: 1,
+    borderColor: withAlpha(theme.primaryLight, 0.3),
+  },
+  heroEmoji: {
+    fontSize: layout.heroIconSize,
+  },
   title: {
-    fontSize: 28,
+    fontSize: layout.titleFontSize,
     fontWeight: '800',
     color: theme.text,
     textAlign: 'center',
-    lineHeight: 34,
+    lineHeight: layout.titleLineHeight,
   },
   body: {
-    fontSize: 16,
+    fontSize: layout.bodyFontSize,
     color: theme.textSecondary,
     textAlign: 'center',
-    lineHeight: 24,
+    lineHeight: layout.bodyLineHeight,
   },
-  dots: { flexDirection: 'row', gap: 8, marginTop: 8 },
+  dots: { flexDirection: 'row', gap: 8, marginTop: layout.dotsMarginTop },
   dot: {
     width: 8,
     height: 8,
@@ -133,10 +229,11 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   },
   dotActive: { backgroundColor: theme.primary, width: 20 },
   btn: {
-    marginTop: 8,
+    width: '100%',
+    maxWidth: layout.buttonWidth,
+    marginTop: layout.buttonMarginTop,
     backgroundColor: theme.primary,
     paddingVertical: 16,
-    paddingHorizontal: 48,
     borderRadius: 14,
     alignItems: 'center',
   },

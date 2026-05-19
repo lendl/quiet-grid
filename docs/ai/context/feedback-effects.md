@@ -25,10 +25,13 @@
 - hint emphasis
 - completion emphasis
 - line or cell highlight effects
+- board spin feedback for correct cells or completed lines
+- board shake feedback for incorrect cells or completed lines
 
 ## File map
 
 - shared feedback or component files under `src/app/`
+- shared board feedback helpers under `src/app/shell/` such as `boardFeedback.ts` and `useBoardFeedbackAnimation.ts`
 - game play UI under `src/games/<id>/ui/play/`
 - Learning Center surfaces when they reuse existing effects
 

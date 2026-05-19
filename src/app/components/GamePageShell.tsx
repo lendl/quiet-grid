@@ -32,6 +32,7 @@ type Props = {
   bodyStyle?: StyleProp<ViewStyle>;
   activeTab?: keyof MainTabParamList;
   headerMode?: 'brand' | 'back' | 'none';
+  headerRight?: React.ReactNode;
   backToPuzzleTypeId?: PuzzleTypeId;
   puzzleNav?: PuzzleNavConfig;
   contentTransitionDirection?: TransitionDirection;
@@ -43,6 +44,7 @@ export default function GamePageShell({
   bodyStyle,
   activeTab = 'Games',
   headerMode = 'brand',
+  headerRight,
   backToPuzzleTypeId,
   puzzleNav,
   contentTransitionDirection = 'none',
@@ -64,7 +66,7 @@ export default function GamePageShell({
     <AppScreen edges={['left', 'right']} overlay={false} includeBottomInset={false} contentStyle={[s.container, contentStyle]}>
       <TopBackgroundEffect topOffset={-insets.top} />
       {headerMode === 'brand' ? <AppTopBar mode="brand" /> : null}
-      {headerMode === 'back' ? <AppTopBar mode="back" onBack={handleBack} /> : null}
+      {headerMode === 'back' ? <AppTopBar mode="back" onBack={handleBack} rightSlot={headerRight} /> : null}
       {puzzleNav ? (
         <PuzzlePageNav
           context={puzzleNav.context}
