@@ -7,25 +7,14 @@ import { useTheme } from '../context/ThemeContext';
 import AppDialog from '../components/AppDialog';
 import GlobalPageShell from '../components/GlobalPageShell';
 import { gameRegistry } from '../shell/games/gameRegistry';
-import { getDifficultyColor } from '../utils/format';
 import { withAlpha } from '../utils/color';
-import { loadStats, clearPlayerData } from '../utils/statsStorage';
-import {
-  STATS_DIFFICULTIES,
-  getMergedPuzzleStats,
-  getMergedPuzzleStreak,
-  getPuzzleStats,
-  getPuzzleStreak,
-  getStatsSummary,
-} from '../utils/statsUtils';
+import { clearPlayerData } from '../utils/statsStorage';
 import type { MainTabParamList } from '../navigation/types';
-import type { AppStats, GameId } from '../types';
+import type { GameId } from '../types';
 import type { Theme } from '../theme';
-
-function fmtScore(n: number | null): string {
-  if (n === null) return '—';
-  return String(n);
-}
+import StatsOverviewSection from '../stats/components/StatsOverviewSection';
+import { useStatsSnapshot } from '../stats/hooks/useStatsSnapshot';
+import { buildStatsOverview, type StatsScope } from '../stats/model/buildStatsOverview';
 
 type GlobalStatsFilter = 'all' | GameId;
 
@@ -35,7 +24,7 @@ export default function StatsScreen({ navigation, route }: Props) {
   const { strings } = useLanguage();
   const { theme } = useTheme();
   const s = useMemo(() => makeStyles(theme), [theme]);
-  const [stats, setStats] = useState<AppStats | null>(null);
+  const { stats, reload } = useStatsSnapshot();
   const [clearDialogVisible, setClearDialogVisible] = useState(false);
   const [activeFilter, setActiveFilter] = useState<GlobalStatsFilter>('all');
   const scopedGameId = route.params?.gameId;
@@ -48,7 +37,7 @@ export default function StatsScreen({ navigation, route }: Props) {
 
   useFocusEffect(useCallback(() => {
     setActiveFilter('all');
-    void loadStats().then(setStats);
+    return undefined;
   }, []));
 
   if (!stats) {
@@ -67,130 +56,77 @@ export default function StatsScreen({ navigation, route }: Props) {
     : hasActiveDefinition
       ? activeFilter
       : 'all';
-
-  const filteredPuzzleTypeIds = effectiveFilter === 'all'
-    ? availableDefinitions.map((definition) => definition.id)
-    : [effectiveFilter];
-
-  const filteredDefinition = effectiveFilter === 'all'
-    ? null
-    : availableDefinitions.find((d) => d.id === effectiveFilter) ?? null;
-  const mergedDifficultyLabels = availableDefinitions[0]?.content.difficultyLabels ?? null;
-
-  const activeGameStats = effectiveFilter === 'all'
-    ? getMergedPuzzleStats(stats, filteredPuzzleTypeIds)
-    : getPuzzleStats(stats, effectiveFilter);
-
-  const summary = getStatsSummary(activeGameStats);
-  const streak = effectiveFilter === 'all'
-    ? getMergedPuzzleStreak(stats, filteredPuzzleTypeIds)
-    : getPuzzleStreak(stats, effectiveFilter);
+  const overviewScope: StatsScope = effectiveFilter === 'all'
+    ? { kind: 'all' }
+    : { kind: 'game', gameId: effectiveFilter };
+  const overview = buildStatsOverview(stats, overviewScope);
 
   return (
     <GlobalPageShell activeTab="Stats">
       <ScrollView contentContainerStyle={s.scroll}>
-        {scopedDefinition ? (
-          <TouchableOpacity
-            style={s.backButton}
-            onPress={clearScope}
-            accessibilityLabel={strings.common.goBack}
-            activeOpacity={0.8}
-          >
-            <Text style={s.backButtonText}>{strings.common.back}</Text>
-          </TouchableOpacity>
-        ) : null}
-
-        {scopedDefinition ? null : (
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={s.badgeRow}
-            style={s.badgeScroller}
-          >
+        <View style={s.controlsSection}>
+          {scopedDefinition ? (
             <TouchableOpacity
-              style={[s.filterBadge, effectiveFilter === 'all' && s.filterBadgeActive]}
-              onPress={() => setActiveFilter('all')}
-              activeOpacity={0.82}
-              accessibilityRole="button"
+              style={s.backButton}
+              onPress={clearScope}
+              accessibilityLabel={strings.common.goBack}
+              activeOpacity={0.8}
             >
-              <Text style={[s.filterBadgeText, effectiveFilter === 'all' && s.filterBadgeTextActive]}>
-                {strings.common.all}
-              </Text>
+              <Text style={s.backButtonText}>{strings.common.back}</Text>
             </TouchableOpacity>
+          ) : null}
 
-            {availableDefinitions.map((definition) => {
-              const selected = effectiveFilter === definition.id;
+          {scopedDefinition ? null : (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={s.badgeRow}
+              style={s.badgeScroller}
+            >
+              <TouchableOpacity
+                style={[s.filterBadge, effectiveFilter === 'all' && s.filterBadgeActive]}
+                onPress={() => setActiveFilter('all')}
+                activeOpacity={0.82}
+                accessibilityRole="button"
+              >
+                <Text style={[s.filterBadgeText, effectiveFilter === 'all' && s.filterBadgeTextActive]}>
+                  {strings.common.all}
+                </Text>
+              </TouchableOpacity>
 
-              return (
-                <TouchableOpacity
-                  key={definition.id}
-                  style={[s.filterBadge, selected && s.filterBadgeActive]}
-                  onPress={() => setActiveFilter(definition.id)}
-                  activeOpacity={0.82}
-                  accessibilityRole="button"
-                >
-                  <Text style={[s.filterBadgeText, selected && s.filterBadgeTextActive]}>
-                    {definition.shortTitle}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
-        )}
+              {availableDefinitions.map((definition) => {
+                const selected = effectiveFilter === definition.id;
 
-        <View style={s.header}>
-          <Text style={s.headerTitle}>
-            {filteredDefinition ? filteredDefinition.shortTitle : strings.common.stats}
-          </Text>
-          <Text style={s.headerSubtitle}>{strings.stats.headerSubtitle}</Text>
+                return (
+                  <TouchableOpacity
+                    key={definition.id}
+                    style={[s.filterBadge, selected && s.filterBadgeActive]}
+                    onPress={() => setActiveFilter(definition.id)}
+                    activeOpacity={0.82}
+                    accessibilityRole="button"
+                  >
+                    <Text style={[s.filterBadgeText, selected && s.filterBadgeTextActive]}>
+                      {definition.shortTitle}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+          )}
         </View>
 
-        <View style={s.summaryBand}>
-          {([
-            [strings.stats.solved, summary.totalSolved],
-            [strings.stats.streak, streak],
-            [strings.stats.winRate, `${summary.winRate}%`],
-          ] as [string, number | string][]).map(([label, value], index) => (
-            <React.Fragment key={label}>
-              <View style={s.summaryMetric}>
-                <Text style={s.summaryValue}>{value}</Text>
-                <Text style={s.summaryLabel}>{label}</Text>
-              </View>
-              {index < 2 ? <View style={s.summaryDivider} /> : null}
-            </React.Fragment>
-          ))}
+        <View style={s.contentSection}>
+          <StatsOverviewSection
+            title={strings.stats.byDifficulty}
+            solvedLabel={strings.stats.solved}
+            streakLabel={strings.stats.streak}
+            winRateLabel={strings.stats.winRate}
+            bestScoreLabel={strings.stats.bestScore}
+            solvedOutOfPlayed={strings.stats.solvedOutOfPlayed}
+            winRateDetail={strings.stats.winRateDetail}
+            model={overview}
+          />
         </View>
-
-        <Text style={s.subsectionLabel}>{strings.stats.byDifficulty}</Text>
-
-        {STATS_DIFFICULTIES.map((key, index) => {
-          const difficultyStats = activeGameStats[key];
-          const rate = difficultyStats.played > 0
-            ? Math.round((difficultyStats.solved / difficultyStats.played) * 100)
-            : 0;
-
-          const difficultyLabel = filteredDefinition?.content.difficultyLabels[key]
-            ?? mergedDifficultyLabels?.[key]
-            ?? key.charAt(0).toUpperCase() + key.slice(1);
-
-          return (
-            <React.Fragment key={key}>
-              <View style={s.diffRow}>
-                <View style={[s.diffMarker, { backgroundColor: getDifficultyColor(theme, key) }]} />
-                <View style={s.diffInfo}>
-                  <Text style={s.diffName}>{difficultyLabel}</Text>
-                  <Text style={s.diffDetail}>{strings.stats.solvedOutOfPlayed(difficultyStats.solved, difficultyStats.played)}</Text>
-                  <Text style={s.diffDetail}>{strings.stats.winRateDetail(rate)}</Text>
-                </View>
-                <View style={s.diffRight}>
-                  <Text style={s.bestLabel}>{strings.stats.bestScore}</Text>
-                  <Text style={s.bestValue}>{fmtScore(difficultyStats.bestScore)}</Text>
-                </View>
-              </View>
-              {index < STATS_DIFFICULTIES.length - 1 ? <View style={s.rowDivider} /> : null}
-            </React.Fragment>
-          );
-        })}
 
         {scopedDefinition ? null : (
           <View style={s.privacySection}>
@@ -202,9 +138,11 @@ export default function StatsScreen({ navigation, route }: Props) {
         )}
 
         {scopedDefinition ? null : (
-          <TouchableOpacity style={s.clearButton} onPress={handleClear} activeOpacity={0.82}>
-            <Text style={s.clearButtonText}>{strings.stats.clearData}</Text>
-          </TouchableOpacity>
+          <View style={s.clearDataSection}>
+            <TouchableOpacity style={s.clearButton} onPress={handleClear} activeOpacity={0.82}>
+              <Text style={s.clearButtonText}>{strings.stats.clearData}</Text>
+            </TouchableOpacity>
+          </View>
         )}
       </ScrollView>
 
@@ -217,7 +155,7 @@ export default function StatsScreen({ navigation, route }: Props) {
           {
             text: strings.common.clear,
             onPress: () => clearPlayerData()
-              .then(() => loadStats().then(setStats))
+              .then(reload)
               .finally(() => setClearDialogVisible(false)),
           },
         ]}
@@ -228,8 +166,13 @@ export default function StatsScreen({ navigation, route }: Props) {
 }
 
 const makeStyles = (theme: Theme) => StyleSheet.create({
-  container:    { flex: 1, backgroundColor: theme.background },
-  scroll:       { padding: 20, gap: 0 },
+  scroll: { padding: 20, paddingBottom: 32 },
+  controlsSection: {
+    marginBottom: 8,
+  },
+  contentSection: {
+    marginBottom: 20,
+  },
   backButton: {
     alignSelf: 'flex-start',
     minHeight: 36,
@@ -241,58 +184,8 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     fontWeight: '700',
     color: theme.textSecondary,
   },
-  header: {
-    marginBottom: 10,
-    gap: 4,
-  },
-  headerTitle: {
-    fontSize: 26,
-    fontWeight: '900',
-    color: theme.text,
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    lineHeight: 21,
-    color: theme.textSecondary,
-  },
-  summaryBand: {
-    flexDirection: 'row',
-    alignItems: 'stretch',
-    paddingVertical: 8,
-  },
-  summaryMetric: {
-    flex: 1,
-    alignItems: 'center',
-    paddingHorizontal: 10,
-  },
-  summaryDivider: {
-    width: 1,
-    backgroundColor: withAlpha(theme.textSecondary, 0.18),
-  },
-  summaryValue: {
-    fontSize: 31,
-    fontWeight: '900',
-    color: theme.text,
-    lineHeight: 34,
-  },
-  summaryLabel: {
-    marginTop: 10,
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 0.8,
-    textTransform: 'uppercase',
-    color: theme.textSecondary,
-  },
-  subsectionLabel: {
-    marginTop: 10,
-    fontSize: 12,
-    fontWeight: '700',
-    letterSpacing: 0.7,
-    textTransform: 'uppercase',
-    color: theme.textMuted,
-  },
   badgeScroller: {
-    marginBottom: 12,
+    marginBottom: 4,
   },
   badgeRow: {
     gap: 10,
@@ -317,49 +210,8 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   filterBadgeTextActive: {
     color: theme.background,
   },
-  diffRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    paddingVertical: 16,
-  },
-  diffMarker: {
-    width: 10,
-    height: 44,
-    borderRadius: 999,
-  },
-  diffInfo: { flex: 1 },
-  diffName: {
-    fontSize: 17,
-    fontWeight: '800',
-    color: theme.text,
-  },
-  diffDetail: {
-    marginTop: 2,
-    fontSize: 13,
-    lineHeight: 19,
-    color: theme.textSecondary,
-  },
-  diffRight: { alignItems: 'flex-end' },
-  bestLabel: {
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 0.6,
-    textTransform: 'uppercase',
-    color: theme.textMuted,
-  },
-  bestValue: {
-    marginTop: 5,
-    fontSize: 19,
-    fontWeight: '800',
-    color: theme.text,
-  },
-  rowDivider: {
-    height: 1,
-    backgroundColor: withAlpha(theme.textSecondary, 0.14),
-  },
   privacySection: {
-    marginTop: 18,
+    marginTop: 4,
   },
   privacyLabel: {
     fontSize: 12,
@@ -374,8 +226,10 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     lineHeight: 20,
     color: theme.textSecondary,
   },
+  clearDataSection: {
+    marginTop: 24,
+  },
   clearButton: {
-    marginTop: 22,
     backgroundColor: theme.surfaceElevated,
     borderRadius: 14,
     borderWidth: 1,
