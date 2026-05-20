@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ComponentType } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { useNavigation, type RouteProp } from '@react-navigation/native';
+import { useIsFocused, useNavigation, type RouteProp } from '@react-navigation/native';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import type { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
 import GamePageShell from '../../components/GamePageShell';
@@ -14,12 +14,31 @@ import type { Theme } from '../../theme';
 type Props = BottomTabScreenProps<GameTabParamList, 'Tutorial'>;
 type TutorialScreenProps = StackScreenProps<RootStackParamList, 'Tutorial'>;
 
-export default function GameTutorialTab({ route }: Props) {
+export default function GameTutorialTab({ navigation, route }: Props) {
   const { strings } = useLanguage();
   const { theme } = useTheme();
   const rootNavigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const definition = getGameDefinition(route.params.gameId);
   const s = useMemo(() => makeStyles(theme), [theme]);
+
+  // Increment this key each time the tutorial tab is focused so the hosted
+  // tutorial screen remounts fresh and lesson state always resets to lesson one.
+  const [tutorialInstanceKey, setTutorialInstanceKey] = useState(0);
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (!isFocused) {
+      return;
+    }
+    setTutorialInstanceKey((current) => current + 1);
+  }, [isFocused, route.params.gameId]);
+
+  const navigateToGamePlay = useCallback((gameId: Props['route']['params']['gameId']) => {
+    navigation.navigate('Play', {
+      gameId,
+      transitionDirection: 'backward',
+    });
+  }, [navigation]);
 
   const tutorialRoute = useMemo<RouteProp<RootStackParamList, 'Tutorial'>>(() => ({
     key: `Tutorial-${route.params.gameId}`,
@@ -34,22 +53,20 @@ export default function GameTutorialTab({ route }: Props) {
     return {
       ...rootNavigation,
       goBack: () => {
-        rootNavigation.navigate('Game', {
-          gameId: route.params.gameId,
-        });
+        navigateToGamePlay(route.params.gameId);
       },
       replace: (...args: [keyof RootStackParamList, RootStackParamList[keyof RootStackParamList]?]) => {
         const [name, params] = args;
 
         if (name === 'Game' && params) {
-          rootNavigation.navigate('Game', params as RootStackParamList['Game']);
+          navigateToGamePlay((params as RootStackParamList['Game']).gameId);
           return;
         }
 
         throw new Error('Tutorial replace only supports the Game route.');
       },
     } as StackNavigationProp<RootStackParamList, 'Tutorial'>;
-  }, [rootNavigation, route.params.gameId]);
+  }, [navigateToGamePlay, rootNavigation, route.params.gameId]);
 
   if (!definition.screens.tutorial) {
     return (
@@ -84,6 +101,7 @@ export default function GameTutorialTab({ route }: Props) {
       }}
     >
       <Screen
+        key={`${route.params.gameId}-${tutorialInstanceKey}`}
         navigation={tutorialNavigation}
         route={tutorialRoute}
       />

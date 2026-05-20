@@ -32,7 +32,6 @@ export default function TutorialScreen({ navigation, route }: Props) {
   const advanceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const lesson = lessons[lessonIndex];
-  const isReplay = route.params.entry === 'howToPlay';
   const isLastLesson = lessonIndex === lessons.length - 1;
   const actionLesson = lesson.kind === 'action' ? lesson : null;
   const board = lesson.kind === 'action'
@@ -54,14 +53,8 @@ export default function TutorialScreen({ navigation, route }: Props) {
 
   const exitTutorial = useCallback(async () => {
     await markPuzzleTutorialSeen(route.params.gameId);
-
-    if (!isReplay) {
-      navigation.replace('Game', { gameId: route.params.gameId });
-      return;
-    }
-
-    navigation.goBack();
-  }, [isReplay, navigation, route.params.gameId]);
+    navigation.replace('Game', { gameId: route.params.gameId });
+  }, [navigation, route.params.gameId]);
 
   const advanceLesson = useCallback(async () => {
     if (isLastLesson) {
