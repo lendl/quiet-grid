@@ -1,14 +1,14 @@
 import TutorialScreen from './screens/TutorialScreen';
-import type { PuzzleDefinition } from '../../app/shell/games/gameDefinition';
+import type { GameDefinition } from '../../app/shell/games/gameDefinition';
 import { getTakuzuHowToPlay } from './content/howToPlay';
 import { getTakuzuLossContent } from './content/loss';
 import { getTakuzuStrings } from './content/strings';
 import { takuzuPlayAdapter } from './playAdapter';
-import { buildTakuzuOutcome, type TakuzuPlaySession } from './playContract';
+import { buildTakuzuResult, type TakuzuPlaySession } from './playContract';
 
 export { takuzuGameSemantics } from './gameplay/semantics';
 
-export const takuzuDefinition: PuzzleDefinition<TakuzuPlaySession> = {
+export const takuzuDefinition: GameDefinition<TakuzuPlaySession> = {
   id: 'takuzu',
   get title() {
     return getTakuzuStrings().title;
@@ -26,7 +26,7 @@ export const takuzuDefinition: PuzzleDefinition<TakuzuPlaySession> = {
     scoring: true,
   },
   difficulties: ['easy', 'medium', 'hard', 'expert'],
-  createOutcome: (session) => buildTakuzuOutcome(session),
+  createResult: (session) => buildTakuzuResult(session),
   playAdapter: takuzuPlayAdapter,
   content: {
     get howToPlay() {

@@ -7,22 +7,22 @@ import GamePageShell from '../../components/GamePageShell';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useActivePuzzleReplacement } from '../../hooks/useActivePuzzleReplacement';
-import type { PuzzleTabParamList, RootStackParamList } from '../../navigation/types';
-import { getPuzzleDefinition } from '../../shell/games/gameRegistry';
+import type { GameTabParamList, RootStackParamList } from '../../navigation/types';
+import { getGameDefinition } from '../../shell/games/gameRegistry';
 import type { Theme } from '../../theme';
 import type { Difficulty } from '../../types';
 import { withAlpha } from '../../utils/color';
 import { getDifficultyColor } from '../../utils/format';
 import { startGame } from '../../utils/gameNavigation';
 
-type Props = BottomTabScreenProps<PuzzleTabParamList, 'Game'>;
+type Props = BottomTabScreenProps<GameTabParamList, 'Play'>;
 
-export default function PuzzleGameTab({ route }: Props) {
+export default function GamePlayTab({ route }: Props) {
   const { strings } = useLanguage();
   const { theme } = useTheme();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const { puzzleTypeId } = route.params;
-  const definition = getPuzzleDefinition(puzzleTypeId);
+  const { gameId } = route.params;
+  const definition = getGameDefinition(gameId);
   const s = useMemo(() => makeStyles(theme), [theme]);
   const {
     dialogVisible,
@@ -40,9 +40,9 @@ export default function PuzzleGameTab({ route }: Props) {
 
   const handleSelectDifficulty = useCallback((difficulty: Difficulty) => {
     requestStart(() => {
-      startGame(navigation, puzzleTypeId, difficulty);
+      startGame(navigation, gameId, difficulty);
     });
-  }, [navigation, puzzleTypeId, requestStart]);
+  }, [gameId, navigation, requestStart]);
 
   const levels = definition.difficulties.map((key) => ({
     key,
@@ -55,10 +55,10 @@ export default function PuzzleGameTab({ route }: Props) {
       activeTab="Games"
       headerMode="brand"
       contentTransitionDirection="forward"
-      puzzleNav={{
+      gameNav={{
         context: 'tabs',
-        activeTab: 'Game',
-        puzzleTypeId,
+        activeTab: 'Play',
+        gameId,
       }}
     >
       <ScrollView contentContainerStyle={s.scroll}>

@@ -113,13 +113,13 @@ const fr = {
     },
   ],
   loss: {
-    forfeit: {
+    abandoned: {
       eyebrow: 'Puzzle terminé',
       title: 'Puzzle inachevé',
       body: 'Tu as terminé ce puzzle avant de le résoudre.',
       icon: '🏁',
     },
-    'rule-based': {
+    'rule-failure': {
       eyebrow: 'Puzzle perdu',
       title: 'Puzzle perdu',
       body: 'Ce puzzle s\'est terminé avant de pouvoir être résolu.',

@@ -6,20 +6,20 @@ import { Animated, Easing, StyleSheet, Text, TouchableOpacity, View } from 'reac
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import type {
-  PuzzleTabParamList,
+  GameTabParamList,
   RootStackParamList,
   TransitionDirection,
   TutorialEntryPoint,
 } from '../navigation/types';
-import type { PuzzleTypeId } from '../shell/types';
+import type { GameId } from '../../games/shared/types';
 import type { Theme } from '../theme';
 import { withAlpha } from '../utils/color';
 
-type PuzzleTabName = keyof PuzzleTabParamList;
+type GameTabName = keyof GameTabParamList;
 
 type BaseProps = {
-  activeTab: PuzzleTabName;
-  puzzleTypeId: PuzzleTypeId;
+  activeTab: GameTabName;
+  gameId: GameId;
 };
 
 type TabContextProps = BaseProps & {
@@ -34,19 +34,19 @@ type RootContextProps = BaseProps & {
 type Props = TabContextProps | RootContextProps;
 
 type NavItem = {
-  key: PuzzleTabName;
+  key: GameTabName;
   label: string;
 };
 
-export default function PuzzlePageNav(props: Props) {
+export default function GamePageNav(props: Props) {
   const { strings } = useLanguage();
   const { theme } = useTheme();
   const s = useMemo(() => makeStyles(theme), [theme]);
-  const tabNavigation = useNavigation<BottomTabNavigationProp<PuzzleTabParamList>>();
+  const tabNavigation = useNavigation<BottomTabNavigationProp<GameTabParamList>>();
   const rootNavigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const items = useMemo<NavItem[]>(() => {
     return [
-      { key: 'Game', label: strings.common.play },
+      { key: 'Play', label: strings.common.play },
       { key: 'Rules', label: strings.common.rules },
       { key: 'Tutorial', label: strings.common.tutorial },
       { key: 'Stats', label: strings.common.stats },
@@ -55,7 +55,7 @@ export default function PuzzlePageNav(props: Props) {
   const resolvedActiveTab = useNavigationState((state) => {
     const routeName = state.routeNames[state.index];
     return items.some((item) => item.key === routeName)
-      ? routeName as PuzzleTabName
+      ? routeName as GameTabName
       : props.activeTab;
   });
   const [rowWidth, setRowWidth] = useState(0);
@@ -106,27 +106,27 @@ export default function PuzzlePageNav(props: Props) {
     };
   }, []);
 
-  const navigateTo = (target: PuzzleTabName, direction: TransitionDirection) => {
+  const navigateTo = (target: GameTabName, direction: TransitionDirection) => {
     if (target === resolvedActiveTab) {
       return;
     }
 
     if (props.context === 'tabs') {
       tabNavigation.navigate(target, {
-        puzzleTypeId: props.puzzleTypeId,
+        gameId: props.gameId,
         transitionDirection: direction,
       });
       return;
     }
 
-    rootNavigation.dispatch(StackActions.replace('Puzzle', {
-      puzzleTypeId: props.puzzleTypeId,
+    rootNavigation.dispatch(StackActions.replace('Game', {
+      gameId: props.gameId,
       initialTab: target,
       initialDirection: direction,
     }));
   };
 
-  const handlePress = (target: PuzzleTabName) => {
+  const handlePress = (target: GameTabName) => {
     const targetIndex = items.findIndex((item) => item.key === target);
     if (targetIndex < 0 || target === resolvedActiveTab) {
       return;

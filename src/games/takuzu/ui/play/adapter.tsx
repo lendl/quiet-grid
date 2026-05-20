@@ -35,7 +35,7 @@ import type {
   Grid,
   LineKey,
 } from '../../types';
-import type { TakuzuActivePuzzle } from '../../activePuzzle';
+import type { TakuzuActiveSession } from '../../activePuzzle';
 
 const VALIDATION_DELAY_MS = 800;
 
@@ -358,7 +358,7 @@ const takuzuTypedPlayAdapter = {
   useAdapter: useTakuzuAdapter,
 } satisfies PuzzlePlayAdapter<
   TakuzuPlaySession,
-  TakuzuActivePuzzle,
+  TakuzuActiveSession,
   TakuzuHudState
 >;
 

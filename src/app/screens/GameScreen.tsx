@@ -1,14 +1,14 @@
 import React from 'react';
 import type { StackScreenProps } from '@react-navigation/stack';
-import PuzzleTabs from '../navigation/PuzzleTabs';
+import GameTabs from '../navigation/GameTabs';
 import type { RootStackParamList } from '../navigation/types';
 
-type Props = StackScreenProps<RootStackParamList, 'Puzzle'>;
+type Props = StackScreenProps<RootStackParamList, 'Game'>;
 
-export default function PuzzleScreen({ route }: Props) {
+export default function GameScreen({ route }: Props) {
   return (
-    <PuzzleTabs
-      puzzleTypeId={route.params.puzzleTypeId}
+    <GameTabs
+      gameId={route.params.gameId}
       initialTab={route.params.initialTab}
       initialDirection={route.params.initialDirection}
     />

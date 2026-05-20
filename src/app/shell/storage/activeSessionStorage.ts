@@ -1,21 +1,21 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { PuzzleSessionEnvelope } from '../types';
+import type { PersistedSessionEnvelope } from '../types';
 import { ACTIVE_PUZZLE_KEY } from '../../utils/storageKeys';
 
-function isStoredPuzzleSessionEnvelope(value: unknown): boolean {
+function isStoredPersistedSessionEnvelope(value: unknown): boolean {
   if (!value || typeof value !== 'object') {
     return false;
   }
 
   const envelope = value as Record<string, unknown>;
   return (
-    typeof envelope.puzzleTypeId === 'string'
+    (typeof envelope.gameId === 'string' || typeof envelope.puzzleTypeId === 'string')
     && Number.isInteger(envelope.version)
     && 'payload' in envelope
   );
 }
 
-export async function loadActivePuzzle(): Promise<unknown> {
+export async function loadActiveSession(): Promise<unknown> {
   let raw: string | null;
 
   try {
@@ -30,7 +30,7 @@ export async function loadActivePuzzle(): Promise<unknown> {
 
   try {
     const parsed: unknown = JSON.parse(raw);
-    if (isStoredPuzzleSessionEnvelope(parsed)) {
+    if (isStoredPersistedSessionEnvelope(parsed)) {
       return parsed;
     }
 
@@ -40,8 +40,8 @@ export async function loadActivePuzzle(): Promise<unknown> {
   }
 }
 
-export async function saveActivePuzzle<TPayload>(
-  envelope: PuzzleSessionEnvelope<TPayload>,
+export async function saveActiveSession<TPayload>(
+  envelope: PersistedSessionEnvelope<TPayload>,
 ): Promise<void> {
   try {
     await AsyncStorage.setItem(ACTIVE_PUZZLE_KEY, JSON.stringify(envelope));
@@ -50,7 +50,7 @@ export async function saveActivePuzzle<TPayload>(
   }
 }
 
-export async function clearActivePuzzle(): Promise<void> {
+export async function clearActiveSession(): Promise<void> {
   try {
     await AsyncStorage.removeItem(ACTIVE_PUZZLE_KEY);
   } catch {

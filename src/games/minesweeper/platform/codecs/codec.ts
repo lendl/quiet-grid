@@ -1,11 +1,11 @@
-import type { PuzzleSessionEnvelope } from '../../../../app/shell/types';
+import type { PersistedSessionEnvelope } from '../../../../app/shell/types';
 import type { MinesweeperPuzzleSession } from '../../types';
 
 export function serializeMinesweeperSession(
   session: MinesweeperPuzzleSession,
-): PuzzleSessionEnvelope<MinesweeperPuzzleSession> {
+): PersistedSessionEnvelope<MinesweeperPuzzleSession> {
   return {
-    puzzleTypeId: 'minesweeper',
+    gameId: 'minesweeper',
     version: 1,
     payload: session,
   };

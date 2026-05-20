@@ -1,19 +1,20 @@
-import type { PuzzleDifficulty, PuzzleTypeId } from '../../games/shared/types';
+import type { GameId, PuzzleDifficulty } from '../../games/shared/types';
 
-export type { PuzzleDifficulty, PuzzleTypeId };
+export type { PuzzleDifficulty };
+export type PuzzleTypeId = GameId;
 
-export interface PuzzleOutcome {
-  puzzleTypeId: PuzzleTypeId;
+export interface SessionResult {
+  gameId: GameId;
   difficulty: PuzzleDifficulty;
-  solved: boolean;
+  status: 'solved' | 'failed';
   score: number;
   accuracy: number;
   elapsedSeconds: number;
   streak: number;
 }
 
-export interface PuzzleSessionEnvelope<TPayload = unknown> {
-  puzzleTypeId: PuzzleTypeId;
+export interface PersistedSessionEnvelope<TPayload = unknown> {
+  gameId: GameId;
   version: number;
   payload: TPayload;
 }

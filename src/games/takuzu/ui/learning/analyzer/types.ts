@@ -7,7 +7,7 @@ export interface TakuzuAnalysisSourcePayload {
 }
 
 export interface TakuzuAnalysisSource extends PuzzleAnalysisSource {
-  puzzleTypeId: 'takuzu';
+  gameId: 'takuzu';
   payload: TakuzuAnalysisSourcePayload;
 }
 
@@ -18,7 +18,7 @@ export interface TakuzuAnalysisStep extends PuzzleAnalysisStep {
 }
 
 export interface TakuzuAnalysisPayload extends PuzzleAnalysisPayload {
-  puzzleTypeId: 'takuzu';
+  gameId: 'takuzu';
   steps: TakuzuAnalysisStep[];
   payload: {
     size: number;

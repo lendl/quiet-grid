@@ -12,10 +12,10 @@ export interface SupportInfoContent {
 }
 
 import { getSupportInfoContent } from '../i18n';
-import { getLocalizedPuzzleNameList } from '../shell/games/gameNameList';
+import { getLocalizedGameNameList } from '../shell/games/gameNameList';
 
 function replaceGameNames(value: string): string {
-  return value.replace(/\{games\}/g, getLocalizedPuzzleNameList());
+  return value.replace(/\{games\}/g, getLocalizedGameNameList());
 }
 
 export function getLocalizedSupportInfoContent(): Record<SupportInfoKey, SupportInfoContent> {

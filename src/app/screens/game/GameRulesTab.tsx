@@ -4,12 +4,12 @@ import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import GamePageShell from '../../components/GamePageShell';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
-import type { PuzzleTabParamList } from '../../navigation/types';
-import { getPuzzleDefinition } from '../../shell/games/gameRegistry';
+import type { GameTabParamList } from '../../navigation/types';
+import { getGameDefinition } from '../../shell/games/gameRegistry';
 import type { HowToPlayCellValue } from '../../shell/games/howToPlayContent';
 import type { Theme } from '../../theme';
 
-type Props = BottomTabScreenProps<PuzzleTabParamList, 'Rules'>;
+type Props = BottomTabScreenProps<GameTabParamList, 'Rules'>;
 
 function MiniGrid({ rows }: { rows: readonly (readonly HowToPlayCellValue[])[] }) {
   const { theme } = useTheme();
@@ -52,10 +52,10 @@ function MiniGrid({ rows }: { rows: readonly (readonly HowToPlayCellValue[])[] }
   );
 }
 
-export default function PuzzleRulesTab({ route }: Props) {
+export default function GameRulesTab({ route }: Props) {
   const { strings } = useLanguage();
   const { theme } = useTheme();
-  const definition = getPuzzleDefinition(route.params.puzzleTypeId);
+  const definition = getGameDefinition(route.params.gameId);
   const { howToPlay } = definition.content;
   const s = makeStyles(theme);
 
@@ -64,10 +64,10 @@ export default function PuzzleRulesTab({ route }: Props) {
       activeTab="Games"
       headerMode="brand"
       contentTransitionDirection="forward"
-      puzzleNav={{
+      gameNav={{
         context: 'tabs',
         activeTab: 'Rules',
-        puzzleTypeId: route.params.puzzleTypeId,
+        gameId: route.params.gameId,
       }}
     >
       <ScrollView contentContainerStyle={s.scroll}>

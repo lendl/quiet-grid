@@ -6,23 +6,23 @@ import AppScreen from './AppScreen';
 import AnimatedContentView from './AnimatedContentView';
 import AppTopBar from './AppTopBar';
 import GlobalBottomNav from './GlobalBottomNav';
-import PuzzlePageNav from './PuzzlePageNav';
+import GamePageNav from './GamePageNav';
 import TopBackgroundEffect from './TopBackgroundEffect';
 import { useTheme } from '../context/ThemeContext';
-import type { MainTabParamList, PuzzleTabParamList, RootStackParamList, TransitionDirection, TutorialEntryPoint } from '../navigation/types';
-import type { PuzzleTypeId } from '../shell/types';
+import type { GameTabParamList, MainTabParamList, RootStackParamList, TransitionDirection, TutorialEntryPoint } from '../navigation/types';
+import type { GameId } from '../../games/shared/types';
 import type { Theme } from '../theme';
 
-type PuzzleNavConfig =
+type GameNavConfig =
   | {
     context: 'tabs';
-    activeTab: keyof PuzzleTabParamList;
-    puzzleTypeId: PuzzleTypeId;
+    activeTab: keyof GameTabParamList;
+    gameId: GameId;
   }
   | {
     context: 'root';
-    activeTab: keyof PuzzleTabParamList;
-    puzzleTypeId: PuzzleTypeId;
+    activeTab: keyof GameTabParamList;
+    gameId: GameId;
     tutorialEntry?: TutorialEntryPoint;
   };
 
@@ -33,8 +33,8 @@ type Props = {
   activeTab?: keyof MainTabParamList;
   headerMode?: 'brand' | 'back' | 'none';
   headerRight?: React.ReactNode;
-  backToPuzzleTypeId?: PuzzleTypeId;
-  puzzleNav?: PuzzleNavConfig;
+  backToPuzzleTypeId?: GameId;
+  gameNav?: GameNavConfig;
   contentTransitionDirection?: TransitionDirection;
 };
 
@@ -46,7 +46,7 @@ export default function GamePageShell({
   headerMode = 'brand',
   headerRight,
   backToPuzzleTypeId,
-  puzzleNav,
+  gameNav,
   contentTransitionDirection = 'none',
 }: Props) {
   const { theme } = useTheme();
@@ -55,7 +55,7 @@ export default function GamePageShell({
   const s = useMemo(() => makeStyles(theme), [theme]);
   const handleBack = useCallback(() => {
     if (backToPuzzleTypeId) {
-      navigation.dispatch(StackActions.replace('Puzzle', { puzzleTypeId: backToPuzzleTypeId }));
+      navigation.dispatch(StackActions.replace('Game', { gameId: backToPuzzleTypeId }));
       return;
     }
 
@@ -67,12 +67,12 @@ export default function GamePageShell({
       <TopBackgroundEffect topOffset={-insets.top} />
       {headerMode === 'brand' ? <AppTopBar mode="brand" /> : null}
       {headerMode === 'back' ? <AppTopBar mode="back" onBack={handleBack} rightSlot={headerRight} /> : null}
-      {puzzleNav ? (
-        <PuzzlePageNav
-          context={puzzleNav.context}
-          activeTab={puzzleNav.activeTab}
-          puzzleTypeId={puzzleNav.puzzleTypeId}
-          tutorialEntry={puzzleNav.context === 'root' ? puzzleNav.tutorialEntry : undefined}
+      {gameNav ? (
+        <GamePageNav
+          context={gameNav.context}
+          activeTab={gameNav.activeTab}
+          gameId={gameNav.gameId}
+          tutorialEntry={gameNav.context === 'root' ? gameNav.tutorialEntry : undefined}
         />
       ) : null}
       <AnimatedContentView style={[s.body, bodyStyle]} direction={contentTransitionDirection}>

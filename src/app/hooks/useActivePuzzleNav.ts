@@ -1,20 +1,20 @@
 import { useCallback, useState } from 'react';
 import { useFocusEffect, useNavigation, type NavigationProp } from '@react-navigation/native';
-import type { ActivePuzzle } from '../shell/activePuzzleTypes';
+import type { ActiveSession } from '../shell/activeSessionTypes';
 import type { RootStackParamList } from '../navigation/types';
-import { resumeActivePuzzle } from '../utils/gameNavigation';
-import { loadActivePuzzleState } from '../utils/activePuzzleStateStorage';
+import { resumeActiveSession } from '../utils/gameNavigation';
+import { loadActiveSessionState } from '../utils/activeSessionStateStorage';
 
 type RootNavigation = NavigationProp<RootStackParamList>;
 
 export function useActivePuzzleNav() {
   const navigation = useNavigation<RootNavigation>();
-  const [activePuzzle, setActivePuzzle] = useState<ActivePuzzle | null>(null);
+  const [activeSession, setActiveSession] = useState<ActiveSession | null>(null);
 
   const refreshActivePuzzle = useCallback(async () => {
-    const puzzle = await loadActivePuzzleState();
-    setActivePuzzle(puzzle);
-    return puzzle;
+    const session = await loadActiveSessionState();
+    setActiveSession(session);
+    return session;
   }, []);
 
   useFocusEffect(useCallback(() => {
@@ -23,17 +23,17 @@ export function useActivePuzzleNav() {
   }, [refreshActivePuzzle]));
 
   const continuePuzzle = useCallback(async () => {
-    const puzzle = activePuzzle ?? await refreshActivePuzzle();
-    if (!puzzle) {
+    const session = activeSession ?? await refreshActivePuzzle();
+    if (!session) {
       return false;
     }
 
-    resumeActivePuzzle(navigation, puzzle);
+    resumeActiveSession(navigation, session);
     return true;
-  }, [activePuzzle, navigation, refreshActivePuzzle]);
+  }, [activeSession, navigation, refreshActivePuzzle]);
 
   return {
-    activePuzzle,
+    activePuzzle: activeSession,
     refreshActivePuzzle,
     continuePuzzle,
   };

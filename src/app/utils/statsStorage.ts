@@ -1,13 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { AppStats, Difficulty, PuzzleTypeId } from '../types';
-import { clearActivePuzzleState } from './activePuzzleStateStorage';
+import type { AppStats, Difficulty, GameId } from '../types';
+import { clearActiveSessionState } from './activeSessionStateStorage';
 import { DEFAULT_STATS, ensurePuzzleStats, mergeStats } from './statsUtils';
 import { STATS_KEY } from './storageKeys';
 
 export interface SaveGameResultInput {
-  puzzleTypeId: PuzzleTypeId;
+  gameId: GameId;
   difficulty: Difficulty;
-  solved: boolean;
+  status: 'solved' | 'failed';
   score?: number;
 }
 
@@ -28,13 +28,14 @@ export async function loadStats(): Promise<AppStats> {
 }
 
 export async function saveGameResult({
-  puzzleTypeId,
+  gameId,
   difficulty,
-  solved,
+  status,
   score = 0,
 }: SaveGameResultInput): Promise<SaveGameResultOutcome> {
+  const solved = status === 'solved';
   const stats = await loadStats();
-  const gameStats = ensurePuzzleStats(stats, puzzleTypeId);
+  const gameStats = ensurePuzzleStats(stats, gameId);
   const previousSolvedCount = gameStats[difficulty].solved;
   const previousBestScore = gameStats[difficulty].bestScore;
   const isFirstSolvedScore = solved && previousSolvedCount === 0;
@@ -47,9 +48,9 @@ export async function saveGameResult({
     if (gameStats[difficulty].bestScore === null || score > gameStats[difficulty].bestScore) {
       gameStats[difficulty].bestScore = score;
     }
-    stats.streaks[puzzleTypeId] = (stats.streaks[puzzleTypeId] ?? 0) + 1;
+    stats.streaks[gameId] = (stats.streaks[gameId] ?? 0) + 1;
   } else {
-    stats.streaks[puzzleTypeId] = 0;
+    stats.streaks[gameId] = 0;
   }
 
   try {
@@ -70,7 +71,7 @@ export async function clearStats(): Promise<void> {
 }
 
 export async function clearPlayerData(): Promise<void> {
-  await Promise.all([clearStats(), clearActivePuzzleState()]);
+  await Promise.all([clearStats(), clearActiveSessionState()]);
 }
 
 export { DEFAULT_STATS };

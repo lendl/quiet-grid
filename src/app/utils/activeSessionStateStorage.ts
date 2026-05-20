@@ -1,19 +1,19 @@
 import type {
-  ActivePuzzle,
-  TakuzuActivePuzzle,
-  MinesweeperActivePuzzle,
-} from '../shell/activePuzzleTypes';
+  ActiveSession,
+  TakuzuActiveSession,
+  MinesweeperActiveSession,
+} from '../shell/activeSessionTypes';
 import type { Difficulty } from '../types';
-import { isPuzzleTypeId } from '../../games/shared/types';
+import { isGameId } from '../../games/shared/types';
 import {
-  clearActivePuzzle,
-  loadActivePuzzle as loadStoredActivePuzzle,
-  saveActivePuzzle as saveStoredActivePuzzle,
-} from '../shell/storage/activePuzzleStorage';
-import type { PuzzleSessionEnvelope } from '../shell/types';
+  clearActiveSession,
+  loadActiveSession as loadStoredActiveSession,
+  saveActiveSession as saveStoredActiveSession,
+} from '../shell/storage/activeSessionStorage';
+import type { PersistedSessionEnvelope } from '../shell/types';
 
-type LineKey = TakuzuActivePuzzle['penalizedLineKeys'][number];
-type MinesweeperPuzzle = MinesweeperActivePuzzle['puzzle'];
+type LineKey = TakuzuActiveSession['penalizedLineKeys'][number];
+type MinesweeperPuzzle = MinesweeperActiveSession['puzzle'];
 
 const HEX_PATTERN = /^[\da-f]+$/i;
 
@@ -54,11 +54,14 @@ function isHexPuzzleData(value: unknown, size: number): value is string {
   return typeof value === 'string' && value.length === encodedLength && HEX_PATTERN.test(value);
 }
 
-function getPuzzleTypeId(value: Record<string, unknown>): 'takuzu' | 'minesweeper' | null {
+function getStoredGameId(value: Record<string, unknown>): 'takuzu' | 'minesweeper' | null {
   if (value.puzzleTypeId === 'binary') {
     return 'takuzu';
   }
-  if (isPuzzleTypeId(value.puzzleTypeId)) {
+  if (isGameId(value.gameId)) {
+    return value.gameId;
+  }
+  if (isGameId(value.puzzleTypeId)) {
     return value.puzzleTypeId;
   }
   return null;
@@ -77,10 +80,10 @@ function isTakuzuPuzzle(value: unknown): boolean {
     && isHexPuzzleData(puzzle.mask, size);
 }
 
-function isTakuzuActivePuzzle(value: unknown): value is TakuzuActivePuzzle {
+function isTakuzuActiveSession(value: unknown): value is TakuzuActiveSession {
   if (!value || typeof value !== 'object') return false;
   const obj = value as Record<string, unknown>;
-  if (getPuzzleTypeId(obj) !== 'takuzu') return false;
+  if (getStoredGameId(obj) !== 'takuzu') return false;
   if (!isTakuzuPuzzle(obj.puzzle)) return false;
   const size = (obj.puzzle as Record<string, unknown>).size as number;
   return isGrid(obj.board, size)
@@ -90,17 +93,17 @@ function isTakuzuActivePuzzle(value: unknown): value is TakuzuActivePuzzle {
     && isLineKeyArray(obj.penalizedLineKeys);
 }
 
-function isLegacyTakuzuActivePuzzle(value: unknown): boolean {
+function isLegacyTakuzuActiveSession(value: unknown): boolean {
   if (!value || typeof value !== 'object') return false;
-  const activePuzzle = value as Record<string, unknown>;
-  if ('puzzleTypeId' in activePuzzle || 'gameType' in activePuzzle) return false;
-  if (!isTakuzuPuzzle(activePuzzle.puzzle)) return false;
-  const size = (activePuzzle.puzzle as Record<string, unknown>).size as number;
-  return isGrid(activePuzzle.board, size)
-    && isFiniteNonNegativeNumber(activePuzzle.elapsedSeconds)
-    && isFiniteNonNegativeNumber(activePuzzle.accuracyDrops)
-    && (activePuzzle.finishedCells === undefined || isBooleanGrid(activePuzzle.finishedCells, size))
-    && (activePuzzle.penalizedLineKeys === undefined || isLineKeyArray(activePuzzle.penalizedLineKeys));
+  const activeSession = value as Record<string, unknown>;
+  if ('puzzleTypeId' in activeSession || 'gameId' in activeSession || 'gameType' in activeSession) return false;
+  if (!isTakuzuPuzzle(activeSession.puzzle)) return false;
+  const size = (activeSession.puzzle as Record<string, unknown>).size as number;
+  return isGrid(activeSession.board, size)
+    && isFiniteNonNegativeNumber(activeSession.elapsedSeconds)
+    && isFiniteNonNegativeNumber(activeSession.accuracyDrops)
+    && (activeSession.finishedCells === undefined || isBooleanGrid(activeSession.finishedCells, size))
+    && (activeSession.penalizedLineKeys === undefined || isLineKeyArray(activeSession.penalizedLineKeys));
 }
 
 function isMinesweeperPuzzle(value: unknown): value is MinesweeperPuzzle {
@@ -169,29 +172,29 @@ function isMinesweeperBoard(value: unknown): boolean {
   return mineCount === mines;
 }
 
-function isMinesweeperActivePuzzle(value: unknown): value is MinesweeperActivePuzzle {
+function isMinesweeperActiveSession(value: unknown): value is MinesweeperActiveSession {
   if (!value || typeof value !== 'object') return false;
   const obj = value as Record<string, unknown>;
-  return getPuzzleTypeId(obj) === 'minesweeper'
+  return getStoredGameId(obj) === 'minesweeper'
     && isMinesweeperPuzzle(obj.puzzle)
     && isMinesweeperBoard(obj.board)
     && isFiniteNonNegativeNumber(obj.elapsedSeconds);
 }
 
-function isActivePuzzle(value: unknown): value is ActivePuzzle {
+function isActiveSession(value: unknown): value is ActiveSession {
   if (!value || typeof value !== 'object') return false;
-  const activePuzzle = value as Record<string, unknown>;
-  if (getPuzzleTypeId(activePuzzle) === 'takuzu') return isTakuzuActivePuzzle(activePuzzle);
-  if (getPuzzleTypeId(activePuzzle) === 'minesweeper') return isMinesweeperActivePuzzle(activePuzzle);
+  const activeSession = value as Record<string, unknown>;
+  if (getStoredGameId(activeSession) === 'takuzu') return isTakuzuActiveSession(activeSession);
+  if (getStoredGameId(activeSession) === 'minesweeper') return isMinesweeperActiveSession(activeSession);
   return false;
 }
 
-function normalizeLegacyTakuzuPuzzle(raw: Record<string, unknown>): TakuzuActivePuzzle {
-  const puzzle = normalizeTakuzuPuzzle(raw.puzzle as TakuzuActivePuzzle['puzzle']);
+function normalizeLegacyTakuzuSession(raw: Record<string, unknown>): TakuzuActiveSession {
+  const puzzle = normalizeTakuzuPuzzle(raw.puzzle as TakuzuActiveSession['puzzle']);
   return {
-    puzzleTypeId: 'takuzu',
+    gameId: 'takuzu',
     puzzle,
-    board: raw.board as TakuzuActivePuzzle['board'],
+    board: raw.board as TakuzuActiveSession['board'],
     elapsedSeconds: raw.elapsedSeconds as number,
     accuracyDrops: raw.accuracyDrops as number,
     finishedCells: (raw.finishedCells as boolean[][] | undefined)
@@ -200,7 +203,7 @@ function normalizeLegacyTakuzuPuzzle(raw: Record<string, unknown>): TakuzuActive
   };
 }
 
-function normalizeTakuzuPuzzle(puzzle: TakuzuActivePuzzle['puzzle']): TakuzuActivePuzzle['puzzle'] {
+function normalizeTakuzuPuzzle(puzzle: TakuzuActiveSession['puzzle']): TakuzuActiveSession['puzzle'] {
   return {
     ...puzzle,
     rows: puzzle.size,
@@ -208,18 +211,18 @@ function normalizeTakuzuPuzzle(puzzle: TakuzuActivePuzzle['puzzle']): TakuzuActi
   };
 }
 
-function normalizeTakuzuActivePuzzle(raw: TakuzuActivePuzzle): TakuzuActivePuzzle {
+function normalizeTakuzuActiveSession(raw: TakuzuActiveSession): TakuzuActiveSession {
   return {
     ...raw,
-    puzzleTypeId: 'takuzu',
+    gameId: 'takuzu',
     puzzle: normalizeTakuzuPuzzle(raw.puzzle),
   };
 }
 
-function normalizeMinesweeperActivePuzzle(raw: MinesweeperActivePuzzle): MinesweeperActivePuzzle {
+function normalizeMinesweeperActiveSession(raw: MinesweeperActiveSession): MinesweeperActiveSession {
   return {
     ...raw,
-    puzzleTypeId: 'minesweeper',
+    gameId: 'minesweeper',
     puzzle: {
       ...raw.puzzle,
       rows: raw.puzzle.rows,
@@ -233,57 +236,57 @@ export function makeEmptyBooleanGrid(size: number): boolean[][] {
   return Array.from({ length: size }, (): boolean[] => Array.from({ length: size }, () => false));
 }
 
-export async function loadActivePuzzleState(): Promise<ActivePuzzle | null> {
-  const stored = await loadStoredActivePuzzle();
+export async function loadActiveSessionState(): Promise<ActiveSession | null> {
+  const stored = await loadStoredActiveSession();
   if (!stored) return null;
 
   try {
-    const parsed: unknown = isPuzzleSessionEnvelope(stored)
+    const parsed: unknown = isPersistedSessionEnvelope(stored)
       ? stored.payload
       : stored;
 
-    if (isActivePuzzle(parsed)) {
-      if (getPuzzleTypeId(parsed as unknown as Record<string, unknown>) === 'takuzu') {
-        return normalizeTakuzuActivePuzzle(parsed as TakuzuActivePuzzle);
+    if (isActiveSession(parsed)) {
+      const parsedSession = parsed as unknown as Record<string, unknown>;
+      if (getStoredGameId(parsedSession) === 'takuzu') {
+        return normalizeTakuzuActiveSession(parsed as TakuzuActiveSession);
       }
-      return normalizeMinesweeperActivePuzzle(parsed as MinesweeperActivePuzzle);
+      return normalizeMinesweeperActiveSession(parsed as MinesweeperActiveSession);
     }
-    if (isLegacyTakuzuActivePuzzle(parsed)) {
-      return normalizeLegacyTakuzuPuzzle(parsed as Record<string, unknown>);
+    if (isLegacyTakuzuActiveSession(parsed)) {
+      return normalizeLegacyTakuzuSession(parsed as Record<string, unknown>);
     }
   } catch {
     // Invalid JSON or shape. Drop below and clear corrupted save.
   }
 
-  await clearActivePuzzle();
+  await clearActiveSession();
   return null;
 }
 
-export async function saveActivePuzzleState(activePuzzle: ActivePuzzle): Promise<void> {
-  const normalizedActivePuzzle = activePuzzle.puzzleTypeId === 'takuzu'
-    ? normalizeTakuzuActivePuzzle(activePuzzle)
-    : normalizeMinesweeperActivePuzzle(activePuzzle);
+export async function saveActiveSessionState(activeSession: ActiveSession): Promise<void> {
+  const normalizedActiveSession = activeSession.gameId === 'takuzu'
+    ? normalizeTakuzuActiveSession(activeSession)
+    : normalizeMinesweeperActiveSession(activeSession);
 
-  await saveStoredActivePuzzle({
-    puzzleTypeId: normalizedActivePuzzle.puzzleTypeId,
+  await saveStoredActiveSession({
+    gameId: normalizedActiveSession.gameId,
     version: 1,
-    payload: normalizedActivePuzzle,
+    payload: normalizedActiveSession,
   });
 }
 
-export async function clearActivePuzzleState(): Promise<void> {
-  await clearActivePuzzle();
+export async function clearActiveSessionState(): Promise<void> {
+  await clearActiveSession();
 }
 
-function isPuzzleSessionEnvelope(value: unknown): value is PuzzleSessionEnvelope {
+function isPersistedSessionEnvelope(value: unknown): value is PersistedSessionEnvelope {
   if (!value || typeof value !== 'object') {
     return false;
   }
 
   const envelope = value as Record<string, unknown>;
   return (
-    (envelope.puzzleTypeId === 'binary'
-      || isPuzzleTypeId(envelope.puzzleTypeId))
+    getStoredGameId(envelope) !== null
     && Number.isInteger(envelope.version)
     && 'payload' in envelope
   );

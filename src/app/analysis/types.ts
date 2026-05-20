@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
-import type { PuzzleTypeId } from '../shell/types';
+import type { GameId } from '../../games/shared/types';
 
 export interface PuzzleAnalysisSource {
-  puzzleTypeId: PuzzleTypeId;
+  gameId: GameId;
   payload: unknown;
 }
 
@@ -20,7 +20,7 @@ export interface PuzzleAnalysisStep {
 }
 
 export interface PuzzleAnalysisPayload {
-  puzzleTypeId: PuzzleTypeId;
+  gameId: GameId;
   steps: PuzzleAnalysisStep[];
   payload: unknown;
 }

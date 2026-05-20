@@ -8,7 +8,7 @@ export interface MinesweeperAnalysisSourcePayload {
 }
 
 export interface MinesweeperAnalysisSource extends PuzzleAnalysisSource {
-  puzzleTypeId: 'minesweeper';
+  gameId: 'minesweeper';
   payload: MinesweeperAnalysisSourcePayload;
 }
 
@@ -20,7 +20,7 @@ export interface MinesweeperAnalysisStep extends PuzzleAnalysisStep {
 }
 
 export interface MinesweeperAnalysisPayload extends PuzzleAnalysisPayload {
-  puzzleTypeId: 'minesweeper';
+  gameId: 'minesweeper';
   steps: MinesweeperAnalysisStep[];
   payload: {
     labels: {

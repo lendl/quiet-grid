@@ -1,19 +1,21 @@
 // src/app/types.ts
 // Shared TypeScript types for the Quiet Grid app
 
-import type { PuzzleDifficulty, PuzzleOutcome, PuzzleSessionEnvelope, PuzzleTypeId } from './shell/types';
+import type { GameId } from '../games/shared/types';
+import type { PersistedSessionEnvelope, PuzzleDifficulty, SessionResult } from './shell/types';
 export type {
   CompletionRouteParams,
   PuzzlePlayRouteParams,
   RootStackParamList,
   TutorialEntryPoint,
 } from './navigation/types';
-export type { CompletionVariant } from './completion/types';
+export type { SolvedResultVariant } from './completion/types';
+export type { FailureReason } from './loss/types';
 
 /** Available puzzle difficulties */
 export type Difficulty = PuzzleDifficulty;
 
-export type { PuzzleOutcome, PuzzleSessionEnvelope, PuzzleTypeId };
+export type { GameId, PersistedSessionEnvelope, SessionResult };
 
 export interface PuzzleLayout {
   rows: number;
@@ -34,4 +36,3 @@ export interface AppStats {
   puzzles: Record<string, Record<Difficulty, DiffStats>>;
   streaks: Record<string, number>;
 }
-

@@ -1,4 +1,4 @@
-import type { MinesweeperActivePuzzle } from './activePuzzle';
+import type { MinesweeperActiveSession } from './activePuzzle';
 import type { MinesweeperBoard, MinesweeperPuzzle } from '../types';
 import { countFlaggedCells, createMinesweeperBoard, createMinesweeperPuzzle } from './rules';
 import { formatElapsed } from '../../../app/utils/formatElapsed';
@@ -24,7 +24,7 @@ function hasMinesweeperMeaningfulProgress(session: MinesweeperPlaySession): bool
 
 export const minesweeperPlayContract: PuzzlePlayContract<
   MinesweeperPlaySession,
-  MinesweeperActivePuzzle,
+  MinesweeperActiveSession,
   MinesweeperHudState
 > = {
   createSession: ({ difficulty }) => {
@@ -34,18 +34,18 @@ export const minesweeperPlayContract: PuzzlePlayContract<
       board: createMinesweeperBoard(puzzle),
     };
   },
-  canResume: (activePuzzle): activePuzzle is MinesweeperActivePuzzle => (
-    activePuzzle?.puzzleTypeId === 'minesweeper' && activePuzzle.board.status === 'playing'
+  canResume: (activeSession): activeSession is MinesweeperActiveSession => (
+    activeSession?.gameId === 'minesweeper' && activeSession.board.status === 'playing'
   ),
-  restoreSession: (activePuzzle) => ({
+  restoreSession: (activeSession) => ({
     session: {
-      puzzle: activePuzzle.puzzle,
-      board: activePuzzle.board,
+      puzzle: activeSession.puzzle,
+      board: activeSession.board,
     },
-    elapsedSeconds: activePuzzle.elapsedSeconds,
+    elapsedSeconds: activeSession.elapsedSeconds,
   }),
   serializeSession: ({ session, elapsedSeconds }) => ({
-    puzzleTypeId: 'minesweeper',
+    gameId: 'minesweeper',
     puzzle: session.puzzle,
     board: session.board,
     elapsedSeconds,
@@ -65,9 +65,9 @@ export const minesweeperPlayContract: PuzzlePlayContract<
     }
 
     return {
-      puzzleTypeId: 'minesweeper',
+      gameId: 'minesweeper',
       difficulty: session.puzzle.difficulty,
-      solved: true,
+      status: 'solved',
       score: computeFinalScore(session.puzzle.difficulty, elapsedSeconds, 0),
       accuracy: computeAccuracyPct(0),
       elapsedSeconds,

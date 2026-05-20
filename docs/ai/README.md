@@ -1,5 +1,9 @@
 # AI Documentation
 
+## Conventions
+
+- `terminology.md`
+
 ## Reusable context
 
 - `context/learning-center.md`

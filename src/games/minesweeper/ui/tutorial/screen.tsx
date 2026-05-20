@@ -53,15 +53,15 @@ export default function TutorialScreen({ navigation, route }: Props) {
   }, []);
 
   const exitTutorial = useCallback(async () => {
-    await markPuzzleTutorialSeen(route.params.puzzleTypeId);
+    await markPuzzleTutorialSeen(route.params.gameId);
 
     if (!isReplay) {
-      navigation.replace('Puzzle', { puzzleTypeId: route.params.puzzleTypeId });
+      navigation.replace('Game', { gameId: route.params.gameId });
       return;
     }
 
     navigation.goBack();
-  }, [isReplay, navigation, route.params.puzzleTypeId]);
+  }, [isReplay, navigation, route.params.gameId]);
 
   const advanceLesson = useCallback(async () => {
     if (isLastLesson) {

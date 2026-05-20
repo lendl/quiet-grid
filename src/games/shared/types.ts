@@ -1,7 +1,7 @@
-export const puzzleTypeIds = ['takuzu', 'minesweeper'] as const;
-export type PuzzleTypeId = typeof puzzleTypeIds[number];
+export const gameIds = ['takuzu', 'minesweeper'] as const;
+export type GameId = typeof gameIds[number];
 export type PuzzleDifficulty = 'easy' | 'medium' | 'hard' | 'expert';
 
-export function isPuzzleTypeId(value: unknown): value is PuzzleTypeId {
-  return typeof value === 'string' && puzzleTypeIds.includes(value as PuzzleTypeId);
+export function isGameId(value: unknown): value is GameId {
+  return typeof value === 'string' && gameIds.includes(value as GameId);
 }

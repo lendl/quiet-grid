@@ -1,20 +1,20 @@
-import type { ActivePuzzle } from './activePuzzleTypes';
-import type { PuzzleDifficulty, PuzzleOutcome } from './types';
+import type { ActiveSession } from './activeSessionTypes';
+import type { PuzzleDifficulty, SessionResult } from './types';
 
 export interface RestoredPuzzleSession<TSession> {
   session: TSession;
   elapsedSeconds: number;
 }
 
-export type PuzzleSolvedState = Omit<PuzzleOutcome, 'streak'> & {
-  solved: true;
+export type PuzzleSolvedState = Omit<SessionResult, 'streak'> & {
+  status: 'solved';
 };
 
 export interface PuzzlePlayContractBase<TSession = unknown, THud = unknown> {
   createSession(input: { difficulty: PuzzleDifficulty }): TSession | null;
-  canResume(activePuzzle: ActivePuzzle | null): boolean;
-  restoreSession(activePuzzle: ActivePuzzle): RestoredPuzzleSession<TSession>;
-  serializeSession(input: { session: TSession; elapsedSeconds: number }): ActivePuzzle;
+  canResume(activeSession: ActiveSession | null): boolean;
+  restoreSession(activeSession: ActiveSession): RestoredPuzzleSession<TSession>;
+  serializeSession(input: { session: TSession; elapsedSeconds: number }): ActiveSession;
   getPersistenceKey(input: { session: TSession; elapsedBucket: number }): string | null;
   getHudState(input: { session: TSession; elapsedSeconds: number }): THud;
   getSolvedState(input: { session: TSession; elapsedSeconds: number }): PuzzleSolvedState | null;
@@ -22,9 +22,9 @@ export interface PuzzlePlayContractBase<TSession = unknown, THud = unknown> {
   hasMeaningfulProgress(session: TSession): boolean;
 }
 
-export interface PuzzlePlayContract<TSession, TActivePuzzle extends ActivePuzzle, THud>
+export interface PuzzlePlayContract<TSession, TActiveSession extends ActiveSession, THud>
   extends PuzzlePlayContractBase<TSession, THud> {
-  canResume(activePuzzle: ActivePuzzle | null): activePuzzle is TActivePuzzle;
-  restoreSession(activePuzzle: TActivePuzzle): RestoredPuzzleSession<TSession>;
-  serializeSession(input: { session: TSession; elapsedSeconds: number }): TActivePuzzle;
+  canResume(activeSession: ActiveSession | null): activeSession is TActiveSession;
+  restoreSession(activeSession: TActiveSession): RestoredPuzzleSession<TSession>;
+  serializeSession(input: { session: TSession; elapsedSeconds: number }): TActiveSession;
 }

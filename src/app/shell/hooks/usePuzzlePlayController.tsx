@@ -4,11 +4,11 @@ import type { StackScreenProps } from '@react-navigation/stack';
 import type { RootStackParamList } from '../../navigation/types';
 import { returnToHome } from '../../navigation/returnToHome';
 import {
-  clearActivePuzzleState,
-  saveActivePuzzleState,
-} from '../../utils/activePuzzleStateStorage';
+  clearActiveSessionState,
+  saveActiveSessionState,
+} from '../../utils/activeSessionStateStorage';
 import { getAppStrings } from '../../i18n';
-import { getPuzzleDefinition } from '../games/gameRegistry';
+import { getGameDefinition } from '../games/gameRegistry';
 import type { PuzzleRenderState } from '../games/playAdapter';
 import type { PuzzlePlayLayoutState } from '../playScreenTypes';
 import { useLeavePuzzleDialog } from './useLeavePuzzleDialog';
@@ -18,7 +18,7 @@ type Props = StackScreenProps<RootStackParamList, 'PuzzlePlay'>;
 
 export function usePuzzlePlayController(props: Props, menuOpen = false): PuzzlePlayLayoutState {
   const strings = getAppStrings();
-  const definition = getPuzzleDefinition(props.route.params.puzzleTypeId);
+  const definition = getGameDefinition(props.route.params.puzzleTypeId);
   const adapter = definition.playAdapter;
   const { dialog, setDialog } = useLeavePuzzleDialog();
   const isFocused = useIsFocused();
@@ -76,14 +76,14 @@ export function usePuzzlePlayController(props: Props, menuOpen = false): PuzzleP
   const bootstrap = usePuzzleControllerBootstrap({
     isFocused,
     menuOpen,
-    puzzleTypeId: props.route.params.puzzleTypeId,
+    gameId: props.route.params.puzzleTypeId,
     difficulty,
     resumeRequested,
     contract: adapter.contract,
     onMissing: handleMissingPuzzle,
     onFreshMissing: onFreshMissing ?? handleMissingPuzzle,
-    saveActivePuzzle: saveActivePuzzleState,
-    clearActivePuzzle: clearActivePuzzleState,
+    saveActiveSession: saveActiveSessionState,
+    clearActiveSession: clearActiveSessionState,
     onShowCompletion: showCompletionScreen,
     onShowLoss: showLossScreen,
     onBeforeLoad: handleBeforeLoad,
@@ -116,7 +116,7 @@ export function usePuzzlePlayController(props: Props, menuOpen = false): PuzzleP
           style: 'destructive',
           onPress: async () => {
             setDialog(null);
-            await finishLossSession('forfeit');
+            await finishLossSession('abandoned');
           },
         },
       ],

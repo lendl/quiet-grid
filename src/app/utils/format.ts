@@ -1,9 +1,9 @@
-import { getPuzzleDefinition } from '../shell/games/gameRegistry';
-import type { Difficulty, PuzzleTypeId } from '../types';
+import { getGameDefinition } from '../shell/games/gameRegistry';
+import type { Difficulty, GameId } from '../types';
 import type { Theme } from '../theme';
 
-export function formatDifficultyLabel(puzzleTypeId: PuzzleTypeId, difficulty: Difficulty): string {
-  return getPuzzleDefinition(puzzleTypeId).content.difficultyLabels[difficulty];
+export function formatDifficultyLabel(puzzleTypeId: GameId, difficulty: Difficulty): string {
+  return getGameDefinition(puzzleTypeId).content.difficultyLabels[difficulty];
 }
 
 export function getDifficultyColor(theme: Theme, difficulty: Difficulty): string {

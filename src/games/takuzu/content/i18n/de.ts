@@ -113,13 +113,13 @@ const de = {
     },
   ],
   loss: {
-    forfeit: {
+    abandoned: {
       eyebrow: 'Rätsel beendet',
       title: 'Rätsel unfertig',
       body: 'Du hast dieses Rätsel beendet, bevor es gelöst war.',
       icon: '🏁',
     },
-    'rule-based': {
+    'rule-failure': {
       eyebrow: 'Rätsel verloren',
       title: 'Rätsel verloren',
       body: 'Dieses Rätsel endete, bevor es gelöst werden konnte.',

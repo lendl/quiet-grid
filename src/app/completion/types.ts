@@ -1,1 +1,1 @@
-export type CompletionVariant = 'first-score' | 'new-high-score' | 'finished';
+export type SolvedResultVariant = 'first-score' | 'new-high-score' | 'standard-solve';

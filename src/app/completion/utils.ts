@@ -1,46 +1,46 @@
-import type { PuzzleOutcome } from '../shell/types';
+import type { SessionResult } from '../shell/types';
 import type { RootStackParamList } from '../navigation/types';
 import type { SaveGameResultOutcome } from '../utils/statsStorage';
 import { saveGameResult } from '../utils/statsStorage';
-import type { CompletionVariant } from './types';
+import type { SolvedResultVariant } from './types';
 import type { PuzzleSolvedState } from '../shell/playContract';
 
-export interface SavedSolvedOutcome {
-  outcome: PuzzleOutcome;
-  variant: CompletionVariant;
+export interface SavedSolvedResult {
+  result: SessionResult;
+  variant: SolvedResultVariant;
 }
 
-export function getCompletionVariant(outcome: SaveGameResultOutcome): CompletionVariant {
+export function getCompletionVariant(outcome: SaveGameResultOutcome): SolvedResultVariant {
   if (outcome.isFirstSolvedScore) return 'first-score';
   if (outcome.isNewBestScore) return 'new-high-score';
-  return 'finished';
+  return 'standard-solve';
 }
 
 export async function buildSolvedCompletionParams(
   buildCompletionParams: (
-    outcome: PuzzleOutcome,
-    variant: CompletionVariant,
+    result: SessionResult,
+    variant: SolvedResultVariant,
   ) => RootStackParamList['Completion'],
   solvedState: PuzzleSolvedState,
 ): Promise<RootStackParamList['Completion']> {
-  const savedOutcome = await saveSolvedOutcome(solvedState);
-  return buildCompletionParams(savedOutcome.outcome, savedOutcome.variant);
+  const savedResult = await saveSolvedResult(solvedState);
+  return buildCompletionParams(savedResult.result, savedResult.variant);
 }
 
-export async function saveSolvedOutcome(
+export async function saveSolvedResult(
   solvedState: PuzzleSolvedState,
-): Promise<SavedSolvedOutcome> {
+): Promise<SavedSolvedResult> {
   const outcome = await saveGameResult({
-    puzzleTypeId: solvedState.puzzleTypeId,
+    gameId: solvedState.gameId,
     difficulty: solvedState.difficulty,
-    solved: true,
+    status: solvedState.status,
     score: solvedState.score,
   });
 
   return {
-    outcome: {
+    result: {
       ...solvedState,
-      streak: outcome.stats.streaks[solvedState.puzzleTypeId] ?? 0,
+      streak: outcome.stats.streaks[solvedState.gameId] ?? 0,
     },
     variant: getCompletionVariant(outcome),
   };

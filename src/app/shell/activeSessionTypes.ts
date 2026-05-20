@@ -1,7 +1,7 @@
-import type { TakuzuActivePuzzle } from '../../games/takuzu/activePuzzle';
-import type { MinesweeperActivePuzzle } from '../../games/minesweeper/activePuzzle';
+import type { TakuzuActiveSession } from '../../games/takuzu/activePuzzle';
+import type { MinesweeperActiveSession } from '../../games/minesweeper/activePuzzle';
 
-export type { TakuzuActivePuzzle } from '../../games/takuzu/activePuzzle';
-export type { MinesweeperActivePuzzle } from '../../games/minesweeper/activePuzzle';
+export type { TakuzuActiveSession } from '../../games/takuzu/activePuzzle';
+export type { MinesweeperActiveSession } from '../../games/minesweeper/activePuzzle';
 
-export type ActivePuzzle = TakuzuActivePuzzle | MinesweeperActivePuzzle;
+export type ActiveSession = TakuzuActiveSession | MinesweeperActiveSession;

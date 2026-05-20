@@ -1,10 +1,10 @@
-import type { PuzzleTypeId } from './shell/types';
+import type { GameId } from '../games/shared/types';
 import type { PuzzleAnalysisAdapter } from './analysis/types';
 import { minesweeperAnalysisAdapter } from '../games/minesweeper/learningCenter/analyzer';
 import { takuzuAnalysisAdapter } from '../games/takuzu/learningCenter/analyzer';
 
-export function getPuzzleAnalysisAdapter(puzzleTypeId: PuzzleTypeId): PuzzleAnalysisAdapter | null {
-  switch (puzzleTypeId) {
+export function getGameAnalysisAdapter(gameId: GameId): PuzzleAnalysisAdapter | null {
+  switch (gameId) {
     case 'minesweeper':
       return minesweeperAnalysisAdapter;
     case 'takuzu':

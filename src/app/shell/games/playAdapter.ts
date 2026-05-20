@@ -4,10 +4,11 @@ import type {
   SetStateAction,
 } from 'react';
 import type { MutableRefObject } from 'react';
-import type { ActivePuzzle } from '../activePuzzleTypes';
+import type { ActiveSession } from '../activeSessionTypes';
 import type { DialogConfig } from '../../components/AppDialog';
 import type { PuzzlePlayContract, PuzzlePlayContractBase } from '../playContract';
 import type { PuzzleDifficulty } from '../types';
+import type { FailureReason } from '../../loss/types';
 
 export interface PuzzleMetaItem {
   key: string;
@@ -76,7 +77,7 @@ export interface PuzzleEffectHandlerArgs<TSession, TEffect = unknown> {
     solvedSession?: TSession,
     showCompletionScreen?: boolean,
   ) => Promise<boolean>;
-  finishLossSession: (reason: 'forfeit' | 'rule-based', sessionOverride?: TSession | null) => Promise<void>;
+  finishLossSession: (reason: FailureReason, sessionOverride?: TSession | null) => Promise<void>;
   loadFreshSession: () => Promise<TSession | null>;
   setDialog: Dispatch<SetStateAction<DialogConfig | null>>;
   goHome: () => void;
@@ -119,23 +120,23 @@ export interface PuzzlePlayAdapterBase {
 
 export interface PuzzlePlayAdapter<
   TSession,
-  TActivePuzzle extends ActivePuzzle,
+  TActiveSession extends ActiveSession,
   THud,
   TAction = unknown,
   TEffect = unknown,
 > {
-  contract: PuzzlePlayContract<TSession, TActivePuzzle, THud>;
+  contract: PuzzlePlayContract<TSession, TActiveSession, THud>;
   useAdapter(this: void, args: PuzzlePlayAdapterShellArgs): PuzzlePlayAdapterInstance<TSession, TAction, TEffect>;
 }
 
 export function createPuzzlePlayAdapter<
   TSession,
-  TActivePuzzle extends ActivePuzzle,
+  TActiveSession extends ActiveSession,
   THud,
   TAction = unknown,
   TEffect = unknown,
 >(
-  adapter: PuzzlePlayAdapter<TSession, TActivePuzzle, THud, TAction, TEffect>,
+  adapter: PuzzlePlayAdapter<TSession, TActiveSession, THud, TAction, TEffect>,
 ): PuzzlePlayAdapterBase {
   return {
     contract: adapter.contract,

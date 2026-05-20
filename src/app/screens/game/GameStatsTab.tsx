@@ -5,8 +5,8 @@ import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import GamePageShell from '../../components/GamePageShell';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
-import type { PuzzleTabParamList } from '../../navigation/types';
-import { getPuzzleDefinition } from '../../shell/games/gameRegistry';
+import type { GameTabParamList } from '../../navigation/types';
+import { getGameDefinition } from '../../shell/games/gameRegistry';
 import type { Theme } from '../../theme';
 import type { AppStats, Difficulty } from '../../types';
 import { withAlpha } from '../../utils/color';
@@ -21,14 +21,14 @@ function fmtScore(n: number | null): string {
   return String(n);
 }
 
-type Props = BottomTabScreenProps<PuzzleTabParamList, 'Stats'>;
+type Props = BottomTabScreenProps<GameTabParamList, 'Stats'>;
 
-export default function PuzzleStatsTab({ route }: Props) {
+export default function GameStatsTab({ route }: Props) {
   const { strings } = useLanguage();
   const { theme } = useTheme();
   const s = useMemo(() => makeStyles(theme), [theme]);
   const [stats, setStats] = useState<AppStats | null>(null);
-  const definition = getPuzzleDefinition(route.params.puzzleTypeId);
+  const definition = getGameDefinition(route.params.gameId);
 
   useFocusEffect(useCallback(() => {
     void loadStats().then(setStats);
@@ -41,30 +41,30 @@ export default function PuzzleStatsTab({ route }: Props) {
         activeTab="Games"
         headerMode="brand"
         contentTransitionDirection="forward"
-        puzzleNav={{
+        gameNav={{
           context: 'tabs',
           activeTab: 'Stats',
-          puzzleTypeId: route.params.puzzleTypeId,
+          gameId: route.params.gameId,
         }}
       />
     );
   }
 
-  const gameStats = getPuzzleStats(stats, route.params.puzzleTypeId);
+  const gameStats = getPuzzleStats(stats, route.params.gameId);
   const totalPlayed = DIFFS.reduce((sum, difficulty) => sum + gameStats[difficulty].played, 0);
   const totalSolved = DIFFS.reduce((sum, difficulty) => sum + gameStats[difficulty].solved, 0);
   const winRate = totalPlayed > 0 ? Math.round((totalSolved / totalPlayed) * 100) : 0;
-  const streak = getPuzzleStreak(stats, route.params.puzzleTypeId);
+  const streak = getPuzzleStreak(stats, route.params.gameId);
 
   return (
     <GamePageShell
       activeTab="Games"
       headerMode="brand"
       contentTransitionDirection="forward"
-      puzzleNav={{
+      gameNav={{
         context: 'tabs',
         activeTab: 'Stats',
-        puzzleTypeId: route.params.puzzleTypeId,
+        gameId: route.params.gameId,
       }}
     >
       <ScrollView contentContainerStyle={s.scroll}>

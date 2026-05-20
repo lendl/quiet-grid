@@ -1,12 +1,12 @@
-import type { TakuzuActivePuzzle } from './activePuzzle';
+import type { TakuzuActiveSession } from './activePuzzle';
 import type { Grid, LineKey, Puzzle } from '../types';
 import { formatElapsed } from '../../../app/utils/formatElapsed';
 import { computeAccuracyPct, computeFinalScore } from '../../../app/utils/scoring';
 import { decodeMask, decodePuzzle, decodeSolution, getRandomPuzzle } from '../platform/puzzleData';
 import { isBoardSolved } from './rules/validation';
-import { makeEmptyBooleanGrid } from '../../../app/utils/activePuzzleStateStorage';
+import { makeEmptyBooleanGrid } from '../../../app/utils/activeSessionStateStorage';
 import type { PuzzlePlayContract } from '../../../app/shell/playContract';
-import type { PuzzleOutcome } from '../../../app/shell/types';
+import type { SessionResult } from '../../../app/shell/types';
 
 export interface TakuzuPlaySession {
   puzzle: Puzzle;
@@ -52,16 +52,16 @@ function hasTakuzuMeaningfulProgress(session: TakuzuPlaySession): boolean {
     || session.penalizedLineKeys.length > 0;
 }
 
-export function buildTakuzuOutcome(
+export function buildTakuzuResult(
   session: TakuzuPlaySession,
   elapsedSeconds = 0,
-): PuzzleOutcome {
+): SessionResult {
   const solved = isBoardSolved(session.board, session.solution);
 
   return {
-    puzzleTypeId: 'takuzu',
+    gameId: 'takuzu',
     difficulty: session.puzzle.difficulty,
-    solved,
+    status: solved ? 'solved' : 'failed',
     score: solved
       ? computeFinalScore(session.puzzle.difficulty, elapsedSeconds, session.accuracyDrops)
       : 0,
@@ -73,28 +73,28 @@ export function buildTakuzuOutcome(
 
 export const takuzuPlayContract: PuzzlePlayContract<
   TakuzuPlaySession,
-  TakuzuActivePuzzle,
+  TakuzuActiveSession,
   TakuzuHudState
 > = {
   createSession: ({ difficulty }) => {
     const puzzle = getRandomPuzzle(difficulty);
     return puzzle ? createTakuzuSession(puzzle) : null;
   },
-  canResume: (activePuzzle): activePuzzle is TakuzuActivePuzzle => activePuzzle?.puzzleTypeId === 'takuzu',
-  restoreSession: (activePuzzle) => ({
+  canResume: (activeSession): activeSession is TakuzuActiveSession => activeSession?.gameId === 'takuzu',
+  restoreSession: (activeSession) => ({
     session: {
-      puzzle: activePuzzle.puzzle,
-      board: activePuzzle.board,
-      solution: decodeSolution(activePuzzle.puzzle.solution, activePuzzle.puzzle.size),
-      isGiven: decodeMask(activePuzzle.puzzle.mask, activePuzzle.puzzle.size),
-      finishedCells: activePuzzle.finishedCells,
-      accuracyDrops: activePuzzle.accuracyDrops,
-      penalizedLineKeys: activePuzzle.penalizedLineKeys,
+      puzzle: activeSession.puzzle,
+      board: activeSession.board,
+      solution: decodeSolution(activeSession.puzzle.solution, activeSession.puzzle.size),
+      isGiven: decodeMask(activeSession.puzzle.mask, activeSession.puzzle.size),
+      finishedCells: activeSession.finishedCells,
+      accuracyDrops: activeSession.accuracyDrops,
+      penalizedLineKeys: activeSession.penalizedLineKeys,
     },
-    elapsedSeconds: activePuzzle.elapsedSeconds,
+    elapsedSeconds: activeSession.elapsedSeconds,
   }),
   serializeSession: ({ session, elapsedSeconds }) => ({
-    puzzleTypeId: 'takuzu',
+    gameId: 'takuzu',
     puzzle: session.puzzle,
     board: session.board,
     elapsedSeconds,
@@ -119,9 +119,9 @@ export const takuzuPlayContract: PuzzlePlayContract<
     }
 
     return {
-      puzzleTypeId: 'takuzu',
+      gameId: 'takuzu',
       difficulty: session.puzzle.difficulty,
-      solved: true,
+      status: 'solved',
       score: computeFinalScore(session.puzzle.difficulty, elapsedSeconds, session.accuracyDrops),
       accuracy: computeAccuracyPct(session.accuracyDrops),
       elapsedSeconds,

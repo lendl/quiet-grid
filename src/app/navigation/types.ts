@@ -1,11 +1,12 @@
 import type { NavigatorScreenParams } from '@react-navigation/native';
+import type { GameId } from '../../games/shared/types';
 import type {
   PuzzleDifficulty,
-  PuzzleOutcome,
   PuzzleTypeId,
+  SessionResult,
 } from '../shell/types';
-import type { CompletionVariant } from '../completion/types';
-import type { LossReason } from '../loss/types';
+import type { SolvedResultVariant } from '../completion/types';
+import type { FailureReason } from '../loss/types';
 import type { SupportInfoKey } from '../content/supportInfo';
 import type { PuzzleAnalysisPayload, PuzzleAnalysisSource } from '../analysis/types';
 
@@ -18,21 +19,21 @@ export interface PuzzlePlayRouteParams {
 export type TransitionDirection = 'forward' | 'backward' | 'none';
 
 export interface CompletionRouteParams {
-  variant: CompletionVariant;
-  outcome: PuzzleOutcome;
+  variant: SolvedResultVariant;
+  result: SessionResult;
 }
 
 export interface LossRouteParams {
-  reason: LossReason;
-  puzzleTypeId: PuzzleTypeId;
+  reason: FailureReason;
+  gameId: GameId;
   difficulty: PuzzleDifficulty;
   elapsedSeconds: number;
   analysisSource?: PuzzleAnalysisSource;
 }
 
-export interface PuzzleRouteParams {
-  puzzleTypeId: PuzzleTypeId;
-  initialTab?: keyof PuzzleTabParamList;
+export interface GameRouteParams {
+  gameId: GameId;
+  initialTab?: keyof GameTabParamList;
   initialDirection?: TransitionDirection;
 }
 
@@ -40,27 +41,27 @@ export type TutorialEntryPoint = 'startup' | 'howToPlay';
 
 export type MainTabParamList = {
   Games: undefined;
-  Stats: { puzzleTypeId?: PuzzleTypeId } | undefined;
+  Stats: { gameId?: GameId } | undefined;
   Settings: undefined;
   Support: undefined;
 };
 
-export type PuzzleTabParamList = {
-  Game: { puzzleTypeId: PuzzleTypeId; transitionDirection?: TransitionDirection };
-  Stats: { puzzleTypeId: PuzzleTypeId; transitionDirection?: TransitionDirection };
-  Rules: { puzzleTypeId: PuzzleTypeId; transitionDirection?: TransitionDirection };
-  Tutorial: { puzzleTypeId: PuzzleTypeId; transitionDirection?: TransitionDirection };
+export type GameTabParamList = {
+  Play: { gameId: GameId; transitionDirection?: TransitionDirection };
+  Stats: { gameId: GameId; transitionDirection?: TransitionDirection };
+  Rules: { gameId: GameId; transitionDirection?: TransitionDirection };
+  Tutorial: { gameId: GameId; transitionDirection?: TransitionDirection };
 };
 
 export type RootStackParamList = {
   Welcome: undefined;
   MainTabs: NavigatorScreenParams<MainTabParamList> | undefined;
   SupportInfo: { infoKey: SupportInfoKey };
-  Puzzle: PuzzleRouteParams;
+  Game: GameRouteParams;
   PuzzlePlay: PuzzlePlayRouteParams;
   Completion: CompletionRouteParams;
   Loss: LossRouteParams;
   Analysis: { analysis: PuzzleAnalysisPayload };
-  HowToPlay: { puzzleTypeId: PuzzleTypeId };
-  Tutorial: { puzzleTypeId: PuzzleTypeId; entry: TutorialEntryPoint };
+  HowToPlay: { gameId: GameId };
+  Tutorial: { gameId: GameId; entry: TutorialEntryPoint };
 };

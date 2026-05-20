@@ -1,10 +1,11 @@
-import type { PuzzleDifficulty, PuzzleOutcome, PuzzleTypeId } from '../types';
+import type { GameId } from '../../../games/shared/types';
+import type { PuzzleDifficulty, SessionResult } from '../types';
 import type { HowToPlayContent } from './howToPlayContent';
 import type { LossContent } from './lossContent';
 import type { PuzzlePlayAdapterBase } from './playAdapter';
 
-export interface PuzzleDefinition<TSession = unknown> {
-  id: PuzzleTypeId;
+export interface GameDefinition<TSession = unknown> {
+  id: GameId;
   title: string;
   shortTitle: string;
   emoji: string;
@@ -15,7 +16,7 @@ export interface PuzzleDefinition<TSession = unknown> {
     scoring: boolean;
   };
   difficulties: readonly PuzzleDifficulty[];
-  createOutcome(session: TSession): PuzzleOutcome;
+  createResult(session: TSession): SessionResult;
   playAdapter: PuzzlePlayAdapterBase;
   content: {
     howToPlay: HowToPlayContent;

@@ -1,11 +1,11 @@
-import type { PuzzleSessionEnvelope } from '../../../../app/shell/types';
+import type { PersistedSessionEnvelope } from '../../../../app/shell/types';
 import type { TakuzuPuzzleSession } from '../../types';
 
 export function serializeTakuzuSession(
   session: TakuzuPuzzleSession,
-): PuzzleSessionEnvelope<TakuzuPuzzleSession> {
+): PersistedSessionEnvelope<TakuzuPuzzleSession> {
   return {
-    puzzleTypeId: 'takuzu',
+    gameId: 'takuzu',
     version: 1,
     payload: session,
   };

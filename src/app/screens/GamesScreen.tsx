@@ -8,7 +8,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import { useActivePuzzleReplacement } from '../hooks/useActivePuzzleReplacement';
 import type { RootStackParamList, MainTabParamList } from '../navigation/types';
-import { puzzleRegistry } from '../shell/games/gameRegistry';
+import { gameRegistry } from '../shell/games/gameRegistry';
 import type { Theme } from '../theme';
 import { getActivePuzzleDisplay } from '../utils/activePuzzle';
 import { withAlpha } from '../utils/color';
@@ -40,17 +40,17 @@ export default function GamesScreen(_: Props) {
     return undefined;
   }, [syncActivePuzzle]));
 
-  const handleSelectPuzzleType = useCallback((puzzleTypeId: typeof puzzleRegistry[number]['id']) => {
+  const handleSelectGame = useCallback((gameId: typeof gameRegistry[number]['id']) => {
     requestStart(() => {
       void (async () => {
-        const puzzleType = puzzleRegistry.find((definition) => definition.id === puzzleTypeId);
+        const game = gameRegistry.find((definition) => definition.id === gameId);
 
-        if (puzzleType?.supports.tutorial && await shouldAutoShowTutorial(puzzleTypeId)) {
-          navigation.navigate('Puzzle', { puzzleTypeId, initialTab: 'Tutorial' });
+        if (game?.supports.tutorial && await shouldAutoShowTutorial(gameId)) {
+          navigation.navigate('Game', { gameId, initialTab: 'Tutorial' });
           return;
         }
 
-        navigation.navigate('Puzzle', { puzzleTypeId });
+        navigation.navigate('Game', { gameId });
       })();
     });
   }, [navigation, requestStart]);
@@ -80,17 +80,17 @@ export default function GamesScreen(_: Props) {
         ) : null}
 
         <View style={s.gameList}>
-          {puzzleRegistry.map((puzzleType) => (
+          {gameRegistry.map((game) => (
             <TouchableOpacity
-              key={puzzleType.id}
+              key={game.id}
               style={s.card}
-              onPress={() => handleSelectPuzzleType(puzzleType.id)}
+              onPress={() => handleSelectGame(game.id)}
               activeOpacity={0.78}
             >
-              <Text style={s.cardEmoji}>{puzzleType.emoji}</Text>
+              <Text style={s.cardEmoji}>{game.emoji}</Text>
               <View style={s.cardBody}>
-                <Text style={s.cardTitle}>{puzzleType.title}</Text>
-                <Text style={s.cardTagline}>{puzzleType.tagline}</Text>
+                <Text style={s.cardTitle}>{game.title}</Text>
+                <Text style={s.cardTagline}>{game.tagline}</Text>
               </View>
             </TouchableOpacity>
           ))}

@@ -1,18 +1,18 @@
 import { useEffect, useRef } from 'react';
 
-interface UseActivePuzzlePersistenceArgs<T> {
+interface UseActiveSessionPersistenceArgs<T> {
   enabled: boolean;
   value: T | null;
   changeKey?: string | null | (() => string | null);
   save: (value: T) => Promise<void>;
 }
 
-export function useActivePuzzlePersistence<T>({
+export function useActiveSessionPersistence<T>({
   enabled,
   value,
   changeKey,
   save,
-}: UseActivePuzzlePersistenceArgs<T>) {
+}: UseActiveSessionPersistenceArgs<T>) {
   const previousSerializedRef = useRef<string | null>(null);
 
   useEffect(() => {

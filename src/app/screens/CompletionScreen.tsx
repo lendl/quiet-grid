@@ -5,7 +5,7 @@ import OutcomeScreenLayout, { type OutcomeScreenMetrics } from '../components/Ou
 import GamePageShell from '../components/GamePageShell';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
-import type { CompletionVariant } from '../completion/types';
+import type { SolvedResultVariant } from '../completion/types';
 import type { RootStackParamList } from '../navigation/types';
 import type { Theme } from '../theme';
 import { withAlpha } from '../utils/color';
@@ -41,7 +41,7 @@ type AccentConfig = {
 };
 
 function getVariantCopy(
-  variant: CompletionVariant,
+  variant: SolvedResultVariant,
   strings: ReturnType<typeof useLanguage>['strings'],
 ): VariantCopy {
   if (variant === 'new-high-score') {
@@ -67,7 +67,7 @@ function getVariantCopy(
   };
 }
 
-function pickCelebrationIcon(score: number, accuracy: number, variant: CompletionVariant): string {
+function pickCelebrationIcon(score: number, accuracy: number, variant: SolvedResultVariant): string {
   const seed = Math.max(0, score) + accuracy + variant.length;
   return CELEBRATION_ICONS[seed % CELEBRATION_ICONS.length];
 }
@@ -90,12 +90,12 @@ function buildHeroAccents(theme: Theme, difficultyColor: string, scale: number):
 export default function CompletionScreen({ route, navigation }: Props) {
   const { strings } = useLanguage();
   const { theme, isDark } = useTheme();
-  const { outcome, variant } = route.params;
-  const { difficulty, score, accuracy, elapsedSeconds, streak, puzzleTypeId } = outcome;
+  const { result, variant } = route.params;
+  const { difficulty, score, accuracy, elapsedSeconds, streak, gameId } = result;
   const copy = getVariantCopy(variant, strings);
   const icon = pickCelebrationIcon(score, accuracy, variant);
   const difficultyColor = getDifficultyColor(theme, difficulty);
-  const difficultyLabel = formatDifficultyLabel(puzzleTypeId, difficulty);
+  const difficultyLabel = formatDifficultyLabel(gameId, difficulty);
   const elapsedLabel = formatElapsed(elapsedSeconds);
   const showStreakBadge = streak >= 2;
 
@@ -139,14 +139,14 @@ export default function CompletionScreen({ route, navigation }: Props) {
   });
 
   const handlePlayAgain = useCallback(() => {
-    startGame(navigation, puzzleTypeId, difficulty, true);
-  }, [difficulty, navigation, puzzleTypeId]);
+    startGame(navigation, gameId, difficulty, true);
+  }, [difficulty, gameId, navigation]);
 
   return (
     <GamePageShell
       activeTab="Games"
       headerMode="back"
-      backToPuzzleTypeId={puzzleTypeId}
+      backToPuzzleTypeId={gameId}
       headerRight={(
         <View style={baseStyles.headerBadgeRow}>
           <View style={[baseStyles.eyebrow, { borderColor: difficultyColor, backgroundColor: withAlpha(theme.surface, 0.7) }]}>

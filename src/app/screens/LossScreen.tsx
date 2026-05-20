@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import type { StackScreenProps } from '@react-navigation/stack';
-import { getPuzzleAnalysisAdapter } from '../analysisRegistry';
+import { getGameAnalysisAdapter } from '../analysisRegistry';
 import OutcomeScreenLayout, { type OutcomeScreenMetrics } from '../components/OutcomeScreenLayout';
 import GamePageShell from '../components/GamePageShell';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
-import { getPuzzleDefinition } from '../shell/games/gameRegistry';
+import { getGameDefinition } from '../shell/games/gameRegistry';
 import type { RootStackParamList } from '../navigation/types';
 import type { Theme } from '../theme';
 import { withAlpha } from '../utils/color';
@@ -30,12 +30,12 @@ function buildLossAccents(theme: Theme, difficultyColor: string, scale: number) 
 export default function LossScreen({ route, navigation }: Props) {
   const { strings } = useLanguage();
   const { theme, isDark } = useTheme();
-  const { reason, puzzleTypeId, difficulty, elapsedSeconds, analysisSource } = route.params;
-  const definition = getPuzzleDefinition(puzzleTypeId);
-  const analysisAdapter = getPuzzleAnalysisAdapter(puzzleTypeId);
+  const { reason, gameId, difficulty, elapsedSeconds, analysisSource } = route.params;
+  const definition = getGameDefinition(gameId);
+  const analysisAdapter = getGameAnalysisAdapter(gameId);
   const copy = definition.content.loss[reason];
   const difficultyColor = getDifficultyColor(theme, difficulty);
-  const difficultyLabel = formatDifficultyLabel(puzzleTypeId, difficulty);
+  const difficultyLabel = formatDifficultyLabel(gameId, difficulty);
   const elapsedLabel = formatElapsed(elapsedSeconds);
   const canAnalyze = analysisAdapter?.supportsAnalysis(analysisSource) ?? false;
 
@@ -79,8 +79,8 @@ export default function LossScreen({ route, navigation }: Props) {
   });
 
   const handlePlayAgain = useCallback(() => {
-    startGame(navigation, puzzleTypeId, difficulty, true);
-  }, [difficulty, navigation, puzzleTypeId]);
+    startGame(navigation, gameId, difficulty, true);
+  }, [difficulty, gameId, navigation]);
 
   const handleAnalyze = useCallback(() => {
     if (!analysisAdapter || !analysisSource) {
@@ -93,7 +93,7 @@ export default function LossScreen({ route, navigation }: Props) {
   }, [analysisAdapter, analysisSource, navigation]);
 
   return (
-    <GamePageShell activeTab="Games" headerMode="back" backToPuzzleTypeId={puzzleTypeId}>
+    <GamePageShell activeTab="Games" headerMode="back" backToPuzzleTypeId={gameId}>
       <OutcomeScreenLayout>
         {(layout) => {
           const s = makeStyles(theme, layout);

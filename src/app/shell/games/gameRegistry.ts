@@ -1,16 +1,16 @@
 import { takuzuDefinition } from '../../../games/takuzu/definition';
 import { minesweeperDefinition } from '../../../games/minesweeper/definition';
-import type { PuzzleDefinition } from './gameDefinition';
+import type { GameDefinition } from './gameDefinition';
 
-export const puzzleRegistry = [
+export const gameRegistry = [
   takuzuDefinition,
   minesweeperDefinition,
-] as const satisfies readonly PuzzleDefinition[];
+] as const satisfies readonly GameDefinition[];
 
-export function getPuzzleDefinition(id: string): PuzzleDefinition {
-  const match = puzzleRegistry.find((definition) => definition.id === id);
+export function getGameDefinition(id: string): GameDefinition {
+  const match = gameRegistry.find((definition) => definition.id === id);
   if (!match) {
-    throw new Error(`Unknown puzzle type: ${id}`);
+    throw new Error(`Unknown game: ${id}`);
   }
 
   return match;

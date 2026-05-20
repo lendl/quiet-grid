@@ -27,7 +27,7 @@ function isTakuzuPlaySession(value: unknown): value is TakuzuPlaySession {
 }
 
 function isTakuzuAnalysisSource(source: PuzzleAnalysisSource | undefined): source is TakuzuAnalysisSource {
-  if (!source || source.puzzleTypeId !== 'takuzu') {
+  if (!source || source.gameId !== 'takuzu') {
     return false;
   }
   const payload = source.payload as Partial<TakuzuAnalysisSource['payload']> | undefined;
@@ -99,7 +99,7 @@ function buildTakuzuAnalysisInternal(source: TakuzuAnalysisSource): TakuzuAnalys
   }
 
   return {
-    puzzleTypeId: 'takuzu',
+    gameId: 'takuzu',
     steps,
     payload: {
       size: puzzle.size,
@@ -114,7 +114,7 @@ export function buildTakuzuAnalysisSource(session: unknown): PuzzleAnalysisSourc
   }
 
   return {
-    puzzleTypeId: 'takuzu',
+    gameId: 'takuzu',
     payload: {
       puzzle: session.puzzle,
       board: cloneGrid(session.board),

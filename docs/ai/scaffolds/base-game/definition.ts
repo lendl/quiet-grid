@@ -16,7 +16,7 @@ export const baseGameDefinitionTemplate = {
   },
   difficulties: ['easy', 'medium', 'hard', 'expert'] as const,
   playAdapter: '__WIRE_PLAY_ADAPTER__',
-  createOutcome: '__WIRE_OUTCOME_ADAPTER_OR_THROW__',
+  createResult: '__WIRE_RESULT_ADAPTER_OR_THROW__',
   content: {
     get howToPlay() {
       return '__LOAD_FROM_CONTENT_I18N__';

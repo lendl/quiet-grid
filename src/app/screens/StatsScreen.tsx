@@ -6,7 +6,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import AppDialog from '../components/AppDialog';
 import GlobalPageShell from '../components/GlobalPageShell';
-import { puzzleRegistry } from '../shell/games/gameRegistry';
+import { gameRegistry } from '../shell/games/gameRegistry';
 import { getDifficultyColor } from '../utils/format';
 import { withAlpha } from '../utils/color';
 import { loadStats, clearPlayerData } from '../utils/statsStorage';
@@ -19,7 +19,7 @@ import {
   getStatsSummary,
 } from '../utils/statsUtils';
 import type { MainTabParamList } from '../navigation/types';
-import type { AppStats, PuzzleTypeId } from '../types';
+import type { AppStats, GameId } from '../types';
 import type { Theme } from '../theme';
 
 function fmtScore(n: number | null): string {
@@ -27,7 +27,7 @@ function fmtScore(n: number | null): string {
   return String(n);
 }
 
-type GlobalStatsFilter = 'all' | PuzzleTypeId;
+type GlobalStatsFilter = 'all' | GameId;
 
 type Props = BottomTabScreenProps<MainTabParamList, 'Stats'>;
 
@@ -38,11 +38,11 @@ export default function StatsScreen({ navigation, route }: Props) {
   const [stats, setStats] = useState<AppStats | null>(null);
   const [clearDialogVisible, setClearDialogVisible] = useState(false);
   const [activeFilter, setActiveFilter] = useState<GlobalStatsFilter>('all');
-  const scopedPuzzleTypeId = route.params?.puzzleTypeId;
-  const scopedDefinition = scopedPuzzleTypeId ? puzzleRegistry.find((d) => d.id === scopedPuzzleTypeId) ?? null : null;
+  const scopedGameId = route.params?.gameId;
+  const scopedDefinition = scopedGameId ? gameRegistry.find((d) => d.id === scopedGameId) ?? null : null;
   const clearScope = useCallback(() => {
     navigation.setParams({
-      puzzleTypeId: undefined,
+      gameId: undefined,
     });
   }, [navigation]);
 
@@ -59,7 +59,7 @@ export default function StatsScreen({ navigation, route }: Props) {
 
   const handleClear = () => setClearDialogVisible(true);
 
-  const availableDefinitions = puzzleRegistry;
+  const availableDefinitions = gameRegistry;
   const hasActiveDefinition = activeFilter === 'all'
     || availableDefinitions.some((definition) => definition.id === activeFilter);
   const effectiveFilter: GlobalStatsFilter = scopedDefinition

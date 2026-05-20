@@ -1,7 +1,7 @@
-import { useActivePuzzlePersistence } from '../../hooks/useActivePuzzlePersistence';
+import { useActiveSessionPersistence } from '../../hooks/useActivePuzzlePersistence';
 
 export function usePersistedPuzzleSession<T>(
-  args: Parameters<typeof useActivePuzzlePersistence<T>>[0],
+  args: Parameters<typeof useActiveSessionPersistence<T>>[0],
 ) {
-  useActivePuzzlePersistence(args);
+  useActiveSessionPersistence(args);
 }

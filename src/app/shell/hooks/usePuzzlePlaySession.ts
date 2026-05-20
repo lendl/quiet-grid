@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from 'react';
 import type { AppStateStatus } from 'react-native';
-import type { ActivePuzzle } from '../activePuzzleTypes';
+import type { ActiveSession } from '../activeSessionTypes';
 import { useGameTimer } from '../../hooks/useGameTimer';
-import { loadActivePuzzleState } from '../../utils/activePuzzleStateStorage';
+import { loadActiveSessionState } from '../../utils/activeSessionStateStorage';
 import type { PuzzlePlayContractBase } from '../playContract';
 import type { PuzzleDifficulty } from '../types';
 import { usePersistedPuzzleSession } from './usePersistedPuzzleSession';
@@ -19,7 +19,7 @@ interface UsePuzzlePlaySessionArgs<TSession, THud> {
   resumeRequested: boolean;
   onMissing: () => void | Promise<void>;
   persistEnabled: boolean;
-  save: (value: ActivePuzzle) => Promise<void>;
+  save: (value: ActiveSession) => Promise<void>;
 }
 
 interface PuzzlePlayTimerResult {
@@ -77,13 +77,13 @@ export function usePuzzlePlaySession<TSession, THud>({
       return null;
     }
 
-    const activePuzzle = await loadActivePuzzleState();
-    if (!activePuzzle || !contract.canResume(activePuzzle)) {
+    const activeSession = await loadActiveSessionState();
+    if (!activeSession || !contract.canResume(activeSession)) {
       await onMissing();
       return null;
     }
 
-    const restoredSession = contract.restoreSession(activePuzzle);
+    const restoredSession = contract.restoreSession(activeSession);
     setElapsedBeforeSession(restoredSession.elapsedSeconds);
     return restoredSession.session;
   }, [contract, onMissing, resumeRequested, setElapsedBeforeSession]);

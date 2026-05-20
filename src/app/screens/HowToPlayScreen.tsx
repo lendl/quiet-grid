@@ -4,7 +4,7 @@ import type { StackScreenProps } from '@react-navigation/stack';
 import GamePageShell from '../components/GamePageShell';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
-import { getPuzzleDefinition } from '../shell/games/gameRegistry';
+import { getGameDefinition } from '../shell/games/gameRegistry';
 import type { HowToPlayCellValue } from '../shell/games/howToPlayContent';
 import type { RootStackParamList } from '../navigation/types';
 import type { Theme } from '../theme';
@@ -49,7 +49,7 @@ function MiniGrid({ rows }: { rows: readonly (readonly HowToPlayCellValue[])[] }
 export default function HowToPlayScreen({ route }: Props) {
   const { strings } = useLanguage();
   const { theme } = useTheme();
-  const definition = getPuzzleDefinition(route.params.puzzleTypeId);
+  const definition = getGameDefinition(route.params.gameId);
   const { howToPlay } = definition.content;
   const s = makeStyles(theme);
 
@@ -58,10 +58,10 @@ export default function HowToPlayScreen({ route }: Props) {
     activeTab="Games"
     headerMode="brand"
     contentTransitionDirection="forward"
-    puzzleNav={{
+    gameNav={{
       context: 'root',
       activeTab: 'Rules',
-      puzzleTypeId: route.params.puzzleTypeId,
+      gameId: route.params.gameId,
     }}
   >
     <ScrollView contentContainerStyle={s.scroll}>

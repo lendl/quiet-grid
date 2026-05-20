@@ -6,8 +6,8 @@ import { createPuzzlePlayAdapter } from '../../../../app/shell/games/playAdapter
 import { useNextMoveHelper } from '../../../../app/shell/games/useNextMoveHelper';
 import { getMinesweeperStrings } from '../../content/strings';
 import {
-  clearActivePuzzleState,
-} from '../../../../app/utils/activePuzzleStateStorage';
+  clearActiveSessionState,
+} from '../../../../app/utils/activeSessionStateStorage';
 import type { Theme } from '../../../../app/theme';
 import { withAlpha } from '../../../../app/utils/color';
 import ZoomableBoardSurface from '../../../../app/components/ZoomableBoardSurface';
@@ -29,7 +29,7 @@ import {
   type MinesweeperHudState,
   type MinesweeperPlaySession,
 } from '../../playContract';
-import type { MinesweeperActivePuzzle } from '../../activePuzzle';
+import type { MinesweeperActiveSession } from '../../activePuzzle';
 import { countFlaggedCells } from '../../rules';
 
 const GRID_HORIZONTAL_PADDING = 12;
@@ -60,7 +60,7 @@ function useMinesweeperAdapter({
 
   const handleMissingPuzzle = useCallback(async () => {
     resetHelperState();
-    await clearActivePuzzleState();
+    await clearActiveSessionState();
     goHome();
   }, [goHome, resetHelperState]);
 
@@ -80,7 +80,7 @@ function useMinesweeperAdapter({
       return;
     }
 
-    await finishLossSession('rule-based', previousSession);
+    await finishLossSession('rule-failure', previousSession);
   }, []);
 
   const handleGridLayout = useCallback((event: LayoutChangeEvent) => {
@@ -213,7 +213,7 @@ const minesweeperTypedPlayAdapter = {
   useAdapter: useMinesweeperAdapter,
 } satisfies PuzzlePlayAdapter<
   MinesweeperPlaySession,
-  MinesweeperActivePuzzle,
+  MinesweeperActiveSession,
   MinesweeperHudState,
   MinesweeperAction,
   MinesweeperActionEffect

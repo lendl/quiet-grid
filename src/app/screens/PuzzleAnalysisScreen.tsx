@@ -16,7 +16,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import type { RootStackParamList } from '../navigation/types';
 import type { Theme } from '../theme';
-import { getPuzzleAnalysisAdapter } from '../analysisRegistry';
+import { getGameAnalysisAdapter } from '../analysisRegistry';
 
 type Props = StackScreenProps<RootStackParamList, 'Analysis'>;
 const SWIPE_DISTANCE_THRESHOLD = 48;
@@ -34,7 +34,7 @@ export default function PuzzleAnalysisScreen({ navigation, route }: Props) {
   const { theme } = useTheme();
   const s = useMemo(() => makeStyles(theme), [theme]);
   const { analysis } = route.params;
-  const adapter = getPuzzleAnalysisAdapter(analysis.puzzleTypeId);
+  const adapter = getGameAnalysisAdapter(analysis.gameId);
   const [stepIndex, setStepIndex] = useState(0);
   const [boardWidth, setBoardWidth] = useState(0);
   const [scrubberWidth, setScrubberWidth] = useState(0);
@@ -59,8 +59,8 @@ export default function PuzzleAnalysisScreen({ navigation, route }: Props) {
   }, [stepCount]);
 
   const returnToPuzzle = useCallback(() => {
-    navigation.dispatch(StackActions.replace('Puzzle', { puzzleTypeId: analysis.puzzleTypeId }));
-  }, [analysis.puzzleTypeId, navigation]);
+    navigation.dispatch(StackActions.replace('Game', { gameId: analysis.gameId }));
+  }, [analysis.gameId, navigation]);
 
   const updateStepFromLocation = useCallback((locationX: number, width: number) => {
     if (stepCount <= 1 || width <= 0) {
@@ -106,7 +106,7 @@ export default function PuzzleAnalysisScreen({ navigation, route }: Props) {
   }
 
   return (
-    <GamePageShell activeTab="Games" headerMode="back" backToPuzzleTypeId={analysis.puzzleTypeId}>
+    <GamePageShell activeTab="Games" headerMode="back" backToPuzzleTypeId={analysis.gameId}>
       <GestureDetector gesture={swipeGesture}>
         <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
           <View style={s.header}>

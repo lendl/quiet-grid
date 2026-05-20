@@ -1,27 +1,28 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
 import type { RootStackParamList } from '../../navigation/types';
-import type { LossReason } from '../../loss/types';
-import type { ActivePuzzle } from '../activePuzzleTypes';
+import type { FailureReason } from '../../loss/types';
+import type { ActiveSession } from '../activeSessionTypes';
 import type { PuzzlePlayContractBase } from '../playContract';
-import type { PuzzleDifficulty, PuzzleTypeId } from '../types';
+import type { GameId } from '../../../games/shared/types';
+import type { PuzzleDifficulty } from '../types';
 import { saveGameResult } from '../../utils/statsStorage';
 import { usePuzzleExitToHome } from './usePuzzleExitToHome';
 import { usePuzzlePlaySession } from './usePuzzlePlaySession';
 import { usePuzzleSessionOrchestration } from './usePuzzleSessionOrchestration';
-import { getPuzzleAnalysisAdapter } from '../../analysisRegistry';
+import { getGameAnalysisAdapter } from '../../analysisRegistry';
 
 interface UsePuzzleControllerBootstrapArgs<TSession, THud> {
   isFocused: boolean;
   menuOpen: boolean;
-  puzzleTypeId: PuzzleTypeId;
+  gameId: GameId;
   difficulty: PuzzleDifficulty;
   resumeRequested: boolean;
   contract: PuzzlePlayContractBase<TSession, THud>;
   onMissing: () => void | Promise<void>;
   onFreshMissing?: () => void | Promise<void>;
-  saveActivePuzzle: (value: ActivePuzzle) => Promise<void>;
-  clearActivePuzzle: () => Promise<void>;
+  saveActiveSession: (value: ActiveSession) => Promise<void>;
+  clearActiveSession: () => Promise<void>;
   onShowCompletion: (params: RootStackParamList['Completion']) => void;
   onShowLoss: (params: RootStackParamList['Loss']) => void;
   onBeforeLoad: () => void;
@@ -45,7 +46,7 @@ export interface PuzzleControllerBootstrapResult<TSession, THud> {
   restoreRequestedPuzzle: () => Promise<TSession | null>;
   hudState: THud | null;
   finishSolvedSession: (solvedSession?: TSession, showCompletionScreen?: boolean) => Promise<boolean>;
-  finishLossSession: (reason: 'forfeit' | 'rule-based', sessionOverride?: TSession | null) => Promise<void>;
+  finishLossSession: (reason: FailureReason, sessionOverride?: TSession | null) => Promise<void>;
   completeExitToHome: (sessionOverride?: TSession | null) => Promise<void>;
   loadFreshSession: () => Promise<TSession | null>;
 }
@@ -53,14 +54,14 @@ export interface PuzzleControllerBootstrapResult<TSession, THud> {
 export function usePuzzleControllerBootstrap<TSession, THud>({
   isFocused,
   menuOpen,
-  puzzleTypeId,
+  gameId,
   difficulty,
   resumeRequested,
   contract,
   onMissing,
   onFreshMissing,
-  saveActivePuzzle,
-  clearActivePuzzle,
+  saveActiveSession,
+  clearActiveSession,
   onShowCompletion,
   onShowLoss,
   onBeforeLoad,
@@ -93,7 +94,7 @@ export function usePuzzleControllerBootstrap<TSession, THud>({
     resumeRequested,
     onMissing,
     persistEnabled: !loading && running && session !== null,
-    save: saveActivePuzzle,
+    save: saveActiveSession,
   });
 
   useEffect(() => {
@@ -107,47 +108,47 @@ export function usePuzzleControllerBootstrap<TSession, THud>({
     getCurrentElapsedSeconds,
     pauseTimer,
     setRunning,
-    clearActivePuzzle,
-    saveActivePuzzle,
+    clearActiveSession,
+    saveActiveSession,
     buildCompletionParams,
     onShowCompletion,
     onExit,
   });
 
   const finishLossSession = useCallback(async (
-    reason: LossReason,
+    reason: FailureReason,
     sessionOverride?: TSession | null,
   ) => {
     if (finalizedRef.current) return;
 
     const elapsedSeconds = pauseTimer();
     const currentSession = sessionOverride ?? sessionRef.current;
-    const analysisSource = getPuzzleAnalysisAdapter(puzzleTypeId)?.buildAnalysisSource(currentSession);
+    const analysisSource = getGameAnalysisAdapter(gameId)?.buildAnalysisSource(currentSession);
     finalizedRef.current = true;
     setRunning(false);
-    await clearActivePuzzle();
+    await clearActiveSession();
 
     // Save unsolved stats
     await saveGameResult({
-      puzzleTypeId,
+      gameId,
       difficulty,
-      solved: false,
+      status: 'failed',
     });
 
     onShowLoss({
       reason,
-      puzzleTypeId,
+      gameId,
       difficulty,
       elapsedSeconds,
       analysisSource: analysisSource ?? undefined,
     });
   }, [
-    clearActivePuzzle,
+    clearActiveSession,
     difficulty,
     finalizedRef,
+    gameId,
     onShowLoss,
     pauseTimer,
-    puzzleTypeId,
     sessionRef,
     setRunning,
   ]);
@@ -157,7 +158,7 @@ export function usePuzzleControllerBootstrap<TSession, THud>({
     contract,
     pauseTimer,
     setRunning,
-    saveActivePuzzle,
+    saveActiveSession,
     onExit,
   });
 

@@ -79,7 +79,7 @@ Use these packets when AI is editing one subsystem and should not load the whole
 
 ### File map
 - `src/games/<id>/platform/`
-- `src/app/utils/activePuzzleStateStorage.ts`
+- `src/app/utils/activeSessionStateStorage.ts`
 
 ### Mistakes to avoid
 - Do not scatter persistence rules across screens.

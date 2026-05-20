@@ -45,8 +45,8 @@ export default function PuzzlePlayScreen(props: Props) {
   }, []);
 
   const handleBackToDifficulty = React.useCallback(() => {
-    props.navigation.dispatch(StackActions.replace('Puzzle', {
-      puzzleTypeId: props.route.params.puzzleTypeId,
+    props.navigation.dispatch(StackActions.replace('Game', {
+      gameId: props.route.params.puzzleTypeId,
     }));
   }, [props.navigation, props.route.params.puzzleTypeId]);
 

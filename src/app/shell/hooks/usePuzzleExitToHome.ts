@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import type { MutableRefObject } from 'react';
-import type { ActivePuzzle } from '../activePuzzleTypes';
+import type { ActiveSession } from '../activeSessionTypes';
 import type { PuzzlePlayContractBase } from '../playContract';
 
 interface UsePuzzleExitToHomeArgs<TSession, THud> {
@@ -8,7 +8,7 @@ interface UsePuzzleExitToHomeArgs<TSession, THud> {
   contract: PuzzlePlayContractBase<TSession, THud>;
   pauseTimer: () => number;
   setRunning: (running: boolean) => void;
-  saveActivePuzzle: (value: ActivePuzzle) => Promise<void>;
+  saveActiveSession: (value: ActiveSession) => Promise<void>;
   onExit: () => void;
 }
 
@@ -17,7 +17,7 @@ export function usePuzzleExitToHome<TSession, THud>({
   contract,
   pauseTimer,
   setRunning,
-  saveActivePuzzle,
+  saveActiveSession,
   onExit,
 }: UsePuzzleExitToHomeArgs<TSession, THud>) {
   return useCallback(async (sessionOverride?: TSession | null) => {
@@ -29,10 +29,10 @@ export function usePuzzleExitToHome<TSession, THud>({
       && contract.isInProgress(currentSession)
       && contract.hasMeaningfulProgress(currentSession)
     ) {
-      await saveActivePuzzle(contract.serializeSession({ session: currentSession, elapsedSeconds }));
+      await saveActiveSession(contract.serializeSession({ session: currentSession, elapsedSeconds }));
     }
 
     setRunning(false);
     onExit();
-  }, [contract, onExit, pauseTimer, saveActivePuzzle, sessionRef, setRunning]);
+  }, [contract, onExit, pauseTimer, saveActiveSession, sessionRef, setRunning]);
 }

@@ -1,6 +1,6 @@
-import type { ActivePuzzle } from '../shell/activePuzzleTypes';
+import type { ActiveSession } from '../shell/activeSessionTypes';
 import type { Difficulty } from '../types';
-import { getPuzzleDefinition } from '../shell/games/gameRegistry';
+import { getGameDefinition } from '../shell/games/gameRegistry';
 import { formatDifficultyLabel } from './format';
 import { formatElapsed } from './formatElapsed';
 
@@ -14,25 +14,25 @@ export type PuzzleDimensions = {
   cols: number;
 };
 
-export function getActivePuzzleDifficulty(activePuzzle: ActivePuzzle): Difficulty {
-  return activePuzzle.puzzle.difficulty;
+export function getActivePuzzleDifficulty(activeSession: ActiveSession): Difficulty {
+  return activeSession.puzzle.difficulty;
 }
 
-export function getActivePuzzleDimensions(activePuzzle: ActivePuzzle): PuzzleDimensions {
+export function getActivePuzzleDimensions(activeSession: ActiveSession): PuzzleDimensions {
   return {
-    rows: activePuzzle.puzzle.rows,
-    cols: activePuzzle.puzzle.cols,
+    rows: activeSession.puzzle.rows,
+    cols: activeSession.puzzle.cols,
   };
 }
 
-export function getActivePuzzleDisplay(activePuzzle: ActivePuzzle): ActivePuzzleDisplay {
+export function getActivePuzzleDisplay(activeSession: ActiveSession): ActivePuzzleDisplay {
   const difficulty = formatDifficultyLabel(
-    activePuzzle.puzzleTypeId,
-    getActivePuzzleDifficulty(activePuzzle),
+    activeSession.gameId,
+    getActivePuzzleDifficulty(activeSession),
   );
-  const elapsed = formatElapsed(activePuzzle.elapsedSeconds);
-  const { rows, cols } = getActivePuzzleDimensions(activePuzzle);
-  const definition = getPuzzleDefinition(activePuzzle.puzzleTypeId);
+  const elapsed = formatElapsed(activeSession.elapsedSeconds);
+  const { rows, cols } = getActivePuzzleDimensions(activeSession);
+  const definition = getGameDefinition(activeSession.gameId);
 
   return {
     label: definition.shortTitle,

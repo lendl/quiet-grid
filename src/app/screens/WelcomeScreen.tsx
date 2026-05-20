@@ -7,7 +7,7 @@ import AppScreen from '../components/AppScreen';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import type { RootStackParamList } from '../navigation/types';
-import { getLocalizedPuzzleNameList } from '../shell/games/gameNameList';
+import { getLocalizedGameNameList } from '../shell/games/gameNameList';
 import { withAlpha } from '../utils/color';
 import { markWelcomeSeen } from '../utils/settingsStorage';
 import type { Theme } from '../theme';
@@ -102,7 +102,7 @@ export default function WelcomeScreen({ navigation }: Props) {
   const { height: windowHeight } = useWindowDimensions();
   const layout = useMemo(() => getWelcomeLayoutMetrics(windowHeight), [windowHeight]);
   const s = useMemo(() => makeStyles(theme, layout), [theme, layout]);
-  const puzzleNames = getLocalizedPuzzleNameList();
+  const puzzleNames = getLocalizedGameNameList();
   const slides = useMemo<Slide[]>(() => ([
     { emoji: '🧩', ...strings.welcome.slides[0] },
     {

@@ -1,8 +1,8 @@
 import { getAppStrings } from '../../i18n';
-import { puzzleRegistry } from './gameRegistry';
+import { gameRegistry } from './gameRegistry';
 
-export function getLocalizedPuzzleNameList(): string {
-  const titles = puzzleRegistry.map((definition) => definition.title);
+export function getLocalizedGameNameList(): string {
+  const titles = gameRegistry.map((definition) => definition.title);
 
   if (titles.length === 0) {
     return '';

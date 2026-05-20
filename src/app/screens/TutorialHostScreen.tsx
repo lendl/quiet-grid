@@ -5,7 +5,7 @@ import type { StackScreenProps } from '@react-navigation/stack';
 import GamePageShell from '../components/GamePageShell';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
-import { getPuzzleDefinition } from '../shell/games/gameRegistry';
+import { getGameDefinition } from '../shell/games/gameRegistry';
 import type { RootStackParamList } from '../navigation/types';
 
 type Props = StackScreenProps<RootStackParamList, 'Tutorial'>;
@@ -13,12 +13,12 @@ type Props = StackScreenProps<RootStackParamList, 'Tutorial'>;
 export default function TutorialHostScreen({ navigation, route }: Props) {
   const { strings } = useLanguage();
   const { theme } = useTheme();
-  const definition = getPuzzleDefinition(route.params.puzzleTypeId);
+  const definition = getGameDefinition(route.params.gameId);
 
   const tutorialNavigation = {
     ...navigation,
     goBack: () => {
-      navigation.navigate('Puzzle', { puzzleTypeId: route.params.puzzleTypeId });
+      navigation.navigate('Game', { gameId: route.params.gameId });
     },
   };
 
@@ -41,10 +41,10 @@ export default function TutorialHostScreen({ navigation, route }: Props) {
       activeTab="Games"
       headerMode="brand"
       contentTransitionDirection="forward"
-      puzzleNav={{
+      gameNav={{
         context: 'root',
         activeTab: 'Tutorial',
-        puzzleTypeId: route.params.puzzleTypeId,
+        gameId: route.params.gameId,
         tutorialEntry: route.params.entry,
       }}
     >

@@ -74,13 +74,13 @@ const de = {
     ],
   },
   loss: {
-    forfeit: {
+    abandoned: {
       eyebrow: 'Rätsel beendet',
       title: 'Rätsel unvollendet',
       body: 'Du hast dieses Rätsel beendet, bevor es gelöst war.',
       icon: '🏁',
     },
-    'rule-based': {
+    'rule-failure': {
       eyebrow: 'Rätsel verloren',
       title: 'Rätsel verloren',
       body: 'Dieses Rätsel endete, als eine Mine aufgedeckt wurde. Ein neues Rätsel wartet, wenn du bereit bist.',

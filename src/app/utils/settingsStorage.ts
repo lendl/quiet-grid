@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { PuzzleTypeId } from '../shell/types';
-import { puzzleTypeIds } from '../../games/shared/types';
+import type { GameId } from '../../games/shared/types';
+import { gameIds } from '../../games/shared/types';
 import { DEFAULT_THEME_MODE, isThemeMode } from '../theme';
 import {
   LANGUAGE_KEY,
@@ -14,7 +14,7 @@ import {
 import type { ThemeMode } from '../theme';
 export type LanguageSetting = 'en' | 'nl' | 'de' | 'fr' | 'es';
 
-type SeenTutorialsMap = Partial<Record<PuzzleTypeId, boolean>>;
+type SeenTutorialsMap = Partial<Record<GameId, boolean>>;
 
 function parseSeenTutorials(value: string | null): SeenTutorialsMap {
   if (!value) {
@@ -29,7 +29,7 @@ function parseSeenTutorials(value: string | null): SeenTutorialsMap {
 
     const tutorialMap = parsed as Record<string, unknown>;
     const seenTutorials: SeenTutorialsMap = {};
-    puzzleTypeIds.forEach((puzzleTypeId) => {
+    gameIds.forEach((puzzleTypeId) => {
       if (tutorialMap[puzzleTypeId] === true) {
         seenTutorials[puzzleTypeId] = true;
       }
@@ -134,7 +134,7 @@ export async function saveTutorialsEnabled(enabled: boolean): Promise<void> {
   }
 }
 
-export async function hasSeenPuzzleTutorial(puzzleTypeId: PuzzleTypeId): Promise<boolean> {
+export async function hasSeenPuzzleTutorial(puzzleTypeId: GameId): Promise<boolean> {
   try {
     const stored = await AsyncStorage.getItem(PUZZLE_TUTORIALS_SEEN_KEY);
     return parseSeenTutorials(stored)[puzzleTypeId] === true;
@@ -143,7 +143,7 @@ export async function hasSeenPuzzleTutorial(puzzleTypeId: PuzzleTypeId): Promise
   }
 }
 
-export async function markPuzzleTutorialSeen(puzzleTypeId: PuzzleTypeId): Promise<void> {
+export async function markPuzzleTutorialSeen(puzzleTypeId: GameId): Promise<void> {
   try {
     const stored = await AsyncStorage.getItem(PUZZLE_TUTORIALS_SEEN_KEY);
     const seenTutorials = parseSeenTutorials(stored);
@@ -154,7 +154,7 @@ export async function markPuzzleTutorialSeen(puzzleTypeId: PuzzleTypeId): Promis
   }
 }
 
-export async function shouldAutoShowTutorial(puzzleTypeId: PuzzleTypeId): Promise<boolean> {
+export async function shouldAutoShowTutorial(puzzleTypeId: GameId): Promise<boolean> {
   const [tutorialsEnabled, tutorialSeen] = await Promise.all([
     loadTutorialsEnabled(),
     hasSeenPuzzleTutorial(puzzleTypeId),

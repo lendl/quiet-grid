@@ -44,7 +44,7 @@ There is no automated test script or committed `*.test.*` / `*.spec.*` suite in 
 - Localization has two layers:
   - `src/app/i18n/index.ts` contains global app chrome strings and current-language state.
   - Each game owns its own localized content under `src/games/<id>/content/i18n/`, resolved with `resolveGameContent()` from `src/app/i18n/gameContent.ts`.
-- Active puzzle persistence is versioned and normalized in `src/app/utils/activePuzzleStateStorage.ts`. That file is responsible for shape validation, legacy migrations (`binary` -> `takuzu`), and save/load envelopes before anything reaches storage helpers.
+- Active puzzle persistence is versioned and normalized in `src/app/utils/activeSessionStateStorage.ts`. That file is responsible for shape validation, legacy migrations (`binary` -> `takuzu`), and save/load envelopes before anything reaches storage helpers.
 - The offline generator in `src/engine/` is separate from Expo app runtime. `src/engine/index.ts` loads an `EngineGameDefinition` from `src/engine/gameRegistry.ts`, generates catalog entries, and deduplicates them through the local SQLite DB in `src/engine/puzzles.db`. Takuzu and Nonogram are both registered as engine-capable games.
 
 ## Key conventions
@@ -52,7 +52,7 @@ There is no automated test script or committed `*.test.*` / `*.spec.*` suite in 
 - Keep puzzle-specific logic inside the owning game package. Shared app shell files should depend on `PuzzleDefinition` / `PuzzlePlayAdapter` contracts and root game entrypoints, not on deep Takuzu- or Minesweeper-specific internals.
 - In game `definition.ts` files, user-facing strings are exposed through getters (`get title()`, `get tagline()`, `content` getters) so language changes always read fresh localized values. Keep `definition.ts` thin and push rules, UI, content, and platform glue into their subfolders instead of growing root files.
 - Treat game i18n files as the single source of truth for user-visible copy. Game locale files now live under `src/games/<id>/content/i18n/`. Do not duplicate tutorial/how-to-play/loss text in content builders when it can be keyed back there.
-- When changing persisted puzzle/session shapes, update `activePuzzleStateStorage.ts` normalization and guards together, and keep game-specific persisted payload shapes in `src/games/<id>/gameplay/activePuzzle.ts`. Backward compatibility for stored local data is handled in app storage normalization, not ad hoc in screens.
+- When changing persisted puzzle/session shapes, update `activeSessionStateStorage.ts` normalization and guards together, and keep game-specific persisted payload shapes in `src/games/<id>/gameplay/activePuzzle.ts`. Backward compatibility for stored local data is handled in app storage normalization, not ad hoc in screens.
 - Engine work uses the dedicated `src/engine/tsconfig.json` and separate `npm run typecheck:engine`. Keep engine-safe code free of Expo/React Native runtime dependencies, and isolate game generator/catalog code under `src/games/<id>/engine/`.
 - New game support is wired in two registries:
   - App play flow: add the game definition to `src/app/shell/games/gameRegistry.ts`

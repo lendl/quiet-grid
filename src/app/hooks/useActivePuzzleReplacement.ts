@@ -1,9 +1,9 @@
 import { useCallback, useRef, useState } from 'react';
 import type { NavigationProp } from '@react-navigation/native';
-import type { ActivePuzzle } from '../shell/activePuzzleTypes';
+import type { ActiveSession } from '../shell/activeSessionTypes';
 import type { RootStackParamList } from '../navigation/types';
-import { clearActivePuzzleState, loadActivePuzzleState } from '../utils/activePuzzleStateStorage';
-import { resumeActivePuzzle } from '../utils/gameNavigation';
+import { clearActiveSessionState, loadActiveSessionState } from '../utils/activeSessionStateStorage';
+import { resumeActiveSession } from '../utils/gameNavigation';
 import { saveGameResult } from '../utils/statsStorage';
 import { getActivePuzzleDifficulty } from '../utils/activePuzzle';
 
@@ -15,14 +15,14 @@ interface UseActivePuzzleReplacementOptions {
 }
 
 export function useActivePuzzleReplacement({ navigation }: UseActivePuzzleReplacementOptions) {
-  const [activePuzzle, setActivePuzzle] = useState<ActivePuzzle | null>(null);
+  const [activeSession, setActiveSession] = useState<ActiveSession | null>(null);
   const [dialogVisible, setDialogVisible] = useState(false);
   const pendingActionRef = useRef<PendingAction>(null);
 
   const syncActivePuzzle = useCallback(async () => {
-    const puzzle = await loadActivePuzzleState();
-    setActivePuzzle(puzzle);
-    return puzzle;
+    const session = await loadActiveSessionState();
+    setActiveSession(session);
+    return session;
   }, []);
 
   const dismissDialog = useCallback(() => {
@@ -31,48 +31,48 @@ export function useActivePuzzleReplacement({ navigation }: UseActivePuzzleReplac
   }, []);
 
   const requestStart = useCallback((action: () => void) => {
-    if (!activePuzzle) {
+    if (!activeSession) {
       action();
       return;
     }
 
     pendingActionRef.current = action;
     setDialogVisible(true);
-  }, [activePuzzle]);
+  }, [activeSession]);
 
   const handleContinue = useCallback(() => {
-    if (!activePuzzle) {
+    if (!activeSession) {
       dismissDialog();
       return;
     }
 
     dismissDialog();
-    resumeActivePuzzle(navigation, activePuzzle);
-  }, [activePuzzle, dismissDialog, navigation]);
+    resumeActiveSession(navigation, activeSession);
+  }, [activeSession, dismissDialog, navigation]);
 
   const handleGiveUpAndStartNew = useCallback(async () => {
-    if (!activePuzzle) {
+    if (!activeSession) {
       dismissDialog();
       return;
     }
 
     const queuedAction = pendingActionRef.current;
-    const difficulty = getActivePuzzleDifficulty(activePuzzle);
+    const difficulty = getActivePuzzleDifficulty(activeSession);
 
     await saveGameResult({
-      puzzleTypeId: activePuzzle.puzzleTypeId,
+      gameId: activeSession.gameId,
       difficulty,
-      solved: false,
+      status: 'failed',
     });
-    await clearActivePuzzleState();
-    setActivePuzzle(null);
+    await clearActiveSessionState();
+    setActiveSession(null);
     dismissDialog();
     queuedAction?.();
-  }, [activePuzzle, dismissDialog]);
+  }, [activeSession, dismissDialog]);
 
   return {
-    activePuzzle,
-    setActivePuzzle,
+    activePuzzle: activeSession,
+    setActivePuzzle: setActiveSession,
     dialogVisible,
     syncActivePuzzle,
     requestStart,

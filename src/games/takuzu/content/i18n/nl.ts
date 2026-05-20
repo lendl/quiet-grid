@@ -113,13 +113,13 @@ const nl = {
     },
   ],
   loss: {
-    forfeit: {
+    abandoned: {
       eyebrow: 'Puzzel beëindigd',
       title: 'Puzzel niet af',
       body: 'Je hebt deze puzzel beëindigd voordat hij was opgelost.',
       icon: '🏁',
     },
-    'rule-based': {
+    'rule-failure': {
       eyebrow: 'Puzzel verloren',
       title: 'Puzzel verloren',
       body: 'Deze puzzel eindigde voordat hij kon worden opgelost.',

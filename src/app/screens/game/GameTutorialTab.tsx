@@ -7,49 +7,49 @@ import type { StackNavigationProp, StackScreenProps } from '@react-navigation/st
 import GamePageShell from '../../components/GamePageShell';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
-import type { PuzzleTabParamList, RootStackParamList } from '../../navigation/types';
-import { getPuzzleDefinition } from '../../shell/games/gameRegistry';
+import type { GameTabParamList, RootStackParamList } from '../../navigation/types';
+import { getGameDefinition } from '../../shell/games/gameRegistry';
 import type { Theme } from '../../theme';
 
-type Props = BottomTabScreenProps<PuzzleTabParamList, 'Tutorial'>;
+type Props = BottomTabScreenProps<GameTabParamList, 'Tutorial'>;
 type TutorialScreenProps = StackScreenProps<RootStackParamList, 'Tutorial'>;
 
-export default function PuzzleTutorialEntryTab({ route }: Props) {
+export default function GameTutorialTab({ route }: Props) {
   const { strings } = useLanguage();
   const { theme } = useTheme();
   const rootNavigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-  const definition = getPuzzleDefinition(route.params.puzzleTypeId);
+  const definition = getGameDefinition(route.params.gameId);
   const s = useMemo(() => makeStyles(theme), [theme]);
 
   const tutorialRoute = useMemo<RouteProp<RootStackParamList, 'Tutorial'>>(() => ({
-    key: `Tutorial-${route.params.puzzleTypeId}`,
+    key: `Tutorial-${route.params.gameId}`,
     name: 'Tutorial',
     params: {
-      puzzleTypeId: route.params.puzzleTypeId,
+      gameId: route.params.gameId,
       entry: 'howToPlay',
     },
-  }), [route.params.puzzleTypeId]);
+  }), [route.params.gameId]);
 
   const tutorialNavigation = useMemo<StackNavigationProp<RootStackParamList, 'Tutorial'>>(() => {
     return {
       ...rootNavigation,
       goBack: () => {
-        rootNavigation.navigate('Puzzle', {
-          puzzleTypeId: route.params.puzzleTypeId,
+        rootNavigation.navigate('Game', {
+          gameId: route.params.gameId,
         });
       },
       replace: (...args: [keyof RootStackParamList, RootStackParamList[keyof RootStackParamList]?]) => {
         const [name, params] = args;
 
-        if (name === 'Puzzle' && params) {
-          rootNavigation.navigate('Puzzle', params as RootStackParamList['Puzzle']);
+        if (name === 'Game' && params) {
+          rootNavigation.navigate('Game', params as RootStackParamList['Game']);
           return;
         }
 
-        throw new Error('Tutorial replace only supports the Puzzle route.');
+        throw new Error('Tutorial replace only supports the Game route.');
       },
     } as StackNavigationProp<RootStackParamList, 'Tutorial'>;
-  }, [rootNavigation, route.params.puzzleTypeId]);
+  }, [rootNavigation, route.params.gameId]);
 
   if (!definition.screens.tutorial) {
     return (
@@ -57,10 +57,10 @@ export default function PuzzleTutorialEntryTab({ route }: Props) {
         activeTab="Games"
         headerMode="brand"
         contentTransitionDirection="forward"
-        puzzleNav={{
+        gameNav={{
           context: 'tabs',
           activeTab: 'Tutorial',
-          puzzleTypeId: route.params.puzzleTypeId,
+          gameId: route.params.gameId,
         }}
       >
         <View style={s.content}>
@@ -77,10 +77,10 @@ export default function PuzzleTutorialEntryTab({ route }: Props) {
       activeTab="Games"
       headerMode="brand"
       contentTransitionDirection="forward"
-      puzzleNav={{
+      gameNav={{
         context: 'tabs',
         activeTab: 'Tutorial',
-        puzzleTypeId: route.params.puzzleTypeId,
+        gameId: route.params.gameId,
       }}
     >
       <Screen

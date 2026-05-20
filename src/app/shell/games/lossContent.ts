@@ -1,4 +1,4 @@
-import type { LossReason } from '../../loss/types';
+import type { FailureReason } from '../../loss/types';
 
 export interface LossContentEntry {
   eyebrow: string;
@@ -7,4 +7,4 @@ export interface LossContentEntry {
   icon: string;
 }
 
-export type LossContent = Record<LossReason, LossContentEntry>;
+export type LossContent = Record<FailureReason, LossContentEntry>;

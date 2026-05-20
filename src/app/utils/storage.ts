@@ -1,9 +1,9 @@
 export {
-  clearActivePuzzleState,
-  loadActivePuzzleState,
+  clearActiveSessionState,
+  loadActiveSessionState,
   makeEmptyBooleanGrid,
-  saveActivePuzzleState,
-} from './activePuzzleStateStorage';
+  saveActiveSessionState,
+} from './activeSessionStateStorage';
 
 export {
   clearPlayerData,

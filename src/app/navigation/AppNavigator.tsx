@@ -12,7 +12,7 @@ import type { RootStackParamList } from './types';
 import { hasSeenWelcome } from '../utils/settingsStorage';
 import MainTabs             from './MainTabs';
 import WelcomeScreen         from '../screens/WelcomeScreen';
-import PuzzleScreen          from '../screens/PuzzleScreen';
+import GameScreen            from '../screens/GameScreen';
 import CompletionScreen      from '../screens/CompletionScreen';
 import LossScreen            from '../screens/LossScreen';
 import PuzzleAnalysisScreen  from '../screens/PuzzleAnalysisScreen';
@@ -76,7 +76,7 @@ export default function AppNavigator() {
         <Stack.Screen name="Welcome"         component={WelcomeScreen} />
         <Stack.Screen name="MainTabs"        component={MainTabs} />
         <Stack.Screen name="SupportInfo"     component={SupportInfoScreen} />
-        <Stack.Screen name="Puzzle"          component={PuzzleScreen} />
+        <Stack.Screen name="Game"            component={GameScreen} />
         <Stack.Screen name="PuzzlePlay"      component={PuzzlePlayScreen} />
         <Stack.Screen name="Completion"      component={CompletionScreen} />
         <Stack.Screen name="Loss"            component={LossScreen} />
@@ -85,7 +85,7 @@ export default function AppNavigator() {
         <Stack.Screen
           name="Tutorial"
           component={TutorialHostScreen}
-          initialParams={{ puzzleTypeId: 'takuzu', entry: 'startup' }}
+          initialParams={{ gameId: 'takuzu', entry: 'startup' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

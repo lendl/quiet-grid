@@ -1,5 +1,5 @@
 import type { CatalogFileOptions } from './catalog';
-import type { PuzzleDifficulty, PuzzleTypeId } from '../games/shared/types';
+import type { GameId, PuzzleDifficulty } from '../games/shared/types';
 
 export interface EngineCatalogEntry {
   id: string;
@@ -14,7 +14,7 @@ export interface EngineGenerateResult<TEntry extends EngineCatalogEntry = Engine
 }
 
 export interface EngineGameDefinition<TEntry extends EngineCatalogEntry = EngineCatalogEntry> {
-  id: PuzzleTypeId;
+  id: GameId;
   title: string;
   catalogPath: string;
   entryIdPrefix: string;

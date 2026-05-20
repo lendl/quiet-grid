@@ -1,1 +1,1 @@
-export type LossReason = 'forfeit' | 'rule-based';
+export type FailureReason = 'abandoned' | 'rule-failure';

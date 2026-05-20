@@ -66,7 +66,7 @@ function isMinesweeperPlaySession(value: unknown): value is MinesweeperPlaySessi
 function isMinesweeperAnalysisSource(
   source: PuzzleAnalysisSource | undefined,
 ): source is MinesweeperAnalysisSource {
-  if (!source || source.puzzleTypeId !== 'minesweeper') {
+  if (!source || source.gameId !== 'minesweeper') {
     return false;
   }
 
@@ -124,7 +124,7 @@ function buildMinesweeperAnalysisInternal(source: MinesweeperAnalysisSource): Mi
   }
 
   return {
-    puzzleTypeId: 'minesweeper',
+    gameId: 'minesweeper',
     steps,
     payload: {
       labels: {
@@ -146,7 +146,7 @@ export function buildMinesweeperAnalysisSource(session: unknown): PuzzleAnalysis
   }
 
   return {
-    puzzleTypeId: 'minesweeper',
+    gameId: 'minesweeper',
     payload: {
       puzzle: session.puzzle,
       board: cloneBoard(session.board),
