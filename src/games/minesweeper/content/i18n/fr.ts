@@ -296,6 +296,10 @@ const fr = {
   },
   tutorialUi: {
     progressLabel: (step: number) => `Leçon ${step}`,
+    exitLabel: {
+      end: 'Terminer le tutoriel',
+      skip: 'Passer le tutoriel',
+    },
     status: {
       finishing: 'Tutoriel en cours de fin\u2026',
       nextLesson: 'Prochaine leçon en cours\u2026',

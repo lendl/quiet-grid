@@ -34,7 +34,6 @@ export default function PuzzleTutorialScaffold({
   activeLessonIndex,
   footer,
   boardMinHeight = 184,
-  onNextLesson,
   onPreviousLesson,
 }: PuzzleTutorialScaffoldProps) {
   const { theme } = useTheme();
@@ -44,20 +43,13 @@ export default function PuzzleTutorialScaffold({
     .activeOffsetX([-16, 16])
     .failOffsetY([-20, 20])
     .onEnd((event) => {
-      const shouldGoNext = event.translationX <= -SWIPE_DISTANCE_THRESHOLD
-        || event.velocityX <= -SWIPE_VELOCITY_THRESHOLD;
       const shouldGoPrevious = event.translationX >= SWIPE_DISTANCE_THRESHOLD
         || event.velocityX >= SWIPE_VELOCITY_THRESHOLD;
-
-      if (shouldGoNext && activeLessonIndex < lessonCount - 1) {
-        onNextLesson();
-        return;
-      }
 
       if (shouldGoPrevious && activeLessonIndex > 0) {
         onPreviousLesson();
       }
-    }), [activeLessonIndex, lessonCount, onNextLesson, onPreviousLesson]);
+    }), [activeLessonIndex, onPreviousLesson]);
 
   return (
     <GestureDetector gesture={swipeGesture}>

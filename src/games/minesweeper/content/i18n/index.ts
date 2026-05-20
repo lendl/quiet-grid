@@ -91,6 +91,10 @@ export interface MinesweeperI18n {
   tutorialText: Record<TutorialTextKey, ActionLessonText | InfoLessonText>;
   tutorialUi: {
     progressLabel: (step: number) => string;
+    exitLabel: {
+      end: string;
+      skip: string;
+    };
     status: {
       finishing: string;
       nextLesson: string;
