@@ -58,10 +58,6 @@ export default function GamesScreen(_: Props) {
   return (
     <GlobalPageShell activeTab="Games">
       <ScrollView contentContainerStyle={s.scroll}>
-        <View style={s.header}>
-          <Text style={s.subtitle}>{strings.games.subtitle}</Text>
-        </View>
-
         {activePuzzleDisplay ? (
           <View style={s.activeGameCard}>
             <Text style={s.activeGameEyebrow}>{activePuzzleDisplay.label}</Text>
