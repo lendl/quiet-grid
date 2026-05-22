@@ -27,19 +27,23 @@ export default function TutorialScreen({ navigation, route }: Props) {
   const lessons = useMemo(() => getTakuzuTutorialLessons(), [resolvedLanguage]);
   const [lessonIndex, setLessonIndex] = useState(0);
   const [grid, setGrid] = useState<Grid>(cloneGrid(lessons[0].grid));
-  const [completed, setCompleted] = useState(false);
   const [moveIndex, setMoveIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<0 | 1 | null>(null);
   const [answerState, setAnswerState] = useState<TutorialAnswerState>('idle');
   const advanceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const clearAdvanceTimeout = useCallback(() => {
+    if (advanceTimeoutRef.current) {
+      clearTimeout(advanceTimeoutRef.current);
+      advanceTimeoutRef.current = null;
+    }
+  }, []);
+
   const lesson = lessons[lessonIndex];
   const currentMove = lesson.moves[moveIndex] ?? null;
-  const progressLabel = takuzuStrings.play.tutorial.progressLabel(lessonIndex + 1);
 
   const resetLessonState = useCallback((nextLesson: typeof lesson) => {
     setGrid(cloneGrid(nextLesson.grid));
-    setCompleted(false);
     setMoveIndex(0);
     setSelectedAnswer(null);
     setAnswerState('idle');
@@ -51,11 +55,9 @@ export default function TutorialScreen({ navigation, route }: Props) {
 
   useEffect(() => {
     return () => {
-      if (advanceTimeoutRef.current) {
-        clearTimeout(advanceTimeoutRef.current);
-      }
+      clearAdvanceTimeout();
     };
-  }, []);
+  }, [clearAdvanceTimeout]);
 
   const isLastLesson = lessonIndex === lessons.length - 1;
   const tutorialActionLabel = isLastLesson
@@ -63,9 +65,10 @@ export default function TutorialScreen({ navigation, route }: Props) {
     : takuzuStrings.play.tutorial.exitLabel.skip;
 
   const exitTutorial = useCallback(async () => {
+    clearAdvanceTimeout();
     await markPuzzleTutorialSeen(route.params.gameId);
     navigation.replace('Game', { gameId: route.params.gameId });
-  }, [navigation, route.params.gameId]);
+  }, [clearAdvanceTimeout, navigation, route.params.gameId]);
 
   const advanceLesson = useCallback(async () => {
     if (isLastLesson) {
@@ -93,44 +96,42 @@ export default function TutorialScreen({ navigation, route }: Props) {
       return;
     }
 
+    clearAdvanceTimeout();
     resetLessonState(previousLesson);
     setLessonIndex((current) => current - 1);
-  }, [lessonIndex, lessons, resetLessonState]);
+  }, [clearAdvanceTimeout, lessonIndex, lessons, resetLessonState]);
 
-  useEffect(() => {
-    if (!completed) {
+  // Board stays stable during feedback — no preview of selected answer in the grid.
+  const displayGrid = grid;
+
+  // Commits the correct answer to the board and advances the step or lesson,
+  // called after the feedback delay so the board only mutates when the step changes.
+  const commitCorrectAnswer = useCallback(async () => {
+    if (!currentMove) {
       return;
     }
 
-    advanceTimeoutRef.current = setTimeout(() => {
-      void advanceLesson();
-    }, ADVANCE_DELAY_MS);
-
-    return () => {
-      if (advanceTimeoutRef.current) {
-        clearTimeout(advanceTimeoutRef.current);
-        advanceTimeoutRef.current = null;
-      }
-    };
-  }, [advanceLesson, completed]);
-
-  const displayGrid = useMemo(() => {
-    if (!currentMove || selectedAnswer === null || answerState === 'idle') {
-      return grid;
-    }
-
-    const row = grid[currentMove.row];
-    if (!row || currentMove.col < 0 || currentMove.col >= row.length) {
-      return grid;
+    const isLastMove = moveIndex === lesson.moves.length - 1;
+    if (isLastMove) {
+      await advanceLesson();
+      return;
     }
 
     const nextGrid = cloneGrid(grid);
-    nextGrid[currentMove.row][currentMove.col] = selectedAnswer;
-    return nextGrid;
-  }, [answerState, currentMove, grid, selectedAnswer]);
+    const row = nextGrid[currentMove.row];
+    if (!row || currentMove.col < 0 || currentMove.col >= row.length) {
+      return;
+    }
+
+    nextGrid[currentMove.row][currentMove.col] = currentMove.value;
+    setGrid(nextGrid);
+    setMoveIndex((current) => current + 1);
+    setSelectedAnswer(null);
+    setAnswerState('idle');
+  }, [advanceLesson, currentMove, grid, lesson.moves.length, moveIndex]);
 
   const handleAnswerPress = useCallback((value: 0 | 1) => {
-    if (!currentMove || completed || answerState === 'correct') {
+    if (!currentMove || answerState === 'correct') {
       return;
     }
 
@@ -141,47 +142,84 @@ export default function TutorialScreen({ navigation, route }: Props) {
       return;
     }
 
-    const nextGrid = cloneGrid(grid);
-    const row = nextGrid[currentMove.row];
-    if (!row || currentMove.col < 0 || currentMove.col >= row.length) {
-      return;
-    }
-
-    nextGrid[currentMove.row][currentMove.col] = value;
-    setGrid(nextGrid);
+    // Correct: show feedback immediately; commit board + advance after delay.
     setAnswerState('correct');
 
-    const isLastMove = moveIndex === lesson.moves.length - 1;
-    if (advanceTimeoutRef.current) {
-      clearTimeout(advanceTimeoutRef.current);
-      advanceTimeoutRef.current = null;
-    }
+    clearAdvanceTimeout();
 
+    // For the final move, write the solved cell into the grid right now so the
+    // completed board is visible during the entire feedback delay. Non-final
+    // moves stay stable — the cell is written later by commitCorrectAnswer so
+    // the board does not mutate until the step actually changes.
+    const isLastMove = moveIndex === lesson.moves.length - 1;
     if (isLastMove) {
-      setCompleted(true);
-      return;
+      const nextGrid = cloneGrid(grid);
+      const row = nextGrid[currentMove.row];
+      if (row && currentMove.col >= 0 && currentMove.col < row.length) {
+        nextGrid[currentMove.row][currentMove.col] = currentMove.value;
+        setGrid(nextGrid);
+      }
     }
 
     advanceTimeoutRef.current = setTimeout(() => {
-      setMoveIndex((current) => current + 1);
-      setSelectedAnswer(null);
-      setAnswerState('idle');
+      void commitCorrectAnswer();
       advanceTimeoutRef.current = null;
     }, ADVANCE_DELAY_MS);
-  }, [answerState, completed, currentMove, grid, moveIndex]);
+  }, [answerState, clearAdvanceTimeout, commitCorrectAnswer, currentMove, grid, lesson.moves.length, moveIndex]);
 
   const feedbackText = answerState === 'correct'
     ? lesson.success
     : answerState === 'wrong'
       ? lesson.retry
       : null;
+  const isLastMove = moveIndex === lesson.moves.length - 1;
   const statusText = answerState === 'correct'
-    ? completed
+    ? isLastMove
        ? (isLastLesson
           ? takuzuStrings.play.tutorial.status.finishing
           : takuzuStrings.play.tutorial.status.nextLesson)
        : takuzuStrings.play.tutorial.status.nextStep
     : null;
+
+  const feedbackContent = (
+    <View style={s.feedbackStack}>
+      {lessonIndex === 0 ? (
+        <View style={s.introCard}>
+          <Text style={s.introText}>{takuzuStrings.play.tutorial.introNote}</Text>
+        </View>
+      ) : null}
+      {statusText ? <Text style={s.statusText}>{statusText}</Text> : null}
+      {feedbackText ? (
+        <View style={s.feedbackCard}>
+          <Text style={s.feedbackText}>{feedbackText}</Text>
+        </View>
+      ) : null}
+    </View>
+  );
+
+  const controlsContent = (
+    <View style={s.answerButtons}>
+      {[1, 0].map((value) => {
+        const isSelected = selectedAnswer === value;
+        return (
+          <TouchableOpacity
+            key={value}
+            accessibilityRole="button"
+            accessibilityLabel={takuzuStrings.play.tutorial.selectAnswerLabel(value as 0 | 1)}
+            activeOpacity={0.82}
+            disabled={answerState === 'correct'}
+            onPress={() => handleAnswerPress(value as 0 | 1)}
+            style={[
+              s.answerButton,
+              isSelected ? s.answerButtonSelected : null,
+            ]}
+          >
+            <Text style={s.answerButtonText}>{value}</Text>
+          </TouchableOpacity>
+        );
+      })}
+    </View>
+  );
 
   return (
     <PuzzleTutorialScaffold
@@ -198,13 +236,12 @@ export default function TutorialScreen({ navigation, route }: Props) {
           <Text style={s.exitButtonText}>{tutorialActionLabel}</Text>
         </TouchableOpacity>
       )}
-      progressLabel={progressLabel}
-      statusText={statusText}
       title={lesson.title}
       body={lesson.body}
       lessonCount={lessons.length}
       activeLessonIndex={lessonIndex}
       boardMinHeight={132}
+      feedbackMinHeight={88}
       onNextLesson={() => {
         void advanceLesson();
       }}
@@ -216,45 +253,8 @@ export default function TutorialScreen({ navigation, route }: Props) {
           answerState={answerState}
         />
       )}
-      footer={(
-        <>
-          {lessonIndex === 0 ? (
-            <View style={s.introCard}>
-              <Text style={s.introText}>{takuzuStrings.play.tutorial.introNote}</Text>
-            </View>
-          ) : null}
-          <View style={s.feedbackSlot}>
-            {feedbackText ? (
-              <View style={s.feedbackCard}>
-                <Text style={s.feedbackText}>{feedbackText}</Text>
-              </View>
-            ) : (
-              <View style={s.feedbackPlaceholder} />
-            )}
-          </View>
-          <View style={s.answerButtons}>
-            {[1, 0].map((value) => {
-              const isSelected = selectedAnswer === value;
-              return (
-                <TouchableOpacity
-                  key={value}
-                  accessibilityRole="button"
-                  accessibilityLabel={takuzuStrings.play.tutorial.selectAnswerLabel(value as 0 | 1)}
-                  activeOpacity={0.82}
-                  disabled={answerState === 'correct'}
-                  onPress={() => handleAnswerPress(value as 0 | 1)}
-                  style={[
-                    s.answerButton,
-                    isSelected ? s.answerButtonSelected : null,
-                  ]}
-                >
-                  <Text style={s.answerButtonText}>{value}</Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        </>
-      )}
+      feedback={feedbackContent}
+      controls={controlsContent}
     />
   );
 }
@@ -271,10 +271,15 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     fontWeight: '700',
     color: theme.textSecondary,
   },
-  feedbackSlot: {
-    minHeight: 52,
-    justifyContent: 'center',
-    gap: 12,
+  feedbackStack: {
+    gap: 10,
+  },
+  statusText: {
+    fontSize: 12,
+    lineHeight: 18,
+    color: theme.textSecondary,
+    textAlign: 'center',
+    fontWeight: '600',
   },
   introCard: {
     borderRadius: 14,
@@ -294,9 +299,6 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     borderRadius: 14,
     paddingHorizontal: 12,
     paddingVertical: 10,
-  },
-  feedbackPlaceholder: {
-    minHeight: 44,
   },
   feedbackText: {
     fontSize: 14,

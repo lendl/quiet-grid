@@ -10,30 +10,30 @@ const SWIPE_VELOCITY_THRESHOLD = 420;
 
 interface PuzzleTutorialScaffoldProps {
   backButton?: React.ReactNode;
-  progressLabel: string;
-  statusText?: string | null;
   title: string;
   body?: string | null;
   board: React.ReactNode;
   lessonCount: number;
   activeLessonIndex: number;
-  footer: React.ReactNode;
+  feedback?: React.ReactNode;
+  controls: React.ReactNode;
   boardMinHeight?: number;
+  feedbackMinHeight?: number;
   onNextLesson: () => void;
   onPreviousLesson: () => void;
 }
 
 export default function PuzzleTutorialScaffold({
   backButton,
-  progressLabel,
-  statusText = null,
   title,
   body = null,
   board,
   lessonCount,
   activeLessonIndex,
-  footer,
+  feedback = null,
+  controls,
   boardMinHeight = 184,
+  feedbackMinHeight = 72,
   onPreviousLesson,
 }: PuzzleTutorialScaffoldProps) {
   const { theme } = useTheme();
@@ -54,17 +54,13 @@ export default function PuzzleTutorialScaffold({
   return (
     <GestureDetector gesture={swipeGesture}>
       <View style={s.container}>
-        {backButton}
-
-        <View style={s.header}>
-          <Text style={s.progress}>{progressLabel}</Text>
+        <View style={s.topBar}>
+          <View style={s.backButtonSlot}>
+            {backButton}
+          </View>
         </View>
 
-        <View style={s.statusRow}>
-          {statusText ? <Text style={s.statusText}>{statusText}</Text> : null}
-        </View>
-
-        <View style={s.mainContent}>
+        <View style={s.lessonRegion}>
           <Text style={s.title}>{title}</Text>
           {body ? <Text style={s.body}>{body}</Text> : null}
 
@@ -82,7 +78,11 @@ export default function PuzzleTutorialScaffold({
           </View>
         </View>
 
-        <View style={s.footerRegion}>{footer}</View>
+        <View style={[s.feedbackRegion, { minHeight: feedbackMinHeight }]}>
+          {feedback ?? <View style={s.feedbackPlaceholder} />}
+        </View>
+
+        <View style={s.controlsRegion}>{controls}</View>
       </View>
     </GestureDetector>
   );
@@ -93,43 +93,32 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     flex: 1,
     backgroundColor: theme.background,
     padding: 20,
-    gap: 20,
+    gap: 16,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  progress: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: theme.primaryLight,
-    letterSpacing: 0.5,
-  },
-  statusRow: {
-    minHeight: 20,
-    alignItems: 'flex-end',
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: theme.textSecondary,
-  },
-  mainContent: {
-    flex: 1,
-    alignItems: 'center',
+  topBar: {
+    width: '100%',
+    minHeight: 40,
     justifyContent: 'center',
+  },
+  backButtonSlot: {
+    alignSelf: 'flex-start',
+  },
+  lessonRegion: {
+    flex: 1,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
     gap: 18,
+    paddingTop: 8,
   },
   title: {
-    maxWidth: 280,
-    fontSize: 28,
+    fontSize: 20,
     lineHeight: 34,
     color: theme.text,
     fontWeight: '800',
     textAlign: 'center',
   },
   body: {
-    maxWidth: 280,
     fontSize: 15,
     lineHeight: 23,
     color: theme.textSecondary,
@@ -155,9 +144,17 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     width: 20,
     backgroundColor: theme.primary,
   },
-  footerRegion: {
+  feedbackRegion: {
+    width: '100%',
+    flexShrink: 0,
+    justifyContent: 'center',
+  },
+  feedbackPlaceholder: {
+    width: '100%',
+  },
+  controlsRegion: {
+    flexShrink: 0,
     gap: 14,
-    paddingTop: 8,
     paddingBottom: 8,
   },
 });

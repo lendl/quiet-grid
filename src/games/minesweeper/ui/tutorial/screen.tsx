@@ -38,8 +38,15 @@ export default function TutorialScreen({ navigation, route }: Props) {
     : tutorialUi.exitLabel.skip;
   const actionLesson = lesson.kind === 'action' ? lesson : null;
   const board = lesson.kind === 'action'
-    ? (answerState === 'correct' ? lesson.resultBoard : lesson.initialBoard)
+    ? lesson.initialBoard
     : lesson.board;
+
+  const clearAdvanceTimeout = useCallback(() => {
+    if (advanceTimeoutRef.current) {
+      clearTimeout(advanceTimeoutRef.current);
+      advanceTimeoutRef.current = null;
+    }
+  }, []);
 
   useEffect(() => {
     setSelectedAction(null);
@@ -48,16 +55,15 @@ export default function TutorialScreen({ navigation, route }: Props) {
 
   useEffect(() => {
     return () => {
-      if (advanceTimeoutRef.current) {
-        clearTimeout(advanceTimeoutRef.current);
-      }
+      clearAdvanceTimeout();
     };
-  }, []);
+  }, [clearAdvanceTimeout]);
 
   const exitTutorial = useCallback(async () => {
+    clearAdvanceTimeout();
     await markPuzzleTutorialSeen(route.params.gameId);
     navigation.replace('Game', { gameId: route.params.gameId });
-  }, [navigation, route.params.gameId]);
+  }, [clearAdvanceTimeout, navigation, route.params.gameId]);
 
   const advanceLesson = useCallback(async () => {
     if (isLastLesson) {
@@ -75,10 +81,11 @@ export default function TutorialScreen({ navigation, route }: Props) {
       return;
     }
 
+    clearAdvanceTimeout();
     setSelectedAction(null);
     setAnswerState('idle');
     setLessonIndex((current) => current - 1);
-  }, [lessonIndex]);
+  }, [clearAdvanceTimeout, lessonIndex]);
 
   const submitAction = useCallback((action: MinesweeperTutorialAction) => {
     if (!actionLesson || answerState === 'correct') {
@@ -93,15 +100,13 @@ export default function TutorialScreen({ navigation, route }: Props) {
     }
 
     setAnswerState('correct');
-    if (advanceTimeoutRef.current) {
-      clearTimeout(advanceTimeoutRef.current);
-      advanceTimeoutRef.current = null;
-    }
+    clearAdvanceTimeout();
+
     advanceTimeoutRef.current = setTimeout(() => {
       void advanceLesson();
       advanceTimeoutRef.current = null;
     }, ADVANCE_DELAY_MS);
-  }, [actionLesson, advanceLesson, answerState]);
+  }, [actionLesson, advanceLesson, answerState, clearAdvanceTimeout]);
 
   const handlePressFocus = useCallback(() => {
     if (!selectedAction) {
@@ -124,6 +129,57 @@ export default function TutorialScreen({ navigation, route }: Props) {
           ? lesson.success
           : null;
 
+  const feedbackContent = (
+    <View style={s.feedbackStack}>
+      {statusText ? <Text style={s.statusText}>{statusText}</Text> : null}
+      {feedbackText ? (
+        <Text style={s.feedbackText}>{feedbackText}</Text>
+      ) : null}
+    </View>
+  );
+
+  const controlsContent = (
+    <>
+      <Text style={s.actionPrompt}>{lesson.prompt}</Text>
+      {lesson.kind === 'action' ? (
+        <View style={s.actionButtons}>
+          {([
+            ['reveal', strings.common.reveal],
+            ['flag', strings.common.flag],
+          ] as const).map(([action, label]) => (
+            <TouchableOpacity
+              key={action}
+              accessibilityRole="button"
+              accessibilityLabel={label}
+              activeOpacity={0.82}
+              onPress={() => {
+                submitAction(action);
+              }}
+              style={[
+                s.actionButton,
+                selectedAction === action ? s.actionButtonSelected : null,
+              ]}
+            >
+              <Text style={s.actionButtonText}>{label}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      ) : (
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel={lesson.continueLabel}
+          activeOpacity={0.82}
+          onPress={() => {
+            void advanceLesson();
+          }}
+          style={s.continueButton}
+        >
+          <Text style={s.continueButtonText}>{lesson.continueLabel}</Text>
+        </TouchableOpacity>
+      )}
+    </>
+  );
+
   return (
     <PuzzleTutorialScaffold
       backButton={(
@@ -139,13 +195,12 @@ export default function TutorialScreen({ navigation, route }: Props) {
           <Text style={s.exitButtonText}>{tutorialActionLabel}</Text>
         </TouchableOpacity>
       )}
-      progressLabel={tutorialUi.progressLabel(lessonIndex + 1)}
-      statusText={statusText}
       title={lesson.title}
       body={lesson.body}
       lessonCount={lessons.length}
       activeLessonIndex={lessonIndex}
       boardMinHeight={184}
+      feedbackMinHeight={72}
       onNextLesson={() => {
         void advanceLesson();
       }}
@@ -158,52 +213,8 @@ export default function TutorialScreen({ navigation, route }: Props) {
           onPressFocus={handlePressFocus}
         />
       )}
-      footer={(
-        <>
-          <Text style={s.actionPrompt}>{lesson.prompt}</Text>
-          <View style={s.feedbackSlot}>
-            {feedbackText ? (
-              <Text style={s.feedbackText}>{feedbackText}</Text>
-            ) : null}
-          </View>
-          {lesson.kind === 'action' ? (
-            <View style={s.actionButtons}>
-              {([
-                 ['reveal', strings.common.reveal],
-                 ['flag', strings.common.flag],
-               ] as const).map(([action, label]) => (
-                <TouchableOpacity
-                  key={action}
-                  accessibilityRole="button"
-                  accessibilityLabel={label}
-                  activeOpacity={0.82}
-                  onPress={() => {
-                    submitAction(action);
-                  }}
-                  style={[
-                    s.actionButton,
-                    selectedAction === action ? s.actionButtonSelected : null,
-                  ]}
-                >
-                  <Text style={s.actionButtonText}>{label}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          ) : (
-            <TouchableOpacity
-              accessibilityRole="button"
-              accessibilityLabel={lesson.continueLabel}
-              activeOpacity={0.82}
-              onPress={() => {
-                void advanceLesson();
-              }}
-              style={s.continueButton}
-            >
-              <Text style={s.continueButtonText}>{lesson.continueLabel}</Text>
-            </TouchableOpacity>
-          )}
-        </>
-      )}
+      feedback={feedbackContent}
+      controls={controlsContent}
     />
   );
 }
@@ -227,9 +238,15 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
   },
-  feedbackSlot: {
-    minHeight: 52,
-    justifyContent: 'center',
+  feedbackStack: {
+    gap: 8,
+  },
+  statusText: {
+    fontSize: 12,
+    lineHeight: 18,
+    color: theme.textSecondary,
+    textAlign: 'center',
+    fontWeight: '600',
   },
   feedbackText: {
     fontSize: 14,
