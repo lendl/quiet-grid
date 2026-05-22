@@ -41,11 +41,13 @@ Learning Center is the umbrella teaching system for a game. It includes all thre
 - Next move should present one stored move suggestion at a time, not a continuously recomputed helper stream.
 - Next move should support the player, not replace the player’s agency.
 - Analyzer mode depends on game type:
-  - engine-backed games: teach full solve path
+  - engine-backed games: teach an approved solve path built from the same canonical move system used for classification
   - non-engine games: analyze loss-state decisions
 - Analyzer should explain decisions in a way that helps the player improve future runs, not just describe the past state.
 - Teach canonical moves first. Support actions are optional style tools.
 - Explain mistake policy only when it changes how the player should play.
+- Do not use hidden brute-force or full-solution search for player-facing next-move or analyzer explanations unless that proof model is explicitly part of the approved move language.
+- If an engine-backed game allows hypothetical branches, teach that branch model explicitly and keep branch resolution inside approved move logic.
 
 ## File map
 
@@ -64,3 +66,4 @@ Learning Center is the umbrella teaching system for a game. It includes all thre
 - Do not use tutorial-only controls without explaining how they map to real play.
 - Do not let tutorial drift into difficulty comparison.
 - Do not invent analyzer logic separate from the game’s move logic.
+- Do not let engine-backed teaching explain a move with evidence the player could never derive from the approved move set.

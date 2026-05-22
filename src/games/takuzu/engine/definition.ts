@@ -1,5 +1,8 @@
 import path from 'path';
-import { analyzeDifficulty } from '../../../engine/difficultyAnalyzer';
+import {
+  analyzeDifficulty,
+  DifficultyAnalysisStalledError,
+} from '../../../engine/difficultyAnalyzer';
 import {
   classifyPuzzleDifficulty,
   computeDifficultyScore,
@@ -122,17 +125,40 @@ export const takuzuEngineDefinition: EngineGameDefinition<TakuzuCatalogEntry> = 
     return generateTakuzuPuzzleWithDifficulty(supportedSize, targetDifficulty as DifficultyLabel);
   },
   getEntryDedupeKey: (entry) => entry.solution,
-  reclassifyEntries: (entries) => entries.flatMap((entry) => {
-    const metrics = analyzeDifficulty(entry.solution, entry.mask, entry.size);
-    const difficultyScore = computeDifficultyScore(entry.size, metrics);
-    const difficulty = classifyPuzzleDifficulty(entry.size, metrics, difficultyScore);
-    if (!difficulty) {
-      return [];
+  reclassifyEntries: (entries) => {
+    let stalledCount = 0;
+
+    const rewrittenEntries = entries.flatMap((entry) => {
+      let metrics: ReturnType<typeof analyzeDifficulty>;
+      try {
+        metrics = analyzeDifficulty(entry.solution, entry.mask, entry.size);
+      } catch (error) {
+        if (error instanceof DifficultyAnalysisStalledError) {
+          stalledCount += 1;
+          return [];
+        }
+
+        throw error;
+      }
+
+      const difficultyScore = computeDifficultyScore(entry.size, metrics);
+      const difficulty = classifyPuzzleDifficulty(entry.size, metrics, difficultyScore);
+      if (!difficulty) {
+        return [];
+      }
+
+      return [{
+        ...entry,
+        difficulty,
+      }];
+    });
+
+    if (stalledCount > 0) {
+      console.log(
+        `Dropped ${stalledCount} Takuzu puzzle(s) that no longer solve with the current human-only tip set.`,
+      );
     }
 
-    return [{
-      ...entry,
-      difficulty,
-    }];
-  }),
+    return rewrittenEntries;
+  },
 };

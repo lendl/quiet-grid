@@ -10,16 +10,17 @@ import {
   buildPausedNextMove,
 } from './content';
 import {
-  countSolutionsForCandidate,
-  countValidLineCompletions,
   countValue,
   findAvoidTrioMoveInLine,
   findEmptyIndexes,
   findPairMoveInLine,
   getColumn,
-  isCandidateLegal,
+  getImpossibleCombinationInsight,
+  type HumanProofRule,
+  type ImpossibleCombinationInsight,
   otherValue,
 } from '../../core';
+import { getCurrentLanguage } from '../../../../app/i18n';
 import type {
   TakuzuNextMoveCell,
   TakuzuNextMoveHint,
@@ -39,7 +40,113 @@ type CandidateMove = {
   lineKind: LineKind;
   lineIndex: number;
   matchingLineIndex?: number;
+  impossibleCombinationInsight?: ImpossibleCombinationInsight;
 };
+
+function getHumanProofRuleLabel(rule: HumanProofRule | null): string {
+  const language = getCurrentLanguage();
+
+  if (rule === null) {
+    switch (language) {
+      case 'nl':
+        return 'de regels';
+      case 'de':
+        return 'den Regeln';
+      case 'fr':
+        return 'les règles';
+      case 'es':
+        return 'las reglas';
+      case 'en':
+      default:
+        return 'the rules';
+    }
+  }
+
+  switch (language) {
+    case 'nl':
+      switch (rule) {
+        case 'find-pairs':
+          return 'de regel voor gelijke paren';
+        case 'avoid-trios':
+          return "de regel zonder trio's";
+        case 'complete-lines':
+          return 'de regel voor complete lijnen';
+        case 'eliminate-filled-lines':
+          return 'de regel voor het uitsluiten van gelijke lijnen';
+      }
+    case 'de':
+      switch (rule) {
+        case 'find-pairs':
+          return 'der Paare-Regel';
+        case 'avoid-trios':
+          return 'der Keine-Drillinge-Regel';
+        case 'complete-lines':
+          return 'der Regel für vollständige Linien';
+        case 'eliminate-filled-lines':
+          return 'der Regel zum Ausschließen gleicher Linien';
+      }
+    case 'fr':
+      switch (rule) {
+        case 'find-pairs':
+          return 'la règle des paires';
+        case 'avoid-trios':
+          return 'la règle anti-trio';
+        case 'complete-lines':
+          return 'la règle des lignes complètes';
+        case 'eliminate-filled-lines':
+          return "la règle d’élimination des lignes identiques";
+      }
+    case 'es':
+      switch (rule) {
+        case 'find-pairs':
+          return 'la regla de las parejas';
+        case 'avoid-trios':
+          return 'la regla de evitar tríos';
+        case 'complete-lines':
+          return 'la regla de completar líneas';
+        case 'eliminate-filled-lines':
+          return 'la regla de eliminar líneas iguales';
+      }
+    case 'en':
+    default:
+      switch (rule) {
+        case 'find-pairs':
+          return 'the find pairs rule';
+        case 'avoid-trios':
+          return 'the avoid trios rule';
+        case 'complete-lines':
+          return 'the complete lines rule';
+        case 'eliminate-filled-lines':
+          return 'the eliminate filled lines rule';
+      }
+  }
+
+  return 'the rules';
+}
+
+function getLocalizedCellLabel(): string {
+  switch (getCurrentLanguage()) {
+    case 'nl':
+      return 'cel';
+    case 'de':
+      return 'Zelle';
+    case 'fr':
+      return 'case';
+    case 'es':
+      return 'celda';
+    case 'en':
+    default:
+      return 'cell';
+  }
+}
+
+function getHumanProofSummaryLabel(stepCount: number, rule: HumanProofRule | null): string {
+  if (stepCount === 1) {
+    return getHumanProofRuleLabel(rule);
+  }
+
+  return getHumanProofRuleLabel(null);
+}
 
 function getLine(board: Grid, lineKind: LineKind, lineIndex: number): CellValue[] {
   return lineKind === 'row' ? board[lineIndex] : getColumn(board, lineIndex);
@@ -201,11 +308,24 @@ function buildProgressHint(board: Grid, move: CandidateMove): TakuzuNextMoveHint
     }
 
     case 'eliminate-impossible-combinations': {
+      const insight = move.impossibleCombinationInsight;
+      if (!insight) {
+        throw new Error('Missing impossible combination insight for progress hint.');
+      }
+
+      const proofRuleLabel = getHumanProofSummaryLabel(insight.proofStepCount, insight.proofUsesRule);
+
       const eic = buildEliminateImpossibleCombinationsNextMove({
-        lineKind: move.lineKind,
-        lineIndex: move.lineIndex,
-        blockedValue: otherValue(move.value),
-        targetValue: move.value,
+        lineKind: insight.lineKind,
+        lineIndex: insight.lineIndex,
+        validCompletionCount: insight.validCompletionCount,
+        blockedValue: insight.blockedValue,
+        targetValue: insight.forcedValue,
+        cellLabel: getLocalizedCellLabel(),
+        contradictionKind: insight.contradictionKind,
+        contradictionLineKind: insight.contradictionLineKind,
+        contradictionLineIndex: insight.contradictionLineIndex,
+        proofRuleLabel,
       });
 
       return toHint({
@@ -213,13 +333,19 @@ function buildProgressHint(board: Grid, move: CandidateMove): TakuzuNextMoveHint
         title: eic.title,
         body: eic.body,
         evidenceCells: buildLineCells(
-          move.lineKind,
-          move.lineIndex,
-          line.flatMap((value, index) => (value !== null ? [index] : [])),
+          insight.lineKind,
+          insight.lineIndex,
+          getLine(board, insight.lineKind, insight.lineIndex)
+            .flatMap((value, index) => (value !== null ? [index] : [])),
         ),
-        targetCells: buildLineTargets(move.lineKind, move.lineIndex, [targetIndex], move.value),
-        highlightRows: move.lineKind === 'row' ? [move.lineIndex] : [],
-        highlightCols: move.lineKind === 'column' ? [move.lineIndex] : [],
+        targetCells: buildLineTargets(
+          insight.lineKind,
+          insight.lineIndex,
+          [insight.lineKind === 'row' ? insight.col : insight.row],
+          insight.forcedValue,
+        ),
+        highlightRows: insight.lineKind === 'row' ? [insight.lineIndex] : [],
+        highlightCols: insight.lineKind === 'column' ? [insight.lineIndex] : [],
       });
     }
   }
@@ -662,26 +788,16 @@ function findImpossibleCombinationMove(board: Grid): CandidateMove | null {
 
   for (let row = 0; row < size; row += 1) {
     for (let col = 0; col < size; col += 1) {
-      if (board[row][col] !== null) {
-        continue;
-      }
-
-      const solvableValues = ([0, 1] as const).filter((value) => (
-        isCandidateLegal(board, row, col, value) && countSolutionsForCandidate(board, row, col, value) > 0
-      ));
-
-      if (solvableValues.length === 1) {
-        const rowCompletions = countValidLineCompletions(board[row]);
-        const colCompletions = countValidLineCompletions(getColumn(board, col));
-        const lineKind: LineKind = rowCompletions <= colCompletions ? 'row' : 'column';
-
+      const insight = getImpossibleCombinationInsight(board, row, col);
+      if (insight) {
         return {
-          row,
-          col,
-          value: solvableValues[0],
+          row: insight.row,
+          col: insight.col,
+          value: insight.forcedValue,
           ruleKey: 'eliminate-impossible-combinations',
-          lineKind,
-          lineIndex: lineKind === 'row' ? row : col,
+          lineKind: insight.lineKind,
+          lineIndex: insight.lineIndex,
+          impossibleCombinationInsight: insight,
         };
       }
     }

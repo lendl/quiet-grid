@@ -1,6 +1,9 @@
 import fs from 'fs';
 
 const DEFAULT_CHUNK_SIZE = 500;
+const WRITE_RETRY_CODES = new Set(['EBUSY', 'EPERM', 'UNKNOWN']);
+const WRITE_RETRY_DELAYS_MS = [50, 100, 200, 400, 800];
+const SLEEP_BUFFER = new Int32Array(new SharedArrayBuffer(4));
 
 export interface CatalogFileOptions<TEntry> {
   importTypePath: string;
@@ -98,7 +101,52 @@ export function writeChunkedCatalog<TEntry>(
   entries: TEntry[],
   options: CatalogFileOptions<TEntry>,
 ): void {
-  fs.writeFileSync(filePath, buildChunkedCatalogContent(entries, options), 'utf-8');
+  const content = buildChunkedCatalogContent(entries, options);
+  const contentBuffer = Buffer.from(content, 'utf-8');
+  const fileExists = fs.existsSync(filePath);
+  const existingSize = fileExists ? fs.statSync(filePath).size : 0;
+
+  for (let attempt = 0; attempt <= WRITE_RETRY_DELAYS_MS.length; attempt += 1) {
+    let fileDescriptor: number | null = null;
+    try {
+      fileDescriptor = fs.openSync(filePath, fileExists ? 'r+' : 'w');
+
+      let written = 0;
+      while (written < contentBuffer.length) {
+        written += fs.writeSync(
+          fileDescriptor,
+          contentBuffer,
+          written,
+          contentBuffer.length - written,
+          written,
+        );
+      }
+
+      if (existingSize > contentBuffer.length) {
+        const padding = Buffer.alloc(Math.min(64 * 1024, existingSize - contentBuffer.length), ' ');
+        let padded = contentBuffer.length;
+        while (padded < existingSize) {
+          const chunkSize = Math.min(padding.length, existingSize - padded);
+          padded += fs.writeSync(fileDescriptor, padding, 0, chunkSize, padded);
+        }
+      }
+
+      fs.closeSync(fileDescriptor);
+      fileDescriptor = null;
+      return;
+    } catch (error) {
+      if (fileDescriptor !== null) {
+        fs.closeSync(fileDescriptor);
+      }
+
+      const code = error instanceof Error && 'code' in error ? String(error.code) : null;
+      if (code === null || !WRITE_RETRY_CODES.has(code) || attempt === WRITE_RETRY_DELAYS_MS.length) {
+        throw error;
+      }
+
+      Atomics.wait(SLEEP_BUFFER, 0, 0, WRITE_RETRY_DELAYS_MS[attempt]);
+    }
+  }
 }
 
 export function getNextId(filePath: string, prefix: string): string {

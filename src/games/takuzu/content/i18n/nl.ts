@@ -192,10 +192,26 @@ const nl = {
         body: `Plaats ${targetValue} in de gemarkeerde ${cellLabel}. Waarom: als ${lineLabel} gelijk werd aan ${matchingLineLabel}, zouden complete ${lineKindLabel} niet uniek meer zijn.`,
       };
     },
-    eliminateImpossible(lineLabel: string, blockedValue: 0 | 1, targetValue: 0 | 1) {
+    eliminateImpossible(
+      lineLabel: string,
+      validCompletionCount: number,
+      blockedValue: 0 | 1,
+      targetValue: 0 | 1,
+      cellLabel: string,
+      contradictionKind: 'triple' | 'balance' | 'duplicate-line',
+      contradictionLineLabel: string,
+      proofRuleLabel: string,
+    ) {
+      const contradictionLabel =
+        contradictionKind === 'triple'
+          ? 'een tegenspraak met drie op rij'
+          : contradictionKind === 'balance'
+            ? 'een balans-tegenspraak'
+            : 'een tegenspraak met een dubbele complete lijn';
+
       return {
         title: `Volgende zet in ${lineLabel}`,
-        body: `Plaats ${targetValue} in de gemarkeerde cel. Waarom: als deze cel ${blockedValue} was, zou ${lineLabel} later een ongeldig trio forceren, dus ${targetValue} is de enige waarde die de lijn oplosbaar houdt.`,
+        body: `Plaats ${targetValue} in de gemarkeerde ${cellLabel}. Waarom: als deze ${cellLabel} ${blockedValue} was, zou het volgen van ${proofRuleLabel} ${contradictionLabel} in ${contradictionLineLabel} afdwingen, dus ${targetValue} ligt hier vast. ${lineLabel} heeft nog ${validCompletionCount} geldige lijncombinatie${validCompletionCount === 1 ? '' : 's'} om te vergelijken, maar alleen deze waarde vermijdt die tegenspraak.`,
       };
     },
     avoidTriosRepair(lineLabel: string, repeatedValue: 0 | 1) {

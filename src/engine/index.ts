@@ -53,8 +53,10 @@ function formatSizeLabel(sizes: readonly number[]): string {
 }
 
 function reclassifyExistingCatalog(gameId: string): void {
+  console.log(`\nReclassifying existing ${gameId} catalog entries...`);
   const game = getEngineGameDefinition(gameId);
   const existingEntries = readGameCatalog(game);
+  console.log(`Found ${existingEntries.length} existing ${game.title} puzzle(s) in the catalog.`);
   const rewrittenEntries = game.reclassifyEntries(existingEntries);
   const droppedCount = existingEntries.length - rewrittenEntries.length;
   writeGameCatalog(game, rewrittenEntries);

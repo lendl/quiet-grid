@@ -192,10 +192,26 @@ const en = {
         body: `Place ${targetValue} in the highlighted ${cellLabel}. Why: if ${lineLabel} matched ${matchingLineLabel}, the completed ${lineKindLabel} would stop being unique.`,
       };
     },
-    eliminateImpossible(lineLabel: string, blockedValue: 0 | 1, targetValue: 0 | 1) {
+    eliminateImpossible(
+      lineLabel: string,
+      validCompletionCount: number,
+      blockedValue: 0 | 1,
+      targetValue: 0 | 1,
+      cellLabel: string,
+      contradictionKind: 'triple' | 'balance' | 'duplicate-line',
+      contradictionLineLabel: string,
+      proofRuleLabel: string,
+    ) {
+      const contradictionLabel =
+        contradictionKind === 'triple'
+          ? 'a three-in-a-row contradiction'
+          : contradictionKind === 'balance'
+            ? 'a balance contradiction'
+            : 'a duplicate completed line contradiction';
+
       return {
         title: `Next move in ${lineLabel}`,
-        body: `Place ${targetValue} in the highlighted cell. Why: if this cell were ${blockedValue}, ${lineLabel} would force an invalid trio later, so ${targetValue} is the only value that keeps the line solvable.`,
+        body: `Place ${targetValue} in the highlighted ${cellLabel}. Why: if this ${cellLabel} were ${blockedValue}, following ${proofRuleLabel} would force ${contradictionLabel} in ${contradictionLineLabel}, so ${targetValue} is forced here. ${lineLabel} still has ${validCompletionCount} valid line completion${validCompletionCount === 1 ? '' : 's'} to compare, but only this value avoids that contradiction.`,
       };
     },
     avoidTriosRepair(lineLabel: string, repeatedValue: 0 | 1) {

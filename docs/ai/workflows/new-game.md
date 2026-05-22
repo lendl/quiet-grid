@@ -24,12 +24,15 @@
    - tutorial
    - next move
    - analyzer
-12. Choose analyzer mode:
-   - engine-backed: full-solution teaching
+12. Make the proof model explicit:
+   - whether hypothetical branching is allowed
+   - whether engine-backed teaching must stay strictly inside approved human/canonical moves
+13. Choose analyzer mode:
+   - engine-backed: approved move-path teaching, not hidden full-solution proof
    - non-engine: loss-state reflection
-13. Apply the base scaffold.
-14. Add engine add-on only if needed.
-15. Wire registries and persistence.
-16. Keep all game-facing copy in `content/i18n/`.
-17. Validate with lint and typechecks.
-18. Review against the new-game checklist.
+14. Apply the base scaffold.
+15. Add engine add-on only if needed.
+16. Wire registries and persistence.
+17. Keep all game-facing copy in `content/i18n/`.
+18. Validate with lint and typechecks.
+19. Review against the new-game checklist.

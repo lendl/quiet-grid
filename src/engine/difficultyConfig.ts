@@ -32,7 +32,7 @@ export const SUPPORTED_BUCKETS: DifficultyBucketConfig[] = [
       maxOverallTipLevel: 4,
       maxSparseMoveCount: 24,
       allowImpossibleCombinations: true,
-      maxImpossibleCombinationLineCompletions: 4,
+      maxImpossibleCombinationLineCompletions: 2,
       minGivenCount: 10,
       maxGivenCount: 14,
     },
@@ -47,7 +47,7 @@ export const SUPPORTED_BUCKETS: DifficultyBucketConfig[] = [
       maxOverallTipLevel: 4,
       maxSparseMoveCount: 30,
       allowImpossibleCombinations: true,
-      maxImpossibleCombinationLineCompletions: 8,
+      maxImpossibleCombinationLineCompletions: 4,
       minGivenCount: 6,
       maxGivenCount: 10,
     },
@@ -62,7 +62,7 @@ export const SUPPORTED_BUCKETS: DifficultyBucketConfig[] = [
       maxOverallTipLevel: 4,
       maxSparseMoveCount: 36,
       allowImpossibleCombinations: true,
-      maxImpossibleCombinationLineCompletions: 4,
+      maxImpossibleCombinationLineCompletions: 2,
     },
   },
   {
@@ -75,7 +75,7 @@ export const SUPPORTED_BUCKETS: DifficultyBucketConfig[] = [
       maxOverallTipLevel: 4,
       maxSparseMoveCount: 40,
       allowImpossibleCombinations: true,
-      maxImpossibleCombinationLineCompletions: 12,
+      maxImpossibleCombinationLineCompletions: 4,
     },
   },
   {
@@ -88,7 +88,7 @@ export const SUPPORTED_BUCKETS: DifficultyBucketConfig[] = [
       maxOverallTipLevel: 4,
       maxSparseMoveCount: Number.POSITIVE_INFINITY,
       allowImpossibleCombinations: true,
-      maxImpossibleCombinationLineCompletions: Number.POSITIVE_INFINITY,
+      maxImpossibleCombinationLineCompletions: 8,
     },
   },
   {
@@ -101,7 +101,7 @@ export const SUPPORTED_BUCKETS: DifficultyBucketConfig[] = [
       maxOverallTipLevel: 4,
       maxSparseMoveCount: 56,
       allowImpossibleCombinations: true,
-      maxImpossibleCombinationLineCompletions: 8,
+      maxImpossibleCombinationLineCompletions: 4,
     },
   },
   {
@@ -114,7 +114,7 @@ export const SUPPORTED_BUCKETS: DifficultyBucketConfig[] = [
       maxOverallTipLevel: 4,
       maxSparseMoveCount: Number.POSITIVE_INFINITY,
       allowImpossibleCombinations: true,
-      maxImpossibleCombinationLineCompletions: Number.POSITIVE_INFINITY,
+      maxImpossibleCombinationLineCompletions: 8,
     },
   },
   {
@@ -127,7 +127,7 @@ export const SUPPORTED_BUCKETS: DifficultyBucketConfig[] = [
       maxOverallTipLevel: 4,
       maxSparseMoveCount: Number.POSITIVE_INFINITY,
       allowImpossibleCombinations: true,
-      maxImpossibleCombinationLineCompletions: Number.POSITIVE_INFINITY,
+      maxImpossibleCombinationLineCompletions: 15,
     },
   },
 ];

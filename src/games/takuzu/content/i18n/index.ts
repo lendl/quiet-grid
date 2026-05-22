@@ -54,8 +54,13 @@ export interface TakuzuLearningCenterContent {
   ): { title: string; body: string };
   eliminateImpossible(
     lineLabel: string,
+    validCompletionCount: number,
     blockedValue: 0 | 1,
     targetValue: 0 | 1,
+    cellLabel: string,
+    contradictionKind: 'triple' | 'balance' | 'duplicate-line',
+    contradictionLineLabel: string,
+    proofRuleLabel: string,
   ): { title: string; body: string };
   avoidTriosRepair(lineLabel: string, repeatedValue: 0 | 1): { title: string; body: string };
   completeLinesRepair(

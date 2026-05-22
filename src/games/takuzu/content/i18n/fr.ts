@@ -192,10 +192,26 @@ const fr = {
         body: `Place ${targetValue} dans la ${cellLabel} mise en évidence. Pourquoi : si ${lineLabel} correspondait à ${matchingLineLabel}, les ${lineKindLabel} complètes ne seraient plus uniques.`,
       };
     },
-    eliminateImpossible(lineLabel: string, blockedValue: 0 | 1, targetValue: 0 | 1) {
+    eliminateImpossible(
+      lineLabel: string,
+      validCompletionCount: number,
+      blockedValue: 0 | 1,
+      targetValue: 0 | 1,
+      cellLabel: string,
+      contradictionKind: 'triple' | 'balance' | 'duplicate-line',
+      contradictionLineLabel: string,
+      proofRuleLabel: string,
+    ) {
+      const contradictionLabel =
+        contradictionKind === 'triple'
+          ? 'une contradiction de trio'
+          : contradictionKind === 'balance'
+            ? 'une contradiction d’équilibre'
+            : 'une contradiction de ligne complète dupliquée';
+
       return {
         title: `Prochain coup dans ${lineLabel}`,
-        body: `Place ${targetValue} dans la case mise en évidence. Pourquoi : si cette case était ${blockedValue}, ${lineLabel} forcerait un triplet invalide plus tard, donc ${targetValue} est la seule valeur qui garde la ligne résoluble.`,
+        body: `Place ${targetValue} dans la ${cellLabel} mise en évidence. Pourquoi : si cette ${cellLabel} valait ${blockedValue}, suivre ${proofRuleLabel} provoquerait ${contradictionLabel} dans ${contradictionLineLabel}, donc ${targetValue} est forcé ici. ${lineLabel} a encore ${validCompletionCount} complétion${validCompletionCount === 1 ? '' : 's'} de ligne valide${validCompletionCount === 1 ? '' : 's'} à comparer, mais seule cette valeur évite cette contradiction.`,
       };
     },
     avoidTriosRepair(lineLabel: string, repeatedValue: 0 | 1) {

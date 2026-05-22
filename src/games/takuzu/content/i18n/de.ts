@@ -192,10 +192,26 @@ const de = {
         body: `Platziere ${targetValue} in der markierten ${cellLabel}. Warum: Wenn ${lineLabel} mit ${matchingLineLabel} übereinstimmte, wären die abgeschlossenen ${lineKindLabel} nicht mehr einzigartig.`,
       };
     },
-    eliminateImpossible(lineLabel: string, blockedValue: 0 | 1, targetValue: 0 | 1) {
+    eliminateImpossible(
+      lineLabel: string,
+      validCompletionCount: number,
+      blockedValue: 0 | 1,
+      targetValue: 0 | 1,
+      cellLabel: string,
+      contradictionKind: 'triple' | 'balance' | 'duplicate-line',
+      contradictionLineLabel: string,
+      proofRuleLabel: string,
+    ) {
+      const contradictionLabel =
+        contradictionKind === 'triple'
+          ? 'einem Drei-in-einer-Reihe-Widerspruch'
+          : contradictionKind === 'balance'
+            ? 'einem Balance-Widerspruch'
+            : 'einem Widerspruch durch eine doppelte vollständige Linie';
+
       return {
         title: `Nächster Zug in ${lineLabel}`,
-        body: `Platziere ${targetValue} in der markierten Zelle. Warum: Wäre diese Zelle ${blockedValue}, würde ${lineLabel} später einen ungültigen Drilling erzwingen, also ist ${targetValue} der einzige Wert, der die Linie lösbar hält.`,
+        body: `Setze ${targetValue} in die markierte ${cellLabel}. Warum: Wäre diese ${cellLabel} ${blockedValue}, würde das Weiterverfolgen von ${proofRuleLabel} in ${contradictionLineLabel} zu ${contradictionLabel} führen, also ist ${targetValue} hier erzwungen. Für ${lineLabel} gibt es noch ${validCompletionCount} gültige Linienfortsetzung${validCompletionCount === 1 ? '' : 'en'} zum Vergleichen, aber nur dieser Wert vermeidet den Widerspruch.`,
       };
     },
     avoidTriosRepair(lineLabel: string, repeatedValue: 0 | 1) {

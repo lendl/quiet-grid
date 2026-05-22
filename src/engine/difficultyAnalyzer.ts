@@ -1,15 +1,13 @@
 import type { Cell} from './validator';
 import {
   countEmpties,
-  countSolutionsForCandidate,
-  countValidLineCompletions,
   decodePuzzle,
   decodeSolution,
   findAvoidTrioMoveInLine,
   findPairMoveInLine,
   getColumn,
+  getImpossibleCombinationInsight,
   hasUniqueLines,
-  isCandidateLegal,
   otherValue,
 } from '../games/takuzu/core';
 import type { EngineTipKey } from './tipCatalog';
@@ -34,6 +32,13 @@ export interface DifficultyMetrics {
   tipUsageCounts: TipUsageCounts;
   openingTipUsageCounts: TipUsageCounts;
   impossibleCombinationMaxLineCompletions: number;
+}
+
+export class DifficultyAnalysisStalledError extends Error {
+  constructor(board: Cell[][]) {
+    super(`Could not fully analyze puzzle with current logical tips.\n${formatBoard(board)}`);
+    this.name = 'DifficultyAnalysisStalledError';
+  }
 }
 
 interface CandidateMove {
@@ -225,25 +230,14 @@ function findImpossibleCombinationMove(board: Cell[][]): CandidateMove | null {
 
   for (let row = 0; row < size; row++) {
     for (let col = 0; col < size; col++) {
-      if (board[row][col] !== null) continue;
-
-      const solvableValues = ([0, 1] as const).filter(value => {
-        if (!isCandidateLegal(board, row, col, value)) {
-          return false;
-        }
-
-        return countSolutionsForCandidate(board, row, col, value) > 0;
-      });
-
-      if (solvableValues.length === 1) {
-        const rowCompletions = countValidLineCompletions(board[row]);
-        const columnCompletions = countValidLineCompletions(getColumn(board, col));
+      const insight = getImpossibleCombinationInsight(board, row, col);
+      if (insight) {
         return {
-          row,
-          col,
-          value: solvableValues[0],
+          row: insight.row,
+          col: insight.col,
+          value: insight.forcedValue,
           tip: 'eliminate-impossible-combinations',
-          lineCompletions: Math.min(rowCompletions, columnCompletions),
+          lineCompletions: insight.validCompletionCount,
         };
       }
     }
@@ -320,7 +314,7 @@ export function analyzeDifficulty(solutionHex: string, maskHex: string, size: nu
       findImpossibleCombinationMove(board);
 
     if (!move) {
-      throw new Error(`Could not fully analyze puzzle with current logical tips.\n${formatBoard(board)}`);
+      throw new DifficultyAnalysisStalledError(board);
     }
 
     if (solution[move.row][move.col] !== move.value) {

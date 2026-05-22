@@ -15,7 +15,9 @@
   - [ ] expert
 - [ ] Difficulty separation is meaningful.
 - [ ] Engine-backed vs non-engine mode is explicit.
+- [ ] Proof model is explicit, including whether hypothetical branching is allowed.
 - [ ] Analyzer mode is explicit.
+- [ ] Engine-backed teaching and classification use the approved canonical move system, not hidden brute-force proof.
 - [ ] App game registry is updated.
 - [ ] Engine registry is updated if applicable.
 - [ ] Persistence shape is defined.

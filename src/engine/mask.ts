@@ -2,7 +2,7 @@ import { countSolutions } from './solver';
 import type { Cell } from './validator';
 import { shuffle } from './encoding';
 import { gridToHex, maskToHex } from './encoding';
-import { analyzeDifficulty } from './difficultyAnalyzer';
+import { analyzeDifficulty, DifficultyAnalysisStalledError } from './difficultyAnalyzer';
 import {
   compareDifficulty,
   computeDifficultyScore,
@@ -50,7 +50,16 @@ function evaluateCandidatePuzzle(
   const maskGrid = buildMaskFromRevealed(size, revealed);
   const solutionHex = gridToHex(grid);
   const maskHex = maskToHex(maskGrid);
-  const metrics = analyzeDifficulty(solutionHex, maskHex, size);
+  let metrics: ReturnType<typeof analyzeDifficulty>;
+  try {
+    metrics = analyzeDifficulty(solutionHex, maskHex, size);
+  } catch (error) {
+    if (error instanceof DifficultyAnalysisStalledError) {
+      return null;
+    }
+
+    throw error;
+  }
   const score = computeDifficultyScore(size, metrics);
   const difficulty = classifyPuzzleDifficulty(size, metrics, score);
   if (!difficulty) {

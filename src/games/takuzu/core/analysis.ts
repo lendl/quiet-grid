@@ -1,4 +1,9 @@
 import type { CellValue, Grid } from './types';
+import {
+  runHumanBranchProof,
+  type HumanProofContradictionKind,
+  type HumanProofRule,
+} from './humanProof';
 
 export function otherValue(value: 0 | 1): 0 | 1 {
   return value === 0 ? 1 : 0;
@@ -195,6 +200,76 @@ export function countValidLineCompletions(line: readonly CellValue[]): number {
   return getValidCompletedLines(line.length).filter((candidate) =>
     line.every((cell, index) => cell === null || candidate[index] === cell),
   ).length;
+}
+
+export interface ImpossibleCombinationInsight {
+  row: number;
+  col: number;
+  forcedValue: 0 | 1;
+  blockedValue: 0 | 1;
+  lineKind: 'row' | 'column';
+  lineIndex: number;
+  validCompletionCount: number;
+  contradictionKind: HumanProofContradictionKind;
+  contradictionLineKind: 'row' | 'column';
+  contradictionLineIndex: number;
+  proofStepCount: number;
+  proofUsesRule: HumanProofRule | null;
+}
+
+export function getImpossibleCombinationInsight(
+  board: Grid,
+  row: number,
+  col: number,
+): ImpossibleCombinationInsight | null {
+  if (board[row]?.[col] !== null) {
+    return null;
+  }
+
+  // Count completions before placing forcedValue so difficulty reflects ambiguity
+  // at deduction time. On ties, prefer row to keep hint output deterministic.
+  const rowCompletionCount = countValidLineCompletions(board[row]);
+  const columnCompletionCount = countValidLineCompletions(getColumn(board, col));
+  const lineKind = rowCompletionCount <= columnCompletionCount ? 'row' : 'column';
+  const validCompletionCount = lineKind === 'row' ? rowCompletionCount : columnCompletionCount;
+
+  const zeroBoard = board.map((line) => [...line]) as Grid;
+  zeroBoard[row][col] = 0;
+  const zeroProof = runHumanBranchProof(zeroBoard);
+
+  const oneBoard = board.map((line) => [...line]) as Grid;
+  oneBoard[row][col] = 1;
+  const oneProof = runHumanBranchProof(oneBoard);
+
+  const zeroDead = zeroProof.kind === 'contradiction';
+  const oneDead = oneProof.kind === 'contradiction';
+
+  if (zeroDead === oneDead) {
+    return null;
+  }
+
+  const forcedValue: 0 | 1 = zeroDead ? 1 : 0;
+  const blockedValue = otherValue(forcedValue);
+  const blockedProof = zeroDead ? zeroProof : oneProof;
+  const contradiction = blockedProof.contradiction;
+  if (!contradiction || blockedProof.steps.length === 0) {
+    return null;
+  }
+
+  return {
+    row,
+    col,
+    forcedValue,
+    blockedValue,
+    lineKind,
+    lineIndex: lineKind === 'row' ? row : col,
+    validCompletionCount,
+    contradictionKind: contradiction.kind,
+    contradictionLineKind: contradiction.lineKind,
+    contradictionLineIndex: contradiction.lineIndex,
+    proofStepCount: blockedProof.steps.length,
+    proofUsesRule: blockedProof.steps[0]?.rule ?? null,
+  };
 }
 
 export function findPairMoveInLine(line: readonly CellValue[]): { index: number; value: 0 | 1 } | null {

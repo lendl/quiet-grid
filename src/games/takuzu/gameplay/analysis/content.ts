@@ -37,8 +37,14 @@ interface EliminateFilledLinesProgressParams extends ProgressLineParams {
 }
 
 interface EliminateImpossibleCombinationsProgressParams extends ProgressLineParams {
+  validCompletionCount: number;
   blockedValue: 0 | 1;
   targetValue: 0 | 1;
+  cellLabel: string;
+  contradictionKind: 'triple' | 'balance' | 'duplicate-line';
+  contradictionLineKind: LineKind;
+  contradictionLineIndex: number;
+  proofRuleLabel: string;
 }
 
 interface AvoidTriosRecoveryParams extends ProgressLineParams {
@@ -129,13 +135,24 @@ export function buildEliminateFilledLinesNextMove({
 export function buildEliminateImpossibleCombinationsNextMove({
   lineKind,
   lineIndex,
+  validCompletionCount,
   blockedValue,
   targetValue,
+  cellLabel,
+  contradictionKind,
+  contradictionLineKind,
+  contradictionLineIndex,
+  proofRuleLabel,
 }: EliminateImpossibleCombinationsProgressParams): NextMoveCopy {
   return getContent().eliminateImpossible(
     formatLine(lineKind, lineIndex),
+    validCompletionCount,
     blockedValue,
     targetValue,
+    cellLabel,
+    contradictionKind,
+    formatLine(contradictionLineKind, contradictionLineIndex),
+    proofRuleLabel,
   );
 }
 
