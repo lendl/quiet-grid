@@ -80,6 +80,10 @@ export interface MinesweeperI18n {
       title: string;
       body: string;
     };
+    groupedSafeStep(params: { targetCount: number; reasonCount: number }): {
+      title: string;
+      body: string;
+    };
     groupedFlagStep(params: { mineCount: number }): {
       title: string;
       body: string;

@@ -114,6 +114,12 @@ const nl = {
         body: `Je kunt de gemarkeerde ${mineCount === 1 ? 'tegel' : 'tegels'} nu markeren. De huidige cijfers bewijzen al dat ${mineCount === 1 ? 'dit vak een mijn is' : 'deze vakken mijnen zijn'}.`,
       };
     },
+    groupedSafeStep({ targetCount, reasonCount }: { targetCount: number; reasonCount: number }) {
+      return {
+        title: 'Meerdere aanwijzingen steunen deze veilige opening',
+        body: `Open de gemarkeerde ${targetCount === 1 ? 'tegel' : 'tegels'}. ${reasonCount} cijferpatronen wijzen onafhankelijk naar dezelfde veilige zet, dus deze opening is van meer dan één kant bevestigd.`,
+      };
+    },
     legendEvidence: 'Bewijs',
     legendSafe: 'Veilig openen',
     legendMine: 'Mijn markeren',

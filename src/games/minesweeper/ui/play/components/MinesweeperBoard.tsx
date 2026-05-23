@@ -32,6 +32,7 @@ interface MinesweeperBoardProps {
   nextMoveTargetCells?: Array<{ row: number; col: number }>;
   nextMoveSafeTargetCells?: Array<{ row: number; col: number }>;
   nextMoveMineTargetCells?: Array<{ row: number; col: number }>;
+  focusedCells?: Array<{ row: number; col: number }>;
 }
 
 const SHELL_INSET = 2;
@@ -57,6 +58,7 @@ function MinesweeperBoard({
   nextMoveTargetCells = [],
   nextMoveSafeTargetCells = nextMoveTargetCells,
   nextMoveMineTargetCells = [],
+  focusedCells = [],
 }: MinesweeperBoardProps) {
   const { resolvedLanguage } = useLanguage();
   const { theme, isDark } = useTheme();
@@ -93,11 +95,12 @@ function MinesweeperBoard({
   const evidenceKeys = useMemo(() => buildCellKeySet(nextMoveEvidenceCells), [nextMoveEvidenceCells]);
   const safeTargetKeys = useMemo(() => buildCellKeySet(nextMoveSafeTargetCells), [nextMoveSafeTargetCells]);
   const mineTargetKeys = useMemo(() => buildCellKeySet(nextMoveMineTargetCells), [nextMoveMineTargetCells]);
+  const focusedKeys = useMemo(() => buildCellKeySet(focusedCells), [focusedCells]);
 
   return (
     <View
       style={styles.shell}
-      onLayout={containerWidth === undefined ? (event: LayoutChangeEvent) => {
+      onLayout={containerWidth === undefined || containerHeight === undefined ? (event: LayoutChangeEvent) => {
         const { width, height } = event.nativeEvent.layout;
         setSelfMeasured({ width, height });
       } : undefined}
@@ -136,119 +139,128 @@ function MinesweeperBoard({
               { backgroundColor: withAlpha(theme.panelSurfaceElevated, isDark ? 0.34 : 0.48) },
             ]}
           />
-          {board.cells.map((row, rowIndex) => row.map((cell, colIndex) => {
-            const key = `${rowIndex}:${colIndex}`;
-            const rect = getGridCellRect(layout, rowIndex, colIndex);
-            const borderColor = mineTargetKeys.has(key)
-              ? withAlpha(theme.difficultyExpert, isDark ? 0.84 : 0.68)
-              : safeTargetKeys.has(key)
-                ? withAlpha(theme.success, isDark ? 0.84 : 0.68)
-                : evidenceKeys.has(key)
-                  ? withAlpha(theme.primary, isDark ? 0.64 : 0.46)
-                  : withAlpha(theme.gridCellBorder, isDark ? 0.84 : 0.62);
-            const faceColor = mineTargetKeys.has(key)
-              ? withAlpha(theme.difficultyExpert, isDark ? 0.26 : 0.16)
-              : safeTargetKeys.has(key)
-                ? withAlpha(theme.success, isDark ? 0.26 : 0.16)
-                : evidenceKeys.has(key)
-                  ? withAlpha(theme.primary, isDark ? 0.14 : 0.08)
-                  : cell.state === 'flagged'
-                    ? withAlpha(theme.primaryLight, 0.2)
-                    : cell.state === 'revealed' && cell.isMine
-                      ? withAlpha(theme.difficultyExpert, 0.22)
-                      : cell.state === 'revealed'
-                        ? tokens.cellSunkenFill
-                        : tokens.cellRaisedFill;
+          {board.cells.map((row, rowIndex) => row
+            .map((cell, colIndex) => {
+              const key = `${rowIndex}:${colIndex}`;
+              const rect = getGridCellRect(layout, rowIndex, colIndex);
+              const isFocused = focusedKeys.has(key);
+              const borderColor = isFocused
+                ? withAlpha(theme.primaryLight, 0.92)
+                : mineTargetKeys.has(key)
+                ? withAlpha(theme.difficultyExpert, isDark ? 0.84 : 0.68)
+                : safeTargetKeys.has(key)
+                  ? withAlpha(theme.success, isDark ? 0.84 : 0.68)
+                  : evidenceKeys.has(key)
+                    ? withAlpha(theme.primary, isDark ? 0.64 : 0.46)
+                    : withAlpha(theme.gridCellBorder, isDark ? 0.84 : 0.62);
+              const faceColor = isFocused
+                ? withAlpha(theme.primary, isDark ? 0.22 : 0.14)
+                : mineTargetKeys.has(key)
+                ? withAlpha(theme.difficultyExpert, isDark ? 0.26 : 0.16)
+                : safeTargetKeys.has(key)
+                  ? withAlpha(theme.success, isDark ? 0.26 : 0.16)
+                  : evidenceKeys.has(key)
+                    ? withAlpha(theme.primary, isDark ? 0.14 : 0.08)
+                    : cell.state === 'flagged'
+                      ? withAlpha(theme.primaryLight, 0.2)
+                      : cell.state === 'revealed' && cell.isMine
+                        ? withAlpha(theme.difficultyExpert, 0.22)
+                        : cell.state === 'revealed'
+                          ? tokens.cellSunkenFill
+                          : tokens.cellRaisedFill;
 
-            return (
-              <View
-                key={key}
-                style={[
-                  styles.cellFrame,
-                  {
-                    left: rect.x,
-                    top: rect.y,
-                    width: rect.width,
-                    height: rect.height,
-                    borderColor,
-                    backgroundColor: cell.state === 'revealed' ? tokens.cellSunkenFill : tokens.cellRaisedFill,
-                  },
-                ]}
-              >
-                <View style={[styles.cellFace, { backgroundColor: faceColor }]} />
-                {cell.state === 'flagged' ? (
-                  <View style={styles.flagWrap}>
-                    <View style={[styles.flagPole, { backgroundColor: tokens.text }]} />
-                    <View
+              return (
+                <View
+                  key={key}
+                  style={[
+                    styles.cellFrame,
+                    {
+                      left: rect.x,
+                      top: rect.y,
+                      width: rect.width,
+                      height: rect.height,
+                      borderColor,
+                      borderWidth: isFocused ? 2 : 1,
+                      opacity: focusedKeys.size === 0 || isFocused || evidenceKeys.has(key) ? 1 : 0.82,
+                      backgroundColor: cell.state === 'revealed' ? tokens.cellSunkenFill : tokens.cellRaisedFill,
+                    },
+                  ]}
+                >
+                  <View style={[styles.cellFace, { backgroundColor: faceColor }]} />
+                  {cell.state === 'flagged' ? (
+                    <View style={styles.flagWrap}>
+                      <View style={[styles.flagPole, { backgroundColor: tokens.text }]} />
+                      <View
+                        style={[
+                          styles.flagPennant,
+                          {
+                            borderLeftColor: mineTargetKeys.has(key)
+                              ? theme.difficultyExpert
+                              : safeTargetKeys.has(key)
+                                ? theme.success
+                                : theme.primaryLight,
+                          },
+                        ]}
+                      />
+                    </View>
+                  ) : null}
+                  {cell.state === 'revealed' && cell.isMine ? (
+                    <MinesweeperMineGlyph
                       style={[
-                        styles.flagPennant,
+                        styles.mineGlyph,
                         {
-                          borderLeftColor: mineTargetKeys.has(key)
-                            ? theme.difficultyExpert
-                            : safeTargetKeys.has(key)
-                              ? theme.success
-                              : theme.primaryLight,
+                          color: mineTargetKeys.has(key) ? theme.difficultyExpert : tokens.danger,
+                          fontSize: layout.cellSize * 0.52,
                         },
                       ]}
                     />
-                  </View>
-                ) : null}
-                {cell.state === 'revealed' && cell.isMine ? (
-                  <MinesweeperMineGlyph
-                    style={[
-                      styles.mineGlyph,
-                      {
-                        color: mineTargetKeys.has(key) ? theme.difficultyExpert : tokens.danger,
-                        fontSize: layout.cellSize * 0.52,
-                      },
-                    ]}
-                  />
-                ) : null}
-                {cell.state === 'revealed' && !cell.isMine && cell.adjacentMines > 0 ? (
-                  <Text
-                    style={[
-                      styles.clueValue,
-                      {
-                        color: mineTargetKeys.has(key)
-                          ? theme.difficultyExpert
-                          : safeTargetKeys.has(key)
-                            ? theme.success
-                            : getMinesweeperNumberColor(theme, cell.adjacentMines),
-                        fontSize: layout.cellSize * 0.52,
-                      },
-                    ]}
-                  >
-                    {String(cell.adjacentMines)}
-                  </Text>
-                ) : null}
-              </View>
-            );
-          }))}
+                  ) : null}
+                  {cell.state === 'revealed' && !cell.isMine && cell.adjacentMines > 0 ? (
+                    <Text
+                      style={[
+                        styles.clueValue,
+                        {
+                          color: mineTargetKeys.has(key)
+                            ? theme.difficultyExpert
+                            : safeTargetKeys.has(key)
+                              ? theme.success
+                              : getMinesweeperNumberColor(theme, cell.adjacentMines),
+                          fontSize: layout.cellSize * 0.52,
+                        },
+                      ]}
+                    >
+                      {String(cell.adjacentMines)}
+                    </Text>
+                  ) : null}
+                </View>
+              );
+            }))}
         </View>
         <View pointerEvents="box-none" style={StyleSheet.absoluteFill}>
-          {board.cells.map((row, rowIndex) => row.map((_, colIndex) => {
-            const rect = getGridCellRect(layout, rowIndex, colIndex);
+          {board.cells.map((row, rowIndex) => row
+            .map((_, colIndex) => {
+              const rect = getGridCellRect(layout, rowIndex, colIndex);
 
-            return (
-              <Pressable
-                key={`${rowIndex}-${colIndex}`}
-                style={[
-                  styles.hitCell,
-                  {
-                    left: rect.x,
-                    top: rect.y,
-                    width: rect.width,
-                    height: rect.height,
-                  },
-                ]}
-                onPress={() => onReveal(rowIndex, colIndex)}
-                onLongPress={() => onToggleFlag(rowIndex, colIndex)}
-                delayLongPress={180}
-                accessibilityRole="button"
-                accessibilityLabel={lc.formatCellLabel({ row: rowIndex, col: colIndex })}
-              />
-            );
-          }))}
+              return (
+                <Pressable
+                  key={`${rowIndex}-${colIndex}`}
+                  style={[
+                    styles.hitCell,
+                    {
+                      left: rect.x,
+                      top: rect.y,
+                      width: rect.width,
+                      height: rect.height,
+                    },
+                  ]}
+                  onPress={() => onReveal(rowIndex, colIndex)}
+                  onLongPress={() => onToggleFlag(rowIndex, colIndex)}
+                  delayLongPress={180}
+                  accessibilityRole="button"
+                  accessibilityLabel={lc.formatCellLabel({ row: rowIndex, col: colIndex })}
+                />
+              );
+            }))}
         </View>
       </View>
     </View>

@@ -1,9 +1,14 @@
+import { groupItemsByKey } from '../../../../../app/analysis/grouping';
 import type { PuzzleAnalysisPayload, PuzzleAnalysisSource } from '../../../../../app/analysis/types';
 import { getMinesweeperAnalysisContent } from '../../../i18n';
 import type { MinesweeperPlaySession } from '../../../gameplay/playContract';
 import type { MinesweeperBoard } from '../../../types';
 import { buildPatternNextMove } from '../../../gameplay/analysis/content';
-import { analyzeMinesweeperLogicalMoves, getNextMinesweeperSafeRevealMove } from '../../../gameplay/analysis/nextMove';
+import {
+  analyzeMinesweeperLogicalMoves,
+  getNextMinesweeperSafeRevealMove,
+  type MinesweeperLogicalMoveStep,
+} from '../../../gameplay/analysis/nextMove';
 import type {
   MinesweeperAnalysisPayload,
   MinesweeperAnalysisStep,
@@ -79,6 +84,36 @@ function isMinesweeperAnalysisSource(
     && isMinesweeperBoard(payload?.board);
 }
 
+function toCellKey(row: number, col: number): string {
+  return `${row}:${col}`;
+}
+
+function compareCells(
+  a: { row: number; col: number },
+  b: { row: number; col: number },
+): number {
+  if (a.row !== b.row) {
+    return a.row - b.row;
+  }
+
+  return a.col - b.col;
+}
+
+function dedupeCells<T extends { row: number; col: number }>(cells: T[]): T[] {
+  const unique = new Map<string, T>();
+
+  cells.forEach((cell) => {
+    unique.set(toCellKey(cell.row, cell.col), cell);
+  });
+
+  return Array.from(unique.values()).sort(compareCells);
+}
+
+function getTargetGroupKey(step: MinesweeperLogicalMoveStep): string {
+  const targets = dedupeCells(step.targetCells);
+  return `${step.moveKind}:${targets.map((cell) => toCellKey(cell.row, cell.col)).join('|')}`;
+}
+
 function buildMinesweeperAnalysisInternal(source: MinesweeperAnalysisSource): MinesweeperAnalysisPayload | null {
   const content = getMinesweeperAnalysisContent();
   const board = cloneBoard(source.payload.board);
@@ -87,35 +122,46 @@ function buildMinesweeperAnalysisInternal(source: MinesweeperAnalysisSource): Mi
     return null;
   }
 
-  const steps: MinesweeperAnalysisStep[] = analysis.steps.map((move, index) => {
-    const copy = move.moveKind === 'flag-mine'
-      ? content.groupedFlagStep({
-          mineCount: move.targetCells.length,
+  const groupedMoves = groupItemsByKey(
+    analysis.steps.filter((step) => step.moveKind === 'safe-reveal'),
+    getTargetGroupKey,
+  );
+
+  const steps: MinesweeperAnalysisStep[] = groupedMoves.map(({ items }, index) => {
+    const primaryMove = items[0];
+    if (!primaryMove) {
+      throw new Error('Minesweeper analysis group is empty.');
+    }
+
+    const mergedEvidenceCells = dedupeCells(items.flatMap((move) => move.evidenceCells));
+    const mergedTargetCells = dedupeCells(items.flatMap((move) => move.targetCells));
+    const copy = items.length > 1
+      ? content.groupedSafeStep({
+          targetCount: mergedTargetCells.length,
+          reasonCount: items.length,
         })
       : buildPatternNextMove({
-          patternKey: move.patternKey ?? 'all-mines-accounted-for',
-          clueCell: move.primaryClueCell,
-          secondaryClueCell: move.secondaryClueCell,
-          targetCount: move.targetCells.length,
-          mineCount: move.mineCount,
+          patternKey: primaryMove.patternKey ?? 'all-mines-accounted-for',
+          clueCell: primaryMove.primaryClueCell,
+          secondaryClueCell: primaryMove.secondaryClueCell,
+          targetCount: mergedTargetCells.length,
+          mineCount: primaryMove.mineCount,
         });
     const beforeState = cloneBoard(board);
-    const afterState = move.moveKind === 'flag-mine'
-      ? buildFlaggedBoardState(board, move.targetCells)
-      : cloneBoard(board);
+    const afterState = cloneBoard(board);
 
     return {
       key: `step-${index + 1}`,
       title: copy.title,
       body: copy.body,
-      evidenceCells: move.evidenceCells,
-      targetCells: move.targetCells,
+      evidenceCells: mergedEvidenceCells,
+      targetCells: mergedTargetCells,
       highlightRows: [],
       highlightCols: [],
       beforeState,
       afterState,
-      safeTargetCells: move.moveKind === 'safe-reveal' ? move.targetCells : [],
-      mineTargetCells: move.moveKind === 'flag-mine' ? move.targetCells : [],
+      safeTargetCells: mergedTargetCells,
+      mineTargetCells: [],
     };
   });
 

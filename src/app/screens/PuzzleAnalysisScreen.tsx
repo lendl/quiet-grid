@@ -105,14 +105,19 @@ export default function PuzzleAnalysisScreen({ navigation, route }: Props) {
     return null;
   }
 
+  const stepCounter = (
+    <Text style={s.stepCounter}>{strings.analysis.step(stepIndex + 1, stepCount)}</Text>
+  );
+
   return (
-    <GamePageShell activeTab="Games" headerMode="back" backToPuzzleTypeId={analysis.gameId}>
+    <GamePageShell
+      activeTab="Games"
+      headerMode="back"
+      backToPuzzleTypeId={analysis.gameId}
+      headerRight={stepCounter}
+    >
       <GestureDetector gesture={swipeGesture}>
         <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
-          <View style={s.header}>
-            <Text style={s.stepCounter}>{strings.analysis.step(stepIndex + 1, stepCount)}</Text>
-          </View>
-
           <View style={s.boardSection} onLayout={handleBoardLayout}>
             {boardSize > 0 ? adapter.renderAnalysisStep({
               analysis,
@@ -125,21 +130,6 @@ export default function PuzzleAnalysisScreen({ navigation, route }: Props) {
           <View style={s.card}>
             <Text style={s.cardTitle}>{currentStep.title}</Text>
             <Text style={s.cardBody}>{currentStep.body}</Text>
-          </View>
-
-          <View style={s.scrubberSection}>
-            <Text style={s.scrubberLabel}>{strings.analysis.fastJump}</Text>
-            <View
-              style={s.scrubberTrack}
-              onLayout={handleScrubberTrackLayout}
-              onStartShouldSetResponder={() => true}
-              onResponderGrant={handleScrubberLayout}
-              onResponderMove={handleScrubberLayout}
-            >
-              <View style={s.scrubberTrackBase} />
-              <View style={[s.scrubberFill, { width: `${scrubberProgress * 100}%` }]} />
-              <View style={[s.scrubberThumb, { left: `${scrubberProgress * 100}%` }]} />
-            </View>
           </View>
 
           <View style={s.controls}>
@@ -160,6 +150,21 @@ export default function PuzzleAnalysisScreen({ navigation, route }: Props) {
               <Text style={s.controlButtonText}>{strings.analysis.next}</Text>
             </TouchableOpacity>
           </View>
+
+          <View style={s.scrubberSection}>
+            <Text style={s.scrubberLabel}>{strings.analysis.fastJump}</Text>
+            <View
+              style={s.scrubberTrack}
+              onLayout={handleScrubberTrackLayout}
+              onStartShouldSetResponder={() => true}
+              onResponderGrant={handleScrubberLayout}
+              onResponderMove={handleScrubberLayout}
+            >
+              <View style={s.scrubberTrackBase} />
+              <View style={[s.scrubberFill, { width: `${scrubberProgress * 100}%` }]} />
+              <View style={[s.scrubberThumb, { left: `${scrubberProgress * 100}%` }]} />
+            </View>
+          </View>
         </ScrollView>
       </GestureDetector>
     </GamePageShell>
@@ -171,15 +176,13 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     padding: 20,
     gap: 20,
   },
-  header: {
-    gap: 6,
-  },
   stepCounter: {
     fontSize: 13,
     fontWeight: '800',
     letterSpacing: 0.8,
     textTransform: 'uppercase',
     color: theme.textMuted,
+    textAlign: 'right',
   },
   boardSection: {
     alignItems: 'center',

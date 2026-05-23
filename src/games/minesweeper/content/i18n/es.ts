@@ -114,6 +114,12 @@ const es = {
         body: `Puedes marcar las ${mineCount === 1 ? 'casilla resaltada' : 'casillas resaltadas'} ahora. Las pistas actuales ya prueban que ${mineCount === 1 ? 'es una mina' : 'son minas'}.`,
       };
     },
+    groupedSafeStep({ targetCount, reasonCount }: { targetCount: number; reasonCount: number }) {
+      return {
+        title: 'Varias pistas respaldan esta revelación segura',
+        body: `Revela las ${targetCount === 1 ? 'casilla resaltada' : 'casillas resaltadas'}. ${reasonCount} patrones de pista apuntan de forma independiente al mismo movimiento seguro, así que esta revelación queda confirmada desde más de un ángulo.`,
+      };
+    },
     legendEvidence: 'Evidencia',
     legendSafe: 'Revelar seguro',
     legendMine: 'Marcar mina',

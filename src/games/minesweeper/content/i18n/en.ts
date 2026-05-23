@@ -114,6 +114,12 @@ const en = {
         body: `You can flag the highlighted ${mineCount === 1 ? 'tile' : 'tiles'} now. Current clues already prove these ${mineCount === 1 ? 'it is a mine' : 'tiles are mines'}.`,
       };
     },
+    groupedSafeStep({ targetCount, reasonCount }: { targetCount: number; reasonCount: number }) {
+      return {
+        title: 'Multiple clues support this safe reveal',
+        body: `Reveal the highlighted ${targetCount === 1 ? 'tile' : 'tiles'}. ${reasonCount} clue patterns independently point to the same safe move, so this reveal is confirmed from more than one angle.`,
+      };
+    },
     legendEvidence: 'Evidence',
     legendSafe: 'Safe reveal',
     legendMine: 'Flag mine',

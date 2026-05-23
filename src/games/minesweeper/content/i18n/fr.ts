@@ -114,6 +114,12 @@ const fr = {
         body: `Vous pouvez marquer les ${mineCount === 1 ? 'case' : 'cases'} mises en évidence maintenant. Les indices actuels prouvent déjà que ${mineCount === 1 ? "c'est une mine" : 'ce sont des mines'}.`,
       };
     },
+    groupedSafeStep({ targetCount, reasonCount }: { targetCount: number; reasonCount: number }) {
+      return {
+        title: 'Plusieurs indices soutiennent cette révélation sûre',
+        body: `Révélez les ${targetCount === 1 ? 'case' : 'cases'} mises en évidence. ${reasonCount} schémas d'indice mènent indépendamment au même coup sûr, donc cette révélation est confirmée sous plusieurs angles.`,
+      };
+    },
     legendEvidence: 'Preuve',
     legendSafe: 'Révélation sûre',
     legendMine: 'Marquer une mine',

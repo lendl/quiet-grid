@@ -114,6 +114,12 @@ const de = {
         body: `Du kannst die hervorgehobenen ${mineCount === 1 ? 'Feld' : 'Felder'} jetzt markieren. Die aktuellen Hinweise beweisen bereits, dass ${mineCount === 1 ? 'es eine Mine ist' : 'diese Felder Minen sind'}.`,
       };
     },
+    groupedSafeStep({ targetCount, reasonCount }: { targetCount: number; reasonCount: number }) {
+      return {
+        title: 'Mehrere Hinweise stützen diese sichere Aufdeckung',
+        body: `Decke die hervorgehobenen ${targetCount === 1 ? 'Feld' : 'Felder'} auf. ${reasonCount} Hinweismuster führen unabhängig zum selben sicheren Zug, also ist diese Aufdeckung aus mehr als einer Richtung bestätigt.`,
+      };
+    },
     legendEvidence: 'Beweis',
     legendSafe: 'Sicher aufdecken',
     legendMine: 'Mine markieren',

@@ -44,6 +44,7 @@ Learning Center is the umbrella teaching system for a game. It includes all thre
   - engine-backed games: teach an approved solve path built from the same canonical move system used for classification
   - non-engine games: analyze loss-state decisions
 - Analyzer should explain decisions in a way that helps the player improve future runs, not just describe the past state.
+- Analyzer may group multiple independent proofs for the same canonical move into one teaching step when they all support the same target action.
 - Teach canonical moves first. Support actions are optional style tools.
 - Explain mistake policy only when it changes how the player should play.
 - Do not use hidden brute-force or full-solution search for player-facing next-move or analyzer explanations unless that proof model is explicitly part of the approved move language.

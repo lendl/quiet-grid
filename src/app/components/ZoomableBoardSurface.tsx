@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/immutability */
 import React, { useCallback, useEffect, useRef } from 'react';
 
 import { StyleSheet, View } from 'react-native';
@@ -20,6 +21,12 @@ type Props = {
   resetThreshold?: number;
   onZoomStateChange?: (isZoomed: boolean) => void;
   onRegisterReset?: (reset: (() => void) | null) => void;
+  autoFocus?: {
+    key: string;
+    xRatio: number;
+    yRatio: number;
+    scale: number;
+  };
 };
 
 type Bounds = {
@@ -39,6 +46,7 @@ export default function ZoomableBoardSurface({
   resetThreshold = 1.02,
   onZoomStateChange,
   onRegisterReset,
+  autoFocus,
 }: Props) {
   const viewportWidth = useSharedValue(0);
   const viewportHeight = useSharedValue(0);
@@ -54,6 +62,9 @@ export default function ZoomableBoardSurface({
   const onZoomStateChangeRef = useRef(onZoomStateChange);
   const resetTransformFromJsRef = useRef<() => void>(() => undefined);
   const lastViewportSizeRef = useRef({ width: 0, height: 0 });
+  const viewportSizeRef = useRef({ width: 0, height: 0 });
+  const contentSizeRef = useRef({ width: 0, height: 0 });
+  const lastAutoFocusKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
     onZoomStateChangeRef.current = onZoomStateChange;
@@ -66,6 +77,39 @@ export default function ZoomableBoardSurface({
   const resetFromJs = useCallback(() => {
     resetTransformFromJsRef.current();
   }, []);
+
+  const applyAutoFocusFromJs = useCallback(() => {
+    if (!autoFocus) {
+      return;
+    }
+
+    const viewport = viewportSizeRef.current;
+    const content = contentSizeRef.current;
+    if (viewport.width <= 0 || viewport.height <= 0 || content.width <= 0 || content.height <= 0) {
+      return;
+    }
+
+    const nextScale = clamp(autoFocus.scale, minScale, maxScale);
+    const focusX = clamp(autoFocus.xRatio, 0, 1) * content.width;
+    const focusY = clamp(autoFocus.yRatio, 0, 1) * content.height;
+    const scaledWidth = content.width * nextScale;
+    const scaledHeight = content.height * nextScale;
+    const maxOffsetX = Math.max(0, (scaledWidth - viewport.width) / 2);
+    const maxOffsetY = Math.max(0, (scaledHeight - viewport.height) / 2);
+    const nextTranslateX = clamp((content.width / 2 - focusX) * nextScale, -maxOffsetX, maxOffsetX);
+    const nextTranslateY = clamp((content.height / 2 - focusY) * nextScale, -maxOffsetY, maxOffsetY);
+
+    scale.value = withTiming(nextScale, { duration: 180 });
+    translateX.value = withTiming(nextTranslateX, { duration: 180 });
+    translateY.value = withTiming(nextTranslateY, { duration: 180 });
+
+    const nextZoomed = nextScale > resetThreshold;
+    if (onZoomStateChangeRef.current) {
+      onZoomStateChangeRef.current(nextZoomed);
+    }
+    lastReportedZoomed.value = nextZoomed;
+    lastAutoFocusKeyRef.current = autoFocus.key;
+  }, [autoFocus, maxScale, minScale, resetThreshold, scale, translateX, translateY, lastReportedZoomed]);
 
   const bounds = useDerivedValue<Bounds>(() => {
     const scaledWidth = contentWidth.value * scale.value;
@@ -115,6 +159,19 @@ export default function ZoomableBoardSurface({
       onRegisterReset?.(null);
     };
   }, [onRegisterReset]);
+
+  useEffect(() => {
+    if (!autoFocus) {
+      lastAutoFocusKeyRef.current = null;
+      return;
+    }
+
+    if (lastAutoFocusKeyRef.current === autoFocus.key) {
+      return;
+    }
+
+    applyAutoFocusFromJs();
+  }, [applyAutoFocusFromJs, autoFocus]);
 
   const pinch = Gesture.Pinch()
     .onStart(() => {
@@ -190,6 +247,7 @@ export default function ZoomableBoardSurface({
           const { width, height } = event.nativeEvent.layout;
           viewportWidth.value = width;
           viewportHeight.value = height;
+          viewportSizeRef.current = { width, height };
 
           const previousViewport = lastViewportSizeRef.current;
           const viewportChanged = previousViewport.width > 0
@@ -198,8 +256,16 @@ export default function ZoomableBoardSurface({
           lastViewportSizeRef.current = { width, height };
 
           if (viewportChanged) {
-            resetFromJs();
+            if (autoFocus) {
+              lastAutoFocusKeyRef.current = null;
+              applyAutoFocusFromJs();
+            } else {
+              resetFromJs();
+            }
+            return;
           }
+
+          applyAutoFocusFromJs();
         }}
       >
         <Animated.View style={animatedStyle}>
@@ -208,6 +274,8 @@ export default function ZoomableBoardSurface({
               const { width, height } = event.nativeEvent.layout;
               contentWidth.value = width;
               contentHeight.value = height;
+              contentSizeRef.current = { width, height };
+              applyAutoFocusFromJs();
             }}
           >
             {children}
