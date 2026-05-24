@@ -2,6 +2,7 @@
 
 - [ ] Game fits Quiet Grid eligibility rules.
 - [ ] User approved the important game-design choices.
+- [ ] UX contract is approved before coding (tutorial scope, interaction model, invalid-board helper behavior, board visual conventions).
 - [ ] Canonical moves are defined.
 - [ ] Support actions are separated from canonical moves.
 - [ ] Mistake policy is defined.
@@ -17,13 +18,21 @@
 - [ ] Engine-backed vs non-engine mode is explicit.
 - [ ] Proof model is explicit, including whether hypothetical branching is allowed.
 - [ ] Analyzer mode is explicit.
+- [ ] Input model is explicitly approved and implemented across gameplay actions and play UI (no implicit default).
+- [ ] `supports.tutorial` is `true` and `screens.tutorial` is wired in `definition.ts`.
+- [ ] Tutorial implementation exists under `ui/tutorial/` and uses game content from `content/i18n/`.
+- [ ] Analyzer implementation exists under `ui/learning/analyzer/` (not only i18n strings).
 - [ ] Engine-backed teaching and classification use the approved canonical move system, not hidden brute-force proof.
+- [ ] Next move blocks on invalid-board state and explains that no valid next move is available until board is corrected.
+- [ ] Next move does not require optional support actions when canonical progress exists.
+- [ ] How-to-play tips include at least one concrete worked example.
+- [ ] Game-specific board visual conventions are implemented (for example, Nonogram 5-cell separators).
 - [ ] App game registry is updated.
 - [ ] Engine registry is updated if applicable.
 - [ ] Persistence shape is defined.
 - [ ] App storage normalization is updated if needed.
 - [ ] All game-facing copy is in `content/i18n/`.
-- [ ] Tutorial uses valid example grids when applicable.
+- [ ] Tutorial uses valid example grids.
 - [ ] `npm run lint`
 - [ ] `npm run typecheck:app`
 - [ ] `npm run typecheck:engine` when engine touched

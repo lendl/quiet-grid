@@ -37,18 +37,29 @@ Learning Center is the umbrella teaching system for a game. It includes all thre
 - Tutorial should use a valid example grid for each lesson when tutorial exists.
 - Tutorial example grids should be valid puzzle states that obey the game rules and the lesson claim being taught.
 - Tutorial should not compare difficulty levels.
+- Tutorial is required for game integrations in this repository unless user explicitly approves an exception.
 - Next move should explain one valid move from the current puzzle state.
 - Next move should present one stored move suggestion at a time, not a continuously recomputed helper stream.
 - Next move should support the player, not replace the player’s agency.
+- Next move must check invalid-board state first and report that the board must be corrected before suggesting any move.
+- Next move should teach canonical progress first and should not require optional support actions when canonical progress exists.
 - Analyzer mode depends on game type:
   - engine-backed games: teach an approved solve path built from the same canonical move system used for classification
   - non-engine games: analyze loss-state decisions
 - Analyzer should explain decisions in a way that helps the player improve future runs, not just describe the past state.
+- Analyzer is not complete until analysis logic and analyzer UI are both wired, not only localized copy.
 - Analyzer may group multiple independent proofs for the same canonical move into one teaching step when they all support the same target action.
 - Teach canonical moves first. Support actions are optional style tools.
 - Explain mistake policy only when it changes how the player should play.
 - Do not use hidden brute-force or full-solution search for player-facing next-move or analyzer explanations unless that proof model is explicitly part of the approved move language.
 - If an engine-backed game allows hypothetical branches, teach that branch model explicitly and keep branch resolution inside approved move logic.
+
+## Next move policy
+
+- Next move suggests one approved canonical move from current puzzle state.
+- If puzzle state is invalid, next move does not suggest a move and must state board must be corrected first.
+- Next move prefers canonical progress and does not require optional support actions unless explicitly part of approved move system.
+- Next move should be deterministic for same stored puzzle/session state and explanation context.
 
 ## File map
 
