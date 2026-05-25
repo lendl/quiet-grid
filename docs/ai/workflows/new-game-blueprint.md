@@ -31,9 +31,21 @@ src/games/<id>/
 - `platform/`
   - runtime loading, codecs, persistence helpers local to the game
 - `engine/`
-  - generator, difficulty logic, engine definition
+  - generator, proof/classification logic, engine definition
+  - dedupe strategy and catalog formatting/round-trip safety
 - `puzzles/`
   - generated puzzle catalog for engine-backed games
+
+## Engine-backed delivery order
+
+For engine-backed games, prefer this order:
+
+1. lock size/difficulty matrix and generation contract
+2. build generator + classifier + dedupe + catalog round-trip spike
+3. bulk-generate enough puzzles to prove bucket supply
+4. only then wire broad app surfaces (play, tutorial, next move, analyzer)
+
+Do not treat full game wiring as proof that engine work is done. Engine feasibility is its own gate.
 
 ## Content rule
 

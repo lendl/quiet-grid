@@ -16,6 +16,11 @@
   - [ ] expert
 - [ ] Difficulty separation is meaningful.
 - [ ] Engine-backed vs non-engine mode is explicit.
+- [ ] For engine-backed games, size matrix is approved up front, including rectangular variants and any size caps.
+- [ ] For engine-backed games, generation contract is explicit: target counts per bucket, dedupe rule, proof/classification model, and catalog shape.
+- [ ] For engine-backed games, generator/classifier feasibility is proven before broad app wiring.
+- [ ] For engine-backed games, bulk generation succeeds at target-like volume and bucket supply is sufficient.
+- [ ] For engine-backed games, catalog round-trip works: generated entries parse, ids increment, and dedupe behaves correctly.
 - [ ] Proof model is explicit, including whether hypothetical branching is allowed.
 - [ ] Analyzer mode is explicit.
 - [ ] Input model is explicitly approved and implemented across gameplay actions and play UI (no implicit default).

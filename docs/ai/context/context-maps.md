@@ -91,6 +91,7 @@ Use these packets when AI is editing one subsystem and should not load the whole
 
 ### Architecture goal
 - Keep generator support inside `engine/` and `puzzles/`.
+- Treat engine feasibility as a separate gate before broad app surface work.
 
 ### File map
 - `src/games/<id>/engine/`
@@ -98,4 +99,5 @@ Use these packets when AI is editing one subsystem and should not load the whole
 - `src/engine/gameRegistry.ts`
 
 ### Mistakes to avoid
+- Do not lock app/tutorial/analyzer work before the generator, classifier, dedupe, and catalog round-trip are proven.
 - Do not ship engine-backed puzzles without uniqueness, difficulty, and reclassification rules.
