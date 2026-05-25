@@ -25,4 +25,5 @@ export interface EngineGameDefinition<TEntry extends EngineCatalogEntry = Engine
   generateOne(size: number, targetDifficulty: PuzzleDifficulty): EngineGenerateResult<TEntry> | null;
   getEntryDedupeKey(entry: TEntry | Omit<TEntry, 'id'>): string;
   reclassifyEntries(entries: TEntry[]): TEntry[];
+  describeSizeOptions?(size: number): readonly string[];
 }

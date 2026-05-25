@@ -1,5 +1,6 @@
 import type { PuzzleDifficulty } from '../games/shared/types';
 import { openDb, hashDedupeKey, hasTried, recordTried } from './db';
+import type { EngineGameDefinition } from './gameDefinition';
 import { getEngineGameDefinition } from './gameRegistry';
 import {
   appendGameCatalogEntry,
@@ -48,8 +49,11 @@ function parseDifficultyArg(): PuzzleDifficulty | null {
     : null;
 }
 
-function formatSizeLabel(sizes: readonly number[]): string {
-  return sizes.map((size) => `${size}x${size}`).join('/');
+function formatSizeLabel(
+  game: EngineGameDefinition,
+  sizes: readonly number[],
+): string {
+  return sizes.flatMap((size) => game.describeSizeOptions?.(size) ?? [`${size}x${size}`]).join('/');
 }
 
 function reclassifyExistingCatalog(gameId: string): void {
@@ -106,7 +110,9 @@ function main(): void {
     resetGameCatalog(game);
   }
 
-  const sizeLabel = forcedSize === null ? formatSizeLabel(allowedSizes) : `${forcedSize}x${forcedSize}`;
+  const sizeLabel = forcedSize === null
+    ? formatSizeLabel(game, allowedSizes)
+    : (game.describeSizeOptions?.(forcedSize) ?? [`${forcedSize}x${forcedSize}`]).join('/');
   console.log(`\nGenerating ${requestedCount} scored ${game.title} ${sizeLabel} puzzle(s)...`);
 
   while (totalGenerated < requestedCount) {

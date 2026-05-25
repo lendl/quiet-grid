@@ -43,8 +43,8 @@ export interface NonogramBoardLayoutInput {
   containerWidth: number;
   rows: number;
   cols: number;
-  rowClues: readonly number[][];
-  colClues: readonly number[][];
+  rowClues: readonly (readonly number[])[];
+  colClues: readonly (readonly number[])[];
   interactive: boolean;
 }
 
@@ -159,7 +159,7 @@ export function getGridCellRect(
   };
 }
 
-function getMaxClueDepth(lines: readonly number[][]): number {
+function getMaxClueDepth(lines: readonly (readonly number[])[]): number {
   return Math.max(
     1,
     ...lines.map((line) => (line.length === 1 && line[0] === 0 ? 0 : line.length)),

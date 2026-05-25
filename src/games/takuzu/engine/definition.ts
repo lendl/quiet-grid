@@ -116,6 +116,7 @@ export const takuzuEngineDefinition: EngineGameDefinition<TakuzuCatalogEntry> = 
     const difficulties = getSupportedDifficultiesForSize(supportedSize);
     return difficulties[Math.floor(Math.random() * difficulties.length)];
   },
+  describeSizeOptions: (size) => [`${size}x${size}`],
   generateOne: (size, targetDifficulty) => {
     const supportedSize = toSupportedPuzzleSize(size);
     if (!supportedSize) {

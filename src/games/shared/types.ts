@@ -1,4 +1,4 @@
-export const gameIds = ['takuzu', 'minesweeper'] as const;
+export const gameIds = ['takuzu', 'minesweeper', 'nonogram'] as const;
 export type GameId = typeof gameIds[number];
 export type PuzzleDifficulty = 'easy' | 'medium' | 'hard' | 'expert';
 

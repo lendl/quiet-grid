@@ -19,8 +19,10 @@
 - [ ] Proof model is explicit, including whether hypothetical branching is allowed.
 - [ ] Analyzer mode is explicit.
 - [ ] Input model is explicitly approved and implemented across gameplay actions and play UI (no implicit default).
+- [ ] Playable puzzle grid supports pinch-zoom and pan (tutorial/analyzer grids may stay static unless explicitly required).
 - [ ] `supports.tutorial` is `true` and `screens.tutorial` is wired in `definition.ts`.
 - [ ] Tutorial implementation exists under `ui/tutorial/` and uses game content from `content/i18n/`.
+- [ ] Tutorial includes at least one explicit player decision checkpoint (for example fill vs empty when the game has those states).
 - [ ] Analyzer implementation exists under `ui/learning/analyzer/` (not only i18n strings).
 - [ ] Engine-backed teaching and classification use the approved canonical move system, not hidden brute-force proof.
 - [ ] Next move blocks on invalid-board state and explains that no valid next move is available until board is corrected.

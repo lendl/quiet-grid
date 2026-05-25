@@ -2,6 +2,7 @@ import type {
   ActiveSession,
   TakuzuActiveSession,
   MinesweeperActiveSession,
+  NonogramActiveSession,
 } from '../shell/activeSessionTypes';
 import type { Difficulty } from '../types';
 import { isGameId } from '../../games/shared/types';
@@ -14,6 +15,7 @@ import type { PersistedSessionEnvelope } from '../shell/types';
 
 type LineKey = TakuzuActiveSession['penalizedLineKeys'][number];
 type MinesweeperPuzzle = MinesweeperActiveSession['puzzle'];
+type NonogramPuzzle = NonogramActiveSession['puzzle'];
 
 const HEX_PATTERN = /^[\da-f]+$/i;
 
@@ -31,6 +33,20 @@ function isBooleanGrid(value: unknown, size: number): boolean {
   return Array.isArray(value)
     && value.length === size
     && value.every((row) => Array.isArray(row) && row.length === size && row.every((cell) => typeof cell === 'boolean'));
+}
+
+function isBooleanMatrix(value: unknown, rows: number, cols: number): boolean {
+  return Array.isArray(value)
+    && value.length === rows
+    && value.every((row) => Array.isArray(row) && row.length === cols && row.every((cell) => typeof cell === 'boolean'));
+}
+
+function isTriStateMatrix(value: unknown, rows: number, cols: number): boolean {
+  return Array.isArray(value)
+    && value.length === rows
+    && value.every((row) => Array.isArray(row)
+      && row.length === cols
+      && row.every((cell) => cell === 0 || cell === 1 || cell === null));
 }
 
 function isLineKey(value: unknown): value is LineKey {
@@ -54,7 +70,7 @@ function isHexPuzzleData(value: unknown, size: number): value is string {
   return typeof value === 'string' && value.length === encodedLength && HEX_PATTERN.test(value);
 }
 
-function getStoredGameId(value: Record<string, unknown>): 'takuzu' | 'minesweeper' | null {
+function getStoredGameId(value: Record<string, unknown>): 'takuzu' | 'minesweeper' | 'nonogram' | null {
   if (value.puzzleTypeId === 'binary') {
     return 'takuzu';
   }
@@ -181,11 +197,54 @@ function isMinesweeperActiveSession(value: unknown): value is MinesweeperActiveS
     && isFiniteNonNegativeNumber(obj.elapsedSeconds);
 }
 
+function isNonogramClueLine(value: unknown): boolean {
+  return Array.isArray(value)
+    && value.every((segment) => Number.isInteger(segment) && (segment as number) > 0);
+}
+
+function isNonogramPuzzle(value: unknown): value is NonogramPuzzle {
+  if (!value || typeof value !== 'object') return false;
+  const puzzle = value as Record<string, unknown>;
+  const rows = puzzle.rows;
+  const cols = puzzle.cols;
+  const rowClues = puzzle.rowClues;
+  const colClues = puzzle.colClues;
+  return typeof puzzle.id === 'string'
+    && typeof rows === 'number'
+    && Number.isInteger(rows)
+    && rows > 0
+    && typeof cols === 'number'
+    && Number.isInteger(cols)
+    && cols > 0
+    && isDifficulty(puzzle.difficulty)
+    && Array.isArray(rowClues)
+    && rowClues.length === rows
+    && rowClues.every(isNonogramClueLine)
+    && Array.isArray(colClues)
+    && colClues.length === cols
+    && colClues.every(isNonogramClueLine);
+}
+
+function isNonogramActiveSession(value: unknown): value is NonogramActiveSession {
+  if (!value || typeof value !== 'object') return false;
+  const obj = value as Record<string, unknown>;
+  if (getStoredGameId(obj) !== 'nonogram' || !isNonogramPuzzle(obj.puzzle)) {
+    return false;
+  }
+
+  const puzzle = obj.puzzle;
+
+  return isTriStateMatrix(obj.board, puzzle.rows, puzzle.cols)
+    && isBooleanMatrix(obj.solution, puzzle.rows, puzzle.cols)
+    && isFiniteNonNegativeNumber(obj.elapsedSeconds);
+}
+
 function isActiveSession(value: unknown): value is ActiveSession {
   if (!value || typeof value !== 'object') return false;
   const activeSession = value as Record<string, unknown>;
   if (getStoredGameId(activeSession) === 'takuzu') return isTakuzuActiveSession(activeSession);
   if (getStoredGameId(activeSession) === 'minesweeper') return isMinesweeperActiveSession(activeSession);
+  if (getStoredGameId(activeSession) === 'nonogram') return isNonogramActiveSession(activeSession);
   return false;
 }
 
@@ -232,6 +291,15 @@ function normalizeMinesweeperActiveSession(raw: MinesweeperActiveSession): Mines
   };
 }
 
+function normalizeNonogramActiveSession(raw: NonogramActiveSession): NonogramActiveSession {
+  return {
+    ...raw,
+    gameId: 'nonogram',
+    board: raw.board.map((row) => [...row]),
+    solution: raw.solution.map((row) => [...row]),
+  };
+}
+
 export function makeEmptyBooleanGrid(size: number): boolean[][] {
   return Array.from({ length: size }, (): boolean[] => Array.from({ length: size }, () => false));
 }
@@ -250,6 +318,9 @@ export async function loadActiveSessionState(): Promise<ActiveSession | null> {
       if (getStoredGameId(parsedSession) === 'takuzu') {
         return normalizeTakuzuActiveSession(parsed as TakuzuActiveSession);
       }
+      if (getStoredGameId(parsedSession) === 'nonogram') {
+        return normalizeNonogramActiveSession(parsed as NonogramActiveSession);
+      }
       return normalizeMinesweeperActiveSession(parsed as MinesweeperActiveSession);
     }
     if (isLegacyTakuzuActiveSession(parsed)) {
@@ -266,7 +337,9 @@ export async function loadActiveSessionState(): Promise<ActiveSession | null> {
 export async function saveActiveSessionState(activeSession: ActiveSession): Promise<void> {
   const normalizedActiveSession = activeSession.gameId === 'takuzu'
     ? normalizeTakuzuActiveSession(activeSession)
-    : normalizeMinesweeperActiveSession(activeSession);
+    : activeSession.gameId === 'nonogram'
+      ? normalizeNonogramActiveSession(activeSession)
+      : normalizeMinesweeperActiveSession(activeSession);
 
   await saveStoredActiveSession({
     gameId: normalizedActiveSession.gameId,

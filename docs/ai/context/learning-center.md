@@ -34,6 +34,7 @@ Learning Center is the umbrella teaching system for a game. It includes all thre
 - Tutorial should explain how the user can interact with the puzzle.
 - Tutorial should explain the real live-play control mapping, not only tutorial-specific controls.
 - Tutorial should explicitly call out when tutorial controls differ from live puzzle controls.
+- Tutorial should include explicit decision checkpoints in key lessons (for example, asking filled vs empty) instead of only passive "continue" steps.
 - Tutorial should use a valid example grid for each lesson when tutorial exists.
 - Tutorial example grids should be valid puzzle states that obey the game rules and the lesson claim being taught.
 - Tutorial should not compare difficulty levels.

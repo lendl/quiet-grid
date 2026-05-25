@@ -23,7 +23,7 @@
 ## Examples
 
 - Takuzu: find pairs, avoid trios, complete lines, eliminate filled lines, eliminate impossible combinations
-- Nonogram: overlap fill, forced empty, complete line
+- Nonogram: overlap fill is canonical; marking empty cells is a support action
 - Minesweeper flagging is a support action, not a canonical move
 
 ## File map

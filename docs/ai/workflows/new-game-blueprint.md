@@ -25,6 +25,7 @@ src/games/<id>/
   - rules, actions, active puzzle shape, play contract, canonical moves
 - `ui/`
   - play plus Learning Center rendering and wiring
+  - playable grid should use zoom/pan support (for example `ZoomableBoardSurface`) when board size can exceed comfortable tap/read bounds
 - `content/`
   - game-facing copy, tutorial lesson configs, localized content
 - `platform/`
