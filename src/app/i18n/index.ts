@@ -120,10 +120,10 @@ const EN_STRINGS = {
     slides: [
       {
         title: 'Welcome to Quiet Grid',
-        body: 'Two logic puzzles. No ads, no accounts, no internet required. Everything stays on your device.',
+        body: 'Logic puzzles. No ads, no accounts, no internet required. Everything stays on your device.',
       },
       {
-        title: 'Two puzzle types included',
+        title: 'Puzzle types included',
         body: '{games} — each with four difficulty levels. Play at your own pace.',
       },
       {
@@ -377,10 +377,10 @@ const NL_STRINGS: AppStrings = {
     slides: [
       {
         title: 'Welkom bij Quiet Grid',
-        body: 'Twee logische puzzels. Geen advertenties, geen accounts, geen internet nodig. Alles blijft op je toestel.',
+        body: 'Logische puzzels. Geen advertenties, geen accounts, geen internet nodig. Alles blijft op je toestel.',
       },
       {
-        title: 'Twee puzzeltypes inbegrepen',
+        title: 'Puzzeltypes inbegrepen',
         body: '{games} — elk met vier moeilijkheidsgraden. Speel op je eigen tempo.',
       },
       {
@@ -634,10 +634,10 @@ const DE_STRINGS: AppStrings = {
     slides: [
       {
         title: 'Willkommen bei Quiet Grid',
-        body: 'Zwei Logikrätsel. Keine Werbung, keine Konten, kein Internet erforderlich. Alles bleibt auf deinem Gerät.',
+        body: 'Logikrätsel. Keine Werbung, keine Konten, kein Internet erforderlich. Alles bleibt auf deinem Gerät.',
       },
       {
-        title: 'Zwei Rätseltypen enthalten',
+        title: 'Rätseltypen enthalten',
         body: '{games} — jeweils mit vier Schwierigkeitsgraden. Spiele in deinem eigenen Tempo.',
       },
       {
@@ -891,10 +891,10 @@ const FR_STRINGS: AppStrings = {
     slides: [
       {
         title: 'Bienvenue dans Quiet Grid',
-        body: "Deux puzzles logiques. Pas de publicités, pas de comptes, pas d'internet requis. Tout reste sur votre appareil.",
+        body: "Puzzles logiques. Pas de publicités, pas de comptes, pas d'internet requis. Tout reste sur votre appareil.",
       },
       {
-        title: 'Deux types de puzzles inclus',
+        title: 'Types de puzzles inclus',
         body: '{games} — chacun avec quatre niveaux de difficulté. Jouez à votre propre rythme.',
       },
       {
@@ -1148,10 +1148,10 @@ const ES_STRINGS: AppStrings = {
     slides: [
       {
         title: 'Bienvenido a Quiet Grid',
-        body: 'Dos puzzles lógicos. Sin anuncios, sin cuentas, sin internet requerido. Todo queda en tu dispositivo.',
+        body: 'Puzzles lógicos. Sin anuncios, sin cuentas, sin internet requerido. Todo queda en tu dispositivo.',
       },
       {
-        title: 'Dos tipos de puzzles incluidos',
+        title: 'Tipos de puzzles incluidos',
         body: '{games} — cada uno con cuatro niveles de dificultad. Juega a tu propio ritmo.',
       },
       {
