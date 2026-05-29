@@ -54,11 +54,13 @@ export default function PuzzleTutorialScaffold({
   return (
     <GestureDetector gesture={swipeGesture}>
       <View style={s.container}>
-        <View style={s.topBar}>
-          <View style={s.backButtonSlot}>
-            {backButton}
+        {backButton ? (
+          <View style={s.topBar}>
+            <View style={s.backButtonSlot}>
+              {backButton}
+            </View>
           </View>
-        </View>
+        ) : null}
 
         <View style={s.lessonRegion}>
           <Text style={s.title}>{title}</Text>
@@ -92,12 +94,14 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.background,
-    padding: 20,
-    gap: 16,
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 16,
+    gap: 12,
   },
   topBar: {
     width: '100%',
-    minHeight: 40,
+    minHeight: 32,
     justifyContent: 'center',
   },
   backButtonSlot: {
@@ -108,8 +112,8 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    gap: 18,
-    paddingTop: 8,
+    gap: 14,
+    paddingTop: 0,
   },
   title: {
     fontSize: 20,
@@ -154,7 +158,6 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   },
   controlsRegion: {
     flexShrink: 0,
-    gap: 14,
-    paddingBottom: 8,
+    gap: 12,
   },
 });

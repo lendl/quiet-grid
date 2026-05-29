@@ -34,9 +34,11 @@ Learning Center is the umbrella teaching system for a game. It includes all thre
 - Tutorial should explain how the user can interact with the puzzle.
 - Tutorial should explain the real live-play control mapping, not only tutorial-specific controls.
 - Tutorial should explicitly call out when tutorial controls differ from live puzzle controls.
+- Tutorial chrome should stay minimal by default: no skip button and no extra live-play info box unless user explicitly approves them.
 - Tutorial should include explicit decision checkpoints in key lessons (for example, asking filled vs empty) instead of only passive "continue" steps.
 - Tutorial should use a valid example grid for each lesson when tutorial exists.
 - Tutorial example grids should be valid puzzle states that obey the game rules and the lesson claim being taught.
+- Tutorial decision checkpoints must not reveal the answer before the player responds. Highlighting the target cell is fine; showing the answer value or other hidden resolution is not.
 - Tutorial should not compare difficulty levels.
 - Tutorial is required for game integrations in this repository unless user explicitly approves an exception.
 - Next move should explain one valid move from the current puzzle state.
@@ -44,13 +46,18 @@ Learning Center is the umbrella teaching system for a game. It includes all thre
 - Next move should support the player, not replace the player’s agency.
 - Next move must check invalid-board state first and report that the board must be corrected before suggesting any move.
 - Next move should teach canonical progress first and should not require optional support actions when canonical progress exists.
+- Next move should end in one actionable canonical move. Elimination-only reasoning may support that move, but should not be exposed as the final player-facing move unless eliminations are explicitly approved as canonical actions.
+- Next move should select or focus the target cell when that helps the player apply the move in live play.
 - Analyzer mode depends on game type:
   - engine-backed games: teach an approved solve path built from the same canonical move system used for classification
   - non-engine games: analyze loss-state decisions
 - Analyzer should explain decisions in a way that helps the player improve future runs, not just describe the past state.
 - Analyzer is not complete until analysis logic and analyzer UI are both wired, not only localized copy.
 - Analyzer may group multiple independent proofs for the same canonical move into one teaching step when they all support the same target action.
+- Analyzer for engine-backed games should teach from the puzzle state itself, not from optional support-action history such as notes, unless those support actions are explicitly part of the approved move language.
+- Analyzer for engine-backed games should prefer placement-first teaching steps. Internal elimination logic may be used as evidence, but the player-facing step should still resolve to one approved target action unless eliminations are explicitly canonical.
 - Teach canonical moves first. Support actions are optional style tools.
+- If a game includes support actions, define whether tutorial may mention them and whether next move/analyzer must ignore them when canonical progress exists.
 - Explain mistake policy only when it changes how the player should play.
 - Do not use hidden brute-force or full-solution search for player-facing next-move or analyzer explanations unless that proof model is explicitly part of the approved move language.
 - If an engine-backed game allows hypothetical branches, teach that branch model explicitly and keep branch resolution inside approved move logic.
@@ -60,6 +67,7 @@ Learning Center is the umbrella teaching system for a game. It includes all thre
 - Next move suggests one approved canonical move from current puzzle state.
 - If puzzle state is invalid, next move does not suggest a move and must state board must be corrected first.
 - Next move prefers canonical progress and does not require optional support actions unless explicitly part of approved move system.
+- Next move does not expose elimination-only proof steps as standalone moves unless eliminations are explicitly approved canonical actions.
 - Next move should be deterministic for same stored puzzle/session state and explanation context.
 
 ## File map
@@ -77,6 +85,9 @@ Learning Center is the umbrella teaching system for a game. It includes all thre
 - Do not hardcode game-facing copy in screens or components.
 - Do not use invalid or rule-breaking tutorial boards.
 - Do not use tutorial-only controls without explaining how they map to real play.
+- Do not leak tutorial answers before decision checkpoints resolve.
 - Do not let tutorial drift into difficulty comparison.
 - Do not invent analyzer logic separate from the game’s move logic.
 - Do not let engine-backed teaching explain a move with evidence the player could never derive from the approved move set.
+- Do not let support actions silently become required for player-facing next move or analyzer behavior.
+- Do not let engine difficulty labels depend on fallback proof families that are not actually implemented and teachable in next move/analyzer.

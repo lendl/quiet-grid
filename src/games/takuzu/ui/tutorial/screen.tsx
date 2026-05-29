@@ -60,9 +60,6 @@ export default function TutorialScreen({ navigation, route }: Props) {
   }, [clearAdvanceTimeout]);
 
   const isLastLesson = lessonIndex === lessons.length - 1;
-  const tutorialActionLabel = isLastLesson
-    ? takuzuStrings.play.tutorial.exitLabel.end
-    : takuzuStrings.play.tutorial.exitLabel.skip;
 
   const exitTutorial = useCallback(async () => {
     clearAdvanceTimeout();
@@ -223,19 +220,6 @@ export default function TutorialScreen({ navigation, route }: Props) {
 
   return (
     <PuzzleTutorialScaffold
-      backButton={(
-        <TouchableOpacity
-          accessibilityRole="button"
-          accessibilityLabel={tutorialActionLabel}
-          activeOpacity={0.82}
-          onPress={() => {
-            void exitTutorial();
-          }}
-          style={s.exitButton}
-        >
-          <Text style={s.exitButtonText}>{tutorialActionLabel}</Text>
-        </TouchableOpacity>
-      )}
       title={lesson.title}
       body={lesson.body}
       lessonCount={lessons.length}
@@ -260,17 +244,6 @@ export default function TutorialScreen({ navigation, route }: Props) {
 }
 
 const makeStyles = (theme: Theme) => StyleSheet.create({
-  exitButton: {
-    alignSelf: 'flex-start',
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    borderRadius: 10,
-  },
-  exitButtonText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: theme.textSecondary,
-  },
   feedbackStack: {
     gap: 10,
   },

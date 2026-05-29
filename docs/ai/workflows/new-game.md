@@ -8,8 +8,13 @@
 2. If AI already knows the puzzle, propose defaults but require user approval.
 3. Capture explicit user-approved UX contract before coding (coding is blocked until approved):
    - tutorial required and expected scope
-   - interaction model (single-cell cycle vs explicit mode toggle)
+   - interaction model (single-cell cycle vs explicit mode toggle vs selected-cell + input bar)
+   - support-action model (for example notes, flags, marks) and whether those actions are optional or required
+   - whether tutorial may mention support actions
+   - whether next move/analyzer must ignore support actions when canonical progress exists
    - helper behavior on invalid boards
+   - whether next move should focus/select target cell in live play
+   - tutorial chrome expectations (skip button, extra live-play info box, compact vs spacious layout)
    - game-specific board conventions (for example, Nonogram 5-cell separators)
 4. Define canonical moves.
 5. Define support actions separately.
@@ -43,6 +48,7 @@
 16. Make the proof model explicit:
    - whether hypothetical branching is allowed
    - whether engine-backed teaching must stay strictly inside approved human/canonical moves
+   - whether elimination-only reasoning may appear as a standalone player-facing move or only as evidence for an actionable move
 17. Choose analyzer mode:
    - engine-backed: approved move-path teaching, not hidden full-solution proof
    - non-engine: loss-state reflection
@@ -56,7 +62,14 @@
    - bulk generation succeeds
    - reclassification returns expected buckets
    - catalog ids/dedupe/parse round-trip works
+   - no fallback difficulty/proof labels remain for techniques that are not actually implemented and teachable
 22. Wire registries and persistence.
 23. Keep all game-facing copy in `content/i18n/`.
-24. Validate with lint and typechecks.
-25. Review against the new-game checklist.
+24. Run manual Learning Center acceptance checks before final validation:
+   - tutorial decision checkpoints do not reveal the answer before response
+   - next move returns one actionable canonical move
+   - next move does not require support actions when canonical progress exists
+   - analyzer teaches from puzzle state, not support-action history, unless explicitly approved
+   - tutorial/next move/analyzer use the approved support-action policy consistently
+25. Validate with lint and typechecks.
+26. Review against the new-game checklist.

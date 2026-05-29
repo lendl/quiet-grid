@@ -1,4 +1,5 @@
 import type { PuzzleDifficulty } from '../../shared/types';
+import { pickRandomPuzzleForDifficulty } from '../../shared/randomPuzzleSelection';
 import type { TakuzuSolutionGrid, CellValue, Grid, Puzzle, PuzzleSize } from './types';
 import allPuzzles from '../puzzles/all';
 
@@ -17,9 +18,8 @@ export const PUZZLES: PuzzleMap = buildPuzzleMap(allPuzzles);
 
 /** Returns a random puzzle for the given difficulty, or null if none available. */
 export function getRandomPuzzle(difficulty: PuzzleDifficulty): Puzzle | null {
-  const pool = PUZZLES[difficulty] ?? [];
-  if (pool.length === 0) return null;
-  const puzzle = pool[Math.floor(Math.random() * pool.length)];
+  const puzzle = pickRandomPuzzleForDifficulty('takuzu', PUZZLES[difficulty] ?? [], difficulty);
+  if (!puzzle) return null;
   return {
     ...puzzle,
     rows: puzzle.rows ?? puzzle.size,
@@ -74,5 +74,4 @@ export function decodePuzzle(solution: string, mask: string, size: number): Grid
     }),
   );
 }
-
 

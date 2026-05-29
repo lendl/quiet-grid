@@ -3,6 +3,7 @@ import type {
   TakuzuActiveSession,
   MinesweeperActiveSession,
   NonogramActiveSession,
+  SudokuActiveSession,
 } from '../shell/activeSessionTypes';
 import type { Difficulty } from '../types';
 import { isGameId } from '../../games/shared/types';
@@ -16,6 +17,8 @@ import type { PersistedSessionEnvelope } from '../shell/types';
 type LineKey = TakuzuActiveSession['penalizedLineKeys'][number];
 type MinesweeperPuzzle = MinesweeperActiveSession['puzzle'];
 type NonogramPuzzle = NonogramActiveSession['puzzle'];
+type SudokuPuzzle = SudokuActiveSession['puzzle'];
+type SudokuUnitKey = SudokuActiveSession['validatedUnitKeys'][number];
 
 const HEX_PATTERN = /^[\da-f]+$/i;
 
@@ -65,12 +68,60 @@ function isFiniteNonNegativeNumber(value: unknown): value is number {
   return typeof value === 'number' && Number.isFinite(value) && value >= 0;
 }
 
+function isSudokuDigit(value: unknown): value is 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 {
+  return Number.isInteger(value) && (value as number) >= 1 && (value as number) <= 9;
+}
+
+function isSudokuCellValue(value: unknown): value is SudokuActiveSession['board'][number][number] {
+  return value === null || isSudokuDigit(value);
+}
+
+function isSudokuBoard(value: unknown, rows: number, cols: number): boolean {
+  return Array.isArray(value)
+    && value.length === rows
+    && value.every((row) => Array.isArray(row)
+      && row.length === cols
+      && row.every((cell) => isSudokuCellValue(cell)));
+}
+
+function isSudokuSolution(value: unknown, rows: number, cols: number): boolean {
+  return Array.isArray(value)
+    && value.length === rows
+    && value.every((row) => Array.isArray(row)
+      && row.length === cols
+      && row.every((cell) => isSudokuDigit(cell)));
+}
+
+function isSudokuNotes(value: unknown, rows: number, cols: number): boolean {
+  return Array.isArray(value)
+    && value.length === rows
+    && value.every((row) => Array.isArray(row)
+      && row.length === cols
+      && row.every((cellNotes) => Array.isArray(cellNotes)
+        && cellNotes.length === 9
+        && cellNotes.every((note) => typeof note === 'boolean')));
+}
+
+function isSudokuInputMode(value: unknown): value is SudokuActiveSession['inputMode'] {
+  return value === 'digit' || value === 'notes';
+}
+
+function isSudokuUnitKey(value: unknown): value is SudokuUnitKey {
+  return typeof value === 'string' && /^[rcb]\d+$/.test(value);
+}
+
+function isSudokuUnitKeyArray(value: unknown): value is SudokuUnitKey[] {
+  return Array.isArray(value) && value.every((unitKey) => isSudokuUnitKey(unitKey));
+}
+
 function isHexPuzzleData(value: unknown, size: number): value is string {
   const encodedLength = Math.ceil((size * size) / 4);
   return typeof value === 'string' && value.length === encodedLength && HEX_PATTERN.test(value);
 }
 
-function getStoredGameId(value: Record<string, unknown>): 'takuzu' | 'minesweeper' | 'nonogram' | null {
+function getStoredGameId(
+  value: Record<string, unknown>,
+): 'takuzu' | 'minesweeper' | 'nonogram' | 'sudoku' | null {
   if (value.puzzleTypeId === 'binary') {
     return 'takuzu';
   }
@@ -239,12 +290,59 @@ function isNonogramActiveSession(value: unknown): value is NonogramActiveSession
     && isFiniteNonNegativeNumber(obj.elapsedSeconds);
 }
 
+function isSudokuPuzzle(value: unknown): value is SudokuPuzzle {
+  if (!value || typeof value !== 'object') return false;
+  const puzzle = value as Record<string, unknown>;
+  const rows = puzzle.rows;
+  const cols = puzzle.cols;
+  return typeof puzzle.id === 'string'
+    && rows === 9
+    && cols === 9
+    && isDifficulty(puzzle.difficulty)
+    && isSudokuBoard(puzzle.givens, rows, cols)
+    && isSudokuSolution(puzzle.solution, rows, cols);
+}
+
+function isSudokuActiveSession(value: unknown): value is SudokuActiveSession {
+  if (!value || typeof value !== 'object') return false;
+  const obj = value as Record<string, unknown>;
+  if (getStoredGameId(obj) !== 'sudoku' || !isSudokuPuzzle(obj.puzzle)) {
+    return false;
+  }
+
+  const puzzle = obj.puzzle;
+
+  return isSudokuBoard(obj.board, puzzle.rows, puzzle.cols)
+    && isSudokuNotes(obj.notes, puzzle.rows, puzzle.cols)
+    && isBooleanMatrix(obj.finishedCells, puzzle.rows, puzzle.cols)
+    && isSudokuInputMode(obj.inputMode)
+    && (obj.selectedNoteDigit === null || isSudokuDigit(obj.selectedNoteDigit))
+    && isFiniteNonNegativeNumber(obj.accuracyDrops)
+    && isSudokuUnitKeyArray(obj.validatedUnitKeys)
+    && isSudokuUnitKeyArray(obj.penalizedUnitKeys)
+    && isFiniteNonNegativeNumber(obj.elapsedSeconds);
+}
+
+function isLegacySudokuActiveSession(value: unknown): boolean {
+  if (!value || typeof value !== 'object') return false;
+  const obj = value as Record<string, unknown>;
+  if (getStoredGameId(obj) !== 'sudoku' || !isSudokuPuzzle(obj.puzzle)) {
+    return false;
+  }
+
+  const puzzle = obj.puzzle;
+
+  return isSudokuBoard(obj.board, puzzle.rows, puzzle.cols)
+    && isFiniteNonNegativeNumber(obj.elapsedSeconds);
+}
+
 function isActiveSession(value: unknown): value is ActiveSession {
   if (!value || typeof value !== 'object') return false;
   const activeSession = value as Record<string, unknown>;
   if (getStoredGameId(activeSession) === 'takuzu') return isTakuzuActiveSession(activeSession);
   if (getStoredGameId(activeSession) === 'minesweeper') return isMinesweeperActiveSession(activeSession);
   if (getStoredGameId(activeSession) === 'nonogram') return isNonogramActiveSession(activeSession);
+  if (getStoredGameId(activeSession) === 'sudoku') return isSudokuActiveSession(activeSession);
   return false;
 }
 
@@ -300,6 +398,45 @@ function normalizeNonogramActiveSession(raw: NonogramActiveSession): NonogramAct
   };
 }
 
+function normalizeSudokuActiveSession(raw: SudokuActiveSession): SudokuActiveSession {
+  return {
+    ...raw,
+    gameId: 'sudoku',
+    puzzle: {
+      ...raw.puzzle,
+      givens: raw.puzzle.givens.map((row) => [...row]),
+      solution: raw.puzzle.solution.map((row) => [...row]),
+    },
+    board: raw.board.map((row) => [...row]),
+    notes: raw.notes.map((row) => row.map((cellNotes) => [...cellNotes])),
+    finishedCells: raw.finishedCells.map((row) => [...row]),
+    accuracyDrops: raw.accuracyDrops,
+    validatedUnitKeys: [...raw.validatedUnitKeys],
+    penalizedUnitKeys: [...raw.penalizedUnitKeys],
+  };
+}
+
+function normalizeLegacySudokuActiveSession(raw: Record<string, unknown>): SudokuActiveSession {
+  const puzzle = raw.puzzle as SudokuActiveSession['puzzle'];
+  return {
+    gameId: 'sudoku',
+    puzzle: {
+      ...puzzle,
+      givens: puzzle.givens.map((row) => [...row]),
+      solution: puzzle.solution.map((row) => [...row]),
+    },
+    board: (raw.board as SudokuActiveSession['board']).map((row) => [...row]),
+    notes: Array.from({ length: puzzle.rows }, () => Array.from({ length: puzzle.cols }, () => Array.from({ length: 9 }, () => false))),
+    finishedCells: makeEmptyBooleanGrid(puzzle.rows),
+    inputMode: 'digit',
+    selectedNoteDigit: null,
+    elapsedSeconds: raw.elapsedSeconds as number,
+    accuracyDrops: 0,
+    validatedUnitKeys: [],
+    penalizedUnitKeys: [],
+  };
+}
+
 export function makeEmptyBooleanGrid(size: number): boolean[][] {
   return Array.from({ length: size }, (): boolean[] => Array.from({ length: size }, () => false));
 }
@@ -321,10 +458,16 @@ export async function loadActiveSessionState(): Promise<ActiveSession | null> {
       if (getStoredGameId(parsedSession) === 'nonogram') {
         return normalizeNonogramActiveSession(parsed as NonogramActiveSession);
       }
+      if (getStoredGameId(parsedSession) === 'sudoku') {
+        return normalizeSudokuActiveSession(parsed as SudokuActiveSession);
+      }
       return normalizeMinesweeperActiveSession(parsed as MinesweeperActiveSession);
     }
     if (isLegacyTakuzuActiveSession(parsed)) {
       return normalizeLegacyTakuzuSession(parsed as Record<string, unknown>);
+    }
+    if (isLegacySudokuActiveSession(parsed)) {
+      return normalizeLegacySudokuActiveSession(parsed as Record<string, unknown>);
     }
   } catch {
     // Invalid JSON or shape. Drop below and clear corrupted save.
@@ -339,7 +482,9 @@ export async function saveActiveSessionState(activeSession: ActiveSession): Prom
     ? normalizeTakuzuActiveSession(activeSession)
     : activeSession.gameId === 'nonogram'
       ? normalizeNonogramActiveSession(activeSession)
-      : normalizeMinesweeperActiveSession(activeSession);
+      : activeSession.gameId === 'sudoku'
+        ? normalizeSudokuActiveSession(activeSession)
+        : normalizeMinesweeperActiveSession(activeSession);
 
   await saveStoredActiveSession({
     gameId: normalizedActiveSession.gameId,

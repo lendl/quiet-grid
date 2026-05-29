@@ -8,13 +8,13 @@ export interface NextMoveHelperState<THint> {
   reset: () => void;
 }
 
-export interface NextMoveHelperActions<TSession> {
-  toggle: (session: TSession | null | undefined) => void;
+export interface NextMoveHelperActions<TSession, THint> {
+  toggle: (session: TSession | null | undefined) => THint | null;
 }
 
 export function useNextMoveHelper<TSession, THint>(
   getHint: NextMoveHintResolver<TSession, THint>,
-): NextMoveHelperState<THint> & NextMoveHelperActions<TSession> {
+): NextMoveHelperState<THint> & NextMoveHelperActions<TSession, THint> {
   const [hint, setHint] = useState<THint | null>(null);
   const [visible, setVisible] = useState(false);
 
@@ -26,21 +26,22 @@ export function useNextMoveHelper<TSession, THint>(
   const toggle = useCallback((session: TSession | null | undefined) => {
     if (visible) {
       reset();
-      return;
+      return null;
     }
 
     if (!session) {
-      return;
+      return null;
     }
 
     const nextHint = getHint(session);
     if (!nextHint) {
       reset();
-      return;
+      return null;
     }
 
     setHint(nextHint);
     setVisible(true);
+    return nextHint;
   }, [getHint, reset, visible]);
 
   return useMemo(() => ({

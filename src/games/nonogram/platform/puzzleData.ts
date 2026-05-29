@@ -9,6 +9,7 @@ import {
 } from '../engine/solver';
 import type { NonogramPuzzle, NonogramSession } from '../types';
 import { createEmptyNonogramBoard } from '../types';
+import { pickRandomPuzzleForDifficulty } from '../../shared/randomPuzzleSelection';
 
 const BUILT_IN_BASE_SPECS = [
   { rows: 5, cols: 5, difficulties: ['easy', 'medium', 'hard', 'expert'] },
@@ -102,13 +103,7 @@ export function getAllNonogramEntries(): NonogramCatalogEntry[] {
 }
 
 export function getRandomNonogramEntry(difficulty: NonogramCatalogEntry['difficulty']): NonogramCatalogEntry | null {
-  const matches = getAllNonogramEntries().filter((entry) => entry.difficulty === difficulty);
-  const pool = matches.length > 0 ? matches : getAllNonogramEntries();
-  if (pool.length === 0) {
-    return null;
-  }
-
-  return pool[Math.floor(Math.random() * pool.length)];
+  return pickRandomPuzzleForDifficulty('nonogram', getAllNonogramEntries(), difficulty);
 }
 
 export function buildNonogramPuzzle(entry: NonogramCatalogEntry): NonogramPuzzle {

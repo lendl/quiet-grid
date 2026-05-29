@@ -1,12 +1,14 @@
 import { takuzuDefinition } from '../../../games/takuzu/definition';
 import { minesweeperDefinition } from '../../../games/minesweeper/definition';
 import { nonogramDefinition } from '../../../games/nonogram/definition';
+import { sudokuDefinition } from '../../../games/sudoku/definition';
 import type { GameDefinition } from './gameDefinition';
 
 export const gameRegistry = [
   takuzuDefinition,
   minesweeperDefinition,
   nonogramDefinition,
+  sudokuDefinition,
 ] as const satisfies readonly GameDefinition[];
 
 export function getGameDefinition(id: string): GameDefinition {
