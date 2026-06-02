@@ -8,8 +8,10 @@ import type { Theme } from '../theme';
 import { getThemeOptions } from '../theme/options';
 import { withAlpha } from '../utils/color';
 import {
+  loadBetaGamesEnabled,
   loadShowTimerInPlay,
   loadTutorialsEnabled,
+  saveBetaGamesEnabled,
   saveShowTimerInPlay,
   saveTutorialsEnabled,
 } from '../utils/settingsStorage';
@@ -68,6 +70,7 @@ export default function SettingsScreen() {
   const { theme, themeMode, setThemeMode } = useTheme();
   const [showTimerInPlay, setShowTimerInPlay] = React.useState(true);
   const [tutorialsEnabled, setTutorialsEnabled] = React.useState(true);
+  const [betaGamesEnabled, setBetaGamesEnabled] = React.useState(false);
   const [themeDropdownOpen, setThemeDropdownOpen] = React.useState(false);
   const [languageDropdownOpen, setLanguageDropdownOpen] = React.useState(false);
   const s = useMemo(() => makeStyles(theme), [theme]);
@@ -78,10 +81,12 @@ export default function SettingsScreen() {
     void Promise.all([
       loadTutorialsEnabled(),
       loadShowTimerInPlay(),
-    ]).then(([tutorials, showTimer]) => {
+      loadBetaGamesEnabled(),
+    ]).then(([tutorials, showTimer, betaGames]) => {
       if (mounted) {
         setTutorialsEnabled(tutorials);
         setShowTimerInPlay(showTimer);
+        setBetaGamesEnabled(betaGames);
       }
     });
 
@@ -159,7 +164,18 @@ export default function SettingsScreen() {
         void saveTutorialsEnabled(next);
       },
     },
-  ], [tutorialsEnabled, strings]);
+    {
+      key: 'betaGames',
+      label: strings.settings.betaGamesLabel,
+      detail: strings.settings.betaGamesDetail,
+      value: betaGamesEnabled ? strings.common.on : strings.common.off,
+      onPress: () => {
+        const next = !betaGamesEnabled;
+        setBetaGamesEnabled(next);
+        void saveBetaGamesEnabled(next);
+      },
+    },
+  ], [tutorialsEnabled, betaGamesEnabled, strings]);
   return (
     <GlobalPageShell activeTab="Settings">
       <ScrollView contentContainerStyle={s.scroll}>

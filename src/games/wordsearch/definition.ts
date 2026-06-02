@@ -15,6 +15,7 @@ export const wordSearchDefinition: GameDefinition<WordSearchPlaySession> = {
     return getWordSearchStrings().shortTitle;
   },
   emoji: '🔤',
+  beta: true,
   get tagline() {
     return getWordSearchStrings().tagline;
   },

@@ -10,6 +10,7 @@ export interface GameDefinition<TSession = unknown> {
   shortTitle: string;
   emoji: string;
   tagline: string;
+  beta?: boolean;
   supports: {
     tutorial: boolean;
     learning: boolean;

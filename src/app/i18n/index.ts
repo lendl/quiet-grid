@@ -99,6 +99,8 @@ const EN_STRINGS = {
   },
   games: {
     subtitle: 'Choose a puzzle and keep your active run close.',
+    comingSoon: 'Coming Soon',
+    betaDisclaimer: 'These games are still in testing and may have rough edges.',
   },
   home: {
     openRepo: 'Open the Quiet Grid GitHub repository',
@@ -157,6 +159,8 @@ const EN_STRINGS = {
     showTimerInPlayDetail: 'Shows the elapsed timer while a puzzle is in progress.',
     tutorialsLabel: 'Show first-time tutorials',
     tutorialsDetail: 'Opens each puzzle tutorial the first time you choose that puzzle type.',
+    betaGamesLabel: 'Enable beta games',
+    betaGamesDetail: 'Unlocks games that are still in testing. These may have rough edges.',
   },
   puzzlePicker: {
     heading: 'Choose puzzle type',
@@ -356,6 +360,8 @@ const NL_STRINGS: AppStrings = {
   },
   games: {
     subtitle: 'Kies een puzzel en houd je actieve spel dichtbij.',
+    comingSoon: 'Binnenkort beschikbaar',
+    betaDisclaimer: 'Deze spellen zijn nog in ontwikkeling en kunnen problemen bevatten.',
   },
   home: {
     openRepo: 'Open de Quiet Grid GitHub-repository',
@@ -414,6 +420,8 @@ const NL_STRINGS: AppStrings = {
     showTimerInPlayDetail: 'Toont de verstreken tijd terwijl een puzzel bezig is.',
     tutorialsLabel: 'Toon tutorials voor de eerste keer',
     tutorialsDetail: 'Opent de tutorial van elk puzzeltype de eerste keer dat je het kiest.',
+    betaGamesLabel: 'Bètaspellen inschakelen',
+    betaGamesDetail: 'Ontgrendelt spellen die nog in ontwikkeling zijn. Deze kunnen problemen bevatten.',
   },
   puzzlePicker: {
     heading: 'Kies puzzeltype',
@@ -613,6 +621,8 @@ const DE_STRINGS: AppStrings = {
   },
   games: {
     subtitle: 'Wähle ein Rätsel und behalte dein aktives Spiel im Blick.',
+    comingSoon: 'Demnächst verfügbar',
+    betaDisclaimer: 'Diese Spiele befinden sich noch in der Entwicklung und können Fehler enthalten.',
   },
   home: {
     openRepo: 'Quiet Grid GitHub-Repository öffnen',
@@ -671,6 +681,8 @@ const DE_STRINGS: AppStrings = {
     showTimerInPlayDetail: 'Zeigt den verstrichenen Timer während eines laufenden Rätsels an.',
     tutorialsLabel: 'Tutorials beim ersten Mal anzeigen',
     tutorialsDetail: 'Öffnet das Tutorial jedes Rätseltyps beim ersten Mal.',
+    betaGamesLabel: 'Beta-Spiele aktivieren',
+    betaGamesDetail: 'Schaltet Spiele frei, die sich noch in der Entwicklung befinden. Diese können Fehler enthalten.',
   },
   puzzlePicker: {
     heading: 'Rätseltyp wählen',
@@ -870,6 +882,8 @@ const FR_STRINGS: AppStrings = {
   },
   games: {
     subtitle: 'Choisissez un puzzle et gardez votre partie active à portée de main.',
+    comingSoon: 'Bientôt disponible',
+    betaDisclaimer: 'Ces jeux sont encore en cours de test et peuvent avoir des imperfections.',
   },
   home: {
     openRepo: 'Ouvrir le dépôt GitHub de Quiet Grid',
@@ -928,6 +942,8 @@ const FR_STRINGS: AppStrings = {
     showTimerInPlayDetail: 'Affiche la minuterie écoulée pendant un puzzle en cours.',
     tutorialsLabel: 'Afficher les tutoriels la première fois',
     tutorialsDetail: 'Ouvre le tutoriel de chaque type de puzzle la première fois que vous le choisissez.',
+    betaGamesLabel: 'Activer les jeux bêta',
+    betaGamesDetail: 'Déverrouille les jeux encore en cours de test. Ceux-ci peuvent avoir des imperfections.',
   },
   puzzlePicker: {
     heading: 'Choisir le type de puzzle',
@@ -1127,6 +1143,8 @@ const ES_STRINGS: AppStrings = {
   },
   games: {
     subtitle: 'Elige un puzzle y mantén tu partida activa cerca.',
+    comingSoon: 'Próximamente',
+    betaDisclaimer: 'Estos juegos aún están en pruebas y pueden tener problemas.',
   },
   home: {
     openRepo: 'Abrir el repositorio GitHub de Quiet Grid',
@@ -1185,6 +1203,8 @@ const ES_STRINGS: AppStrings = {
     showTimerInPlayDetail: 'Muestra el temporizador transcurrido mientras un puzzle está en progreso.',
     tutorialsLabel: 'Mostrar tutoriales la primera vez',
     tutorialsDetail: 'Abre el tutorial de cada tipo de puzzle la primera vez que lo elijas.',
+    betaGamesLabel: 'Activar juegos beta',
+    betaGamesDetail: 'Desbloquea juegos que aún están en pruebas. Estos pueden tener problemas.',
   },
   puzzlePicker: {
     heading: 'Elegir tipo de puzzle',

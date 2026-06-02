@@ -3,6 +3,7 @@ import type { GameId } from '../../games/shared/types';
 import { gameIds } from '../../games/shared/types';
 import { DEFAULT_THEME_MODE, isThemeMode } from '../theme';
 import {
+  BETA_GAMES_ENABLED_KEY,
   LANGUAGE_KEY,
   PUZZLE_TUTORIALS_SEEN_KEY,
   SHOW_TIMER_IN_PLAY_KEY,
@@ -151,6 +152,23 @@ export async function markPuzzleTutorialSeen(puzzleTypeId: GameId): Promise<void
     await AsyncStorage.setItem(PUZZLE_TUTORIALS_SEEN_KEY, JSON.stringify(seenTutorials));
   } catch {
     // Keep app stable if tutorial progress save fails.
+  }
+}
+
+export async function loadBetaGamesEnabled(): Promise<boolean> {
+  try {
+    const value = await AsyncStorage.getItem(BETA_GAMES_ENABLED_KEY);
+    return value === 'true';
+  } catch {
+    return false;
+  }
+}
+
+export async function saveBetaGamesEnabled(enabled: boolean): Promise<void> {
+  try {
+    await AsyncStorage.setItem(BETA_GAMES_ENABLED_KEY, String(enabled));
+  } catch {
+    // Keep app stable if beta games preference save fails.
   }
 }
 

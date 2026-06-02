@@ -12,7 +12,7 @@ import { gameRegistry } from '../shell/games/gameRegistry';
 import type { Theme } from '../theme';
 import { getActivePuzzleDisplay } from '../utils/activePuzzle';
 import { withAlpha } from '../utils/color';
-import { shouldAutoShowTutorial } from '../utils/settingsStorage';
+import { loadBetaGamesEnabled, shouldAutoShowTutorial } from '../utils/settingsStorage';
 
 type Props = BottomTabScreenProps<MainTabParamList, 'Games'>;
 
@@ -21,6 +21,7 @@ export default function GamesScreen(_: Props) {
   const { theme } = useTheme();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const s = useMemo(() => makeStyles(theme), [theme]);
+  const [betaGamesEnabled, setBetaGamesEnabled] = React.useState(false);
   const {
     activePuzzle,
     dialogVisible,
@@ -37,6 +38,7 @@ export default function GamesScreen(_: Props) {
 
   useFocusEffect(useCallback(() => {
     void syncActivePuzzle();
+    void loadBetaGamesEnabled().then(setBetaGamesEnabled);
     return undefined;
   }, [syncActivePuzzle]));
 
@@ -54,6 +56,9 @@ export default function GamesScreen(_: Props) {
       })();
     });
   }, [navigation, requestStart]);
+
+  const readyGames = useMemo(() => gameRegistry.filter((g) => !g.beta), []);
+  const betaGames = useMemo(() => gameRegistry.filter((g) => g.beta), []);
 
   return (
     <GlobalPageShell activeTab="Games">
@@ -76,16 +81,35 @@ export default function GamesScreen(_: Props) {
         ) : null}
 
         <View style={s.gameList}>
-          {gameRegistry.map((game) => (
+          {readyGames.map((game) => (
             <TouchableOpacity
               key={game.id}
               style={s.card}
               onPress={() => handleSelectGame(game.id)}
               activeOpacity={0.78}
             >
-              <Text style={s.cardEmoji}>{game.emoji}</Text>
               <View style={s.cardBody}>
                 <Text style={s.cardTitle}>{game.title}</Text>
+                <Text style={s.cardTagline}>{game.tagline}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <View style={s.comingSoonSection}>
+          <Text style={s.sectionLabel}>{strings.games.comingSoon}</Text>
+          {betaGamesEnabled ? (
+            <Text style={s.betaDisclaimer}>{strings.games.betaDisclaimer}</Text>
+          ) : null}
+          {betaGames.map((game) => (
+            <TouchableOpacity
+              key={game.id}
+              style={[s.card, betaGamesEnabled ? s.cardBeta : s.cardDisabled]}
+              onPress={betaGamesEnabled ? () => handleSelectGame(game.id) : undefined}
+              activeOpacity={betaGamesEnabled ? 0.78 : 1}
+            >
+              <View style={s.cardBody}>
+                <Text style={[s.cardTitle, !betaGamesEnabled && s.cardTitleDisabled]}>{game.title}</Text>
                 <Text style={s.cardTagline}>{game.tagline}</Text>
               </View>
             </TouchableOpacity>
@@ -115,7 +139,6 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   header: {
     gap: 8,
   },
-
   subtitle: {
     fontSize: 15,
     lineHeight: 22,
@@ -176,13 +199,16 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
     padding: 20,
     backgroundColor: theme.surface,
     borderRadius: 16,
   },
-  cardEmoji: {
-    fontSize: 32,
+  cardBeta: {
+    borderWidth: 1,
+    borderColor: withAlpha(theme.primaryLight, 0.3),
+  },
+  cardDisabled: {
+    opacity: 0.45,
   },
   cardBody: {
     flex: 1,
@@ -192,10 +218,29 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     fontWeight: '700',
     color: theme.text,
   },
+  cardTitleDisabled: {
+    color: theme.textSecondary,
+  },
   cardTagline: {
     marginTop: 4,
     fontSize: 13,
     color: theme.textSecondary,
     lineHeight: 19,
+  },
+  comingSoonSection: {
+    gap: 12,
+  },
+  sectionLabel: {
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+    color: theme.textMuted,
+  },
+  betaDisclaimer: {
+    fontSize: 13,
+    lineHeight: 19,
+    color: theme.textSecondary,
+    marginTop: -4,
   },
 });

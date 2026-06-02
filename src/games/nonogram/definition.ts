@@ -16,6 +16,7 @@ export const nonogramDefinition: GameDefinition<NonogramPlaySession> = {
     return getNonogramStrings().shortTitle;
   },
   emoji: '🧩',
+  beta: true,
   get tagline() {
     return getNonogramStrings().tagline;
   },

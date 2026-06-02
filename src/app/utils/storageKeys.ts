@@ -6,3 +6,4 @@ export const SHOW_TIMER_IN_PLAY_KEY = '@bp/showTimerInPlay';
 export const WELCOME_SEEN_KEY = '@bp/welcomeSeen';
 export const TUTORIALS_ENABLED_KEY = '@bp/tutorialsEnabled';
 export const PUZZLE_TUTORIALS_SEEN_KEY = '@bp/puzzleTutorialsSeen';
+export const BETA_GAMES_ENABLED_KEY = '@bp/betaGamesEnabled';
