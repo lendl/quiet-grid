@@ -1,6 +1,6 @@
 # Privacy Policy for Quiet Grid
 
-Last updated: 2026-05-05
+Last updated: 2026-06-02
 
 Quiet Grid is a fully offline Android puzzle app.
 
@@ -41,4 +41,4 @@ If Quiet Grid's privacy practices change in the future, this policy will be upda
 
 If you have privacy questions, contact:
 
-support.quietgrid@proton.me
+quiet-grid@outlook.com

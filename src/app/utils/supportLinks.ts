@@ -1,7 +1,7 @@
 import { Linking } from 'react-native';
 import { getCurrentLanguage } from '../i18n';
 
-export const SUPPORT_EMAIL = 'support.quietgrid@proton.me';
+export const SUPPORT_EMAIL = 'quiet-grid@outlook.com';
 export const REPO_URL = 'https://github.com/lendl/quiet-grid';
 export const ISSUES_URL = `${REPO_URL}/issues`;
 export const PLAY_STORE_APP_URL = 'market://details?id=com.quietgrid.app';
