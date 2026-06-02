@@ -9,7 +9,8 @@
     "lint": "eslint src App.tsx",
     "lint:fix": "eslint src App.tsx --fix",
     "typecheck:app": "tsc --noEmit",
-    "typecheck:engine": "tsc --noEmit --project src/engine/tsconfig.json"
+    "typecheck:engine": "tsc --noEmit --project src/engine/tsconfig.json",
+    "check:wordsearch": "ts-node --project src/engine/tsconfig.json src/engine/checkWordSearchCatalog.ts"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

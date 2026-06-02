@@ -147,6 +147,21 @@ export function usePuzzlePlayController(props: Props, menuOpen = false): PuzzleP
     sessionRef.current = result.session;
     setSession(result.session);
 
+    const solvedCompletionDelayMs = adapterInstance.solvedCompletionDelayMs ?? 0;
+    const hasSolvedState = Boolean(adapter.contract.getSolvedState({
+      session: result.session,
+      elapsedSeconds: getCurrentElapsedSeconds(),
+    }));
+    if (hasSolvedState && solvedCompletionDelayMs > 0) {
+      setRunning(false);
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve, solvedCompletionDelayMs);
+      });
+      if (!isFocused) {
+        return;
+      }
+    }
+
     const solved = await finishSolvedSession(result.session);
     if (solved) {
       return;
@@ -173,6 +188,8 @@ export function usePuzzlePlayController(props: Props, menuOpen = false): PuzzleP
     finalizedRef,
     finishLossSession,
     finishSolvedSession,
+    getCurrentElapsedSeconds,
+    isFocused,
     loadFreshSession,
     pauseTimer,
     sessionRef,

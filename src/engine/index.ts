@@ -3,14 +3,152 @@ import { openDb, hashDedupeKey, hasTried, recordTried } from './db';
 import type { EngineGameDefinition } from './gameDefinition';
 import { getEngineGameDefinition } from './gameRegistry';
 import {
-  appendGameCatalogEntry,
-  catalogContainsDedupeKey,
   readGameCatalog,
-  resetGameCatalog,
   writeGameCatalog,
 } from './writer';
+import { wordSearchSeedCorpus } from '../games/wordsearch/engine/seedCorpus';
+import type { WordSearchLanguage } from '../games/wordsearch/types';
 
 const MAX_ATTEMPTS = 100;
+const WORD_SEARCH_LANGUAGES = ['en', 'nl', 'de', 'fr', 'es'] as const;
+
+function hasLanguageField(value: unknown): value is { language: string } {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+  return 'language' in value && typeof (value as { language?: unknown }).language === 'string';
+}
+
+function buildLanguageCounts(
+  entries: readonly unknown[],
+): Map<(typeof WORD_SEARCH_LANGUAGES)[number], number> {
+  const counts = new Map<(typeof WORD_SEARCH_LANGUAGES)[number], number>(
+    WORD_SEARCH_LANGUAGES.map((language) => [language, 0]),
+  );
+
+  entries.forEach((entry) => {
+    if (!hasLanguageField(entry)) {
+      return;
+    }
+    const language = entry.language as (typeof WORD_SEARCH_LANGUAGES)[number];
+    if (!counts.has(language)) {
+      return;
+    }
+    counts.set(language, (counts.get(language) ?? 0) + 1);
+  });
+
+  return counts;
+}
+
+function hasLanguageThemeFields(value: unknown): value is { language: string; themeId: string } {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+  return typeof (value as { language?: unknown }).language === 'string'
+    && typeof (value as { themeId?: unknown }).themeId === 'string';
+}
+
+function buildThemeCounts(
+  entries: readonly unknown[],
+): Map<WordSearchLanguage, Map<string, number>> {
+  const counts = new Map<WordSearchLanguage, Map<string, number>>(
+    WORD_SEARCH_LANGUAGES.map((language) => [
+      language,
+      new Map<string, number>(
+        (wordSearchSeedCorpus[language] ?? []).map((theme) => [theme.themeId, 0]),
+      ),
+    ]),
+  );
+
+  entries.forEach((entry) => {
+    if (!hasLanguageThemeFields(entry)) {
+      return;
+    }
+    const language = entry.language as WordSearchLanguage;
+    const themeCounts = counts.get(language);
+    if (!themeCounts || !themeCounts.has(entry.themeId)) {
+      return;
+    }
+    themeCounts.set(entry.themeId, (themeCounts.get(entry.themeId) ?? 0) + 1);
+  });
+
+  return counts;
+}
+
+function getLeastRepresentedLanguages(
+  counts: ReadonlyMap<(typeof WORD_SEARCH_LANGUAGES)[number], number>,
+): Set<(typeof WORD_SEARCH_LANGUAGES)[number]> {
+  let minimum = Number.POSITIVE_INFINITY;
+  counts.forEach((value) => {
+    if (value < minimum) {
+      minimum = value;
+    }
+  });
+
+  return new Set(
+    [...counts.entries()]
+      .filter(([, value]) => value === minimum)
+      .map(([language]) => language),
+  );
+}
+
+function getMinimumLanguageCount(
+  counts: ReadonlyMap<(typeof WORD_SEARCH_LANGUAGES)[number], number>,
+): number {
+  let minimum = Number.POSITIVE_INFINITY;
+  counts.forEach((value) => {
+    if (value < minimum) {
+      minimum = value;
+    }
+  });
+  return minimum;
+}
+
+function getPreferredLanguagesForBalance(
+  counts: ReadonlyMap<(typeof WORD_SEARCH_LANGUAGES)[number], number>,
+  attempt: number,
+): (typeof WORD_SEARCH_LANGUAGES)[number][] {
+  const minimum = getMinimumLanguageCount(counts);
+  const allowedGap = Math.floor((attempt - 1) / 30);
+  const preferred = [...counts.entries()]
+    .filter(([, count]) => count <= minimum + allowedGap)
+    .sort((left, right) => left[1] - right[1])
+    .map(([language]) => language);
+
+  if (preferred.length > 0) {
+    return preferred;
+  }
+
+  return [...getLeastRepresentedLanguages(counts)];
+}
+
+function getPreferredThemesForBalance(
+  counts: ReadonlyMap<WordSearchLanguage, ReadonlyMap<string, number>>,
+  attempt: number,
+): Map<WordSearchLanguage, string[]> {
+  const allowedGap = Math.floor((attempt - 1) / 30);
+  const preferred = new Map<WordSearchLanguage, string[]>();
+
+  counts.forEach((themeCounts, language) => {
+    let minimum = Number.POSITIVE_INFINITY;
+    themeCounts.forEach((value) => {
+      if (value < minimum) {
+        minimum = value;
+      }
+    });
+
+    const selected = [...themeCounts.entries()]
+      .filter(([, value]) => value <= minimum + allowedGap)
+      .sort((left, right) => left[1] - right[1])
+      .map(([themeId]) => themeId);
+
+    if (selected.length > 0) {
+      preferred.set(language, selected);
+    }
+  });
+
+  return preferred;
+}
 
 function parseGameArg(): string {
   const gameIndex = process.argv.findIndex((arg) => arg === '--game');
@@ -49,6 +187,13 @@ function parseDifficultyArg(): PuzzleDifficulty | null {
     : null;
 }
 
+function parseLanguageArg(): string | null {
+  const languageIndex = process.argv.findIndex((arg) => arg === '--language');
+  const pairedArg = languageIndex >= 0 ? process.argv[languageIndex + 1] : null;
+  const inlineArg = process.argv.find((arg) => arg.startsWith('--language='))?.split('=')[1];
+  return inlineArg ?? pairedArg ?? null;
+}
+
 function formatSizeLabel(
   game: EngineGameDefinition,
   sizes: readonly number[],
@@ -78,6 +223,7 @@ function main(): void {
   const reclassifyExisting = process.argv.includes('--reclassify-existing');
   const forcedSize = parseSizeArg();
   const forcedDifficulty = parseDifficultyArg();
+  const forcedLanguage = parseLanguageArg();
   const allowedSizes = game.listAllowedSizes();
 
   if (forcedSize !== null && !allowedSizes.includes(forcedSize)) {
@@ -96,9 +242,31 @@ function main(): void {
     }
   }
 
+  if (forcedLanguage !== null) {
+    if (game.id !== 'wordsearch') {
+      throw new Error(`--language is only supported for game wordsearch. Received game ${game.id}.`);
+    }
+    if (!WORD_SEARCH_LANGUAGES.includes(forcedLanguage as (typeof WORD_SEARCH_LANGUAGES)[number])) {
+      throw new Error(
+        `Unsupported language "${forcedLanguage}" for wordsearch. Allowed: ${WORD_SEARCH_LANGUAGES.join(', ')}`,
+      );
+    }
+  }
+
   const selectedSizes = forcedSize === null ? [...allowedSizes] : [forcedSize];
   const db = openDb();
   let totalGenerated = 0;
+  let catalogEntries = readGameCatalog(game);
+  if (replaceCatalog) {
+    catalogEntries = [];
+  }
+  const catalogDedupeKeys = new Set(catalogEntries.map((entry) => game.getEntryDedupeKey(entry)));
+  let nextCatalogId = catalogEntries
+    .map((entry) => {
+      const suffix = entry.id.slice(game.entryIdPrefix.length);
+      return /^\d+$/.test(suffix) ? Number(suffix) : 0;
+    })
+    .reduce((max, current) => Math.max(max, current), 0);
 
   if (reclassifyExisting) {
     reclassifyExistingCatalog(game.id);
@@ -106,9 +274,12 @@ function main(): void {
     return;
   }
 
-  if (replaceCatalog) {
-    resetGameCatalog(game);
-  }
+  const languageCounts = game.id === 'wordsearch'
+    ? buildLanguageCounts(catalogEntries)
+    : null;
+  const themeCounts = game.id === 'wordsearch'
+    ? buildThemeCounts(catalogEntries)
+    : null;
 
   const sizeLabel = forcedSize === null
     ? formatSizeLabel(game, allowedSizes)
@@ -121,7 +292,22 @@ function main(): void {
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
       const puzzleSize = selectedSizes[Math.floor(Math.random() * selectedSizes.length)];
       const targetDifficulty = forcedDifficulty ?? game.pickTargetDifficulty(puzzleSize);
-      const generatedPuzzle = game.generateOne(puzzleSize, targetDifficulty);
+      const preferredLanguages = forcedLanguage
+        ? [forcedLanguage]
+        : (languageCounts ? getPreferredLanguagesForBalance(languageCounts, attempt) : undefined);
+      const preferredThemeIds = themeCounts
+        ? [...new Set(
+          [...getPreferredThemesForBalance(themeCounts, attempt).entries()]
+            .filter(([language]) => !forcedLanguage || language === forcedLanguage)
+            .flatMap(([, themeIds]) => themeIds),
+        )]
+        : undefined;
+      const generatedPuzzle = game.generateOne(puzzleSize, targetDifficulty, {
+        attempt,
+        requestedCount,
+        preferredLanguages,
+        preferredThemeIds,
+      });
       if (!generatedPuzzle) {
         console.log(`  [skip] ${game.title} generator hit backtrack limit (attempt ${attempt})`);
         continue;
@@ -132,16 +318,24 @@ function main(): void {
         continue;
       }
 
-      if (catalogContainsDedupeKey(game, generatedPuzzle.dedupeKey)) {
+      if (catalogDedupeKeys.has(generatedPuzzle.dedupeKey)) {
         recordTried(db, dedupeHash, puzzleSize, 'valid');
         continue;
       }
 
       recordTried(db, dedupeHash, puzzleSize, 'valid');
-      const id = appendGameCatalogEntry(game, generatedPuzzle.entry);
+      nextCatalogId += 1;
+      const id = `${game.entryIdPrefix}${nextCatalogId}`;
+      const catalogEntry = { ...generatedPuzzle.entry, id };
+      catalogEntries.push(catalogEntry);
+      catalogDedupeKeys.add(generatedPuzzle.dedupeKey);
 
       const scoreLabel = generatedPuzzle.score === undefined ? '' : `, score ${generatedPuzzle.score}`;
       console.log(`  ✓ Generated puzzle ${id} (${generatedPuzzle.label}${scoreLabel})`);
+      if (languageCounts && hasLanguageField(generatedPuzzle.entry)) {
+        const language = generatedPuzzle.entry.language as (typeof WORD_SEARCH_LANGUAGES)[number];
+        languageCounts.set(language, (languageCounts.get(language) ?? 0) + 1);
+      }
       generated = true;
       totalGenerated += 1;
       break;
@@ -155,6 +349,9 @@ function main(): void {
     }
   }
 
+  if (replaceCatalog || totalGenerated > 0) {
+    writeGameCatalog(game, catalogEntries);
+  }
   console.log(`\nDone. Generated ${totalGenerated} new ${game.title} puzzle(s).`);
   db.close();
 }

@@ -19,7 +19,7 @@ export interface PuzzleMetaItem {
 export interface PuzzleHeaderAction {
   key: string;
   accessibilityLabel: string;
-  iconName: 'bulb' | 'bulb-outline' | 'refresh-outline';
+  iconName: 'bulb' | 'bulb-outline' | 'refresh-outline' | 'key' | 'key-outline';
   active?: boolean;
   onPress: () => void;
 }
@@ -94,6 +94,7 @@ export interface PuzzlePlayAdapterState {
 }
 
 export interface PuzzlePlayAdapterInstance<TSession = unknown, TAction = unknown, TEffect = unknown> {
+  solvedCompletionDelayMs?: number;
   onMissing?(this: void): void | Promise<void>;
   onFreshMissing?(this: void): void | Promise<void>;
   onBeforeLoad?(this: void): void;
@@ -104,6 +105,7 @@ export interface PuzzlePlayAdapterInstance<TSession = unknown, TAction = unknown
 }
 
 export interface PuzzlePlayAdapterShellInstance {
+  solvedCompletionDelayMs?: number;
   onMissing?(this: void): void | Promise<void>;
   onFreshMissing?(this: void): void | Promise<void>;
   onBeforeLoad?(this: void): void;
@@ -144,6 +146,7 @@ export function createPuzzlePlayAdapter<
       const instance = adapter.useAdapter(args);
 
       return {
+        solvedCompletionDelayMs: instance.solvedCompletionDelayMs,
         onMissing: instance.onMissing,
         onFreshMissing: instance.onFreshMissing,
         onBeforeLoad: instance.onBeforeLoad,

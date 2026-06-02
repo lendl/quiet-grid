@@ -2,6 +2,7 @@ import { takuzuDefinition } from '../../../games/takuzu/definition';
 import { minesweeperDefinition } from '../../../games/minesweeper/definition';
 import { nonogramDefinition } from '../../../games/nonogram/definition';
 import { sudokuDefinition } from '../../../games/sudoku/definition';
+import { wordSearchDefinition } from '../../../games/wordsearch/definition';
 import type { GameDefinition } from './gameDefinition';
 
 export const gameRegistry = [
@@ -9,6 +10,7 @@ export const gameRegistry = [
   minesweeperDefinition,
   nonogramDefinition,
   sudokuDefinition,
+  wordSearchDefinition,
 ] as const satisfies readonly GameDefinition[];
 
 export function getGameDefinition(id: string): GameDefinition {
@@ -19,3 +21,4 @@ export function getGameDefinition(id: string): GameDefinition {
 
   return match;
 }
+

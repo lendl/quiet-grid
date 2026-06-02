@@ -4,6 +4,7 @@ import type {
   MinesweeperActiveSession,
   NonogramActiveSession,
   SudokuActiveSession,
+  WordSearchActiveSession,
 } from '../shell/activeSessionTypes';
 import type { Difficulty } from '../types';
 import { isGameId } from '../../games/shared/types';
@@ -19,6 +20,7 @@ type MinesweeperPuzzle = MinesweeperActiveSession['puzzle'];
 type NonogramPuzzle = NonogramActiveSession['puzzle'];
 type SudokuPuzzle = SudokuActiveSession['puzzle'];
 type SudokuUnitKey = SudokuActiveSession['validatedUnitKeys'][number];
+type WordSearchCellRef = WordSearchActiveSession['puzzle']['words'][number]['positions'][number];
 
 const HEX_PATTERN = /^[\da-f]+$/i;
 
@@ -121,7 +123,7 @@ function isHexPuzzleData(value: unknown, size: number): value is string {
 
 function getStoredGameId(
   value: Record<string, unknown>,
-): 'takuzu' | 'minesweeper' | 'nonogram' | 'sudoku' | null {
+): 'takuzu' | 'minesweeper' | 'nonogram' | 'sudoku' | 'wordsearch' | null {
   if (value.puzzleTypeId === 'binary') {
     return 'takuzu';
   }
@@ -336,6 +338,106 @@ function isLegacySudokuActiveSession(value: unknown): boolean {
     && isFiniteNonNegativeNumber(obj.elapsedSeconds);
 }
 
+
+function isWordSearchCellRef(value: unknown): value is WordSearchCellRef {
+  return Boolean(value && typeof value === 'object'
+    && Number.isInteger((value as { row?: unknown }).row)
+    && Number.isInteger((value as { col?: unknown }).col));
+}
+
+function isWordSearchGrid(value: unknown, rows: number, cols: number): boolean {
+  return Array.isArray(value)
+    && value.length === rows
+    && value.every((row) => Array.isArray(row)
+      && row.length === cols
+      && row.every((cell) => typeof cell === 'string' && cell.length === 1));
+}
+
+function isWordSearchPuzzle(value: unknown): value is WordSearchActiveSession['puzzle'] {
+  if (!value || typeof value !== 'object') return false;
+  const puzzle = value as Record<string, unknown>;
+  const rows = puzzle.rows;
+  const cols = puzzle.cols;
+
+  return typeof puzzle.id === 'string'
+    && (puzzle.language === 'en' || puzzle.language === 'nl' || puzzle.language === 'de' || puzzle.language === 'fr' || puzzle.language === 'es')
+    && typeof puzzle.themeId === 'string'
+    && typeof rows === 'number'
+    && Number.isInteger(rows)
+    && rows > 0
+    && typeof cols === 'number'
+    && Number.isInteger(cols)
+    && cols > 0
+    && isDifficulty(puzzle.difficulty)
+    && isWordSearchGrid(puzzle.grid, rows, cols)
+    && Array.isArray(puzzle.words)
+    && puzzle.words.every((word) => Boolean(word)
+      && typeof word === 'object'
+      && typeof (word as { id?: unknown }).id === 'string'
+      && typeof (word as { word?: unknown }).word === 'string'
+      && Array.isArray((word as { positions?: unknown }).positions)
+      && (word as { positions: unknown[] }).positions.every(isWordSearchCellRef))
+    && Boolean(puzzle.hiddenWord)
+    && typeof (puzzle.hiddenWord as { word?: unknown }).word === 'string'
+    && typeof (puzzle.hiddenWord as { clue?: unknown }).clue === 'string'
+    && Array.isArray((puzzle.hiddenWord as { positions?: unknown }).positions)
+    && (puzzle.hiddenWord as { positions: unknown[] }).positions.every(isWordSearchCellRef);
+}
+
+function isWordSearchSelection(value: unknown): boolean {
+  if (value === null) {
+    return true;
+  }
+
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+
+  const selection = value as Record<string, unknown>;
+  return isWordSearchCellRef(selection.start)
+    && isWordSearchCellRef(selection.end)
+    && Array.isArray(selection.path)
+    && selection.path.every(isWordSearchCellRef);
+}
+
+function isWordSearchActiveSession(value: unknown): value is WordSearchActiveSession {
+  if (!value || typeof value !== 'object') return false;
+  const obj = value as Record<string, unknown>;
+
+  return getStoredGameId(obj) === 'wordsearch'
+    && isWordSearchPuzzle(obj.puzzle)
+    && Array.isArray(obj.foundWordIds)
+    && obj.foundWordIds.every((id) => typeof id === 'string')
+    && isWordSearchSelection(obj.tempSelection)
+    && isFiniteNonNegativeNumber(obj.elapsedSeconds);
+}
+
+function normalizeWordSearchActiveSession(raw: WordSearchActiveSession): WordSearchActiveSession {
+  return {
+    ...raw,
+    gameId: 'wordsearch',
+    puzzle: {
+      ...raw.puzzle,
+      grid: raw.puzzle.grid.map((row) => [...row]),
+      words: raw.puzzle.words.map((word) => ({
+        ...word,
+        positions: word.positions.map((cell) => ({ ...cell })),
+      })),
+      hiddenWord: {
+        ...raw.puzzle.hiddenWord,
+        positions: raw.puzzle.hiddenWord.positions.map((cell) => ({ ...cell })),
+      },
+    },
+    foundWordIds: [...raw.foundWordIds],
+    tempSelection: raw.tempSelection
+      ? {
+          start: { ...raw.tempSelection.start },
+          end: { ...raw.tempSelection.end },
+          path: raw.tempSelection.path.map((cell) => ({ ...cell })),
+        }
+      : null,
+  };
+}
 function isActiveSession(value: unknown): value is ActiveSession {
   if (!value || typeof value !== 'object') return false;
   const activeSession = value as Record<string, unknown>;
@@ -343,6 +445,7 @@ function isActiveSession(value: unknown): value is ActiveSession {
   if (getStoredGameId(activeSession) === 'minesweeper') return isMinesweeperActiveSession(activeSession);
   if (getStoredGameId(activeSession) === 'nonogram') return isNonogramActiveSession(activeSession);
   if (getStoredGameId(activeSession) === 'sudoku') return isSudokuActiveSession(activeSession);
+  if (getStoredGameId(activeSession) === 'wordsearch') return isWordSearchActiveSession(activeSession);
   return false;
 }
 
@@ -461,6 +564,9 @@ export async function loadActiveSessionState(): Promise<ActiveSession | null> {
       if (getStoredGameId(parsedSession) === 'sudoku') {
         return normalizeSudokuActiveSession(parsed as SudokuActiveSession);
       }
+      if (getStoredGameId(parsedSession) === 'wordsearch') {
+        return normalizeWordSearchActiveSession(parsed as WordSearchActiveSession);
+      }
       return normalizeMinesweeperActiveSession(parsed as MinesweeperActiveSession);
     }
     if (isLegacyTakuzuActiveSession(parsed)) {
@@ -484,7 +590,9 @@ export async function saveActiveSessionState(activeSession: ActiveSession): Prom
       ? normalizeNonogramActiveSession(activeSession)
       : activeSession.gameId === 'sudoku'
         ? normalizeSudokuActiveSession(activeSession)
-        : normalizeMinesweeperActiveSession(activeSession);
+        : activeSession.gameId === 'wordsearch'
+          ? normalizeWordSearchActiveSession(activeSession)
+          : normalizeMinesweeperActiveSession(activeSession);
 
   await saveStoredActiveSession({
     gameId: normalizedActiveSession.gameId,
@@ -509,3 +617,4 @@ function isPersistedSessionEnvelope(value: unknown): value is PersistedSessionEn
     && 'payload' in envelope
   );
 }
+

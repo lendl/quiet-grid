@@ -13,6 +13,13 @@ export interface EngineGenerateResult<TEntry extends EngineCatalogEntry = Engine
   score?: number;
 }
 
+export interface EngineGenerateContext {
+  attempt: number;
+  requestedCount: number;
+  preferredLanguages?: readonly string[];
+  preferredThemeIds?: readonly string[];
+}
+
 export interface EngineGameDefinition<TEntry extends EngineCatalogEntry = EngineCatalogEntry> {
   id: GameId;
   title: string;
@@ -22,7 +29,11 @@ export interface EngineGameDefinition<TEntry extends EngineCatalogEntry = Engine
   listAllowedSizes(): readonly number[];
   listAllowedDifficulties(size: number): readonly PuzzleDifficulty[];
   pickTargetDifficulty(size: number): PuzzleDifficulty;
-  generateOne(size: number, targetDifficulty: PuzzleDifficulty): EngineGenerateResult<TEntry> | null;
+  generateOne(
+    size: number,
+    targetDifficulty: PuzzleDifficulty,
+    context?: EngineGenerateContext,
+  ): EngineGenerateResult<TEntry> | null;
   getEntryDedupeKey(entry: TEntry | Omit<TEntry, 'id'>): string;
   reclassifyEntries(entries: TEntry[]): TEntry[];
   describeSizeOptions?(size: number): readonly string[];

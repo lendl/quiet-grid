@@ -51,19 +51,28 @@ export default allEntries;
 `;
 }
 
-function parseEntryBody<TEntry>(body: string, options: CatalogFileOptions<TEntry>): TEntry[] {
-  const trimmedBody = body.trim();
-  if (trimmedBody.length === 0) {
-    return [];
+function readCatalogFromModule<TEntry>(
+  filePath: string,
+  options: CatalogFileOptions<TEntry>,
+): TEntry[] {
+  const resolvedPath = require.resolve(filePath);
+  delete require.cache[resolvedPath];
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const moduleExports = require(resolvedPath) as { default?: unknown };
+  const raw = moduleExports.default ?? moduleExports;
+
+  if (Array.isArray(raw)) {
+    return raw.map((entry) => options.normalizeParsedEntry(entry as TEntry));
   }
 
-  const normalizedJson = `[${trimmedBody}]`
-    .replace(/(\w+):/g, '"$1":')
-    .replace(/'/g, '"')
-    .replace(/,\s*}/g, '}')
-    .replace(/,\s*]/g, ']');
-  const entries = JSON.parse(normalizedJson) as TEntry[];
-  return entries.map((entry) => options.normalizeParsedEntry(entry));
+  if (raw && typeof raw === 'object') {
+    const arrays = Object.values(raw as Record<string, unknown>)
+      .filter((value): value is unknown[] => Array.isArray(value));
+    return arrays.flatMap((items) => items)
+      .map((entry) => options.normalizeParsedEntry(entry as TEntry));
+  }
+
+  throw new Error(`Unsupported catalog module shape at ${filePath}`);
 }
 
 export function readChunkedCatalog<TEntry>(
@@ -74,26 +83,7 @@ export function readChunkedCatalog<TEntry>(
     return [];
   }
 
-  const content = fs.readFileSync(filePath, 'utf-8');
-  const entryTypeName = escapeRegex(options.entryTypeName);
-  const chunkPattern = new RegExp(
-    `const chunk\\d+: ${entryTypeName}\\[] = \\[(?<body>[\\s\\S]*?)\\];`,
-    'g',
-  );
-  const chunkMatches = [...content.matchAll(chunkPattern)];
-  if (chunkMatches.length > 0) {
-    return chunkMatches.flatMap((match) => parseEntryBody(match.groups?.body ?? '', options));
-  }
-
-  const allEntriesPattern = new RegExp(
-    `const \\w+: ${entryTypeName}\\[] = \\[(?<body>[\\s\\S]*?)\\];`,
-  );
-  const allEntriesMatch = content.match(allEntriesPattern);
-  if (allEntriesMatch?.groups?.body !== undefined) {
-    return parseEntryBody(allEntriesMatch.groups.body, options);
-  }
-
-  throw new Error(`Cannot parse catalog at ${filePath}`);
+  return readCatalogFromModule(filePath, options);
 }
 
 export function writeChunkedCatalog<TEntry>(
@@ -103,13 +93,11 @@ export function writeChunkedCatalog<TEntry>(
 ): void {
   const content = buildChunkedCatalogContent(entries, options);
   const contentBuffer = Buffer.from(content, 'utf-8');
-  const fileExists = fs.existsSync(filePath);
-  const existingSize = fileExists ? fs.statSync(filePath).size : 0;
 
   for (let attempt = 0; attempt <= WRITE_RETRY_DELAYS_MS.length; attempt += 1) {
     let fileDescriptor: number | null = null;
     try {
-      fileDescriptor = fs.openSync(filePath, fileExists ? 'r+' : 'w');
+      fileDescriptor = fs.openSync(filePath, 'w');
 
       let written = 0;
       while (written < contentBuffer.length) {
@@ -120,15 +108,6 @@ export function writeChunkedCatalog<TEntry>(
           contentBuffer.length - written,
           written,
         );
-      }
-
-      if (existingSize > contentBuffer.length) {
-        const padding = Buffer.alloc(Math.min(64 * 1024, existingSize - contentBuffer.length), ' ');
-        let padded = contentBuffer.length;
-        while (padded < existingSize) {
-          const chunkSize = Math.min(padding.length, existingSize - padded);
-          padded += fs.writeSync(fileDescriptor, padding, 0, chunkSize, padded);
-        }
       }
 
       fs.closeSync(fileDescriptor);
