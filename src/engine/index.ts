@@ -387,7 +387,7 @@ function main(): void {
       }
       if (themeCapabilityMap && hasLanguageThemeDifficultyFields(generatedPuzzle.entry)) {
         const language = generatedPuzzle.entry.language as WordSearchLanguage;
-        const difficulty = generatedPuzzle.entry.difficulty as PuzzleDifficulty;
+        const difficulty = generatedPuzzle.entry.difficulty;
         const themeEntry = themeCapabilityMap.get(language)?.get(generatedPuzzle.entry.themeId);
         if (themeEntry) {
           themeEntry.counts.set(difficulty, (themeEntry.counts.get(difficulty) ?? 0) + 1);
