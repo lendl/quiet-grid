@@ -53,12 +53,6 @@
         "projectId": "06d3f810-3f74-42fa-a3b7-53cc7ee3f51c"
       }
     },
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
-    "updates": {
-      "url": "https://u.expo.dev/06d3f810-3f74-42fa-a3b7-53cc7ee3f51c"
-    },
     "ios": {},
     "plugins": [
       "expo-font",
