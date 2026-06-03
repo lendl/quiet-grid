@@ -9,7 +9,7 @@ import type { WordSearchCellRef, WordSearchPuzzle, WordSearchSelection } from '.
 
 const FRAME_PADDING = 8;
 const GRID_PADDING = 4;
-const GAP = 1;
+const GAP = 3;
 const SHELL_INSET = 2;
 const SHELL_RADIUS = 10;
 const SHELL_INNER_RADIUS = 8;
@@ -23,7 +23,6 @@ interface WordSearchPuzzleGridProps {
   puzzle: WordSearchPuzzle;
   foundWordIds: readonly string[];
   tempSelection: WordSearchSelection | null;
-  hiddenWordProgressCells?: readonly WordSearchCellRef[];
   hiddenWordTargetCell?: WordSearchCellRef | null;
   containerWidth: number;
   containerHeight: number;
@@ -77,7 +76,6 @@ export default function WordSearchPuzzleGrid({
   puzzle,
   foundWordIds,
   tempSelection,
-  hiddenWordProgressCells = [],
   hiddenWordTargetCell = null,
   containerWidth,
   containerHeight,
@@ -126,10 +124,6 @@ export default function WordSearchPuzzleGrid({
   const tempSelectionEndKey = tempSelection
     ? buildCellKey(tempSelection.end.row, tempSelection.end.col)
     : null;
-  const hiddenWordProgressKeys = useMemo(
-    () => new Set(hiddenWordProgressCells.map((cell) => buildCellKey(cell.row, cell.col))),
-    [hiddenWordProgressCells],
-  );
   const hiddenWordTargetKey = hiddenWordTargetCell
     ? buildCellKey(hiddenWordTargetCell.row, hiddenWordTargetCell.col)
     : null;
@@ -141,6 +135,7 @@ export default function WordSearchPuzzleGrid({
     () => new Set(nextMoveTargetCells.map((cell) => buildCellKey(cell.row, cell.col))),
     [nextMoveTargetCells],
   );
+  const crosshairStart = tempSelection?.start ?? null;
 
   const handleTap = useCallback((x: number, y: number) => {
     if (!onCellTap) {
@@ -276,18 +271,19 @@ export default function WordSearchPuzzleGrid({
             const rect = getGridCellRect(layout, rowIndex, colIndex);
             const isFound = foundCellKeys.has(key);
             const isTemp = tempSelectionKeys.has(key);
-            const isHiddenProgress = hiddenWordProgressKeys.has(key);
             const isHiddenTarget = hiddenWordTargetKey === key;
             const isEvidence = evidenceKeys.has(key);
             const isTarget = targetKeys.has(key);
             const isSelectionStart = tempSelectionStartKey === key;
             const isSelectionEnd = tempSelectionEndKey === key;
+            const isInCrosshair = crosshairStart !== null
+              && !isTemp && !isFound && !isSelectionStart && !isSelectionEnd && !isTarget && !isEvidence
+              && (rowIndex === crosshairStart.row || colIndex === crosshairStart.col);
+            const isOddRow = rowIndex % 2 === 1;
             const borderColor = isHiddenTarget
               ? withAlpha(theme.difficultyMedium, isDark ? 0.92 : 0.78)
               : isTarget
               ? withAlpha(theme.success, isDark ? 0.92 : 0.74)
-              : isHiddenProgress
-                ? withAlpha(theme.difficultyMedium, isDark ? 0.72 : 0.56)
               : isSelectionStart || isSelectionEnd
                 ? withAlpha(theme.primaryLight, isDark ? 0.94 : 0.74)
                 : isTemp
@@ -301,8 +297,6 @@ export default function WordSearchPuzzleGrid({
               ? withAlpha(theme.difficultyMedium, isDark ? 0.24 : 0.18)
               : isTarget
               ? withAlpha(theme.success, isDark ? 0.24 : 0.16)
-              : isHiddenProgress
-                ? withAlpha(theme.difficultyMedium, isDark ? 0.18 : 0.12)
               : isSelectionStart || isSelectionEnd
                 ? withAlpha(theme.primary, isDark ? 0.3 : 0.2)
                 : isTemp
@@ -311,7 +305,11 @@ export default function WordSearchPuzzleGrid({
                     ? withAlpha(theme.success, isDark ? 0.22 : 0.12)
                     : isEvidence
                       ? withAlpha(theme.primary, isDark ? 0.12 : 0.08)
-                      : tokens.cellRaisedFill;
+                      : isInCrosshair
+                        ? withAlpha(theme.primary, isDark ? 0.1 : 0.06)
+                        : isOddRow
+                          ? withAlpha(theme.text, isDark ? 0.05 : 0.03)
+                          : tokens.cellRaisedFill;
 
             return (
               <View

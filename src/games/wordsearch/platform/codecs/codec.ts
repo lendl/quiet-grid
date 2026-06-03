@@ -22,6 +22,8 @@ export interface WordSearchCatalogEntry {
     word: string;
     start: WordSearchCellRef;
     direction: WordSearchDirection;
+    bendAt?: number;
+    direction2?: WordSearchDirection;
   }>;
   hiddenWord: {
     word: string;
@@ -69,12 +71,31 @@ function buildPositions(
   start: WordSearchCellRef,
   direction: WordSearchDirection,
   length: number,
+  bendAt?: number,
+  direction2?: WordSearchDirection,
 ): WordSearchCellRef[] {
-  const delta = directionToDelta[direction];
-  return Array.from({ length }, (_, index) => ({
-    row: start.row + (delta.row * index),
-    col: start.col + (delta.col * index),
-  }));
+  const d1 = directionToDelta[direction];
+
+  if (bendAt === undefined || direction2 === undefined) {
+    return Array.from({ length }, (_, index) => ({
+      row: start.row + (d1.row * index),
+      col: start.col + (d1.col * index),
+    }));
+  }
+
+  const d2 = directionToDelta[direction2];
+  const positions: WordSearchCellRef[] = [];
+
+  // First leg: bendAt+1 cells from start in direction
+  for (let i = 0; i <= bendAt; i++) {
+    positions.push({ row: start.row + d1.row * i, col: start.col + d1.col * i });
+  }
+  // Second leg: remaining cells from corner in direction2
+  const corner = positions[bendAt];
+  for (let j = 1; j <= length - 1 - bendAt; j++) {
+    positions.push({ row: corner.row + d2.row * j, col: corner.col + d2.col * j });
+  }
+  return positions;
 }
 
 function isInside(rows: number, cols: number, row: number, col: number): boolean {
@@ -91,6 +112,9 @@ export function normalizeWordSearchCatalogEntry(entry: WordSearchCatalogEntry): 
       ...word,
       word: normalizeWordToken(word.word),
       start: { ...word.start },
+      ...(word.bendAt !== undefined && word.direction2 !== undefined
+        ? { bendAt: word.bendAt, direction2: word.direction2 }
+        : {}),
     })),
     hiddenWord: {
       ...entry.hiddenWord,
@@ -119,6 +143,8 @@ export function materializeWordSearchCatalogEntry(
       word.start,
       word.direction,
       word.word.length,
+      word.bendAt,
+      word.direction2,
     );
     positions.forEach((cell, index) => {
       if (!isInside(normalized.rows, normalized.cols, cell.row, cell.col)) {

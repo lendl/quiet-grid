@@ -21,8 +21,9 @@ type Props = StackScreenProps<RootStackParamList, 'Tutorial'>;
 type AnswerState = 'idle' | 'wrong' | 'correct';
 
 const LESSON_KEYS: readonly WordSearchTutorialLessonKey[] = [
-  'scan-lines',
-  'drag-selection',
+  'win-condition',
+  'selection',
+  'no-penalty',
   'hidden-word',
 ];
 
@@ -96,7 +97,7 @@ export default function WordSearchTutorialScreen({ navigation, route }: Props) {
 
   const lessonKey = LESSON_KEYS[lessonIndex];
   const lessonCopy = copies[lessonKey];
-  const isCheckpoint = lessonKey === 'drag-selection';
+  const isCheckpoint = lessonKey === 'selection';
   const isLastLesson = lessonIndex === LESSON_KEYS.length - 1;
 
   const clearAdvanceTimeout = useCallback(() => {
@@ -165,22 +166,36 @@ export default function WordSearchTutorialScreen({ navigation, route }: Props) {
     }, 900);
   }, [advanceLesson, clearAdvanceTimeout, strings.tutorial.checkpoint.correctFeedback, strings.tutorial.checkpoint.wrongFeedback]);
 
-  const foundWordIds = lessonKey === 'hidden-word'
+  // Lesson 1 — win-condition: fresh grid, both words shown as dim evidence
+  // Lesson 2 — selection: STAR actively selected (tempSelection), checkpoint
+  // Lesson 3 — no-penalty: STAR found, MOON's start cell highlighted as next target
+  // Lesson 4 — hidden-word: both found, first hidden-word cell highlighted
+  const foundWordIds: string[] = lessonKey === 'hidden-word'
     ? ['star', 'moon']
-    : lessonKey === 'drag-selection'
+    : lessonKey === 'no-penalty'
       ? ['star']
       : [];
-  const tempSelection = lessonKey === 'drag-selection'
+  const tempSelection = lessonKey === 'selection'
     ? makeSelection(STAR_PATH)
     : null;
-  const evidenceCells = lessonKey === 'scan-lines'
-    ? [...MOON_PATH]
-    : lessonKey === 'hidden-word'
-      ? [HIDDEN_PATH[0]]
-      : [...STAR_PATH];
-  const targetCells = lessonKey === 'hidden-word'
-    ? [HIDDEN_PATH[0]]
-    : [...STAR_PATH];
+  const evidenceCells: readonly { row: number; col: number }[] = (() => {
+    switch (lessonKey) {
+      case 'win-condition': return [...STAR_PATH, ...MOON_PATH];
+      case 'selection': return [...STAR_PATH];
+      case 'no-penalty': return [MOON_PATH[0]!];
+      case 'hidden-word': return [HIDDEN_PATH[0]!];
+      default: return [];
+    }
+  })();
+  const targetCells: readonly { row: number; col: number }[] = (() => {
+    switch (lessonKey) {
+      case 'win-condition': return [...STAR_PATH];
+      case 'selection': return [...STAR_PATH];
+      case 'no-penalty': return [MOON_PATH[0]!];
+      case 'hidden-word': return [HIDDEN_PATH[0]!];
+      default: return [];
+    }
+  })();
 
   const feedback = (
     <View style={styles.feedbackStack}>

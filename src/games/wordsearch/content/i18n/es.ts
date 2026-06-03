@@ -6,6 +6,16 @@ const locale: WordSearchI18n = {
   strings: {
     ...en.strings,
     tagline: 'Traza palabras en líneas rectas y resuelve la palabra oculta de bonificación directamente en la cuadrícula.',
+    tutorial: {
+      ...en.strings.tutorial,
+      checkpoint: {
+        prompt: '¿Quieres seleccionar STAR. Después de tocar S, ¿qué tocas a continuación?',
+        validOption: 'R — la última letra',
+        invalidOption: 'T — la siguiente letra',
+        correctFeedback: 'Correcto — toca la primera letra, luego la última. El camino se traza automáticamente.',
+        wrongFeedback: 'No del todo. Toca solo la primera y la última letra, no cada letra entre ellas.',
+      },
+    },
     play: {
       ...en.strings.play,
       hiddenWord: {
@@ -14,7 +24,7 @@ const locale: WordSearchI18n = {
         revealed: (clue: string, word: string) => `${clue}: ${word}`,
         enterMode: 'Resolver palabra oculta',
         exitMode: 'Salir del modo de palabra oculta',
-        progress: (current: number, total: number) => `Palabra oculta ${current}/${total}`,
+        solvedTitle: '¡Palabra oculta encontrada!',
         instructions: 'Toca las letras de la palabra oculta en orden sobre la cuadrícula.',
         resetOnMistake: 'Una pulsación incorrecta en la palabra oculta reinicia tu progreso.',
         nextLetterTitle: (clue: string) => `Palabra oculta: ${clue}`,
@@ -43,10 +53,28 @@ const locale: WordSearchI18n = {
   },
   tutorialLessons: {
     ...en.tutorialLessons,
+    'win-condition': {
+      title: 'Encuentra la palabra oculta para ganar',
+      body: 'Las palabras de la lista son pistas temáticas — te ayudan a identificar la palabra oculta de bonificación. Encontrar la palabra oculta es la única forma de ganar.',
+      summary: 'Las palabras normales son pistas. La palabra oculta es el objetivo.',
+      continueLabel: 'Siguiente lección',
+    },
+    'selection': {
+      title: 'Toca el inicio, luego el final',
+      body: 'Toca la primera letra de una palabra, luego la última. El juego traza el camino — horizontal, vertical, diagonal o con un giro.',
+      summary: 'Dos toques seleccionan una palabra.',
+      continueLabel: 'Siguiente lección',
+    },
+    'no-penalty': {
+      title: 'Los intentos fallidos desaparecen',
+      body: 'Si no se encuentra ninguna palabra, la selección se reinicia sin penalización. Escanea libremente y prueba cualquier combinación de inicio y final.',
+      summary: 'Nada que perder — sigue escaneando.',
+      continueLabel: 'Siguiente lección',
+    },
     'hidden-word': {
-      title: 'Cambia al modo de palabra oculta',
-      body: 'Usa la acción de palabra oculta durante la partida y luego toca sus letras en orden sobre la cuadrícula activa.',
-      summary: 'La palabra oculta se resuelve directamente durante la partida.',
+      title: 'Encuentra la palabra oculta',
+      body: 'Toca el icono de llave para entrar en el modo de palabra oculta. Las letras están dispersas por toda la cuadrícula. La barra inferior muestra cada letra al tocarla — encuéntralas todas para ganar.',
+      summary: 'El progreso inferior te guía letra por letra.',
       continueLabel: 'Empezar puzzle',
     },
   },

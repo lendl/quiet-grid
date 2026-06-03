@@ -107,6 +107,5 @@ export function cloneWordSearchSession(session: WordSearchSession): WordSearchSe
 }
 
 export function isWordSearchSolved(session: WordSearchSession): boolean {
-  return session.foundWordIds.length >= session.puzzle.words.length
-    && session.hiddenWordSolved;
+  return session.hiddenWordSolved;
 }

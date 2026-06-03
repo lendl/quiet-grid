@@ -23,7 +23,7 @@ const es: WordSearchThemeSeed[] = [
       'Albaricoque', 'Fresa', 'Frambuesa', 'Mora', 'Baya', 'Nispero', 'Papaya', 'Guayaba', 'Lichi', 'Rambutan',
       'Durian', 'Pomelo', 'Lima', 'Limon', 'Naranja', 'Mandarina', 'Kumquat', 'Aguacate', 'Datiles', 'Higo',
       'ArandanoRojo', 'Tomate', 'Sandia', 'Melon', 'Cantalupo', 'Aceituna', 'Coco', 'Feijoa', 'Caqui', 'Longan',
-      'Salak', 'Rambai', 'GrosellaNegra', 'GrosellaRoja', 'Arandano', 'Membrillo', 'Maracuya', 'Pomelo', 'Papaya', 'Azufaifa'
+      'Salak', 'Rambai', 'GrosellaNegra', 'GrosellaRoja', 'Arandano', 'Membrillo', 'Maracuya', 'Tamarindo', 'Carambola', 'Azufaifa'
     ]
   },
   {
@@ -43,7 +43,7 @@ const es: WordSearchThemeSeed[] = [
       'Leggings', 'Falda', 'Vestido', 'Short', 'Pijama', 'Calzoncillo', 'Sosten', 'Calcetines', 'Medias', 'Gorro',
       'Bufanda', 'Gorra', 'Sombrero', 'Zapatillas', 'Botas', 'Sandalias', 'Tacones', 'Chanclas', 'Cinturon', 'Bikini',
       'Banador', 'Mono', 'Traje', 'Americana', 'Blazer', 'Sudadera', 'Poncho', 'Kimono', 'Chandal', 'Pantaloncorto',
-      'Camisetadeporte', 'Camisadevestir', 'Chaleco', 'Mediaslargas', 'Chalecoacolchado', 'Impermeable', 'Abrigoinvierno', 'Parka', 'Jersey', 'Cardigan'
+      'Camisetadeporte', 'Camisadevestir', 'Abrigo', 'Mediaslargas', 'Chalecoacolchado', 'Impermeable', 'Abrigoinvierno', 'Parka', 'Jersey', 'Cardigan'
     ]
   },
   {
@@ -92,11 +92,8 @@ const es: WordSearchThemeSeed[] = [
       'Medico', 'Enfermero', 'Carpintero', 'Fontanero', 'Electricista', 'Panadero', 'Carnicero', 'Cocinero', 'Piloto', 'Conductor',
       'Bombero', 'Policia', 'Abogado', 'Juez', 'Notario', 'Pintor', 'Albanil', 'Arquitecto', 'Ingeniero', 'Programador',
       'Disenador', 'Periodista', 'Escritor', 'Poeta', 'Actor', 'Cantante', 'Musico', 'Jardinero', 'Granjero', 'Peluquero',
-      'Mecanico', 'Recepcionista', 'Entrenador', 'Coach', 'Maestro', 'Profesor', 'Vendedor', 'Barista', 'Camarero',
-      'Farmaceutico', 'Laboratorista', 'Cuidador', 'Terapeuta', 'Psicologo', 'Interprete', 'Traductor', 'Fotografo', 'Artista', 'Seguridad',
-      'Piloto', 'Yesero', 'Partera', 'Optico', 'Cirujano', 'Dentista', 'Fisioterapeuta', 'Terapeuta', 'Analista',
-      'Contable', 'Inmobiliario', 'Inspector', 'Operador', 'Tecnico', 'Mecanico', 'Planificador', 'Despachador', 'Editor', 'Productor',
-      'Director', 'Animador', 'Modelador', 'Estilista', 'Barbero', 'Limpiador', 'Portero', 'Conserje', 'Entrenador', 'Coach'
+      'Mecanico', 'Recepcionista', 'Entrenador', 'Coach', 'Maestro', 'Profesor', 'Vendedor', 'Barista', 'Camarero', 'Farmaceutico',
+      'Laboratorista', 'Cuidador', 'Terapeuta', 'Psicologo', 'Interprete', 'Traductor', 'Fotografo', 'Artista', 'Yesero', 'Optico'
     ]
   },
   {
@@ -105,7 +102,7 @@ const es: WordSearchThemeSeed[] = [
       'Padre', 'Madre', 'Hijo', 'Hija', 'Hermano', 'Hermana', 'Abuelo', 'Abuela', 'Tio', 'Tia',
       'Sobrino', 'Sobrina', 'Padrino', 'Madrina', 'Ahijado', 'Suegro', 'Suegra', 'Yerno', 'Nuera', 'Cunado',
       'Cunada', 'Padrastro', 'Madrastra', 'Hermanastro', 'Hermanastra', 'Padreadoptivo', 'Madreadoptiva', 'Hijoadoptivo', 'Hogar', 'Familia',
-      'Nieto', 'Nieto', 'Nieta', 'Cunado', 'Cunada', 'Novio', 'Novia', 'Esposo', 'Esposa', 'Pareja',
+      'Nieto', 'Primo', 'Nieta', 'Gemelo', 'Gemela', 'Novio', 'Novia', 'Esposo', 'Esposa', 'Pareja',
       'Prometido', 'Descendiente', 'Ancestro', 'Linaje', 'Nino', 'Bebe', 'Pequeno', 'Adolescente', 'Adulto', 'Mayor'
     ]
   },
@@ -115,7 +112,7 @@ const es: WordSearchThemeSeed[] = [
       'Feliz', 'Enojado', 'Asustado', 'Triste', 'Orgulloso', 'Calmo', 'Nervioso', 'Contento', 'Decepcionado', 'Sorprendido',
       'Irritado', 'Relajado', 'Indefenso', 'Seguro', 'Solitario', 'Alegre', 'Sombrio', 'Furioso', 'Emocionado', 'Sereno',
       'Preocupado', 'Aliviado', 'Confuso', 'Encantado', 'Divertido', 'Frustrado', 'Esperanzado', 'Desesperado', 'Agradecido', 'Curioso',
-      'Avergonzado', 'Culpable', 'Timido', 'Inquieto', 'Panico', 'Rabioso', 'Satisfecho', 'Conmovido', 'Encantado', 'Reacio',
+      'Avergonzado', 'Culpable', 'Timido', 'Inquieto', 'Panico', 'Rabioso', 'Satisfecho', 'Conmovido', 'Animado', 'Reacio',
       'Asco', 'Envidia', 'Celos', 'Arrepentido', 'Asombrado', 'Horrorizado', 'Aturdido', 'Euforico', 'Melancolico', 'Carinoso'
     ]
   },

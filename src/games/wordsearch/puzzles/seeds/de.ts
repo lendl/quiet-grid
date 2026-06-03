@@ -23,7 +23,7 @@ const de: WordSearchThemeSeed[] = [
       'Aprikose', 'Erdbeere', 'Himbeere', 'Brombeere', 'Beere', 'Mispel', 'Papaya', 'Guave', 'Litschi', 'Rambutan',
       'Durian', 'Pomelo', 'Limette', 'Zitrone', 'Orange', 'Mandarine', 'Kumquat', 'Avocado', 'Datteln', 'Feige',
       'Cranberry', 'Tomate', 'Wassermelone', 'Honigmelone', 'Cantaloupe', 'Olive', 'Kokosnuss', 'Feijoa', 'Kaki', 'Longan',
-      'Salak', 'Rambai', 'SchwarzeJohannisbeere', 'RoteJohannisbeere', 'Heidelbeere', 'Quitte', 'Passionsfrucht', 'Grapefruit', 'Papaya', 'Jujube'
+      'Salak', 'Rambai', 'SchwarzeJohannisbeere', 'RoteJohannisbeere', 'Heidelbeere', 'Quitte', 'Passionsfrucht', 'Grapefruit', 'Tamarinde', 'Jujube'
     ]
   },
   {
@@ -91,12 +91,9 @@ const de: WordSearchThemeSeed[] = [
     words: [
       'Arzt', 'Krankenschwester', 'Tischler', 'Klempner', 'Elektriker', 'Baecker', 'Metzger', 'Koch', 'Pilot', 'Fahrer',
       'Feuerwehrmann', 'Polizist', 'Anwalt', 'Richter', 'Notar', 'Maler', 'Maurer', 'Architekt', 'Ingenieur', 'Programmierer',
-      'Designer', 'Journalist', 'Schriftsteller', 'Dichter', 'Schauspieler', 'Saenger', 'Musiker', 'Gaertner', 'Bauer', 'Friseurin',
-      'Mechaniker', 'Rezeptionist', 'Trainer', 'Coach', 'Lehrer', 'Professor', 'Verkaeufer', 'Barista', 'Kellner',
-      'Apotheker', 'Labortechniker', 'Pfleger', 'Therapeut', 'Psychologe', 'Dolmetscher', 'Uebersetzer', 'Fotograf', 'Kuenstler', 'Sicherheitsdienst',
-      'Pilot', 'Stuckateur', 'Hebamme', 'Optiker', 'Chirurg', 'Zahnarzt', 'Physiotherapeut', 'Therapeut', 'Analyst',
-      'Buchhalter', 'Makler', 'Inspektor', 'Bediener', 'Techniker', 'Mechaniker', 'Planer', 'Disponent', 'Redakteur', 'Produzent',
-      'Regisseur', 'Animator', 'Modellierer', 'Stylist', 'Friseur', 'Reinigungskraft', 'Portier', 'Hausmeister', 'Trainer', 'Coach'
+      'Designer', 'Journalist', 'Schriftsteller', 'Dichter', 'Schauspieler', 'Saenger', 'Musiker', 'Gaertner', 'Bauer', 'Friseur',
+      'Mechaniker', 'Rezeptionist', 'Trainer', 'Coach', 'Lehrer', 'Professor', 'Verkaeufer', 'Barista', 'Kellner', 'Apotheker',
+      'Labortechniker', 'Pfleger', 'Therapeut', 'Psychologe', 'Dolmetscher', 'Uebersetzer', 'Fotograf', 'Kuenstler', 'Stuckateur', 'Optiker'
     ]
   },
   {
@@ -105,7 +102,7 @@ const de: WordSearchThemeSeed[] = [
       'Vater', 'Mutter', 'Sohn', 'Tochter', 'Bruder', 'Schwester', 'Opa', 'Oma', 'Onkel', 'Tante',
       'Neffe', 'Nichte', 'Pate', 'Patin', 'Patenkind', 'Schwiegervater', 'Schwiegermutter', 'Schwiegersohn', 'Schwiegertochter', 'Schwager',
       'Schwaegerin', 'Stiefvater', 'Stiefmutter', 'Stiefbruder', 'Stiefschwester', 'Pflegevater', 'Pflegemutter', 'Pflegekind', 'Haushalt', 'Familie',
-      'Enkelkind', 'Enkelsohn', 'Enkeltochter', 'Schwager', 'Schwaegerin', 'Braeutigam', 'Braut', 'Ehemann', 'Ehefrau', 'Partner',
+      'Enkelkind', 'Enkelsohn', 'Enkeltochter', 'Cousin', 'Cousine', 'Braeutigam', 'Braut', 'Ehemann', 'Ehefrau', 'Partner',
       'Verlobte', 'Nachkomme', 'Vorfahr', 'Nachfahren', 'Kind', 'Baby', 'Kleinkind', 'Teenager', 'Erwachsene', 'Senior'
     ]
   },

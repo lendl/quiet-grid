@@ -8,6 +8,7 @@ import {
 export type WordSearchAction =
   | { type: 'begin-selection'; cell: WordSearchCellRef }
   | { type: 'update-selection'; cell: WordSearchCellRef }
+  | { type: 'set-selection'; path: readonly WordSearchCellRef[] }
   | { type: 'commit-selection' }
   | { type: 'clear-selection' }
   | { type: 'toggle-hidden-word-mode' }
@@ -44,7 +45,7 @@ function computeStepDelta(start: WordSearchCellRef, end: WordSearchCellRef): { r
   return null;
 }
 
-function buildPath(start: WordSearchCellRef, end: WordSearchCellRef): WordSearchCellRef[] | null {
+function buildStraightPath(start: WordSearchCellRef, end: WordSearchCellRef): WordSearchCellRef[] | null {
   const step = computeStepDelta(start, end);
   if (!step) {
     return null;
@@ -62,6 +63,35 @@ function buildPath(start: WordSearchCellRef, end: WordSearchCellRef): WordSearch
   }
 
   return path;
+}
+
+export function buildBentPaths(
+  start: WordSearchCellRef,
+  end: WordSearchCellRef,
+): WordSearchCellRef[][] {
+  if (start.row === end.row || start.col === end.col) {
+    return [];
+  }
+
+  const paths: WordSearchCellRef[][] = [];
+
+  // Horizontal-first L: start → (start.row, end.col) → end
+  const corner1 = { row: start.row, col: end.col };
+  const leg1a = buildStraightPath(start, corner1);
+  const leg1b = buildStraightPath(corner1, end);
+  if (leg1a && leg1b) {
+    paths.push([...leg1a, ...leg1b.slice(1)]);
+  }
+
+  // Vertical-first L: start → (end.row, start.col) → end
+  const corner2 = { row: end.row, col: start.col };
+  const leg2a = buildStraightPath(start, corner2);
+  const leg2b = buildStraightPath(corner2, end);
+  if (leg2a && leg2b) {
+    paths.push([...leg2a, ...leg2b.slice(1)]);
+  }
+
+  return paths;
 }
 
 function cellsEqual(a: WordSearchCellRef, b: WordSearchCellRef): boolean {
@@ -93,7 +123,7 @@ function pathMatchesWord(
 }
 
 function buildSelection(start: WordSearchCellRef, end: WordSearchCellRef): WordSearchSelection | null {
-  const path = buildPath(start, end);
+  const path = buildStraightPath(start, end);
   if (!path) {
     return null;
   }
@@ -146,6 +176,25 @@ export function runWordSearchAction(
       session: {
         ...cloneWordSearchSession(session),
         tempSelection: nextSelection,
+      },
+    };
+  }
+
+  if (action.type === 'set-selection') {
+    if (action.path.length < 2) {
+      return { changed: false, session };
+    }
+    const start = action.path[0]!;
+    const end = action.path[action.path.length - 1]!;
+    return {
+      changed: true,
+      session: {
+        ...cloneWordSearchSession(session),
+        tempSelection: {
+          start: { ...start },
+          end: { ...end },
+          path: action.path.map((c) => ({ ...c })),
+        },
       },
     };
   }

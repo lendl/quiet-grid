@@ -6,11 +6,20 @@ import {
   readGameCatalog,
   writeGameCatalog,
 } from './writer';
+import { WORD_SEARCH_DIFFICULTY_CONFIG } from '../games/wordsearch/engine/constraints';
 import { wordSearchSeedCorpus } from '../games/wordsearch/engine/seedCorpus';
 import type { WordSearchLanguage } from '../games/wordsearch/types';
 
 const MAX_ATTEMPTS = 100;
 const WORD_SEARCH_LANGUAGES = ['en', 'nl', 'de', 'fr', 'es'] as const;
+const WORD_SEARCH_DIFFICULTIES = ['easy', 'medium', 'hard', 'expert'] as const;
+
+interface ThemeEntry {
+  capable: Set<PuzzleDifficulty>;
+  counts: Map<PuzzleDifficulty, number>;
+}
+
+type ThemeCapabilityMap = Map<WordSearchLanguage, Map<string, ThemeEntry>>;
 
 function hasLanguageField(value: unknown): value is { language: string } {
   if (!value || typeof value !== 'object') {
@@ -48,31 +57,61 @@ function hasLanguageThemeFields(value: unknown): value is { language: string; th
     && typeof (value as { themeId?: unknown }).themeId === 'string';
 }
 
-function buildThemeCounts(
-  entries: readonly unknown[],
-): Map<WordSearchLanguage, Map<string, number>> {
-  const counts = new Map<WordSearchLanguage, Map<string, number>>(
+function hasLanguageThemeDifficultyFields(
+  value: unknown,
+): value is { language: string; themeId: string; difficulty: string } {
+  return hasLanguageThemeFields(value)
+    && typeof (value as { difficulty?: unknown }).difficulty === 'string';
+}
+
+function normalizeWord(word: string): string {
+  return word.normalize('NFKD').replace(/[^A-Za-z]/g, '').toUpperCase();
+}
+
+function computeThemeCapability(themeWords: readonly string[]): Set<PuzzleDifficulty> {
+  const capable = new Set<PuzzleDifficulty>();
+  for (const difficulty of WORD_SEARCH_DIFFICULTIES) {
+    const config = WORD_SEARCH_DIFFICULTY_CONFIG[difficulty];
+    const qualifyingCount = [...new Set(themeWords.map(normalizeWord))]
+      .filter((w) => w.length >= config.wordLengthProfile.min && w.length <= config.wordLengthProfile.max)
+      .length;
+    if (qualifyingCount >= config.wordCount.min) {
+      capable.add(difficulty);
+    }
+  }
+  return capable;
+}
+
+function buildThemeCapabilityAndCounts(entries: readonly unknown[]): ThemeCapabilityMap {
+  const map: ThemeCapabilityMap = new Map(
     WORD_SEARCH_LANGUAGES.map((language) => [
       language,
-      new Map<string, number>(
-        (wordSearchSeedCorpus[language] ?? []).map((theme) => [theme.themeId, 0]),
+      new Map(
+        (wordSearchSeedCorpus[language] ?? []).map((theme) => [
+          theme.themeId,
+          {
+            capable: computeThemeCapability(theme.words),
+            counts: new Map(WORD_SEARCH_DIFFICULTIES.map((d) => [d, 0])),
+          },
+        ]),
       ),
     ]),
   );
 
-  entries.forEach((entry) => {
-    if (!hasLanguageThemeFields(entry)) {
-      return;
+  for (const entry of entries) {
+    if (!hasLanguageThemeDifficultyFields(entry)) {
+      continue;
     }
     const language = entry.language as WordSearchLanguage;
-    const themeCounts = counts.get(language);
-    if (!themeCounts || !themeCounts.has(entry.themeId)) {
-      return;
+    const difficulty = entry.difficulty as PuzzleDifficulty;
+    const themeEntry = map.get(language)?.get(entry.themeId);
+    if (!themeEntry) {
+      continue;
     }
-    themeCounts.set(entry.themeId, (themeCounts.get(entry.themeId) ?? 0) + 1);
-  });
+    themeEntry.counts.set(difficulty, (themeEntry.counts.get(difficulty) ?? 0) + 1);
+  }
 
-  return counts;
+  return map;
 }
 
 function getLeastRepresentedLanguages(
@@ -123,23 +162,33 @@ function getPreferredLanguagesForBalance(
 }
 
 function getPreferredThemesForBalance(
-  counts: ReadonlyMap<WordSearchLanguage, ReadonlyMap<string, number>>,
+  capabilityMap: ThemeCapabilityMap,
+  targetDifficulty: PuzzleDifficulty,
   attempt: number,
 ): Map<WordSearchLanguage, string[]> {
   const allowedGap = Math.floor((attempt - 1) / 30);
   const preferred = new Map<WordSearchLanguage, string[]>();
 
-  counts.forEach((themeCounts, language) => {
-    let minimum = Number.POSITIVE_INFINITY;
-    themeCounts.forEach((value) => {
-      if (value < minimum) {
-        minimum = value;
-      }
-    });
+  capabilityMap.forEach((themeMap, language) => {
+    // Only balance among themes that can actually generate the target difficulty.
+    const capable = [...themeMap.entries()]
+      .filter(([, entry]) => entry.capable.has(targetDifficulty));
 
-    const selected = [...themeCounts.entries()]
-      .filter(([, value]) => value <= minimum + allowedGap)
-      .sort((left, right) => left[1] - right[1])
+    if (capable.length === 0) {
+      return;
+    }
+
+    let minimum = Number.POSITIVE_INFINITY;
+    for (const [, entry] of capable) {
+      const count = entry.counts.get(targetDifficulty) ?? 0;
+      if (count < minimum) {
+        minimum = count;
+      }
+    }
+
+    const selected = capable
+      .filter(([, entry]) => (entry.counts.get(targetDifficulty) ?? 0) <= minimum + allowedGap)
+      .sort((a, b) => (a[1].counts.get(targetDifficulty) ?? 0) - (b[1].counts.get(targetDifficulty) ?? 0))
       .map(([themeId]) => themeId);
 
     if (selected.length > 0) {
@@ -277,8 +326,8 @@ function main(): void {
   const languageCounts = game.id === 'wordsearch'
     ? buildLanguageCounts(catalogEntries)
     : null;
-  const themeCounts = game.id === 'wordsearch'
-    ? buildThemeCounts(catalogEntries)
+  const themeCapabilityMap = game.id === 'wordsearch'
+    ? buildThemeCapabilityAndCounts(catalogEntries)
     : null;
 
   const sizeLabel = forcedSize === null
@@ -295,9 +344,9 @@ function main(): void {
       const preferredLanguages = forcedLanguage
         ? [forcedLanguage]
         : (languageCounts ? getPreferredLanguagesForBalance(languageCounts, attempt) : undefined);
-      const preferredThemeIds = themeCounts
+      const preferredThemeIds = themeCapabilityMap
         ? [...new Set(
-          [...getPreferredThemesForBalance(themeCounts, attempt).entries()]
+          [...getPreferredThemesForBalance(themeCapabilityMap, targetDifficulty, attempt).entries()]
             .filter(([language]) => !forcedLanguage || language === forcedLanguage)
             .flatMap(([, themeIds]) => themeIds),
         )]
@@ -335,6 +384,14 @@ function main(): void {
       if (languageCounts && hasLanguageField(generatedPuzzle.entry)) {
         const language = generatedPuzzle.entry.language as (typeof WORD_SEARCH_LANGUAGES)[number];
         languageCounts.set(language, (languageCounts.get(language) ?? 0) + 1);
+      }
+      if (themeCapabilityMap && hasLanguageThemeDifficultyFields(generatedPuzzle.entry)) {
+        const language = generatedPuzzle.entry.language as WordSearchLanguage;
+        const difficulty = generatedPuzzle.entry.difficulty as PuzzleDifficulty;
+        const themeEntry = themeCapabilityMap.get(language)?.get(generatedPuzzle.entry.themeId);
+        if (themeEntry) {
+          themeEntry.counts.set(difficulty, (themeEntry.counts.get(difficulty) ?? 0) + 1);
+        }
       }
       generated = true;
       totalGenerated += 1;

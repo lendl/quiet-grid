@@ -6,15 +6,25 @@ const locale: WordSearchI18n = {
   strings: {
     ...en.strings,
     tagline: 'Trek woorden in rechte lijnen en los het verborgen bonuswoord op in het raster.',
+    tutorial: {
+      ...en.strings.tutorial,
+      checkpoint: {
+        prompt: 'Je wilt STAR selecteren. Na het tikken op S, wat tik je dan?',
+        validOption: 'R — de laatste letter',
+        invalidOption: 'T — de volgende letter',
+        correctFeedback: 'Correct — tik de eerste letter, dan de laatste. Het pad wordt automatisch getraceerd.',
+        wrongFeedback: 'Niet helemaal. Tik alleen op de eerste en laatste letter — niet op elke letter ertussen.',
+      },
+    },
     play: {
       ...en.strings.play,
       hiddenWord: {
         ...en.strings.play.hiddenWord,
         locked: 'Los het verborgen woord in het raster op zodra je er klaar voor bent.',
         revealed: (clue: string, word: string) => `${clue}: ${word}`,
+        solvedTitle: 'Verborgen woord gevonden!',
         enterMode: 'Verborgen woord oplossen',
         exitMode: 'Verborgen-woordmodus verlaten',
-        progress: (current: number, total: number) => `Verborgen woord ${current}/${total}`,
         instructions: 'Tik de letters van het verborgen woord in volgorde aan op het raster.',
         resetOnMistake: 'Een verkeerde tik op het verborgen woord zet je voortgang terug.',
         nextLetterTitle: (clue: string) => `Verborgen woord: ${clue}`,
@@ -43,10 +53,28 @@ const locale: WordSearchI18n = {
   },
   tutorialLessons: {
     ...en.tutorialLessons,
+    'win-condition': {
+      title: 'Vind het verborgen woord om te winnen',
+      body: 'De woorden in de lijst zijn thema-aanwijzingen — ze helpen je het verborgen bonuswoord te identificeren. Het verborgen woord vinden is de enige manier om te winnen.',
+      summary: 'Normale woorden zijn aanwijzingen. Het verborgen woord is het doel.',
+      continueLabel: 'Volgende les',
+    },
+    'selection': {
+      title: 'Tik begin, dan einde',
+      body: 'Tik op de eerste letter van een woord, dan op de laatste. Het spel trekt het pad — horizontaal, verticaal, diagonaal of met één hoek.',
+      summary: 'Twee tikken selecteren een woord.',
+      continueLabel: 'Volgende les',
+    },
+    'no-penalty': {
+      title: 'Foute gokken verdwijnen gewoon',
+      body: 'Als er geen woord gevonden wordt, verdwijnt de selectie — geen straf. Scan vrij en probeer elke combinatie van begin en einde.',
+      summary: 'Niets te verliezen — blijf scannen.',
+      continueLabel: 'Volgende les',
+    },
     'hidden-word': {
-      title: 'Schakel naar verborgen-woordmodus',
-      body: 'Gebruik tijdens het spelen de actie voor het verborgen woord en tik daarna de letters in volgorde aan op het live raster.',
-      summary: 'Het verborgen woord los je direct tijdens het spelen op.',
+      title: 'Vind het verborgen woord',
+      body: 'Tik op het sleutelicoontje om de verborgen-woordmodus in te schakelen. De letters staan verspreid door het raster. De balk onderaan toont elke letter terwijl je tikt — vind ze allemaal om te winnen.',
+      summary: 'Voortgang onderaan begeleidt je letter voor letter.',
       continueLabel: 'Start puzzel',
     },
   },

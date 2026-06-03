@@ -2,7 +2,6 @@ import type { PuzzleDifficulty } from '../../shared/types';
 import type { WordSearchCatalogEntry } from '../platform/codecs/codec';
 import type { WordSearchDirection, WordSearchLanguage } from '../types';
 import {
-  WORD_SEARCH_ALLOWED_SIZES,
   WORD_SEARCH_DIFFICULTY_CONFIG,
   WORD_SEARCH_QUALITY_THRESHOLDS,
 } from './constraints';
@@ -14,6 +13,8 @@ interface Placement {
   word: string;
   start: { row: number; col: number };
   direction: WordSearchDirection;
+  bendAt?: number;
+  direction2?: WordSearchDirection;
   positions: Array<{ row: number; col: number }>;
 }
 
@@ -51,33 +52,10 @@ function toUpperWord(word: string): string {
     .toUpperCase();
 }
 
-function createEmptyGrid(size: number): string[][] {
-  return Array.from({ length: size }, () => Array.from({ length: size }, () => ''));
+function createEmptyGrid(rows: number, cols: number): string[][] {
+  return Array.from({ length: rows }, () => Array.from({ length: cols }, () => ''));
 }
 
-function isInside(size: number, row: number, col: number): boolean {
-  return row >= 0 && col >= 0 && row < size && col < size;
-}
-
-function buildPositions(
-  size: number,
-  row: number,
-  col: number,
-  direction: WordSearchDirection,
-  length: number,
-): Array<{ row: number; col: number }> | null {
-  const delta = directionToDelta[direction];
-  const positions = Array.from({ length }, (_, index) => ({
-    row: row + (delta.row * index),
-    col: col + (delta.col * index),
-  }));
-
-  if (!positions.every((cell) => isInside(size, cell.row, cell.col))) {
-    return null;
-  }
-
-  return positions;
-}
 
 function computePlacementScore(
   grid: string[][],
@@ -88,14 +66,15 @@ function computePlacementScore(
 ): number {
   let overlapCount = 0;
   let centerBias = 0;
-  const center = (grid.length - 1) / 2;
+  const centerRow = (grid.length - 1) / 2;
+  const centerCol = ((grid[0]?.length ?? grid.length) - 1) / 2;
 
   positions.forEach((cell, index) => {
     const existing = grid[cell.row][cell.col];
     if (existing === word[index]) {
       overlapCount += 1;
     }
-    centerBias += Math.abs(cell.row - center) + Math.abs(cell.col - center);
+    centerBias += Math.abs(cell.row - centerRow) + Math.abs(cell.col - centerCol);
   });
 
   const overlapScore = overlapCount * overlapFrequency * 10;
@@ -121,24 +100,183 @@ function normalizeWordToken(value: string): string {
 }
 
 
+const ORTHOGONAL_DIRECTIONS = ['right', 'left', 'up', 'down'] as const;
+type OrthogonalDirection = (typeof ORTHOGONAL_DIRECTIONS)[number];
+
+function perpendicularDirs(dir: OrthogonalDirection): OrthogonalDirection[] {
+  return dir === 'right' || dir === 'left' ? ['up', 'down'] : ['right', 'left'];
+}
+
+function buildBentPositions(
+  rows: number,
+  cols: number,
+  start: { row: number; col: number },
+  direction1: OrthogonalDirection,
+  direction2: OrthogonalDirection,
+  wordLen: number,
+  bendAt: number,
+): Array<{ row: number; col: number }> | null {
+  const d1 = directionToDelta[direction1];
+  const d2 = directionToDelta[direction2];
+  const positions: Array<{ row: number; col: number }> = [];
+
+  for (let i = 0; i <= bendAt; i++) {
+    const r = start.row + d1.row * i;
+    const c = start.col + d1.col * i;
+    if (r < 0 || r >= rows || c < 0 || c >= cols) return null;
+    positions.push({ row: r, col: c });
+  }
+  const corner = positions[bendAt]!;
+  for (let j = 1; j <= wordLen - 1 - bendAt; j++) {
+    const r = corner.row + d2.row * j;
+    const c = corner.col + d2.col * j;
+    if (r < 0 || r >= rows || c < 0 || c >= cols) return null;
+    positions.push({ row: r, col: c });
+  }
+  return positions.length === wordLen ? positions : null;
+}
+
+function hasCoverageViolation(placements: readonly Placement[]): boolean {
+  const sets = placements.map((p) => new Set(p.positions.map((c) => toGridKey(c))));
+  for (let i = 0; i < sets.length; i += 1) {
+    for (let j = 0; j < sets.length; j += 1) {
+      if (i === j) continue;
+      if ([...sets[i]].every((k) => sets[j].has(k))) return true;
+    }
+  }
+  return false;
+}
+
+function pathSpellsWord(
+  grid: string[][],
+  positions: readonly { row: number; col: number }[],
+  word: string,
+): boolean {
+  if (positions.length !== word.length) return false;
+  return positions.every((p, i) => grid[p.row]?.[p.col] === word[i]);
+}
+
+function positionsMatch(
+  a: readonly { row: number; col: number }[],
+  b: readonly { row: number; col: number }[],
+): boolean {
+  if (a.length !== b.length) return false;
+  const fwd = a.every((p, i) => p.row === b[i]!.row && p.col === b[i]!.col);
+  if (fwd) return true;
+  const n = b.length;
+  return a.every((p, i) => p.row === b[n - 1 - i]!.row && p.col === b[n - 1 - i]!.col);
+}
+
+function hasGhostOccurrence(
+  grid: string[][],
+  wordText: string,
+  intendedPositions: readonly { row: number; col: number }[],
+  maxBends: number,
+): boolean {
+  const rows = grid.length;
+  const cols = grid[0]?.length ?? 0;
+  const rev = wordText.split('').reverse().join('');
+
+  function checkPath(positions: { row: number; col: number }[]): boolean {
+    if (positionsMatch(positions, intendedPositions)) return false;
+    return pathSpellsWord(grid, positions, wordText)
+      || pathSpellsWord(grid, positions, rev);
+  }
+
+  // Straight-line scan in all 8 directions
+  const allDirs = Object.keys(directionToDelta) as WordSearchDirection[];
+  for (const dir of allDirs) {
+    const d = directionToDelta[dir];
+    for (let row = 0; row < rows; row += 1) {
+      for (let col = 0; col < cols; col += 1) {
+        const positions: { row: number; col: number }[] = [];
+        let valid = true;
+        for (let i = 0; i < wordText.length; i += 1) {
+          const r = row + d.row * i;
+          const c = col + d.col * i;
+          if (r < 0 || r >= rows || c < 0 || c >= cols) { valid = false; break; }
+          positions.push({ row: r, col: c });
+        }
+        if (valid && checkPath(positions)) return true;
+      }
+    }
+  }
+
+  // Single-bend scan (orthogonal L-shapes)
+  if (maxBends >= 1 && wordText.length >= 3) {
+    for (const dir1 of ORTHOGONAL_DIRECTIONS) {
+      const d1 = directionToDelta[dir1];
+      for (const dir2 of perpendicularDirs(dir1)) {
+        const d2 = directionToDelta[dir2];
+        for (let bendAt = 1; bendAt <= wordText.length - 2; bendAt += 1) {
+          for (let row = 0; row < rows; row += 1) {
+            for (let col = 0; col < cols; col += 1) {
+              const positions: { row: number; col: number }[] = [];
+              let valid = true;
+              for (let i = 0; i <= bendAt; i += 1) {
+                const r = row + d1.row * i;
+                const c = col + d1.col * i;
+                if (r < 0 || r >= rows || c < 0 || c >= cols) { valid = false; break; }
+                positions.push({ row: r, col: c });
+              }
+              if (!valid) continue;
+              const corner = positions[bendAt]!;
+              for (let j = 1; j <= wordText.length - 1 - bendAt; j += 1) {
+                const r = corner.row + d2.row * j;
+                const c = corner.col + d2.col * j;
+                if (r < 0 || r >= rows || c < 0 || c >= cols) { valid = false; break; }
+                positions.push({ row: r, col: c });
+              }
+              if (valid && checkPath(positions)) return true;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return false;
+}
+
 function buildGrid(
   words: string[],
-  size: number,
+  rows: number,
+  cols: number,
   difficulty: PuzzleDifficulty,
 ): GridBuildResult {
   const config = WORD_SEARCH_DIFFICULTY_CONFIG[difficulty];
-  const grid = createEmptyGrid(size);
+  const grid = createEmptyGrid(rows, cols);
   const placements: Placement[] = [];
 
-  words.forEach((word, wordIndex) => {
+  for (let wordIndex = 0; wordIndex < words.length; wordIndex += 1) {
+    const word = words[wordIndex]!;
     let bestPlacement: Placement | null = null;
     let bestScore = Number.NEGATIVE_INFINITY;
 
-    for (let row = 0; row < size; row += 1) {
-      for (let col = 0; col < size; col += 1) {
-        for (const direction of config.allowedDirections) {
-          const positions = buildPositions(size, row, col, direction, word.length);
-          if (!positions || !canPlace(grid, positions, word)) {
+    for (const direction of config.allowedDirections) {
+      const delta = directionToDelta[direction];
+      const wordLen = word.length;
+
+      // Pre-compute the valid start-cell range for this direction+length.
+      // This eliminates all positions where the word would exit the grid,
+      // so no bounds check is needed when building positions below.
+      const minRow = delta.row < 0 ? wordLen - 1 : 0;
+      const maxRow = delta.row > 0 ? rows - wordLen : rows - 1;
+      const minCol = delta.col < 0 ? wordLen - 1 : 0;
+      const maxCol = delta.col > 0 ? cols - wordLen : cols - 1;
+
+      if (minRow > maxRow || minCol > maxCol) {
+        continue;
+      }
+
+      for (let row = minRow; row <= maxRow; row += 1) {
+        for (let col = minCol; col <= maxCol; col += 1) {
+          const positions = Array.from({ length: wordLen }, (_, i) => ({
+            row: row + delta.row * i,
+            col: col + delta.col * i,
+          }));
+
+          if (!canPlace(grid, positions, word)) {
             continue;
           }
 
@@ -164,13 +302,44 @@ function buildGrid(
       }
     }
 
+    // Bent placements (hard/expert, max 1 orthogonal bend)
+    if (config.maxBends >= 1 && word.length >= 3) {
+      for (const direction1 of ORTHOGONAL_DIRECTIONS) {
+        for (const direction2 of perpendicularDirs(direction1)) {
+          for (let bendAt = 1; bendAt <= word.length - 2; bendAt += 1) {
+            for (let row = 0; row < rows; row += 1) {
+              for (let col = 0; col < cols; col += 1) {
+                const positions = buildBentPositions(rows, cols, { row, col }, direction1, direction2, word.length, bendAt);
+                if (!positions || !canPlace(grid, positions, word)) {
+                  continue;
+                }
+                const score = computePlacementScore(grid, positions, word, config.overlapFrequency, config.clustering);
+                if (score > bestScore) {
+                  bestScore = score;
+                  bestPlacement = {
+                    id: `${wordIndex + 1}`,
+                    word,
+                    start: { row, col },
+                    direction: direction1,
+                    bendAt,
+                    direction2,
+                    positions,
+                  };
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
     if (!bestPlacement) {
-      return;
+      continue;
     }
 
     placeWord(grid, bestPlacement.positions, bestPlacement.word);
     placements.push(bestPlacement);
-  });
+  }
 
   return {
     grid,
@@ -203,27 +372,18 @@ function pickLanguage(preferredLanguages?: readonly WordSearchLanguage[]): WordS
 function pickWords(
   themeWords: string[],
   difficulty: PuzzleDifficulty,
-  size: number,
+  rows: number,
+  cols: number,
 ): string[] {
   const config = WORD_SEARCH_DIFFICULTY_CONFIG[difficulty].wordLengthProfile;
+  const maxFit = Math.max(rows, cols);
   const candidates = themeWords
     .map(toUpperWord)
-    .filter((word) => word.length >= config.min && word.length <= Math.min(config.max, size));
+    .filter((word) => word.length >= config.min && word.length <= Math.min(config.max, maxFit));
 
   return [...new Set(candidates)];
 }
 
-function findHiddenWordForLength(themeWords: string[], length: number): string | null {
-  if (length < 3) {
-    return null;
-  }
-  const candidates = [...new Set(
-    themeWords
-      .map(normalizeWordToken)
-      .filter((w) => w.length === length),
-  )];
-  return candidates.length > 0 ? randomFrom(candidates) : null;
-}
 
 function calculateDirectionEntropy(placements: readonly Placement[]): number {
   if (placements.length === 0) {
@@ -243,14 +403,14 @@ function calculateDirectionEntropy(placements: readonly Placement[]): number {
   return maxEntropy <= 0 ? 0 : clamp01(entropy / maxEntropy);
 }
 
-function calculateLargestEmptyClusterRatio(size: number, placements: readonly Placement[]): number {
-  const occupancy = Array.from({ length: size }, () => Array.from({ length: size }, () => false));
+function calculateLargestEmptyClusterRatio(rows: number, cols: number, placements: readonly Placement[]): number {
+  const occupancy = Array.from({ length: rows }, () => Array.from({ length: cols }, () => false));
   placements.forEach((placement) => {
     placement.positions.forEach((cell) => {
       occupancy[cell.row][cell.col] = true;
     });
   });
-  const visited = Array.from({ length: size }, () => Array.from({ length: size }, () => false));
+  const visited = Array.from({ length: rows }, () => Array.from({ length: cols }, () => false));
   const directions = [
     { row: 1, col: 0 },
     { row: -1, col: 0 },
@@ -259,8 +419,8 @@ function calculateLargestEmptyClusterRatio(size: number, placements: readonly Pl
   ];
   let maxCluster = 0;
 
-  for (let row = 0; row < size; row += 1) {
-    for (let col = 0; col < size; col += 1) {
+  for (let row = 0; row < rows; row += 1) {
+    for (let col = 0; col < cols; col += 1) {
       if (visited[row][col] || occupancy[row][col]) {
         continue;
       }
@@ -278,8 +438,8 @@ function calculateLargestEmptyClusterRatio(size: number, placements: readonly Pl
           if (
             nextRow < 0
             || nextCol < 0
-            || nextRow >= size
-            || nextCol >= size
+            || nextRow >= rows
+            || nextCol >= cols
             || visited[nextRow][nextCol]
             || occupancy[nextRow][nextCol]
           ) {
@@ -293,26 +453,27 @@ function calculateLargestEmptyClusterRatio(size: number, placements: readonly Pl
     }
   }
 
-  return clamp01(maxCluster / (size * size));
+  return clamp01(maxCluster / (rows * cols));
 }
 
-function calculateSpreadRatio(size: number, placements: readonly Placement[]): number {
+function calculateSpreadRatio(rows: number, cols: number, placements: readonly Placement[]): number {
   if (placements.length === 0) {
     return 0;
   }
-  const rows = new Set<number>();
-  const cols = new Set<number>();
+  const usedRows = new Set<number>();
+  const usedCols = new Set<number>();
   placements.forEach((placement) => {
     placement.positions.forEach((cell) => {
-      rows.add(cell.row);
-      cols.add(cell.col);
+      usedRows.add(cell.row);
+      usedCols.add(cell.col);
     });
   });
-  return clamp01(((rows.size / size) + (cols.size / size)) / 2);
+  return clamp01(((usedRows.size / rows) + (usedCols.size / cols)) / 2);
 }
 
 function buildQualityMetrics(
-  size: number,
+  rows: number,
+  cols: number,
   placements: readonly Placement[],
 ): WordSearchQualityMetrics {
   const totalWordLetters = placements.reduce((sum, placement) => sum + placement.word.length, 0);
@@ -327,9 +488,9 @@ function buildQualityMetrics(
     ? 0
     : clamp01((totalWordLetters - occupiedCount) / totalWordLetters);
   const directionEntropy = calculateDirectionEntropy(placements);
-  const spreadRatio = calculateSpreadRatio(size, placements);
-  const deadZoneRatio = calculateLargestEmptyClusterRatio(size, placements);
-  const coverageRatio = clamp01(occupiedCount / (size * size));
+  const spreadRatio = calculateSpreadRatio(rows, cols, placements);
+  const deadZoneRatio = calculateLargestEmptyClusterRatio(rows, cols, placements);
+  const coverageRatio = clamp01(occupiedCount / (rows * cols));
   const score = clamp01(
     (overlapRatio * 0.25)
     + (directionEntropy * 0.2)
@@ -358,7 +519,7 @@ function passesQualityThreshold(
     && quality.deadZoneRatio <= threshold.maxDeadZoneRatio;
 }
 
-function buildDiversitySignature(size: number, placements: readonly Placement[]): string {
+function buildDiversitySignature(rows: number, cols: number, placements: readonly Placement[]): string {
   const words = [...placements].map((placement) => placement.word).sort().join(',');
   const directionCounts = new Map<WordSearchDirection, number>();
   const overlapCounts = new Map<number, number>();
@@ -383,11 +544,16 @@ function buildDiversitySignature(size: number, placements: readonly Placement[])
     .map(([depth, count]) => `${depth}:${count}`)
     .join('|');
   const anchors = [...placements]
-    .map((placement) => `${placement.start.row},${placement.start.col},${placement.direction},${placement.word.length}`)
+    .map((placement) => {
+      const base = `${placement.start.row},${placement.start.col},${placement.direction},${placement.word.length}`;
+      return placement.bendAt !== undefined
+        ? `${base},b${placement.bendAt},${placement.direction2}`
+        : base;
+    })
     .sort()
     .join('|');
 
-  return `${size}:${words}:${directionMix}:${overlapHistogram}:${anchors}`;
+  return `${rows}x${cols}:${words}:${directionMix}:${overlapHistogram}:${anchors}`;
 }
 
 function buildDifficultyRatedScore(
@@ -408,7 +574,8 @@ function buildDifficultyRatedScore(
 }
 
 export function generateWordSearchPuzzle(
-  size: number,
+  rows: number,
+  cols: number,
   difficulty: PuzzleDifficulty,
   options?: { preferredLanguages?: readonly WordSearchLanguage[]; preferredThemeIds?: readonly string[] },
 ): {
@@ -417,25 +584,44 @@ export function generateWordSearchPuzzle(
   label: string;
   score: number;
 } | null {
-  if (!WORD_SEARCH_ALLOWED_SIZES.includes(size as (typeof WORD_SEARCH_ALLOWED_SIZES)[number])) {
-    throw new Error(`Unsupported Word Search size: ${size}`);
-  }
-
   const language = pickLanguage(options?.preferredLanguages);
   const theme = pickTheme(language, options?.preferredThemeIds);
-  const allWords = pickWords(theme.words, difficulty, size);
+  const allWords = pickWords(theme.words, difficulty, rows, cols);
   if (allWords.length === 0) {
     return null;
   }
 
   const difficultyConfig = WORD_SEARCH_DIFFICULTY_CONFIG[difficulty];
   const config = difficultyConfig.wordLengthProfile;
-  const preferredLength = Math.max(config.min, Math.min(config.preferred, config.max, size));
+  const totalCells = rows * cols;
   const maxPlacementWords = Math.min(
     allWords.length,
     difficultyConfig.wordCount.max,
-    Math.ceil((size * size) / Math.max(1, config.min)),
+    Math.ceil(totalCells / Math.max(1, config.min)),
   );
+
+  // Pre-build a length → candidates map so each attempt pays O(1) for the hidden-word check
+  // instead of scanning all theme words every time.
+  const hiddenWordByLength = new Map<number, string[]>();
+  for (const word of theme.words) {
+    const normalized = normalizeWordToken(word);
+    if (normalized.length >= 3) {
+      const bucket = hiddenWordByLength.get(normalized.length);
+      if (bucket) {
+        bucket.push(normalized);
+      } else {
+        hiddenWordByLength.set(normalized.length, [normalized]);
+      }
+    }
+  }
+
+  const availableHiddenLengths = [...hiddenWordByLength.keys()];
+  if (availableHiddenLengths.length === 0) {
+    return null;
+  }
+
+  // Estimate average word length to guide word-count selection toward a target fill.
+  const avgWordLength = (config.min + config.max) / 2;
 
   let selectedPlacements: Placement[] | null = null;
   let selectedHiddenWord: string | null = null;
@@ -444,36 +630,58 @@ export function generateWordSearchPuzzle(
   let selectedSignature: string | null = null;
 
   for (let attempt = 0; attempt < 300; attempt += 1) {
+    // Pick a random target hidden-word length and derive how many regular words
+    // to place so the grid is filled to leave roughly that many empty cells.
+    // Using 0.85 as an empirical fill-efficiency factor (accounts for ~15% overlap).
+    const targetHiddenLength = randomFrom(availableHiddenLengths);
+    const targetFill = totalCells - targetHiddenLength;
+    const estimatedWordCount = Math.round(targetFill / (avgWordLength * 0.85));
     const targetWordCount = Math.max(
       difficultyConfig.wordCount.min,
-      Math.min(
-        maxPlacementWords,
-        difficultyConfig.wordCount.min + (attempt % (difficultyConfig.wordCount.max - difficultyConfig.wordCount.min + 1)),
-      ),
+      Math.min(maxPlacementWords, estimatedWordCount),
     );
+
     const shuffled = [...allWords].sort(() => Math.random() - 0.5);
-    const candidateWords = shuffled.slice(0, targetWordCount);
-    const { grid, words: placements } = buildGrid(candidateWords, size, difficulty);
+    // Sort longest-first so large words are placed when the grid is most open.
+    const candidateWords = shuffled.slice(0, targetWordCount).sort((a, b) => b.length - a.length);
+
+    const { grid, words: placements } = buildGrid(candidateWords, rows, cols, difficulty);
     if (placements.length === 0) {
       continue;
     }
-    const quality = buildQualityMetrics(size, placements);
+
+    // Reject if any word's cells are fully covered by another word's cells.
+    if (hasCoverageViolation(placements)) {
+      continue;
+    }
+
+    // Check hidden-word match first — it's O(1) and cheaper than the quality BFS.
+    const emptyCells = collectEmptyCells(grid);
+    const hiddenCandidates = hiddenWordByLength.get(emptyCells.length);
+    if (!hiddenCandidates) {
+      continue;
+    }
+
+    const quality = buildQualityMetrics(rows, cols, placements);
     if (!passesQualityThreshold(difficulty, quality)) {
       continue;
     }
 
-    // All empty cells become the hidden word — find a theme word of exactly that length.
-    const sortedEmpty = collectEmptyCells(grid).sort((a, b) => toGridKey(a) - toGridKey(b));
-    const hiddenWord = findHiddenWordForLength(theme.words, sortedEmpty.length);
-    if (!hiddenWord) {
+    // Reject if any word accidentally spells itself (forward or backward) at another
+    // location in the grid — either as a straight line or single-bend path.
+    const ghostDetected = placements.some(
+      (p) => hasGhostOccurrence(grid, p.word, p.positions, difficultyConfig.maxBends),
+    );
+    if (ghostDetected) {
       continue;
     }
 
     selectedPlacements = placements;
-    selectedHiddenWord = hiddenWord;
-    selectedHiddenPositions = sortedEmpty;
+    selectedHiddenWord = randomFrom(hiddenCandidates);
+    // Shuffle hidden word positions so letters are scattered rather than in reading order.
+    selectedHiddenPositions = [...emptyCells].sort(() => Math.random() - 0.5);
     selectedQuality = quality;
-    selectedSignature = buildDiversitySignature(size, placements);
+    selectedSignature = buildDiversitySignature(rows, cols, placements);
     break;
   }
 
@@ -484,8 +692,8 @@ export function generateWordSearchPuzzle(
   const entry: Omit<WordSearchCatalogEntry, 'id'> = {
     schemaVersion: 1,
     difficulty,
-    rows: size,
-    cols: size,
+    rows,
+    cols,
     language,
     themeId: theme.themeId,
     words: selectedPlacements.map((placement) => ({
@@ -493,6 +701,9 @@ export function generateWordSearchPuzzle(
       word: placement.word,
       start: { ...placement.start },
       direction: placement.direction,
+      ...(placement.bendAt !== undefined && placement.direction2 !== undefined
+        ? { bendAt: placement.bendAt, direction2: placement.direction2 }
+        : {}),
     })),
     hiddenWord: {
       word: selectedHiddenWord,
@@ -503,12 +714,12 @@ export function generateWordSearchPuzzle(
     quality: selectedQuality,
   };
 
-  const dedupeKey = `${language}:${theme.themeId}:${difficulty}:${size}:${selectedSignature}`;
+  const dedupeKey = `${language}:${theme.themeId}:${difficulty}:${rows}x${cols}:${selectedSignature}`;
 
   return {
     dedupeKey,
     entry,
-    label: `${size}x${size} ${difficulty} (${language})`,
+    label: `${rows}x${cols} ${difficulty} (${language})`,
     score: buildDifficultyRatedScore(difficulty, selectedQuality.score),
   };
 }

@@ -18,7 +18,7 @@ import type { Theme } from '../../../../app/theme';
 import { withAlpha } from '../../../../app/utils/color';
 import { getWordSearchStrings } from '../../content/strings';
 import { getWordSearchNextMoveHint } from '../../gameplay/analysis/nextMove';
-import { runWordSearchAction, type WordSearchAction } from '../../gameplay/actions';
+import { buildBentPaths, runWordSearchAction, type WordSearchAction } from '../../gameplay/actions';
 import {
   wordSearchPlayContract,
   type WordSearchHudState,
@@ -127,16 +127,48 @@ function useWordSearchAdapter({
         type: 'update-selection',
         cell: { row, col },
       });
-      if (!updatePreview.changed) {
-        // Not aligned with current selection — start a new one from here.
-        await applyAction({ type: 'begin-selection', cell: { row, col } });
+
+      // Try L-shapes alongside the straight line — needed when the second leg is
+      // exactly one cell (e.g. COW where C→O is down and O→W is right): the
+      // diagonal C→W is geometrically valid but is NOT the intended bent path.
+      const bentPaths = buildBentPaths(currentSession.tempSelection.start, { row, col });
+
+      if (updatePreview.changed) {
+        // Straight path aligned — but check L-shapes first when a bent word
+        // matches, so a diagonal never wins over the correct L-shape.
+        for (const bentPath of bentPaths) {
+          const bentPreview = runWordSearchAction(
+            { ...currentSession, tempSelection: { start: bentPath[0]!, end: bentPath[bentPath.length - 1]!, path: bentPath } },
+            { type: 'commit-selection' },
+          );
+          if (bentPreview.changed && bentPreview.session.foundWordIds.length > currentSession.foundWordIds.length) {
+            await applyAction({ type: 'set-selection', path: bentPath });
+            await applyAction({ type: 'commit-selection' });
+            return;
+          }
+        }
+
+        // No bent word matched — commit straight and leave visible.
+        await applyAction({ type: 'update-selection', cell: { row, col } });
+        await applyAction({ type: 'commit-selection' });
         return;
       }
 
-      // Extend the selection and auto-commit. On no match the selection stays
-      // visible so the user can tap the correct endpoint without restarting.
-      await applyAction({ type: 'update-selection', cell: { row, col } });
-      await applyAction({ type: 'commit-selection' });
+      // Straight line doesn't align — try L-shaped bent paths.
+      for (const bentPath of bentPaths) {
+        const preview = runWordSearchAction(
+          { ...currentSession, tempSelection: { start: bentPath[0]!, end: bentPath[bentPath.length - 1]!, path: bentPath } },
+          { type: 'commit-selection' },
+        );
+        if (preview.changed && preview.session.foundWordIds.length > currentSession.foundWordIds.length) {
+          await applyAction({ type: 'set-selection', path: bentPath });
+          await applyAction({ type: 'commit-selection' });
+          return;
+        }
+      }
+
+      // No match on any path — start a new selection here.
+      await applyAction({ type: 'begin-selection', cell: { row, col } });
     };
 
     const nextMoveHeaderAction: PuzzleHeaderAction = {
@@ -172,10 +204,6 @@ function useWordSearchAdapter({
     const sortedWords = session
       ? [...session.puzzle.words].sort((a, b) => a.word.localeCompare(b.word))
       : [];
-    const hiddenWordTargetCell = session?.hiddenWordMode && !session.hiddenWordSolved
-      ? session.puzzle.hiddenWord.positions[session.hiddenWordProgress.length] ?? null
-      : null;
-
     return {
       headerActions: isBoardZoomed
         ? [resetZoomHeaderAction, hiddenWordHeaderAction, nextMoveHeaderAction]
@@ -241,8 +269,6 @@ function useWordSearchAdapter({
                   puzzle={session.puzzle}
                   foundWordIds={session.foundWordIds}
                   tempSelection={session.tempSelection}
-                  hiddenWordProgressCells={session.hiddenWordProgress}
-                  hiddenWordTargetCell={hiddenWordTargetCell}
                   containerWidth={gridContainer.width}
                   containerHeight={gridContainer.height}
                   interactive={running}
@@ -272,16 +298,28 @@ function useWordSearchAdapter({
             </View>
           ) : null}
 
-          {session.hiddenWordMode || !session.hiddenWordSolved ? (
+          {session.hiddenWordSolved ? (
+            <View style={styles.hiddenWordSolvedCard}>
+              <Text style={styles.hiddenWordSolvedTitle}>
+                {strings.play.hiddenWord.solvedTitle}
+              </Text>
+              <Text style={styles.hiddenWordSolvedWord}>
+                {strings.play.hiddenWord.revealed(
+                  formatThemeId(session.puzzle.hiddenWord.clue),
+                  session.puzzle.hiddenWord.word,
+                )}
+              </Text>
+            </View>
+          ) : (
             <View style={styles.hiddenWordCard}>
               <Text style={styles.hiddenWordLabel}>
-                {session.puzzle.hiddenWord.clue}
+                {formatThemeId(session.puzzle.hiddenWord.clue)}
               </Text>
-              <Text style={styles.hiddenWordProgress}>
-                {strings.play.hiddenWord.progress(
-                  session.hiddenWordProgress.length,
-                  session.puzzle.hiddenWord.word.length,
-                )}
+              <Text style={styles.hiddenWordLetters}>
+                {session.puzzle.hiddenWord.word
+                  .split('')
+                  .map((_, i) => session.puzzle.grid[session.hiddenWordProgress[i]?.row ?? -1]?.[session.hiddenWordProgress[i]?.col ?? -1] ?? '_')
+                  .join(' ')}
               </Text>
               <Text style={styles.hiddenWordBody}>
                 {session.hiddenWordMode
@@ -292,7 +330,7 @@ function useWordSearchAdapter({
                 <Text style={styles.hiddenWordHint}>{strings.play.hiddenWord.resetOnMistake}</Text>
               ) : null}
             </View>
-          ) : null}
+          )}
         </View>
       ) : (
         <View style={styles.footerSpacer} />
@@ -413,6 +451,28 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     fontSize: 12,
     lineHeight: 17,
   },
+  hiddenWordSolvedCard: {
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: withAlpha(theme.success, 0.4),
+    backgroundColor: withAlpha(theme.success, 0.1),
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  hiddenWordSolvedTitle: {
+    color: theme.success,
+    fontSize: 13,
+    lineHeight: 19,
+    fontWeight: '800',
+  },
+  hiddenWordSolvedWord: {
+    marginTop: 4,
+    color: theme.text,
+    fontSize: 16,
+    lineHeight: 22,
+    fontWeight: '800',
+    letterSpacing: 1,
+  },
   hiddenWordCard: {
     borderRadius: 14,
     borderWidth: 1,
@@ -427,12 +487,14 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     lineHeight: 19,
     fontWeight: '700',
   },
-  hiddenWordProgress: {
-    marginTop: 4,
-    color: theme.textSecondary,
-    fontSize: 12,
-    lineHeight: 16,
-    fontWeight: '700',
+  hiddenWordLetters: {
+    marginTop: 6,
+    color: theme.text,
+    fontSize: 18,
+    lineHeight: 24,
+    fontWeight: '800',
+    fontFamily: 'monospace',
+    letterSpacing: 2,
   },
   hiddenWordBody: {
     marginTop: 6,

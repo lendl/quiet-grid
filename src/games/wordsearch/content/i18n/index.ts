@@ -10,8 +10,9 @@ import fr from './fr';
 import es from './es';
 
 export type WordSearchTutorialLessonKey =
-  | 'scan-lines'
-  | 'drag-selection'
+  | 'win-condition'
+  | 'selection'
+  | 'no-penalty'
   | 'hidden-word';
 
 export interface WordSearchTutorialLessonCopy {
@@ -45,9 +46,9 @@ export interface WordSearchStrings {
     hiddenWord: {
       locked: string;
       revealed(clue: string, word: string): string;
+      solvedTitle: string;
       enterMode: string;
       exitMode: string;
-      progress(current: number, total: number): string;
       instructions: string;
       resetOnMistake: string;
       nextLetterTitle(clue: string): string;

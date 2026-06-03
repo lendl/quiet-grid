@@ -23,7 +23,7 @@ const fr: WordSearchThemeSeed[] = [
       'Abricot', 'Fraise', 'Framboise', 'Mure', 'Baie', 'Nefle', 'Papaye', 'Goyave', 'Litchi', 'Ramboutan',
       'Durian', 'Pomelo', 'Citronvert', 'Citron', 'Orange', 'Mandarine', 'Kumquat', 'Avocat', 'Datte', 'Figue',
       'Canneberge', 'Tomate', 'Pasteque', 'MelondeMiel', 'Cantaloup', 'Olive', 'Noixdecoco', 'Feijoa', 'Kaki', 'Longane',
-      'Salak', 'Rambai', 'Cassis', 'Groseille', 'Myrtille', 'Coing', 'Maracuja', 'Pamplemousse', 'Papaye', 'Jujube'
+      'Salak', 'Rambai', 'Cassis', 'Groseille', 'Myrtille', 'Coing', 'Maracuja', 'Pamplemousse', 'Tamarin', 'Jujube'
     ]
   },
   {
@@ -43,7 +43,7 @@ const fr: WordSearchThemeSeed[] = [
       'Legging', 'Jupe', 'Robe', 'Short', 'Pyjama', 'Culotte', 'Soutiengorge', 'Chaussettes', 'Collant', 'Bonnet',
       'Echarpe', 'Casquette', 'Chapeau', 'Baskets', 'Bottes', 'Sandales', 'Talons', 'Claquettes', 'Ceinture', 'Bikini',
       'Maillotdebain', 'Combinaison', 'Costume', 'Veston', 'Blazer', 'Hoodie', 'Poncho', 'Kimono', 'Survetement', 'Shortsport',
-      'Maillotsport', 'Chemise', 'Gilet', 'Bas', 'Doudoune', 'Impermeable', 'Manteauhiver', 'Parka', 'Sweat', 'Cardigan'
+      'Maillotsport', 'Tunique', 'Caraco', 'Bas', 'Doudoune', 'Impermeable', 'Manteauhiver', 'Parka', 'Sweat', 'Cardigan'
     ]
   },
   {
@@ -92,11 +92,8 @@ const fr: WordSearchThemeSeed[] = [
       'Medecin', 'Infirmier', 'Charpentier', 'Plombier', 'Electricien', 'Boulanger', 'Boucher', 'Cuisinier', 'Pilote', 'Chauffeur',
       'Pompier', 'Policier', 'Avocat', 'Juge', 'Notaire', 'Peintre', 'Macon', 'Architecte', 'Ingenieur', 'Programmeur',
       'Designer', 'Journaliste', 'Ecrivain', 'Poete', 'Acteur', 'Chanteur', 'Musicien', 'Jardinier', 'Fermier', 'Coiffeur',
-      'Mecanicien', 'Receptionniste', 'Entraineur', 'Coach', 'Enseignant', 'Professeur', 'Vendeur', 'Barista', 'Serveur',
-      'Pharmacien', 'Laborantin', 'Soignant', 'Therapeute', 'Psychologue', 'Interprete', 'Traducteur', 'Photographe', 'Artiste', 'Agentdesecurite',
-      'Pilote', 'Platrier', 'Sagefemme', 'Opticien', 'Chirurgien', 'Dentiste', 'Kinesitherapeute', 'Therapeute', 'Analyste',
-      'Comptable', 'Agentimmobilier', 'Inspecteur', 'Operateur', 'Technicien', 'Mecanicien', 'Planificateur', 'Dispatcheur', 'Redacteur', 'Producteur',
-      'Realisateur', 'Animateur', 'Modelisateur', 'Styliste', 'Barbier', 'Nettoyeur', 'Portier', 'Concierge', 'Entraineur', 'Coach'
+      'Mecanicien', 'Receptionniste', 'Entraineur', 'Coach', 'Enseignant', 'Professeur', 'Vendeur', 'Barista', 'Serveur', 'Pharmacien',
+      'Laborantin', 'Soignant', 'Therapeute', 'Psychologue', 'Interprete', 'Traducteur', 'Photographe', 'Artiste', 'Platrier', 'Opticien'
     ]
   },
   {
@@ -104,8 +101,8 @@ const fr: WordSearchThemeSeed[] = [
     words: [
       'Pere', 'Mere', 'Fils', 'Fille', 'Frere', 'Soeur', 'Papi', 'Mamie', 'Oncle', 'Tante',
       'Neveu', 'Niece', 'Parrain', 'Marraine', 'Filleul', 'Beaupere', 'Bellemere', 'Gendre', 'Bru', 'Beaufrere',
-      'Bellesoeur', 'Beaupere', 'Bellemere', 'Demifrere', 'Demisoeur', 'Pereadoptif', 'Mereadoptive', 'Enfantadoptif', 'Foyer', 'Famille',
-      'Petiotenfant', 'Petitfils', 'Petitefille', 'Beaufrere', 'Bellesoeur', 'Marie', 'Mariee', 'Epoux', 'Epouse', 'Partenaire',
+      'Bellesoeur', 'Cousin', 'Cousine', 'Demifrere', 'Demisoeur', 'Pereadoptif', 'Mereadoptive', 'Enfantadoptif', 'Foyer', 'Famille',
+      'Petitenfant', 'Petitfils', 'Petitefille', 'Jumeau', 'Jumelle', 'Marie', 'Mariee', 'Epoux', 'Epouse', 'Partenaire',
       'Fiance', 'Descendant', 'Ancetre', 'Descendance', 'Enfant', 'Bebe', 'Bambin', 'Ado', 'Adulte', 'Senior'
     ]
   },
