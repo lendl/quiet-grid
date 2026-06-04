@@ -4,7 +4,7 @@ import {
   cloneSolutionGrid,
   solutionToKey,
 } from '../engine/solver';
-import { classifyNonogramEntry } from '../gameplay/analysis/difficulty';
+import { classifyNonogramEntry, computeNonogramScore } from '../gameplay/analysis/difficulty';
 import { getBuiltInNonogramEntries } from '../platform/puzzleData';
 import type { NonogramCatalogEntry } from '../platform/codecs/codec';
 import type { PuzzleDifficulty } from '../../shared/types';
@@ -85,7 +85,7 @@ export function generateNonogramPuzzle(
       dedupeKey: solutionToKey(candidate.solution),
       entry: candidate,
       label: `${candidate.rows}x${candidate.cols} ${targetDifficulty}`,
-      score: classification?.metrics.steps,
+      score: classification ? computeNonogramScore(classification.metrics) : undefined,
     };
 
     if (!fallback) {

@@ -5,7 +5,7 @@ import {
   type NonogramLineOrientation,
   type NonogramPuzzle,
 } from '../../types';
-import { analyzeNonogramBoard, lineCellsToRefs } from '../rules/solver';
+import { analyzeNonogramBoard, type NonogramBoardAnalysis, lineCellsToRefs } from '../rules/solver';
 import { buildNonogramPuzzle } from '../../platform/puzzleData';
 import type { NonogramCatalogEntry } from '../../platform/codecs/codec';
 
@@ -13,6 +13,14 @@ export interface NonogramDifficultyMetrics {
   steps: number;
   filledCells: number;
   clueSegments: number;
+  /** Average number of valid placements that existed when each deduction was made. Higher = harder to spot. */
+  avgPlacementsAtDeduction: number;
+  /** Maximum number of valid placements for any single deduction. Captures the hardest individual step. */
+  maxPlacementsAtDeduction: number;
+  /** Count of overlap-fill steps that revealed only 1 cell. Each requires very precise incremental reasoning. */
+  singleCellStepCount: number;
+  /** Count of steps that unlocked at least one new deduction on a line of the opposite orientation. */
+  crossAxisUnlocks: number;
 }
 
 function countClueSegments(clues: readonly (readonly number[])[]): number {
@@ -22,6 +30,8 @@ function countClueSegments(clues: readonly (readonly number[])[]): number {
 interface CanonicalStep {
   kind: 'overlap-fill' | 'forced-empty' | 'complete-line';
   targetCells: Array<NonogramCellRef & { value: 0 | 1 }>;
+  placementCount: number;
+  orientation: NonogramLineOrientation;
 }
 
 function buildTargets(
@@ -36,11 +46,9 @@ function buildTargets(
   }));
 }
 
-function getCanonicalStep(
-  puzzle: NonogramPuzzle,
-  board: ReturnType<typeof createEmptyNonogramBoard>,
+function getCanonicalStepFromAnalysis(
+  analysis: NonogramBoardAnalysis,
 ): CanonicalStep | null {
-  const analysis = analyzeNonogramBoard(puzzle, board);
   if (analysis.invalidLine) {
     return null;
   }
@@ -50,29 +58,56 @@ function getCanonicalStep(
       return null;
     }
 
+    const placementCount = line.analysis.placements.length;
+    const { orientation } = line;
+
     if (line.analysis.overlapFillCells.length > 0) {
       return {
         kind: 'overlap-fill',
-        targetCells: buildTargets(line.orientation, line.index, line.analysis.overlapFillCells, 1),
+        targetCells: buildTargets(orientation, line.index, line.analysis.overlapFillCells, 1),
+        placementCount,
+        orientation,
       };
     }
 
     if (line.analysis.isComplete && line.analysis.forcedEmptyCells.length > 0) {
       return {
         kind: 'complete-line',
-        targetCells: buildTargets(line.orientation, line.index, line.analysis.forcedEmptyCells, 0),
+        targetCells: buildTargets(orientation, line.index, line.analysis.forcedEmptyCells, 0),
+        placementCount,
+        orientation,
       };
     }
 
     if (line.analysis.forcedEmptyCells.length > 0) {
       return {
         kind: 'forced-empty',
-        targetCells: buildTargets(line.orientation, line.index, line.analysis.forcedEmptyCells, 0),
+        targetCells: buildTargets(orientation, line.index, line.analysis.forcedEmptyCells, 0),
+        placementCount,
+        orientation,
       };
     }
   }
 
   return null;
+}
+
+function isLineActionable(lineAnalysis: NonogramBoardAnalysis['rows'][number]['analysis']): boolean {
+  if (!lineAnalysis) {
+    return false;
+  }
+  return lineAnalysis.overlapFillCells.length > 0 || lineAnalysis.forcedEmptyCells.length > 0;
+}
+
+function hasCrossAxisUnlock(
+  before: NonogramBoardAnalysis,
+  after: NonogramBoardAnalysis,
+  stepOrientation: NonogramLineOrientation,
+): boolean {
+  const beforeOpposite = stepOrientation === 'row' ? before.cols : before.rows;
+  const afterOpposite = stepOrientation === 'row' ? after.cols : after.rows;
+
+  return afterOpposite.some((line, i) => !isLineActionable(beforeOpposite[i]?.analysis ?? null) && isLineActionable(line.analysis));
 }
 
 function applyStep(
@@ -90,16 +125,33 @@ export function analyzeNonogramDifficulty(
 ): NonogramDifficultyMetrics | null {
   const board = createEmptyNonogramBoard(puzzle.rows, puzzle.cols);
   let steps = 0;
+  let totalPlacements = 0;
+  let maxPlacementsAtDeduction = 0;
+  let singleCellStepCount = 0;
+  let crossAxisUnlocks = 0;
   const safetyLimit = Math.max(8, puzzle.rows * puzzle.cols * 2);
 
   while (!isNonogramSolved(board, solution) && steps < safetyLimit) {
-    const step = getCanonicalStep(puzzle, board);
+    const before = analyzeNonogramBoard(puzzle, board);
+    const step = getCanonicalStepFromAnalysis(before);
     if (!step) {
       return null;
     }
 
+    totalPlacements += step.placementCount;
+    maxPlacementsAtDeduction = Math.max(maxPlacementsAtDeduction, step.placementCount);
+
+    if (step.kind === 'overlap-fill' && step.targetCells.length <= 1) {
+      singleCellStepCount += 1;
+    }
+
     applyStep(board, step);
     steps += 1;
+
+    const after = analyzeNonogramBoard(puzzle, board);
+    if (hasCrossAxisUnlock(before, after, step.orientation)) {
+      crossAxisUnlocks += 1;
+    }
   }
 
   if (!isNonogramSolved(board, solution)) {
@@ -110,7 +162,21 @@ export function analyzeNonogramDifficulty(
     steps,
     filledCells: solution.flat().filter(Boolean).length,
     clueSegments: countClueSegments(puzzle.rowClues) + countClueSegments(puzzle.colClues),
+    avgPlacementsAtDeduction: steps > 0 ? totalPlacements / steps : 0,
+    maxPlacementsAtDeduction,
+    singleCellStepCount,
+    crossAxisUnlocks,
   };
+}
+
+export function computeNonogramScore(metrics: NonogramDifficultyMetrics): number {
+  // +1 per 5 placements in the hardest single deduction (captures the peak mental effort)
+  const placementBonus = Math.floor(metrics.maxPlacementsAtDeduction / 5);
+  // each 1-cell overlap-fill step adds +1 (most incremental possible reasoning)
+  const incrementalBonus = metrics.singleCellStepCount;
+  // +1 per 4 steps that unlock new deductions across the opposite axis (cross-line chaining)
+  const chainBonus = Math.floor(metrics.crossAxisUnlocks / 4);
+  return metrics.steps + placementBonus + incrementalBonus + chainBonus;
 }
 
 export function classifyNonogramDifficulty(
@@ -118,38 +184,47 @@ export function classifyNonogramDifficulty(
   cols: number,
   metrics: NonogramDifficultyMetrics,
 ): NonogramCatalogEntry['difficulty'] {
-  const score = metrics.steps;
+  const score = computeNonogramScore(metrics);
   const shortSide = Math.min(rows, cols);
   const longSide = Math.max(rows, cols);
 
+  // Score-based classification
+  let difficulty: NonogramCatalogEntry['difficulty'];
+
   if (shortSide <= 5 && longSide <= 5) {
-    if (score <= 3) return 'easy';
-    if (score <= 5) return 'medium';
-    if (score <= 7) return 'hard';
-    return 'expert';
+    if (score <= 3) difficulty = 'easy';
+    else if (score <= 5) difficulty = 'medium';
+    else difficulty = 'hard'; // 5x5 is too small to reach genuine expert complexity
+  } else if (shortSide <= 5 && longSide <= 10) {
+    if (score <= 4) difficulty = 'easy';
+    else if (score <= 7) difficulty = 'medium';
+    else if (score <= 10) difficulty = 'hard';
+    else difficulty = 'expert';
+  } else if (shortSide <= 10 && longSide <= 10) {
+    if (score <= 6) difficulty = 'medium';
+    else if (score <= 9) difficulty = 'hard';
+    else difficulty = 'expert';
+  } else if (shortSide <= 10 && longSide <= 15) {
+    if (score <= 9) difficulty = 'medium';
+    else if (score <= 13) difficulty = 'hard';
+    else difficulty = 'expert';
+  } else {
+    difficulty = score <= 18 ? 'hard' : 'expert';
   }
 
-  if (shortSide <= 5 && longSide <= 10) {
-    if (score <= 4) return 'easy';
-    if (score <= 7) return 'medium';
-    if (score <= 10) return 'hard';
-    return 'expert';
-  }
+  // Size ceiling gates (push down): expert requires at least 10x10
+  if (difficulty === 'expert' && shortSide < 10) difficulty = 'hard';
 
-  if (shortSide <= 10 && longSide <= 10) {
-    if (score <= 6) return 'medium';
-    if (score <= 9) return 'hard';
-    return 'expert';
-  }
+  // Size floor gates (push up): larger boards carry visual weight that makes easy/medium feel wrong
+  if (difficulty === 'easy' && longSide > 5) difficulty = 'medium';     // bigger than 5x5 → min medium
+  if (difficulty === 'medium' && longSide > 10) difficulty = 'hard';    // bigger than 10x10 → min hard
 
-  if (shortSide <= 10 && longSide <= 15) {
-    if (score <= 9) return 'medium';
-    if (score <= 13) return 'hard';
-    return 'expert';
-  }
+  // Minimum steps gate (cascades downward so each level is independently enforced)
+  if (difficulty === 'expert' && metrics.steps < 20) difficulty = 'hard';
+  if (difficulty === 'hard' && metrics.steps < 15) difficulty = 'medium';
+  if (difficulty === 'medium' && metrics.steps < 10) difficulty = 'easy';
 
-  if (score <= 18) return 'hard';
-  return 'expert';
+  return difficulty;
 }
 
 export function classifyNonogramEntry(

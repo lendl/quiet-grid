@@ -208,6 +208,7 @@ export default function NonogramPuzzleGrid({
     const panGesture = Gesture.Pan()
       .runOnJS(true)
       .minDistance(8)
+      .maxPointers(1)
       .onBegin((event) => {
         handleSwipeStart(event.x, event.y);
       })
