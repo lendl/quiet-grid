@@ -1,0 +1,20 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    groups:
+      expo:
+        patterns:
+          - "expo*"
+          - "@expo/*"
+      react-navigation:
+        patterns:
+          - "@react-navigation/*"
+      react-native:
+        patterns:
+          - "react-native*"
+          - "@react-native*"
