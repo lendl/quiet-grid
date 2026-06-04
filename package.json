@@ -19,7 +19,7 @@
     "@react-navigation/material-top-tabs": "^6.6.14",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/stack": "^6.4.1",
-    "expo": "~54.0.35",
+    "expo": "~56.0.8",
     "expo-font": "~14.0.12",
     "expo-linear-gradient": "~15.0.8",
     "expo-localization": "~17.0.9",
