@@ -43,11 +43,6 @@
         "backgroundColor": "#0d1117"
       }
     },
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#0d1117"
-    },
     "extra": {
       "eas": {
         "projectId": "06d3f810-3f74-42fa-a3b7-53cc7ee3f51c"
@@ -56,7 +51,12 @@
     "ios": {},
     "plugins": [
       "expo-font",
-      "expo-localization"
+      "expo-localization",
+      ["expo-splash-screen", {
+        "image": "./assets/splash.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#0d1117"
+      }]
     ]
   }
 }
