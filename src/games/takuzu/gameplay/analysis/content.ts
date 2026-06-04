@@ -1,4 +1,4 @@
-import { getTakuzuLearningCenterContent as getContent } from '../../i18n';
+import { getTakuzuLearningCenterContent as getContent } from '../../content/i18n';
 
 type LineKind = 'row' | 'column';
 

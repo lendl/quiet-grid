@@ -8,7 +8,7 @@ import {
   type ActionLessonText,
   type InfoLessonText,
   type TutorialTextKey,
-} from '../i18n';
+} from './i18n';
 
 export type MinesweeperTutorialAction = 'reveal' | 'flag';
 

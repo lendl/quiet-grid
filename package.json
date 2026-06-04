@@ -8,6 +8,7 @@
     "engine": "ts-node --project src/engine/tsconfig.json src/engine/index.ts",
     "lint": "eslint src App.tsx",
     "lint:fix": "eslint src App.tsx --fix",
+    "test:regression": "node tests\\regression\\run.cjs",
     "typecheck:app": "tsc --noEmit",
     "typecheck:engine": "tsc --noEmit --project src/engine/tsconfig.json",
     "check:wordsearch": "ts-node --project src/engine/tsconfig.json src/engine/checkWordSearchCatalog.ts"

@@ -65,11 +65,12 @@
    - no fallback difficulty/proof labels remain for techniques that are not actually implemented and teachable
 22. Wire registries and persistence.
 23. Keep all game-facing copy in `content/i18n/`.
-24. Run manual Learning Center acceptance checks before final validation:
+24. Prefer canonical module paths (`gameplay/`, `ui/`, `content/`, `platform/`, `engine/`) even if older games still expose root-level compatibility shims.
+25. Run manual Learning Center acceptance checks before final validation:
    - tutorial decision checkpoints do not reveal the answer before response
    - next move returns one actionable canonical move
    - next move does not require support actions when canonical progress exists
    - analyzer teaches from puzzle state, not support-action history, unless explicitly approved
    - tutorial/next move/analyzer use the approved support-action policy consistently
-25. Validate with lint and typechecks.
-26. Review against the new-game checklist.
+26. Validate with lint and typechecks.
+27. Review against the new-game checklist.

@@ -3,6 +3,7 @@
 ## Conventions
 
 - `terminology.md`
+- Prefer canonical game-package imports (`gameplay/`, `ui/`, `content/`, `platform/`, `engine/`). Older games may still keep root-level compatibility shims, but new work should treat those as adapters, not the target structure.
 
 ## Reusable context
 

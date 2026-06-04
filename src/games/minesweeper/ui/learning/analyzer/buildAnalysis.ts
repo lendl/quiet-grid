@@ -1,6 +1,6 @@
 import { groupItemsByKey } from '../../../../../app/analysis/grouping';
 import type { PuzzleAnalysisPayload, PuzzleAnalysisSource } from '../../../../../app/analysis/types';
-import { getMinesweeperAnalysisContent } from '../../../i18n';
+import { getMinesweeperAnalysisContent } from '../../../content/i18n';
 import type { MinesweeperPlaySession } from '../../../gameplay/playContract';
 import type { MinesweeperBoard } from '../../../types';
 import { buildPatternNextMove } from '../../../gameplay/analysis/content';

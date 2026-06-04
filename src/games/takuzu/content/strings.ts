@@ -1,5 +1,5 @@
 import type { Difficulty } from '../../../app/types';
-import { getTakuzuStrings as resolveTakuzuStrings } from '../i18n';
+import { getTakuzuStrings as resolveTakuzuStrings } from './i18n';
 
 export interface TakuzuStrings {
   title: string;

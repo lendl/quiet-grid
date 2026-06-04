@@ -1,5 +1,5 @@
 import type { HowToPlayContent } from '../../../app/shell/games/howToPlayContent';
-import { getTakuzuHowToPlayRules, getTakuzuHowToPlayTips } from '../i18n';
+import { getTakuzuHowToPlayRules, getTakuzuHowToPlayTips } from './i18n';
 
 export function getTakuzuHowToPlay(): HowToPlayContent {
   return {

@@ -1,5 +1,5 @@
 export { getTakuzuNextMoveHint } from './nextMove';
-export { takuzuAnalysisAdapter } from '../../learningCenter/analyzer';
+export { takuzuAnalysisAdapter } from '../../ui/learning/analyzer';
 export {
   takuzuGameSemantics,
   type TakuzuCanonicalMoveKey,

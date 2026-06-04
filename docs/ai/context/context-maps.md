@@ -9,6 +9,7 @@ Use these packets when AI is editing one subsystem and should not load the whole
 
 ### Architecture goal
 - Keep `definition.ts` thin and use getters for user-facing strings.
+- Inside `definition.ts`, prefer canonical imports from `ui/`, `gameplay/`, and `content/` over legacy compatibility shims.
 
 ### File map
 - `src/games/<id>/definition.ts`
@@ -60,6 +61,7 @@ Use these packets when AI is editing one subsystem and should not load the whole
 
 ### Architecture goal
 - Put all game-facing copy in `content/i18n/`, including tutorial copy.
+- If an older package still has a root `i18n/` shim, treat it as compatibility only and import `content/i18n/` in new edits.
 
 ### File map
 - `src/games/<id>/content/i18n/index.ts`

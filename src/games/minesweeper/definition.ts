@@ -1,11 +1,12 @@
-import TutorialScreen from './screens/TutorialScreen';
+import TutorialScreen from './ui/tutorial/screen';
 import type { GameDefinition } from '../../app/shell/games/gameDefinition';
 import { getMinesweeperHowToPlay } from './content/howToPlay';
 import { getMinesweeperLossContent } from './content/loss';
 import { getMinesweeperStrings } from './content/strings';
-import { minesweeperPlayAdapter } from './playAdapter';
+import { buildMinesweeperResult, type MinesweeperPlaySession } from './gameplay/playContract';
+import { minesweeperPlayAdapter } from './ui/play/adapter';
 
-export const minesweeperDefinition: GameDefinition = {
+export const minesweeperDefinition: GameDefinition<MinesweeperPlaySession> = {
   id: 'minesweeper',
   get title() {
     return getMinesweeperStrings().title;
@@ -23,9 +24,7 @@ export const minesweeperDefinition: GameDefinition = {
     scoring: true,
   },
   difficulties: ['easy', 'medium', 'hard', 'expert'],
-  createResult: () => {
-    throw new Error('Minesweeper result adapter not wired yet.');
-  },
+  createResult: (session) => buildMinesweeperResult(session),
   playAdapter: minesweeperPlayAdapter,
   content: {
     get howToPlay() {

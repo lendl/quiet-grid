@@ -20,22 +20,22 @@ import type {
   PuzzleRenderState,
 } from '../../../../app/shell/games/playAdapter';
 import { getTakuzuStrings } from '../../content/strings';
-import TakuzuPuzzleGrid from './components/TakuzuPuzzleGrid';
-import { getTakuzuNextMoveHint } from '../../learningCenter';
-import type { CompletedLineState } from '../../validation';
-import { getTouchedLineStates } from '../../validation';
-import { applyTakuzuAction } from '../../actions';
+import { applyTakuzuAction } from '../../gameplay/actions';
+import { getTakuzuNextMoveHint } from '../../gameplay/analysis';
+import type { TakuzuActiveSession } from '../../gameplay/activePuzzle';
 import {
   takuzuPlayContract,
   type TakuzuHudState,
   type TakuzuPlaySession,
-} from '../../playContract';
+} from '../../gameplay/playContract';
+import type { CompletedLineState } from '../../gameplay/rules/validation';
+import { getTouchedLineStates } from '../../gameplay/rules/validation';
+import TakuzuPuzzleGrid from './components/TakuzuPuzzleGrid';
 import type {
   TakuzuNextMoveHint,
   Grid,
   LineKey,
 } from '../../types';
-import type { TakuzuActiveSession } from '../../activePuzzle';
 
 const VALIDATION_DELAY_MS = 800;
 

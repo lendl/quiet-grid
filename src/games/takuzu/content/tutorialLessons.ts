@@ -1,6 +1,6 @@
 import type { TutorialLesson, TutorialLessonKey } from '../types';
 import type { HowToPlayCellValue } from './howToPlayTips';
-import { getTakuzuTutorialLessonCopies } from '../i18n';
+import { getTakuzuTutorialLessonCopies } from './i18n';
 
 const EXAMPLES: Record<TutorialLessonKey, HowToPlayCellValue[][]> = {
   'find-pairs': [[0, 0, 'a1']],

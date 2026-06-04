@@ -1,5 +1,5 @@
 import type { Difficulty } from '../../../app/types';
-import { getMinesweeperStrings as resolveMinesweeperStrings } from '../i18n';
+import { getMinesweeperStrings as resolveMinesweeperStrings } from './i18n';
 
 export interface MinesweeperStrings {
   title: string;

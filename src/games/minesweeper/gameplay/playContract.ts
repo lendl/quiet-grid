@@ -4,6 +4,7 @@ import { countFlaggedCells, createMinesweeperBoard, createMinesweeperPuzzle } fr
 import { formatElapsed } from '../../../app/utils/formatElapsed';
 import { computeAccuracyPct, computeFinalScore } from '../../../app/utils/scoring';
 import type { PuzzlePlayContract } from '../../../app/shell/playContract';
+import type { SessionResult } from '../../../app/shell/types';
 
 export interface MinesweeperPlaySession {
   puzzle: MinesweeperPuzzle;
@@ -16,6 +17,23 @@ export interface MinesweeperHudState {
 }
 
 export type { MinesweeperAction, MinesweeperActionEffect, MinesweeperActionResult } from './actions';
+
+export function buildMinesweeperResult(
+  session: MinesweeperPlaySession,
+  elapsedSeconds = 0,
+): SessionResult {
+  const solved = session.board.status === 'won';
+
+  return {
+    gameId: 'minesweeper',
+    difficulty: session.puzzle.difficulty,
+    status: solved ? 'solved' : 'failed',
+    score: solved ? computeFinalScore(session.puzzle.difficulty, elapsedSeconds, 0) : 0,
+    accuracy: computeAccuracyPct(0),
+    elapsedSeconds,
+    streak: 0,
+  };
+}
 
 function hasMinesweeperMeaningfulProgress(session: MinesweeperPlaySession): boolean {
   return session.board.generated
@@ -60,17 +78,18 @@ export const minesweeperPlayContract: PuzzlePlayContract<
     remainingMines: Math.max(0, session.board.mines - countFlaggedCells(session.board)),
   }),
   getSolvedState: ({ session, elapsedSeconds }) => {
-    if (session.board.status !== 'won') {
+    const result = buildMinesweeperResult(session, elapsedSeconds);
+    if (result.status !== 'solved') {
       return null;
     }
 
     return {
-      gameId: 'minesweeper',
-      difficulty: session.puzzle.difficulty,
-      status: 'solved',
-      score: computeFinalScore(session.puzzle.difficulty, elapsedSeconds, 0),
-      accuracy: computeAccuracyPct(0),
-      elapsedSeconds,
+      gameId: result.gameId,
+      difficulty: result.difficulty,
+      status: result.status,
+      score: result.score,
+      accuracy: result.accuracy,
+      elapsedSeconds: result.elapsedSeconds,
     };
   },
   isInProgress: (session) => session.board.status === 'playing',

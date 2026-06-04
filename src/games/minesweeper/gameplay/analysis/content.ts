@@ -2,7 +2,7 @@ import {
   getMinesweeperLearningCenterContent as getContent,
   type MinesweeperMineFlagReason,
   type MinesweeperLearningCenterPatternKey,
-} from '../../i18n';
+} from '../../content/i18n';
 
 interface MinesweeperCellRef {
   row: number;

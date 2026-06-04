@@ -1,10 +1,10 @@
-import TutorialScreen from './screens/TutorialScreen';
+import TutorialScreen from './ui/tutorial/screen';
 import type { GameDefinition } from '../../app/shell/games/gameDefinition';
 import { getTakuzuHowToPlay } from './content/howToPlay';
 import { getTakuzuLossContent } from './content/loss';
 import { getTakuzuStrings } from './content/strings';
-import { takuzuPlayAdapter } from './playAdapter';
-import { buildTakuzuResult, type TakuzuPlaySession } from './playContract';
+import { takuzuPlayAdapter } from './ui/play/adapter';
+import { buildTakuzuResult, type TakuzuPlaySession } from './gameplay/playContract';
 
 export { takuzuGameSemantics } from './gameplay/semantics';
 

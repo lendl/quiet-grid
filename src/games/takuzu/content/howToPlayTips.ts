@@ -1,4 +1,4 @@
-import { getTakuzuHowToPlayTips as resolveTakuzuHowToPlayTips } from '../i18n';
+import { getTakuzuHowToPlayTips as resolveTakuzuHowToPlayTips } from './i18n';
 
 export type HowToPlayCellValue = 0 | 1 | null | 'a0' | 'a1';
 

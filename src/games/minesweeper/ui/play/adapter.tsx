@@ -20,17 +20,17 @@ import type {
   PuzzleRenderState,
 } from '../../../../app/shell/games/playAdapter';
 import MinesweeperBoard from './components/MinesweeperBoard';
-import { getMinesweeperNextMoveHint } from '../../learningCenter';
-import { applyMinesweeperAction } from '../../actions';
+import { applyMinesweeperAction } from '../../gameplay/actions';
+import { getMinesweeperNextMoveHint } from '../../gameplay/analysis';
+import type { MinesweeperActiveSession } from '../../gameplay/activePuzzle';
+import { countFlaggedCells } from '../../gameplay/rules';
 import {
   minesweeperPlayContract,
   type MinesweeperAction,
   type MinesweeperActionEffect,
   type MinesweeperHudState,
   type MinesweeperPlaySession,
-} from '../../playContract';
-import type { MinesweeperActiveSession } from '../../activePuzzle';
-import { countFlaggedCells } from '../../rules';
+} from '../../gameplay/playContract';
 
 const GRID_HORIZONTAL_PADDING = 12;
 const GRID_BOTTOM_PADDING = 24;

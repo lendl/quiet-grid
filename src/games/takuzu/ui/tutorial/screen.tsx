@@ -11,7 +11,7 @@ import { withAlpha } from '../../../../app/utils/color';
 import TutorialRow from './components/TutorialRow';
 import { getTakuzuTutorialLessons } from '../../content';
 import { getTakuzuStrings } from '../../content/strings';
-import { cloneGrid } from '../../puzzleData';
+import { cloneGrid } from '../../core/puzzleData';
 import type { Grid } from '../../types';
 
 type Props = StackScreenProps<RootStackParamList, 'Tutorial'>;

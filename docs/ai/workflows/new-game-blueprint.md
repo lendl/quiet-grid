@@ -19,6 +19,7 @@ src/games/<id>/
 - `definition.ts`
   - thin shell entrypoint
   - getters for user-facing strings
+  - prefer imports from canonical subfolders (`ui/`, `gameplay/`, `content/`, `platform/`) instead of legacy root shims
 - `types.ts`
   - shared game types
 - `gameplay/`
@@ -56,6 +57,8 @@ All game-facing copy belongs in `content/i18n/`, including:
 - analyzer copy
 - how-to-play text
 - loss-related text
+
+Older packages may still carry compatibility shims like root `playAdapter.tsx`, `playContract.ts`, or `activePuzzle.ts`, plus legacy folders such as `screens/` or `learningCenter/`. Treat those as migration aids only; new code and refactors should point at the canonical locations above.
 
 ## Learning Center rule
 
