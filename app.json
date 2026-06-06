@@ -9,6 +9,7 @@
     "android": {
       "package": "com.quietgrid.app",
       "versionCode": 7,
+      "edgeToEdge": true,
       "blockedPermissions": [
         "android.permission.INTERNET",
         "android.permission.ACCESS_NETWORK_STATE",

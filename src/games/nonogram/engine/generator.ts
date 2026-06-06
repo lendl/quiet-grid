@@ -17,11 +17,7 @@ export interface NonogramEngineGenerateResult {
 }
 
 function pickCandidates(size: number, difficulty: PuzzleDifficulty): NonogramCatalogEntry[] {
-  const preferredCols = size <= 5
-    ? 5
-    : size <= 10
-      ? (difficulty === 'easy' ? 5 : 10)
-      : (difficulty === 'expert' ? 15 : 10);
+  const preferredCols = size <= 5 ? 5 : (difficulty === 'easy' ? 5 : 10);
 
   return getBuiltInNonogramEntries()
     .filter((entry) => entry.rows === size)

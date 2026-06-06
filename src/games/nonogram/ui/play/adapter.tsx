@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import type { LayoutChangeEvent } from 'react-native';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { createPuzzlePlayAdapter } from '../../../../app/shell/games/playAdapter';
 import { getAppStrings } from '../../../../app/i18n';
 import { useTheme } from '../../../../app/context/ThemeContext';
@@ -42,12 +42,14 @@ function useNonogramAdapter({
     getNonogramNextMoveHint(session.puzzle, session.board)
   ));
   const [isBoardZoomed, setIsBoardZoomed] = useState(false);
+  const [inputMode, setInputMode] = useState<'fill' | 'cross'>('fill');
   const resetBoardZoomRef = useRef<(() => void) | null>(null);
   const [gridContainer, setGridContainer] = useState({ width: 0, height: 0 });
 
   const resetAdapterState = useCallback(() => {
     nextMove.reset();
     setIsBoardZoomed(false);
+    setInputMode('fill');
     resetBoardZoomRef.current = null;
   }, [nextMove.reset]);
 
@@ -142,9 +144,10 @@ function useNonogramAdapter({
                 containerHeight={gridContainer.height}
                 interactive
                 allowSwipe={!isBoardZoomed}
+                inputMode={inputMode}
                 onCellTap={(row, col) => {
                   nextMove.reset();
-                  void runImmediateAction({ kind: 'tap', row, col });
+                  void runImmediateAction({ kind: 'tap', row, col, mode: inputMode });
                 }}
                 onCellSwipe={(cells, value) => {
                   nextMove.reset();
@@ -161,27 +164,57 @@ function useNonogramAdapter({
       ) : (
         <View style={styles.boardArea} />
       ),
-      footer: nextMove.visible && nextMove.hint ? (
-        <View style={styles.nextMoveCard}>
-          <View style={styles.nextMoveCardHeader}>
-            <View style={styles.nextMoveCardBadge}>
-              <Text style={styles.nextMoveCardBadgeText}>i</Text>
+      footer: (
+        <View style={styles.footer}>
+          {nextMove.visible && nextMove.hint ? (
+            <View style={styles.nextMoveCard}>
+              <View style={styles.nextMoveCardHeader}>
+                <View style={styles.nextMoveCardBadge}>
+                  <Text style={styles.nextMoveCardBadgeText}>i</Text>
+                </View>
+                <Text style={styles.nextMoveCardTitle}>{nextMove.hint.title}</Text>
+              </View>
+              <Text style={styles.nextMoveCardBody}>{nextMove.hint.body}</Text>
             </View>
-            <Text style={styles.nextMoveCardTitle}>{nextMove.hint.title}</Text>
+          ) : (
+            <View style={styles.footerSpacer} />
+          )}
+          <View style={styles.modeToggleRow}>
+            <TouchableOpacity
+              style={[styles.modeBtn, inputMode === 'cross' && styles.modeBtnActive]}
+              onPress={() => setInputMode('cross')}
+              activeOpacity={0.75}
+            >
+              <Text style={[
+                styles.modeBtnCrossText,
+                { color: inputMode === 'cross' ? theme.onPrimary : theme.textSecondary },
+              ]}>
+                ×
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.modeBtn, inputMode === 'fill' && styles.modeBtnActive]}
+              onPress={() => setInputMode('fill')}
+              activeOpacity={0.75}
+            >
+              <View style={[
+                styles.modeBtnSquare,
+                { backgroundColor: inputMode === 'fill' ? theme.onPrimary : theme.textSecondary },
+              ]} />
+            </TouchableOpacity>
           </View>
-          <Text style={styles.nextMoveCardBody}>{nextMove.hint.body}</Text>
         </View>
-      ) : (
-        <View style={styles.footerSpacer} />
       ),
     };
   }, [
     gridContainer.height,
     gridContainer.width,
     handleGridLayout,
+    inputMode,
     isBoardZoomed,
     nextMove,
     strings,
+    theme,
   ]);
 
   return {
@@ -255,7 +288,41 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     fontSize: 12,
     lineHeight: 17,
   },
+  footer: {
+    flex: 1,
+    gap: 8,
+  },
   footerSpacer: {
     flex: 1,
+  },
+  modeToggleRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 10,
+  },
+  modeBtn: {
+    width: 52,
+    height: 52,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: withAlpha(theme.surfaceElevated, 0.9),
+    borderWidth: 1,
+    borderColor: withAlpha(theme.border, 0.5),
+  },
+  modeBtnActive: {
+    backgroundColor: theme.primary,
+    borderColor: theme.primary,
+  },
+  modeBtnCrossText: {
+    fontSize: 26,
+    fontWeight: '900',
+    lineHeight: 30,
+    textAlign: 'center',
+  },
+  modeBtnSquare: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
   },
 });

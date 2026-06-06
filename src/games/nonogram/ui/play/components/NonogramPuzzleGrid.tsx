@@ -9,6 +9,7 @@ import {
 } from '../../../../../app/shell/boardLayout';
 import { createSharedBoardRenderTokens } from '../../../../../app/shell/renderTokens';
 import { withAlpha } from '../../../../../app/utils/color';
+import { isNonogramLineComplete } from '../../../gameplay/rules/solver';
 import type {
   NonogramBoard,
   NonogramCellRef,
@@ -31,6 +32,7 @@ interface NonogramPuzzleGridProps {
   containerHeight?: number;
   interactive?: boolean;
   allowSwipe?: boolean;
+  inputMode?: 'fill' | 'cross';
   onCellTap?: (row: number, col: number) => void;
   onCellSwipe?: (cells: readonly NonogramCellRef[], value: NonogramDirectState) => void;
   nextMoveEvidenceCells?: readonly NonogramCellRef[];
@@ -53,7 +55,8 @@ function buildTargetValueMap(
   return new Map(cells.map(({ row, col, value }) => [buildCellKey(row, col), value]));
 }
 
-function getSwipePaintValue(cell: NonogramCellValue): NonogramDirectState {
+function getSwipePaintValue(cell: NonogramCellValue, mode: 'fill' | 'cross'): NonogramDirectState {
+  if (mode === 'cross') return 0;
   return cell === 1 ? 0 : 1;
 }
 
@@ -96,6 +99,7 @@ export default function NonogramPuzzleGrid({
   containerHeight: _containerHeight,
   interactive = true,
   allowSwipe = true,
+  inputMode = 'fill',
   onCellTap,
   onCellSwipe,
   nextMoveEvidenceCells = [],
@@ -115,17 +119,42 @@ export default function NonogramPuzzleGrid({
     colClues: puzzle.colClues,
     interactive,
   }), [effectiveWidth, interactive, puzzle.colClues, puzzle.cols, puzzle.rowClues, puzzle.rows]);
+
+  const completedRows = useMemo(() => {
+    const result = new Set<number>();
+    puzzle.rowClues.forEach((clues, i) => {
+      if (isNonogramLineComplete(board[i] ?? [], clues)) result.add(i);
+    });
+    return result;
+  }, [board, puzzle.rowClues]);
+
+  const completedCols = useMemo(() => {
+    const result = new Set<number>();
+    puzzle.colClues.forEach((clues, j) => {
+      const cells = board.map((row) => row[j] ?? null);
+      if (isNonogramLineComplete(cells, clues)) result.add(j);
+    });
+    return result;
+  }, [board, puzzle.colClues]);
+
   const evidenceKeySet = useMemo(() => buildCellKeySet(nextMoveEvidenceCells), [nextMoveEvidenceCells]);
   const targetValueMap = useMemo(() => buildTargetValueMap(nextMoveTargetCells), [nextMoveTargetCells]);
   const highlightedRows = useMemo(() => new Set(nextMoveHighlightRows), [nextMoveHighlightRows]);
   const highlightedCols = useMemo(() => new Set(nextMoveHighlightCols), [nextMoveHighlightCols]);
+
   const activeSwipeCellsRef = useRef<NonogramCellRef[]>([]);
   const activeSwipeKeysRef = useRef(new Set<string>());
   const activeSwipeValueRef = useRef<NonogramDirectState>(1);
+  const swipeStartPosRef = useRef<{ x: number; y: number } | null>(null);
+  const swipeAxisRef = useRef<'h' | 'v' | null>(null);
+  const inputModeRef = useRef<'fill' | 'cross'>(inputMode);
+  inputModeRef.current = inputMode;
 
   const resetSwipeState = useCallback(() => {
     activeSwipeCellsRef.current = [];
     activeSwipeKeysRef.current = new Set();
+    swipeStartPosRef.current = null;
+    swipeAxisRef.current = null;
   }, []);
 
   const appendSwipeCell = useCallback((cell: NonogramCellRef) => {
@@ -149,31 +178,58 @@ export default function NonogramPuzzleGrid({
     }
 
     onCellTap(cell.row, cell.col);
-  }, [layout, onCellTap]);
+  }, [layout, onCellTap, puzzle.cols, puzzle.rows]);
 
   const handleSwipeStart = useCallback((x: number, y: number) => {
     resetSwipeState();
+    swipeStartPosRef.current = { x, y };
+
     const cell = getCellAtPoint(layout, puzzle.rows, puzzle.cols, x, y);
     if (!cell) {
       return;
     }
 
-    activeSwipeValueRef.current = getSwipePaintValue(board[cell.row]?.[cell.col] ?? null);
+    activeSwipeValueRef.current = getSwipePaintValue(
+      board[cell.row]?.[cell.col] ?? null,
+      inputModeRef.current,
+    );
     appendSwipeCell(cell);
-  }, [appendSwipeCell, board, layout, resetSwipeState]);
+  }, [appendSwipeCell, board, layout, puzzle.cols, puzzle.rows, resetSwipeState]);
 
   const handleSwipeMove = useCallback((x: number, y: number) => {
-    const cell = getCellAtPoint(layout, puzzle.rows, puzzle.cols, x, y);
+    const startPos = swipeStartPosRef.current;
+    let constrainedX = x;
+    let constrainedY = y;
+
+    if (startPos) {
+      const dx = Math.abs(x - startPos.x);
+      const dy = Math.abs(y - startPos.y);
+
+      if (!swipeAxisRef.current && (dx > 5 || dy > 5)) {
+        swipeAxisRef.current = dx >= dy ? 'h' : 'v';
+      }
+
+      if (swipeAxisRef.current === 'h') {
+        constrainedY = startPos.y;
+      } else if (swipeAxisRef.current === 'v') {
+        constrainedX = startPos.x;
+      }
+    }
+
+    const cell = getCellAtPoint(layout, puzzle.rows, puzzle.cols, constrainedX, constrainedY);
     if (!cell) {
       return;
     }
 
     if (activeSwipeCellsRef.current.length === 0) {
-      activeSwipeValueRef.current = getSwipePaintValue(board[cell.row]?.[cell.col] ?? null);
+      activeSwipeValueRef.current = getSwipePaintValue(
+        board[cell.row]?.[cell.col] ?? null,
+        inputModeRef.current,
+      );
     }
 
     appendSwipeCell(cell);
-  }, [appendSwipeCell, board, layout]);
+  }, [appendSwipeCell, board, layout, puzzle.cols, puzzle.rows]);
 
   const handleSwipeEnd = useCallback(() => {
     if (!onCellSwipe || activeSwipeCellsRef.current.length === 0) {
@@ -274,89 +330,99 @@ export default function NonogramPuzzleGrid({
         </View>
 
         <View pointerEvents="none" style={StyleSheet.absoluteFill}>
-          {rows.map((rowClues, rowIndex) => rowClues.map((clue, clueIndex) => {
-            const top = layout.rowRailY + rowIndex * (layout.cellSize + layout.cellGap)
-              + Math.floor((layout.cellSize - layout.rowClueSlotSize) / 2);
-            const left = layout.rowRailX + clueIndex * (layout.rowClueSlotSize + layout.rowClueValueGap);
+          {rows.map((rowClues, rowIndex) => {
             const isActiveRow = highlightedRows.has(rowIndex);
+            const isCompletedRow = completedRows.has(rowIndex);
 
-            return (
-              <View
-                key={`row-clue-${rowIndex}-${clueIndex}`}
-                style={[
-                  styles.clueSlot,
-                  {
-                    left,
-                    top,
-                    width: layout.rowClueSlotSize,
-                    height: layout.rowClueSlotSize,
-                    backgroundColor: isActiveRow
-                      ? withAlpha(theme.primary, isDark ? 0.16 : 0.08)
-                      : withAlpha(theme.surfaceElevated, isDark ? 0.9 : 0.82),
-                    borderColor: isActiveRow
-                      ? withAlpha(theme.primaryLight, isDark ? 0.72 : 0.56)
-                      : withAlpha(theme.border, isDark ? 0.74 : 0.54),
-                  },
-                ]}
-              >
-                {clue !== null ? (
-                  <Text
-                    style={[
-                      styles.clueText,
-                      {
-                        color: isActiveRow ? theme.primaryLight : theme.textSecondary,
-                        fontSize: Math.max(10, Math.min(14, layout.rowClueSlotSize * 0.58)),
-                      },
-                    ]}
-                  >
-                    {clue}
-                  </Text>
-                ) : null}
-              </View>
-            );
-          }))}
+            return rowClues.map((clue, clueIndex) => {
+              const top = layout.rowRailY + rowIndex * (layout.cellSize + layout.cellGap)
+                + Math.floor((layout.cellSize - layout.rowClueSlotSize) / 2);
+              const left = layout.rowRailX + clueIndex * (layout.rowClueSlotSize + layout.rowClueValueGap);
 
-          {cols.map((colClues, colIndex) => colClues.map((clue, clueIndex) => {
-            const left = layout.gridX + colIndex * (layout.cellSize + layout.cellGap)
-              + Math.floor((layout.cellSize - layout.colClueSlotSize) / 2);
-            const top = layout.colRailY + clueIndex * (layout.colClueSlotSize + layout.colClueValueGap);
+              return (
+                <View
+                  key={`row-clue-${rowIndex}-${clueIndex}`}
+                  style={[
+                    styles.clueSlot,
+                    {
+                      left,
+                      top,
+                      width: layout.rowClueSlotSize,
+                      height: layout.rowClueSlotSize,
+                      backgroundColor: isActiveRow
+                        ? withAlpha(theme.primary, isDark ? 0.16 : 0.08)
+                        : withAlpha(theme.surfaceElevated, isDark ? 0.9 : 0.82),
+                      borderColor: isActiveRow
+                        ? withAlpha(theme.primaryLight, isDark ? 0.72 : 0.56)
+                        : withAlpha(theme.border, isDark ? 0.74 : 0.54),
+                      opacity: isCompletedRow ? 0.3 : 1,
+                    },
+                  ]}
+                >
+                  {clue !== null ? (
+                    <Text
+                      style={[
+                        styles.clueText,
+                        {
+                          color: isActiveRow ? theme.primaryLight : theme.textSecondary,
+                          fontSize: Math.max(10, Math.min(14, layout.rowClueSlotSize * 0.58)),
+                        },
+                      ]}
+                    >
+                      {clue}
+                    </Text>
+                  ) : null}
+                </View>
+              );
+            });
+          })}
+
+          {cols.map((colClues, colIndex) => {
             const isActiveCol = highlightedCols.has(colIndex);
+            const isCompletedCol = completedCols.has(colIndex);
 
-            return (
-              <View
-                key={`col-clue-${colIndex}-${clueIndex}`}
-                style={[
-                  styles.clueSlot,
-                  {
-                    left,
-                    top,
-                    width: layout.colClueSlotSize,
-                    height: layout.colClueSlotSize,
-                    backgroundColor: isActiveCol
-                      ? withAlpha(theme.primary, isDark ? 0.16 : 0.08)
-                      : withAlpha(theme.surfaceElevated, isDark ? 0.9 : 0.82),
-                    borderColor: isActiveCol
-                      ? withAlpha(theme.primaryLight, isDark ? 0.72 : 0.56)
-                      : withAlpha(theme.border, isDark ? 0.74 : 0.54),
-                  },
-                ]}
-              >
-                {clue !== null ? (
-                  <Text
-                    style={[
-                      styles.clueText,
-                      {
-                        color: isActiveCol ? theme.primaryLight : theme.textSecondary,
-                        fontSize: Math.max(10, Math.min(14, layout.colClueSlotSize * 0.58)),
-                      },
-                    ]}
-                  >
-                    {clue}
-                  </Text>
-                ) : null}
-              </View>
-            );
-          }))}
+            return colClues.map((clue, clueIndex) => {
+              const left = layout.gridX + colIndex * (layout.cellSize + layout.cellGap)
+                + Math.floor((layout.cellSize - layout.colClueSlotSize) / 2);
+              const top = layout.colRailY + clueIndex * (layout.colClueSlotSize + layout.colClueValueGap);
+
+              return (
+                <View
+                  key={`col-clue-${colIndex}-${clueIndex}`}
+                  style={[
+                    styles.clueSlot,
+                    {
+                      left,
+                      top,
+                      width: layout.colClueSlotSize,
+                      height: layout.colClueSlotSize,
+                      backgroundColor: isActiveCol
+                        ? withAlpha(theme.primary, isDark ? 0.16 : 0.08)
+                        : withAlpha(theme.surfaceElevated, isDark ? 0.9 : 0.82),
+                      borderColor: isActiveCol
+                        ? withAlpha(theme.primaryLight, isDark ? 0.72 : 0.56)
+                        : withAlpha(theme.border, isDark ? 0.74 : 0.54),
+                      opacity: isCompletedCol ? 0.3 : 1,
+                    },
+                  ]}
+                >
+                  {clue !== null ? (
+                    <Text
+                      style={[
+                        styles.clueText,
+                        {
+                          color: isActiveCol ? theme.primaryLight : theme.textSecondary,
+                          fontSize: Math.max(10, Math.min(14, layout.colClueSlotSize * 0.58)),
+                        },
+                      ]}
+                    >
+                      {clue}
+                    </Text>
+                  ) : null}
+                </View>
+              );
+            });
+          })}
 
           {board.map((row, rowIndex) => row.map((cell, colIndex) => {
             const key = buildCellKey(rowIndex, colIndex);

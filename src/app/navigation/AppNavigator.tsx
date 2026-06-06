@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
 import type { Theme as NavigationTheme } from '@react-navigation/native';
-import { NavigationContainer } from '@react-navigation/native';
+import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import {
   createStackNavigator,
   TransitionPresets,
@@ -28,8 +28,10 @@ export default function AppNavigator() {
   const { theme, isDark } = useTheme();
   const [initialRoute, setInitialRoute] = useState<'MainTabs' | 'Welcome' | null>(null);
   const navigationTheme = useMemo<NavigationTheme>(() => ({
+    ...DefaultTheme,
     dark: isDark,
     colors: {
+      ...DefaultTheme.colors,
       primary: theme.primary,
       background: theme.background,
       card: theme.background,

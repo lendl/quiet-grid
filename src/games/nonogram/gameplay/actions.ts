@@ -1,7 +1,14 @@
-import { cloneNonogramBoard, type NonogramBoard, type NonogramCellRef, type NonogramDirectState, type NonogramSession } from '../types';
+import {
+  cloneNonogramBoard,
+  type NonogramBoard,
+  type NonogramCellRef,
+  type NonogramDirectState,
+  type NonogramSession,
+} from '../types';
+import { isNonogramLineComplete } from './rules/solver';
 
 export type NonogramAction =
-  | { kind: 'tap'; row: number; col: number }
+  | { kind: 'tap'; row: number; col: number; mode: 'fill' | 'cross' }
   | { kind: 'swipe'; cells: readonly NonogramCellRef[]; value: NonogramDirectState };
 
 export interface NonogramActionResult {
@@ -9,16 +16,12 @@ export interface NonogramActionResult {
   session: NonogramSession;
 }
 
-function cycleDirectValue(value: NonogramBoard[number][number]): NonogramBoard[number][number] {
-  if (value === null) {
-    return 1;
-  }
-
-  if (value === 1) {
-    return 0;
-  }
-
-  return null;
+function cycleForMode(
+  value: NonogramBoard[number][number],
+  mode: 'fill' | 'cross',
+): NonogramBoard[number][number] {
+  if (mode === 'fill') return value === 1 ? null : 1;
+  return value === 0 ? null : 0;
 }
 
 function applyDirectValue(
@@ -41,6 +44,43 @@ function applyDirectValue(
   return true;
 }
 
+function applyAutoCorrect(board: NonogramBoard, solution: boolean[][]): void {
+  board.forEach((row, rowIndex) => {
+    row.forEach((cell, colIndex) => {
+      const shouldBeFilled = solution[rowIndex]?.[colIndex] ?? false;
+      if (cell === 1 && !shouldBeFilled) {
+        row[colIndex] = null;
+      } else if (cell === 0 && shouldBeFilled) {
+        row[colIndex] = null;
+      }
+    });
+  });
+}
+
+function applyAutoFillCompletedLines(
+  board: NonogramBoard,
+  puzzle: NonogramSession['puzzle'],
+): void {
+  puzzle.rowClues.forEach((clues, rowIndex) => {
+    const cells = board[rowIndex];
+    if (!cells) return;
+    if (isNonogramLineComplete(cells, clues)) {
+      cells.forEach((cell, colIndex) => {
+        if (cell === null) cells[colIndex] = 0;
+      });
+    }
+  });
+
+  puzzle.colClues.forEach((clues, colIndex) => {
+    const cells = board.map((row) => row[colIndex] ?? null);
+    if (isNonogramLineComplete(cells, clues)) {
+      board.forEach((row) => {
+        if (row[colIndex] === null) row[colIndex] = 0;
+      });
+    }
+  });
+}
+
 export function runNonogramAction(
   session: NonogramSession,
   action: NonogramAction,
@@ -49,6 +89,8 @@ export function runNonogramAction(
     ...session,
     board: cloneNonogramBoard(session.board),
   };
+
+  let changed = false;
 
   if (action.kind === 'tap') {
     const rowCells = nextSession.board[action.row];
@@ -60,26 +102,28 @@ export function runNonogramAction(
     }
 
     const currentValue = rowCells[action.col];
-    rowCells[action.col] = cycleDirectValue(currentValue);
-    return {
-      changed: currentValue !== rowCells[action.col],
-      session: nextSession,
-    };
+    const nextValue = cycleForMode(currentValue, action.mode);
+    rowCells[action.col] = nextValue;
+    changed = currentValue !== nextValue;
+  } else {
+    const visited = new Set<string>();
+
+    action.cells.forEach(({ row, col }) => {
+      const key = `${row}:${col}`;
+      if (visited.has(key)) {
+        return;
+      }
+      visited.add(key);
+      if (applyDirectValue(nextSession.board, row, col, action.value)) {
+        changed = true;
+      }
+    });
   }
 
-  const visited = new Set<string>();
-  let changed = false;
-
-  action.cells.forEach(({ row, col }) => {
-    const key = `${row}:${col}`;
-    if (visited.has(key)) {
-      return;
-    }
-    visited.add(key);
-    if (applyDirectValue(nextSession.board, row, col, action.value)) {
-      changed = true;
-    }
-  });
+  if (changed) {
+    applyAutoCorrect(nextSession.board, nextSession.solution);
+    applyAutoFillCompletedLines(nextSession.board, nextSession.puzzle);
+  }
 
   return {
     changed,

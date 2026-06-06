@@ -15,8 +15,6 @@ const BUILT_IN_BASE_SPECS = [
   { rows: 5, cols: 5, difficulties: ['easy', 'medium', 'hard', 'expert'] },
   { rows: 10, cols: 5, difficulties: ['easy', 'medium', 'hard', 'expert'] },
   { rows: 10, cols: 10, difficulties: ['medium', 'hard', 'expert'] },
-  { rows: 15, cols: 10, difficulties: ['medium', 'hard', 'expert'] },
-  { rows: 15, cols: 15, difficulties: ['hard', 'expert'] },
 ] as const;
 
 const VARIANTS_PER_SPEC = 16;

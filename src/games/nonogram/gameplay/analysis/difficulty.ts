@@ -200,24 +200,18 @@ export function classifyNonogramDifficulty(
     else if (score <= 7) difficulty = 'medium';
     else if (score <= 10) difficulty = 'hard';
     else difficulty = 'expert';
-  } else if (shortSide <= 10 && longSide <= 10) {
+  } else {
+    // 10x10
     if (score <= 6) difficulty = 'medium';
     else if (score <= 9) difficulty = 'hard';
     else difficulty = 'expert';
-  } else if (shortSide <= 10 && longSide <= 15) {
-    if (score <= 9) difficulty = 'medium';
-    else if (score <= 13) difficulty = 'hard';
-    else difficulty = 'expert';
-  } else {
-    difficulty = score <= 18 ? 'hard' : 'expert';
   }
 
-  // Size ceiling gates (push down): expert requires at least 10x10
+  // Size ceiling gate: expert requires at least 10x10
   if (difficulty === 'expert' && shortSide < 10) difficulty = 'hard';
 
-  // Size floor gates (push up): larger boards carry visual weight that makes easy/medium feel wrong
-  if (difficulty === 'easy' && longSide > 5) difficulty = 'medium';     // bigger than 5x5 → min medium
-  if (difficulty === 'medium' && longSide > 10) difficulty = 'hard';    // bigger than 10x10 → min hard
+  // Size floor gate: bigger than 5x5 is at least medium
+  if (difficulty === 'easy' && longSide > 5) difficulty = 'medium';
 
   // Minimum steps gate (cascades downward so each level is independently enforced)
   if (difficulty === 'expert' && metrics.steps < 20) difficulty = 'hard';
