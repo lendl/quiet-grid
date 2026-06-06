@@ -33,7 +33,7 @@ export default function PuzzlePlayScaffold({
 }: PuzzlePlayScaffoldProps) {
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
-  const s = makeStyles(theme);
+  const s = makeStyles(theme, insets.bottom);
 
   return (
     <AppScreen edges={['left', 'right']} overlay={false} includeBottomInset={false} contentStyle={s.container}>
@@ -67,7 +67,7 @@ export default function PuzzlePlayScaffold({
   );
 }
 
-const makeStyles = (theme: Theme) => StyleSheet.create({
+const makeStyles = (theme: Theme, bottomInset: number) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.background,
@@ -96,7 +96,7 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     flexShrink: 0,
     paddingHorizontal: 10,
     paddingTop: 8,
-    paddingBottom: 10,
+    paddingBottom: Math.max(10, bottomInset + 4),
     overflow: 'hidden',
   },
 });

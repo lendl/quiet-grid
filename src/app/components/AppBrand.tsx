@@ -7,9 +7,10 @@ import appIcon from '../../../assets/icon.png';
 
 type Props = {
   compact?: boolean;
+  gameName?: string;
 };
 
-export default function AppBrand({ compact = false }: Props) {
+export default function AppBrand({ compact = false, gameName }: Props) {
   const { strings } = useLanguage();
   const { theme } = useTheme();
   const s = useMemo(() => makeStyles(theme, compact), [compact, theme]);
@@ -18,7 +19,9 @@ export default function AppBrand({ compact = false }: Props) {
     <View style={s.container} accessibilityRole="image" accessibilityLabel={strings.home.brandMark}>
       <Image source={appIcon} style={s.logo} />
       <View style={s.textWrap}>
-        <Text style={s.title}>Quiet Grid</Text>
+        <Text style={s.title} numberOfLines={1}>
+          {gameName ? `Quiet Grid - ${gameName}` : 'Quiet Grid'}
+        </Text>
         {compact ? null : <Text style={s.subtitle}>{strings.home.subtitle}</Text>}
       </View>
     </View>

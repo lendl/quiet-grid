@@ -13,6 +13,7 @@ import { openRepo } from '../utils/supportLinks';
 
 type BrandProps = {
   mode: 'brand';
+  gameName?: string;
 };
 
 type BackProps = {
@@ -59,7 +60,7 @@ export default function AppTopBar(props: Props) {
           ) : (
           <>
             <View style={s.brandWrap}>
-              <AppBrand compact />
+              <AppBrand compact gameName={props.mode === 'brand' ? props.gameName : undefined} />
             </View>
             <View style={s.actions}>
               {activePuzzle ? (

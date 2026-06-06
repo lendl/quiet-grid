@@ -71,7 +71,8 @@ export default function GameTutorialTab({ navigation, route }: Props) {
   if (!definition.screens.tutorial) {
     return (
       <GamePageShell
-        headerMode="back"
+        activeTab="Games"
+        headerMode="brand"
         contentTransitionDirection="forward"
         gameNav={{
           context: 'tabs',

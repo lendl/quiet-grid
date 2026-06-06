@@ -5,10 +5,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AppScreen from './AppScreen';
 import AnimatedContentView from './AnimatedContentView';
 import AppTopBar from './AppTopBar';
+import GlobalBottomNav from './GlobalBottomNav';
 import GamePageNav from './GamePageNav';
 import TopBackgroundEffect from './TopBackgroundEffect';
 import { useTheme } from '../context/ThemeContext';
-import type { GameTabParamList, RootStackParamList, TransitionDirection, TutorialEntryPoint } from '../navigation/types';
+import { getGameDefinition } from '../shell/games/gameRegistry';
+import type { GameTabParamList, MainTabParamList, RootStackParamList, TransitionDirection, TutorialEntryPoint } from '../navigation/types';
 import type { GameId } from '../../games/shared/types';
 import type { Theme } from '../theme';
 
@@ -29,6 +31,7 @@ type Props = {
   children?: React.ReactNode;
   contentStyle?: StyleProp<ViewStyle>;
   bodyStyle?: StyleProp<ViewStyle>;
+  activeTab?: keyof MainTabParamList;
   headerMode?: 'brand' | 'back' | 'none';
   headerRight?: React.ReactNode;
   backToPuzzleTypeId?: GameId;
@@ -40,6 +43,7 @@ export default function GamePageShell({
   children,
   contentStyle,
   bodyStyle,
+  activeTab = 'Games',
   headerMode = 'brand',
   headerRight,
   backToPuzzleTypeId,
@@ -50,6 +54,10 @@ export default function GamePageShell({
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const s = useMemo(() => makeStyles(theme), [theme]);
+  const gameName = useMemo(
+    () => gameNav ? getGameDefinition(gameNav.gameId).title : undefined,
+    [gameNav],
+  );
   const handleBack = useCallback(() => {
     if (backToPuzzleTypeId) {
       navigation.dispatch(StackActions.replace('Game', { gameId: backToPuzzleTypeId }));
@@ -62,7 +70,7 @@ export default function GamePageShell({
   return (
     <AppScreen edges={['left', 'right']} overlay={false} includeBottomInset={false} contentStyle={[s.container, contentStyle]}>
       <TopBackgroundEffect topOffset={-insets.top} />
-      {headerMode === 'brand' ? <AppTopBar mode="brand" /> : null}
+      {headerMode === 'brand' ? <AppTopBar mode="brand" gameName={gameName} /> : null}
       {headerMode === 'back' ? <AppTopBar mode="back" onBack={handleBack} rightSlot={headerRight} /> : null}
       {gameNav ? (
         <GamePageNav
@@ -75,6 +83,7 @@ export default function GamePageShell({
       <AnimatedContentView style={[s.body, bodyStyle]} direction={contentTransitionDirection}>
         {children}
       </AnimatedContentView>
+      <GlobalBottomNav activeTab={activeTab} />
     </AppScreen>
   );
 }

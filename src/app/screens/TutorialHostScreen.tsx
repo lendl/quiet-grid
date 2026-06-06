@@ -38,7 +38,8 @@ export default function TutorialHostScreen({ navigation, route }: Props) {
 
   return (
     <GamePageShell
-      headerMode="back"
+      activeTab="Games"
+      headerMode="brand"
       contentTransitionDirection="forward"
       gameNav={{
         context: 'root',
