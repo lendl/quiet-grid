@@ -5,11 +5,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AppScreen from './AppScreen';
 import AnimatedContentView from './AnimatedContentView';
 import AppTopBar from './AppTopBar';
-import GlobalBottomNav from './GlobalBottomNav';
 import GamePageNav from './GamePageNav';
 import TopBackgroundEffect from './TopBackgroundEffect';
 import { useTheme } from '../context/ThemeContext';
-import type { GameTabParamList, MainTabParamList, RootStackParamList, TransitionDirection, TutorialEntryPoint } from '../navigation/types';
+import type { GameTabParamList, RootStackParamList, TransitionDirection, TutorialEntryPoint } from '../navigation/types';
 import type { GameId } from '../../games/shared/types';
 import type { Theme } from '../theme';
 
@@ -30,7 +29,6 @@ type Props = {
   children?: React.ReactNode;
   contentStyle?: StyleProp<ViewStyle>;
   bodyStyle?: StyleProp<ViewStyle>;
-  activeTab?: keyof MainTabParamList;
   headerMode?: 'brand' | 'back' | 'none';
   headerRight?: React.ReactNode;
   backToPuzzleTypeId?: GameId;
@@ -42,7 +40,6 @@ export default function GamePageShell({
   children,
   contentStyle,
   bodyStyle,
-  activeTab = 'Games',
   headerMode = 'brand',
   headerRight,
   backToPuzzleTypeId,
@@ -78,7 +75,6 @@ export default function GamePageShell({
       <AnimatedContentView style={[s.body, bodyStyle]} direction={contentTransitionDirection}>
         {children}
       </AnimatedContentView>
-      <GlobalBottomNav activeTab={activeTab} />
     </AppScreen>
   );
 }

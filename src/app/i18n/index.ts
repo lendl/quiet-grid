@@ -168,6 +168,9 @@ const EN_STRINGS = {
   puzzle: {
     chooseDifficulty: 'Choose difficulty',
   },
+  gameSheet: {
+    newToGame: (name: string) => `New to ${name}? Start with the tutorial.`,
+  },
   howToPlay: {
     rulesTitle: (name: string) => `${name} rules`,
     tipsTitle: 'Tips',
@@ -196,10 +199,13 @@ const EN_STRINGS = {
     score: 'Score',
     elapsedTime: 'Elapsed time',
     accuracy: 'Accuracy',
+    tryAnotherGame: 'Try Another Game',
+    viewStats: 'Your Progress',
   },
   loss: {
     difficulty: 'Difficulty',
     elapsedTime: 'Elapsed time',
+    tryAnotherGame: 'Try Another Game',
   },
   analysis: {
     title: 'Analysis',
@@ -429,6 +435,9 @@ const NL_STRINGS: AppStrings = {
   puzzle: {
     chooseDifficulty: 'Kies moeilijkheid',
   },
+  gameSheet: {
+    newToGame: (name: string) => `Nieuw in ${name}? Begin met de tutorial.`,
+  },
   howToPlay: {
     rulesTitle: (name: string) => `${name}-regels`,
     tipsTitle: 'Tips',
@@ -457,10 +466,13 @@ const NL_STRINGS: AppStrings = {
     score: 'Score',
     elapsedTime: 'Verstreken tijd',
     accuracy: 'Nauwkeurigheid',
+    tryAnotherGame: 'Ander spel proberen',
+    viewStats: 'Jouw voortgang',
   },
   loss: {
     difficulty: 'Moeilijkheid',
     elapsedTime: 'Verstreken tijd',
+    tryAnotherGame: 'Ander spel proberen',
   },
   analysis: {
     title: 'Analyse',
@@ -690,6 +702,9 @@ const DE_STRINGS: AppStrings = {
   puzzle: {
     chooseDifficulty: 'Schwierigkeitsgrad wählen',
   },
+  gameSheet: {
+    newToGame: (name: string) => `Neu bei ${name}? Starte mit dem Tutorial.`,
+  },
   howToPlay: {
     rulesTitle: (name: string) => `${name}-Regeln`,
     tipsTitle: 'Tipps',
@@ -718,10 +733,13 @@ const DE_STRINGS: AppStrings = {
     score: 'Punkte',
     elapsedTime: 'Verstrichene Zeit',
     accuracy: 'Genauigkeit',
+    tryAnotherGame: 'Anderes Spiel versuchen',
+    viewStats: 'Dein Fortschritt',
   },
   loss: {
     difficulty: 'Schwierigkeitsgrad',
     elapsedTime: 'Verstrichene Zeit',
+    tryAnotherGame: 'Anderes Spiel versuchen',
   },
   analysis: {
     title: 'Analyse',
@@ -951,6 +969,9 @@ const FR_STRINGS: AppStrings = {
   puzzle: {
     chooseDifficulty: 'Choisir la difficulté',
   },
+  gameSheet: {
+    newToGame: (name: string) => `Nouveau dans ${name} ? Commencez par le tutoriel.`,
+  },
   howToPlay: {
     rulesTitle: (name: string) => `Règles de ${name}`,
     tipsTitle: 'Conseils',
@@ -979,10 +1000,13 @@ const FR_STRINGS: AppStrings = {
     score: 'Score',
     elapsedTime: 'Temps écoulé',
     accuracy: 'Précision',
+    tryAnotherGame: 'Essayer un autre jeu',
+    viewStats: 'Votre progression',
   },
   loss: {
     difficulty: 'Difficulté',
     elapsedTime: 'Temps écoulé',
+    tryAnotherGame: 'Essayer un autre jeu',
   },
   analysis: {
     title: 'Analyse',
@@ -1212,6 +1236,9 @@ const ES_STRINGS: AppStrings = {
   puzzle: {
     chooseDifficulty: 'Elegir dificultad',
   },
+  gameSheet: {
+    newToGame: (name: string) => `¿Nuevo en ${name}? Empieza con el tutorial.`,
+  },
   howToPlay: {
     rulesTitle: (name: string) => `Reglas de ${name}`,
     tipsTitle: 'Consejos',
@@ -1240,10 +1267,13 @@ const ES_STRINGS: AppStrings = {
     score: 'Puntuación',
     elapsedTime: 'Tiempo transcurrido',
     accuracy: 'Precisión',
+    tryAnotherGame: 'Probar otro juego',
+    viewStats: 'Tu progreso',
   },
   loss: {
     difficulty: 'Dificultad',
     elapsedTime: 'Tiempo transcurrido',
+    tryAnotherGame: 'Probar otro juego',
   },
   analysis: {
     title: 'Análisis',

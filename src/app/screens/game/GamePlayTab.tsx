@@ -52,8 +52,7 @@ export default function GamePlayTab({ route }: Props) {
 
   return (
     <GamePageShell
-      activeTab="Games"
-      headerMode="brand"
+      headerMode="back"
       contentTransitionDirection="forward"
       gameNav={{
         context: 'tabs',

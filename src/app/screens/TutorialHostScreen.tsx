@@ -24,7 +24,7 @@ export default function TutorialHostScreen({ navigation, route }: Props) {
 
   if (!definition.screens.tutorial) {
     return (
-      <GamePageShell activeTab="Games" headerMode="brand">
+      <GamePageShell headerMode="brand">
         <View style={styles.content}>
           <Text style={[styles.title, { color: theme.text }]}>{strings.tutorialHost.unavailableTitle}</Text>
           <Text style={[styles.body, { color: theme.textSecondary }]}>{strings.tutorialHost.unavailableBody}</Text>
@@ -38,8 +38,7 @@ export default function TutorialHostScreen({ navigation, route }: Props) {
 
   return (
     <GamePageShell
-      activeTab="Games"
-      headerMode="brand"
+      headerMode="back"
       contentTransitionDirection="forward"
       gameNav={{
         context: 'root',

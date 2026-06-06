@@ -82,6 +82,10 @@ export default function LossScreen({ route, navigation }: Props) {
     startGame(navigation, gameId, difficulty, true);
   }, [difficulty, gameId, navigation]);
 
+  const handleTryAnotherGame = useCallback(() => {
+    navigation.navigate('MainTabs', { screen: 'Games' });
+  }, [navigation]);
+
   const handleAnalyze = useCallback(() => {
     if (!analysisAdapter || !analysisSource) {
       return;
@@ -93,7 +97,7 @@ export default function LossScreen({ route, navigation }: Props) {
   }, [analysisAdapter, analysisSource, navigation]);
 
   return (
-    <GamePageShell activeTab="Games" headerMode="back" backToPuzzleTypeId={gameId}>
+    <GamePageShell headerMode="back" backToPuzzleTypeId={gameId}>
       <OutcomeScreenLayout>
         {(layout) => {
           const s = makeStyles(theme, layout);
@@ -167,6 +171,12 @@ export default function LossScreen({ route, navigation }: Props) {
                 </TouchableOpacity>
               </View>
 
+              <View style={s.secondaryRow}>
+                <TouchableOpacity style={baseStyles.secondaryButton} onPress={handleTryAnotherGame} activeOpacity={0.75}>
+                  <Text style={[baseStyles.secondaryText, { color: theme.textSecondary }]}>{strings.loss.tryAnotherGame}</Text>
+                </TouchableOpacity>
+              </View>
+
               <View style={s.actionRow}>
                 {canAnalyze ? (
                   <TouchableOpacity
@@ -227,6 +237,16 @@ const baseStyles = StyleSheet.create({
   secondaryButtonText: {
     fontSize: 16,
     fontWeight: '700',
+  },
+  secondaryButton: {
+    minHeight: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 8,
+  },
+  secondaryText: {
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
 
@@ -294,10 +314,16 @@ const makeStyles = (theme: Theme, layout: OutcomeScreenMetrics) => StyleSheet.cr
     flexDirection: 'row',
     marginTop: layout.primaryActionMarginTop,
   },
+  secondaryRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+  },
   actionRow: {
     flexDirection: 'row',
     gap: 12,
-    marginTop: Math.max(12, layout.actionMarginTop - 8),
+    marginTop: Math.max(8, layout.actionMarginTop - 12),
     marginBottom: 4,
   },
 });

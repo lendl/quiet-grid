@@ -16,8 +16,7 @@ export default function GameStatsTab({ route }: Props) {
   if (!stats) {
     return (
       <GamePageShell
-        activeTab="Games"
-        headerMode="brand"
+        headerMode="back"
         contentTransitionDirection="forward"
         gameNav={{
           context: 'tabs',
@@ -35,8 +34,7 @@ export default function GameStatsTab({ route }: Props) {
 
   return (
     <GamePageShell
-      activeTab="Games"
-      headerMode="brand"
+      headerMode="back"
       contentTransitionDirection="forward"
       gameNav={{
         context: 'tabs',

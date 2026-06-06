@@ -55,8 +55,7 @@ export default function HowToPlayScreen({ route }: Props) {
 
   return (
   <GamePageShell
-    activeTab="Games"
-    headerMode="brand"
+    headerMode="back"
     contentTransitionDirection="forward"
     gameNav={{
       context: 'root',

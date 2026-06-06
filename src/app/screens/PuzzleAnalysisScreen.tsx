@@ -111,7 +111,6 @@ export default function PuzzleAnalysisScreen({ navigation, route }: Props) {
 
   return (
     <GamePageShell
-      activeTab="Games"
       headerMode="back"
       backToPuzzleTypeId={analysis.gameId}
       headerRight={stepCounter}

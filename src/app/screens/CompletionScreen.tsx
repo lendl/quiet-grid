@@ -142,9 +142,16 @@ export default function CompletionScreen({ route, navigation }: Props) {
     startGame(navigation, gameId, difficulty, true);
   }, [difficulty, gameId, navigation]);
 
+  const handleTryAnotherGame = useCallback(() => {
+    navigation.navigate('MainTabs', { screen: 'Games' });
+  }, [navigation]);
+
+  const handleViewStats = useCallback(() => {
+    navigation.navigate('MainTabs', { screen: 'Stats', params: { gameId } });
+  }, [gameId, navigation]);
+
   return (
     <GamePageShell
-      activeTab="Games"
       headerMode="back"
       backToPuzzleTypeId={gameId}
       headerRight={(
@@ -243,6 +250,16 @@ export default function CompletionScreen({ route, navigation }: Props) {
                   <Text style={[baseStyles.primaryButtonText, { color: theme.onPrimary }]}>{strings.common.playAgain}</Text>
                 </TouchableOpacity>
               </View>
+
+              <View style={s.secondaryRow}>
+                <TouchableOpacity style={baseStyles.secondaryButton} onPress={handleTryAnotherGame} activeOpacity={0.75}>
+                  <Text style={[baseStyles.secondaryButtonText, { color: theme.textSecondary }]}>{strings.completion.tryAnotherGame}</Text>
+                </TouchableOpacity>
+                <View style={[baseStyles.secondaryDivider, { backgroundColor: withAlpha(theme.border, 0.5) }]} />
+                <TouchableOpacity style={baseStyles.secondaryButton} onPress={handleViewStats} activeOpacity={0.75}>
+                  <Text style={[baseStyles.secondaryButtonText, { color: theme.textSecondary }]}>{strings.completion.viewStats}</Text>
+                </TouchableOpacity>
+              </View>
             </Animated.View>
           );
         }}
@@ -338,6 +355,20 @@ const baseStyles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
   },
+  secondaryButton: {
+    flex: 1,
+    minHeight: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  secondaryButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  secondaryDivider: {
+    width: 1,
+    height: 16,
+  },
 });
 
 const makeStyles = (theme: Theme, layout: OutcomeScreenMetrics) => StyleSheet.create({
@@ -425,6 +456,12 @@ const makeStyles = (theme: Theme, layout: OutcomeScreenMetrics) => StyleSheet.cr
     flexDirection: 'row',
     gap: 12,
     marginTop: layout.actionMarginTop,
+  },
+  secondaryRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
     marginBottom: 4,
   },
 });

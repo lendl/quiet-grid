@@ -4,7 +4,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import type { StackScreenProps } from '@react-navigation/stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import GlobalBottomNav from '../components/GlobalBottomNav';
 import PuzzlePlayScaffold from '../components/PuzzlePlayScaffold';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
@@ -50,6 +49,10 @@ export default function PuzzlePlayScreen(props: Props) {
     }));
   }, [props.navigation, props.route.params.puzzleTypeId]);
 
+  const handleHowToPlay = React.useCallback(() => {
+    props.navigation.navigate('HowToPlay', { gameId: props.route.params.puzzleTypeId });
+  }, [props.navigation, props.route.params.puzzleTypeId]);
+
   return (
     <PuzzlePlayScaffold
       loading={layout.loading}
@@ -92,6 +95,15 @@ export default function PuzzlePlayScreen(props: Props) {
               ))}
               <TouchableOpacity
                 accessibilityRole="button"
+                accessibilityLabel={strings.common.rules}
+                onPress={handleHowToPlay}
+                style={s.iconButton}
+                activeOpacity={0.8}
+              >
+                <Ionicons name="help-outline" size={18} color={theme.text} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                accessibilityRole="button"
                 accessibilityLabel={strings.common.endPuzzle}
                 onPress={layout.onForfeit}
                 style={s.iconButton}
@@ -115,7 +127,6 @@ export default function PuzzlePlayScreen(props: Props) {
       ) : null}
       main={layout.main}
       footer={layout.footer}
-      bottomSlot={<GlobalBottomNav activeTab="Games" />}
     />
   );
 }

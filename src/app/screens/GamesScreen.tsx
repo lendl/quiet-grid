@@ -1,18 +1,21 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useFocusEffect, useNavigation, type NavigationProp } from '@react-navigation/native';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import ActivePuzzleReplaceDialog from '../components/ActivePuzzleReplaceDialog';
+import GameSelectSheet from '../components/GameSelectSheet';
 import GlobalPageShell from '../components/GlobalPageShell';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import { useActivePuzzleReplacement } from '../hooks/useActivePuzzleReplacement';
 import type { RootStackParamList, MainTabParamList } from '../navigation/types';
 import { gameRegistry } from '../shell/games/gameRegistry';
+import type { GameId } from '../../games/shared/types';
+import type { Difficulty } from '../types';
 import type { Theme } from '../theme';
 import { getActivePuzzleDisplay } from '../utils/activePuzzle';
 import { withAlpha } from '../utils/color';
-import { loadBetaGamesEnabled, shouldAutoShowTutorial } from '../utils/settingsStorage';
+import { loadBetaGamesEnabled } from '../utils/settingsStorage';
+import { startGame } from '../utils/gameNavigation';
 
 type Props = BottomTabScreenProps<MainTabParamList, 'Games'>;
 
@@ -22,6 +25,7 @@ export default function GamesScreen(_: Props) {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const s = useMemo(() => makeStyles(theme), [theme]);
   const [betaGamesEnabled, setBetaGamesEnabled] = React.useState(false);
+  const [selectedGameId, setSelectedGameId] = useState<GameId | null>(null);
   const {
     activePuzzle,
     dialogVisible,
@@ -42,20 +46,27 @@ export default function GamesScreen(_: Props) {
     return undefined;
   }, [syncActivePuzzle]));
 
-  const handleSelectGame = useCallback((gameId: typeof gameRegistry[number]['id']) => {
+  const handleOpenSheet = useCallback((gameId: GameId) => {
+    setSelectedGameId(gameId);
+  }, []);
+
+  const handleSheetDismiss = useCallback(() => {
+    setSelectedGameId(null);
+  }, []);
+
+  const handleSheetSelectDifficulty = useCallback((gameId: GameId, difficulty: Difficulty) => {
     requestStart(() => {
-      void (async () => {
-        const game = gameRegistry.find((definition) => definition.id === gameId);
-
-        if (game?.supports.tutorial && await shouldAutoShowTutorial(gameId)) {
-          navigation.navigate('Game', { gameId, initialTab: 'Tutorial' });
-          return;
-        }
-
-        navigation.navigate('Game', { gameId });
-      })();
+      startGame(navigation, gameId, difficulty);
     });
   }, [navigation, requestStart]);
+
+  const handleSheetRules = useCallback((gameId: GameId) => {
+    navigation.navigate('Game', { gameId, initialTab: 'Rules' });
+  }, [navigation]);
+
+  const handleSheetTutorial = useCallback((gameId: GameId) => {
+    navigation.navigate('Game', { gameId, initialTab: 'Tutorial' });
+  }, [navigation]);
 
   const readyGames = useMemo(() => gameRegistry.filter((g) => !g.beta), []);
   const betaGames = useMemo(() => gameRegistry.filter((g) => g.beta), []);
@@ -85,9 +96,10 @@ export default function GamesScreen(_: Props) {
             <TouchableOpacity
               key={game.id}
               style={s.card}
-              onPress={() => handleSelectGame(game.id)}
+              onPress={() => handleOpenSheet(game.id)}
               activeOpacity={0.78}
             >
+              <Text style={s.cardEmoji}>{game.emoji}</Text>
               <View style={s.cardBody}>
                 <Text style={s.cardTitle}>{game.title}</Text>
                 <Text style={s.cardTagline}>{game.tagline}</Text>
@@ -105,9 +117,10 @@ export default function GamesScreen(_: Props) {
             <TouchableOpacity
               key={game.id}
               style={[s.card, betaGamesEnabled ? s.cardBeta : s.cardDisabled]}
-              onPress={betaGamesEnabled ? () => handleSelectGame(game.id) : undefined}
+              onPress={betaGamesEnabled ? () => handleOpenSheet(game.id) : undefined}
               activeOpacity={betaGamesEnabled ? 0.78 : 1}
             >
+              <Text style={[s.cardEmoji, !betaGamesEnabled && s.cardEmojiDisabled]}>{game.emoji}</Text>
               <View style={s.cardBody}>
                 <Text style={[s.cardTitle, !betaGamesEnabled && s.cardTitleDisabled]}>{game.title}</Text>
                 <Text style={s.cardTagline}>{game.tagline}</Text>
@@ -117,32 +130,25 @@ export default function GamesScreen(_: Props) {
         </View>
       </ScrollView>
 
-      <ActivePuzzleReplaceDialog
-        visible={dialogVisible}
-        onContinue={handleContinue}
-        onStartNew={handleGiveUpAndStartNew}
-        onDismiss={dismissDialog}
+      <GameSelectSheet
+        gameId={selectedGameId}
+        onDismiss={handleSheetDismiss}
+        onSelectDifficulty={handleSheetSelectDifficulty}
+        onRules={handleSheetRules}
+        onTutorial={handleSheetTutorial}
+        dialogVisible={dialogVisible}
+        onDialogContinue={handleContinue}
+        onDialogStartNew={handleGiveUpAndStartNew}
+        onDialogDismiss={dismissDialog}
       />
     </GlobalPageShell>
   );
 }
 
 const makeStyles = (theme: Theme) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.background,
-  },
   scroll: {
     padding: 20,
     gap: 20,
-  },
-  header: {
-    gap: 8,
-  },
-  subtitle: {
-    fontSize: 15,
-    lineHeight: 22,
-    color: theme.textSecondary,
   },
   activeGameCard: {
     borderRadius: 22,
@@ -199,6 +205,7 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   card: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 14,
     padding: 20,
     backgroundColor: theme.surface,
     borderRadius: 16,
@@ -209,6 +216,13 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   },
   cardDisabled: {
     opacity: 0.45,
+  },
+  cardEmoji: {
+    fontSize: 28,
+    lineHeight: 36,
+  },
+  cardEmojiDisabled: {
+    opacity: 0.5,
   },
   cardBody: {
     flex: 1,
