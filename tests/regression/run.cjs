@@ -8,6 +8,7 @@ register({
     target: 'ES2022',
     module: 'CommonJS',
     moduleResolution: 'Node',
+    ignoreDeprecations: '6.0',
     esModuleInterop: true,
     jsx: 'react-jsx',
   },
