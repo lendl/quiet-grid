@@ -50,6 +50,26 @@ export const orderedSudokuTechniqueDispatchers: readonly SudokuTechniqueDispatch
   chainsTechnique,
 ] as const;
 
+// Base scores match DEFAULT_SUDOKU_DIFFICULTY_WEIGHTS.techniqueWeights in difficulty.ts
+const TECHNIQUE_BASE_SCORES: Record<SudokuTechnique, number> = {
+  'naked-single': 2,
+  'hidden-single': 3,
+  'naked-pair': 6,
+  'hidden-pair': 9,
+  'pointing-pair-triple': 10,
+  'box-line-reduction': 10,
+  'x-wing': 17,
+  'swordfish': 24,
+  'xy-wing': 21,
+  'xyz-wing': 28,
+  coloring: 27,
+  chains: 30,
+};
+
+function moveScore(move: SudokuCanonicalMove): number {
+  return TECHNIQUE_BASE_SCORES[move.technique] + move.complexity;
+}
+
 function applySudokuMove(state: SudokuBitmaskState, move: SudokuCanonicalMove): void {
   if (move.kind === 'placement') {
     placeSudokuDigit(state, getCellIndex(move.target.row, move.target.col), move.target.digit);
@@ -66,19 +86,33 @@ function findNextSudokuMoveInState(
   allowedTechniques: readonly SudokuTechnique[],
 ): SudokuCanonicalMove | null {
   const allowedTechniqueSet = new Set(allowedTechniques);
+  let best: SudokuCanonicalMove | null = null;
+  let bestScore = Infinity;
 
   for (const dispatcher of orderedSudokuTechniqueDispatchers) {
     if (!allowedTechniqueSet.has(dispatcher.technique)) {
       continue;
     }
 
+    // Prune: the minimum possible score for this technique is its base score + 0 complexity.
+    // If that already can't beat the current best, skip entirely.
+    if (TECHNIQUE_BASE_SCORES[dispatcher.technique] >= bestScore) {
+      continue;
+    }
+
     const move = dispatcher.findMove(state);
-    if (move) {
-      return move;
+    if (!move) {
+      continue;
+    }
+
+    const score = moveScore(move);
+    if (score < bestScore) {
+      best = move;
+      bestScore = score;
     }
   }
 
-  return null;
+  return best;
 }
 
 export function traceSudokuHumanSolve(

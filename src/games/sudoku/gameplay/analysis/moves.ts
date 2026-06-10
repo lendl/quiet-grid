@@ -14,6 +14,7 @@ export interface SudokuHouseRef {
 export interface SudokuPlacementMove {
   kind: 'placement';
   technique: SudokuTechnique;
+  complexity: number;
   target: SudokuCellRef & { digit: SudokuDigit };
   evidenceCells: SudokuCellRef[];
   houses: SudokuHouseRef[];
@@ -22,6 +23,7 @@ export interface SudokuPlacementMove {
 export interface SudokuCandidateEliminationMove {
   kind: 'candidate-elimination';
   technique: SudokuTechnique;
+  complexity: number;
   eliminations: Array<SudokuCellRef & { digit: SudokuDigit }>;
   evidenceCells: SudokuCellRef[];
   houses: SudokuHouseRef[];

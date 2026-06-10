@@ -31,6 +31,10 @@ export function usePuzzlePlayController(props: Props, menuOpen = false): PuzzleP
   const goBack = useCallback(() => {
     props.navigation.goBack();
   }, [props.navigation]);
+  const navigate = useCallback((routeName: string, params: object) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    props.navigation.navigate(routeName as any, params as any);
+  }, [props.navigation]);
 
   const adapterInstance = adapter.useAdapter({
     difficulty,
@@ -38,6 +42,7 @@ export function usePuzzlePlayController(props: Props, menuOpen = false): PuzzleP
     setDialog,
     goHome,
     goBack,
+    navigate,
   });
   const {
     onMissing,

@@ -278,7 +278,7 @@ export function getSudokuNextMoveHint(
     };
   }
 
-  const move = traceSudokuHumanSolve(session.board).moves.find((candidate) => candidate.kind === 'placement');
+  const move = traceSudokuHumanSolve(session.board).moves[0] ?? null;
   if (!move) {
     return null;
   }

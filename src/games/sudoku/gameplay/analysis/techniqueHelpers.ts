@@ -99,10 +99,12 @@ export function buildPlacementMove(input: {
   digit: SudokuDigit;
   evidenceCells: number[];
   houses?: SudokuHouseRef[];
+  complexity: number;
 }): SudokuCanonicalMove {
   return {
     kind: 'placement',
     technique: input.technique,
+    complexity: input.complexity,
     target: {
       row: input.row,
       col: input.col,
@@ -118,6 +120,7 @@ export function buildCandidateEliminationMove(input: {
   eliminations: Array<{ index: number; digit: SudokuDigit }>;
   evidenceCells: number[];
   houses?: SudokuHouseRef[];
+  complexity: number;
 }): SudokuCanonicalMove | null {
   const uniqueEliminations = Array.from(new Map(
     input.eliminations.map((elimination) => {
@@ -147,6 +150,7 @@ export function buildCandidateEliminationMove(input: {
   return {
     kind: 'candidate-elimination',
     technique: input.technique,
+    complexity: input.complexity,
     eliminations: uniqueEliminations,
     evidenceCells: Array.from(new Map(
       input.evidenceCells.map((index) => {

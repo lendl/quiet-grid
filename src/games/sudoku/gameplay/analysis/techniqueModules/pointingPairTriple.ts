@@ -2,13 +2,21 @@ import { sudokuDigits } from '../../../types';
 import { boxCellIndexes, cellBoxIndexes, cellColIndexes, cellRowIndexes } from '../bitmask';
 import { buildCandidateEliminationMove, getHouseDigitMatches } from '../techniqueHelpers';
 import type { SudokuTechniqueDispatcher } from '../techniqueModuleTypes';
+import type { SudokuCanonicalMove } from '../moves';
 
 export const pointingPairTripleTechnique: SudokuTechniqueDispatcher = {
   technique: 'pointing-pair-triple',
   tier: 'medium',
   findMove(state) {
+    let best: SudokuCanonicalMove | null = null;
+    let bestComplexity = Infinity;
+
     for (let boxIndex = 0; boxIndex < boxCellIndexes.length; boxIndex += 1) {
       const boxCells = boxCellIndexes[boxIndex];
+      const complexity = boxCells.filter((i) => state.board[i] === 0).length;
+      if (complexity >= bestComplexity) {
+        continue;
+      }
 
       for (const digit of sudokuDigits) {
         const matches = getHouseDigitMatches(state, boxCells, digit);
@@ -30,9 +38,12 @@ export const pointingPairTripleTechnique: SudokuTechniqueDispatcher = {
               { kind: 'box', index: boxIndex },
               { kind: 'row', index: targetRow },
             ],
+            complexity,
           });
           if (move) {
-            return move;
+            best = move;
+            bestComplexity = complexity;
+            break;
           }
         }
 
@@ -50,14 +61,17 @@ export const pointingPairTripleTechnique: SudokuTechniqueDispatcher = {
               { kind: 'box', index: boxIndex },
               { kind: 'column', index: targetCol },
             ],
+            complexity,
           });
           if (move) {
-            return move;
+            best = move;
+            bestComplexity = complexity;
+            break;
           }
         }
       }
     }
 
-    return null;
+    return best;
   },
 };

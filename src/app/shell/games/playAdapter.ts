@@ -30,6 +30,7 @@ export interface PuzzlePlayAdapterShellArgs {
   setDialog: Dispatch<SetStateAction<DialogConfig | null>>;
   goHome: () => void;
   goBack: () => void;
+  navigate: (routeName: string, params: object) => void;
 }
 
 export interface PuzzleRenderState<TSession, TAction = unknown> {

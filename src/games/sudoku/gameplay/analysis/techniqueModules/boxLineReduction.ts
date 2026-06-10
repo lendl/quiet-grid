@@ -2,13 +2,22 @@ import { sudokuDigits } from '../../../types';
 import { boxCellIndexes, cellBoxIndexes, columnCellIndexes, rowCellIndexes } from '../bitmask';
 import { buildCandidateEliminationMove, getHouseDigitMatches } from '../techniqueHelpers';
 import type { SudokuTechniqueDispatcher } from '../techniqueModuleTypes';
+import type { SudokuCanonicalMove } from '../moves';
 
 export const boxLineReductionTechnique: SudokuTechniqueDispatcher = {
   technique: 'box-line-reduction',
   tier: 'medium',
   findMove(state) {
+    let best: SudokuCanonicalMove | null = null;
+    let bestComplexity = Infinity;
+
     for (let rowIndex = 0; rowIndex < rowCellIndexes.length; rowIndex += 1) {
       const rowCells = rowCellIndexes[rowIndex];
+      const complexity = rowCells.filter((i) => state.board[i] === 0).length;
+      if (complexity >= bestComplexity) {
+        continue;
+      }
+
       for (const digit of sudokuDigits) {
         const matches = getHouseDigitMatches(state, rowCells, digit);
         if (matches.length < 2 || matches.length > 3) {
@@ -31,9 +40,12 @@ export const boxLineReductionTechnique: SudokuTechniqueDispatcher = {
               { kind: 'row', index: rowIndex },
               { kind: 'box', index: boxIndex },
             ],
+            complexity,
           });
           if (move) {
-            return move;
+            best = move;
+            bestComplexity = complexity;
+            break;
           }
         }
       }
@@ -41,6 +53,11 @@ export const boxLineReductionTechnique: SudokuTechniqueDispatcher = {
 
     for (let colIndex = 0; colIndex < columnCellIndexes.length; colIndex += 1) {
       const colCells = columnCellIndexes[colIndex];
+      const complexity = colCells.filter((i) => state.board[i] === 0).length;
+      if (complexity >= bestComplexity) {
+        continue;
+      }
+
       for (const digit of sudokuDigits) {
         const matches = getHouseDigitMatches(state, colCells, digit);
         if (matches.length < 2 || matches.length > 3) {
@@ -61,14 +78,17 @@ export const boxLineReductionTechnique: SudokuTechniqueDispatcher = {
               { kind: 'column', index: colIndex },
               { kind: 'box', index: boxIndex },
             ],
+            complexity,
           });
           if (move) {
-            return move;
+            best = move;
+            bestComplexity = complexity;
+            break;
           }
         }
       }
     }
 
-    return null;
+    return best;
   },
 };

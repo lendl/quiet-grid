@@ -95,7 +95,10 @@ function useTakuzuAdapter({
 
   const handleGridLayout = useCallback((e: LayoutChangeEvent) => {
     const { width, height } = e.nativeEvent.layout;
-    setGridContainer({ width, height });
+    setGridContainer({
+      width: Math.max(0, width - 12),
+      height: Math.max(0, height - 10),
+    });
   }, []);
 
   const getState = useCallback(({

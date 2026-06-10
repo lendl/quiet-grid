@@ -30,6 +30,7 @@ export interface SudokuDifficultyMetrics {
   openingTechnique: SudokuTechnique | null;
   hardestTechnique: SudokuTechnique | null;
   techniqueCounts: Partial<Record<SudokuTechnique, number>>;
+  maxComplexityPerTechnique: Partial<Record<SudokuTechnique, number>>;
 }
 
 export interface SudokuDifficultySafetyRails {
@@ -37,6 +38,7 @@ export interface SudokuDifficultySafetyRails {
   maxOverallTechnique: SudokuTechnique | null;
   maxStepCount: number;
   maxAdvancedStepCount: number;
+  maxComplexityPerTechnique: Partial<Record<SudokuTechnique, number>>;
 }
 
 export interface SudokuDifficultyProfile {
@@ -83,6 +85,11 @@ export const SUDOKU_DIFFICULTY_PROFILES: Record<PuzzleDifficulty, SudokuDifficul
       maxOverallTechnique: 'naked-pair',
       maxStepCount: 64,
       maxAdvancedStepCount: 0,
+      maxComplexityPerTechnique: {
+        'naked-single': 3,
+        'hidden-single': 4,
+        'naked-pair': 5,
+      },
     },
   },
   medium: {
@@ -93,6 +100,14 @@ export const SUDOKU_DIFFICULTY_PROFILES: Record<PuzzleDifficulty, SudokuDifficul
       maxOverallTechnique: 'box-line-reduction',
       maxStepCount: 108,
       maxAdvancedStepCount: 24,
+      maxComplexityPerTechnique: {
+        'naked-single': 6,
+        'hidden-single': 7,
+        'naked-pair': 8,
+        'hidden-pair': 7,
+        'pointing-pair-triple': 5,
+        'box-line-reduction': 5,
+      },
     },
   },
   hard: {
@@ -103,6 +118,12 @@ export const SUDOKU_DIFFICULTY_PROFILES: Record<PuzzleDifficulty, SudokuDifficul
       maxOverallTechnique: 'xy-wing',
       maxStepCount: 148,
       maxAdvancedStepCount: 56,
+      maxComplexityPerTechnique: {
+        'x-wing': 6,
+        'swordfish': 7,
+        'xy-wing': 12,
+        coloring: 8,
+      },
     },
   },
   expert: {
@@ -113,6 +134,7 @@ export const SUDOKU_DIFFICULTY_PROFILES: Record<PuzzleDifficulty, SudokuDifficul
       maxOverallTechnique: 'chains',
       maxStepCount: 280,
       maxAdvancedStepCount: 128,
+      maxComplexityPerTechnique: {},
     },
   },
 };
@@ -143,6 +165,11 @@ export function collectSudokuDifficultyMetrics(
     acc[move.technique] = (acc[move.technique] ?? 0) + 1;
     return acc;
   }, {});
+  const maxComplexityPerTechnique = moves.reduce<Partial<Record<SudokuTechnique, number>>>((acc, move) => {
+    const current = acc[move.technique] ?? 0;
+    acc[move.technique] = Math.max(current, move.complexity);
+    return acc;
+  }, {});
   const usedTechniques = moves.map((move) => move.technique);
   const hardestTechnique = getHardestSudokuTechnique(usedTechniques);
   const openingTechnique = moves[0]?.technique ?? null;
@@ -168,6 +195,7 @@ export function collectSudokuDifficultyMetrics(
     openingTechnique,
     hardestTechnique,
     techniqueCounts,
+    maxComplexityPerTechnique,
   };
 }
 
@@ -216,11 +244,29 @@ export function passesSudokuDifficultySafetyRails(
   metrics: SudokuDifficultyMetrics,
 ): boolean {
   const profile = SUDOKU_DIFFICULTY_PROFILES[difficulty];
+  const rails = profile.safetyRails;
 
-  return isTechniqueWithinCeiling(metrics.openingTechnique, profile.safetyRails.maxOpeningTechnique)
-    && isTechniqueWithinCeiling(metrics.hardestTechnique, profile.safetyRails.maxOverallTechnique)
-    && metrics.stepCount <= profile.safetyRails.maxStepCount
-    && metrics.advancedStepCount <= profile.safetyRails.maxAdvancedStepCount;
+  if (!isTechniqueWithinCeiling(metrics.openingTechnique, rails.maxOpeningTechnique)) {
+    return false;
+  }
+  if (!isTechniqueWithinCeiling(metrics.hardestTechnique, rails.maxOverallTechnique)) {
+    return false;
+  }
+  if (metrics.stepCount > rails.maxStepCount) {
+    return false;
+  }
+  if (metrics.advancedStepCount > rails.maxAdvancedStepCount) {
+    return false;
+  }
+
+  for (const [technique, maxComplexity] of Object.entries(rails.maxComplexityPerTechnique)) {
+    const observed = metrics.maxComplexityPerTechnique[technique as SudokuTechnique];
+    if (observed !== undefined && observed > (maxComplexity ?? Infinity)) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 export function classifySudokuDifficulty(

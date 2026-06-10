@@ -53,6 +53,20 @@ export type GameTabParamList = {
   Tutorial: { gameId: GameId; transitionDirection?: TransitionDirection };
 };
 
+export interface TechniqueLessonParams {
+  gameId: GameId;
+  ruleKey: string;
+  title: string;
+  board: (number | null)[][];
+  givens: (number | null)[][];
+  finishedCells: boolean[][];
+  evidenceCells: Array<{ row: number; col: number }>;
+  targetCells: Array<{ row: number; col: number; digit: number; action: 'place' | 'eliminate' }>;
+  highlightRows: number[];
+  highlightCols: number[];
+  highlightBoxes: number[];
+}
+
 export type RootStackParamList = {
   Welcome: undefined;
   MainTabs: NavigatorScreenParams<MainTabParamList> | undefined;
@@ -64,4 +78,5 @@ export type RootStackParamList = {
   Analysis: { analysis: PuzzleAnalysisPayload };
   HowToPlay: { gameId: GameId };
   Tutorial: { gameId: GameId; entry: TutorialEntryPoint };
+  TechniqueLesson: TechniqueLessonParams;
 };

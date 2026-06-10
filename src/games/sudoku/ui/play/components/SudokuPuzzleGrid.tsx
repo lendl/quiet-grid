@@ -70,6 +70,8 @@ function SudokuPuzzleGrid({
   notes,
   finishedCells,
   selectedCell,
+  validatedUnitKeys,
+  penalizedUnitKeys,
   boardFeedbackEffects,
   interactive = true,
   nextMoveEvidenceCells = [],
@@ -135,6 +137,30 @@ function SudokuPuzzleGrid({
   const highlightedRows = useMemo(() => new Set(nextMoveHighlightRows), [nextMoveHighlightRows]);
   const highlightedCols = useMemo(() => new Set(nextMoveHighlightCols), [nextMoveHighlightCols]);
   const highlightedBoxes = useMemo(() => new Set(nextMoveHighlightBoxes), [nextMoveHighlightBoxes]);
+  const validatedUnitSets = useMemo(() => {
+    const rows = new Set<number>();
+    const cols = new Set<number>();
+    const boxes = new Set<number>();
+    validatedUnitKeys.forEach((key) => {
+      const index = Number(key.slice(1));
+      if (key[0] === 'r') rows.add(index);
+      else if (key[0] === 'c') cols.add(index);
+      else boxes.add(index);
+    });
+    return { rows, cols, boxes };
+  }, [validatedUnitKeys]);
+  const penalizedUnitSets = useMemo(() => {
+    const rows = new Set<number>();
+    const cols = new Set<number>();
+    const boxes = new Set<number>();
+    penalizedUnitKeys.forEach((key) => {
+      const index = Number(key.slice(1));
+      if (key[0] === 'r') rows.add(index);
+      else if (key[0] === 'c') cols.add(index);
+      else boxes.add(index);
+    });
+    return { rows, cols, boxes };
+  }, [penalizedUnitKeys]);
   const separatorThickness = Math.max(4, Math.round(layout.cellSize * 0.1));
   const gridWidth = SUDOKU_SIZE * layout.cellSize + Math.max(0, SUDOKU_SIZE - 1) * GAP;
   const gridHeight = SUDOKU_SIZE * layout.cellSize + Math.max(0, SUDOKU_SIZE - 1) * GAP;
@@ -192,11 +218,18 @@ function SudokuPuzzleGrid({
             const showShake = activeShakeKeys.has(key) && value !== null;
             const placementTargetDigit = placementTargets.get(key) ?? null;
             const eliminationDigits = eliminationTargets.get(key) ?? null;
+            const cellBoxIndex = Math.floor(rowIndex / 3) * 3 + Math.floor(colIndex / 3);
             const isEvidenceCell = evidenceKeys.has(key);
             const isSelectedCell = selectedCellKey === key;
             const isHouseHighlighted = highlightedRows.has(rowIndex)
               || highlightedCols.has(colIndex)
-              || highlightedBoxes.has(Math.floor(rowIndex / 3) * 3 + Math.floor(colIndex / 3));
+              || highlightedBoxes.has(cellBoxIndex);
+            const isInValidatedUnit = validatedUnitSets.rows.has(rowIndex)
+              || validatedUnitSets.cols.has(colIndex)
+              || validatedUnitSets.boxes.has(cellBoxIndex);
+            const isInPenalizedUnit = penalizedUnitSets.rows.has(rowIndex)
+              || penalizedUnitSets.cols.has(colIndex)
+              || penalizedUnitSets.boxes.has(cellBoxIndex);
             const isPlacementTarget = placementTargetDigit !== null;
             const isEliminationTarget = Boolean(eliminationDigits && eliminationDigits.size > 0);
             const borderColor = isPlacementTarget
@@ -209,7 +242,9 @@ function SudokuPuzzleGrid({
                   ? withAlpha(theme.primaryLight, isDark ? 0.96 : 0.7)
                   : isHouseHighlighted
                     ? withAlpha(theme.primaryLight, isDark ? 0.44 : 0.24)
-                    : withAlpha(theme.border, isDark ? 0.84 : 0.66);
+                    : isInPenalizedUnit
+                      ? withAlpha(theme.difficultyExpert, isDark ? 0.52 : 0.32)
+                      : withAlpha(theme.border, isDark ? 0.84 : 0.66);
             const faceColor = isPlacementTarget
               ? withAlpha(theme.success, isDark ? 0.26 : 0.14)
               : isSelectedCell
@@ -219,10 +254,14 @@ function SudokuPuzzleGrid({
                 : isEvidenceCell
                   ? withAlpha(theme.primary, isDark ? 0.28 : 0.18)
                   : isHouseHighlighted
-                      ? withAlpha(theme.primary, isDark ? 0.08 : 0.04)
-                      : locked
-                        ? tokens.cellSunkenFill
-                        : tokens.cellRaisedFill;
+                    ? withAlpha(theme.primary, isDark ? 0.08 : 0.04)
+                    : isInPenalizedUnit
+                      ? withAlpha(theme.difficultyExpert, isDark ? 0.16 : 0.09)
+                      : isInValidatedUnit
+                        ? withAlpha(theme.success, isDark ? 0.18 : 0.1)
+                        : locked
+                          ? tokens.cellSunkenFill
+                          : tokens.cellRaisedFill;
 
             return (
               <View

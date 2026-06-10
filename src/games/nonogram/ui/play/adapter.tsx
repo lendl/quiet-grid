@@ -71,8 +71,8 @@ function useNonogramAdapter({
   const handleGridLayout = useCallback((event: LayoutChangeEvent) => {
     const { width, height } = event.nativeEvent.layout;
     setGridContainer({
-      width: Math.max(0, width),
-      height: Math.max(0, height),
+      width: Math.max(0, width - 16),
+      height: Math.max(0, height - 10),
     });
   }, []);
 

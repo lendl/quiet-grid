@@ -15,6 +15,8 @@ export const xyzWingTechnique: SudokuTechniqueDispatcher = {
       .filter(({ value, index }) => value === 0 && popcount[state.candidateMask[index]] === 2)
       .map(({ index }) => ({ index, candidates: getCellCandidatesByIndex(state, index) }));
 
+    const complexity = pivotCells.length;
+
     for (const pivot of pivotCells) {
       const pivotPeers = wings.filter((wing) => arePeerIndexes(wing.index, pivot.index));
       for (let leftIndex = 0; leftIndex < pivotPeers.length; leftIndex += 1) {
@@ -27,7 +29,7 @@ export const xyzWingTechnique: SudokuTechniqueDispatcher = {
             continue;
           }
 
-          const wingUnion = Array.from(new Set([...leftWing.candidates, ...rightWing.candidates])).sort((left, right) => left - right);
+          const wingUnion = Array.from(new Set([...leftWing.candidates, ...rightWing.candidates])).sort((a, b) => a - b);
           if (wingUnion.length !== 3 || wingUnion.some((digit) => !pivot.candidates.includes(digit))) {
             continue;
           }
@@ -45,6 +47,7 @@ export const xyzWingTechnique: SudokuTechniqueDispatcher = {
               .filter((index) => getCellCandidatesByIndex(state, index).includes(zDigit))
               .map((index) => ({ index, digit: zDigit })),
             evidenceCells: [pivot.index, leftWing.index, rightWing.index],
+            complexity,
           });
           if (move) {
             return move;

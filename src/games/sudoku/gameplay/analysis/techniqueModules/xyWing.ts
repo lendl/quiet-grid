@@ -16,6 +16,8 @@ export const xyWingTechnique: SudokuTechniqueDispatcher = {
         candidates: getCellCandidatesByIndex(state, index),
       }));
 
+    const complexity = bivalueCells.length;
+
     for (const pivot of bivalueCells) {
       const wings = bivalueCells.filter((cell) => !isSameCell(cell, pivot) && arePeerCells(cell, pivot));
 
@@ -60,6 +62,7 @@ export const xyWingTechnique: SudokuTechniqueDispatcher = {
               .map(({ index }) => ({ index, digit: zDigit })),
             evidenceCells: [pivot.index, leftWing.index, rightWing.index],
             houses: buildPlacementHouseRefs(pivot.row, pivot.col),
+            complexity,
           });
           if (move) {
             return move;

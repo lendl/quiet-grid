@@ -2,6 +2,7 @@ import { sudokuDigits } from '../../../types';
 import { cellPeers } from '../bitmask';
 import { buildCandidateEliminationMove, collectHousesFromIndexes, getHouseDigitMatches } from '../techniqueHelpers';
 import type { SudokuTechniqueDispatcher } from '../techniqueModuleTypes';
+import type { SudokuCanonicalMove } from '../moves';
 
 function addEdge(graph: Map<number, Set<number>>, left: number, right: number): void {
   graph.set(left, new Set([...(graph.get(left) ?? []), right]));
@@ -23,6 +24,9 @@ export const coloringTechnique: SudokuTechniqueDispatcher = {
         ));
       }),
     ];
+
+    let best: SudokuCanonicalMove | null = null;
+    let bestComplexity = Infinity;
 
     for (const digit of sudokuDigits) {
       const graph = new Map<number, Set<number>>();
@@ -62,6 +66,11 @@ export const coloringTechnique: SudokuTechniqueDispatcher = {
           });
         }
 
+        const complexity = component.length;
+        if (complexity >= bestComplexity) {
+          continue;
+        }
+
         for (const color of [0, 1] as const) {
           const colorCells = component.filter((index) => colors.get(index) === color);
           const hasConflict = colorCells.some((left, leftIndex) => (
@@ -76,10 +85,17 @@ export const coloringTechnique: SudokuTechniqueDispatcher = {
             eliminations: colorCells.map((index) => ({ index, digit })),
             evidenceCells: component,
             houses: collectHousesFromIndexes(component),
+            complexity,
           });
           if (move) {
-            return move;
+            best = move;
+            bestComplexity = complexity;
+            break;
           }
+        }
+
+        if (complexity >= bestComplexity) {
+          continue;
         }
 
         const colorZero = component.filter((index) => colors.get(index) === 0);
@@ -97,13 +113,15 @@ export const coloringTechnique: SudokuTechniqueDispatcher = {
             .map(({ index }) => ({ index, digit })),
           evidenceCells: component,
           houses: collectHousesFromIndexes(component),
+          complexity,
         });
         if (move) {
-          return move;
+          best = move;
+          bestComplexity = complexity;
         }
       }
     }
 
-    return null;
+    return best;
   },
 };

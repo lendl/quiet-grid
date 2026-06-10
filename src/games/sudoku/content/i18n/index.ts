@@ -73,6 +73,11 @@ export interface SudokuStrings {
       eliminationBody(techniqueLabel: string, digitsLabel: string, targetLabels: string, houseLabels: string): string;
       unsupportedTitle: string;
       unsupportedBody: string;
+      explainButton: string;
+    };
+    techniqueLesson: {
+      backButton: string;
+      explanations: Partial<Record<SudokuTechnique, string>>;
     };
   };
   tutorial: {

@@ -36,6 +36,8 @@ export const chainsTechnique: SudokuTechniqueDispatcher = {
           continue;
         }
 
+        const chainLength = path.length + 1;
+
         if (nextCell.candidates.includes(targetDigit) && path.length >= 3) {
           const move = buildCandidateEliminationMove({
             technique: 'chains',
@@ -46,6 +48,7 @@ export const chainsTechnique: SudokuTechniqueDispatcher = {
               .filter(({ index }) => getCellCandidatesByIndex(state, index).includes(targetDigit))
               .map(({ index }) => ({ index, digit: targetDigit })),
             evidenceCells: [...path, nextCell.index],
+            complexity: chainLength,
           });
           if (move) {
             return move;

@@ -92,7 +92,7 @@ const makeStyles = (theme: Theme, bottomInset: number) => StyleSheet.create({
     flex: 1,
   },
   footerRegion: {
-    minHeight: 112,
+    minHeight: 102 + Math.max(10, bottomInset + 4),
     flexShrink: 0,
     paddingHorizontal: 10,
     paddingTop: 8,

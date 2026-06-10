@@ -199,6 +199,28 @@ function getPreferredThemesForBalance(
   return preferred;
 }
 
+function printHelp(): void {
+  const knownGames = ['takuzu', 'nonogram', 'sudoku', 'wordsearch'];
+  console.log(`
+Usage: tsx src/engine/index.ts [options] [count]
+
+Generates puzzle catalog entries for a given game.
+
+Arguments:
+  count                      Number of puzzles to generate (default: 1)
+
+Options:
+  --game <id>                Game to generate puzzles for (default: takuzu)
+                             Known games: ${knownGames.join(', ')}
+  --size <n>                 Force a specific puzzle size (game-dependent)
+  --difficulty <level>       Force a specific difficulty: easy, medium, hard, expert
+  --language <code>          Force a specific language (wordsearch only): en, nl, de, fr, es
+  --replace                  Replace the existing catalog instead of appending
+  --reclassify-existing      Reclassify existing catalog entries without generating new ones
+  --help, -h                 Show this help message
+`);
+}
+
 function parseGameArg(): string {
   const gameIndex = process.argv.findIndex((arg) => arg === '--game');
   const pairedArg = gameIndex >= 0 ? process.argv[gameIndex + 1] : null;
@@ -266,6 +288,11 @@ function reclassifyExistingCatalog(gameId: string): void {
 }
 
 function main(): void {
+  if (process.argv.includes('--help') || process.argv.includes('-h')) {
+    printHelp();
+    process.exit(0);
+  }
+
   const game = getEngineGameDefinition(parseGameArg());
   const requestedCount = parseRequestedCount();
   const replaceCatalog = process.argv.includes('--replace');

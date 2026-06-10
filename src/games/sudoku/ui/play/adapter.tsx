@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import type { LayoutChangeEvent } from 'react-native';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useLanguage } from '../../../../app/context/LanguageContext';
 import { useTheme } from '../../../../app/context/ThemeContext';
 import ZoomableBoardSurface from '../../../../app/components/ZoomableBoardSurface';
@@ -97,6 +97,7 @@ function buildBoardFeedbackEffects(
 function useSudokuAdapter({
   difficulty,
   goHome,
+  navigate,
   setDialog,
 }: PuzzlePlayAdapterShellArgs): PuzzlePlayAdapterInstance<SudokuPlaySession> {
   const { strings: appStrings, resolvedLanguage } = useLanguage();
@@ -148,8 +149,8 @@ function useSudokuAdapter({
   const handleGridLayout = useCallback((event: LayoutChangeEvent) => {
     const { width, height } = event.nativeEvent.layout;
     setGridContainer({
-      width: Math.max(0, width),
-      height: Math.max(0, height),
+      width: Math.max(0, width - 12),
+      height: Math.max(0, height - 10),
     });
   }, []);
 
@@ -457,6 +458,35 @@ function useSudokuAdapter({
                 <Text style={styles.nextMoveCardTitle}>{nextMove.hint.title}</Text>
               </View>
               <Text style={styles.nextMoveCardBody}>{nextMove.hint.body}</Text>
+              {nextMove.hint.kind === 'progress' && nextMove.hint.ruleKey !== 'naked-single' ? (
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={strings.play.nextMove.explainButton}
+                  onPress={() => {
+                    const hint = nextMove.hint;
+                    const currentSession = sessionRef.current;
+                    if (!hint || hint.kind !== 'progress' || !currentSession) {
+                      return;
+                    }
+                    navigate('TechniqueLesson', {
+                      gameId: 'sudoku',
+                      ruleKey: hint.ruleKey,
+                      title: hint.title,
+                      board: currentSession.board,
+                      givens: currentSession.puzzle.givens,
+                      finishedCells: currentSession.finishedCells,
+                      evidenceCells: hint.evidenceCells,
+                      targetCells: hint.targetCells,
+                      highlightRows: hint.highlightRows,
+                      highlightCols: hint.highlightCols,
+                      highlightBoxes: hint.highlightBoxes,
+                    });
+                  }}
+                  style={styles.explainButton}
+                >
+                  <Text style={styles.explainButtonText}>{strings.play.nextMove.explainButton}</Text>
+                </Pressable>
+              ) : null}
             </View>
           ) : null}
         </View>
@@ -471,6 +501,7 @@ function useSudokuAdapter({
     gridContainer.width,
     handleGridLayout,
     isBoardZoomed,
+    navigate,
     noteMode,
     nextMove,
     selectedCell,
@@ -554,5 +585,20 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   },
   footerSpacer: {
     flex: 1,
+  },
+  explainButton: {
+    alignSelf: 'flex-start',
+    marginTop: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 10,
+    backgroundColor: withAlpha(theme.primary, 0.14),
+    borderWidth: 1,
+    borderColor: withAlpha(theme.primaryLight, 0.36),
+  },
+  explainButtonText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: theme.primary,
   },
 });
