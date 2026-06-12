@@ -50,7 +50,11 @@ export default function PuzzlePlayScaffold({
         <>
           {header ? <View style={s.headerRegion}>{header}</View> : null}
           <View style={s.mainRegion}>{main}</View>
-          <View style={s.footerRegion}>{footer}</View>
+          {footer != null ? (
+            <View style={s.footerRegion}>{footer}</View>
+          ) : (
+            <View style={s.footerInset} />
+          )}
         </>
         )}
       {bottomSlot}
@@ -92,11 +96,14 @@ const makeStyles = (theme: Theme, bottomInset: number) => StyleSheet.create({
     flex: 1,
   },
   footerRegion: {
-    minHeight: 102 + Math.max(10, bottomInset + 4),
     flexShrink: 0,
     paddingHorizontal: 10,
     paddingTop: 8,
     paddingBottom: Math.max(10, bottomInset + 4),
     overflow: 'hidden',
+  },
+  footerInset: {
+    height: Math.max(10, bottomInset + 4),
+    flexShrink: 0,
   },
 });

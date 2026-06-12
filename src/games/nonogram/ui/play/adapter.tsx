@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import type { LayoutChangeEvent } from 'react-native';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { HintPopoverContent } from '../../../../app/components/HintPopoverContent';
 import { createPuzzlePlayAdapter } from '../../../../app/shell/games/playAdapter';
 import { getAppStrings } from '../../../../app/i18n';
 import { useTheme } from '../../../../app/context/ThemeContext';
@@ -101,6 +102,9 @@ function useNonogramAdapter({
       onPress: () => {
         nextMove.toggle(sessionRef.current);
       },
+      popoverContent: nextMove.hint ? (
+        <HintPopoverContent title={nextMove.hint.title} body={nextMove.hint.body} />
+      ) : undefined,
     };
     const resetZoomHeaderAction: PuzzleHeaderAction = {
       key: 'reset-zoom',
@@ -166,19 +170,6 @@ function useNonogramAdapter({
       ),
       footer: (
         <View style={styles.footer}>
-          {nextMove.visible && nextMove.hint ? (
-            <View style={styles.nextMoveCard}>
-              <View style={styles.nextMoveCardHeader}>
-                <View style={styles.nextMoveCardBadge}>
-                  <Text style={styles.nextMoveCardBadgeText}>i</Text>
-                </View>
-                <Text style={styles.nextMoveCardTitle}>{nextMove.hint.title}</Text>
-              </View>
-              <Text style={styles.nextMoveCardBody}>{nextMove.hint.body}</Text>
-            </View>
-          ) : (
-            <View style={styles.footerSpacer} />
-          )}
           <View style={styles.modeToggleRow}>
             <TouchableOpacity
               style={[styles.modeBtn, inputMode === 'cross' && styles.modeBtnActive]}
@@ -247,46 +238,6 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     paddingHorizontal: 8,
     paddingTop: 4,
     paddingBottom: 6,
-  },
-  nextMoveCard: {
-    flex: 1,
-    borderRadius: 16,
-    paddingHorizontal: 12,
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: withAlpha(theme.surfaceElevated, 0.96),
-    borderWidth: 1,
-    borderColor: withAlpha(theme.primaryLight, 0.34),
-  },
-  nextMoveCardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 4,
-  },
-  nextMoveCardBadge: {
-    width: 22,
-    height: 22,
-    borderRadius: 999,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: theme.primary,
-  },
-  nextMoveCardBadgeText: {
-    color: theme.onPrimary,
-    fontSize: 12,
-    fontWeight: '800',
-  },
-  nextMoveCardTitle: {
-    flex: 1,
-    color: theme.text,
-    fontSize: 13,
-    fontWeight: '800',
-  },
-  nextMoveCardBody: {
-    color: theme.textSecondary,
-    fontSize: 12,
-    lineHeight: 17,
   },
   footer: {
     flex: 1,

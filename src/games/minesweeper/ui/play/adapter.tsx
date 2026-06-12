@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import type { LayoutChangeEvent } from 'react-native';
 import { StyleSheet, Text, View } from 'react-native';
+import { HintPopoverContent } from '../../../../app/components/HintPopoverContent';
 import { useTheme } from '../../../../app/context/ThemeContext';
 import { createPuzzlePlayAdapter } from '../../../../app/shell/games/playAdapter';
 import { useNextMoveHelper } from '../../../../app/shell/games/useNextMoveHelper';
@@ -114,6 +115,18 @@ function useMinesweeperAdapter({
       iconName: nextMove.visible ? 'bulb' : 'bulb-outline',
       active: nextMove.visible,
       onPress: handleToggleNextMove,
+      popoverContent: nextMove.hint ? (
+        <HintPopoverContent title={nextMove.hint.title} body={nextMove.hint.body}>
+          {nextMove.hint.teaching ? (
+            <>
+              <Text style={styles.nextMoveCardLabel}>{nextMove.hint.teaching.patternTitle}</Text>
+              <Text style={styles.nextMoveCardPattern}>{nextMove.hint.teaching.patternLabel}</Text>
+              <Text style={styles.nextMoveCardLabel}>{nextMove.hint.teaching.explanationTitle}</Text>
+              <Text style={styles.nextMoveCardBody}>{nextMove.hint.teaching.explanation}</Text>
+            </>
+          ) : null}
+        </HintPopoverContent>
+      ) : undefined,
     };
     const resetZoomHeaderAction: PuzzleHeaderAction = {
       key: 'reset-zoom',
@@ -173,27 +186,7 @@ function useMinesweeperAdapter({
       ) : (
         <View style={styles.gridArea} />
       ),
-      footer: nextMove.visible && nextMove.hint ? (
-        <View style={styles.nextMoveCard}>
-          <View style={styles.nextMoveCardHeader}>
-            <View style={styles.nextMoveCardBadge}>
-              <Text style={styles.nextMoveCardBadgeText}>i</Text>
-            </View>
-            <Text style={styles.nextMoveCardTitle}>{nextMove.hint.title}</Text>
-          </View>
-          <Text style={styles.nextMoveCardBody}>{nextMove.hint.body}</Text>
-          {nextMove.hint.teaching ? (
-            <>
-              <Text style={styles.nextMoveCardLabel}>{nextMove.hint.teaching.patternTitle}</Text>
-              <Text style={styles.nextMoveCardPattern}>{nextMove.hint.teaching.patternLabel}</Text>
-              <Text style={styles.nextMoveCardLabel}>{nextMove.hint.teaching.explanationTitle}</Text>
-              <Text style={styles.nextMoveCardBody}>{nextMove.hint.teaching.explanation}</Text>
-            </>
-          ) : null}
-        </View>
-      ) : (
-        <View style={styles.emptyFooter} />
-      ),
+      footer: null,
     };
   }, [gridContainer.height, gridContainer.width, handleGridLayout, isBoardZoomed, minesweeperStrings, nextMove, styles]);
 
@@ -227,41 +220,6 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: GRID_HORIZONTAL_PADDING,
     paddingBottom: GRID_BOTTOM_PADDING,
-  },
-  nextMoveCard: {
-    flex: 1,
-    borderRadius: 16,
-    paddingHorizontal: 12,
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: withAlpha(theme.surfaceElevated, 0.96),
-    borderWidth: 1,
-    borderColor: withAlpha(theme.primaryLight, 0.34),
-  },
-  nextMoveCardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 4,
-  },
-  nextMoveCardBadge: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: withAlpha(theme.primary, 0.24),
-  },
-  nextMoveCardBadgeText: {
-    color: theme.primaryLight,
-    fontSize: 13,
-    fontWeight: '800',
-  },
-  nextMoveCardTitle: {
-    flex: 1,
-    color: theme.text,
-    fontSize: 14,
-    fontWeight: '700',
   },
   nextMoveCardBody: {
     color: theme.textSecondary,

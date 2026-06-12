@@ -1,13 +1,15 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { StackActions } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import type { StackScreenProps } from '@react-navigation/stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Popover, { PopoverPlacement, Rect as PopoverRect } from 'react-native-popover-view';
 import PuzzlePlayScaffold from '../components/PuzzlePlayScaffold';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import type { RootStackParamList } from '../navigation/types';
+import type { PuzzleHeaderAction } from '../shell/games/playAdapter';
 import { usePuzzlePlayController } from '../shell/hooks/usePuzzlePlayController';
 import type { Theme } from '../theme';
 import { withAlpha } from '../utils/color';
@@ -78,20 +80,24 @@ export default function PuzzlePlayScreen(props: Props) {
                 </View>
               ) : null}
               {layout.headerActions.map((action) => (
-                <TouchableOpacity
-                  key={action.key}
-                  accessibilityRole="button"
-                  accessibilityLabel={action.accessibilityLabel}
-                  onPress={action.onPress}
-                  style={[s.iconButton, action.active ? s.helperActive : null]}
-                  activeOpacity={0.8}
-                >
-                  <Ionicons
-                    name={action.iconName}
-                    size={18}
-                    color={action.active ? theme.primaryLight : theme.text}
-                  />
-                </TouchableOpacity>
+                action.popoverContent != null ? (
+                  <HeaderPopoverButton key={action.key} action={action} theme={theme} s={s} />
+                ) : (
+                  <TouchableOpacity
+                    key={action.key}
+                    accessibilityRole="button"
+                    accessibilityLabel={action.accessibilityLabel}
+                    onPress={action.onPress}
+                    style={[s.iconButton, action.active ? s.helperActive : null]}
+                    activeOpacity={0.8}
+                  >
+                    <Ionicons
+                      name={action.iconName}
+                      size={18}
+                      color={action.active ? theme.primaryLight : theme.text}
+                    />
+                  </TouchableOpacity>
+                )
               ))}
               <TouchableOpacity
                 accessibilityRole="button"
@@ -128,6 +134,57 @@ export default function PuzzlePlayScreen(props: Props) {
       main={layout.main}
       footer={layout.footer}
     />
+  );
+}
+
+interface HeaderPopoverButtonProps {
+  action: PuzzleHeaderAction;
+  theme: Theme;
+  s: ReturnType<typeof makeStyles>;
+}
+
+function HeaderPopoverButton({ action, theme, s }: HeaderPopoverButtonProps) {
+  const buttonRef = useRef<View>(null);
+  const [buttonRect, setButtonRect] = useState<PopoverRect | null>(null);
+
+  const measureButton = useCallback(() => {
+    buttonRef.current?.measureInWindow((x, y, width, height) => {
+      setButtonRect(new PopoverRect(x, y, width, height));
+    });
+  }, []);
+
+  const isVisible = !!(action.active && action.popoverContent != null && buttonRect != null);
+
+  return (
+    <>
+      <View ref={buttonRef} collapsable={false} onLayout={measureButton}>
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel={action.accessibilityLabel}
+          onPress={action.onPress}
+          style={[s.iconButton, action.active ? s.helperActive : null]}
+          activeOpacity={0.8}
+        >
+          <Ionicons
+            name={action.iconName}
+            size={18}
+            color={action.active ? theme.primary : theme.text}
+          />
+        </TouchableOpacity>
+      </View>
+      <Popover
+        from={buttonRect ?? new PopoverRect(0, 0, 0, 0)}
+        isVisible={isVisible}
+        onRequestClose={action.onPress}
+        placement={PopoverPlacement.BOTTOM}
+        popoverStyle={{ borderRadius: 16, backgroundColor: theme.surfaceElevated }}
+        backgroundStyle={{ backgroundColor: 'transparent' }}
+      >
+        <View style={s.popoverContent}>
+          {action.popoverContent}
+        </View>
+      </Popover>
+    </>
   );
 }
 
@@ -216,5 +273,10 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     color: theme.text,
     fontSize: 13,
     fontWeight: '700',
+  },
+  popoverContent: {
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    width: 280,
   },
 });

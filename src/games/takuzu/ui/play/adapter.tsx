@@ -1,16 +1,14 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import type { LayoutChangeEvent } from 'react-native';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { HintPopoverContent } from '../../../../app/components/HintPopoverContent';
 import { useLanguage } from '../../../../app/context/LanguageContext';
-import { useTheme } from '../../../../app/context/ThemeContext';
 import { createPuzzlePlayAdapter } from '../../../../app/shell/games/playAdapter';
 import { useNextMoveHelper } from '../../../../app/shell/games/useNextMoveHelper';
 import {
   buildBoardFeedbackCellsFromLines,
   type BoardFeedbackEffect,
 } from '../../../../app/shell/boardFeedback';
-import type { Theme } from '../../../../app/theme';
-import { withAlpha } from '../../../../app/utils/color';
 import ZoomableBoardSurface from '../../../../app/components/ZoomableBoardSurface';
 import type {
   PuzzleHeaderAction,
@@ -51,9 +49,8 @@ function useTakuzuAdapter({
   goHome,
 }: PuzzlePlayAdapterShellArgs): PuzzlePlayAdapterInstance<TakuzuPlaySession> {
   const { strings } = useLanguage();
-  const { theme } = useTheme();
   const takuzuStrings = getTakuzuStrings();
-  const styles = useMemo(() => makeStyles(theme), [theme]);
+  const styles = useMemo(makeStyles, []);
   const [boardFeedbackEffects, setBoardFeedbackEffects] =
    useState<BoardFeedbackEffect[] | null>(null);
   const nextMove = useNextMoveHelper((session: TakuzuPlaySession) => (
@@ -280,6 +277,9 @@ function useTakuzuAdapter({
       iconName: nextMove.visible ? 'bulb' : 'bulb-outline',
       active: nextMove.visible,
       onPress: handleToggleNextMove,
+      popoverContent: nextMove.hint ? (
+        <HintPopoverContent title={nextMove.hint.title} body={nextMove.hint.body} />
+      ) : undefined,
     };
     const resetZoomHeaderAction: PuzzleHeaderAction = {
       key: 'reset-zoom',
@@ -295,19 +295,7 @@ function useTakuzuAdapter({
         ? [resetZoomHeaderAction, nextMoveHeaderAction]
         : [nextMoveHeaderAction],
       headerMeta: metadata,
-      footer: nextMove.visible && nextMove.hint ? (
-        <View style={styles.nextMoveCard}>
-          <View style={styles.nextMoveCardHeader}>
-            <View style={styles.nextMoveCardBadge}>
-              <Text style={styles.nextMoveCardBadgeText}>i</Text>
-            </View>
-            <Text style={styles.nextMoveCardTitle}>{nextMove.hint.title}</Text>
-          </View>
-          <Text style={styles.nextMoveCardBody}>{nextMove.hint.body}</Text>
-        </View>
-      ) : (
-        <View style={styles.footerSpacer} />
-      ),
+      footer: null,
       main: (
         <View style={styles.gridArea} onLayout={handleGridLayout}>
           {session && gridContainer.width > 0 ? (
@@ -367,7 +355,7 @@ const takuzuTypedPlayAdapter = {
 
 export const takuzuPlayAdapter = createPuzzlePlayAdapter(takuzuTypedPlayAdapter);
 
-const makeStyles = (theme: Theme) => StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   gridArea: {
     flex: 1,
     alignItems: 'center',
@@ -375,46 +363,6 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     paddingHorizontal: 6,
     paddingTop: 4,
     paddingBottom: 6,
-  },
-  nextMoveCard: {
-    flex: 1,
-    borderRadius: 16,
-    paddingHorizontal: 12,
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: withAlpha(theme.surfaceElevated, 0.96),
-    borderWidth: 1,
-    borderColor: withAlpha(theme.primaryLight, 0.34),
-  },
-  nextMoveCardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 4,
-  },
-  nextMoveCardBadge: {
-    width: 22,
-    height: 22,
-    borderRadius: 999,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: theme.primary,
-  },
-  nextMoveCardBadgeText: {
-    color: theme.onPrimary,
-    fontSize: 12,
-    fontWeight: '800',
-  },
-  nextMoveCardTitle: {
-    flex: 1,
-    color: theme.text,
-    fontSize: 13,
-    fontWeight: '800',
-  },
-  nextMoveCardBody: {
-    color: theme.textSecondary,
-    fontSize: 12,
-    lineHeight: 17,
   },
   footerSpacer: {
     flex: 1,

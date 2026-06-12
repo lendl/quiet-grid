@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import type { LayoutChangeEvent } from 'react-native';
 import { StyleSheet, Text, View } from 'react-native';
+import { HintPopoverContent } from '../../../../app/components/HintPopoverContent';
 import { useLanguage } from '../../../../app/context/LanguageContext';
 import { useTheme } from '../../../../app/context/ThemeContext';
 import ZoomableBoardSurface from '../../../../app/components/ZoomableBoardSurface';
@@ -181,6 +182,9 @@ function useWordSearchAdapter({
       onPress: () => {
         nextMove.toggle(sessionRef.current);
       },
+      popoverContent: !session?.hiddenWordMode && nextMove.hint ? (
+        <HintPopoverContent title={nextMove.hint.title} body={nextMove.hint.body} />
+      ) : undefined,
     };
     const hiddenWordHeaderAction: PuzzleHeaderAction = {
       key: 'hidden-word',
@@ -286,18 +290,6 @@ function useWordSearchAdapter({
       ),
       footer: session ? (
         <View style={styles.footerStack}>
-          {!session.hiddenWordMode && nextMove.visible && nextMove.hint ? (
-            <View style={styles.nextMoveCard}>
-              <View style={styles.nextMoveCardHeader}>
-                <View style={styles.nextMoveCardBadge}>
-                  <Text style={styles.nextMoveCardBadgeText}>i</Text>
-                </View>
-                <Text style={styles.nextMoveCardTitle}>{nextMove.hint.title}</Text>
-              </View>
-              <Text style={styles.nextMoveCardBody}>{nextMove.hint.body}</Text>
-            </View>
-          ) : null}
-
           {session.hiddenWordSolved ? (
             <View style={styles.hiddenWordSolvedCard}>
               <Text style={styles.hiddenWordSolvedTitle}>
@@ -411,45 +403,6 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   },
   footerStack: {
     gap: 10,
-  },
-  nextMoveCard: {
-    borderRadius: 16,
-    paddingHorizontal: 12,
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: withAlpha(theme.surfaceElevated, 0.96),
-    borderWidth: 1,
-    borderColor: withAlpha(theme.primaryLight, 0.34),
-  },
-  nextMoveCardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 4,
-  },
-  nextMoveCardBadge: {
-    width: 22,
-    height: 22,
-    borderRadius: 999,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: theme.primary,
-  },
-  nextMoveCardBadgeText: {
-    color: theme.onPrimary,
-    fontSize: 12,
-    fontWeight: '800',
-  },
-  nextMoveCardTitle: {
-    flex: 1,
-    color: theme.text,
-    fontSize: 13,
-    fontWeight: '800',
-  },
-  nextMoveCardBody: {
-    color: theme.textSecondary,
-    fontSize: 12,
-    lineHeight: 17,
   },
   hiddenWordSolvedCard: {
     borderRadius: 14,

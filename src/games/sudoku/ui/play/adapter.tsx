@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import type { LayoutChangeEvent } from 'react-native';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { HintPopoverContent } from '../../../../app/components/HintPopoverContent';
 import { useLanguage } from '../../../../app/context/LanguageContext';
 import { useTheme } from '../../../../app/context/ThemeContext';
 import ZoomableBoardSurface from '../../../../app/components/ZoomableBoardSurface';
@@ -377,6 +378,39 @@ function useSudokuAdapter({
       iconName: nextMove.visible ? 'bulb' : 'bulb-outline',
       active: nextMove.visible,
       onPress: handleToggleNextMove,
+      popoverContent: nextMove.hint ? (
+        <HintPopoverContent title={nextMove.hint.title} body={nextMove.hint.body}>
+          {nextMove.hint.kind === 'progress' && nextMove.hint.ruleKey !== 'naked-single' ? (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={strings.play.nextMove.explainButton}
+              onPress={() => {
+                const hint = nextMove.hint;
+                const currentSession = sessionRef.current;
+                if (!hint || hint.kind !== 'progress' || !currentSession) {
+                  return;
+                }
+                navigate('TechniqueLesson', {
+                  gameId: 'sudoku',
+                  ruleKey: hint.ruleKey,
+                  title: hint.title,
+                  board: currentSession.board,
+                  givens: currentSession.puzzle.givens,
+                  finishedCells: currentSession.finishedCells,
+                  evidenceCells: hint.evidenceCells,
+                  targetCells: hint.targetCells,
+                  highlightRows: hint.highlightRows,
+                  highlightCols: hint.highlightCols,
+                  highlightBoxes: hint.highlightBoxes,
+                });
+              }}
+              style={styles.explainButton}
+            >
+              <Text style={styles.explainButtonText}>{strings.play.nextMove.explainButton}</Text>
+            </Pressable>
+          ) : null}
+        </HintPopoverContent>
+      ) : undefined,
     };
 
     return {
@@ -447,52 +481,7 @@ function useSudokuAdapter({
       ) : (
         <View style={styles.boardArea} />
       ),
-      footer: session ? (
-        <View style={styles.footerStack}>
-          {nextMove.visible && nextMove.hint ? (
-            <View style={styles.nextMoveCard}>
-              <View style={styles.nextMoveCardHeader}>
-                <View style={styles.nextMoveCardBadge}>
-                  <Text style={styles.nextMoveCardBadgeText}>i</Text>
-                </View>
-                <Text style={styles.nextMoveCardTitle}>{nextMove.hint.title}</Text>
-              </View>
-              <Text style={styles.nextMoveCardBody}>{nextMove.hint.body}</Text>
-              {nextMove.hint.kind === 'progress' && nextMove.hint.ruleKey !== 'naked-single' ? (
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel={strings.play.nextMove.explainButton}
-                  onPress={() => {
-                    const hint = nextMove.hint;
-                    const currentSession = sessionRef.current;
-                    if (!hint || hint.kind !== 'progress' || !currentSession) {
-                      return;
-                    }
-                    navigate('TechniqueLesson', {
-                      gameId: 'sudoku',
-                      ruleKey: hint.ruleKey,
-                      title: hint.title,
-                      board: currentSession.board,
-                      givens: currentSession.puzzle.givens,
-                      finishedCells: currentSession.finishedCells,
-                      evidenceCells: hint.evidenceCells,
-                      targetCells: hint.targetCells,
-                      highlightRows: hint.highlightRows,
-                      highlightCols: hint.highlightCols,
-                      highlightBoxes: hint.highlightBoxes,
-                    });
-                  }}
-                  style={styles.explainButton}
-                >
-                  <Text style={styles.explainButtonText}>{strings.play.nextMove.explainButton}</Text>
-                </Pressable>
-              ) : null}
-            </View>
-          ) : null}
-        </View>
-      ) : (
-        <View style={styles.footerSpacer} />
-      ),
+      footer: null,
     };
   }, [
     boardFeedbackEffects,
@@ -543,45 +532,6 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   },
   footerStack: {
     gap: 12,
-  },
-  nextMoveCard: {
-    gap: 10,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    borderRadius: 18,
-    backgroundColor: theme.surface,
-    borderWidth: 1,
-    borderColor: withAlpha(theme.primary, 0.18),
-  },
-  nextMoveCardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  nextMoveCardBadge: {
-    width: 24,
-    height: 24,
-    borderRadius: 999,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: withAlpha(theme.primary, 0.16),
-  },
-  nextMoveCardBadgeText: {
-    fontSize: 14,
-    fontWeight: '800',
-    color: theme.primary,
-  },
-  nextMoveCardTitle: {
-    flex: 1,
-    fontSize: 15,
-    lineHeight: 21,
-    fontWeight: '800',
-    color: theme.text,
-  },
-  nextMoveCardBody: {
-    fontSize: 14,
-    lineHeight: 21,
-    color: theme.textSecondary,
   },
   footerSpacer: {
     flex: 1,
