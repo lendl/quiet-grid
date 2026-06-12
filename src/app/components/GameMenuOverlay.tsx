@@ -120,7 +120,7 @@ const makeStyles = (theme: Theme, topInset: number) => StyleSheet.create({
     zIndex: 40,
   },
   backdrop: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: withAlpha(theme.background, 0.72),
   },
   panelWrap: {

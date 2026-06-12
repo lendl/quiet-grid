@@ -30,7 +30,7 @@ export default function ScreenOverlay() {
 
 const styles = StyleSheet.create({
   fill: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     zIndex: 2,
   },
   veil: {
