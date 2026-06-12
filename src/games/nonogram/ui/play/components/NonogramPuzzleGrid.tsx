@@ -589,12 +589,12 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   shellBorder: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     borderWidth: 1,
     borderRadius: BOARD_FRAME_RADIUS,
   },
   shellFill: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     top: 2,
     right: 2,
     bottom: 2,
@@ -602,12 +602,12 @@ const styles = StyleSheet.create({
     borderRadius: BOARD_INNER_RADIUS,
   },
   boardBorder: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     borderWidth: 1,
     borderRadius: BOARD_INNER_RADIUS,
   },
   boardSurface: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     top: 1,
     right: 1,
     bottom: 1,
@@ -633,12 +633,12 @@ const styles = StyleSheet.create({
     borderRadius: CELL_RADIUS,
   },
   cellFace: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     margin: CELL_FACE_INSET,
     borderRadius: CELL_RADIUS - CELL_FACE_INSET,
   },
   cellInset: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     margin: 3,
     borderWidth: 1,
     borderRadius: CELL_RADIUS - 3,

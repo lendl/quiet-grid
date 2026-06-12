@@ -276,12 +276,12 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   fieldKitShellBorder: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     borderWidth: 1,
     borderRadius: SHELL_RADIUS,
   },
   fieldKitShellFill: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     top: SHELL_INSET,
     right: SHELL_INSET,
     bottom: SHELL_INSET,
@@ -289,12 +289,12 @@ const styles = StyleSheet.create({
     borderRadius: SHELL_INNER_RADIUS,
   },
   fieldKitBoardBorder: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     borderWidth: 1,
     borderRadius: BOARD_RADIUS,
   },
   fieldKitBoardSurface: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     top: BOARD_INSET,
     right: BOARD_INSET,
     bottom: BOARD_INSET,
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   cellFace: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     margin: CELL_FACE_INSET,
     borderRadius: CELL_RADIUS - CELL_FACE_INSET,
   },

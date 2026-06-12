@@ -454,12 +454,12 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   shellBorder: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     borderWidth: 1,
     borderRadius: SHELL_RADIUS,
   },
   shellFill: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     top: SHELL_INSET,
     right: SHELL_INSET,
     bottom: SHELL_INSET,
@@ -467,12 +467,12 @@ const styles = StyleSheet.create({
     borderRadius: SHELL_INNER_RADIUS,
   },
   boardBorder: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     borderWidth: 1,
     borderRadius: BOARD_RADIUS,
   },
   boardSurface: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     top: BOARD_INSET,
     right: BOARD_INSET,
     bottom: BOARD_INSET,
@@ -487,7 +487,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   cellFace: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     margin: CELL_FACE_INSET,
     borderRadius: CELL_RADIUS - CELL_FACE_INSET,
   },
@@ -500,7 +500,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   notesGrid: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     flexDirection: 'row',
     flexWrap: 'wrap',
     paddingHorizontal: 1,
