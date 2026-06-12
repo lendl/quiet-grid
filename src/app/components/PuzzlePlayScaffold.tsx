@@ -94,6 +94,7 @@ const makeStyles = (theme: Theme, bottomInset: number) => StyleSheet.create({
   },
   mainRegion: {
     flex: 1,
+    overflow: 'hidden',
   },
   footerRegion: {
     flexShrink: 0,
