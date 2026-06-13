@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from '@react-native-vector-icons/ionicons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useLanguage } from '../../../../../app/context/LanguageContext';
 import { useTheme } from '../../../../../app/context/ThemeContext';

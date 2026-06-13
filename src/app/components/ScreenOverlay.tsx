@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import LinearGradient from './LinearGradient';
 import { useTheme } from '../context/ThemeContext';
 import { withAlpha } from '../utils/color';
 

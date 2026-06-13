@@ -1,5 +1,3 @@
-import type { ComponentProps } from 'react';
-import type { Ionicons } from '@expo/vector-icons';
 import type { Theme, ThemeMode } from './index';
 import { darkTheme, getTheme, pencilTheme } from './index';
 
@@ -18,7 +16,7 @@ export interface ThemeOption {
   key: ThemeMode;
   label: string;
   detail: string;
-  iconName: ComponentProps<typeof Ionicons>['name'];
+  iconName: string;
   iconColor: string;
   theme: Theme;
 }

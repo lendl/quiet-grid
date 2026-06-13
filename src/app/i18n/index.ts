@@ -1,4 +1,3 @@
-import { getLocales } from 'expo-localization';
 import type { LanguageSetting } from '../utils/settingsStorage';
 
 export type ResolvedLanguage = 'en' | 'nl' | 'de' | 'fr' | 'es';
@@ -16,10 +15,11 @@ function resolveLocaleLanguage(value: string | null | undefined): ResolvedLangua
 }
 
 export function detectSystemLanguage(): ResolvedLanguage {
-  const [locale] = getLocales();
-  return resolveLocaleLanguage(locale?.languageCode)
-    ?? resolveLocaleLanguage(locale?.languageTag)
-    ?? resolveLocaleLanguage(locale?.regionCode)
+  const tag = Intl.DateTimeFormat().resolvedOptions().locale ?? '';
+  const [languageCode = '', countryCode = ''] = tag.split('-');
+  return resolveLocaleLanguage(languageCode)
+    ?? resolveLocaleLanguage(tag)
+    ?? resolveLocaleLanguage(countryCode)
     ?? 'en';
 }
 
