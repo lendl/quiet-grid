@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import type { LayoutChangeEvent } from 'react-native';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { HintPopoverContent } from '../../../../app/components/HintPopoverContent';
 import { useLanguage } from '../../../../app/context/LanguageContext';
 import { useTheme } from '../../../../app/context/ThemeContext';
@@ -103,6 +104,7 @@ function useSudokuAdapter({
 }: PuzzlePlayAdapterShellArgs): PuzzlePlayAdapterInstance<SudokuPlaySession> {
   const { strings: appStrings, resolvedLanguage } = useLanguage();
   const { theme } = useTheme();
+  const { bottom: safeAreaBottom } = useSafeAreaInsets();
   const strings = useMemo(() => getSudokuStrings(), [resolvedLanguage]);
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const [gridContainer, setGridContainer] = useState({ width: 0, height: 0 });
@@ -150,7 +152,7 @@ function useSudokuAdapter({
   const handleGridLayout = useCallback((event: LayoutChangeEvent) => {
     const { width, height } = event.nativeEvent.layout;
     setGridContainer({
-      width: Math.max(0, width - 12),
+      width: Math.max(0, width - 16),
       height: Math.max(0, height - 10),
     });
   }, []);
@@ -436,49 +438,61 @@ function useSudokuAdapter({
           value: getSudokuBoardFillSummary(session),
         },
       ] : [],
-      main: session ? (
-        <View style={styles.boardArea}>
-          <SudokuInputBar
-            selectedCell={visibleSelectedCell}
-            board={session.board}
-            givens={session.puzzle.givens}
-            notes={session.notes}
-            noteMode={noteMode}
-            onToggleNoteMode={handleToggleNoteMode}
-            onPressDigit={handlePressDigit}
-          />
-          <View style={styles.gridContainer} onLayout={handleGridLayout}>
-            {gridContainer.width > 0 && gridContainer.height > 0 ? (
-              <ZoomableBoardSurface
-                panEnabled={isBoardZoomed}
-                onZoomStateChange={setIsBoardZoomed}
-                onRegisterReset={(reset) => {
-                  resetBoardZoomRef.current = reset;
-                }}
-              >
-                <SudokuPuzzleGrid
-                  board={session.board}
-                  givens={session.puzzle.givens}
-                  notes={session.notes}
-                  finishedCells={session.finishedCells}
-                  selectedCell={visibleSelectedCell}
-                  validatedUnitKeys={session.validatedUnitKeys}
-                  penalizedUnitKeys={session.penalizedUnitKeys}
-                  boardFeedbackEffects={boardFeedbackEffects}
-                  nextMoveEvidenceCells={nextMove.hint?.evidenceCells ?? []}
-                  nextMoveTargetCells={nextMove.hint?.targetCells ?? []}
-                  nextMoveHighlightRows={nextMove.hint?.highlightRows ?? []}
-                  nextMoveHighlightCols={nextMove.hint?.highlightCols ?? []}
-                  nextMoveHighlightBoxes={nextMove.hint?.highlightBoxes ?? []}
-                  containerWidth={gridContainer.width}
-                  containerHeight={gridContainer.height}
-                  onCellPress={handleCellPress}
-                />
-              </ZoomableBoardSurface>
-            ) : null}
+      main: session ? (() => {
+        // Space the input bar midway between grid bottom and screen bottom.
+        // gridContainer.height = boardArea.height - 10 (handleGridLayout subtraction).
+        // boardContentHeight = boardArea.height - paddingTop(4) = gridContainer.height + 6.
+        // footerInset = what footerInset View would be if footer is null.
+        // Solving for equal gap: spacer = (boardContentHeight - inputH - gridW - 2*footerInset) / 3
+        const footerInset = Math.max(10, safeAreaBottom + 4);
+        const inputH = 52;
+        const spacer = Math.max(0, (gridContainer.height + 6 - inputH - gridContainer.width - 2 * footerInset) / 3);
+
+        return (
+          <View style={styles.boardArea} onLayout={handleGridLayout}>
+            <View style={styles.gridContainer}>
+              {gridContainer.width > 0 && gridContainer.height > 0 ? (
+                <ZoomableBoardSurface
+                  panEnabled={isBoardZoomed}
+                  onZoomStateChange={setIsBoardZoomed}
+                  onRegisterReset={(reset) => {
+                    resetBoardZoomRef.current = reset;
+                  }}
+                >
+                  <SudokuPuzzleGrid
+                    board={session.board}
+                    givens={session.puzzle.givens}
+                    notes={session.notes}
+                    finishedCells={session.finishedCells}
+                    selectedCell={visibleSelectedCell}
+                    validatedUnitKeys={session.validatedUnitKeys}
+                    penalizedUnitKeys={session.penalizedUnitKeys}
+                    boardFeedbackEffects={boardFeedbackEffects}
+                    nextMoveEvidenceCells={nextMove.hint?.evidenceCells ?? []}
+                    nextMoveTargetCells={nextMove.hint?.targetCells ?? []}
+                    nextMoveHighlightRows={nextMove.hint?.highlightRows ?? []}
+                    nextMoveHighlightCols={nextMove.hint?.highlightCols ?? []}
+                    nextMoveHighlightBoxes={nextMove.hint?.highlightBoxes ?? []}
+                    containerWidth={gridContainer.width}
+                    containerHeight={gridContainer.height}
+                    onCellPress={handleCellPress}
+                  />
+                </ZoomableBoardSurface>
+              ) : null}
+            </View>
+            <SudokuInputBar
+              selectedCell={visibleSelectedCell}
+              board={session.board}
+              givens={session.puzzle.givens}
+              notes={session.notes}
+              noteMode={noteMode}
+              onToggleNoteMode={handleToggleNoteMode}
+              onPressDigit={handlePressDigit}
+            />
+            <View style={{ height: spacer }} />
           </View>
-        </View>
-      ) : (
+        );
+      })() : (
         <View style={styles.boardArea} />
       ),
       footer: null,
@@ -493,6 +507,7 @@ function useSudokuAdapter({
     navigate,
     noteMode,
     nextMove,
+    safeAreaBottom,
     selectedCell,
     strings,
     styles,
@@ -521,10 +536,8 @@ export const sudokuPlayAdapter = createPuzzlePlayAdapter(sudokuTypedPlayAdapter)
 const makeStyles = (theme: Theme) => StyleSheet.create({
   boardArea: {
     flex: 1,
-    gap: 12,
     paddingHorizontal: 8,
     paddingTop: 4,
-    paddingBottom: 6,
   },
   gridContainer: {
     flex: 1,
