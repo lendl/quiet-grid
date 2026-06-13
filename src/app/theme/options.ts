@@ -1,3 +1,5 @@
+import type { ComponentProps } from 'react';
+import type Ionicons from '@react-native-vector-icons/ionicons';
 import type { Theme, ThemeMode } from './index';
 import { darkTheme, getTheme, pencilTheme } from './index';
 
@@ -16,7 +18,7 @@ export interface ThemeOption {
   key: ThemeMode;
   label: string;
   detail: string;
-  iconName: string;
+  iconName: ComponentProps<typeof Ionicons>['name'];
   iconColor: string;
   theme: Theme;
 }
