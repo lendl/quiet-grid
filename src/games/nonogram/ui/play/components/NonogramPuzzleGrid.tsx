@@ -147,14 +147,18 @@ export default function NonogramPuzzleGrid({
   const activeSwipeValueRef = useRef<NonogramDirectState>(1);
   const swipeStartPosRef = useRef<{ x: number; y: number } | null>(null);
   const swipeAxisRef = useRef<'h' | 'v' | null>(null);
+  const lastCommittedCountRef = useRef(0);
   const inputModeRef = useRef<'fill' | 'cross'>(inputMode);
   inputModeRef.current = inputMode;
+  const onCellSwipeRef = useRef(onCellSwipe);
+  onCellSwipeRef.current = onCellSwipe;
 
   const resetSwipeState = useCallback(() => {
     activeSwipeCellsRef.current = [];
     activeSwipeKeysRef.current = new Set();
     swipeStartPosRef.current = null;
     swipeAxisRef.current = null;
+    lastCommittedCountRef.current = 0;
   }, []);
 
   const appendSwipeCell = useCallback((cell: NonogramCellRef) => {
@@ -229,17 +233,17 @@ export default function NonogramPuzzleGrid({
     }
 
     appendSwipeCell(cell);
+
+    const newCells = activeSwipeCellsRef.current.slice(lastCommittedCountRef.current);
+    if (newCells.length > 0) {
+      lastCommittedCountRef.current = activeSwipeCellsRef.current.length;
+      onCellSwipeRef.current?.(newCells, activeSwipeValueRef.current);
+    }
   }, [appendSwipeCell, board, layout, puzzle.cols, puzzle.rows]);
 
   const handleSwipeEnd = useCallback(() => {
-    if (!onCellSwipe || activeSwipeCellsRef.current.length === 0) {
-      resetSwipeState();
-      return;
-    }
-
-    onCellSwipe(activeSwipeCellsRef.current, activeSwipeValueRef.current);
     resetSwipeState();
-  }, [onCellSwipe, resetSwipeState]);
+  }, [resetSwipeState]);
 
   const interactionGesture = useMemo(() => {
     if (!interactive || (!onCellTap && !onCellSwipe)) {
