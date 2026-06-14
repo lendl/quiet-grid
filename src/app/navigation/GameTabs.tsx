@@ -3,7 +3,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import GamePlayTab from '../screens/game/GamePlayTab';
 import GameRulesTab from '../screens/game/GameRulesTab';
 import GameStatsTab from '../screens/game/GameStatsTab';
-import GameTutorialTab from '../screens/game/GameTutorialTab';
 import type { GameId } from '../../games/shared/types';
 import type { GameTabParamList, TransitionDirection } from './types';
 
@@ -33,11 +32,6 @@ export default function GameTabs({ gameId, initialTab = 'Play', initialDirection
         name="Rules"
         component={GameRulesTab}
         initialParams={{ gameId, transitionDirection: initialTab === 'Rules' ? initialDirection : 'none' }}
-      />
-      <Tab.Screen
-        name="Tutorial"
-        component={GameTutorialTab}
-        initialParams={{ gameId, transitionDirection: initialTab === 'Tutorial' ? initialDirection : 'none' }}
       />
       <Tab.Screen
         name="Stats"

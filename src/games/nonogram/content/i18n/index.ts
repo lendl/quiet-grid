@@ -77,7 +77,11 @@ export interface NonogramStrings {
 
 export interface NonogramI18n {
   strings: NonogramStrings;
+  howToPlayGoal: string;
+  howToPlayControls: string;
+  howToPlayWrongMove: string;
   howToPlayRules: HowToPlayContent['rules'];
+  howToPlayTechniques: HowToPlayContent['techniques'];
   howToPlayTips: HowToPlayContent['tips'];
   loss: LossContent;
   tutorialLessons: Record<NonogramTutorialLessonKey, NonogramTutorialLessonCopy>;
@@ -102,8 +106,12 @@ export function getNonogramTutorialLessonCopies(): Record<NonogramTutorialLesson
 export function getNonogramHowToPlay(): HowToPlayContent {
   const i18n = getNonogramI18n();
   return {
+    goal: i18n.howToPlayGoal,
+    controls: i18n.howToPlayControls,
+    wrongMove: i18n.howToPlayWrongMove,
     rules: i18n.howToPlayRules,
-    tips: i18n.howToPlayTips,
+    techniques: i18n.howToPlayTechniques,
+    tips: [...i18n.howToPlayTips],
   };
 }
 

@@ -1,9 +1,8 @@
 import { getCurrentLanguage } from '../../../../app/i18n';
 import { resolveGameContent, type LocalizedGameContent } from '../../../../app/i18n/gameContent';
 import type { LossContent } from '../../../../app/shell/games/lossContent';
-import type { HowToPlayContent } from '../../../../app/shell/games/howToPlayContent';
+import type { HowToPlayContent, HowToPlayTip } from '../../../../app/shell/games/howToPlayContent';
 import type { TakuzuStrings } from '../strings';
-import type { HowToPlayTip } from '../howToPlayTips';
 import en from './en';
 import nl from './nl';
 import de from './de';
@@ -78,7 +77,12 @@ export interface TakuzuLearningCenterContent {
 
 export interface TakuzuI18n {
   strings: TakuzuStrings;
+  howToPlayGoal: string;
+  howToPlayControls: string;
+  howToPlayWrongMove: string;
   howToPlayRules: HowToPlayContent['rules'];
+  howToPlayTechniques: HowToPlayContent['techniques'];
+  howToPlayScoring: string;
   howToPlayTips: readonly HowToPlayTip[];
   loss: LossContent;
   tutorialLessons: Record<TakuzuTutorialLessonKey, TakuzuTutorialLessonCopy>;
@@ -101,12 +105,17 @@ export function getTakuzuStrings(): TakuzuStrings {
   return getTakuzuI18n().strings;
 }
 
-export function getTakuzuHowToPlayRules(): HowToPlayContent['rules'] {
-  return getTakuzuI18n().howToPlayRules;
-}
-
-export function getTakuzuHowToPlayTips(): HowToPlayTip[] {
-  return [...getTakuzuI18n().howToPlayTips];
+export function getTakuzuHowToPlay(): HowToPlayContent {
+  const i18n = getTakuzuI18n();
+  return {
+    goal: i18n.howToPlayGoal,
+    controls: i18n.howToPlayControls,
+    wrongMove: i18n.howToPlayWrongMove,
+    rules: i18n.howToPlayRules,
+    techniques: i18n.howToPlayTechniques,
+    scoring: i18n.howToPlayScoring,
+    tips: [...i18n.howToPlayTips],
+  };
 }
 
 export function getTakuzuLossContent(): LossContent {

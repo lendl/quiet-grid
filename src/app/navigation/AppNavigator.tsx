@@ -19,7 +19,6 @@ import PuzzleAnalysisScreen  from '../screens/PuzzleAnalysisScreen';
 import PuzzlePlayScreen      from '../screens/PuzzlePlayScreen';
 import HowToPlayScreen       from '../screens/HowToPlayScreen';
 import SupportInfoScreen     from '../screens/SupportInfoScreen';
-import TutorialHostScreen    from '../screens/TutorialHostScreen';
 import TechniqueLessonScreen from '../screens/TechniqueLessonScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -107,11 +106,6 @@ export default function AppNavigator() {
         <Stack.Screen name="Loss"            component={LossScreen} />
         <Stack.Screen name="Analysis"        component={PuzzleAnalysisScreen} />
         <Stack.Screen name="HowToPlay"       component={HowToPlayScreen} />
-        <Stack.Screen
-          name="Tutorial"
-          component={TutorialHostScreen}
-          initialParams={{ gameId: 'takuzu', entry: 'startup' }}
-        />
         <Stack.Screen name="TechniqueLesson" component={TechniqueLessonScreen} />
       </Stack.Navigator>
     </NavigationContainer>

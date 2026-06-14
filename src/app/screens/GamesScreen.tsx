@@ -13,7 +13,7 @@ import { gameRegistry } from '../shell/games/gameRegistry';
 import type { Theme } from '../theme';
 import { getActivePuzzleDisplay } from '../utils/activePuzzle';
 import { withAlpha } from '../utils/color';
-import { loadBetaGamesEnabled, shouldAutoShowTutorial } from '../utils/settingsStorage';
+import { loadBetaGamesEnabled, shouldAutoShowHowToPlay } from '../utils/settingsStorage';
 
 type Props = BottomTabScreenProps<MainTabParamList, 'Games'>;
 
@@ -46,10 +46,8 @@ export default function GamesScreen(_: Props) {
   const handleSelectGame = useCallback((gameId: typeof gameRegistry[number]['id']) => {
     requestStart(() => {
       void (async () => {
-        const game = gameRegistry.find((definition) => definition.id === gameId);
-
-        if (game?.supports.tutorial && await shouldAutoShowTutorial(gameId)) {
-          navigation.navigate('Game', { gameId, initialTab: 'Tutorial' });
+        if (await shouldAutoShowHowToPlay(gameId)) {
+          navigation.navigate('HowToPlay', { gameId, isFirstLaunch: true });
           return;
         }
 

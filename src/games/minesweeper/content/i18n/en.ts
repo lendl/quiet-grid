@@ -28,11 +28,14 @@ const en = {
     },
   },
   howToPlay: {
+    goal: 'Reveal every safe cell without opening a mine.',
+    controls: 'Tap to reveal a cell. Long-press to place or remove a flag.',
+    wrongMove: 'Opening a mine ends the puzzle immediately.',
     rules: [
       {
         num: '1',
         title: 'Reveal safe cells',
-        body: 'Open cells that you believe are safe. A revealed mine ends the active puzzle.',
+        body: 'Tap any hidden cell you think is safe to open it.',
       },
       {
         num: '2',
@@ -42,14 +45,32 @@ const en = {
       {
         num: '3',
         title: 'Flag likely mines',
-        body: 'Long-press a hidden cell to place or remove a flag when you are confident a mine is there.',
+        body: 'Long-press any hidden cell to mark or unmark it as a suspected mine.',
       },
       {
         num: '4',
         title: 'Clear every safe cell',
-        body: 'The puzzle is solved when every non-mine cell is revealed.',
+        body: 'The puzzle is complete once every safe cell is revealed.',
       },
     ],
+    techniques: [
+      {
+        key: 'forced-flag',
+        title: 'Forced flag',
+        body: 'When a clue\'s remaining hidden neighbors equal its mine count, every one of them must be a mine — flag them all.',
+      },
+      {
+        key: 'safe-reveal',
+        title: 'Safe reveal',
+        body: 'When a clue already has all its mines flagged, every remaining hidden neighbor is safe to reveal.',
+      },
+      {
+        key: 'compare-clues',
+        title: 'Compare clues',
+        body: 'Two clues that share hidden cells can together reveal more than either clue alone — the overlap exposes which cells are safe and which are mines.',
+      },
+    ],
+    scoring: 'Starts at 10,000 and drops while the timer runs. Finishing faster keeps more score.',
     tips: [
       {
         key: 'start-from-openings',
@@ -62,14 +83,9 @@ const en = {
         body: 'When two revealed numbers touch some of the same hidden cells, compare their remaining mine counts before placing flags.',
       },
       {
-        key: 'Use flags carefully',
+        key: 'use-flags-carefully',
         title: 'Use flags carefully',
-        body: 'Flags help you track likely mines, but they do not prove a cell is dangerous unless the surrounding clues support it.',
-      },
-      {
-        key: 'pace-matters',
-        title: 'How scoring works',
-        body: 'Your score starts at 10,000 and drops while the puzzle timer runs. Faster safe solves keep more score.',
+        body: "A flag is only as reliable as the reasoning behind it — don't treat flagged cells as confirmed unless the clues support it.",
       },
     ],
   },

@@ -198,21 +198,41 @@ const de = {
     },
   },
   howToPlay: {
+    goal: 'Platziere jede Ziffer 1–9 genau einmal in jeder Zeile, Spalte und 3×3-Box.',
+    controls: 'Tippe auf eine Zelle, um sie auszuwählen, dann auf eine Zifferntaste, um sie zu setzen. Schalte in den Notizmodus, um Kandidaten einzutragen.',
+    wrongMove: 'Eine doppelte Ziffer in der gleichen Zeile, Spalte oder Box wird als Konflikt hervorgehoben.',
     rules: [
       {
         num: '1',
         title: 'Fülle das Gitter',
-        body: 'Setze die Ziffern 1 bis 9 so ein, dass jede Zeile, Spalte und 3×3-Box jede Ziffer genau einmal enthält.',
+        body: 'Keine Ziffer darf in derselben Zeile, Spalte oder Box zweimal vorkommen.',
       },
       {
         num: '2',
         title: 'Respektiere die Vorgaben',
-        body: 'Die Startvorgaben bleiben fest und verankern jede gültige Sudoku-Sitzung.',
+        body: 'Die vorausgefüllten Ziffern sind fest — du kannst sie nicht ändern.',
       },
       {
         num: '3',
         title: 'Nutze Notizen, wenn eine Zelle noch nicht bereit ist',
-        body: 'Notizen sind optionale Unterstützungsaktionen, helfen dir aber dabei, Kandidaten zu verfolgen, bevor du eine endgültige Ziffer setzt.',
+        body: 'Schalte in den Notizmodus, um mögliche Ziffern für eine Zelle einzutragen und sie zu streichen, während das Rätsel sich eingrenzt.',
+      },
+    ],
+    techniques: [
+      {
+        key: 'naked-single',
+        title: 'Nacktes Einzelnes',
+        body: 'Wenn nach dem Ausschließen aller Ziffern in der Zeile, Spalte und Box nur eine Ziffer in einer Zelle übrig bleibt, setze sie.',
+      },
+      {
+        key: 'hidden-single',
+        title: 'Verstecktes Einzelnes',
+        body: 'Wenn eine Ziffer in einer Zeile, Spalte oder Box nur in eine Zelle passt, setze sie dort, auch wenn andere Kandidaten noch sichtbar sind.',
+      },
+      {
+        key: 'notes-mode',
+        title: 'Notizmodus',
+        body: 'Schreibe alle möglichen Ziffern als Notizen und streiche sie durch, während umliegende Zeilen, Spalten und Boxen sich füllen — bis nur noch eine übrig ist.',
       },
     ],
     tips: [
@@ -229,7 +249,7 @@ const de = {
       {
         key: 'notes-first',
         title: 'Notizen halten schwierige Zellen ehrlich',
-        body: 'Wenn eine Zelle noch mehrere legale Ziffern hat, wechsle in den Notizmodus statt zu raten. Notizen lassen Hidden Singles und Paar-Deduktionen später klarer hervortreten.',
+        body: 'Wenn eine Zelle noch mehrere gültige Ziffern hat, wechsle in den Notizmodus statt zu raten. Eingetragene Kandidaten machen Hidden Singles und andere erzwungene Placements viel leichter erkennbar.',
         example: [
           [null, '4·5', 3],
           ['1·4·7', '4·7', 6],

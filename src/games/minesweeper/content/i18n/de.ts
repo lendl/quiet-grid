@@ -28,11 +28,14 @@ const de = {
     },
   },
   howToPlay: {
+    goal: 'Decke jedes sichere Feld auf, ohne eine Mine zu öffnen.',
+    controls: 'Tippe zum Aufdecken eines Feldes. Halte gedrückt, um eine Flagge zu setzen oder zu entfernen.',
+    wrongMove: 'Eine Mine öffnen beendet das Rätsel sofort.',
     rules: [
       {
         num: '1',
         title: 'Sichere Felder aufdecken',
-        body: 'Öffne Felder, die du für sicher hältst. Eine aufgedeckte Mine beendet das aktive Rätsel.',
+        body: 'Tippe auf jedes versteckte Feld, das du für sicher hältst, um es zu öffnen.',
       },
       {
         num: '2',
@@ -42,14 +45,32 @@ const de = {
       {
         num: '3',
         title: 'Wahrscheinliche Minen markieren',
-        body: 'Halte ein verstecktes Feld gedrückt, um eine Flagge zu setzen oder zu entfernen, wenn du sicher bist, dass sich dort eine Mine befindet.',
+        body: 'Halte ein verstecktes Feld gedrückt, um es als mögliche Mine zu markieren oder die Markierung zu entfernen.',
       },
       {
         num: '4',
         title: 'Jedes sichere Feld räumen',
-        body: 'Das Rätsel ist gelöst, wenn jedes Feld ohne Mine aufgedeckt ist.',
+        body: 'Das Rätsel ist abgeschlossen, sobald jedes sichere Feld aufgedeckt ist.',
       },
     ],
+    techniques: [
+      {
+        key: 'forced-flag',
+        title: 'Erzwungene Flagge',
+        body: 'Wenn die verbleibenden versteckten Nachbarn eines Hinweises dessen Minenanzahl entsprechen, sind alle davon Minen — markiere sie alle.',
+      },
+      {
+        key: 'safe-reveal',
+        title: 'Sichere Aufdeckung',
+        body: 'Wenn ein Hinweis alle seine Minen bereits markiert hat, ist jeder verbleibende versteckte Nachbar sicher aufzudecken.',
+      },
+      {
+        key: 'compare-clues',
+        title: 'Hinweise vergleichen',
+        body: 'Zwei Hinweise, die versteckte Felder teilen, können zusammen mehr enthüllen als jeder für sich — die Überschneidung zeigt, welche Felder sicher sind und welche Minen sind.',
+      },
+    ],
+    scoring: 'Startet bei 10.000 und sinkt, solange der Timer läuft. Schnelleres Lösen erhält mehr Punkte.',
     tips: [
       {
         key: 'start-from-openings',
@@ -62,14 +83,9 @@ const de = {
         body: 'Wenn zwei aufgedeckte Zahlen einige der gleichen versteckten Felder berühren, vergleiche ihre verbleibenden Minenzahlen, bevor du Flaggen setzt.',
       },
       {
-        key: 'Use flags carefully',
+        key: 'use-flags-carefully',
         title: 'Flaggen sorgfältig verwenden',
-        body: 'Flaggen helfen dir, wahrscheinliche Minen zu verfolgen, beweisen aber nicht, dass ein Feld gefährlich ist, es sei denn, die umliegenden Hinweise unterstützen dies.',
-      },
-      {
-        key: 'pace-matters',
-        title: 'So funktioniert die Punktewertung',
-        body: 'Dein Punktestand beginnt bei 10.000 und sinkt, während der Timer läuft. Schnelleres sicheres Lösen erhält mehr Punkte.',
+        body: 'Eine Flagge ist nur so zuverlässig wie die Überlegung dahinter — behandle markierte Felder nicht als bestätigt, außer die umliegenden Hinweise stützen das.',
       },
     ],
   },

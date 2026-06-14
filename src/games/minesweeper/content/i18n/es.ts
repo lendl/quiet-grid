@@ -28,11 +28,14 @@ const es = {
     },
   },
   howToPlay: {
+    goal: 'Revela cada casilla segura sin abrir una mina.',
+    controls: 'Toca para revelar una casilla. Mantén pulsado para colocar o quitar una bandera.',
+    wrongMove: 'Abrir una mina termina el puzzle inmediatamente.',
     rules: [
       {
         num: '1',
         title: 'Revelar casillas seguras',
-        body: 'Abre casillas que creas seguras. Una mina revelada termina el puzzle activo.',
+        body: 'Toca cualquier casilla oculta que creas segura para abrirla.',
       },
       {
         num: '2',
@@ -42,14 +45,32 @@ const es = {
       {
         num: '3',
         title: 'Marcar las minas probables',
-        body: 'Mantén pulsada una casilla oculta para colocar o quitar una bandera cuando estés seguro de que hay una mina.',
+        body: 'Mantén pulsada cualquier casilla oculta para marcarla o desmarcarla como posible mina.',
       },
       {
         num: '4',
         title: 'Limpiar cada casilla segura',
-        body: 'El puzzle se resuelve cuando cada casilla sin mina está revelada.',
+        body: 'El puzzle se completa cuando cada casilla segura está revelada.',
       },
     ],
+    techniques: [
+      {
+        key: 'forced-flag',
+        title: 'Bandera forzada',
+        body: 'Cuando los vecinos ocultos restantes de una pista igualan su recuento de minas, todos son minas — márcalos todos.',
+      },
+      {
+        key: 'safe-reveal',
+        title: 'Revelación segura',
+        body: 'Cuando una pista ya tiene todas sus minas marcadas, cada vecino oculto restante es seguro para revelar.',
+      },
+      {
+        key: 'compare-clues',
+        title: 'Comparar pistas',
+        body: 'Dos pistas que comparten casillas ocultas revelan juntas más que cada una por separado — la superposición muestra qué casillas son seguras y cuáles son minas.',
+      },
+    ],
+    scoring: 'Comienza en 10.000 y baja mientras el temporizador avanza. Terminar más rápido conserva más puntuación.',
     tips: [
       {
         key: 'start-from-openings',
@@ -62,14 +83,9 @@ const es = {
         body: 'Cuando dos números revelados tocan algunas de las mismas casillas ocultas, compara sus recuentos de minas restantes antes de colocar banderas.',
       },
       {
-        key: 'Use flags carefully',
+        key: 'use-flags-carefully',
         title: 'Usar las banderas con cuidado',
-        body: 'Las banderas te ayudan a rastrear las minas probables, pero no prueban que una casilla sea peligrosa a menos que las pistas circundantes lo respalden.',
-      },
-      {
-        key: 'pace-matters',
-        title: 'Cómo funciona la puntuación',
-        body: 'Tu puntuación comienza en 10.000 y baja mientras el temporizador avanza. Resolver más rápido conserva más puntuación.',
+        body: 'Una bandera solo es tan fiable como el razonamiento detrás — no trates las casillas marcadas como confirmadas a menos que las pistas lo respalden.',
       },
     ],
   },

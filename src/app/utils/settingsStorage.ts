@@ -4,20 +4,20 @@ import { gameIds } from '../../games/shared/types';
 import { DEFAULT_THEME_MODE, isThemeMode } from '../theme';
 import {
   BETA_GAMES_ENABLED_KEY,
+  HOW_TO_PLAY_AUTO_SHOW_KEY,
+  HOW_TO_PLAY_SEEN_KEY,
   LANGUAGE_KEY,
-  PUZZLE_TUTORIALS_SEEN_KEY,
   SHOW_TIMER_IN_PLAY_KEY,
   THEME_KEY,
-  TUTORIALS_ENABLED_KEY,
   WELCOME_SEEN_KEY,
 } from './storageKeys';
 
 import type { ThemeMode } from '../theme';
 export type LanguageSetting = 'en' | 'nl' | 'de' | 'fr' | 'es';
 
-type SeenTutorialsMap = Partial<Record<GameId, boolean>>;
+type SeenHowToPlayMap = Partial<Record<GameId, boolean>>;
 
-function parseSeenTutorials(value: string | null): SeenTutorialsMap {
+function parseSeenHowToPlay(value: string | null): SeenHowToPlayMap {
   if (!value) {
     return {};
   }
@@ -28,18 +28,18 @@ function parseSeenTutorials(value: string | null): SeenTutorialsMap {
       return {};
     }
 
-    const tutorialMap = parsed as Record<string, unknown>;
-    const seenTutorials: SeenTutorialsMap = {};
-    gameIds.forEach((puzzleTypeId) => {
-      if (tutorialMap[puzzleTypeId] === true) {
-        seenTutorials[puzzleTypeId] = true;
+    const map = parsed as Record<string, unknown>;
+    const seen: SeenHowToPlayMap = {};
+    gameIds.forEach((gameId) => {
+      if (map[gameId] === true) {
+        seen[gameId] = true;
       }
     });
-    if (tutorialMap.binary === true) {
-      seenTutorials.takuzu = true;
+    if (map.binary === true) {
+      seen.takuzu = true;
     }
 
-    return seenTutorials;
+    return seen;
   } catch {
     return {};
   }
@@ -118,40 +118,40 @@ export async function markWelcomeSeen(): Promise<void> {
   }
 }
 
-export async function loadTutorialsEnabled(): Promise<boolean> {
+export async function loadHowToPlayAutoShow(): Promise<boolean> {
   try {
-    const value = await AsyncStorage.getItem(TUTORIALS_ENABLED_KEY);
+    const value = await AsyncStorage.getItem(HOW_TO_PLAY_AUTO_SHOW_KEY);
     return value !== 'false';
   } catch {
     return true;
   }
 }
 
-export async function saveTutorialsEnabled(enabled: boolean): Promise<void> {
+export async function saveHowToPlayAutoShow(enabled: boolean): Promise<void> {
   try {
-    await AsyncStorage.setItem(TUTORIALS_ENABLED_KEY, String(enabled));
+    await AsyncStorage.setItem(HOW_TO_PLAY_AUTO_SHOW_KEY, String(enabled));
   } catch {
-    // Keep app stable if tutorial preference save fails.
+    // Keep app stable if how-to-play preference save fails.
   }
 }
 
-export async function hasSeenPuzzleTutorial(puzzleTypeId: GameId): Promise<boolean> {
+export async function hasSeenGameHowToPlay(gameId: GameId): Promise<boolean> {
   try {
-    const stored = await AsyncStorage.getItem(PUZZLE_TUTORIALS_SEEN_KEY);
-    return parseSeenTutorials(stored)[puzzleTypeId] === true;
+    const stored = await AsyncStorage.getItem(HOW_TO_PLAY_SEEN_KEY);
+    return parseSeenHowToPlay(stored)[gameId] === true;
   } catch {
     return false;
   }
 }
 
-export async function markPuzzleTutorialSeen(puzzleTypeId: GameId): Promise<void> {
+export async function markGameHowToPlaySeen(gameId: GameId): Promise<void> {
   try {
-    const stored = await AsyncStorage.getItem(PUZZLE_TUTORIALS_SEEN_KEY);
-    const seenTutorials = parseSeenTutorials(stored);
-    seenTutorials[puzzleTypeId] = true;
-    await AsyncStorage.setItem(PUZZLE_TUTORIALS_SEEN_KEY, JSON.stringify(seenTutorials));
+    const stored = await AsyncStorage.getItem(HOW_TO_PLAY_SEEN_KEY);
+    const seen = parseSeenHowToPlay(stored);
+    seen[gameId] = true;
+    await AsyncStorage.setItem(HOW_TO_PLAY_SEEN_KEY, JSON.stringify(seen));
   } catch {
-    // Keep app stable if tutorial progress save fails.
+    // Keep app stable if how-to-play progress save fails.
   }
 }
 
@@ -172,11 +172,11 @@ export async function saveBetaGamesEnabled(enabled: boolean): Promise<void> {
   }
 }
 
-export async function shouldAutoShowTutorial(puzzleTypeId: GameId): Promise<boolean> {
-  const [tutorialsEnabled, tutorialSeen] = await Promise.all([
-    loadTutorialsEnabled(),
-    hasSeenPuzzleTutorial(puzzleTypeId),
+export async function shouldAutoShowHowToPlay(gameId: GameId): Promise<boolean> {
+  const [autoShowEnabled, alreadySeen] = await Promise.all([
+    loadHowToPlayAutoShow(),
+    hasSeenGameHowToPlay(gameId),
   ]);
 
-  return tutorialsEnabled && !tutorialSeen;
+  return autoShowEnabled && !alreadySeen;
 }

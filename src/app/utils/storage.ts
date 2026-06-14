@@ -19,13 +19,13 @@ export type {
 } from './statsStorage';
 
 export {
-  hasSeenPuzzleTutorial,
+  hasSeenGameHowToPlay,
   hasSeenWelcome,
+  loadHowToPlayAutoShow,
   loadTheme,
-  loadTutorialsEnabled,
-  markPuzzleTutorialSeen,
+  markGameHowToPlaySeen,
   markWelcomeSeen,
+  saveHowToPlayAutoShow,
   saveTheme,
-  saveTutorialsEnabled,
-  shouldAutoShowTutorial,
+  shouldAutoShowHowToPlay,
 } from './settingsStorage';

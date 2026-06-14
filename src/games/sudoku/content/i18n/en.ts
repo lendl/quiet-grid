@@ -198,21 +198,41 @@ const en = {
     },
   },
   howToPlay: {
+    goal: 'Place each digit 1–9 exactly once in every row, column, and 3×3 box.',
+    controls: 'Tap a cell to select it, then tap a digit button to place it. Toggle Notes mode to pencil in candidates instead.',
+    wrongMove: 'A duplicate digit in the same row, column, or box is highlighted as a conflict.',
     rules: [
       {
         num: '1',
         title: 'Fill the grid',
-        body: 'Place digits 1 through 9 so each row, column, and 3×3 box uses every digit once.',
+        body: 'No digit may appear twice in the same row, column, or box.',
       },
       {
         num: '2',
         title: 'Respect the givens',
-        body: 'The starting givens stay fixed and anchor every valid Sudoku session.',
+        body: 'The pre-filled digits are fixed — you cannot change them.',
       },
       {
         num: '3',
         title: 'Use notes when a cell is not ready',
-        body: 'Notes are optional support actions, but they help track candidates before you commit to a final digit.',
+        body: 'Toggle Notes mode to pencil in possible digits for a cell and cross them out as the puzzle narrows down.',
+      },
+    ],
+    techniques: [
+      {
+        key: 'naked-single',
+        title: 'Naked single',
+        body: 'When only one digit is allowed in a cell after ruling out every digit already in its row, column, and box, place it.',
+      },
+      {
+        key: 'hidden-single',
+        title: 'Hidden single',
+        body: 'When a digit can only fit one cell within a row, column, or box, place it there even if other candidates are still visible in that cell.',
+      },
+      {
+        key: 'notes-mode',
+        title: 'Notes mode',
+        body: 'Write all possible digits as notes, then cross them out as surrounding rows, columns, and boxes fill in — until only one is left.',
       },
     ],
     tips: [
@@ -229,7 +249,7 @@ const en = {
       {
         key: 'notes-first',
         title: 'Notes keep hard cells honest',
-        body: 'If a cell still has multiple legal digits, switch to Notes mode instead of guessing. Notes help hidden singles and pair-based deductions stand out later.',
+        body: 'If a cell still has multiple valid digits, switch to Notes mode instead of guessing. Pencilled candidates make hidden singles and other forced placements much easier to spot.',
         example: [
           [null, '4·5', 3],
           ['1·4·7', '4·7', 6],

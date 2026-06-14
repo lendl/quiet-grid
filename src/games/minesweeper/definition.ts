@@ -1,4 +1,3 @@
-import TutorialScreen from './ui/tutorial/screen';
 import type { GameDefinition } from '../../app/shell/games/gameDefinition';
 import { getMinesweeperHowToPlay } from './content/howToPlay';
 import { getMinesweeperLossContent } from './content/loss';
@@ -19,7 +18,6 @@ export const minesweeperDefinition: GameDefinition<MinesweeperPlaySession> = {
     return getMinesweeperStrings().tagline;
   },
   supports: {
-    tutorial: true,
     learning: true,
     scoring: true,
   },
@@ -39,8 +37,5 @@ export const minesweeperDefinition: GameDefinition<MinesweeperPlaySession> = {
     get difficultyDescriptions() {
       return getMinesweeperStrings().difficultyDescriptions;
     },
-  },
-  screens: {
-    tutorial: TutorialScreen,
   },
 };

@@ -45,67 +45,55 @@ const es = {
       },
     },
   },
+  howToPlayGoal: 'Rellena cada celda con un 0 o un 1 siguiendo tres reglas.',
+  howToPlayControls: 'Toca una celda para ciclar: vacío → 0 → 1 → vacío.',
+  howToPlayWrongMove: 'Completar una fila o columna que incumple una regla la hace parpadear y cuesta 500 puntos.',
   howToPlayRules: [
     {
       num: '1',
-      title: 'Rellenar cada celda',
-      body: 'Toca una celda para ciclar: vacío → 0 → 1 → vacío. Rellena toda la cuadrícula.',
+      title: 'Sin tres seguidos',
+      body: 'Tres dígitos idénticos seguidos en una fila o columna no están permitidos.',
     },
     {
       num: '2',
-      title: 'Sin tres seguidos',
-      body: 'Evita colocar tres dígitos idénticos seguidos en cualquier fila o columna.',
+      title: 'Mitades iguales',
+      body: 'Cada fila y cada columna contiene el mismo número de 0s y 1s.',
     },
     {
       num: '3',
-      title: 'Mitades iguales',
-      body: 'Cada fila y cada columna debe contener exactamente el mismo número de 0s y 1s.',
-    },
-    {
-      num: '4',
       title: 'Todas las líneas son únicas',
       body: 'No puede haber dos filas idénticas, ni dos columnas idénticas.',
     },
   ],
-  howToPlayTips: [
+  howToPlayTechniques: [
     {
       key: 'find-pairs',
       title: 'Encontrar pares',
-      body: 'Dos dígitos idénticos adyacentes significan que las celdas a cada lado deben ser el dígito opuesto.',
-      example: [[0, 0, 'a1']],
+      body: 'Dos dígitos iguales uno al lado del otro obligan a las celdas de ambos lados a ser el dígito opuesto.',
     },
     {
       key: 'avoid-trios',
       title: 'Evitar trillizos',
-      body: 'Si el mismo dígito aparece con una celda vacía entre ellos, esa celda central debe ser el dígito opuesto.',
-      example: [[1, 'a0', 1]],
+      body: 'Cuando el mismo dígito flanquea una celda vacía, esa celda debe ser el dígito opuesto.',
     },
     {
       key: 'complete-lines',
       title: 'Completar filas y columnas',
-      body: 'Una vez alcanzado el número máximo de un dígito en una línea, todas las celdas vacías restantes deben ser el otro dígito.',
-      example: [[0, 1, 0, 1, 0, 'a1']],
+      body: 'Cuando una fila o columna ya tiene todos los 0s (o 1s) que puede contener, las celdas restantes deben ser el otro dígito.',
     },
     {
       key: 'eliminate-filled-lines',
       title: 'Eliminar por líneas rellenas',
-      body: 'Si rellenar una fila o columna la haría idéntica a una ya completa, esos valores deben intercambiarse.',
-      example: [
-        [1, 0, 1, 0, 1, 0],
-        [1, 0, 'a0', 'a1', 1, 0],
-      ],
+      body: 'Una fila o columna no puede ser copia de una ya completa. Si lo fuera, usa el valor opuesto.',
     },
     {
       key: 'eliminate-impossible-combinations',
       title: 'Eliminar combinaciones imposibles',
-      body: 'Si el valor resaltado fuera uno, los espacios vacíos restantes forzarían un trillizo. Como eso no está permitido, el valor resaltado debe ser cero.',
-      example: [[1, 1, 0, null, null, 'a0']],
+      body: 'Si un valor terminaría forzando tres seguidos, el otro valor debe ir aquí.',
     },
-    {
-      key: 'score-matters',
-      title: 'Cómo funciona la puntuación',
-      body: 'Tu puntuación empieza en 10.000 y baja mientras el cronómetro corre. Cada línea completada que no coincide con la solución resta 500 puntos. Las dificultades más altas pierden puntos más lentamente.',
-    },
+  ],
+  howToPlayScoring: 'Empieza en 10.000 y baja mientras el cronómetro corre. Cada línea completada incorrectamente resta 500 puntos. El marcador baja más lentamente en dificultades altas.',
+  howToPlayTips: [
     {
       key: 'watch-for-flashes',
       title: 'Observar los destellos',

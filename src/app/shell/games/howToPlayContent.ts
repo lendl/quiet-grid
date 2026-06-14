@@ -13,7 +13,18 @@ export interface HowToPlayRule {
   body: string;
 }
 
+export interface HowToPlayTechnique {
+  key: string;
+  title: string;
+  body: string;
+}
+
 export interface HowToPlayContent {
+  goal: string;
+  controls: string;
+  wrongMove: string;
   rules: readonly HowToPlayRule[];
+  techniques: readonly HowToPlayTechnique[];
+  scoring?: string;
   tips: readonly HowToPlayTip[];
 }

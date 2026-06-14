@@ -9,11 +9,11 @@ import type { Theme } from '../theme';
 import { getThemeOptions } from '../theme/options';
 import {
   loadBetaGamesEnabled,
+  loadHowToPlayAutoShow,
   loadShowTimerInPlay,
-  loadTutorialsEnabled,
   saveBetaGamesEnabled,
+  saveHowToPlayAutoShow,
   saveShowTimerInPlay,
-  saveTutorialsEnabled,
 } from '../utils/settingsStorage';
 
 type SettingsRow = {
@@ -66,7 +66,7 @@ export default function SettingsScreen() {
   const { strings, resolvedLanguage, setLanguageSetting } = useLanguage();
   const { theme, themeMode, setThemeMode } = useTheme();
   const [showTimerInPlay, setShowTimerInPlay] = React.useState(true);
-  const [tutorialsEnabled, setTutorialsEnabled] = React.useState(true);
+  const [howToPlayAutoShow, setHowToPlayAutoShow] = React.useState(true);
   const [betaGamesEnabled, setBetaGamesEnabled] = React.useState(false);
   const [themeDropdownOpen, setThemeDropdownOpen] = React.useState(false);
   const [languageDropdownOpen, setLanguageDropdownOpen] = React.useState(false);
@@ -76,12 +76,12 @@ export default function SettingsScreen() {
     let mounted = true;
 
     void Promise.all([
-      loadTutorialsEnabled(),
+      loadHowToPlayAutoShow(),
       loadShowTimerInPlay(),
       loadBetaGamesEnabled(),
-    ]).then(([tutorials, showTimer, betaGames]) => {
+    ]).then(([howToPlay, showTimer, betaGames]) => {
       if (mounted) {
-        setTutorialsEnabled(tutorials);
+        setHowToPlayAutoShow(howToPlay);
         setShowTimerInPlay(showTimer);
         setBetaGamesEnabled(betaGames);
       }
@@ -154,11 +154,11 @@ export default function SettingsScreen() {
       key: 'tutorials',
       label: strings.settings.tutorialsLabel,
       detail: strings.settings.tutorialsDetail,
-      value: tutorialsEnabled ? strings.common.on : strings.common.off,
+      value: howToPlayAutoShow ? strings.common.on : strings.common.off,
       onPress: () => {
-        const next = !tutorialsEnabled;
-        setTutorialsEnabled(next);
-        void saveTutorialsEnabled(next);
+        const next = !howToPlayAutoShow;
+        setHowToPlayAutoShow(next);
+        void saveHowToPlayAutoShow(next);
       },
     },
     {
@@ -172,7 +172,7 @@ export default function SettingsScreen() {
         void saveBetaGamesEnabled(next);
       },
     },
-  ], [tutorialsEnabled, betaGamesEnabled, strings]);
+  ], [howToPlayAutoShow, betaGamesEnabled, strings]);
   return (
     <GlobalPageShell activeTab="Settings">
       <ScrollView contentContainerStyle={s.scroll}>

@@ -10,7 +10,7 @@ import GamePageNav from './GamePageNav';
 import TopBackgroundEffect from './TopBackgroundEffect';
 import { useTheme } from '../context/ThemeContext';
 import { getGameDefinition } from '../shell/games/gameRegistry';
-import type { GameTabParamList, MainTabParamList, RootStackParamList, TransitionDirection, TutorialEntryPoint } from '../navigation/types';
+import type { GameTabParamList, MainTabParamList, RootStackParamList, TransitionDirection } from '../navigation/types';
 import type { GameId } from '../../games/shared/types';
 import type { Theme } from '../theme';
 
@@ -24,7 +24,6 @@ type GameNavConfig =
     context: 'root';
     activeTab: keyof GameTabParamList;
     gameId: GameId;
-    tutorialEntry?: TutorialEntryPoint;
   };
 
 type Props = {
@@ -77,7 +76,6 @@ export default function GamePageShell({
           context={gameNav.context}
           activeTab={gameNav.activeTab}
           gameId={gameNav.gameId}
-          tutorialEntry={gameNav.context === 'root' ? gameNav.tutorialEntry : undefined}
         />
       ) : null}
       <AnimatedContentView style={[s.body, bodyStyle]} direction={contentTransitionDirection}>

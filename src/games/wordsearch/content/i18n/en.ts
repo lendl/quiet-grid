@@ -64,6 +64,9 @@ const en: WordSearchI18n = {
     },
   },
   howToPlay: {
+    goal: 'Find every listed word hidden in the grid, then solve the hidden bonus word to complete the puzzle.',
+    controls: 'Tap the first letter of a word, then tap the last letter to select. Words run in straight lines: horizontal, vertical, or diagonal.',
+    wrongMove: 'Invalid selections are silently ignored — there is no penalty for tracing wrong paths.',
     rules: [
       {
         num: '1',
@@ -81,6 +84,7 @@ const en: WordSearchI18n = {
         body: 'Use hidden-word mode during play, then tap the hidden-word letters in order on the grid.',
       },
     ],
+    techniques: [],
     tips: [
       {
         key: 'scan-first-letter',

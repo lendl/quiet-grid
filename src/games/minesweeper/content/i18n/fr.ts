@@ -28,11 +28,14 @@ const fr = {
     },
   },
   howToPlay: {
+    goal: 'Révèle chaque case sûre sans ouvrir de mine.',
+    controls: 'Appuie pour révéler une case. Appuie longuement pour placer ou retirer un drapeau.',
+    wrongMove: 'Ouvrir une mine termine le puzzle immédiatement.',
     rules: [
       {
         num: '1',
         title: 'Révéler les cases sûres',
-        body: "Ouvrez les cases que vous pensez sûres. Une mine révélée termine le puzzle en cours.",
+        body: 'Appuie sur toute case cachée que tu penses sûre pour l\'ouvrir.',
       },
       {
         num: '2',
@@ -42,14 +45,32 @@ const fr = {
       {
         num: '3',
         title: 'Marquer les mines probables',
-        body: "Appuyez longuement sur une case cachée pour placer ou retirer un drapeau quand vous êtes sûr qu'une mine s'y trouve.",
+        body: 'Appuie longuement sur toute case cachée pour la marquer ou démarquer comme mine supposée.',
       },
       {
         num: '4',
         title: 'Libérer toutes les cases sûres',
-        body: 'Le puzzle est résolu quand chaque case sans mine est révélée.',
+        body: 'Le puzzle est terminé dès que chaque case sûre est révélée.',
       },
     ],
+    techniques: [
+      {
+        key: 'forced-flag',
+        title: 'Drapeau forcé',
+        body: 'Quand les voisins cachés restants d\'un indice sont égaux à son nombre de mines, ce sont tous des mines — marque-les tous.',
+      },
+      {
+        key: 'safe-reveal',
+        title: 'Révélation sûre',
+        body: 'Quand un indice a déjà tous ses mines marquées, chaque voisin caché restant est sûr à révéler.',
+      },
+      {
+        key: 'compare-clues',
+        title: 'Comparer les indices',
+        body: 'Deux indices qui partagent des cases cachées révèlent ensemble plus que chacun seul — le chevauchement montre quelles cases sont sûres et lesquelles sont des mines.',
+      },
+    ],
+    scoring: 'Commence à 10 000 et diminue pendant que le chronomètre tourne. Finir plus vite conserve plus de points.',
     tips: [
       {
         key: 'start-from-openings',
@@ -62,14 +83,9 @@ const fr = {
         body: 'Quand deux chiffres révélés touchent certaines des mêmes cases cachées, comparez leurs nombres de mines restants avant de placer des drapeaux.',
       },
       {
-        key: 'Use flags carefully',
+        key: 'use-flags-carefully',
         title: 'Utiliser les drapeaux avec soin',
-        body: "Les drapeaux vous aident à suivre les mines probables, mais ne prouvent pas qu'une case est dangereuse à moins que les indices environnants ne le confirment.",
-      },
-      {
-        key: 'pace-matters',
-        title: 'Comment fonctionne le score',
-        body: 'Votre score commence à 10 000 et diminue pendant que le chronomètre tourne. Résoudre plus vite conserve plus de points.',
+        body: "Un drapeau n'est fiable qu'autant que le raisonnement derrière — ne traite pas les cases marquées comme confirmées à moins que les indices ne le soutiennent.",
       },
     ],
   },

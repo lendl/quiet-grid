@@ -4,8 +4,6 @@ import { getWordSearchLossContent } from './content/loss';
 import { getWordSearchStrings } from './content/strings';
 import { buildWordSearchResult, type WordSearchPlaySession } from './gameplay/playContract';
 import { wordSearchPlayAdapter } from './ui/play/adapter';
-import WordSearchTutorialScreen from './ui/tutorial/screen';
-
 export const wordSearchDefinition: GameDefinition<WordSearchPlaySession> = {
   id: 'wordsearch',
   get title() {
@@ -20,7 +18,6 @@ export const wordSearchDefinition: GameDefinition<WordSearchPlaySession> = {
     return getWordSearchStrings().tagline;
   },
   supports: {
-    tutorial: true,
     learning: true,
     scoring: true,
   },
@@ -40,8 +37,5 @@ export const wordSearchDefinition: GameDefinition<WordSearchPlaySession> = {
     get difficultyDescriptions() {
       return getWordSearchStrings().difficultyDescriptions;
     },
-  },
-  screens: {
-    tutorial: WordSearchTutorialScreen,
   },
 };

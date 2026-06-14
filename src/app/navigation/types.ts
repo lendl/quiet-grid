@@ -37,8 +37,6 @@ export interface GameRouteParams {
   initialDirection?: TransitionDirection;
 }
 
-export type TutorialEntryPoint = 'startup' | 'howToPlay';
-
 export type MainTabParamList = {
   Games: undefined;
   Stats: { gameId?: GameId } | undefined;
@@ -50,7 +48,6 @@ export type GameTabParamList = {
   Play: { gameId: GameId; transitionDirection?: TransitionDirection };
   Stats: { gameId: GameId; transitionDirection?: TransitionDirection };
   Rules: { gameId: GameId; transitionDirection?: TransitionDirection };
-  Tutorial: { gameId: GameId; transitionDirection?: TransitionDirection };
 };
 
 export interface TechniqueLessonParams {
@@ -76,7 +73,6 @@ export type RootStackParamList = {
   Completion: CompletionRouteParams;
   Loss: LossRouteParams;
   Analysis: { analysis: PuzzleAnalysisPayload };
-  HowToPlay: { gameId: GameId };
-  Tutorial: { gameId: GameId; entry: TutorialEntryPoint };
+  HowToPlay: { gameId: GameId; isFirstLaunch?: boolean };
   TechniqueLesson: TechniqueLessonParams;
 };

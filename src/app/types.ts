@@ -7,7 +7,6 @@ export type {
   CompletionRouteParams,
   PuzzlePlayRouteParams,
   RootStackParamList,
-  TutorialEntryPoint,
 } from './navigation/types';
 export type { SolvedResultVariant } from './completion/types';
 export type { FailureReason } from './loss/types';

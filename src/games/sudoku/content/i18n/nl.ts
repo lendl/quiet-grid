@@ -198,21 +198,41 @@ const nl = {
     },
   },
   howToPlay: {
+    goal: 'Plaats elk cijfer 1–9 precies één keer in elke rij, kolom en 3×3-box.',
+    controls: 'Tik op een cel om hem te selecteren, tik dan op een cijferknop om te plaatsen. Schakel naar notitiemodus om kandidaten in te vullen.',
+    wrongMove: 'Een dubbel cijfer in dezelfde rij, kolom of box wordt gemarkeerd als conflict.',
     rules: [
       {
         num: '1',
         title: 'Vul het rooster',
-        body: 'Plaats de cijfers 1 tot en met 9 zodat elke rij, kolom en 3×3-box elk cijfer precies één keer gebruikt.',
+        body: 'Geen cijfer mag twee keer voorkomen in dezelfde rij, kolom of box.',
       },
       {
         num: '2',
         title: 'Respecteer de gegeven cijfers',
-        body: 'De startcijfers blijven vast staan en vormen het anker voor elke geldige Sudoku-sessie.',
+        body: 'De vooraf ingevulde cijfers staan vast — je kunt ze niet veranderen.',
       },
       {
         num: '3',
         title: 'Gebruik notities als een cel nog niet klaar is',
-        body: 'Notities zijn optionele ondersteunende acties, maar ze helpen kandidaten bij te houden voordat je een definitief cijfer plaatst.',
+        body: 'Schakel naar notitiemodus om mogelijke cijfers in een cel te noteren en ze te schrappen naarmate de puzzel zich toespitst.',
+      },
+    ],
+    techniques: [
+      {
+        key: 'naked-single',
+        title: 'Naakt enkelvoud',
+        body: 'Als na het uitsluiten van elk cijfer in de rij, kolom en box slechts één cijfer overblijft in een cel, plaats het.',
+      },
+      {
+        key: 'hidden-single',
+        title: 'Verborgen enkelvoud',
+        body: 'Als een cijfer slechts in één cel past binnen een rij, kolom of box, plaats het daar, ook als andere kandidaten nog zichtbaar zijn.',
+      },
+      {
+        key: 'notes-mode',
+        title: 'Notitiemodus',
+        body: 'Schrijf alle mogelijke cijfers als notities en schrap ze terwijl omliggende rijen, kolommen en boxen worden ingevuld — totdat er nog maar één overblijft.',
       },
     ],
     tips: [
@@ -229,7 +249,7 @@ const nl = {
       {
         key: 'notes-first',
         title: 'Notities houden moeilijke cellen eerlijk',
-        body: 'Als een cel nog meerdere legale cijfers heeft, schakel dan naar notitiemodus in plaats van te gokken. Notities laten hidden singles en pair-deducties later beter opvallen.',
+        body: 'Als een cel nog meerdere geldige cijfers heeft, schakel dan naar notitiemodus in plaats van te gokken. Genoteerde kandidaten maken hidden singles en andere gedwongen plaatsingen veel gemakkelijker te herkennen.',
         example: [
           [null, '4·5', 3],
           ['1·4·7', '4·7', 6],

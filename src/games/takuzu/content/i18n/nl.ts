@@ -45,67 +45,55 @@ const nl = {
       },
     },
   },
+  howToPlayGoal: 'Vul elke cel met een 0 of 1 op basis van drie regels.',
+  howToPlayControls: 'Tik op een cel om te wisselen: leeg → 0 → 1 → leeg.',
+  howToPlayWrongMove: 'Een rij of kolom die een regel schendt knippert en kost 500 punten.',
   howToPlayRules: [
     {
       num: '1',
-      title: 'Vul elke cel',
-      body: 'Tik op een cel om te wisselen: leeg -> 0 -> 1 -> leeg. Vul het volledige rooster.',
+      title: 'Geen drie op rij',
+      body: 'Drie gelijke cijfers naast elkaar in een rij of kolom zijn niet toegestaan.',
     },
     {
       num: '2',
-      title: 'Geen drie op rij',
-      body: 'Vermijd drie gelijke cijfers naast elkaar in een rij of kolom.',
+      title: 'Gelijke helften',
+      body: 'Elke rij en kolom bevat evenveel 0\'en als 1\'en.',
     },
     {
       num: '3',
-      title: 'Gelijke helften',
-      body: 'Elke rij en elke kolom moet exact evenveel 0\'en en 1\'en bevatten.',
-    },
-    {
-      num: '4',
       title: 'Alle lijnen zijn uniek',
-      body: 'Geen twee rijen mogen identiek zijn, en geen twee kolommen mogen identiek zijn.',
+      body: 'Geen twee rijen zijn gelijk, en geen twee kolommen zijn gelijk.',
     },
   ],
-  howToPlayTips: [
+  howToPlayTechniques: [
     {
       key: 'find-pairs',
       title: 'Zoek paren',
-      body: 'Twee gelijke cijfers naast elkaar betekenen dat de cellen ernaast het tegenovergestelde cijfer moeten zijn.',
-      example: [[0, 0, 'a1']],
+      body: 'Twee gelijke cijfers naast elkaar dwingen de cellen ernaast tot het tegenovergestelde cijfer.',
     },
     {
       key: 'avoid-trios',
       title: 'Vermijd trio\'s',
-      body: 'Als hetzelfde cijfer verschijnt met een lege cel ertussen, moet die middelste cel het tegenovergestelde zijn.',
-      example: [[1, 'a0', 1]],
+      body: 'Als hetzelfde cijfer aan beide kanten van een lege cel staat, moet die cel het tegenovergestelde zijn.',
     },
     {
       key: 'complete-lines',
       title: 'Maak rijen en kolommen af',
-      body: 'Zodra het maximum van één cijfer in een lijn is bereikt, moeten alle overgebleven lege cellen het andere cijfer zijn.',
-      example: [[0, 1, 0, 1, 0, 'a1']],
+      body: 'Zodra een rij of kolom zo veel 0\'en (of 1\'en) heeft als toegestaan, moeten de overige cellen het andere cijfer zijn.',
     },
     {
       key: 'eliminate-filled-lines',
       title: 'Schrap op basis van gevulde lijnen',
-      body: 'Als het invullen van een rij of kolom die identiek zou maken aan een al complete lijn, moeten die waarden worden omgewisseld.',
-      example: [
-        [1, 0, 1, 0, 1, 0],
-        [1, 0, 'a0', 'a1', 1, 0],
-      ],
+      body: 'Een rij of kolom mag geen kopie zijn van een voltooide lijn. Dreigt dat, gebruik dan de andere waarde.',
     },
     {
       key: 'eliminate-impossible-combinations',
       title: 'Schrap onmogelijke combinaties',
-      body: 'Als de gemarkeerde waarde een één zou zijn, zouden de resterende lege vakken een trio forceren. Omdat dat niet mag, moet de gemarkeerde waarde nul zijn.',
-      example: [[1, 1, 0, null, null, 'a0']],
+      body: 'Als één waarde uiteindelijk drie op rij zou forceren, moet de andere waarde hier staan.',
     },
-    {
-      key: 'score-matters',
-      title: 'Hoe scoren werkt',
-      body: 'Je score start op 10.000 en daalt terwijl de timer loopt. Elke voltooide lijn die niet met de oplossing overeenkomt kost 500 punten. Hogere moeilijkheden verliezen langzamer score.',
-    },
+  ],
+  howToPlayScoring: 'Start op 10.000 en daalt terwijl de timer loopt. Elke fout voltooide lijn kost 500 punten. De score daalt trager bij hogere moeilijkheden.',
+  howToPlayTips: [
     {
       key: 'watch-for-flashes',
       title: 'Let op flitsen',

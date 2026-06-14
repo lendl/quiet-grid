@@ -45,67 +45,55 @@ const fr = {
       },
     },
   },
+  howToPlayGoal: 'Remplis chaque case avec un 0 ou un 1 en suivant trois règles.',
+  howToPlayControls: 'Appuie sur une case pour cycler : vide → 0 → 1 → vide.',
+  howToPlayWrongMove: 'Compléter une ligne ou colonne qui enfreint une règle la fait clignoter et coûte 500 points.',
   howToPlayRules: [
     {
       num: '1',
-      title: 'Remplir chaque case',
-      body: 'Appuie sur une case pour cycler : vide → 0 → 1 → vide. Remplis toute la grille.',
+      title: 'Pas trois à la suite',
+      body: 'Trois chiffres identiques dans une ligne ou colonne ne sont pas autorisés.',
     },
     {
       num: '2',
-      title: 'Pas trois à la suite',
-      body: 'Évite de placer trois chiffres identiques côte à côte dans une ligne ou une colonne.',
+      title: 'Moitiés égales',
+      body: 'Chaque ligne et chaque colonne contient autant de 0 que de 1.',
     },
     {
       num: '3',
-      title: 'Moitiés égales',
-      body: 'Chaque ligne et chaque colonne doit contenir exactement le même nombre de 0 et de 1.',
-    },
-    {
-      num: '4',
       title: 'Toutes les lignes sont uniques',
       body: 'Deux lignes ne peuvent pas être identiques, et deux colonnes non plus.',
     },
   ],
-  howToPlayTips: [
+  howToPlayTechniques: [
     {
       key: 'find-pairs',
       title: 'Trouver les paires',
-      body: 'Deux chiffres identiques adjacents signifient que les cases de chaque côté doivent être le chiffre opposé.',
-      example: [[0, 0, 'a1']],
+      body: 'Deux chiffres identiques côte à côte forcent les cases de chaque côté à être le chiffre opposé.',
     },
     {
       key: 'avoid-trios',
       title: 'Éviter les triplets',
-      body: 'Si le même chiffre apparaît avec une case vide entre eux, cette case centrale doit être le chiffre opposé.',
-      example: [[1, 'a0', 1]],
+      body: 'Quand le même chiffre encadre une case vide, cette case doit être le chiffre opposé.',
     },
     {
       key: 'complete-lines',
       title: 'Compléter les lignes et colonnes',
-      body: 'Une fois le nombre maximal d\'un chiffre atteint dans une ligne, toutes les cases vides restantes doivent être l\'autre chiffre.',
-      example: [[0, 1, 0, 1, 0, 'a1']],
+      body: 'Quand une ligne ou colonne contient autant de 0 (ou de 1) que permis, les cases restantes doivent être l\'autre chiffre.',
     },
     {
       key: 'eliminate-filled-lines',
       title: 'Éliminer par les lignes remplies',
-      body: 'Si remplir une ligne ou colonne la rendrait identique à une ligne déjà complète, ces valeurs doivent être échangées.',
-      example: [
-        [1, 0, 1, 0, 1, 0],
-        [1, 0, 'a0', 'a1', 1, 0],
-      ],
+      body: 'Une ligne ou colonne ne peut pas copier une ligne déjà complète. Si c\'est le cas, utilise la valeur opposée.',
     },
     {
       key: 'eliminate-impossible-combinations',
       title: 'Éliminer les combinaisons impossibles',
-      body: 'Si la valeur mise en évidence était un, les cases vides restantes forceraient un triplet. Comme ce n\'est pas permis, la valeur mise en évidence doit être zéro.',
-      example: [[1, 1, 0, null, null, 'a0']],
+      body: 'Si une valeur finirait par forcer un triplet, c\'est l\'autre valeur qui doit aller ici.',
     },
-    {
-      key: 'score-matters',
-      title: 'Comment fonctionne le score',
-      body: 'Ton score commence à 10 000 et diminue pendant que le chronomètre tourne. Chaque ligne complétée qui ne correspond pas à la solution soustrait 500 points. Les difficultés plus élevées perdent des points plus lentement.',
-    },
+  ],
+  howToPlayScoring: 'Commence à 10 000 et diminue pendant que le chronomètre tourne. Chaque ligne incorrectement complétée coûte 500 points. Le score diminue plus lentement aux difficultés élevées.',
+  howToPlayTips: [
     {
       key: 'watch-for-flashes',
       title: 'Surveiller les éclairs',

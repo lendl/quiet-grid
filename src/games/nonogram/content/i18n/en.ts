@@ -91,11 +91,14 @@ const en = {
       continueLabel: 'Finish tutorial',
     },
   },
+  howToPlayGoal: 'Fill cells to form the exact blocks described by each row and column clue.',
+  howToPlayControls: 'Tap a cell to cycle: blank → filled → empty. Swipe across cells to paint them all with the same state.',
+  howToPlayWrongMove: 'If a row or column can no longer match its clues, it is marked as invalid.',
   howToPlayRules: [
     {
       num: '1',
       title: 'Read the clues',
-      body: 'Each row and column clue tells you the lengths of the filled blocks in order.',
+      body: 'Clue numbers list block lengths from left to right (or top to bottom), with at least one gap between each block.',
     },
     {
       num: '2',
@@ -113,23 +116,24 @@ const en = {
       body: 'Once a line is complete, the remaining cells in that line must stay empty.',
     },
   ],
-  howToPlayTips: [
+  howToPlayTechniques: [
     {
       key: 'overlap-fill',
       title: 'Overlap fill',
-      body: 'When a block can only fit in one shared area, fill those overlapping cells.',
+      body: 'Slide a block between its leftmost and rightmost valid position — any cell covered in both extremes must be filled.',
     },
     {
       key: 'forced-empty',
       title: 'Forced empty',
-      body: 'If a cell cannot belong to any clue placement, mark it empty.',
+      body: 'If no block can legally reach a cell in any valid arrangement, mark it empty.',
     },
     {
       key: 'complete-line',
       title: 'Complete line',
-      body: 'If a row or column already matches its clue pattern, the rest of that line is empty.',
+      body: 'Once all blocks in a line are fully placed, every remaining cell in that line must be empty.',
     },
   ],
+  howToPlayTips: [],
   loss: {
     abandoned: {
       eyebrow: 'Puzzle ended',

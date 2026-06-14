@@ -4,8 +4,6 @@ import { getSudokuLossContent } from './content/loss';
 import { getSudokuStrings } from './content/strings';
 import { buildSudokuResult, type SudokuPlaySession } from './gameplay/playContract';
 import { sudokuPlayAdapter } from './ui/play/adapter';
-import SudokuTutorialScreen from './ui/tutorial/screen';
-
 export const sudokuDefinition: GameDefinition<SudokuPlaySession> = {
   id: 'sudoku',
   get title() {
@@ -22,7 +20,6 @@ export const sudokuDefinition: GameDefinition<SudokuPlaySession> = {
     return getSudokuStrings().tagline;
   },
   supports: {
-    tutorial: true,
     learning: true,
     scoring: true,
   },
@@ -42,8 +39,5 @@ export const sudokuDefinition: GameDefinition<SudokuPlaySession> = {
     get difficultyDescriptions() {
       return getSudokuStrings().difficultyDescriptions;
     },
-  },
-  screens: {
-    tutorial: SudokuTutorialScreen,
   },
 };

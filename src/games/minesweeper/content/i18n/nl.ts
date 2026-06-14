@@ -28,11 +28,14 @@ const nl = {
     },
   },
   howToPlay: {
+    goal: 'Onthul elk veilig vak zonder een mijn te openen.',
+    controls: 'Tik om een cel te onthullen. Houd ingedrukt om een vlag te plaatsen of verwijderen.',
+    wrongMove: 'Een mijn openen beëindigt de puzzel onmiddellijk.',
     rules: [
       {
         num: '1',
         title: 'Open veilige vakken',
-        body: 'Open vakken waarvan je denkt dat ze veilig zijn. Een geopende mijn beëindigt de actieve puzzel.',
+        body: 'Tik op elk verborgen vak waarvan je denkt dat het veilig is om het te openen.',
       },
       {
         num: '2',
@@ -42,14 +45,32 @@ const nl = {
       {
         num: '3',
         title: 'Markeer waarschijnlijke mijnen',
-        body: 'Houd een verborgen cel lang ingedrukt om een vlag te plaatsen of verwijderen wanneer je zeker denkt te zijn dat daar een mijn ligt.',
+        body: 'Houd een verborgen vak lang ingedrukt om het te markeren of de markering te verwijderen als mogelijke mijn.',
       },
       {
         num: '4',
         title: 'Maak elk veilig vak vrij',
-        body: 'De puzzel is opgelost wanneer elke cel zonder mijn zichtbaar is.',
+        body: 'De puzzel is voltooid zodra elk veilig vak zichtbaar is.',
       },
     ],
+    techniques: [
+      {
+        key: 'forced-flag',
+        title: 'Verplichte vlag',
+        body: 'Als de resterende verborgen buren van een aanwijzing gelijk zijn aan het mijnenaantal, zijn dat allemaal mijnen — markeer ze allemaal.',
+      },
+      {
+        key: 'safe-reveal',
+        title: 'Veilige onthulling',
+        body: 'Als een aanwijzing al alle mijnen gemarkeerd heeft, is elk resterende verborgen buur veilig om te onthullen.',
+      },
+      {
+        key: 'compare-clues',
+        title: 'Aanwijzingen vergelijken',
+        body: 'Twee aanwijzingen die verborgen vakken delen onthullen samen meer dan elk afzonderlijk — de overlap laat zien welke vakken veilig zijn en welke mijnen zijn.',
+      },
+    ],
+    scoring: 'Start op 10.000 en daalt terwijl de timer loopt. Sneller oplossen houdt meer score over.',
     tips: [
       {
         key: 'start-from-openings',
@@ -62,14 +83,9 @@ const nl = {
         body: 'Wanneer twee zichtbare cijfers sommige verborgen vakken delen, vergelijk dan eerst hun resterende mijnenaantallen voordat je vlaggen plaatst.',
       },
       {
-        key: 'Use flags carefully',
+        key: 'use-flags-carefully',
         title: 'Gebruik vlaggen zorgvuldig',
-        body: 'Vlaggen helpen je waarschijnlijke mijnen bij te houden, maar bewijzen niet dat een cel gevaarlijk is tenzij de omliggende aanwijzingen dat ondersteunen.',
-      },
-      {
-        key: 'pace-matters',
-        title: 'Hoe scoren werkt',
-        body: 'Je score start op 10.000 en daalt terwijl de timer loopt. Sneller veilig oplossen houdt meer score over.',
+        body: 'Een vlag is alleen zo betrouwbaar als de redenering erachter — behandel gemarkeerde vakken niet als bevestigd tenzij de aanwijzingen dat ondersteunen.',
       },
     ],
   },

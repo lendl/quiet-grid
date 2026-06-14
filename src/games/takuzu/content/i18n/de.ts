@@ -45,67 +45,55 @@ const de = {
       },
     },
   },
+  howToPlayGoal: 'Fülle jede Zelle mit einer 0 oder 1 nach drei Regeln.',
+  howToPlayControls: 'Tippe auf eine Zelle, um zu wechseln: leer → 0 → 1 → leer.',
+  howToPlayWrongMove: 'Eine Zeile oder Spalte, die eine Regel verletzt, blinkt und kostet 500 Punkte.',
   howToPlayRules: [
     {
       num: '1',
-      title: 'Jede Zelle ausfüllen',
-      body: 'Tippe auf eine Zelle, um zu wechseln: leer → 0 → 1 → leer. Fülle das gesamte Raster.',
+      title: 'Keine drei in einer Reihe',
+      body: 'Drei gleiche Ziffern in einer Zeile oder Spalte sind nicht erlaubt.',
     },
     {
       num: '2',
-      title: 'Keine drei in einer Reihe',
-      body: 'Vermeide drei gleiche Ziffern nebeneinander in einer Zeile oder Spalte.',
+      title: 'Gleiche Hälften',
+      body: 'Jede Zeile und jede Spalte enthält gleich viele 0en und 1en.',
     },
     {
       num: '3',
-      title: 'Gleiche Hälften',
-      body: 'Jede Zeile und jede Spalte muss genau gleich viele 0en und 1en enthalten.',
-    },
-    {
-      num: '4',
       title: 'Alle Linien sind einzigartig',
-      body: 'Keine zwei Zeilen dürfen identisch sein, und keine zwei Spalten dürfen identisch sein.',
+      body: 'Keine zwei Zeilen sind identisch, und keine zwei Spalten sind identisch.',
     },
   ],
-  howToPlayTips: [
+  howToPlayTechniques: [
     {
       key: 'find-pairs',
       title: 'Paare finden',
-      body: 'Zwei benachbarte gleiche Ziffern bedeuten, dass die Zellen auf beiden Seiten die entgegengesetzte Ziffer sein müssen.',
-      example: [[0, 0, 'a1']],
+      body: 'Zwei gleiche Ziffern nebeneinander zwingen die Zellen auf beiden Seiten zur entgegengesetzten Ziffer.',
     },
     {
       key: 'avoid-trios',
       title: 'Drillinge vermeiden',
-      body: 'Wenn dieselbe Ziffer mit einer leeren Zelle dazwischen erscheint, muss diese mittlere Zelle die entgegengesetzte Ziffer sein.',
-      example: [[1, 'a0', 1]],
+      body: 'Steht dieselbe Ziffer auf beiden Seiten einer leeren Zelle, muss diese Zelle die entgegengesetzte sein.',
     },
     {
       key: 'complete-lines',
       title: 'Zeilen und Spalten vervollständigen',
-      body: 'Sobald die maximale Anzahl einer Ziffer in einer Linie erreicht ist, müssen alle verbleibenden leeren Zellen die andere Ziffer sein.',
-      example: [[0, 1, 0, 1, 0, 'a1']],
+      body: 'Sobald eine Zeile oder Spalte so viele 0en (oder 1en) hat wie erlaubt, müssen die restlichen Zellen die andere Ziffer sein.',
     },
     {
       key: 'eliminate-filled-lines',
       title: 'Anhand gefüllter Linien ausschließen',
-      body: 'Würde das Ausfüllen einer Zeile oder Spalte sie identisch mit einer bereits vollständigen machen, müssen diese Werte getauscht werden.',
-      example: [
-        [1, 0, 1, 0, 1, 0],
-        [1, 0, 'a0', 'a1', 1, 0],
-      ],
+      body: 'Eine Zeile oder Spalte darf keine Kopie einer vollständigen sein. Droht das, muss der andere Wert verwendet werden.',
     },
     {
       key: 'eliminate-impossible-combinations',
       title: 'Unmögliche Kombinationen ausschließen',
-      body: 'Wäre der markierte Wert eine Eins, würden die verbleibenden leeren Felder einen Drilling erzwingen. Da das nicht erlaubt ist, muss der markierte Wert null sein.',
-      example: [[1, 1, 0, null, null, 'a0']],
+      body: 'Wenn ein Wert später einen Drilling erzwingen würde, muss der andere Wert hier stehen.',
     },
-    {
-      key: 'score-matters',
-      title: 'So funktioniert die Bewertung',
-      body: 'Dein Punktestand beginnt bei 10.000 und sinkt, während der Rätseltimer läuft. Jede abgeschlossene Linie, die nicht der Lösung entspricht, zieht 500 Punkte ab. Höhere Schwierigkeitsgrade verlieren Punkte langsamer.',
-    },
+  ],
+  howToPlayScoring: 'Startet bei 10.000 und sinkt, solange der Timer läuft. Jede falsch abgeschlossene Linie kostet 500 Punkte. Punkte sinken bei höheren Schwierigkeitsgraden langsamer.',
+  howToPlayTips: [
     {
       key: 'watch-for-flashes',
       title: 'Auf Aufblitzen achten',

@@ -2,10 +2,10 @@
 
 - [ ] Game fits Quiet Grid eligibility rules.
 - [ ] User approved the important game-design choices.
-- [ ] UX contract is approved before coding (tutorial scope, interaction model, invalid-board helper behavior, board visual conventions).
+- [ ] UX contract is approved before coding (interaction model, invalid-board helper behavior, board visual conventions).
 - [ ] Canonical moves are defined.
 - [ ] Support actions are separated from canonical moves.
-- [ ] Support-action policy is explicit for all Learning Center surfaces: tutorial mention allowed or not, next move/analyzer ignore or use them, and whether they are ever required.
+- [ ] Support-action policy is explicit for all Learning Center surfaces: next move/analyzer ignore or use them, and whether they are ever required.
 - [ ] Mistake policy is defined.
 - [ ] Loss condition is defined separately if applicable.
 - [ ] Existing feedback effects are selected.
@@ -26,10 +26,10 @@
 - [ ] It is explicit whether elimination-only reasoning may appear as a standalone player-facing move or only as evidence for an actionable move.
 - [ ] Analyzer mode is explicit.
 - [ ] Input model is explicitly approved and implemented across gameplay actions and play UI (no implicit default).
-- [ ] Playable puzzle grid supports pinch-zoom and pan (tutorial/analyzer grids may stay static unless explicitly required).
-- [ ] `supports.tutorial` is `true` and `screens.tutorial` is wired in `definition.ts`.
-- [ ] Tutorial implementation exists under `ui/tutorial/` and uses game content from `content/i18n/`.
-- [ ] Tutorial includes at least one explicit player decision checkpoint (for example fill vs empty when the game has those states).
+- [ ] Playable puzzle grid supports pinch-zoom and pan (analyzer grids may stay static unless explicitly required).
+- [ ] How-to-play page content is populated in `content/i18n/` for all 5 languages (en, nl, de, fr, es) with all required sections: `goal`, `controls`, `wrongMove`, `rules`, `techniques`, `tips`. Scoring is optional.
+- [ ] `content/howToPlay.ts` calls the i18n function and returns a valid `HowToPlayContent`.
+- [ ] `definition.ts` has `supports.learning: true` and NO `supports.tutorial` or `screens.tutorial`.
 - [ ] Analyzer implementation exists under `ui/learning/analyzer/` (not only i18n strings).
 - [ ] Engine-backed teaching and classification use the approved canonical move system, not hidden brute-force proof.
 - [ ] Engine-backed analyzer teaches from puzzle state, not optional support-action history, unless explicitly approved.
@@ -37,16 +37,12 @@
 - [ ] Next move does not require optional support actions when canonical progress exists.
 - [ ] Next move returns one actionable canonical move; elimination-only logic is evidence unless explicitly approved as canonical.
 - [ ] Next move selects/focuses target cell in live play when that is part of the approved UX contract.
-- [ ] How-to-play tips include at least one concrete worked example.
 - [ ] Game-specific board visual conventions are implemented (for example, Nonogram 5-cell separators).
 - [ ] App game registry is updated.
 - [ ] Engine registry is updated if applicable.
 - [ ] Persistence shape is defined.
 - [ ] App storage normalization is updated if needed.
 - [ ] All game-facing copy is in `content/i18n/`.
-- [ ] Tutorial uses valid example grids.
-- [ ] Tutorial decision checkpoints do not reveal the answer before the player responds.
-- [ ] Tutorial chrome is minimal by default: no skip button and no extra live-play info box unless explicitly approved.
 - [ ] Engine-backed difficulty labels only use proof families that are actually implemented and teachable.
 - [ ] `npm run lint`
 - [ ] `npm run typecheck:app`

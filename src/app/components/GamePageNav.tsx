@@ -10,7 +10,6 @@ import type {
   GameTabParamList,
   RootStackParamList,
   TransitionDirection,
-  TutorialEntryPoint,
 } from '../navigation/types';
 import type { GameId } from '../../games/shared/types';
 import type { Theme } from '../theme';
@@ -29,7 +28,6 @@ type TabContextProps = BaseProps & {
 
 type RootContextProps = BaseProps & {
   context: 'root';
-  tutorialEntry?: TutorialEntryPoint;
 };
 
 type Props = TabContextProps | RootContextProps;
@@ -49,7 +47,6 @@ export default function GamePageNav(props: Props) {
     return [
       { key: 'Play', label: strings.common.play },
       { key: 'Rules', label: strings.common.rules },
-      { key: 'Tutorial', label: strings.common.tutorial },
       { key: 'Stats', label: strings.common.stats },
     ];
   }, [strings]);

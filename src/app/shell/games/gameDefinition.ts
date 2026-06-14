@@ -15,7 +15,6 @@ export interface GameDefinition<TSession = unknown> {
     explainTechnique?: boolean;
   };
   supports: {
-    tutorial: boolean;
     learning: boolean;
     scoring: boolean;
   };
@@ -27,8 +26,5 @@ export interface GameDefinition<TSession = unknown> {
     loss: LossContent;
     difficultyLabels: Record<PuzzleDifficulty, string>;
     difficultyDescriptions: Record<PuzzleDifficulty, string>;
-  };
-  screens: {
-    tutorial?: unknown;
   };
 }

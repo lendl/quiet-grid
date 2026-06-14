@@ -198,21 +198,41 @@ const es = {
     },
   },
   howToPlay: {
+    goal: 'Coloca cada dígito del 1 al 9 exactamente una vez en cada fila, columna y caja de 3×3.',
+    controls: 'Toca una celda para seleccionarla, luego toca un botón de dígito para colocarlo. Activa el modo notas para anotar candidatos en su lugar.',
+    wrongMove: 'Un dígito repetido en la misma fila, columna o caja se resalta como conflicto.',
     rules: [
       {
         num: '1',
         title: 'Rellena la cuadrícula',
-        body: 'Coloca los dígitos del 1 al 9 para que cada fila, columna y caja de 3×3 use cada dígito una sola vez.',
+        body: 'Ningún dígito puede aparecer dos veces en la misma fila, columna o caja.',
       },
       {
         num: '2',
         title: 'Respeta las pistas dadas',
-        body: 'Las pistas iniciales permanecen fijas y sostienen cualquier sesión válida de Sudoku.',
+        body: 'Los dígitos ya escritos son fijos — no puedes modificarlos.',
       },
       {
         num: '3',
         title: 'Usa notas cuando una celda aún no esté lista',
-        body: 'Las notas son acciones de apoyo opcionales, pero te ayudan a seguir los candidatos antes de fijar un dígito final.',
+        body: 'Activa el modo notas para anotar los dígitos posibles de una celda y tacharlos a medida que el puzzle se reduce.',
+      },
+    ],
+    techniques: [
+      {
+        key: 'naked-single',
+        title: 'Single desnudo',
+        body: 'Cuando solo queda un dígito permitido en una celda tras descartar todos los que ya aparecen en su fila, columna y caja, colócalo.',
+      },
+      {
+        key: 'hidden-single',
+        title: 'Single oculto',
+        body: 'Cuando un dígito solo cabe en una celda dentro de una fila, columna o caja, colócalo ahí aunque otros candidatos sigan visibles.',
+      },
+      {
+        key: 'notes-mode',
+        title: 'Modo notas',
+        body: 'Escribe todos los dígitos posibles como notas y táchalos conforme las filas, columnas y cajas circundantes se van llenando — hasta que solo quede uno.',
       },
     ],
     tips: [
@@ -229,7 +249,7 @@ const es = {
       {
         key: 'notes-first',
         title: 'Las notas mantienen honestas a las celdas difíciles',
-        body: 'Si una celda todavía tiene varios dígitos legales, cambia al modo notas en lugar de adivinar. Las notas ayudan a que los hidden singles y las deducciones por pares destaquen después.',
+        body: 'Si una celda todavía tiene varios dígitos válidos, cambia al modo notas en lugar de adivinar. Los candidatos anotados hacen que los hidden singles y otras colocaciones forzadas sean mucho más fáciles de detectar.',
         example: [
           [null, '4·5', 3],
           ['1·4·7', '4·7', 6],

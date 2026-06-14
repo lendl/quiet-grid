@@ -198,28 +198,48 @@ const fr = {
     },
   },
   howToPlay: {
+    goal: "Place chaque chiffre de 1 à 9 exactement une fois dans chaque ligne, colonne et boîte 3×3.",
+    controls: "Appuie sur une case pour la sélectionner, puis sur un chiffre pour le placer. Active le mode notes pour saisir des candidats à la place.",
+    wrongMove: "Un chiffre en double dans la même ligne, colonne ou boîte est mis en évidence comme conflit.",
     rules: [
       {
-        num: '1',
-        title: 'Remplis la grille',
-        body: 'Place les chiffres de 1 à 9 pour que chaque ligne, chaque colonne et chaque boîte 3×3 utilisent chaque chiffre une seule fois.',
+        num: "1",
+        title: "Remplis la grille",
+        body: "Aucun chiffre ne peut apparaître deux fois dans la même ligne, colonne ou boîte.",
       },
       {
-        num: '2',
-        title: 'Respecte les chiffres donnés',
-        body: 'Les chiffres de départ restent fixes et servent d’ancrage à toute session de Sudoku valide.',
+        num: "2",
+        title: "Respecte les chiffres donnés",
+        body: "Les chiffres pré-remplis sont fixes — tu ne peux pas les modifier.",
       },
       {
-        num: '3',
-        title: 'Utilise les notes quand une case n’est pas prête',
-        body: 'Les notes sont des actions de support facultatives, mais elles aident à suivre les candidats avant de valider un chiffre final.',
+        num: "3",
+        title: "Utilise les notes quand une case n’est pas prête",
+        body: "Active le mode notes pour noter les chiffres possibles d’une case et les barrer au fil que le puzzle se resserre.",
+      },
+    ],
+    techniques: [
+      {
+        key: "naked-single",
+        title: "Single nu",
+        body: "Quand un seul chiffre est autorisé dans une case après avoir exclu tous ceux déjà présents dans sa ligne, colonne et boîte, place-le.",
+      },
+      {
+        key: "hidden-single",
+        title: "Single caché",
+        body: "Quand un chiffre ne peut aller que dans une seule case d’une ligne, colonne ou boîte, place-le là même si d’autres candidats sont encore visibles.",
+      },
+      {
+        key: "notes-mode",
+        title: "Mode notes",
+        body: "Écris tous les chiffres possibles en notes, puis barre-les au fur et à mesure que les lignes, colonnes et boîtes environnantes se remplissent — jusqu’à ce qu’il n’en reste qu’un.",
       },
     ],
     tips: [
       {
-        key: 'scan-rows',
-        title: 'Inspecte une seule maison à la fois',
-        body: 'Choisis une ligne, une colonne ou une boîte et demande-toi quels chiffres manquent encore. Les vérifications petites et locales restent plus fiables que les suppositions larges.',
+        key: ‘scan-rows’,
+        title: ‘Inspecte une seule maison à la fois’,
+        body: ‘Choisis une ligne, une colonne ou une boîte et demande-toi quels chiffres manquent encore. Les vérifications petites et locales restent plus fiables que les suppositions larges.’,
         example: [
           [5, 3, null],
           [6, 7, 2],
@@ -227,9 +247,9 @@ const fr = {
         ],
       },
       {
-        key: 'notes-first',
-        title: 'Les notes gardent les cases difficiles honnêtes',
-        body: 'Si une case a encore plusieurs chiffres légaux, passe en mode notes au lieu de deviner. Les notes aident les hidden singles et les déductions par paires à ressortir plus tard.',
+        key: ‘notes-first’,
+        title: ‘Les notes gardent les cases difficiles honnêtes’,
+        body: ‘Si une case a encore plusieurs chiffres valides, passe en mode notes au lieu de deviner. Les candidats notés rendent les hidden singles et les autres placements forcés bien plus faciles à repérer.’,
         example: [
           [null, '4·5', 3],
           ['1·4·7', '4·7', 6],

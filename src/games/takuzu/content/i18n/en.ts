@@ -45,67 +45,55 @@ const en = {
       },
     },
   },
+  howToPlayGoal: 'Fill every cell with a 0 or 1 following three rules.',
+  howToPlayControls: 'Tap any cell to cycle through empty → 0 → 1 → empty.',
+  howToPlayWrongMove: 'Completing a row or column that breaks a rule flashes it and costs 500 points.',
   howToPlayRules: [
     {
       num: '1',
-      title: 'Fill every cell',
-      body: 'Tap a cell to cycle: empty -> 0 -> 1 -> empty. Fill the entire grid.',
+      title: 'No three in a row',
+      body: 'Three identical digits in a row or column are not allowed.',
     },
     {
       num: '2',
-      title: 'No three in a row',
-      body: 'Avoid placing three identical digits next to each other in any row or column.',
+      title: 'Equal halves',
+      body: 'Every row and column must contain the same number of 0s and 1s.',
     },
     {
       num: '3',
-      title: 'Equal halves',
-      body: 'Every row and every column must contain exactly the same number of 0s and 1s.',
-    },
-    {
-      num: '4',
       title: 'All lines are unique',
-      body: 'No two rows may be identical, and no two columns may be identical.',
+      body: 'Every row is different from every other row, and every column from every other column.',
     },
   ],
-  howToPlayTips: [
+  howToPlayTechniques: [
     {
       key: 'find-pairs',
       title: 'Find pairs',
-      body: 'Two adjacent identical digits mean the cells on either side must be the opposite digit.',
-      example: [[0, 0, 'a1']],
+      body: 'Two matching digits next to each other force the cells on both sides to be the opposite digit.',
     },
     {
       key: 'avoid-trios',
       title: 'Avoid trios',
-      body: 'If the same digit appears with one empty cell between them, that middle cell must be the opposite.',
-      example: [[1, 'a0', 1]],
+      body: 'When the same digit appears on both sides of an empty cell, that empty cell must be the opposite.',
     },
     {
       key: 'complete-lines',
       title: 'Complete rows and columns',
-      body: 'Once the maximum count of one digit is reached in a line, all remaining empty cells must be the other digit.',
-      example: [[0, 1, 0, 1, 0, 'a1']],
+      body: 'Once a row or column has as many 0s (or 1s) as it can hold, all remaining cells must be the other digit.',
     },
     {
       key: 'eliminate-filled-lines',
       title: 'Eliminate based on filled lines',
-      body: 'If filling a row or column would make it identical to an already-complete one, those values must be swapped.',
-      example: [
-        [1, 0, 1, 0, 1, 0],
-        [1, 0, 'a0', 'a1', 1, 0],
-      ],
+      body: 'A row or column cannot duplicate a completed one. If it would, use the opposite value.',
     },
     {
       key: 'eliminate-impossible-combinations',
       title: 'Eliminate impossible combinations',
-      body: 'If the highlighted value were one, the remaining blanks would force a trio. Because that is not allowed, the highlighted value must be zero.',
-      example: [[1, 1, 0, null, null, 'a0']],
+      body: 'If one value would eventually force three in a row, the other value must go here.',
     },
-    {
-      key: 'score-matters',
-      title: 'How scoring works',
-      body: 'Your score starts at 10,000 and drops while the puzzle timer runs. Each completed line that does not match the solution subtracts 500 points. Harder difficulties lose score more slowly.',
-    },
+  ],
+  howToPlayScoring: 'Starts at 10,000 and drops while the timer runs. Each incorrectly completed line costs 500 points. Score drops more slowly on harder difficulties.',
+  howToPlayTips: [
     {
       key: 'watch-for-flashes',
       title: 'Watch for flashes',

@@ -1,4 +1,3 @@
-import TutorialScreen from './ui/tutorial/screen';
 import type { GameDefinition } from '../../app/shell/games/gameDefinition';
 import { getTakuzuHowToPlay } from './content/howToPlay';
 import { getTakuzuLossContent } from './content/loss';
@@ -21,7 +20,6 @@ export const takuzuDefinition: GameDefinition<TakuzuPlaySession> = {
     return getTakuzuStrings().tagline;
   },
   supports: {
-    tutorial: true,
     learning: true,
     scoring: true,
   },
@@ -41,8 +39,5 @@ export const takuzuDefinition: GameDefinition<TakuzuPlaySession> = {
     get difficultyDescriptions() {
       return getTakuzuStrings().difficultyDescriptions;
     },
-  },
-  screens: {
-    tutorial: TutorialScreen,
   },
 };

@@ -1,4 +1,3 @@
-import TutorialScreen from './screens/TutorialScreen';
 import type { GameDefinition } from '../../app/shell/games/gameDefinition';
 import { getNonogramHowToPlay } from './content/howToPlay';
 import { getNonogramLossContent } from './content/loss';
@@ -21,7 +20,6 @@ export const nonogramDefinition: GameDefinition<NonogramPlaySession> = {
     return getNonogramStrings().tagline;
   },
   supports: {
-    tutorial: true,
     learning: true,
     scoring: true,
   },
@@ -41,8 +39,5 @@ export const nonogramDefinition: GameDefinition<NonogramPlaySession> = {
     get difficultyDescriptions() {
       return getNonogramStrings().difficultyDescriptions;
     },
-  },
-  screens: {
-    tutorial: TutorialScreen,
   },
 };
