@@ -5,7 +5,6 @@ import { Button, TouchableRipple } from 'react-native-paper';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { StackScreenProps } from '@react-navigation/stack';
-import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import type { RootStackParamList } from '../navigation/types';
 import type { Theme } from '../theme';
@@ -38,17 +37,16 @@ function buildNotesFromBoard(board: SudokuBoard, givens: SudokuBoard): SudokuNot
 }
 
 export default function TechniqueLessonScreen({ navigation, route }: Props) {
-  const { resolvedLanguage } = useLanguage();
   const { theme, isDark } = useTheme();
   const insets = useSafeAreaInsets();
   const styles = useMemo(() => makeStyles(theme, isDark, insets.top, insets.bottom), [theme, isDark, insets.top, insets.bottom]);
-  const strings = useMemo(() => getSudokuStrings(), [resolvedLanguage]);
+  const strings = getSudokuStrings();
   const { ruleKey, title, board, givens, finishedCells, evidenceCells, targetCells, highlightRows, highlightCols, highlightBoxes } = route.params;
   const [boardBounds, setBoardBounds] = useState({ width: 0, height: 0 });
 
   const typedBoard = board as SudokuBoard;
   const typedGivens = givens as SudokuBoard;
-  const typedFinishedCells = finishedCells as boolean[][];
+  const typedFinishedCells = finishedCells;
   const typedTargetCells = targetCells as SudokuHintTargetCell[];
 
   const notes = useMemo(() => buildNotesFromBoard(typedBoard, typedGivens), [typedBoard, typedGivens]);
@@ -151,7 +149,7 @@ export default function TechniqueLessonScreen({ navigation, route }: Props) {
   );
 }
 
-const makeStyles = (theme: Theme, isDark: boolean, topInset: number, _bottomInset: number) => StyleSheet.create({
+const makeStyles = (theme: Theme, isDark: boolean, _topInset: number, _bottomInset: number) => StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: theme.background,

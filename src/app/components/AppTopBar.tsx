@@ -81,7 +81,7 @@ export default function AppTopBar(props: Props) {
               accessibilityLabel={strings.home.changeTheme}
               icon={({ size, color }) => (
                 <Ionicons
-                  name={themeIconName as React.ComponentProps<typeof Ionicons>['name']}
+                  name={themeIconName}
                   size={size}
                   color={color}
                 />

@@ -25,7 +25,7 @@ export default function GlobalBottomNav({ activeTab }: Props) {
 
   const routes = useMemo(() => ([
     {
-      key: 'Games' as GlobalTabName,
+      key: 'Games',
       title: strings.tabs.games,
       focusedIcon: ({ color, size }: { color: string; size: number }) => (
         <Ionicons name="grid" size={size} color={color} />
@@ -35,7 +35,7 @@ export default function GlobalBottomNav({ activeTab }: Props) {
       ),
     },
     {
-      key: 'Stats' as GlobalTabName,
+      key: 'Stats',
       title: strings.tabs.stats,
       focusedIcon: ({ color, size }: { color: string; size: number }) => (
         <Ionicons name="stats-chart" size={size} color={color} />
@@ -45,7 +45,7 @@ export default function GlobalBottomNav({ activeTab }: Props) {
       ),
     },
     {
-      key: 'Settings' as GlobalTabName,
+      key: 'Settings',
       title: strings.tabs.settings,
       focusedIcon: ({ color, size }: { color: string; size: number }) => (
         <Ionicons name="settings" size={size} color={color} />
@@ -55,7 +55,7 @@ export default function GlobalBottomNav({ activeTab }: Props) {
       ),
     },
     {
-      key: 'Support' as GlobalTabName,
+      key: 'Support',
       title: strings.tabs.support,
       focusedIcon: ({ color, size }: { color: string; size: number }) => (
         <Ionicons name="help-circle" size={size} color={color} />
@@ -73,7 +73,7 @@ export default function GlobalBottomNav({ activeTab }: Props) {
       <BottomNavigation.Bar
         navigationState={{ index: activeIndex, routes }}
         onTabPress={({ route }) => {
-          navigation.navigate('MainTabs', { screen: route.key as GlobalTabName });
+          navigation.navigate('MainTabs', { screen: route.key });
         }}
         safeAreaInsets={{ bottom: insets.bottom }}
         inactiveColor={theme.textSecondary}
