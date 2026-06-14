@@ -1,16 +1,12 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import type { LayoutChangeEvent } from 'react-native';
-import { StyleSheet, Text, View } from 'react-native';
-import { HintPopoverContent } from '../../../../app/components/HintPopoverContent';
-import { useTheme } from '../../../../app/context/ThemeContext';
+import { StyleSheet, View } from 'react-native';
 import { createPuzzlePlayAdapter } from '../../../../app/shell/games/playAdapter';
 import { useNextMoveHelper } from '../../../../app/shell/games/useNextMoveHelper';
 import { getMinesweeperStrings } from '../../content/strings';
 import {
   clearActiveSessionState,
 } from '../../../../app/utils/activeSessionStateStorage';
-import type { Theme } from '../../../../app/theme';
-import { withAlpha } from '../../../../app/utils/color';
 import ZoomableBoardSurface from '../../../../app/components/ZoomableBoardSurface';
 import type {
   PuzzleEffectHandlerArgs,
@@ -43,9 +39,8 @@ function useMinesweeperAdapter({
   MinesweeperAction,
   MinesweeperActionEffect
 > {
-  const { theme } = useTheme();
   const minesweeperStrings = getMinesweeperStrings();
-  const styles = useMemo(() => makeStyles(theme), [theme]);
+  const styles = useMemo(() => makeStyles(), []);
   const nextMove = useNextMoveHelper((session: MinesweeperPlaySession) => (
     getMinesweeperNextMoveHint(session.board)
   ));
@@ -115,18 +110,7 @@ function useMinesweeperAdapter({
       iconName: nextMove.visible ? 'bulb' : 'bulb-outline',
       active: nextMove.visible,
       onPress: handleToggleNextMove,
-      popoverContent: nextMove.hint ? (
-        <HintPopoverContent title={nextMove.hint.title} body={nextMove.hint.body}>
-          {nextMove.hint.teaching ? (
-            <>
-              <Text style={styles.nextMoveCardLabel}>{nextMove.hint.teaching.patternTitle}</Text>
-              <Text style={styles.nextMoveCardPattern}>{nextMove.hint.teaching.patternLabel}</Text>
-              <Text style={styles.nextMoveCardLabel}>{nextMove.hint.teaching.explanationTitle}</Text>
-              <Text style={styles.nextMoveCardBody}>{nextMove.hint.teaching.explanation}</Text>
-            </>
-          ) : null}
-        </HintPopoverContent>
-      ) : undefined,
+      tooltipTitle: nextMove.hint?.title,
     };
     const resetZoomHeaderAction: PuzzleHeaderAction = {
       key: 'reset-zoom',
@@ -214,32 +198,11 @@ const minesweeperTypedPlayAdapter = {
 
 export const minesweeperPlayAdapter = createPuzzlePlayAdapter(minesweeperTypedPlayAdapter);
 
-const makeStyles = (theme: Theme) => StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   gridArea: {
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: GRID_HORIZONTAL_PADDING,
     paddingBottom: GRID_BOTTOM_PADDING,
-  },
-  nextMoveCardBody: {
-    color: theme.textSecondary,
-    fontSize: 13,
-    lineHeight: 18,
-  },
-  nextMoveCardLabel: {
-    marginTop: 8,
-    color: theme.textSecondary,
-    fontSize: 11,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-  },
-  nextMoveCardPattern: {
-    marginTop: 2,
-    color: theme.text,
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  emptyFooter: {
-    minHeight: 1,
   },
 });

@@ -22,7 +22,7 @@ export interface PuzzleHeaderAction {
   iconName: 'bulb' | 'bulb-outline' | 'refresh-outline' | 'key' | 'key-outline';
   active?: boolean;
   onPress: () => void;
-  popoverContent?: ReactNode;
+  tooltipTitle?: string;
 }
 
 export interface PuzzlePlayAdapterShellArgs {

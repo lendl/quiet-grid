@@ -1,16 +1,14 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useMemo } from 'react';
 import { StackActions } from '@react-navigation/native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { StyleSheet, Text, View } from 'react-native';
-import { TouchableRipple } from 'react-native-paper';
+import { Tooltip, TouchableRipple } from 'react-native-paper';
 import type { StackScreenProps } from '@react-navigation/stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Popover, { PopoverPlacement, Rect as PopoverRect } from 'react-native-popover-view';
 import PuzzlePlayScaffold from '../components/PuzzlePlayScaffold';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import type { RootStackParamList } from '../navigation/types';
-import type { PuzzleHeaderAction } from '../shell/games/playAdapter';
 import { usePuzzlePlayController } from '../shell/hooks/usePuzzlePlayController';
 import type { Theme } from '../theme';
 import { formatElapsed } from '../utils/formatElapsed';
@@ -79,12 +77,9 @@ export default function PuzzlePlayScreen(props: Props) {
                   <Text style={s.timerText}>{elapsedLabel}</Text>
                 </View>
               ) : null}
-              {layout.headerActions.map((action) => (
-                action.popoverContent != null ? (
-                  <HeaderPopoverButton key={action.key} action={action} theme={theme} s={s} />
-                ) : (
+              {layout.headerActions.map((action) => {
+                const button = (
                   <TouchableRipple
-                    key={action.key}
                     accessibilityRole="button"
                     accessibilityLabel={action.accessibilityLabel}
                     onPress={action.onPress}
@@ -94,11 +89,21 @@ export default function PuzzlePlayScreen(props: Props) {
                     <Ionicons
                       name={action.iconName}
                       size={18}
-                      color={action.active ? theme.primaryLight : theme.text}
+                      color={action.active ? theme.primary : theme.text}
                     />
                   </TouchableRipple>
-                )
-              ))}
+                );
+
+                if (action.tooltipTitle) {
+                  return (
+                    <Tooltip key={action.key} title={action.tooltipTitle}>
+                      {button}
+                    </Tooltip>
+                  );
+                }
+
+                return React.cloneElement(button, { key: action.key });
+              })}
               <TouchableRipple
                 accessibilityRole="button"
                 accessibilityLabel={strings.common.rules}
@@ -134,57 +139,6 @@ export default function PuzzlePlayScreen(props: Props) {
       main={layout.main}
       footer={layout.footer}
     />
-  );
-}
-
-interface HeaderPopoverButtonProps {
-  action: PuzzleHeaderAction;
-  theme: Theme;
-  s: ReturnType<typeof makeStyles>;
-}
-
-function HeaderPopoverButton({ action, theme, s }: HeaderPopoverButtonProps) {
-  const buttonRef = useRef<View>(null);
-  const [buttonRect, setButtonRect] = useState<PopoverRect | null>(null);
-
-  const measureButton = useCallback(() => {
-    buttonRef.current?.measureInWindow((x, y, width, height) => {
-      setButtonRect(new PopoverRect(x, y, width, height));
-    });
-  }, []);
-
-  const isVisible = !!(action.active && action.popoverContent != null && buttonRect != null);
-
-  return (
-    <>
-      <View ref={buttonRef} collapsable={false} onLayout={measureButton}>
-        <TouchableRipple
-          accessibilityRole="button"
-          accessibilityLabel={action.accessibilityLabel}
-          onPress={action.onPress}
-          style={s.iconButton}
-          borderless
-        >
-          <Ionicons
-            name={action.iconName}
-            size={18}
-            color={action.active ? theme.primary : theme.text}
-          />
-        </TouchableRipple>
-      </View>
-      <Popover
-        from={buttonRect ?? new PopoverRect(0, 0, 0, 0)}
-        isVisible={isVisible}
-        onRequestClose={action.onPress}
-        placement={PopoverPlacement.BOTTOM}
-        popoverStyle={{ borderRadius: 16, backgroundColor: theme.surfaceElevated }}
-        backgroundStyle={{ backgroundColor: 'transparent' }}
-      >
-        <View style={s.popoverContent}>
-          {action.popoverContent}
-        </View>
-      </Popover>
-    </>
   );
 }
 
@@ -261,10 +215,5 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     color: theme.text,
     fontSize: 13,
     fontWeight: '700',
-  },
-  popoverContent: {
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    width: 280,
   },
 });

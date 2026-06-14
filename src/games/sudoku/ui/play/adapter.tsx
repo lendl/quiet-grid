@@ -1,8 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import type { LayoutChangeEvent } from 'react-native';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { HintPopoverContent } from '../../../../app/components/HintPopoverContent';
 import { useLanguage } from '../../../../app/context/LanguageContext';
 import { useTheme } from '../../../../app/context/ThemeContext';
 import ZoomableBoardSurface from '../../../../app/components/ZoomableBoardSurface';
@@ -17,7 +16,6 @@ import {
 import type { BoardFeedbackEffect } from '../../../../app/shell/boardFeedback';
 import { useNextMoveHelper } from '../../../../app/shell/games/useNextMoveHelper';
 import type { Theme } from '../../../../app/theme';
-import { withAlpha } from '../../../../app/utils/color';
 import { getSudokuStrings } from '../../content/strings';
 import {
   applySudokuAction,
@@ -99,7 +97,6 @@ function buildBoardFeedbackEffects(
 function useSudokuAdapter({
   difficulty,
   goHome,
-  navigate,
   setDialog,
 }: PuzzlePlayAdapterShellArgs): PuzzlePlayAdapterInstance<SudokuPlaySession> {
   const { strings: appStrings, resolvedLanguage } = useLanguage();
@@ -380,39 +377,7 @@ function useSudokuAdapter({
       iconName: nextMove.visible ? 'bulb' : 'bulb-outline',
       active: nextMove.visible,
       onPress: handleToggleNextMove,
-      popoverContent: nextMove.hint ? (
-        <HintPopoverContent title={nextMove.hint.title} body={nextMove.hint.body}>
-          {nextMove.hint.kind === 'progress' && nextMove.hint.ruleKey !== 'naked-single' ? (
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={strings.play.nextMove.explainButton}
-              onPress={() => {
-                const hint = nextMove.hint;
-                const currentSession = sessionRef.current;
-                if (!hint || hint.kind !== 'progress' || !currentSession) {
-                  return;
-                }
-                navigate('TechniqueLesson', {
-                  gameId: 'sudoku',
-                  ruleKey: hint.ruleKey,
-                  title: hint.title,
-                  board: currentSession.board,
-                  givens: currentSession.puzzle.givens,
-                  finishedCells: currentSession.finishedCells,
-                  evidenceCells: hint.evidenceCells,
-                  targetCells: hint.targetCells,
-                  highlightRows: hint.highlightRows,
-                  highlightCols: hint.highlightCols,
-                  highlightBoxes: hint.highlightBoxes,
-                });
-              }}
-              style={styles.explainButton}
-            >
-              <Text style={styles.explainButtonText}>{strings.play.nextMove.explainButton}</Text>
-            </Pressable>
-          ) : null}
-        </HintPopoverContent>
-      ) : undefined,
+      tooltipTitle: nextMove.hint?.title,
     };
 
     return {
@@ -504,7 +469,6 @@ function useSudokuAdapter({
     gridContainer.width,
     handleGridLayout,
     isBoardZoomed,
-    navigate,
     noteMode,
     nextMove,
     safeAreaBottom,
@@ -548,20 +512,5 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   },
   footerSpacer: {
     flex: 1,
-  },
-  explainButton: {
-    alignSelf: 'flex-start',
-    marginTop: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 10,
-    backgroundColor: withAlpha(theme.primary, 0.14),
-    borderWidth: 1,
-    borderColor: withAlpha(theme.primaryLight, 0.36),
-  },
-  explainButtonText: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: theme.primary,
   },
 });

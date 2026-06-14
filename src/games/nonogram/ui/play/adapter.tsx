@@ -2,7 +2,6 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import type { LayoutChangeEvent } from 'react-native';
 import { StyleSheet, Text, View } from 'react-native';
 import { Switch } from 'react-native-paper';
-import { HintPopoverContent } from '../../../../app/components/HintPopoverContent';
 import { createPuzzlePlayAdapter } from '../../../../app/shell/games/playAdapter';
 import { getAppStrings } from '../../../../app/i18n';
 import { useTheme } from '../../../../app/context/ThemeContext';
@@ -101,9 +100,7 @@ function useNonogramAdapter({
       onPress: () => {
         nextMove.toggle(sessionRef.current);
       },
-      popoverContent: nextMove.hint ? (
-        <HintPopoverContent title={nextMove.hint.title} body={nextMove.hint.body} />
-      ) : undefined,
+      tooltipTitle: nextMove.hint?.title,
     };
     const resetZoomHeaderAction: PuzzleHeaderAction = {
       key: 'reset-zoom',

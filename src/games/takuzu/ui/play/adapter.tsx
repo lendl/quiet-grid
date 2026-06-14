@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import type { LayoutChangeEvent } from 'react-native';
 import { StyleSheet, View } from 'react-native';
-import { HintPopoverContent } from '../../../../app/components/HintPopoverContent';
 import { useLanguage } from '../../../../app/context/LanguageContext';
 import { createPuzzlePlayAdapter } from '../../../../app/shell/games/playAdapter';
 import { useNextMoveHelper } from '../../../../app/shell/games/useNextMoveHelper';
@@ -277,9 +276,7 @@ function useTakuzuAdapter({
       iconName: nextMove.visible ? 'bulb' : 'bulb-outline',
       active: nextMove.visible,
       onPress: handleToggleNextMove,
-      popoverContent: nextMove.hint ? (
-        <HintPopoverContent title={nextMove.hint.title} body={nextMove.hint.body} />
-      ) : undefined,
+      tooltipTitle: nextMove.hint?.title,
     };
     const resetZoomHeaderAction: PuzzleHeaderAction = {
       key: 'reset-zoom',
