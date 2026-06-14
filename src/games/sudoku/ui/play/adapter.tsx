@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import type { LayoutChangeEvent } from 'react-native';
 import { StyleSheet, View } from 'react-native';
+import { Button } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLanguage } from '../../../../app/context/LanguageContext';
 import { useTheme } from '../../../../app/context/ThemeContext';
@@ -96,7 +97,9 @@ function buildBoardFeedbackEffects(
 
 function useSudokuAdapter({
   difficulty,
+  betaFeaturesEnabled,
   goHome,
+  navigate,
   setDialog,
 }: PuzzlePlayAdapterShellArgs): PuzzlePlayAdapterInstance<SudokuPlaySession> {
   const { strings: appStrings, resolvedLanguage } = useLanguage();
@@ -380,6 +383,30 @@ function useSudokuAdapter({
       tooltipTitle: nextMove.hint?.title,
     };
 
+    const explainHint = betaFeaturesEnabled && nextMove.hint?.kind === 'progress' ? nextMove.hint : null;
+    const footer = explainHint && session ? (
+      <Button
+        mode="outlined"
+        onPress={() => navigate('TechniqueLesson', {
+          gameId: 'sudoku',
+          ruleKey: explainHint.ruleKey,
+          title: explainHint.title,
+          board: session.board,
+          givens: session.puzzle.givens,
+          finishedCells: session.finishedCells,
+          evidenceCells: explainHint.evidenceCells,
+          targetCells: explainHint.targetCells,
+          highlightRows: explainHint.highlightRows,
+          highlightCols: explainHint.highlightCols,
+          highlightBoxes: explainHint.highlightBoxes,
+        })}
+        style={styles.explainButton}
+        labelStyle={styles.explainButtonLabel}
+      >
+        {strings.play.nextMove.explainButton}
+      </Button>
+    ) : null;
+
     return {
       loading: loading || !session,
       exitToHome,
@@ -460,15 +487,17 @@ function useSudokuAdapter({
       })() : (
         <View style={styles.boardArea} />
       ),
-      footer: null,
+      footer,
     };
   }, [
+    betaFeaturesEnabled,
     boardFeedbackEffects,
     goHome,
     gridContainer.height,
     gridContainer.width,
     handleGridLayout,
     isBoardZoomed,
+    navigate,
     noteMode,
     nextMove,
     safeAreaBottom,
@@ -507,10 +536,11 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
   },
-  footerStack: {
-    gap: 12,
+  explainButton: {
+    borderRadius: 14,
   },
-  footerSpacer: {
-    flex: 1,
+  explainButtonLabel: {
+    fontSize: 15,
+    fontWeight: '700',
   },
 });

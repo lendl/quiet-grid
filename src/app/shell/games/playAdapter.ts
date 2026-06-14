@@ -28,6 +28,7 @@ export interface PuzzleHeaderAction {
 export interface PuzzlePlayAdapterShellArgs {
   difficulty: PuzzleDifficulty;
   resumeRequested: boolean;
+  betaFeaturesEnabled: boolean;
   setDialog: Dispatch<SetStateAction<DialogConfig | null>>;
   goHome: () => void;
   goBack: () => void;

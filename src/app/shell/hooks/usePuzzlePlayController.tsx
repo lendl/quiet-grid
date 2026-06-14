@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useIsFocused } from '@react-navigation/native';
 import type { StackScreenProps } from '@react-navigation/stack';
 import type { RootStackParamList } from '../../navigation/types';
@@ -8,6 +8,7 @@ import {
   saveActiveSessionState,
 } from '../../utils/activeSessionStateStorage';
 import { getAppStrings } from '../../i18n';
+import { loadBetaGamesEnabled } from '../../utils/settingsStorage';
 import { getGameDefinition } from '../games/gameRegistry';
 import type { PuzzleRenderState } from '../games/playAdapter';
 import type { PuzzlePlayLayoutState } from '../playScreenTypes';
@@ -25,6 +26,15 @@ export function usePuzzlePlayController(props: Props, menuOpen = false): PuzzleP
   const difficulty = props.route.params.difficulty ?? 'easy';
   const resumeRequested = props.route.params.resume === true;
 
+  const [betaFeaturesEnabled, setBetaFeaturesEnabled] = useState(false);
+
+  useEffect(() => {
+    if (!definition.features?.explainTechnique) {
+      return;
+    }
+    void loadBetaGamesEnabled().then(setBetaFeaturesEnabled);
+  }, [definition.features?.explainTechnique]);
+
   const goHome = useCallback(() => {
     returnToHome(props.navigation);
   }, [props.navigation]);
@@ -39,6 +49,7 @@ export function usePuzzlePlayController(props: Props, menuOpen = false): PuzzleP
   const adapterInstance = adapter.useAdapter({
     difficulty,
     resumeRequested,
+    betaFeaturesEnabled,
     setDialog,
     goHome,
     goBack,

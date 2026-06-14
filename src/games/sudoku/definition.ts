@@ -16,6 +16,9 @@ export const sudokuDefinition: GameDefinition<SudokuPlaySession> = {
   },
   emoji: '🔢',
   beta: true,
+  features: {
+    explainTechnique: true,
+  },
   get tagline() {
     return getSudokuStrings().tagline;
   },
