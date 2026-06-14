@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import Ionicons from '@react-native-vector-icons/ionicons';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Appbar, TouchableRipple } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AppBrand from './AppBrand';
 import AppDialog from './AppDialog';
@@ -9,6 +10,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import { useMenuThemeCycle } from '../hooks/useMenuThemeCycle';
 import type { Theme } from '../theme';
+import { withAlpha } from '../utils/color';
 import { openRepo } from '../utils/supportLinks';
 
 type BrandProps = {
@@ -42,65 +44,53 @@ export default function AppTopBar(props: Props) {
 
   return (
     <>
-      <View style={s.container}>
-        <View style={[s.inner, { paddingTop: insets.top + 12 }]}>
-          {props.mode === 'back' ? (
-            <>
-              <TouchableOpacity
-                accessibilityRole="button"
-                accessibilityLabel={strings.common.goBack}
-                onPress={props.onBack}
-                style={s.backButton}
-                activeOpacity={0.82}
-              >
-                <Ionicons name="arrow-back" size={20} color={theme.text} />
-              </TouchableOpacity>
-              <View style={s.backRightSlot}>{props.rightSlot}</View>
-            </>
-          ) : (
+      <Appbar.Header style={s.header} statusBarHeight={insets.top}>
+        {props.mode === 'back' ? (
+          <>
+            <Appbar.BackAction
+              onPress={props.onBack}
+              accessibilityLabel={strings.common.goBack}
+            />
+            <View style={s.flex} />
+            {props.rightSlot ? <View style={s.rightSlotWrap}>{props.rightSlot}</View> : null}
+          </>
+        ) : (
           <>
             <View style={s.brandWrap}>
               <AppBrand compact gameName={props.mode === 'brand' ? props.gameName : undefined} />
             </View>
-            <View style={s.actions}>
-              {activePuzzle ? (
-                <TouchableOpacity
-                  accessibilityRole="button"
-                  accessibilityLabel={strings.common.continuePuzzle}
-                  onPress={() => {
-                    void continuePuzzle();
-                  }}
-                  style={[s.iconButton, s.playButton]}
-                  activeOpacity={0.82}
-                >
-                  <Ionicons name="play" size={18} color={theme.onPrimary} />
-                </TouchableOpacity>
-              ) : null}
-              <TouchableOpacity
+            {activePuzzle ? (
+              <TouchableRipple
                 accessibilityRole="button"
-                accessibilityLabel={strings.home.openRepo}
-                onPress={() => {
-                  void handleOpenRepo();
-                }}
-                style={s.iconButton}
-                activeOpacity={0.82}
+                accessibilityLabel={strings.common.continuePuzzle}
+                onPress={() => { void continuePuzzle(); }}
+                style={s.playButton}
+                rippleColor={withAlpha(theme.onPrimary, 0.2)}
               >
-                <Ionicons name="logo-github" size={20} color={theme.text} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                accessibilityRole="button"
-                accessibilityLabel={strings.home.changeTheme}
-                onPress={cycleTheme}
-                style={s.iconButton}
-                activeOpacity={0.82}
-              >
-                <Ionicons name={themeIconName} size={20} color={theme.text} />
-              </TouchableOpacity>
-            </View>
+                <Ionicons name="play" size={18} color={theme.onPrimary} />
+              </TouchableRipple>
+            ) : null}
+            <Appbar.Action
+              accessibilityLabel={strings.home.openRepo}
+              icon={({ size, color }) => (
+                <Ionicons name="logo-github" size={size} color={color} />
+              )}
+              onPress={() => { void handleOpenRepo(); }}
+            />
+            <Appbar.Action
+              accessibilityLabel={strings.home.changeTheme}
+              icon={({ size, color }) => (
+                <Ionicons
+                  name={themeIconName as React.ComponentProps<typeof Ionicons>['name']}
+                  size={size}
+                  color={color}
+                />
+              )}
+              onPress={cycleTheme}
+            />
           </>
         )}
-      </View>
-      </View>
+      </Appbar.Header>
       <AppDialog
         visible={repoErrorVisible}
         title={strings.home.repoErrorTitle}
@@ -118,44 +108,28 @@ export default function AppTopBar(props: Props) {
 }
 
 const makeStyles = (theme: Theme) => StyleSheet.create({
-  container: {
-    paddingHorizontal: 16,
-    paddingBottom: 10,
+  header: {
+    backgroundColor: 'transparent',
+    elevation: 0,
+    paddingHorizontal: 4,
   },
-  inner: {
-    minHeight: 56,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 12,
-  },
+  flex: { flex: 1 },
   brandWrap: {
     flex: 1,
+    paddingLeft: 4,
     minWidth: 0,
   },
-  actions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  iconButton: {
-    width: 32,
-    height: 32,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  backButton: {
-    width: 36,
-    height: 36,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  backRightSlot: {
-    flex: 1,
-    minWidth: 0,
-    alignItems: 'flex-end',
+  rightSlotWrap: {
+    paddingRight: 16,
   },
   playButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 999,
     backgroundColor: theme.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 4,
+    overflow: 'hidden',
   },
 });

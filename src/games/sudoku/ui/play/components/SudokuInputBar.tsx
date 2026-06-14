@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import Ionicons from '@react-native-vector-icons/ionicons';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { TouchableRipple } from 'react-native-paper';
 import { useLanguage } from '../../../../../app/context/LanguageContext';
 import { useTheme } from '../../../../../app/context/ThemeContext';
 import { withAlpha } from '../../../../../app/utils/color';
@@ -37,7 +38,7 @@ export default function SudokuInputBar({
 
   return (
     <View accessibilityRole="toolbar" style={styles.row}>
-      <Pressable
+      <TouchableRipple
         accessibilityRole="button"
         accessibilityLabel={noteMode
           ? strings.play.controls.noteModeEnabled
@@ -45,6 +46,7 @@ export default function SudokuInputBar({
         accessibilityState={{ selected: noteMode, disabled: !hasEditableSelection }}
         disabled={!hasEditableSelection}
         onPress={onToggleNoteMode}
+        rippleColor={noteMode ? withAlpha(theme.onPrimary, 0.2) : undefined}
         style={[
           styles.btn,
           {
@@ -59,11 +61,11 @@ export default function SudokuInputBar({
         ]}
       >
         <Ionicons
-          name={noteMode ? 'pencil' : 'pencil-outline'}
+          name={noteMode ? 'create' : 'create-outline'}
           size={20}
           color={noteMode ? theme.onPrimary : theme.textSecondary}
         />
-      </Pressable>
+      </TouchableRipple>
       {sudokuDigits.map((digit) => {
         const active = noteMode
           ? Boolean(selectedNotes?.[digit - 1])
@@ -73,13 +75,14 @@ export default function SudokuInputBar({
           : strings.play.controls.digitButtonLabel(digit);
 
         return (
-          <Pressable
+          <TouchableRipple
             key={digit}
             accessibilityRole="button"
             accessibilityLabel={label}
             accessibilityState={{ selected: active, disabled: digitsDisabled }}
             disabled={digitsDisabled}
             onPress={() => onPressDigit(digit)}
+            rippleColor={active ? withAlpha(theme.onPrimary, 0.2) : undefined}
             style={[
               styles.btn,
               {
@@ -96,7 +99,7 @@ export default function SudokuInputBar({
             <Text style={[styles.digitText, { color: active ? theme.onPrimary : theme.text }]}>
               {digit}
             </Text>
-          </Pressable>
+          </TouchableRipple>
         );
       })}
     </View>

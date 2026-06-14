@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef } from 'react';
-import { Animated, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, StyleSheet, Text, View } from 'react-native';
+import { Button } from 'react-native-paper';
 import type { StackScreenProps } from '@react-navigation/stack';
 import OutcomeScreenLayout, { type OutcomeScreenMetrics } from '../components/OutcomeScreenLayout';
 import GamePageShell from '../components/GamePageShell';
@@ -246,19 +247,23 @@ export default function CompletionScreen({ route, navigation }: Props) {
               </View>
 
               <View style={s.actionRow}>
-                <TouchableOpacity style={[baseStyles.actionButton, { backgroundColor: theme.primary }]} onPress={handlePlayAgain} activeOpacity={0.82}>
-                  <Text style={[baseStyles.primaryButtonText, { color: theme.onPrimary }]}>{strings.common.playAgain}</Text>
-                </TouchableOpacity>
+                <Button
+                  mode="contained"
+                  onPress={handlePlayAgain}
+                  style={baseStyles.primaryButton}
+                >
+                  {strings.common.playAgain}
+                </Button>
               </View>
 
               <View style={s.secondaryRow}>
-                <TouchableOpacity style={baseStyles.secondaryButton} onPress={handleTryAnotherGame} activeOpacity={0.75}>
-                  <Text style={[baseStyles.secondaryButtonText, { color: theme.textSecondary }]}>{strings.completion.tryAnotherGame}</Text>
-                </TouchableOpacity>
+                <Button mode="text" onPress={handleTryAnotherGame} textColor={theme.textSecondary}>
+                  {strings.completion.tryAnotherGame}
+                </Button>
                 <View style={[baseStyles.secondaryDivider, { backgroundColor: withAlpha(theme.border, 0.5) }]} />
-                <TouchableOpacity style={baseStyles.secondaryButton} onPress={handleViewStats} activeOpacity={0.75}>
-                  <Text style={[baseStyles.secondaryButtonText, { color: theme.textSecondary }]}>{strings.completion.viewStats}</Text>
-                </TouchableOpacity>
+                <Button mode="text" onPress={handleViewStats} textColor={theme.textSecondary}>
+                  {strings.completion.viewStats}
+                </Button>
               </View>
             </Animated.View>
           );
@@ -345,25 +350,9 @@ const baseStyles = StyleSheet.create({
   verticalMetaDivider: {
     width: 1,
   },
-  actionButton: {
+  primaryButton: {
     flex: 1,
-    paddingVertical: 15,
     borderRadius: 14,
-    alignItems: 'center',
-  },
-  primaryButtonText: {
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  secondaryButton: {
-    flex: 1,
-    minHeight: 36,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  secondaryButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
   },
   secondaryDivider: {
     width: 1,

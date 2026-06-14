@@ -1,14 +1,13 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import type { LayoutChangeEvent } from 'react-native';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { Switch } from 'react-native-paper';
 import { HintPopoverContent } from '../../../../app/components/HintPopoverContent';
 import { createPuzzlePlayAdapter } from '../../../../app/shell/games/playAdapter';
 import { getAppStrings } from '../../../../app/i18n';
 import { useTheme } from '../../../../app/context/ThemeContext';
 import { useNextMoveHelper } from '../../../../app/shell/games/useNextMoveHelper';
 import { clearActiveSessionState } from '../../../../app/utils/activeSessionStateStorage';
-import { withAlpha } from '../../../../app/utils/color';
-import type { Theme } from '../../../../app/theme';
 import ZoomableBoardSurface from '../../../../app/components/ZoomableBoardSurface';
 import type {
   PuzzleImmediateActionRunner,
@@ -38,7 +37,7 @@ function useNonogramAdapter({
   const { theme } = useTheme();
   const appStrings = getAppStrings();
   const strings = getNonogramStrings();
-  const styles = useMemo(() => makeStyles(theme), [theme]);
+  const styles = useMemo(() => makeStyles(), []);
   const nextMove = useNextMoveHelper((session: NonogramPlaySession) => (
     getNonogramNextMoveHint(session.puzzle, session.board)
   ));
@@ -169,31 +168,16 @@ function useNonogramAdapter({
         <View style={styles.boardArea} />
       ),
       footer: (
-        <View style={styles.footer}>
-          <View style={styles.modeToggleRow}>
-            <TouchableOpacity
-              style={[styles.modeBtn, inputMode === 'cross' && styles.modeBtnActive]}
-              onPress={() => setInputMode('cross')}
-              activeOpacity={0.75}
-            >
-              <Text style={[
-                styles.modeBtnCrossText,
-                { color: inputMode === 'cross' ? theme.onPrimary : theme.textSecondary },
-              ]}>
-                ×
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.modeBtn, inputMode === 'fill' && styles.modeBtnActive]}
-              onPress={() => setInputMode('fill')}
-              activeOpacity={0.75}
-            >
-              <View style={[
-                styles.modeBtnSquare,
-                { backgroundColor: inputMode === 'fill' ? theme.onPrimary : theme.textSecondary },
-              ]} />
-            </TouchableOpacity>
-          </View>
+        <View style={styles.switchRow}>
+          <Text style={[styles.sideLabel, { color: inputMode === 'cross' ? theme.text : theme.textSecondary }]}>
+            ×
+          </Text>
+          <Switch
+            value={inputMode === 'fill'}
+            onValueChange={(fill) => setInputMode(fill ? 'fill' : 'cross')}
+            accessibilityLabel="Input mode: fill or empty"
+          />
+          <View style={[styles.fillSquare, { backgroundColor: inputMode === 'fill' ? theme.primary : theme.textSecondary }]} />
         </View>
       ),
     };
@@ -231,7 +215,7 @@ const nonogramTypedPlayAdapter = {
 
 export const nonogramPlayAdapter = createPuzzlePlayAdapter(nonogramTypedPlayAdapter);
 
-const makeStyles = (theme: Theme) => StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   boardArea: {
     flex: 1,
     justifyContent: 'center',
@@ -239,39 +223,21 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     paddingTop: 4,
     paddingBottom: 6,
   },
-  footer: {
-    flex: 1,
-    gap: 8,
-  },
-  footerSpacer: {
-    flex: 1,
-  },
-  modeToggleRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 10,
-  },
-  modeBtn: {
-    width: 52,
+  switchRow: {
     height: 52,
-    borderRadius: 14,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: withAlpha(theme.surfaceElevated, 0.9),
-    borderWidth: 1,
-    borderColor: withAlpha(theme.border, 0.5),
+    gap: 14,
   },
-  modeBtnActive: {
-    backgroundColor: theme.primary,
-    borderColor: theme.primary,
-  },
-  modeBtnCrossText: {
+  sideLabel: {
     fontSize: 26,
     fontWeight: '900',
     lineHeight: 30,
+    width: 28,
     textAlign: 'center',
   },
-  modeBtnSquare: {
+  fillSquare: {
     width: 20,
     height: 20,
     borderRadius: 4,

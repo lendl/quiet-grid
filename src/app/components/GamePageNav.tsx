@@ -2,7 +2,8 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { StackActions, useNavigation, useNavigationState } from '@react-navigation/native';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import type { StackNavigationProp } from '@react-navigation/stack';
-import { Animated, Easing, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
+import { TouchableRipple } from 'react-native-paper';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import type {
@@ -134,36 +135,31 @@ export default function GamePageNav(props: Props) {
     const direction: TransitionDirection = targetIndex > activeIndex ? 'forward' : 'backward';
 
     const metrics = getIndicatorMetrics(targetIndex);
-    if (!metrics) {
-      navigateTo(target, direction);
-      return;
+    if (metrics) {
+      navigationAttempt.current += 1;
+      indicatorAnimation.current?.stop();
+
+      const animation = Animated.parallel([
+        Animated.timing(indicatorX, {
+          toValue: metrics.x,
+          duration: 200,
+          easing: Easing.bezier(0.2, 0, 0, 1),
+          useNativeDriver: false,
+        }),
+        Animated.timing(indicatorWidth, {
+          toValue: metrics.width,
+          duration: 200,
+          easing: Easing.bezier(0.2, 0, 0, 1),
+          useNativeDriver: false,
+        }),
+      ]);
+
+      indicatorAnimation.current = animation;
+      animation.start();
     }
 
-    navigationAttempt.current += 1;
-    const attempt = navigationAttempt.current;
-    indicatorAnimation.current?.stop();
-
-    const animation = Animated.parallel([
-      Animated.timing(indicatorX, {
-        toValue: metrics.x,
-        duration: 180,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: false,
-      }),
-      Animated.timing(indicatorWidth, {
-        toValue: metrics.width,
-        duration: 180,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: false,
-      }),
-    ]);
-
-    indicatorAnimation.current = animation;
-    animation.start(({ finished }) => {
-      if (finished && attempt === navigationAttempt.current) {
-        navigateTo(target, direction);
-      }
-    });
+    // Navigate immediately so the content transition and indicator slide together.
+    navigateTo(target, direction);
   };
 
   return (
@@ -185,13 +181,13 @@ export default function GamePageNav(props: Props) {
           const focused = item.key === resolvedActiveTab;
 
           return (
-            <TouchableOpacity
+            <TouchableRipple
               key={item.key}
               accessibilityRole="button"
               accessibilityLabel={item.label}
               onPress={() => handlePress(item.key)}
               style={s.badge}
-              activeOpacity={0.82}
+              borderless
             >
               <Text
                 style={[s.badgeText, focused ? s.badgeTextActive : null]}
@@ -212,7 +208,7 @@ export default function GamePageNav(props: Props) {
               >
                 {item.label}
               </Text>
-            </TouchableOpacity>
+            </TouchableRipple>
           );
         })}
       </View>

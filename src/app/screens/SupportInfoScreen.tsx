@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Divider, TouchableRipple } from 'react-native-paper';
 import type { StackScreenProps } from '@react-navigation/stack';
 import GlobalPageShell from '../components/GlobalPageShell';
 import { getLocalizedSupportInfoContent } from '../content/supportInfo';
@@ -19,15 +20,15 @@ export default function SupportInfoScreen({ navigation, route }: Props) {
   return (
     <GlobalPageShell activeTab="Support" contentStyle={s.container}>
       <ScrollView contentContainerStyle={s.scroll}>
-        <TouchableOpacity
+        <TouchableRipple
           style={s.backButton}
           onPress={() => navigation.goBack()}
           accessibilityRole="button"
-            accessibilityLabel={strings.common.goBack}
-            activeOpacity={0.8}
-          >
-            <Text style={s.backButtonText}>{strings.supportInfoBack}</Text>
-          </TouchableOpacity>
+          accessibilityLabel={strings.common.goBack}
+          borderless
+        >
+          <Text style={s.backButtonText}>{strings.supportInfoBack}</Text>
+        </TouchableRipple>
 
         <Text style={s.title}>{info.title}</Text>
         <Text style={s.intro}>{info.intro}</Text>
@@ -40,7 +41,7 @@ export default function SupportInfoScreen({ navigation, route }: Props) {
                 {paragraph}
               </Text>
             ))}
-            <View style={s.sectionDivider} />
+            <Divider style={{ marginTop: 6 }} />
           </View>
         ))}
       </ScrollView>
@@ -92,10 +93,5 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     fontSize: 15,
     lineHeight: 23,
     color: theme.text,
-  },
-  sectionDivider: {
-    height: 1,
-    marginTop: 6,
-    backgroundColor: theme.border,
   },
 });

@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Divider, TouchableRipple } from 'react-native-paper';
 import { useFocusEffect, useNavigation, type NavigationProp } from '@react-navigation/native';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import ActivePuzzleReplaceDialog from '../../components/ActivePuzzleReplaceDialog';
@@ -11,7 +12,6 @@ import type { GameTabParamList, RootStackParamList } from '../../navigation/type
 import { getGameDefinition } from '../../shell/games/gameRegistry';
 import type { Theme } from '../../theme';
 import type { Difficulty } from '../../types';
-import { withAlpha } from '../../utils/color';
 import { getDifficultyColor } from '../../utils/format';
 import { startGame } from '../../utils/gameNavigation';
 
@@ -70,19 +70,20 @@ export default function GamePlayTab({ route }: Props) {
 
         {levels.map((level, index) => (
           <React.Fragment key={level.key}>
-            <TouchableOpacity
+            <TouchableRipple
               style={s.diffRow}
               onPress={() => handleSelectDifficulty(level.key)}
-              activeOpacity={0.78}
             >
-              <View style={[s.diffMarker, { backgroundColor: getDifficultyColor(theme, level.key) }]} />
-              <View style={s.diffBody}>
-                <Text style={s.diffLabel}>{level.label}</Text>
-                <Text style={s.diffDesc}>{level.description}</Text>
+              <View style={s.diffRowContent}>
+                <View style={[s.diffMarker, { backgroundColor: getDifficultyColor(theme, level.key) }]} />
+                <View style={s.diffBody}>
+                  <Text style={s.diffLabel}>{level.label}</Text>
+                  <Text style={s.diffDesc}>{level.description}</Text>
+                </View>
+                <Text style={s.diffAction}>{strings.common.play}</Text>
               </View>
-              <Text style={s.diffAction}>{strings.common.play}</Text>
-            </TouchableOpacity>
-            {index < levels.length - 1 ? <View style={s.rowDivider} /> : null}
+            </TouchableRipple>
+            {index < levels.length - 1 ? <Divider /> : null}
           </React.Fragment>
         ))}
       </ScrollView>
@@ -122,10 +123,12 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     color: theme.textMuted,
   },
   diffRow: {
+    paddingVertical: 18,
+  },
+  diffRowContent: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 14,
-    paddingVertical: 18,
   },
   diffMarker: {
     width: 10,
@@ -148,9 +151,5 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     fontSize: 13,
     fontWeight: '700',
     color: theme.primaryLight,
-  },
-  rowDivider: {
-    height: 1,
-    backgroundColor: withAlpha(theme.textSecondary, 0.14),
   },
 });

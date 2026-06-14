@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import type { LayoutChangeEvent } from 'react-native';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Button, TouchableRipple } from 'react-native-paper';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { StackScreenProps } from '@react-navigation/stack';
@@ -66,15 +67,15 @@ export default function TechniqueLessonScreen({ navigation, route }: Props) {
   return (
     <View style={[styles.root, { paddingTop: insets.top }]}>
       <View style={styles.topBar}>
-        <TouchableOpacity
+        <TouchableRipple
           accessibilityRole="button"
           accessibilityLabel={strings.play.techniqueLesson.backButton}
           onPress={() => navigation.goBack()}
           style={styles.backButton}
-          activeOpacity={0.82}
+          borderless
         >
           <Ionicons name="arrow-back" size={20} color={theme.text} />
-        </TouchableOpacity>
+        </TouchableRipple>
         <Text style={styles.topBarTitle} numberOfLines={1}>
           {title}
         </Text>
@@ -137,16 +138,14 @@ export default function TechniqueLessonScreen({ navigation, route }: Props) {
           </View>
         ) : null}
 
-        <TouchableOpacity
-          accessibilityRole="button"
-          activeOpacity={0.82}
+        <Button
+          mode="contained"
           onPress={() => navigation.goBack()}
-          style={[styles.backCta, { backgroundColor: theme.primary }]}
+          style={styles.backCta}
+          labelStyle={styles.backCtaText}
         >
-          <Text style={[styles.backCtaText, { color: theme.onPrimary }]}>
-            {strings.play.techniqueLesson.backButton}
-          </Text>
-        </TouchableOpacity>
+          {strings.play.techniqueLesson.backButton}
+        </Button>
       </ScrollView>
     </View>
   );
@@ -217,8 +216,11 @@ const makeStyles = (theme: Theme, isDark: boolean, topInset: number, _bottomInse
   explanationCard: {
     backgroundColor: withAlpha(theme.surfaceElevated, 0.96),
     borderRadius: 16,
-    borderWidth: 1,
-    borderColor: withAlpha(theme.border, isDark ? 0.44 : 0.3),
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
     paddingHorizontal: 16,
     paddingVertical: 16,
   },
@@ -230,10 +232,7 @@ const makeStyles = (theme: Theme, isDark: boolean, topInset: number, _bottomInse
     marginTop: 14,
   },
   backCta: {
-    minHeight: 52,
     borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   backCtaText: {
     fontSize: 16,

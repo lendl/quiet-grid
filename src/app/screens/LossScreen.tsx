@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef } from 'react';
-import { Animated, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, StyleSheet, Text, View } from 'react-native';
+import { Button } from 'react-native-paper';
 import type { StackScreenProps } from '@react-navigation/stack';
 import { getGameAnalysisAdapter } from '../analysisRegistry';
 import OutcomeScreenLayout, { type OutcomeScreenMetrics } from '../components/OutcomeScreenLayout';
@@ -166,33 +167,31 @@ export default function LossScreen({ route, navigation }: Props) {
               </View>
 
               <View style={s.primaryActionRow}>
-                <TouchableOpacity style={[baseStyles.actionButton, baseStyles.fullWidthAction, { backgroundColor: theme.primary }]} onPress={handlePlayAgain} activeOpacity={0.82}>
-                  <Text style={[baseStyles.primaryButtonText, { color: theme.onPrimary }]}>{strings.common.playAgain}</Text>
-                </TouchableOpacity>
+                <Button
+                  mode="contained"
+                  onPress={handlePlayAgain}
+                  style={baseStyles.primaryButton}
+                >
+                  {strings.common.playAgain}
+                </Button>
               </View>
 
               <View style={s.secondaryRow}>
-                <TouchableOpacity style={baseStyles.secondaryButton} onPress={handleTryAnotherGame} activeOpacity={0.75}>
-                  <Text style={[baseStyles.secondaryText, { color: theme.textSecondary }]}>{strings.loss.tryAnotherGame}</Text>
-                </TouchableOpacity>
+                <Button mode="text" onPress={handleTryAnotherGame} textColor={theme.textSecondary}>
+                  {strings.loss.tryAnotherGame}
+                </Button>
               </View>
 
               <View style={s.actionRow}>
                 {canAnalyze ? (
-                  <TouchableOpacity
-                    style={[
-                      baseStyles.actionButton,
-                      {
-                        backgroundColor: theme.surfaceElevated,
-                        borderColor: theme.border,
-                        borderWidth: 1,
-                      },
-                    ]}
+                  <Button
+                    mode="outlined"
                     onPress={handleAnalyze}
-                    activeOpacity={0.82}
+                    style={baseStyles.primaryButton}
+                    textColor={theme.text}
                   >
-                    <Text style={[baseStyles.secondaryButtonText, { color: theme.text }]}>{strings.analysis.analyze}</Text>
-                  </TouchableOpacity>
+                    {strings.analysis.analyze}
+                  </Button>
                 ) : null}
               </View>
             </Animated.View>
@@ -221,32 +220,9 @@ const baseStyles = StyleSheet.create({
   horizontalDivider: {
     height: 1,
   },
-  actionButton: {
+  primaryButton: {
     flex: 1,
-    paddingVertical: 15,
     borderRadius: 14,
-    alignItems: 'center',
-  },
-  fullWidthAction: {
-    flex: 1,
-  },
-  primaryButtonText: {
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  secondaryButtonText: {
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  secondaryButton: {
-    minHeight: 36,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 8,
-  },
-  secondaryText: {
-    fontSize: 14,
-    fontWeight: '600',
   },
 });
 

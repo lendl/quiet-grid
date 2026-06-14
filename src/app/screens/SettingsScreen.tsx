@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import Ionicons from '@react-native-vector-icons/ionicons';
+import { Divider, List, Menu, TouchableRipple } from 'react-native-paper';
 import GlobalPageShell from '../components/GlobalPageShell';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import type { Theme } from '../theme';
 import { getThemeOptions } from '../theme/options';
-import { withAlpha } from '../utils/color';
 import {
   loadBetaGamesEnabled,
   loadShowTimerInPlay,
@@ -45,20 +45,17 @@ function Section({
       <Text style={styles.sectionTitle}>{title}</Text>
       {rows.map((row, index) => (
         <React.Fragment key={row.key}>
-          <TouchableOpacity
-            style={styles.row}
+          <List.Item
+            title={row.label}
+            description={row.detail ?? null}
+            titleStyle={styles.rowLabel}
+            descriptionStyle={styles.rowDetail}
             onPress={row.onPress}
-            accessibilityRole="button"
-            accessibilityLabel={row.label}
-            activeOpacity={0.82}
-          >
-            <View style={styles.rowTextWrap}>
-              <Text style={styles.rowLabel}>{row.label}</Text>
-              {row.detail ? <Text style={styles.rowDetail}>{row.detail}</Text> : null}
-            </View>
-            {row.value ? <Text style={styles.rowValue}>{row.value}</Text> : null}
-          </TouchableOpacity>
-          {index < rows.length - 1 ? <View style={styles.rowDivider} /> : null}
+            right={() => (
+              row.value ? <View style={styles.rowValueWrap}><Text style={styles.rowValue}>{row.value}</Text></View> : null
+            )}
+          />
+          {index < rows.length - 1 ? <Divider /> : null}
         </React.Fragment>
       ))}
     </View>
@@ -187,143 +184,120 @@ export default function SettingsScreen() {
 
         <View style={s.section}>
           <Text style={s.sectionTitle}>{strings.settings.appearance}</Text>
-          <TouchableOpacity
-            style={s.dropdownTrigger}
-            onPress={() => {
-              setThemeDropdownOpen((open) => {
-                const next = !open;
-                if (next) {
+          <Menu
+            visible={themeDropdownOpen}
+            onDismiss={() => setThemeDropdownOpen(false)}
+            anchor={
+              <TouchableRipple
+                style={s.dropdownTrigger}
+                onPress={() => {
                   setLanguageDropdownOpen(false);
-                }
-                return next;
-              });
-            }}
-            accessibilityRole="button"
-            accessibilityLabel={strings.settings.theme}
-            activeOpacity={0.82}
+                  setThemeDropdownOpen((open) => !open);
+                }}
+                accessibilityRole="button"
+                accessibilityLabel={strings.settings.theme}
+              >
+                <View style={s.dropdownTriggerContent}>
+                  <View style={s.dropdownIconWrap}>
+                    <Ionicons name={selectedTheme.iconName} size={18} color={selectedTheme.iconColor} />
+                  </View>
+                  <View style={s.rowTextWrap}>
+                    <Text style={s.rowLabel}>{strings.settings.theme}</Text>
+                  </View>
+                  <View style={s.dropdownValueWrap}>
+                    <Text style={s.rowValue}>{selectedTheme.label}</Text>
+                    <Ionicons
+                      name={themeDropdownOpen ? 'chevron-up' : 'chevron-down'}
+                      size={18}
+                      color={theme.textSecondary}
+                    />
+                  </View>
+                </View>
+              </TouchableRipple>
+            }
           >
-            <View style={s.dropdownIconWrap}>
-              <Ionicons name={selectedTheme.iconName} size={18} color={selectedTheme.iconColor} />
-            </View>
-            <View style={s.rowTextWrap}>
-              <Text style={s.rowLabel}>{strings.settings.theme}</Text>
-            </View>
-            <View style={s.dropdownValueWrap}>
-              <Text style={s.rowValue}>{selectedTheme.label}</Text>
-              <Ionicons
-                name={themeDropdownOpen ? 'chevron-up' : 'chevron-down'}
-                size={18}
-                color={theme.textSecondary}
-              />
-            </View>
-          </TouchableOpacity>
-          {themeDropdownOpen ? (
-            <View style={s.dropdownMenu}>
-              {themeOptions.map((option, index) => (
-                <React.Fragment key={option.key}>
-                  <TouchableOpacity
-                    style={s.dropdownOption}
-                    onPress={() => {
-                      setThemeMode(option.key);
-                      setThemeDropdownOpen(false);
-                    }}
-                    accessibilityRole="button"
-                    accessibilityLabel={option.label}
-                    activeOpacity={0.82}
-                  >
-                    <View style={s.dropdownIconWrap}>
-                      <Ionicons name={option.iconName} size={18} color={option.iconColor} />
-                    </View>
-                    <View style={s.rowTextWrap}>
-                      <Text style={s.rowLabel}>{option.label}</Text>
-                      <Text style={s.rowDetail}>{option.detail}</Text>
-                    </View>
-                    {themeMode === option.key ? (
-                      <Ionicons name="checkmark" size={18} color={theme.primaryLight} />
-                    ) : null}
-                  </TouchableOpacity>
-                  {index < themeOptions.length - 1 ? <View style={s.rowDivider} /> : null}
-                </React.Fragment>
-              ))}
-            </View>
-          ) : null}
-          <View style={s.rowDivider} />
-          <TouchableOpacity
-            style={s.dropdownTrigger}
-            onPress={() => {
-              setLanguageDropdownOpen((open) => {
-                const next = !open;
-                if (next) {
+            {themeOptions.map((option) => (
+              <Menu.Item
+                key={option.key}
+                title={option.label}
+                onPress={() => {
+                  setThemeMode(option.key);
                   setThemeDropdownOpen(false);
-                }
-                return next;
-              });
-            }}
-            accessibilityRole="button"
-            accessibilityLabel={strings.settings.language}
-            activeOpacity={0.82}
-          >
-            <View style={s.dropdownIconWrap}>
-              <Ionicons name="globe-outline" size={18} color={theme.primaryLight} />
-            </View>
-            <View style={s.rowTextWrap}>
-              <Text style={s.rowLabel}>{strings.settings.language}</Text>
-              <Text style={s.rowDetail}>{strings.settings.languageDropdownDetail}</Text>
-            </View>
-            <View style={s.dropdownValueWrap}>
-              <Text style={s.rowValue}>{selectedLanguage.label}</Text>
-              <Ionicons
-                name={languageDropdownOpen ? 'chevron-up' : 'chevron-down'}
-                size={18}
-                color={theme.textSecondary}
+                }}
+                leadingIcon={({ size }) => (
+                  <Ionicons name={option.iconName} size={size} color={option.iconColor} />
+                )}
+                trailingIcon={themeMode === option.key ? ({ size }) => (
+                  <Ionicons name="checkmark" size={size} color={theme.primaryLight} />
+                ) : undefined}
               />
-            </View>
-          </TouchableOpacity>
-          {languageDropdownOpen ? (
-            <View style={s.dropdownMenu}>
-              {languageOptions.map((option, index) => (
-                <React.Fragment key={option.key}>
-                  <TouchableOpacity
-                    style={s.dropdownOption}
-                    onPress={() => {
-                      setLanguageSetting(option.key);
-                      setLanguageDropdownOpen(false);
-                    }}
-                    accessibilityRole="button"
-                    accessibilityLabel={option.label}
-                    activeOpacity={0.82}
-                  >
-                    <Text style={s.dropdownFlag}>{option.icon}</Text>
-                    <View style={s.rowTextWrap}>
-                      <Text style={s.rowLabel}>{option.label}</Text>
-                      <Text style={s.rowDetail}>{option.detail}</Text>
-                    </View>
-                    {resolvedLanguage === option.key ? (
-                      <Ionicons name="checkmark" size={18} color={theme.primaryLight} />
-                    ) : null}
-                  </TouchableOpacity>
-                  {index < languageOptions.length - 1 ? <View style={s.rowDivider} /> : null}
-                </React.Fragment>
-              ))}
-            </View>
-          ) : null}
+            ))}
+          </Menu>
+          <Divider />
+          <Menu
+            visible={languageDropdownOpen}
+            onDismiss={() => setLanguageDropdownOpen(false)}
+            anchor={
+              <TouchableRipple
+                style={s.dropdownTrigger}
+                onPress={() => {
+                  setThemeDropdownOpen(false);
+                  setLanguageDropdownOpen((open) => !open);
+                }}
+                accessibilityRole="button"
+                accessibilityLabel={strings.settings.language}
+              >
+                <View style={s.dropdownTriggerContent}>
+                  <View style={s.dropdownIconWrap}>
+                    <Ionicons name="globe-outline" size={18} color={theme.primaryLight} />
+                  </View>
+                  <View style={s.rowTextWrap}>
+                    <Text style={s.rowLabel}>{strings.settings.language}</Text>
+                    <Text style={s.rowDetail}>{strings.settings.languageDropdownDetail}</Text>
+                  </View>
+                  <View style={s.dropdownValueWrap}>
+                    <Text style={s.rowValue}>{selectedLanguage.label}</Text>
+                    <Ionicons
+                      name={languageDropdownOpen ? 'chevron-up' : 'chevron-down'}
+                      size={18}
+                      color={theme.textSecondary}
+                    />
+                  </View>
+                </View>
+              </TouchableRipple>
+            }
+          >
+            {languageOptions.map((option) => (
+              <Menu.Item
+                key={option.key}
+                title={option.label}
+                onPress={() => {
+                  setLanguageSetting(option.key);
+                  setLanguageDropdownOpen(false);
+                }}
+                leadingIcon={({ size }) => (
+                  <Text style={{ fontSize: size, lineHeight: size + 2 }}>{option.icon}</Text>
+                )}
+                trailingIcon={resolvedLanguage === option.key ? ({ size }) => (
+                  <Ionicons name="checkmark" size={size} color={theme.primaryLight} />
+                ) : undefined}
+              />
+            ))}
+          </Menu>
           <Text style={s.disclaimerText}>{strings.settings.languageAiDisclaimer}</Text>
-          <View style={s.rowDivider} />
+          <Divider />
           {timerRows.map((row) => (
-            <TouchableOpacity
+            <List.Item
               key={row.key}
-              style={s.row}
+              title={row.label}
+              description={row.detail ?? null}
+              titleStyle={s.rowLabel}
+              descriptionStyle={s.rowDetail}
               onPress={row.onPress}
-              accessibilityRole="button"
-              accessibilityLabel={row.label}
-              activeOpacity={0.82}
-            >
-              <View style={s.rowTextWrap}>
-                <Text style={s.rowLabel}>{row.label}</Text>
-                {row.detail ? <Text style={s.rowDetail}>{row.detail}</Text> : null}
-              </View>
-              {row.value ? <Text style={s.rowValue}>{row.value}</Text> : null}
-            </TouchableOpacity>
+              right={() => (
+                row.value ? <View style={s.rowValueWrap}><Text style={s.rowValue}>{row.value}</Text></View> : null
+              )}
+            />
           ))}
         </View>
         <Section title={strings.settings.tutorials} rows={tutorialRows} styles={s} />
@@ -360,17 +334,6 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     color: theme.textMuted,
     marginBottom: 4,
   },
-  row: {
-    minHeight: 62,
-    paddingVertical: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  rowTextWrap: {
-    flex: 1,
-    gap: 4,
-  },
   rowLabel: {
     fontSize: 16,
     fontWeight: '700',
@@ -386,13 +349,20 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     fontWeight: '700',
     color: theme.primaryLight,
   },
-  rowDivider: {
-    height: 1,
-    backgroundColor: withAlpha(theme.border, 0.48),
+  rowValueWrap: {
+    justifyContent: 'center',
+    paddingRight: 4,
+  },
+  rowTextWrap: {
+    flex: 1,
+    gap: 4,
   },
   dropdownTrigger: {
     minHeight: 62,
     paddingVertical: 12,
+  },
+  dropdownTriggerContent: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
@@ -405,27 +375,6 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-  },
-  dropdownMenu: {
-    marginTop: 4,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: withAlpha(theme.border, 0.64),
-    backgroundColor: withAlpha(theme.surfaceElevated, 0.98),
-    overflow: 'hidden',
-  },
-  dropdownOption: {
-    minHeight: 62,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  dropdownFlag: {
-    width: 28,
-    fontSize: 18,
-    textAlign: 'center',
   },
   disclaimerText: {
     marginTop: 10,

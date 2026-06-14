@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { TouchableRipple } from 'react-native-paper';
 import type { StackScreenProps } from '@react-navigation/stack';
 import PuzzleTutorialScaffold from '../../../../app/components/PuzzleTutorialScaffold';
 import { useLanguage } from '../../../../app/context/LanguageContext';
@@ -84,11 +85,10 @@ export default function TutorialScreen({ navigation, route }: Props) {
         <Text style={styles.answerPrompt}>{strings.play.tutorial.answerPrompt}</Text>
         <View style={styles.answerButtonsRow}>
           {[1, 0].map((value) => (
-            <TouchableOpacity
+            <TouchableRipple
               key={value}
               accessibilityRole="button"
               accessibilityLabel={strings.play.tutorial.selectAnswerLabel(value as 0 | 1)}
-              activeOpacity={0.82}
               onPress={() => {
                 if (value === expectedAnswer) {
                   setShowAnswerRetry(false);
@@ -100,22 +100,21 @@ export default function TutorialScreen({ navigation, route }: Props) {
               style={styles.answerButton}
             >
               <Text style={styles.answerButtonText}>{strings.play.tutorial.selectAnswerLabel(value as 0 | 1)}</Text>
-            </TouchableOpacity>
+            </TouchableRipple>
           ))}
         </View>
       </View>
     ) : (
-      <TouchableOpacity
+      <TouchableRipple
         accessibilityRole="button"
         accessibilityLabel={lesson.continueLabel}
-        activeOpacity={0.82}
         onPress={() => {
           void advanceLesson();
         }}
         style={styles.continueButton}
       >
         <Text style={styles.continueButtonText}>{lesson.continueLabel}</Text>
-      </TouchableOpacity>
+      </TouchableRipple>
     )
   );
 

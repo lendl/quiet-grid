@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { Button, Chip, TouchableRipple } from 'react-native-paper';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { useFocusEffect } from '@react-navigation/native';
 import { useLanguage } from '../context/LanguageContext';
@@ -7,7 +8,6 @@ import { useTheme } from '../context/ThemeContext';
 import AppDialog from '../components/AppDialog';
 import GlobalPageShell from '../components/GlobalPageShell';
 import { gameRegistry } from '../shell/games/gameRegistry';
-import { withAlpha } from '../utils/color';
 import { clearPlayerData } from '../utils/statsStorage';
 import type { MainTabParamList } from '../navigation/types';
 import type { GameId } from '../types';
@@ -66,14 +66,14 @@ export default function StatsScreen({ navigation, route }: Props) {
       <ScrollView contentContainerStyle={s.scroll}>
         <View style={s.controlsSection}>
           {scopedDefinition ? (
-            <TouchableOpacity
+            <TouchableRipple
               style={s.backButton}
               onPress={clearScope}
               accessibilityLabel={strings.common.goBack}
-              activeOpacity={0.8}
+              borderless
             >
               <Text style={s.backButtonText}>{strings.common.back}</Text>
-            </TouchableOpacity>
+            </TouchableRipple>
           ) : null}
 
           {scopedDefinition ? null : (
@@ -83,32 +83,28 @@ export default function StatsScreen({ navigation, route }: Props) {
               contentContainerStyle={s.badgeRow}
               style={s.badgeScroller}
             >
-              <TouchableOpacity
-                style={[s.filterBadge, effectiveFilter === 'all' && s.filterBadgeActive]}
+              <Chip
+                mode="flat"
+                selected={effectiveFilter === 'all'}
                 onPress={() => setActiveFilter('all')}
-                activeOpacity={0.82}
-                accessibilityRole="button"
+                compact
               >
-                <Text style={[s.filterBadgeText, effectiveFilter === 'all' && s.filterBadgeTextActive]}>
-                  {strings.common.all}
-                </Text>
-              </TouchableOpacity>
+                {strings.common.all}
+              </Chip>
 
               {availableDefinitions.map((definition) => {
                 const selected = effectiveFilter === definition.id;
 
                 return (
-                  <TouchableOpacity
+                  <Chip
                     key={definition.id}
-                    style={[s.filterBadge, selected && s.filterBadgeActive]}
+                    mode="flat"
+                    selected={selected}
                     onPress={() => setActiveFilter(definition.id)}
-                    activeOpacity={0.82}
-                    accessibilityRole="button"
+                    compact
                   >
-                    <Text style={[s.filterBadgeText, selected && s.filterBadgeTextActive]}>
-                      {definition.shortTitle}
-                    </Text>
-                  </TouchableOpacity>
+                    {definition.shortTitle}
+                  </Chip>
                 );
               })}
             </ScrollView>
@@ -139,9 +135,9 @@ export default function StatsScreen({ navigation, route }: Props) {
 
         {scopedDefinition ? null : (
           <View style={s.clearDataSection}>
-            <TouchableOpacity style={s.clearButton} onPress={handleClear} activeOpacity={0.82}>
-              <Text style={s.clearButtonText}>{strings.stats.clearData}</Text>
-            </TouchableOpacity>
+            <Button mode="text" onPress={handleClear} textColor={theme.difficultyExpert}>
+            {strings.stats.clearData}
+          </Button>
           </View>
         )}
       </ScrollView>
@@ -191,25 +187,6 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     gap: 10,
     paddingRight: 6,
   },
-  filterBadge: {
-    minHeight: 34,
-    paddingHorizontal: 14,
-    borderRadius: 999,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: withAlpha(theme.textSecondary, 0.12),
-  },
-  filterBadgeActive: {
-    backgroundColor: theme.text,
-  },
-  filterBadgeText: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: theme.text,
-  },
-  filterBadgeTextActive: {
-    color: theme.background,
-  },
   privacySection: {
     marginTop: 4,
   },
@@ -228,18 +205,5 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   },
   clearDataSection: {
     marginTop: 24,
-  },
-  clearButton: {
-    backgroundColor: theme.surfaceElevated,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: theme.border,
-    paddingVertical: 15,
-    alignItems: 'center',
-  },
-  clearButtonText: {
-    color: theme.text,
-    fontSize: 16,
-    fontWeight: '700',
   },
 });

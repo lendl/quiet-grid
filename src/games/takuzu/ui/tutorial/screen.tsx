@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import { TouchableRipple } from 'react-native-paper';
 import type { StackScreenProps } from '@react-navigation/stack';
 import PuzzleTutorialScaffold from '../../../../app/components/PuzzleTutorialScaffold';
 import { useLanguage } from '../../../../app/context/LanguageContext';
@@ -199,11 +200,10 @@ export default function TutorialScreen({ navigation, route }: Props) {
       {[1, 0].map((value) => {
         const isSelected = selectedAnswer === value;
         return (
-          <TouchableOpacity
+          <TouchableRipple
             key={value}
             accessibilityRole="button"
             accessibilityLabel={takuzuStrings.play.tutorial.selectAnswerLabel(value as 0 | 1)}
-            activeOpacity={0.82}
             disabled={answerState === 'correct'}
             onPress={() => handleAnswerPress(value as 0 | 1)}
             style={[
@@ -212,7 +212,7 @@ export default function TutorialScreen({ navigation, route }: Props) {
             ]}
           >
             <Text style={s.answerButtonText}>{value}</Text>
-          </TouchableOpacity>
+          </TouchableRipple>
         );
       })}
     </View>

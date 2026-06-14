@@ -1,5 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import Ionicons from '@react-native-vector-icons/ionicons';
+import { Divider, List } from 'react-native-paper';
 import { useNavigation, type NavigationProp } from '@react-navigation/native';
 import appConfig from '../../../app.json';
 import AppDialog from '../components/AppDialog';
@@ -14,7 +16,6 @@ import {
   openRepo,
   openSupportEmail,
 } from '../utils/supportLinks';
-import { withAlpha } from '../utils/color';
 import type { RootStackParamList } from '../navigation/types';
 import type { Theme } from '../theme';
 
@@ -32,30 +33,35 @@ function Section({
   title,
   rows,
   styles,
+  iconColor,
 }: {
   title: string;
   rows: SupportRow[];
   styles: ReturnType<typeof makeStyles>;
+  iconColor: string;
 }) {
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{title}</Text>
       {rows.map((row, index) => (
         <React.Fragment key={row.key}>
-          <TouchableOpacity
-            style={styles.row}
+          <List.Item
+            title={row.label}
+            description={row.detail ?? null}
+            titleStyle={styles.rowLabel}
+            descriptionStyle={styles.rowDetail}
             onPress={row.onPress}
-            accessibilityRole="button"
-            accessibilityLabel={row.label}
-            activeOpacity={0.82}
-          >
-            <View style={styles.rowTextWrap}>
-              <Text style={styles.rowLabel}>{row.label}</Text>
-              {row.detail ? <Text style={styles.rowDetail}>{row.detail}</Text> : null}
-            </View>
-            <Text style={styles.rowChevron}>{row.external ? 'Open' : '>'}</Text>
-          </TouchableOpacity>
-          {index < rows.length - 1 ? <View style={styles.rowDivider} /> : null}
+            right={() => (
+              <View style={styles.rowIconRight}>
+                <Ionicons
+                  name={row.external ? 'open-outline' : 'chevron-forward'}
+                  size={16}
+                  color={iconColor}
+                />
+              </View>
+            )}
+          />
+          {index < rows.length - 1 ? <Divider /> : null}
         </React.Fragment>
       ))}
     </View>
@@ -165,9 +171,9 @@ export default function SupportScreen() {
           </Text>
         </View>
 
-        <Section title={strings.support.supportSection} rows={supportRows} styles={s} />
-        <Section title={strings.support.trustSection} rows={trustRows} styles={s} />
-        <Section title={strings.support.aboutSection} rows={aboutRows} styles={s} />
+        <Section title={strings.support.supportSection} rows={supportRows} styles={s} iconColor={theme.textMuted} />
+        <Section title={strings.support.trustSection} rows={trustRows} styles={s} iconColor={theme.textMuted} />
+        <Section title={strings.support.aboutSection} rows={aboutRows} styles={s} iconColor={theme.textMuted} />
 
         <View style={s.versionBlock}>
           <Text style={s.versionText}>{strings.support.version(APP_VERSION)}</Text>
@@ -218,17 +224,6 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     color: theme.textMuted,
     marginBottom: 4,
   },
-  row: {
-    minHeight: 62,
-    paddingVertical: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  rowTextWrap: {
-    flex: 1,
-    gap: 4,
-  },
   rowLabel: {
     fontSize: 16,
     fontWeight: '700',
@@ -239,14 +234,9 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     lineHeight: 19,
     color: theme.textSecondary,
   },
-  rowChevron: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: theme.textMuted,
-  },
-  rowDivider: {
-    height: 1,
-    backgroundColor: withAlpha(theme.border, 0.48),
+  rowIconRight: {
+    justifyContent: 'center',
+    paddingRight: 4,
   },
   versionBlock: {
     marginTop: 4,

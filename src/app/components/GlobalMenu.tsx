@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import Ionicons from '@react-native-vector-icons/ionicons';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { TouchableRipple } from 'react-native-paper';
 import { useNavigation, type NavigationProp } from '@react-navigation/native';
 import AppDialog from './AppDialog';
 import AppBrand from './AppBrand';
@@ -83,39 +84,39 @@ export default function GlobalMenu({
 
         <View style={s.actions}>
           {activePuzzle ? (
-            <TouchableOpacity
+            <TouchableRipple
               accessibilityRole="button"
               accessibilityLabel={strings.common.continuePuzzle}
               onPress={() => {
                 void handleContinue();
               }}
               style={s.playButton}
-              activeOpacity={0.82}
+              rippleColor={withAlpha(theme.text, 0.2)}
             >
               <Ionicons name="play" size={16} color={theme.onPrimary} />
-            </TouchableOpacity>
+            </TouchableRipple>
           ) : null}
-          <TouchableOpacity
+          <TouchableRipple
             accessibilityRole="button"
             accessibilityLabel={strings.home.openRepo}
             onPress={() => {
               void handleOpenRepo();
             }}
             style={s.iconButton}
-            activeOpacity={0.82}
+            borderless
           >
             <Ionicons name="logo-github" size={24} color={theme.text} />
-          </TouchableOpacity>
+          </TouchableRipple>
 
-          <TouchableOpacity
+          <TouchableRipple
             accessibilityRole="button"
             accessibilityLabel={strings.home.changeTheme}
             onPress={cycleTheme}
             style={s.iconButton}
-            activeOpacity={0.82}
+            borderless
           >
             <Ionicons name={themeIconName} size={24} color={theme.text} />
-          </TouchableOpacity>
+          </TouchableRipple>
         </View>
       </View>
 
@@ -124,16 +125,15 @@ export default function GlobalMenu({
           const active = activeTab === link.key;
 
           return (
-            <TouchableOpacity
+            <TouchableRipple
               key={link.key}
               accessibilityRole="button"
               accessibilityLabel={link.label}
               onPress={() => handleNavigate(link.key)}
               style={[s.linkButton, active ? s.linkButtonActive : null]}
-              activeOpacity={0.82}
             >
               <Text style={[s.linkText, active ? s.linkTextActive : null]}>{link.label}</Text>
-            </TouchableOpacity>
+            </TouchableRipple>
           );
         })}
       </View>
@@ -221,7 +221,6 @@ const makeStyles = (theme: Theme, topInset: number) => StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: theme.primary,
-    borderWidth: 1,
-    borderColor: withAlpha(theme.primaryLight, 0.84),
+    overflow: 'hidden',
   },
 });

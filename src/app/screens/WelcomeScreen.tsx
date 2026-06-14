@@ -1,6 +1,7 @@
 // src/app/screens/WelcomeScreen.tsx
 import React, { useCallback, useMemo, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, useWindowDimensions } from 'react-native';
+import { Button } from 'react-native-paper';
 import type { StackScreenProps } from '@react-navigation/stack';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import AppScreen from '../components/AppScreen';
@@ -169,9 +170,14 @@ export default function WelcomeScreen({ navigation }: Props) {
               ))}
             </View>
 
-            <TouchableOpacity style={s.btn} onPress={() => { void handleNext(); }} activeOpacity={0.8}>
-              <Text style={s.btnText}>{isLast ? strings.common.getStarted : strings.common.next}</Text>
-            </TouchableOpacity>
+            <Button
+              mode="contained"
+              onPress={() => { void handleNext(); }}
+              style={s.btn}
+              labelStyle={s.btnLabel}
+            >
+              {isLast ? strings.common.getStarted : strings.common.next}
+            </Button>
           </View>
         </ScrollView>
       </GestureDetector>
@@ -201,8 +207,6 @@ const makeStyles = (theme: Theme, layout: WelcomeLayoutMetrics) => StyleSheet.cr
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: withAlpha(theme.primary, 0.12),
-    borderWidth: 1,
-    borderColor: withAlpha(theme.primaryLight, 0.3),
   },
   heroEmoji: {
     fontSize: layout.heroIconSize,
@@ -232,13 +236,9 @@ const makeStyles = (theme: Theme, layout: WelcomeLayoutMetrics) => StyleSheet.cr
     width: '100%',
     maxWidth: layout.buttonWidth,
     marginTop: layout.buttonMarginTop,
-    backgroundColor: theme.primary,
-    paddingVertical: 16,
     borderRadius: 14,
-    alignItems: 'center',
   },
-  btnText: {
-    color: theme.onPrimary,
+  btnLabel: {
     fontSize: 17,
     fontWeight: '700',
   },

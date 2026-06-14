@@ -108,7 +108,8 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   ruleCard: {
     flexDirection: 'row', alignItems: 'flex-start',
     backgroundColor: theme.surface, borderRadius: 14, padding: 16,
-    borderWidth: 1, borderColor: theme.border,
+    elevation: 1,
+    shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 },
   },
   badge:     { width: 32, height: 32, borderRadius: 8, backgroundColor: theme.primary, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
   badgeText: { color: '#fff', fontWeight: '800', fontSize: 14 },
@@ -117,7 +118,8 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   ruleText:  { fontSize: 13, color: theme.textSecondary, lineHeight: 20 },
   tipCard: {
     backgroundColor: theme.surface, borderRadius: 14, padding: 16,
-    borderWidth: 1, borderColor: theme.border,
+    elevation: 1,
+    shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 },
   },
   tipTitle:  { fontSize: 14, fontWeight: '700', color: theme.text, marginBottom: 4 },
   tipText:   { fontSize: 13, color: theme.textSecondary, lineHeight: 20 },

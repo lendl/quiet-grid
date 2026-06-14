@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { LayoutChangeEvent } from 'react-native';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { TouchableRipple } from 'react-native-paper';
 import type { StackScreenProps } from '@react-navigation/stack';
 import PuzzleTutorialScaffold from '../../../../app/components/PuzzleTutorialScaffold';
 import { useLanguage } from '../../../../app/context/LanguageContext';
@@ -215,30 +216,27 @@ export default function WordSearchTutorialScreen({ navigation, route }: Props) {
     <View style={styles.answerControls}>
       <Text style={styles.answerPrompt}>{strings.tutorial.checkpoint.prompt}</Text>
       <View style={styles.answerButtonsRow}>
-        <TouchableOpacity
+        <TouchableRipple
           accessibilityRole="button"
-          activeOpacity={0.82}
           disabled={answerState === 'correct'}
           onPress={() => handleCheckpointChoice(true)}
           style={styles.answerButton}
         >
           <Text style={styles.answerButtonText}>{strings.tutorial.checkpoint.validOption}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
+        </TouchableRipple>
+        <TouchableRipple
           accessibilityRole="button"
-          activeOpacity={0.82}
           disabled={answerState === 'correct'}
           onPress={() => handleCheckpointChoice(false)}
           style={styles.answerButton}
         >
           <Text style={styles.answerButtonText}>{strings.tutorial.checkpoint.invalidOption}</Text>
-        </TouchableOpacity>
+        </TouchableRipple>
       </View>
     </View>
   ) : (
-    <TouchableOpacity
+    <TouchableRipple
       accessibilityRole="button"
-      activeOpacity={0.82}
       onPress={() => {
         void advanceLesson();
       }}
@@ -247,7 +245,7 @@ export default function WordSearchTutorialScreen({ navigation, route }: Props) {
       <Text style={styles.continueButtonText}>
         {lessonCopy.continueLabel}
       </Text>
-    </TouchableOpacity>
+    </TouchableRipple>
   );
 
   return (

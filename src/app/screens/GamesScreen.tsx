@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Button, Card, Chip } from 'react-native-paper';
 import { useFocusEffect, useNavigation, type NavigationProp } from '@react-navigation/native';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import ActivePuzzleReplaceDialog from '../components/ActivePuzzleReplaceDialog';
@@ -69,30 +70,30 @@ export default function GamesScreen(_: Props) {
             <Text style={s.activeGameTitle}>{strings.home.activePuzzleWaiting}</Text>
             <View style={s.activeGameMetaRow}>
               {activePuzzleDisplay.meta.map((meta) => (
-                <View key={meta} style={s.activeGameMetaPill}>
-                  <Text style={s.activeGameMetaText}>{meta}</Text>
-                </View>
+                <Chip key={meta} mode="flat" compact style={s.activeGameMetaChip} textStyle={s.activeGameMetaText}>
+                  {meta}
+                </Chip>
               ))}
             </View>
-            <TouchableOpacity style={s.activeGameAction} onPress={handleContinue} activeOpacity={0.85}>
-              <Text style={s.activeGameActionText}>{`▶ ${strings.common.continuePuzzle}`}</Text>
-            </TouchableOpacity>
+            <Button mode="contained" onPress={handleContinue} style={s.activeGameAction}>
+              {`▶  ${strings.common.continuePuzzle}`}
+            </Button>
           </View>
         ) : null}
 
         <View style={s.gameList}>
           {readyGames.map((game) => (
-            <TouchableOpacity
+            <Card
               key={game.id}
+              mode="elevated"
               style={s.card}
               onPress={() => handleSelectGame(game.id)}
-              activeOpacity={0.78}
             >
               <View style={s.cardBody}>
                 <Text style={s.cardTitle}>{game.title}</Text>
                 <Text style={s.cardTagline}>{game.tagline}</Text>
               </View>
-            </TouchableOpacity>
+            </Card>
           ))}
         </View>
 
@@ -102,17 +103,18 @@ export default function GamesScreen(_: Props) {
             <Text style={s.betaDisclaimer}>{strings.games.betaDisclaimer}</Text>
           ) : null}
           {betaGames.map((game) => (
-            <TouchableOpacity
+            <Card
               key={game.id}
+              mode="elevated"
               style={[s.card, betaGamesEnabled ? s.cardBeta : s.cardDisabled]}
               onPress={betaGamesEnabled ? () => handleSelectGame(game.id) : undefined}
-              activeOpacity={betaGamesEnabled ? 0.78 : 1}
+              disabled={!betaGamesEnabled}
             >
               <View style={s.cardBody}>
                 <Text style={[s.cardTitle, !betaGamesEnabled && s.cardTitleDisabled]}>{game.title}</Text>
                 <Text style={s.cardTagline}>{game.tagline}</Text>
               </View>
-            </TouchableOpacity>
+            </Card>
           ))}
         </View>
       </ScrollView>
@@ -135,10 +137,13 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   activeGameCard: {
     borderRadius: 22,
     padding: 18,
-    borderWidth: 1,
-    borderColor: withAlpha(theme.primaryLight, 0.28),
-    backgroundColor: withAlpha(theme.surfaceElevated, 0.94),
+    backgroundColor: theme.surfaceElevated,
     gap: 10,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.18,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
   },
   activeGameEyebrow: {
     fontSize: 11,
@@ -157,37 +162,21 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     flexWrap: 'wrap',
     gap: 8,
   },
-  activeGameMetaPill: {
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    backgroundColor: withAlpha(theme.background, 0.5),
+  activeGameMetaChip: {
+    backgroundColor: withAlpha(theme.text, 0.08),
   },
   activeGameMetaText: {
     fontSize: 12,
-    fontWeight: '700',
-    color: theme.textSecondary,
+    color: theme.text,
   },
   activeGameAction: {
     marginTop: 4,
-    minHeight: 50,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: theme.primary,
-  },
-  activeGameActionText: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: theme.onPrimary,
+    borderRadius: 12,
   },
   gameList: {
     gap: 12,
   },
   card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 20,
     backgroundColor: theme.surface,
     borderRadius: 16,
   },
@@ -199,7 +188,7 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     opacity: 0.45,
   },
   cardBody: {
-    flex: 1,
+    padding: 20,
   },
   cardTitle: {
     fontSize: 18,

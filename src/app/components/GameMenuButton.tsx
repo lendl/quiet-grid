@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import Ionicons from '@react-native-vector-icons/ionicons';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { TouchableRipple } from 'react-native-paper';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 
@@ -15,19 +16,19 @@ export default function GameMenuButton({ open, onPress }: Props) {
   const s = useMemo(() => makeStyles(), []);
 
   return (
-    <TouchableOpacity
+    <TouchableRipple
       accessibilityRole="button"
       accessibilityLabel={open ? strings.common.goBack : strings.common.open}
       onPress={onPress}
       style={s.button}
-      activeOpacity={0.82}
+      borderless
     >
       <Ionicons
         name="menu"
         size={20}
         color={open ? theme.primaryLight : theme.text}
       />
-    </TouchableOpacity>
+    </TouchableRipple>
   );
 }
 

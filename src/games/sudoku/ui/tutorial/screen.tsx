@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { TouchableRipple } from 'react-native-paper';
 import type { LayoutChangeEvent } from 'react-native';
 import type { StackScreenProps } from '@react-navigation/stack';
 import PuzzleTutorialScaffold from '../../../../app/components/PuzzleTutorialScaffold';
@@ -133,10 +134,9 @@ export default function SudokuTutorialScreen({ navigation, route }: Props) {
       <Text style={styles.answerPrompt}>{lesson.prompt}</Text>
       <View style={styles.answerButtonsRow}>
         {Object.entries(lesson.options).map(([key, label]) => (
-          <TouchableOpacity
+          <TouchableRipple
             key={key}
             accessibilityRole="button"
-            activeOpacity={0.82}
             disabled={answerState === 'correct'}
             onPress={() => handleAnswerPress(key)}
             style={[
@@ -147,21 +147,20 @@ export default function SudokuTutorialScreen({ navigation, route }: Props) {
             ]}
           >
             <Text style={styles.answerButtonText}>{label}</Text>
-          </TouchableOpacity>
+          </TouchableRipple>
         ))}
       </View>
     </View>
   ) : (
-    <TouchableOpacity
+    <TouchableRipple
       accessibilityRole="button"
-      activeOpacity={0.82}
       onPress={() => {
         void advanceLesson();
       }}
       style={styles.continueButton}
     >
       <Text style={styles.continueButtonText}>{lesson.continueLabel ?? strings.tutorial.exitLabel.end}</Text>
-    </TouchableOpacity>
+    </TouchableRipple>
   );
 
   return (

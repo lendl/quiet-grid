@@ -1,7 +1,8 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { StackActions } from '@react-navigation/native';
 import Ionicons from '@react-native-vector-icons/ionicons';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { TouchableRipple } from 'react-native-paper';
 import type { StackScreenProps } from '@react-navigation/stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Popover, { PopoverPlacement, Rect as PopoverRect } from 'react-native-popover-view';
@@ -12,7 +13,6 @@ import type { RootStackParamList } from '../navigation/types';
 import type { PuzzleHeaderAction } from '../shell/games/playAdapter';
 import { usePuzzlePlayController } from '../shell/hooks/usePuzzlePlayController';
 import type { Theme } from '../theme';
-import { withAlpha } from '../utils/color';
 import { formatElapsed } from '../utils/formatElapsed';
 import { loadShowTimerInPlay } from '../utils/settingsStorage';
 
@@ -64,15 +64,15 @@ export default function PuzzlePlayScreen(props: Props) {
       topSlot={(
         <View style={s.topBar}>
           <View style={[s.topBarInner, { paddingTop: insets.top + 12 }]}>
-            <TouchableOpacity
+            <TouchableRipple
               accessibilityRole="button"
               accessibilityLabel={strings.common.goBack}
               onPress={handleBackToDifficulty}
               style={s.backButton}
-              activeOpacity={0.82}
+              borderless
             >
               <Ionicons name="arrow-back" size={20} color={theme.text} />
-            </TouchableOpacity>
+            </TouchableRipple>
             <View style={s.headerActions}>
               {showTimerInPlay ? (
                 <View style={s.timerPill}>
@@ -83,40 +83,40 @@ export default function PuzzlePlayScreen(props: Props) {
                 action.popoverContent != null ? (
                   <HeaderPopoverButton key={action.key} action={action} theme={theme} s={s} />
                 ) : (
-                  <TouchableOpacity
+                  <TouchableRipple
                     key={action.key}
                     accessibilityRole="button"
                     accessibilityLabel={action.accessibilityLabel}
                     onPress={action.onPress}
-                    style={[s.iconButton, action.active ? s.helperActive : null]}
-                    activeOpacity={0.8}
+                    style={s.iconButton}
+                    borderless
                   >
                     <Ionicons
                       name={action.iconName}
                       size={18}
                       color={action.active ? theme.primaryLight : theme.text}
                     />
-                  </TouchableOpacity>
+                  </TouchableRipple>
                 )
               ))}
-              <TouchableOpacity
+              <TouchableRipple
                 accessibilityRole="button"
                 accessibilityLabel={strings.common.rules}
                 onPress={handleHowToPlay}
                 style={s.iconButton}
-                activeOpacity={0.8}
+                borderless
               >
                 <Ionicons name="help-outline" size={18} color={theme.text} />
-              </TouchableOpacity>
-              <TouchableOpacity
+              </TouchableRipple>
+              <TouchableRipple
                 accessibilityRole="button"
                 accessibilityLabel={strings.common.endPuzzle}
                 onPress={layout.onForfeit}
                 style={s.iconButton}
-                activeOpacity={0.8}
+                borderless
               >
                 <Ionicons name="flag-outline" size={18} color={theme.text} />
-              </TouchableOpacity>
+              </TouchableRipple>
             </View>
           </View>
         </View>
@@ -158,19 +158,19 @@ function HeaderPopoverButton({ action, theme, s }: HeaderPopoverButtonProps) {
   return (
     <>
       <View ref={buttonRef} collapsable={false} onLayout={measureButton}>
-        <TouchableOpacity
+        <TouchableRipple
           accessibilityRole="button"
           accessibilityLabel={action.accessibilityLabel}
           onPress={action.onPress}
-          style={[s.iconButton, action.active ? s.helperActive : null]}
-          activeOpacity={0.8}
+          style={s.iconButton}
+          borderless
         >
           <Ionicons
             name={action.iconName}
             size={18}
             color={action.active ? theme.primary : theme.text}
           />
-        </TouchableOpacity>
+        </TouchableRipple>
       </View>
       <Popover
         from={buttonRect ?? new PopoverRect(0, 0, 0, 0)}
@@ -211,21 +211,13 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     width: 36,
     height: 36,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   iconButton: {
     width: 36,
     height: 36,
-    borderRadius: 999,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: withAlpha(theme.surfaceElevated, 0.84),
-    borderWidth: 1,
-    borderColor: withAlpha(theme.border, 0.72),
-  },
-  helperActive: {
-    backgroundColor: withAlpha(theme.primary, 0.18),
-    borderColor: withAlpha(theme.primaryLight, 0.72),
   },
   timerPill: {
     minWidth: 70,
@@ -234,9 +226,7 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     borderRadius: 999,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: withAlpha(theme.surface, 0.9),
-    borderWidth: 1,
-    borderColor: withAlpha(theme.border, 0.72),
+    backgroundColor: theme.surfaceElevated,
   },
   timerText: {
     color: theme.text,
@@ -258,9 +248,7 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     minHeight: 30,
     paddingHorizontal: 10,
     borderRadius: 999,
-    backgroundColor: withAlpha(theme.surface, 0.84),
-    borderWidth: 1,
-    borderColor: withAlpha(theme.border, 0.6),
+    backgroundColor: theme.surfaceElevated,
   },
   metadataLabel: {
     color: theme.textMuted,

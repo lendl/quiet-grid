@@ -5,9 +5,9 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
+import { Button } from 'react-native-paper';
 import { StackActions } from '@react-navigation/native';
 import type { StackScreenProps } from '@react-navigation/stack';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -132,22 +132,26 @@ export default function PuzzleAnalysisScreen({ navigation, route }: Props) {
           </View>
 
           <View style={s.controls}>
-            <TouchableOpacity
-              style={[s.controlButton, stepIndex === 0 ? s.controlButtonDisabled : null]}
+            <Button
+              mode="outlined"
               onPress={goToPreviousStep}
               disabled={stepIndex === 0}
-              activeOpacity={0.82}
+              style={s.controlButton}
+
+              labelStyle={s.controlButtonText}
             >
-              <Text style={s.controlButtonText}>{strings.analysis.previous}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[s.controlButton, stepIndex === stepCount - 1 ? s.controlButtonDisabled : null]}
+              {strings.analysis.previous}
+            </Button>
+            <Button
+              mode="outlined"
               onPress={goToNextStep}
               disabled={stepIndex === stepCount - 1}
-              activeOpacity={0.82}
+              style={s.controlButton}
+
+              labelStyle={s.controlButtonText}
             >
-              <Text style={s.controlButtonText}>{strings.analysis.next}</Text>
-            </TouchableOpacity>
+              {strings.analysis.next}
+            </Button>
           </View>
 
           <View style={s.scrubberSection}>
@@ -193,8 +197,11 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     padding: 18,
     borderRadius: 22,
     backgroundColor: theme.surface,
-    borderWidth: 1,
-    borderColor: theme.border,
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
   },
   cardTitle: {
     fontSize: 19,
@@ -255,16 +262,7 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   },
   controlButton: {
     flex: 1,
-    minHeight: 52,
-    alignItems: 'center',
-    justifyContent: 'center',
     borderRadius: 18,
-    backgroundColor: theme.surface,
-    borderWidth: 1,
-    borderColor: theme.border,
-  },
-  controlButtonDisabled: {
-    opacity: 0.45,
   },
   controlButtonText: {
     fontSize: 15,

@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
+import { View, ActivityIndicator, Text, StyleSheet, Easing } from 'react-native';
 import type { Theme as NavigationTheme } from '@react-navigation/native';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import {
   createStackNavigator,
-  TransitionPresets,
+  type StackCardStyleInterpolator,
 } from '@react-navigation/stack';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
@@ -23,6 +23,23 @@ import TutorialHostScreen    from '../screens/TutorialHostScreen';
 import TechniqueLessonScreen from '../screens/TechniqueLessonScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
+
+// MD3 shared-axis horizontal transition: small translate + fade, no full-width iOS slide.
+const md3CardStyleInterpolator: StackCardStyleInterpolator = ({ current, next }) => ({
+  cardStyle: {
+    opacity: next
+      ? next.progress.interpolate({ inputRange: [0, 1], outputRange: [1, 0.94] })
+      : current.progress,
+    transform: [{
+      translateX: next
+        ? next.progress.interpolate({ inputRange: [0, 1], outputRange: [0, -10] })
+        : current.progress.interpolate({ inputRange: [0, 1], outputRange: [28, 0] }),
+    }],
+  },
+  overlayStyle: {
+    opacity: current.progress.interpolate({ inputRange: [0, 1], outputRange: [0, 0.1] }),
+  },
+});
 
 export default function AppNavigator() {
   const { strings } = useLanguage();
@@ -73,7 +90,12 @@ export default function AppNavigator() {
           headerShown: false,
           cardStyle: { backgroundColor: theme.background },
           gestureEnabled: true,
-          ...TransitionPresets.SlideFromRightIOS,
+          gestureDirection: 'horizontal',
+          transitionSpec: {
+            open: { animation: 'timing', config: { duration: 280, easing: Easing.bezier(0.05, 0.7, 0.1, 1.0) } },
+            close: { animation: 'timing', config: { duration: 220, easing: Easing.bezier(0.3, 0.0, 0.8, 0.15) } },
+          },
+          cardStyleInterpolator: md3CardStyleInterpolator,
         }}
       >
         <Stack.Screen name="Welcome"         component={WelcomeScreen} />
