@@ -73,7 +73,7 @@ export default function GlobalBottomNav({ activeTab }: Props) {
       <BottomNavigation.Bar
         navigationState={{ index: activeIndex, routes }}
         onTabPress={({ route }) => {
-          navigation.navigate('MainTabs', { screen: route.key });
+          navigation.navigate('MainTabs', { screen: route.key as GlobalTabName });
         }}
         safeAreaInsets={{ bottom: insets.bottom }}
         inactiveColor={theme.textSecondary}
