@@ -1,4 +1,4 @@
-const fr = {
+﻿const fr = {
   strings: {
     title: 'Sudoku',
     shortTitle: 'Sudoku',
@@ -237,9 +237,9 @@ const fr = {
     ],
     tips: [
       {
-        key: ‘scan-rows’,
-        title: ‘Inspecte une seule maison à la fois’,
-        body: ‘Choisis une ligne, une colonne ou une boîte et demande-toi quels chiffres manquent encore. Les vérifications petites et locales restent plus fiables que les suppositions larges.’,
+        key: 'scan-rows',
+        title: 'Inspecte une seule maison à la fois',
+        body: 'Choisis une ligne, une colonne ou une boîte et demande-toi quels chiffres manquent encore. Les vérifications petites et locales restent plus fiables que les suppositions larges.',
         example: [
           [5, 3, null],
           [6, 7, 2],
@@ -247,9 +247,9 @@ const fr = {
         ],
       },
       {
-        key: ‘notes-first’,
-        title: ‘Les notes gardent les cases difficiles honnêtes’,
-        body: ‘Si une case a encore plusieurs chiffres valides, passe en mode notes au lieu de deviner. Les candidats notés rendent les hidden singles et les autres placements forcés bien plus faciles à repérer.’,
+        key: 'notes-first',
+        title: 'Les notes gardent les cases difficiles honnêtes',
+        body: 'Si une case a encore plusieurs chiffres valides, passe en mode notes au lieu de deviner. Les candidats notés rendent les hidden singles et les autres placements forcés bien plus faciles à repérer.',
         example: [
           [null, '4·5', 3],
           ['1·4·7', '4·7', 6],
