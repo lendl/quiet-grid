@@ -1,93 +1,93 @@
 # Learning Center
 
-Learning Center is the umbrella teaching system for a game. It includes all three teaching surfaces:
+Learning Center is the umbrella teaching system for a game. It includes two teaching surfaces:
 
-- Tutorial
-- Next Move
-- Analyzer
+- How to Play
+- Technique Explanation
 
 ## User goal
 
 - Help players learn each puzzle, improve over time, and become expert players.
-- Keep teaching centered on puzzle interaction and canonical move language.
-- Use tutorial for first-contact teaching, next move for live guidance, and analyzer for reflection.
+- Keep teaching centered on puzzle interaction and canonical technique language.
+- Use how to play for first-contact teaching, technique explanation for live guidance and post-game reflection.
 
 ## Surface user goals
 
-- Tutorial user goal: help the player safely learn the rules, interaction model, and core move language before or alongside real play.
-- Next Move user goal: help the player during live play by suggesting one valid, approved next step without taking control away from the player.
-- Analyzer user goal: help the player reflect on a finished state, understand why moves were right or wrong, and improve future decision-making.
+- How to Play user goal: help the player safely learn the rules, interaction model, and core technique language before or alongside real play.
+- Technique Explanation (live) user goal: help the player during live play by suggesting one valid, approved next step without taking control away from the player.
+- Technique Explanation (post-game) user goal: help the player reflect on a finished state, understand why moves were right or wrong, and improve future decision-making.
 
 ## Architecture goal
 
-- Learning Center owns tutorial, next move, and analyzer as one connected subsystem.
-- Tutorial flow belongs in `ui/tutorial/`.
-- Next move belongs to gameplay move detection plus play UI.
-- Analyzer belongs in `ui/learning/analyzer/` and should reuse game move logic.
-- Difficulty guidance belongs in Learning Center, but not inside tutorial lessons.
+- Learning Center owns how to play and technique explanation as one connected subsystem.
+- How to play static content belongs in `content/i18n/` (howToPlay section) and is rendered by the app shell.
+- How to play interactive onboarding belongs in `ui/tutorial/` (code name) and `content/tutorialLessons.ts` (code name).
+- Technique explanation (live) belongs to gameplay technique detection plus play UI.
+- Technique explanation (post-game) belongs in `ui/learning/analyzer/` (code name) and should reuse game technique logic.
+- Difficulty guidance belongs in Learning Center, but not inside how to play lessons.
 
 ## Rules
 
-- Shared Learning Center rules apply to tutorial, next move, and analyzer unless a rule below names only one surface.
-- Keep all Learning Center surfaces aligned with the same canonical move language and puzzle semantics.
-- Tutorial should introduce the player goal and win condition before or alongside move teaching.
-- Tutorial should explain how the user can interact with the puzzle.
-- Tutorial should explain the real live-play control mapping, not only tutorial-specific controls.
-- Tutorial should explicitly call out when tutorial controls differ from live puzzle controls.
-- Tutorial chrome should stay minimal by default: no skip button and no extra live-play info box unless user explicitly approves them.
-- Tutorial should include explicit decision checkpoints in key lessons (for example, asking filled vs empty) instead of only passive "continue" steps.
-- Tutorial should use a valid example grid for each lesson when tutorial exists.
-- Tutorial example grids should be valid puzzle states that obey the game rules and the lesson claim being taught.
-- Tutorial decision checkpoints must not reveal the answer before the player responds. Highlighting the target cell is fine; showing the answer value or other hidden resolution is not.
-- Tutorial should not compare difficulty levels.
-- Tutorial is required for game integrations in this repository unless user explicitly approves an exception.
-- Next move should explain one valid move from the current puzzle state.
-- Next move should present one stored move suggestion at a time, not a continuously recomputed helper stream.
-- Next move should support the player, not replace the player’s agency.
-- Next move must check invalid-board state first and report that the board must be corrected before suggesting any move.
-- Next move should teach canonical progress first and should not require optional support actions when canonical progress exists.
-- Next move should end in one actionable canonical move. Elimination-only reasoning may support that move, but should not be exposed as the final player-facing move unless eliminations are explicitly approved as canonical actions.
-- Next move should select or focus the target cell when that helps the player apply the move in live play.
-- Analyzer mode depends on game type:
-  - engine-backed games: teach an approved solve path built from the same canonical move system used for classification
+- Shared Learning Center rules apply to how to play and technique explanation unless a rule below names only one surface.
+- Keep all Learning Center surfaces aligned with the same canonical technique language and puzzle semantics.
+- How to play should introduce the player goal and win condition before or alongside technique teaching.
+- How to play should explain how the user can interact with the puzzle.
+- How to play should explain the real live-play control mapping, not only onboarding-specific controls.
+- How to play should explicitly call out when onboarding controls differ from live puzzle controls.
+- How to play chrome should stay minimal by default: no skip button and no extra live-play info box unless user explicitly approves them.
+- How to play should include explicit decision checkpoints in key lessons (for example, asking filled vs empty) instead of only passive "continue" steps.
+- How to play should use a valid example grid for each lesson when interactive onboarding exists.
+- How to play example grids should be valid puzzle states that obey the game rules and the lesson claim being taught.
+- How to play decision checkpoints must not reveal the answer before the player responds. Highlighting the target cell is fine; showing the answer value or other hidden resolution is not.
+- How to play should not compare difficulty levels.
+- How to play is required for game integrations in this repository unless user explicitly approves an exception.
+- Technique explanation (live) should explain one valid technique from the current puzzle state.
+- Technique explanation (live) should present one stored suggestion at a time, not a continuously recomputed helper stream.
+- Technique explanation (live) should support the player, not replace the player's agency.
+- Technique explanation (live) must check invalid-board state first and report that the grid must be corrected before suggesting any technique.
+- Technique explanation (live) should teach canonical progress first and should not require optional support actions when canonical progress exists.
+- Technique explanation (live) should end in one actionable canonical technique. Elimination-only reasoning may support that technique, but should not be exposed as the final player-facing step unless eliminations are explicitly approved as canonical actions.
+- Technique explanation (live) should select or focus the target cell when that helps the player apply the technique in live play.
+- Technique explanation mode depends on game type:
+  - engine-backed games: teach an approved solve path built from the same canonical technique system used for classification
   - non-engine games: analyze loss-state decisions
-- Analyzer should explain decisions in a way that helps the player improve future runs, not just describe the past state.
-- Analyzer is not complete until analysis logic and analyzer UI are both wired, not only localized copy.
-- Analyzer may group multiple independent proofs for the same canonical move into one teaching step when they all support the same target action.
-- Analyzer for engine-backed games should teach from the puzzle state itself, not from optional support-action history such as notes, unless those support actions are explicitly part of the approved move language.
-- Analyzer for engine-backed games should prefer placement-first teaching steps. Internal elimination logic may be used as evidence, but the player-facing step should still resolve to one approved target action unless eliminations are explicitly canonical.
-- Teach canonical moves first. Support actions are optional style tools.
-- If a game includes support actions, define whether tutorial may mention them and whether next move/analyzer must ignore them when canonical progress exists.
+- Technique explanation (post-game) should explain decisions in a way that helps the player improve future runs, not just describe the past state.
+- Technique explanation (post-game) is not complete until analysis logic and analyzer UI are both wired, not only localized copy.
+- Technique explanation (post-game) may group multiple independent proofs for the same canonical technique into one teaching step when they all support the same target action.
+- Technique explanation (post-game) for engine-backed games should teach from the puzzle state itself. It may reference visible support actions (flags, notes) as context, but the suggested action must always be a technique.
+- Technique explanation (post-game) for engine-backed games should prefer placement-first teaching steps. Internal elimination logic may be used as evidence, but the player-facing step should still resolve to one approved target action unless eliminations are explicitly canonical.
+- Teach canonical techniques. Support actions may appear as context in explanations but must never be the suggested player action.
+- How to play may mention support actions to explain player controls.
 - Explain mistake policy only when it changes how the player should play.
-- Do not use hidden brute-force or full-solution search for player-facing next-move or analyzer explanations unless that proof model is explicitly part of the approved move language.
-- If an engine-backed game allows hypothetical branches, teach that branch model explicitly and keep branch resolution inside approved move logic.
+- Do not use hidden brute-force or full-solution search for player-facing technique explanation unless that proof model is explicitly part of the approved technique language.
+- If an engine-backed game allows hypothetical branches, teach that branch model explicitly and keep branch resolution inside approved technique logic.
 
-## Next move policy
+## Technique Explanation (live) policy
 
-- Next move suggests one approved canonical move from current puzzle state.
-- If puzzle state is invalid, next move does not suggest a move and must state board must be corrected first.
-- Next move prefers canonical progress and does not require optional support actions unless explicitly part of approved move system.
-- Next move does not expose elimination-only proof steps as standalone moves unless eliminations are explicitly approved canonical actions.
-- Next move should be deterministic for same stored puzzle/session state and explanation context.
+- Technique explanation (live) suggests one approved canonical technique from current puzzle state.
+- If puzzle state is invalid, technique explanation does not suggest a technique and must state the grid must be corrected first.
+- Technique explanation (live) must suggest a technique as the player's next step. It may reference visible support actions as context, but must not suggest a support action as the output.
+- Technique explanation (live) does not expose elimination-only proof steps as standalone techniques unless eliminations are explicitly approved canonical actions.
+- Technique explanation (live) should be deterministic for same stored puzzle/session state and explanation context.
 
 ## File map
 
-- Learning Center spans tutorial UI, next move play integration, analyzer UI, and their shared content.
-- `src/games/<id>/ui/tutorial/`
-- next move logic in `src/games/<id>/gameplay/` and play adapter wiring in `src/games/<id>/ui/play/`
-- `src/games/<id>/ui/learning/analyzer/`
-- `src/games/<id>/content/tutorialLessons.ts`
-- `src/games/<id>/content/i18n/`
+- Learning Center spans how to play onboarding, technique explanation play integration, analyzer UI, and their shared content.
+- `src/games/<id>/ui/tutorial/` (code name for how to play onboarding)
+- technique explanation logic in `src/games/<id>/gameplay/` and play adapter wiring in `src/games/<id>/ui/play/`
+- `src/games/<id>/ui/learning/analyzer/` (code name for technique explanation post-game)
+- `src/games/<id>/content/tutorialLessons.ts` (code name for how to play lessons)
+- `src/games/<id>/content/i18n/` (how to play static content in howToPlay section)
 - shared layout helpers in `src/app/components/` when needed
 
 ## Mistakes to avoid
 
 - Do not hardcode game-facing copy in screens or components.
-- Do not use invalid or rule-breaking tutorial boards.
-- Do not use tutorial-only controls without explaining how they map to real play.
-- Do not leak tutorial answers before decision checkpoints resolve.
-- Do not let tutorial drift into difficulty comparison.
-- Do not invent analyzer logic separate from the game’s move logic.
-- Do not let engine-backed teaching explain a move with evidence the player could never derive from the approved move set.
-- Do not let support actions silently become required for player-facing next move or analyzer behavior.
-- Do not let engine difficulty labels depend on fallback proof families that are not actually implemented and teachable in next move/analyzer.
+- Do not use invalid or rule-breaking how to play grids.
+- Do not use onboarding-specific controls without explaining how they map to real play.
+- Do not leak how to play answers before decision checkpoints resolve.
+- Do not let how to play drift into difficulty comparison.
+- Do not invent technique explanation logic separate from the game's technique logic.
+- Do not let engine-backed teaching explain a technique with evidence the player could never derive from the approved technique set.
+- Do not suggest a support action as the player's next step in technique explanation. The output must always be a technique. Support actions may appear as evidence or context, not as the conclusion.
+- Do not let engine difficulty labels depend on fallback proof families that are not actually implemented and teachable in technique explanation.

@@ -23,12 +23,12 @@ src/games/<id>/
 - `types.ts`
   - shared game types
 - `gameplay/`
-  - rules, actions, active puzzle shape, play contract, canonical moves
+  - rules, actions, active puzzle shape, play contract, canonical techniques
 - `ui/`
   - play plus Learning Center rendering and wiring
-  - playable grid should use zoom/pan support (for example `ZoomableBoardSurface`) when board size can exceed comfortable tap/read bounds
+  - playable grid should use zoom/pan support (for example `ZoomableBoardSurface`) when grid size can exceed comfortable tap/read bounds
 - `content/`
-  - game-facing copy, tutorial lesson configs, localized content
+  - game-facing copy, how to play lesson configs, localized content
 - `platform/`
   - runtime loading, codecs, persistence helpers local to the game
 - `engine/`
@@ -44,7 +44,7 @@ For engine-backed games, prefer this order:
 1. lock size/difficulty matrix and generation contract
 2. build generator + classifier + dedupe + catalog round-trip spike
 3. bulk-generate enough puzzles to prove bucket supply
-4. only then wire broad app surfaces (play, tutorial, next move, analyzer)
+4. only then wire broad app surfaces (play, how to play, technique explanation)
 
 Do not treat full game wiring as proof that engine work is done. Engine feasibility is its own gate.
 
@@ -53,14 +53,14 @@ Do not treat full game wiring as proof that engine work is done. Engine feasibil
 All game-facing copy belongs in `content/i18n/`, including:
 
 - play labels
-- tutorial copy
-- analyzer copy
-- how-to-play text
+- how to play copy
+- technique explanation copy
+- how to play static text
 - loss-related text
 
 Older packages may still carry compatibility shims like root `playAdapter.tsx`, `playContract.ts`, or `activePuzzle.ts`, plus legacy folders such as `screens/` or `learningCenter/`. Treat those as migration aids only; new code and refactors should point at the canonical locations above.
 
 ## Learning Center rule
 
-- Learning Center is the umbrella subsystem for tutorial, next move, and analyzer.
+- Learning Center is the umbrella subsystem for how to play (static + onboarding) and technique explanation (live + post-game).
 - Load `docs/ai/context/learning-center.md` and follow it as the single source of truth for Learning Center user goals, rules, and architecture guidance.

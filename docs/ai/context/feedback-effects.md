@@ -25,8 +25,8 @@
 - hint emphasis
 - completion emphasis
 - line or cell highlight effects
-- board spin feedback for correct cells or completed lines
-- board shake feedback for incorrect cells or completed lines
+- grid spin feedback for correct cells or completed lines
+- grid shake feedback for incorrect cells or completed lines
 
 ## File map
 

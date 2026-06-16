@@ -13,11 +13,12 @@ Use these packets when AI is editing one subsystem and should not load the whole
 
 ### File map
 - `src/games/<id>/definition.ts`
-- `src/app/shell/games/gameRegistry.ts`
-- `src/engine/gameRegistry.ts` when engine-backed
+- `src/app/shell/games/gameRegistry.ts` — must add an entry here or the game is not discoverable
+- `src/engine/gameRegistry.ts` — must add an entry here if the game has an engine
 
 ### Mistakes to avoid
 - Do not grow `definition.ts` into a behavior dump.
+- Do not forget to add the game to `src/app/shell/games/gameRegistry.ts` — routing silently fails without it.
 
 ## Gameplay core
 
@@ -39,17 +40,17 @@ Use these packets when AI is editing one subsystem and should not load the whole
 ## Learning Center
 
 ### User goal
-- Teach interaction, moves, and improvement.
+- Teach interaction, techniques, and improvement via two surfaces: how to play and technique explanation.
 
 ### Architecture goal
-- Learning Center is the umbrella subsystem for tutorial, next move, and analyzer.
+- Learning Center is the umbrella subsystem for how to play (static + onboarding) and technique explanation (live + post-game).
 - Load `docs/ai/context/learning-center.md` for the canonical Learning Center rules and surface-specific guidance.
 
 ### File map
-- `src/games/<id>/ui/tutorial/`
-- `src/games/<id>/ui/learning/analyzer/`
-- `src/games/<id>/content/tutorialLessons.ts`
-- `src/games/<id>/content/i18n/`
+- `src/games/<id>/ui/tutorial/` (how to play onboarding, code name)
+- `src/games/<id>/ui/learning/analyzer/` (technique explanation post-game, code name)
+- `src/games/<id>/content/tutorialLessons.ts` (how to play lessons, code name)
+- `src/games/<id>/content/i18n/` (how to play static content in howToPlay section)
 
 ### Mistakes to avoid
 - Do not treat this summary as the rule source when `docs/ai/context/learning-center.md` exists.
@@ -60,16 +61,20 @@ Use these packets when AI is editing one subsystem and should not load the whole
 - Keep all game-facing copy consistent and translatable.
 
 ### Architecture goal
-- Put all game-facing copy in `content/i18n/`, including tutorial copy.
+- Put all game-facing copy in `content/i18n/`, including how to play copy.
+- Content files (`howToPlay.ts`, `loss.ts`, etc.) are thin wrappers that call the i18n function — they do not contain strings directly. All strings live in `content/i18n/en.ts` and the other locale files.
 - If an older package still has a root `i18n/` shim, treat it as compatibility only and import `content/i18n/` in new edits.
 
 ### File map
 - `src/games/<id>/content/i18n/index.ts`
 - `src/games/<id>/content/i18n/en.ts`
 - `src/games/<id>/content/i18n/nl.ts`
+- `src/games/<id>/content/i18n/de.ts`
+- `src/games/<id>/content/i18n/fr.ts`
+- `src/games/<id>/content/i18n/es.ts`
 
 ### Mistakes to avoid
-- Do not hardcode game-facing copy in screens or components.
+- Do not hardcode game-facing copy in screens, components, or content files. Strings belong in `content/i18n/`.
 
 ## Persistence and platform
 
@@ -78,13 +83,15 @@ Use these packets when AI is editing one subsystem and should not load the whole
 
 ### Architecture goal
 - Keep game-specific payload shapes in `gameplay/activePuzzle.ts` and app normalization in storage helpers.
+- Every new game must add validate and normalize functions to `activeSessionStateStorage.ts`. Without this, sessions silently corrupt on load after an app update.
 
 ### File map
 - `src/games/<id>/platform/`
-- `src/app/utils/activeSessionStateStorage.ts`
+- `src/app/utils/activeSessionStateStorage.ts` — add `is<Game>ActiveSession()` and `normalize<Game>ActiveSession()` here
 
 ### Mistakes to avoid
 - Do not scatter persistence rules across screens.
+- Do not ship a new game without updating `activeSessionStateStorage.ts` — missing normalization causes silent session corruption, not a typecheck error.
 
 ## Engine generation
 
@@ -94,6 +101,7 @@ Use these packets when AI is editing one subsystem and should not load the whole
 ### Architecture goal
 - Keep generator support inside `engine/` and `puzzles/`.
 - Treat engine feasibility as a separate gate before broad app surface work.
+- Load `docs/ai/context/engine.md` for full generation pipeline, difficulty balancing guidance, and catalog rules.
 
 ### File map
 - `src/games/<id>/engine/`
@@ -101,5 +109,5 @@ Use these packets when AI is editing one subsystem and should not load the whole
 - `src/engine/gameRegistry.ts`
 
 ### Mistakes to avoid
-- Do not lock app/tutorial/analyzer work before the generator, classifier, dedupe, and catalog round-trip are proven.
-- Do not ship engine-backed puzzles without uniqueness, difficulty, and reclassification rules.
+- Do not lock app/how to play/technique explanation work before the generator, classifier, dedupe, and catalog round-trip are proven.
+- Do not ship engine-backed puzzles without verifying bucket supply across all sizes and difficulties.
