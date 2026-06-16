@@ -220,6 +220,25 @@ const nl = {
         body: `Pas een gemarkeerde cel aan. Waarom: ${firstLineLabel} en ${secondLineLabel} zijn gelijk, maar complete ${lineLabel} moeten uniek blijven.`,
       };
     },
+    lineLabel(lineKind: 'row' | 'column', index: number) {
+      return `${lineKind === 'row' ? 'rij' : 'kolom'} ${index + 1}`;
+    },
+    cellLabel(count: number) {
+      return count === 1 ? 'cel' : 'cellen';
+    },
+    lineKindLabel(lineKind: 'row' | 'column', count: number) {
+      if (lineKind === 'row') return count === 1 ? 'rij' : 'rijen';
+      return count === 1 ? 'kolom' : 'kolommen';
+    },
+    ruleLabel(rule: 'find-pairs' | 'avoid-trios' | 'complete-lines' | 'eliminate-filled-lines' | null) {
+      switch (rule) {
+        case 'find-pairs': return 'de regel voor gelijke paren';
+        case 'avoid-trios': return "de regel zonder trio's";
+        case 'complete-lines': return 'de regel voor complete lijnen';
+        case 'eliminate-filled-lines': return 'de regel voor het uitsluiten van gelijke lijnen';
+        default: return 'de regels';
+      }
+    },
   },
 } as const;
 

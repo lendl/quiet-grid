@@ -58,11 +58,13 @@ Use these packets when AI is editing one subsystem and should not load the whole
 ## Content and i18n
 
 ### User goal
-- Keep all game-facing copy consistent and translatable.
+- Keep all game-facing copy consistent and translatable. Adding a new language must only require adding one locale file per game — no gameplay code changes.
 
 ### Architecture goal
 - Put all game-facing copy in `content/i18n/`, including how to play copy.
 - Content files (`howToPlay.ts`, `loss.ts`, etc.) are thin wrappers that call the i18n function — they do not contain strings directly. All strings live in `content/i18n/en.ts` and the other locale files.
+- This includes labels for lines, cells, rule names, plural forms, and any other language-specific string used in gameplay or technique explanation output.
+- Never switch on language or locale in gameplay, analysis, or content code. If a string varies by language, it belongs in the locale file — not in a `switch (language)` block inside a `.ts` file.
 - If an older package still has a root `i18n/` shim, treat it as compatibility only and import `content/i18n/` in new edits.
 
 ### File map
@@ -75,6 +77,7 @@ Use these packets when AI is editing one subsystem and should not load the whole
 
 ### Mistakes to avoid
 - Do not hardcode game-facing copy in screens, components, or content files. Strings belong in `content/i18n/`.
+- Do not switch on language in gameplay or analysis code to build strings. That makes adding a language require code changes outside locale files.
 
 ## Persistence and platform
 

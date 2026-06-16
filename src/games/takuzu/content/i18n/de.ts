@@ -220,6 +220,25 @@ const de = {
         body: `Ändere eine markierte Zelle. Warum: ${firstLineLabel} und ${secondLineLabel} sind identisch, aber abgeschlossene ${lineLabel} müssen einzigartig bleiben.`,
       };
     },
+    lineLabel(lineKind: 'row' | 'column', index: number) {
+      return `${lineKind === 'row' ? 'Zeile' : 'Spalte'} ${index + 1}`;
+    },
+    cellLabel(count: number) {
+      return count === 1 ? 'Zelle' : 'Zellen';
+    },
+    lineKindLabel(lineKind: 'row' | 'column', count: number) {
+      if (lineKind === 'row') return count === 1 ? 'Zeile' : 'Zeilen';
+      return count === 1 ? 'Spalte' : 'Spalten';
+    },
+    ruleLabel(rule: 'find-pairs' | 'avoid-trios' | 'complete-lines' | 'eliminate-filled-lines' | null) {
+      switch (rule) {
+        case 'find-pairs': return 'der Paare-Regel';
+        case 'avoid-trios': return 'der Keine-Drillinge-Regel';
+        case 'complete-lines': return 'der Regel für vollständige Linien';
+        case 'eliminate-filled-lines': return 'der Regel zum Ausschließen gleicher Linien';
+        default: return 'den Regeln';
+      }
+    },
   },
 } as const;
 

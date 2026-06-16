@@ -220,6 +220,24 @@ const en = {
         body: `Change one highlighted cell. Why: ${firstLineLabel} and ${secondLineLabel} match, but completed ${lineLabel} must stay unique.`,
       };
     },
+    lineLabel(lineKind: 'row' | 'column', index: number) {
+      return `${lineKind} ${index + 1}`;
+    },
+    cellLabel(count: number) {
+      return count === 1 ? 'cell' : 'cells';
+    },
+    lineKindLabel(lineKind: 'row' | 'column', count: number) {
+      return count === 1 ? lineKind : `${lineKind}s`;
+    },
+    ruleLabel(rule: 'find-pairs' | 'avoid-trios' | 'complete-lines' | 'eliminate-filled-lines' | null) {
+      switch (rule) {
+        case 'find-pairs': return 'the find pairs rule';
+        case 'avoid-trios': return 'the avoid trios rule';
+        case 'complete-lines': return 'the complete lines rule';
+        case 'eliminate-filled-lines': return 'the eliminate filled lines rule';
+        default: return 'the rules';
+      }
+    },
   },
 } as const;
 

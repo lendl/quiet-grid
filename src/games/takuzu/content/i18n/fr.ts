@@ -220,6 +220,25 @@ const fr = {
         body: `Change une case mise en évidence. Pourquoi : ${firstLineLabel} et ${secondLineLabel} sont identiques, mais les ${lineLabel} complètes doivent rester uniques.`,
       };
     },
+    lineLabel(lineKind: 'row' | 'column', index: number) {
+      return `${lineKind === 'row' ? 'ligne' : 'colonne'} ${index + 1}`;
+    },
+    cellLabel(count: number) {
+      return count === 1 ? 'case' : 'cases';
+    },
+    lineKindLabel(lineKind: 'row' | 'column', count: number) {
+      if (lineKind === 'row') return count === 1 ? 'ligne' : 'lignes';
+      return count === 1 ? 'colonne' : 'colonnes';
+    },
+    ruleLabel(rule: 'find-pairs' | 'avoid-trios' | 'complete-lines' | 'eliminate-filled-lines' | null) {
+      switch (rule) {
+        case 'find-pairs': return 'la règle des paires';
+        case 'avoid-trios': return 'la règle anti-trio';
+        case 'complete-lines': return 'la règle des lignes complètes';
+        case 'eliminate-filled-lines': return "la règle d'élimination des lignes identiques";
+        default: return 'les règles';
+      }
+    },
   },
 } as const;
 

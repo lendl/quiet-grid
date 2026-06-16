@@ -220,6 +220,25 @@ const es = {
         body: `Cambia una celda resaltada. Por qué: ${firstLineLabel} y ${secondLineLabel} coinciden, pero las ${lineLabel} completas deben seguir siendo únicas.`,
       };
     },
+    lineLabel(lineKind: 'row' | 'column', index: number) {
+      return `${lineKind === 'row' ? 'fila' : 'columna'} ${index + 1}`;
+    },
+    cellLabel(count: number) {
+      return count === 1 ? 'celda' : 'celdas';
+    },
+    lineKindLabel(lineKind: 'row' | 'column', count: number) {
+      if (lineKind === 'row') return count === 1 ? 'fila' : 'filas';
+      return count === 1 ? 'columna' : 'columnas';
+    },
+    ruleLabel(rule: 'find-pairs' | 'avoid-trios' | 'complete-lines' | 'eliminate-filled-lines' | null) {
+      switch (rule) {
+        case 'find-pairs': return 'la regla de las parejas';
+        case 'avoid-trios': return 'la regla de evitar tríos';
+        case 'complete-lines': return 'la regla de completar líneas';
+        case 'eliminate-filled-lines': return 'la regla de eliminar líneas iguales';
+        default: return 'las reglas';
+      }
+    },
   },
 } as const;
 

@@ -73,6 +73,10 @@ export interface TakuzuLearningCenterContent {
     secondLineLabel: string,
     lineLabel: string,
   ): { title: string; body: string };
+  lineLabel(lineKind: 'row' | 'column', index: number): string;
+  cellLabel(count: number): string;
+  lineKindLabel(lineKind: 'row' | 'column', count: number): string;
+  ruleLabel(rule: 'find-pairs' | 'avoid-trios' | 'complete-lines' | 'eliminate-filled-lines' | null): string;
 }
 
 export interface TakuzuI18n {

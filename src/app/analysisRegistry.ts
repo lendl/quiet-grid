@@ -2,7 +2,7 @@ import type { GameId } from '../games/shared/types';
 import type { PuzzleAnalysisAdapter } from './analysis/types';
 import { minesweeperAnalysisAdapter } from '../games/minesweeper/learningCenter/analyzer';
 import { nonogramAnalysisAdapter } from '../games/nonogram/learningCenter/analyzer';
-import { takuzuAnalysisAdapter } from '../games/takuzu/learningCenter/analyzer';
+import { takuzuAnalysisAdapter } from '../games/takuzu/ui/learning/analyzer';
 import { sudokuAnalysisAdapter } from '../games/sudoku/ui/learning/analyzer';
 import { wordSearchAnalysisAdapter } from '../games/wordsearch/learningCenter/analyzer';
 

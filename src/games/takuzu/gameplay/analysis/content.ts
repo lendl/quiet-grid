@@ -1,6 +1,5 @@
 import { getTakuzuLearningCenterContent as getContent } from '../../content/i18n';
-
-type LineKind = 'row' | 'column';
+import type { LineKind } from './helpers';
 
 interface NextMoveCopy {
   title: string;
@@ -40,11 +39,11 @@ interface EliminateImpossibleCombinationsProgressParams extends ProgressLinePara
   validCompletionCount: number;
   blockedValue: 0 | 1;
   targetValue: 0 | 1;
-  cellLabel: string;
+  proofStepCount: number;
+  proofUsesRule: 'find-pairs' | 'avoid-trios' | 'complete-lines' | 'eliminate-filled-lines' | null;
   contradictionKind: 'triple' | 'balance' | 'duplicate-line';
   contradictionLineKind: LineKind;
   contradictionLineIndex: number;
-  proofRuleLabel: string;
 }
 
 interface AvoidTriosRecoveryParams extends ProgressLineParams {
@@ -63,14 +62,6 @@ interface EliminateFilledLinesRecoveryParams {
   secondLineIndex: number;
 }
 
-function formatLine(lineKind: LineKind, lineIndex: number): string {
-  return `${lineKind} ${lineIndex + 1}`;
-}
-
-function pluralize(count: number, singular: string, plural: string): string {
-  return count === 1 ? singular : plural;
-}
-
 export function buildPausedNextMove(): NextMoveCopy {
   return getContent().pausedNextMove;
 }
@@ -83,10 +74,10 @@ export function buildFindPairsNextMove({
   targetCount,
 }: FindPairsProgressParams): NextMoveCopy {
   return getContent().findPairs(
-    formatLine(lineKind, lineIndex),
+    getContent().lineLabel(lineKind, lineIndex),
     repeatedValue,
     targetValue,
-    pluralize(targetCount, 'cell', 'cells'),
+    getContent().cellLabel(targetCount),
   );
 }
 
@@ -96,7 +87,7 @@ export function buildAvoidTriosNextMove({
   repeatedValue,
   targetValue,
 }: AvoidTriosProgressParams): NextMoveCopy {
-  return getContent().avoidTrios(formatLine(lineKind, lineIndex), repeatedValue, targetValue);
+  return getContent().avoidTrios(getContent().lineLabel(lineKind, lineIndex), repeatedValue, targetValue);
 }
 
 export function buildCompleteLinesNextMove({
@@ -108,11 +99,11 @@ export function buildCompleteLinesNextMove({
   targetCount,
 }: CompleteLinesProgressParams): NextMoveCopy {
   return getContent().completeLines(
-    formatLine(lineKind, lineIndex),
+    getContent().lineLabel(lineKind, lineIndex),
     filledValue,
     filledCount,
     targetValue,
-    pluralize(targetCount, 'cell', 'cells'),
+    getContent().cellLabel(targetCount),
   );
 }
 
@@ -124,11 +115,11 @@ export function buildEliminateFilledLinesNextMove({
   targetCount,
 }: EliminateFilledLinesProgressParams): NextMoveCopy {
   return getContent().eliminateFilledLines(
-    formatLine(lineKind, lineIndex),
-    formatLine(lineKind, matchingLineIndex),
+    getContent().lineLabel(lineKind, lineIndex),
+    getContent().lineLabel(lineKind, matchingLineIndex),
     targetValue,
-    pluralize(targetCount, 'cell', 'cells'),
-    pluralize(targetCount, lineKind, `${lineKind}s`),
+    getContent().cellLabel(targetCount),
+    getContent().lineKindLabel(lineKind, targetCount),
   );
 }
 
@@ -138,20 +129,23 @@ export function buildEliminateImpossibleCombinationsNextMove({
   validCompletionCount,
   blockedValue,
   targetValue,
-  cellLabel,
+  proofStepCount,
+  proofUsesRule,
   contradictionKind,
   contradictionLineKind,
   contradictionLineIndex,
-  proofRuleLabel,
 }: EliminateImpossibleCombinationsProgressParams): NextMoveCopy {
+  const proofRuleLabel = getContent().ruleLabel(
+    proofStepCount === 1 ? proofUsesRule : null
+  );
   return getContent().eliminateImpossible(
-    formatLine(lineKind, lineIndex),
+    getContent().lineLabel(lineKind, lineIndex),
     validCompletionCount,
     blockedValue,
     targetValue,
-    cellLabel,
+    getContent().cellLabel(1),
     contradictionKind,
-    formatLine(contradictionLineKind, contradictionLineIndex),
+    getContent().lineLabel(contradictionLineKind, contradictionLineIndex),
     proofRuleLabel,
   );
 }
@@ -161,7 +155,7 @@ export function buildAvoidTriosRepair({
   lineIndex,
   repeatedValue,
 }: AvoidTriosRecoveryParams): NextMoveCopy {
-  return getContent().avoidTriosRepair(formatLine(lineKind, lineIndex), repeatedValue);
+  return getContent().avoidTriosRepair(getContent().lineLabel(lineKind, lineIndex), repeatedValue);
 }
 
 export function buildCompleteLinesRepair({
@@ -172,7 +166,7 @@ export function buildCompleteLinesRepair({
   limit,
 }: CompleteLinesRecoveryParams): NextMoveCopy {
   return getContent().completeLinesRepair(
-    formatLine(lineKind, lineIndex),
+    getContent().lineLabel(lineKind, lineIndex),
     filledValue,
     filledCount,
     limit,
@@ -185,8 +179,8 @@ export function buildEliminateFilledLinesRepair({
   secondLineIndex,
 }: EliminateFilledLinesRecoveryParams): NextMoveCopy {
   return getContent().eliminateFilledLinesRepair(
-    formatLine(lineKind, firstLineIndex),
-    formatLine(lineKind, secondLineIndex),
-    pluralize(2, lineKind, `${lineKind}s`),
+    getContent().lineLabel(lineKind, firstLineIndex),
+    getContent().lineLabel(lineKind, secondLineIndex),
+    getContent().lineKindLabel(lineKind, 2),
   );
 }

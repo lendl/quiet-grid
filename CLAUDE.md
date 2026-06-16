@@ -50,7 +50,7 @@ For new games and reusable context, load the relevant files under `docs/ai/`:
 
 - Keep puzzle-specific logic inside the owning game package.
 - In `definition.ts`, expose user-facing strings through getters (`get title()`, `get tagline()`) so language changes always read fresh values.
-- Treat `src/games/<id>/content/i18n/` as the single source of truth for all user-visible copy.
+- Treat `src/games/<id>/content/i18n/` as the single source of truth for all user-visible copy. This includes line labels, cell labels, rule names, and plural forms used inside gameplay and technique explanation — never switch on language in gameplay code to build strings.
 - When changing persisted puzzle/session shapes, update `activeSessionStateStorage.ts` normalization together with the change.
 - Engine code uses `src/engine/tsconfig.json` — keep it free of Expo/React Native runtime dependencies.
 - New games are wired in two registries: `src/app/shell/games/gameRegistry.ts` (app) and `src/engine/gameRegistry.ts` (engine, only if the game has a generator).
