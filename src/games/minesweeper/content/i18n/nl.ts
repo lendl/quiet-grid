@@ -1,7 +1,7 @@
 const nl = {
   strings: {
-    title: 'Minesweeper',
-    shortTitle: 'Minesweeper',
+    title: 'Mijnenveger',
+    shortTitle: 'Mijnenveger',
     tagline: 'Maak het rooster vrij zonder een mijn te openen.',
     difficultyLabels: {
       easy: 'Makkelijk',

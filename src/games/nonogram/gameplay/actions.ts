@@ -2,6 +2,7 @@ import {
   cloneNonogramBoard,
   type NonogramBoard,
   type NonogramCellRef,
+  type NonogramCellValue,
   type NonogramDirectState,
   type NonogramSession,
 } from '../types';
@@ -57,14 +58,25 @@ function applyAutoCorrect(board: NonogramBoard, solution: boolean[][]): void {
   });
 }
 
+function isLineCorrectlyComplete(
+  cells: readonly NonogramCellValue[],
+  clues: readonly number[],
+  solutionLine: readonly boolean[],
+): boolean {
+  return isNonogramLineComplete(cells, clues)
+    && cells.every((cell, index) => cell !== 1 || solutionLine[index] === true);
+}
+
 function applyAutoFillCompletedLines(
   board: NonogramBoard,
   puzzle: NonogramSession['puzzle'],
+  solution: boolean[][],
 ): void {
   puzzle.rowClues.forEach((clues, rowIndex) => {
     const cells = board[rowIndex];
     if (!cells) return;
-    if (isNonogramLineComplete(cells, clues)) {
+    const solutionRow = solution[rowIndex] ?? [];
+    if (isLineCorrectlyComplete(cells, clues, solutionRow)) {
       cells.forEach((cell, colIndex) => {
         if (cell === null) cells[colIndex] = 0;
       });
@@ -73,7 +85,8 @@ function applyAutoFillCompletedLines(
 
   puzzle.colClues.forEach((clues, colIndex) => {
     const cells = board.map((row) => row[colIndex] ?? null);
-    if (isNonogramLineComplete(cells, clues)) {
+    const solutionCol = solution.map((row) => row[colIndex] ?? false);
+    if (isLineCorrectlyComplete(cells, clues, solutionCol)) {
       board.forEach((row) => {
         if (row[colIndex] === null) row[colIndex] = 0;
       });
@@ -121,8 +134,7 @@ export function runNonogramAction(
   }
 
   if (changed) {
-    applyAutoCorrect(nextSession.board, nextSession.solution);
-    applyAutoFillCompletedLines(nextSession.board, nextSession.puzzle);
+    applyAutoFillCompletedLines(nextSession.board, nextSession.puzzle, nextSession.solution);
   }
 
   return {

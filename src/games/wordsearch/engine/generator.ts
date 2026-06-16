@@ -136,15 +136,15 @@ function buildBentPositions(
   return positions.length === wordLen ? positions : null;
 }
 
+
 function hasCoverageViolation(placements: readonly Placement[]): boolean {
   const sets = placements.map((p) => new Set(p.positions.map((c) => toGridKey(c))));
-  for (let i = 0; i < sets.length; i += 1) {
-    for (let j = 0; j < sets.length; j += 1) {
-      if (i === j) continue;
-      if ([...sets[i]].every((k) => sets[j].has(k))) return true;
-    }
-  }
-  return false;
+  const unionWithout = (excludeIndex: number): Set<number> => {
+    const union = new Set<number>();
+    sets.forEach((s, i) => { if (i !== excludeIndex) s.forEach((k) => union.add(k)); });
+    return union;
+  };
+  return sets.some((s, i) => [...s].every((k) => unionWithout(i).has(k)));
 }
 
 function pathSpellsWord(
@@ -678,8 +678,7 @@ export function generateWordSearchPuzzle(
 
     selectedPlacements = placements;
     selectedHiddenWord = randomFrom(hiddenCandidates);
-    // Shuffle hidden word positions so letters are scattered rather than in reading order.
-    selectedHiddenPositions = [...emptyCells].sort(() => Math.random() - 0.5);
+    selectedHiddenPositions = emptyCells;
     selectedQuality = quality;
     selectedSignature = buildDiversitySignature(rows, cols, placements);
     break;

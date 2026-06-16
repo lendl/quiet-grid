@@ -55,9 +55,8 @@ function buildTargetValueMap(
   return new Map(cells.map(({ row, col, value }) => [buildCellKey(row, col), value]));
 }
 
-function getSwipePaintValue(cell: NonogramCellValue, mode: 'fill' | 'cross'): NonogramDirectState {
-  if (mode === 'cross') return 0;
-  return cell === 1 ? 0 : 1;
+function getSwipePaintValue(_cell: NonogramCellValue, mode: 'fill' | 'cross'): NonogramDirectState {
+  return mode === 'fill' ? 1 : 0;
 }
 
 function getCellAtPoint(
@@ -152,6 +151,8 @@ export default function NonogramPuzzleGrid({
   boardRef.current = board;
   const inputModeRef = useRef<'fill' | 'cross'>(inputMode);
   inputModeRef.current = inputMode;
+  const onCellTapRef = useRef(onCellTap);
+  onCellTapRef.current = onCellTap;
   const onCellSwipeRef = useRef(onCellSwipe);
   onCellSwipeRef.current = onCellSwipe;
 
@@ -174,7 +175,7 @@ export default function NonogramPuzzleGrid({
   }, []);
 
   const handleTap = useCallback((x: number, y: number) => {
-    if (!onCellTap) {
+    if (!onCellTapRef.current) {
       return;
     }
 
@@ -183,8 +184,8 @@ export default function NonogramPuzzleGrid({
       return;
     }
 
-    onCellTap(cell.row, cell.col);
-  }, [layout, onCellTap, puzzle.cols, puzzle.rows]);
+    onCellTapRef.current(cell.row, cell.col);
+  }, [layout, puzzle.cols, puzzle.rows]);
 
   const handleSwipeStart = useCallback((x: number, y: number) => {
     resetSwipeState();
@@ -248,7 +249,7 @@ export default function NonogramPuzzleGrid({
   }, [resetSwipeState]);
 
   const interactionGesture = useMemo(() => {
-    if (!interactive || (!onCellTap && !onCellSwipe)) {
+    if (!interactive || (!onCellTapRef.current && !onCellSwipeRef.current)) {
       return null;
     }
 
@@ -263,7 +264,7 @@ export default function NonogramPuzzleGrid({
         handleTap(event.x, event.y);
       });
 
-    if (!allowSwipe || !onCellSwipe) {
+    if (!allowSwipe || !onCellSwipeRef.current) {
       return tapGesture;
     }
 
@@ -285,7 +286,7 @@ export default function NonogramPuzzleGrid({
       });
 
     return Gesture.Simultaneous(tapGesture, panGesture);
-  }, [allowSwipe, handleSwipeEnd, handleSwipeMove, handleSwipeStart, handleTap, interactive, onCellSwipe, onCellTap, resetSwipeState]);
+  }, [allowSwipe, handleSwipeEnd, handleSwipeMove, handleSwipeStart, handleTap, interactive, resetSwipeState]);
 
   const rows = puzzle.rowClues.map((clues) => padNonogramClues(clues, layout.rowClueDepth));
   const cols = puzzle.colClues.map((clues) => padNonogramClues(clues, layout.colClueDepth));

@@ -5,9 +5,15 @@ const locale: WordSearchI18n = {
   ...en,
   strings: {
     ...en.strings,
+    title: 'Sopa de Letras',
+    shortTitle: 'Letras',
     tagline: 'Traza palabras en líneas rectas y resuelve la palabra oculta de bonificación directamente en la cuadrícula.',
     tutorial: {
       ...en.strings.tutorial,
+      exitLabel: {
+        skip: 'Saltar tutorial',
+        end: 'Abrir Sopa de Letras',
+      },
       checkpoint: {
         prompt: '¿Quieres seleccionar STAR. Después de tocar S, ¿qué tocas a continuación?',
         validOption: 'R — la última letra',
@@ -18,6 +24,10 @@ const locale: WordSearchI18n = {
     },
     play: {
       ...en.strings.play,
+      noPuzzlesDialog: {
+        title: 'Sopa de Letras no disponible',
+        message: (difficultyLabel: string) => `Todavía no hay ningún puzzle de Sopa de Letras listo para ${difficultyLabel}.`,
+      },
       hiddenWord: {
         ...en.strings.play.hiddenWord,
         locked: 'Resuelve la palabra oculta desde la cuadrícula cuando quieras.',
@@ -48,7 +58,13 @@ const locale: WordSearchI18n = {
     ...en.loss,
     abandoned: {
       ...en.loss.abandoned,
+      title: 'Sesión de Sopa de Letras terminada',
       body: 'Terminaste esta sesión de Sopa de Letras antes de resolver todas las palabras y la palabra oculta.',
+    },
+    'rule-failure': {
+      ...en.loss['rule-failure'],
+      title: 'Sopa de Letras no tiene derrota por reglas',
+      body: 'Las selecciones no válidas se ignoran en la Sopa de Letras. Sigue escaneando y continúa el puzzle.',
     },
   },
   tutorialLessons: {

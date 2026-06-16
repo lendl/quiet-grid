@@ -5,9 +5,15 @@ const locale: WordSearchI18n = {
   ...en,
   strings: {
     ...en.strings,
+    title: 'Woordzoeker',
+    shortTitle: 'Woorden',
     tagline: 'Trek woorden in rechte lijnen en los het verborgen bonuswoord op in het raster.',
     tutorial: {
       ...en.strings.tutorial,
+      exitLabel: {
+        skip: 'Tutorial overslaan',
+        end: 'Woordzoeker openen',
+      },
       checkpoint: {
         prompt: 'Je wilt STAR selecteren. Na het tikken op S, wat tik je dan?',
         validOption: 'R — de laatste letter',
@@ -18,6 +24,10 @@ const locale: WordSearchI18n = {
     },
     play: {
       ...en.strings.play,
+      noPuzzlesDialog: {
+        title: 'Woordzoeker niet beschikbaar',
+        message: (difficultyLabel: string) => `Nog geen Woordzoeker-puzzel klaar voor ${difficultyLabel}.`,
+      },
       hiddenWord: {
         ...en.strings.play.hiddenWord,
         locked: 'Los het verborgen woord in het raster op zodra je er klaar voor bent.',
@@ -48,7 +58,13 @@ const locale: WordSearchI18n = {
     ...en.loss,
     abandoned: {
       ...en.loss.abandoned,
+      title: 'Woordzoeker-sessie beëindigd',
       body: 'Je hebt deze Woordzoeker-sessie beëindigd voordat je alle woorden en het verborgen woord had opgelost.',
+    },
+    'rule-failure': {
+      ...en.loss['rule-failure'],
+      title: 'Woordzoeker heeft geen regelovertreding',
+      body: 'Ongeldige selecties worden genegeerd in Woordzoeker. Blijf scannen en ga door met de puzzel.',
     },
   },
   tutorialLessons: {

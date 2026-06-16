@@ -5,9 +5,15 @@ const locale: WordSearchI18n = {
   ...en,
   strings: {
     ...en.strings,
+    title: 'Wortsuche',
+    shortTitle: 'Wörter',
     tagline: 'Ziehe Wörter in geraden Linien nach und löse das versteckte Bonuswort direkt im Raster.',
     tutorial: {
       ...en.strings.tutorial,
+      exitLabel: {
+        skip: 'Tutorial überspringen',
+        end: 'Wortsuche öffnen',
+      },
       checkpoint: {
         prompt: 'Du möchtest STAR auswählen. Was tippst du nach dem S als Nächstes?',
         validOption: 'R — den letzten Buchstaben',
@@ -18,6 +24,10 @@ const locale: WordSearchI18n = {
     },
     play: {
       ...en.strings.play,
+      noPuzzlesDialog: {
+        title: 'Wortsuche nicht verfügbar',
+        message: (difficultyLabel: string) => `Noch kein Wortsuche-Rätsel für ${difficultyLabel} verfügbar.`,
+      },
       hiddenWord: {
         ...en.strings.play.hiddenWord,
         locked: 'Löse das versteckte Wort im Raster, sobald du bereit bist.',
@@ -48,7 +58,13 @@ const locale: WordSearchI18n = {
     ...en.loss,
     abandoned: {
       ...en.loss.abandoned,
+      title: 'Wortsuche-Sitzung beendet',
       body: 'Du hast diese Wortsuche beendet, bevor du alle Wörter und das versteckte Wort gelöst hast.',
+    },
+    'rule-failure': {
+      ...en.loss['rule-failure'],
+      title: 'Wortsuche hat keinen Regelverlust',
+      body: 'Ungültige Auswahlen werden in der Wortsuche ignoriert. Weiter scannen und das Rätsel fortsetzen.',
     },
   },
   tutorialLessons: {

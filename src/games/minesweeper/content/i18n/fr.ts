@@ -1,7 +1,7 @@
 const fr = {
   strings: {
-    title: 'Minesweeper',
-    shortTitle: 'Minesweeper',
+    title: 'Démineur',
+    shortTitle: 'Démineur',
     tagline: 'Libérez la grille sans ouvrir de mine.',
     difficultyLabels: {
       easy: 'Facile',

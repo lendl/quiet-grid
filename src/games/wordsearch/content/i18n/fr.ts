@@ -5,9 +5,15 @@ const locale: WordSearchI18n = {
   ...en,
   strings: {
     ...en.strings,
+    title: 'Mots mêlés',
+    shortTitle: 'Mots',
     tagline: 'Trace les mots en lignes droites et résous le mot bonus caché directement dans la grille.',
     tutorial: {
       ...en.strings.tutorial,
+      exitLabel: {
+        skip: 'Passer le tutoriel',
+        end: 'Ouvrir Mots mêlés',
+      },
       checkpoint: {
         prompt: "Vous souhaitez sélectionner STAR. Après avoir touché S, que touchez-vous ensuite ?",
         validOption: "R — la dernière lettre",
@@ -18,6 +24,10 @@ const locale: WordSearchI18n = {
     },
     play: {
       ...en.strings.play,
+      noPuzzlesDialog: {
+        title: 'Mots mêlés non disponible',
+        message: (difficultyLabel: string) => `Aucun puzzle de mots mêlés n'est prêt pour ${difficultyLabel} pour l'instant.`,
+      },
       hiddenWord: {
         ...en.strings.play.hiddenWord,
         locked: 'Résolvez le mot caché dans la grille dès que vous le souhaitez.',
@@ -48,7 +58,13 @@ const locale: WordSearchI18n = {
     ...en.loss,
     abandoned: {
       ...en.loss.abandoned,
+      title: ‘Partie de mots mêlés terminée’,
       body: "Vous avez quitté cette partie de mots mêlés avant d’avoir résolu tous les mots et le mot caché.",
+    },
+    ‘rule-failure’: {
+      ...en.loss[‘rule-failure’],
+      title: ‘Les mots mêlés n\’ont pas de défaite par règle’,
+      body: ‘Les sélections invalides sont ignorées dans les mots mêlés. Continuez à scanner et poursuivez le puzzle.’,
     },
   },
   tutorialLessons: {
