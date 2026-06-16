@@ -262,12 +262,12 @@ const es = {
     abandoned: {
       eyebrow: 'Puzzle terminado',
       title: 'Sesión de Sudoku terminada',
-      body: 'Terminaste esta sesión de Sudoku antes de completar la cuadrícula.',
+      body: 'Terminaste esta sesión de Sudoku antes de resolver la cuadrícula.',
       icon: '🏁',
     },
     'rule-failure': {
       eyebrow: 'Puzzle bloqueado',
-      title: 'El tablero de Sudoku se volvió inválido',
+      title: 'La cuadrícula de Sudoku se volvió inválida',
       body: 'Al menos una fila, columna o caja ahora entra en conflicto con las reglas del Sudoku. Corrige el conflicto antes de pedir el siguiente movimiento.',
       icon: '⚠️',
     },

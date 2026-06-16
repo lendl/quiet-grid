@@ -262,12 +262,12 @@ const nl = {
     abandoned: {
       eyebrow: 'Puzzel beëindigd',
       title: 'Sudoku-sessie beëindigd',
-      body: 'Je hebt deze Sudoku-sessie beëindigd voordat het rooster af was.',
+      body: 'Je hebt deze Sudoku-sessie beëindigd voordat het rooster opgelost was.',
       icon: '🏁',
     },
     'rule-failure': {
       eyebrow: 'Puzzel geblokkeerd',
-      title: 'Sudoku-bord werd ongeldig',
+      title: 'Sudoku-raster werd ongeldig',
       body: 'Minstens één rij, kolom of box is nu in strijd met de Sudoku-regels. Los het conflict op voordat je naar de volgende zet vraagt.',
       icon: '⚠️',
     },

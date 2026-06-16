@@ -262,12 +262,12 @@ const en = {
     abandoned: {
       eyebrow: 'Puzzle ended',
       title: 'Sudoku session ended',
-      body: 'You ended this Sudoku session before finishing the grid.',
+      body: 'You ended this Sudoku session before solving the grid.',
       icon: '🏁',
     },
     'rule-failure': {
       eyebrow: 'Puzzle blocked',
-      title: 'Sudoku board became invalid',
+      title: 'Sudoku grid became invalid',
       body: 'At least one row, column, or box now conflicts with the Sudoku rules. Correct the conflict before asking for the next move.',
       icon: '⚠️',
     },

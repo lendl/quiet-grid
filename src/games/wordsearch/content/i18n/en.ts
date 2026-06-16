@@ -64,7 +64,7 @@ const en: WordSearchI18n = {
     },
   },
   howToPlay: {
-    goal: 'Find every listed word hidden in the grid, then solve the hidden bonus word to complete the puzzle.',
+    goal: 'Find every listed word hidden in the grid, then solve the hidden bonus word to solve the puzzle.',
     controls: 'Tap the first letter of a word, then tap the last letter to select. Words run in straight lines: horizontal, vertical, or diagonal.',
     wrongMove: 'Invalid selections are silently ignored — there is no penalty for tracing wrong paths.',
     rules: [
@@ -75,7 +75,7 @@ const en: WordSearchI18n = {
       },
       {
         num: '2',
-        title: 'No mistakes, no penalties',
+        title: 'Invalid selections, no penalties',
         body: 'Invalid selections are ignored, so you can keep scanning without losing the run.',
       },
       {

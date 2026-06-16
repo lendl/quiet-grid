@@ -63,3 +63,39 @@ When adding or editing code:
 2. Prefer matching existing file and symbol names to these boundaries.
 3. Do not reintroduce mixed naming like `PuzzleDefinition`, `puzzleRegistry`, `CompletionVariant`, or `LossReason`.
 4. Do not rename `.puzzle` payload fields just to force `game` wording.
+
+---
+
+## Player-facing copy
+
+These rules apply to i18n files, UI labels, tutorial text, how-to-play content, and loss screens.
+
+### Preferred terms
+
+| Concept | Use | Avoid |
+| --- | --- | --- |
+| One concrete board or challenge | `puzzle` | `game`, `level`, `board` |
+| The category of game | `puzzle type` | `game type`, `game mode` |
+| Player won | `puzzle solved` | `completed`, `finished`, `won` |
+| Rule-based loss (e.g. Minesweeper mine) | `lost puzzle` | `failed`, `game over` |
+| Player stopped without solving | `unfinished puzzle` | `ended puzzle`, `gave up`, `quit` |
+| The play area | `grid` | `board`, `field` |
+| A wrong input | `invalid` or omit entirely | `mistake`, `error`, `wrong` |
+
+### Game titles
+
+- In English copy use the English title: `Word Search`, `Minesweeper`, etc.
+- On non-English surfaces use the localized title: `Woordzoeker`, `Wortsuche`, `Mots mêlés`, `Sopa de Letras`. Never use the English title as a fallback in translated copy.
+- In labels where the game name already provides context, use the short form: `Binary`, `Minesweeper` rather than repeating the full puzzle-type phrase.
+
+### Loss and abandonment screens
+
+- Rule-failure loss title: `Puzzle lost`
+- Abandoned/unfinished title: `Puzzle unfinished`
+- `session` is acceptable in loss titles when the game name is already the subject (e.g. `Word Search session ended`), but prefer `puzzle` everywhere else.
+
+### Tone
+
+- Keep copy calm and direct — no blame.
+- Avoid `mistake`, `failed`, `give up`, `wrong`.
+- Do not over-explain; trust the player.

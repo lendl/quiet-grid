@@ -262,12 +262,12 @@ const de = {
     abandoned: {
       eyebrow: 'Rätsel beendet',
       title: 'Sudoku-Sitzung beendet',
-      body: 'Du hast diese Sudoku-Sitzung beendet, bevor du das Gitter fertiggestellt hast.',
+      body: 'Du hast diese Sudoku-Sitzung beendet, bevor du das Raster gelöst hast.',
       icon: '🏁',
     },
     'rule-failure': {
       eyebrow: 'Rätsel blockiert',
-      title: 'Sudoku-Brett wurde ungültig',
+      title: 'Sudoku-Raster wurde ungültig',
       body: 'Mindestens eine Zeile, Spalte oder Box verstößt jetzt gegen die Sudoku-Regeln. Korrigiere den Konflikt, bevor du nach dem nächsten Zug fragst.',
       icon: '⚠️',
     },
