@@ -35,7 +35,7 @@ const locale: WordSearchI18n = {
         solvedTitle: 'Verborgen woord gevonden!',
         enterMode: 'Verborgen woord oplossen',
         exitMode: 'Verborgen-woordmodus verlaten',
-        instructions: 'Tik de letters van het verborgen woord in volgorde aan op het raster.',
+        instructions: 'De letters van het verborgen woord staan in de lege cellen, van links naar rechts en van boven naar beneden. Tik ze op volgorde aan.',
         resetOnMistake: 'Een verkeerde tik op het verborgen woord zet je voortgang terug.',
         nextLetterTitle: (clue: string) => `Verborgen woord: ${clue}`,
         nextLetterBody: 'De gemarkeerde cel is de volgende letter van het verborgen woord.',
@@ -50,7 +50,7 @@ const locale: WordSearchI18n = {
       {
         num: '3',
         title: 'Los het verborgen woord op',
-        body: 'Gebruik tijdens het spelen de verborgen-woordmodus en tik daarna de letters in volgorde aan op het raster.',
+        body: 'De letters van het verborgen woord vullen de lege cellen van links naar rechts en van boven naar beneden. Activeer de verborgen-woordmodus en tik de letters op volgorde aan.',
       },
     ],
   },
@@ -89,8 +89,8 @@ const locale: WordSearchI18n = {
     },
     'hidden-word': {
       title: 'Vind het verborgen woord',
-      body: 'Tik op het sleutelicoontje om de verborgen-woordmodus in te schakelen. De letters staan verspreid door het raster. De balk onderaan toont elke letter terwijl je tikt — vind ze allemaal om te winnen.',
-      summary: 'Voortgang onderaan begeleidt je letter voor letter.',
+      body: 'Tik op het sleutelicoontje om de verborgen-woordmodus in te schakelen. De letters staan in de lege cellen, van links naar rechts en van boven naar beneden. De balk onderaan houdt je voortgang bij — tik de letters op volgorde aan om te winnen.',
+      summary: 'Lege cellen vormen het verborgen woord in leesvolgorde.',
       continueLabel: 'Start puzzel',
     },
   },

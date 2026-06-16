@@ -35,7 +35,7 @@ const locale: WordSearchI18n = {
         enterMode: 'Resolver palabra oculta',
         exitMode: 'Salir del modo de palabra oculta',
         solvedTitle: '¡Palabra oculta encontrada!',
-        instructions: 'Toca las letras de la palabra oculta en orden sobre la cuadrícula.',
+        instructions: 'Las letras de la palabra oculta están en las casillas vacías, de izquierda a derecha y de arriba a abajo. Tócalas en orden.',
         resetOnMistake: 'Una pulsación incorrecta en la palabra oculta reinicia tu progreso.',
         nextLetterTitle: (clue: string) => `Palabra oculta: ${clue}`,
         nextLetterBody: 'La casilla resaltada es la siguiente letra de la palabra oculta.',
@@ -50,7 +50,7 @@ const locale: WordSearchI18n = {
       {
         num: '3',
         title: 'Resuelve la palabra oculta',
-        body: 'Activa el modo de palabra oculta durante la partida y luego toca sus letras en orden sobre la cuadrícula.',
+        body: 'Las letras de la palabra oculta llenan las casillas vacías de izquierda a derecha y de arriba a abajo. Activa el modo de palabra oculta y toca cada letra en orden.',
       },
     ],
   },
@@ -89,8 +89,8 @@ const locale: WordSearchI18n = {
     },
     'hidden-word': {
       title: 'Encuentra la palabra oculta',
-      body: 'Toca el icono de llave para entrar en el modo de palabra oculta. Las letras están dispersas por toda la cuadrícula. La barra inferior muestra cada letra al tocarla — encuéntralas todas para ganar.',
-      summary: 'El progreso inferior te guía letra por letra.',
+      body: 'Toca el icono de llave para entrar en el modo de palabra oculta. Las letras están en las casillas vacías, de izquierda a derecha y de arriba a abajo. La barra inferior sigue tu progreso — toca cada letra en orden para ganar.',
+      summary: 'Las casillas vacías deletrean la palabra oculta en orden de lectura.',
       continueLabel: 'Empezar puzzle',
     },
   },

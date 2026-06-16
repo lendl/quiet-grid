@@ -35,7 +35,7 @@ const locale: WordSearchI18n = {
         enterMode: 'Verstecktes Wort lösen',
         exitMode: 'Modus für verstecktes Wort verlassen',
         solvedTitle: 'Verstecktes Wort gefunden!',
-        instructions: 'Tippe die Buchstaben des versteckten Worts in der richtigen Reihenfolge im Raster an.',
+        instructions: 'Die Buchstaben des versteckten Worts befinden sich in den leeren Feldern, von links nach rechts und von oben nach unten. Tippe sie der Reihe nach an.',
         resetOnMistake: 'Ein falscher Tipp auf das versteckte Wort setzt deinen Fortschritt zurück.',
         nextLetterTitle: (clue: string) => `Verstecktes Wort: ${clue}`,
         nextLetterBody: 'Die markierte Zelle ist der nächste Buchstabe des versteckten Worts.',
@@ -50,7 +50,7 @@ const locale: WordSearchI18n = {
       {
         num: '3',
         title: 'Löse das versteckte Wort',
-        body: 'Nutze während des Spiels den Modus für das versteckte Wort und tippe dann die Buchstaben im Raster der Reihe nach an.',
+        body: 'Die Buchstaben des versteckten Worts füllen die leeren Felder von links nach rechts und von oben nach unten. Aktiviere den Modus für das versteckte Wort und tippe die Buchstaben der Reihe nach an.',
       },
     ],
   },
@@ -89,8 +89,8 @@ const locale: WordSearchI18n = {
     },
     'hidden-word': {
       title: 'Finde das versteckte Wort',
-      body: 'Tippe auf das Schlüssel-Symbol, um den Modus für das versteckte Wort zu aktivieren. Die Buchstaben sind überall im Raster verteilt. Die untere Leiste zeigt jeden Buchstaben beim Tippen — finde alle, um zu gewinnen.',
-      summary: 'Der Fortschritt unten führt dich Buchstabe für Buchstabe.',
+      body: 'Tippe auf das Schlüssel-Symbol, um den Modus für das versteckte Wort zu aktivieren. Die Buchstaben sitzen in den leeren Feldern, von links nach rechts und von oben nach unten. Die untere Leiste verfolgt deinen Fortschritt — tippe alle Buchstaben der Reihe nach an, um zu gewinnen.',
+      summary: 'Die leeren Felder buchstabieren das versteckte Wort in Lesereihenfolge.',
       continueLabel: 'Puzzle starten',
     },
   },

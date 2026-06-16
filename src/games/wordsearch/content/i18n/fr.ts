@@ -1,4 +1,4 @@
-import type { WordSearchI18n } from './index';
+﻿import type { WordSearchI18n } from './index';
 import en from './en';
 
 const locale: WordSearchI18n = {
@@ -35,7 +35,7 @@ const locale: WordSearchI18n = {
         enterMode: 'Résoudre le mot caché',
         exitMode: 'Quitter le mode mot caché',
         solvedTitle: "Mot caché trouvé !",
-        instructions: "Touchez les lettres du mot caché dans l’ordre sur la grille.",
+        instructions: "Les lettres du mot caché se trouvent dans les cases vides, de gauche à droite puis de haut en bas. Touchez-les dans l'ordre.",
         resetOnMistake: 'Une mauvaise case du mot caché réinitialise votre progression.',
         nextLetterTitle: (clue: string) => `Mot caché : ${clue}`,
         nextLetterBody: 'La case mise en évidence est la prochaine lettre du mot caché.',
@@ -50,7 +50,7 @@ const locale: WordSearchI18n = {
       {
         num: '3',
         title: 'Résoudre le mot caché',
-        body: "Activez le mode mot caché pendant la partie, puis touchez ses lettres dans l’ordre sur la grille.",
+        body: "Les lettres du mot caché remplissent les cases vides de gauche à droite et de haut en bas. Activez le mode mot caché et touchez chaque lettre dans l'ordre.",
       },
     ],
   },
@@ -58,13 +58,13 @@ const locale: WordSearchI18n = {
     ...en.loss,
     abandoned: {
       ...en.loss.abandoned,
-      title: ‘Partie de mots mêlés terminée’,
-      body: "Vous avez quitté cette partie de mots mêlés avant d’avoir résolu tous les mots et le mot caché.",
+      title: 'Partie de mots mêlés terminée',
+      body: "Vous avez quitté cette partie de mots mêlés avant d'avoir résolu tous les mots et le mot caché.",
     },
-    ‘rule-failure’: {
-      ...en.loss[‘rule-failure’],
-      title: ‘Les mots mêlés n\’ont pas de défaite par règle’,
-      body: ‘Les sélections invalides sont ignorées dans les mots mêlés. Continuez à scanner et poursuivez le puzzle.’,
+    'rule-failure': {
+      ...en.loss['rule-failure'],
+      title: 'Les mots mêlés n\'ont pas de défaite par règle',
+      body: 'Les sélections invalides sont ignorées dans les mots mêlés. Continuez à scanner et poursuivez le puzzle.',
     },
   },
   tutorialLessons: {
@@ -72,25 +72,25 @@ const locale: WordSearchI18n = {
     "win-condition": {
       title: "Trouvez le mot cache pour gagner",
       body: "Les mots listes sont des indices thematiques — ils vous aident a identifier le mot bonus cache. Trouver le mot cache est la seule facon de gagner.",
-      summary: "Les mots normaux sont des indices. Le mot cache est l’objectif.",
+      summary: "Les mots normaux sont des indices. Le mot cache est l'objectif.",
       continueLabel: "Lecon suivante",
     },
     "selection": {
       title: "Touchez le debut, puis la fin",
-      body: "Touchez la premiere lettre d’un mot, puis la derniere. Le jeu trace le chemin — horizontal, vertical, diagonal ou avec un seul angle.",
+      body: "Touchez la premiere lettre d'un mot, puis la derniere. Le jeu trace le chemin — horizontal, vertical, diagonal ou avec un seul angle.",
       summary: "Deux touches selectionnent un mot.",
       continueLabel: "Lecon suivante",
     },
     "no-penalty": {
       title: "Les mauvaises tentatives disparaissent",
-      body: "Si aucun mot n’est trouve, la selection se reinitialise sans penalite. Scannez librement et essayez toutes les combinaisons de debut et de fin.",
+      body: "Si aucun mot n'est trouve, la selection se reinitialise sans penalite. Scannez librement et essayez toutes les combinaisons de debut et de fin.",
       summary: "Rien a perdre — continuez a scanner.",
       continueLabel: "Lecon suivante",
     },
     "hidden-word": {
-      title: "Trouvez le mot cache",
-      body: "Touchez l’icone de cle pour passer en mode mot cache. Les lettres sont dispersees partout dans la grille. La barre inferieure montre chaque lettre au fil des touches — trouvez-les toutes pour gagner.",
-      summary: "La progression en bas vous guide lettre par lettre.",
+      title: "Trouvez le mot caché",
+      body: "Touchez l'icône de clé pour passer en mode mot caché. Les lettres se trouvent dans les cases vides, de gauche à droite puis de haut en bas. La barre inférieure suit votre progression — touchez chaque lettre dans l'ordre pour gagner.",
+      summary: "Les cases vides épèlent le mot caché dans l'ordre de lecture.",
       continueLabel: "Commencer la grille",
     },
   },

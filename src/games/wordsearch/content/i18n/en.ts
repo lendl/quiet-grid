@@ -38,7 +38,7 @@ const en: WordSearchI18n = {
         solvedTitle: 'Hidden word found!',
         enterMode: 'Solve hidden word',
         exitMode: 'Exit hidden-word mode',
-        instructions: 'Tap the hidden-word letters in order on the grid.',
+        instructions: 'The hidden-word letters sit in the empty cells, left to right then top to bottom. Tap them in order.',
         resetOnMistake: 'A wrong hidden-word tap resets your progress.',
         nextLetterTitle: (clue: string) => `Hidden word: ${clue}`,
         nextLetterBody: 'The highlighted cell is the next hidden-word letter in order.',
@@ -81,7 +81,7 @@ const en: WordSearchI18n = {
       {
         num: '3',
         title: 'Solve the hidden word',
-        body: 'Use hidden-word mode during play, then tap the hidden-word letters in order on the grid.',
+        body: 'The hidden-word letters fill the empty cells in reading order — left to right, top to bottom. Enter hidden-word mode and tap each letter in sequence.',
       },
     ],
     techniques: [],
@@ -133,8 +133,8 @@ const en: WordSearchI18n = {
     },
     'hidden-word': {
       title: 'Find the hidden word',
-      body: 'Tap the key icon to enter hidden-word mode. The letters are scattered anywhere in the grid. The footer shows each letter as you tap it — find them all to win.',
-      summary: 'Footer progress guides you letter by letter.',
+      body: 'Tap the key icon to enter hidden-word mode. The hidden-word letters sit in the empty cells, reading left to right then top to bottom. The footer tracks your progress — tap each letter in order to win.',
+      summary: 'Empty cells spell the hidden word in reading order.',
       continueLabel: 'Start puzzle',
     },
   },
