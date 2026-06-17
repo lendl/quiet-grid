@@ -47,9 +47,12 @@ export default function AppTopBar(props: Props) {
       <Appbar.Header style={s.header} statusBarHeight={insets.top}>
         {props.mode === 'back' ? (
           <>
-            <Appbar.BackAction
+            <Appbar.Action
               onPress={props.onBack}
               accessibilityLabel={strings.common.goBack}
+              icon={({ size, color }) => (
+                <Ionicons name="arrow-back" size={size} color={color} />
+              )}
             />
             <View style={s.flex} />
             {props.rightSlot ? <View style={s.rightSlotWrap}>{props.rightSlot}</View> : null}
