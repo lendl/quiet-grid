@@ -28,10 +28,12 @@ export interface DiffStats {
   played: number;
   solved: number;
   bestScore: number | null;
+  bestTime: number | null;
 }
 
 /** Full stats object stored in AsyncStorage */
 export interface AppStats {
   puzzles: Record<string, Record<Difficulty, DiffStats>>;
   streaks: Record<string, number>;
+  difficultyStreaks: Record<string, Record<Difficulty, number>>;
 }

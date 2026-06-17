@@ -1,7 +1,7 @@
 // src/app/utils/statsUtils.ts
 import type { AppStats, Difficulty, DiffStats } from '../types';
 
-const DEFAULT_DIFF_STATS: DiffStats = { played: 0, solved: 0, bestScore: null };
+const DEFAULT_DIFF_STATS: DiffStats = { played: 0, solved: 0, bestScore: null, bestTime: null };
 
 export const STATS_DIFFICULTIES: Difficulty[] = ['easy', 'medium', 'hard', 'expert'];
 
@@ -19,11 +19,13 @@ function isDiffStats(value: unknown): value is DiffStats {
   const d = value as Record<string, unknown>;
   return typeof d.played === 'number'
     && typeof d.solved === 'number'
-    && (d.bestScore === null || typeof d.bestScore === 'number');
+    && (d.bestScore === null || typeof d.bestScore === 'number')
+    && (d.bestTime === undefined || d.bestTime === null || typeof d.bestTime === 'number');
 }
 
 function mergeDiffStats(value: unknown): DiffStats {
-  return { ...DEFAULT_DIFF_STATS, ...(isDiffStats(value) ? value : {}) };
+  const base = isDiffStats(value) ? value : {};
+  return { ...DEFAULT_DIFF_STATS, ...base };
 }
 
 function mergeGameStats(value: unknown): Record<Difficulty, DiffStats> {
@@ -45,9 +47,20 @@ function normalizePuzzleTypeId(key: string): string {
   return key === 'binary' ? 'takuzu' : key;
 }
 
+function mergeDifficultyStreakRecord(value: unknown): Record<Difficulty, number> {
+  const base = value && typeof value === 'object' ? value as Record<string, unknown> : {};
+  return {
+    easy:   safeStreak(base.easy),
+    medium: safeStreak(base.medium),
+    hard:   safeStreak(base.hard),
+    expert: safeStreak(base.expert),
+  };
+}
+
 export const DEFAULT_STATS: AppStats = {
   puzzles: {},
   streaks: {},
+  difficultyStreaks: {},
 };
 
 /**
@@ -62,6 +75,7 @@ export function mergeStats(raw: unknown): AppStats {
     return {
       puzzles: {},
       streaks: {},
+      difficultyStreaks: {},
     };
   }
 
@@ -79,9 +93,8 @@ export function mergeStats(raw: unknown): AppStats {
           expert: mergeDiffStats(p.expert),
         },
       },
-      streaks: {
-        takuzu: safeStreak(p.streak),
-      },
+      streaks: { takuzu: safeStreak(p.streak) },
+      difficultyStreaks: {},
     };
   }
 
@@ -91,6 +104,9 @@ export function mergeStats(raw: unknown): AppStats {
       : {};
     const rawStreaks = p.streaks && typeof p.streaks === 'object'
       ? p.streaks as Record<string, unknown>
+      : {};
+    const rawDifficultyStreaks = p.difficultyStreaks && typeof p.difficultyStreaks === 'object'
+      ? p.difficultyStreaks as Record<string, unknown>
       : {};
 
     const puzzles = Object.fromEntries(
@@ -105,8 +121,14 @@ export function mergeStats(raw: unknown): AppStats {
         safeStreak(value),
       ]),
     );
+    const difficultyStreaks = Object.fromEntries(
+      Object.entries(rawDifficultyStreaks).map(([gameId, value]) => [
+        normalizePuzzleTypeId(gameId),
+        mergeDifficultyStreakRecord(value),
+      ]),
+    );
 
-    return { puzzles, streaks };
+    return { puzzles, streaks, difficultyStreaks };
   }
 
   // Previous multi-puzzle format
@@ -123,6 +145,7 @@ export function mergeStats(raw: unknown): AppStats {
       takuzu: safeStreak(rawStreaks.takuzu ?? rawStreaks.binary),
       minesweeper: safeStreak(rawStreaks.minesweeper),
     },
+    difficultyStreaks: {},
   };
 }
 
@@ -195,4 +218,18 @@ export function ensurePuzzleStats(stats: AppStats, puzzleTypeId: string): Record
   }
 
   return stats.puzzles[puzzleTypeId];
+}
+
+export function getDifficultyStreak(stats: AppStats, gameId: string, difficulty: Difficulty): number {
+  return stats.difficultyStreaks[gameId]?.[difficulty] ?? 0;
+}
+
+export function ensureDifficultyStreaks(
+  stats: AppStats,
+  gameId: string,
+): Record<Difficulty, number> {
+  if (!stats.difficultyStreaks[gameId]) {
+    stats.difficultyStreaks[gameId] = { easy: 0, medium: 0, hard: 0, expert: 0 };
+  }
+  return stats.difficultyStreaks[gameId];
 }

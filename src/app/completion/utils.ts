@@ -35,6 +35,7 @@ export async function saveSolvedResult(
     difficulty: solvedState.difficulty,
     status: solvedState.status,
     score: solvedState.score,
+    elapsedSeconds: solvedState.elapsedSeconds,
   });
 
   return {
