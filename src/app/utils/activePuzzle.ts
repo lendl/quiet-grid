@@ -19,6 +19,10 @@ export function getActivePuzzleDifficulty(activeSession: ActiveSession): Difficu
 }
 
 export function getActivePuzzleDimensions(activeSession: ActiveSession): PuzzleDimensions {
+  if (activeSession.gameId === 'chimptest') {
+    const size = activeSession.puzzle.gridSize;
+    return { rows: size, cols: size };
+  }
   return {
     rows: activeSession.puzzle.rows,
     cols: activeSession.puzzle.cols,

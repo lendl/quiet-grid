@@ -5,6 +5,7 @@ import type {
   NonogramActiveSession,
   SudokuActiveSession,
   WordSearchActiveSession,
+  ChimpTestActiveSession,
 } from '../shell/activeSessionTypes';
 import type { Difficulty } from '../types';
 import { isGameId } from '../../games/shared/types';
@@ -123,7 +124,7 @@ function isHexPuzzleData(value: unknown, size: number): value is string {
 
 function getStoredGameId(
   value: Record<string, unknown>,
-): 'takuzu' | 'minesweeper' | 'nonogram' | 'sudoku' | 'wordsearch' | null {
+): 'takuzu' | 'minesweeper' | 'nonogram' | 'sudoku' | 'wordsearch' | 'chimptest' | null {
   if (value.puzzleTypeId === 'binary') {
     return 'takuzu';
   }
@@ -438,6 +439,63 @@ function normalizeWordSearchActiveSession(raw: WordSearchActiveSession): WordSea
       : null,
   };
 }
+function isChimpTestCell(value: unknown): boolean {
+  if (!value || typeof value !== 'object') return false;
+  const cell = value as Record<string, unknown>;
+  return Number.isInteger(cell.number)
+    && (cell.number as number) >= 1
+    && Number.isInteger(cell.row)
+    && (cell.row as number) >= 0
+    && Number.isInteger(cell.col)
+    && (cell.col as number) >= 0
+    && typeof cell.hidden === 'boolean';
+}
+
+function isChimpTestPuzzle(value: unknown): boolean {
+  if (!value || typeof value !== 'object') return false;
+  const puzzle = value as Record<string, unknown>;
+  return typeof puzzle.id === 'string'
+    && isDifficulty(puzzle.difficulty)
+    && Number.isInteger(puzzle.gridSize)
+    && (puzzle.gridSize as number) >= 4
+    && Number.isInteger(puzzle.startCount)
+    && (puzzle.startCount as number) >= 1
+    && Number.isInteger(puzzle.maxCount)
+    && (puzzle.maxCount as number) >= 1;
+}
+
+function isChimpTestActiveSession(value: unknown): value is ChimpTestActiveSession {
+  if (!value || typeof value !== 'object') return false;
+  const obj = value as Record<string, unknown>;
+  if (getStoredGameId(obj) !== 'chimptest' || !isChimpTestPuzzle(obj.puzzle)) {
+    return false;
+  }
+  return Number.isInteger(obj.currentCount)
+    && (obj.currentCount as number) >= 1
+    && Array.isArray(obj.cells)
+    && (obj.cells as unknown[]).every(isChimpTestCell)
+    && Number.isInteger(obj.nextExpected)
+    && (obj.nextExpected as number) >= 1
+    && typeof obj.revealAll === 'boolean'
+    && (obj.wrongTapCell === undefined || obj.wrongTapCell === null || Number.isInteger(obj.wrongTapCell))
+    && Array.isArray(obj.roundTimes)
+    && (obj.roundTimes as unknown[]).every((t) => isFiniteNonNegativeNumber(t))
+    && isFiniteNonNegativeNumber(obj.roundStartElapsed)
+    && (obj.status === 'playing' || obj.status === 'won')
+    && isFiniteNonNegativeNumber(obj.elapsedSeconds);
+}
+
+function normalizeChimpTestActiveSession(raw: ChimpTestActiveSession): ChimpTestActiveSession {
+  return {
+    ...raw,
+    gameId: 'chimptest',
+    puzzle: { ...raw.puzzle },
+    cells: raw.cells.map((c) => ({ ...c })),
+    wrongTapCell: null,
+    roundTimes: [...raw.roundTimes],
+  };
+}
+
 function isActiveSession(value: unknown): value is ActiveSession {
   if (!value || typeof value !== 'object') return false;
   const activeSession = value as Record<string, unknown>;
@@ -446,6 +504,7 @@ function isActiveSession(value: unknown): value is ActiveSession {
   if (getStoredGameId(activeSession) === 'nonogram') return isNonogramActiveSession(activeSession);
   if (getStoredGameId(activeSession) === 'sudoku') return isSudokuActiveSession(activeSession);
   if (getStoredGameId(activeSession) === 'wordsearch') return isWordSearchActiveSession(activeSession);
+  if (getStoredGameId(activeSession) === 'chimptest') return isChimpTestActiveSession(activeSession);
   return false;
 }
 
@@ -567,6 +626,9 @@ export async function loadActiveSessionState(): Promise<ActiveSession | null> {
       if (getStoredGameId(parsedSession) === 'wordsearch') {
         return normalizeWordSearchActiveSession(parsed as WordSearchActiveSession);
       }
+      if (getStoredGameId(parsedSession) === 'chimptest') {
+        return normalizeChimpTestActiveSession(parsed as ChimpTestActiveSession);
+      }
       return normalizeMinesweeperActiveSession(parsed as MinesweeperActiveSession);
     }
     if (isLegacyTakuzuActiveSession(parsed)) {
@@ -592,7 +654,9 @@ export async function saveActiveSessionState(activeSession: ActiveSession): Prom
         ? normalizeSudokuActiveSession(activeSession)
         : activeSession.gameId === 'wordsearch'
           ? normalizeWordSearchActiveSession(activeSession)
-          : normalizeMinesweeperActiveSession(activeSession);
+          : activeSession.gameId === 'chimptest'
+            ? normalizeChimpTestActiveSession(activeSession)
+            : normalizeMinesweeperActiveSession(activeSession);
 
   await saveStoredActiveSession({
     gameId: normalizedActiveSession.gameId,
