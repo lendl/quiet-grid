@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import type { LayoutChangeEvent } from 'react-native';
 import { StyleSheet, Text, View } from 'react-native';
+import { HintPopoverContent } from '../../../../app/components/HintPopoverContent';
 import { useLanguage } from '../../../../app/context/LanguageContext';
 import { useTheme } from '../../../../app/context/ThemeContext';
 import ZoomableBoardSurface from '../../../../app/components/ZoomableBoardSurface';
@@ -181,7 +182,9 @@ function useWordSearchAdapter({
       onPress: () => {
         nextMove.toggle(sessionRef.current);
       },
-      tooltipTitle: !session?.hiddenWordMode && nextMove.hint ? nextMove.hint.title : undefined,
+      popoverContent: !session?.hiddenWordMode && nextMove.hint ? (
+        <HintPopoverContent title={nextMove.hint.title} body={nextMove.hint.body} />
+      ) : undefined,
     };
     const hiddenWordHeaderAction: PuzzleHeaderAction = {
       key: 'hidden-word',

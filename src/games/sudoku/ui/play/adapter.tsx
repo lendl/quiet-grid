@@ -3,6 +3,7 @@ import type { LayoutChangeEvent } from 'react-native';
 import { StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { HintPopoverContent } from '../../../../app/components/HintPopoverContent';
 import { useLanguage } from '../../../../app/context/LanguageContext';
 import { useTheme } from '../../../../app/context/ThemeContext';
 import ZoomableBoardSurface from '../../../../app/components/ZoomableBoardSurface';
@@ -380,7 +381,9 @@ function useSudokuAdapter({
       iconName: nextMove.visible ? 'bulb' : 'bulb-outline',
       active: nextMove.visible,
       onPress: handleToggleNextMove,
-      tooltipTitle: nextMove.hint?.title,
+      popoverContent: nextMove.hint ? (
+        <HintPopoverContent title={nextMove.hint.title} body={nextMove.hint.body} />
+      ) : undefined,
     };
 
     const explainHint = betaFeaturesEnabled && nextMove.hint?.kind === 'progress' ? nextMove.hint : null;

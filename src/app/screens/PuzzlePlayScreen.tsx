@@ -2,13 +2,15 @@ import React, { useMemo } from 'react';
 import { StackActions } from '@react-navigation/native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { StyleSheet, Text, View } from 'react-native';
-import { Tooltip, TouchableRipple } from 'react-native-paper';
+import { TouchableRipple } from 'react-native-paper';
+import Popover, { PopoverPlacement } from 'react-native-popover-view';
 import type { StackScreenProps } from '@react-navigation/stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import PuzzlePlayScaffold from '../components/PuzzlePlayScaffold';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import type { RootStackParamList } from '../navigation/types';
+import type { PuzzleHeaderAction } from '../shell/games/playAdapter';
 import { usePuzzlePlayController } from '../shell/hooks/usePuzzlePlayController';
 import type { Theme } from '../theme';
 import { formatElapsed } from '../utils/formatElapsed';
@@ -77,9 +79,12 @@ export default function PuzzlePlayScreen(props: Props) {
                   <Text style={s.timerText}>{elapsedLabel}</Text>
                 </View>
               ) : null}
-              {layout.headerActions.map((action) => {
-                const button = (
+              {layout.headerActions.map((action) => (
+                action.popoverContent != null ? (
+                  <HeaderPopoverButton key={action.key} action={action} theme={theme} s={s} />
+                ) : (
                   <TouchableRipple
+                    key={action.key}
                     accessibilityRole="button"
                     accessibilityLabel={action.accessibilityLabel}
                     onPress={action.onPress}
@@ -92,18 +97,8 @@ export default function PuzzlePlayScreen(props: Props) {
                       color={action.active ? theme.primary : theme.text}
                     />
                   </TouchableRipple>
-                );
-
-                if (action.tooltipTitle) {
-                  return (
-                    <Tooltip key={action.key} title={action.tooltipTitle}>
-                      {button}
-                    </Tooltip>
-                  );
-                }
-
-                return React.cloneElement(button, { key: action.key });
-              })}
+                )
+              ))}
               <TouchableRipple
                 accessibilityRole="button"
                 accessibilityLabel={strings.common.rules}
@@ -139,6 +134,48 @@ export default function PuzzlePlayScreen(props: Props) {
       main={layout.main}
       footer={layout.footer}
     />
+  );
+}
+
+interface HeaderPopoverButtonProps {
+  action: PuzzleHeaderAction;
+  theme: Theme;
+  s: ReturnType<typeof makeStyles>;
+}
+
+function HeaderPopoverButton({ action, theme, s }: HeaderPopoverButtonProps) {
+  const isVisible = !!(action.active && action.popoverContent != null);
+
+  return (
+    <Popover
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      from={(sourceRef: React.RefObject<any>) => (
+        <View ref={sourceRef} collapsable={false}>
+          <TouchableRipple
+            accessibilityRole="button"
+            accessibilityLabel={action.accessibilityLabel}
+            onPress={action.onPress}
+            style={s.iconButton}
+            borderless
+          >
+            <Ionicons
+              name={action.iconName}
+              size={18}
+              color={action.active ? theme.primary : theme.text}
+            />
+          </TouchableRipple>
+        </View>
+      )}
+      isVisible={isVisible}
+      onRequestClose={action.onPress}
+      placement={PopoverPlacement.BOTTOM}
+      popoverStyle={{ borderRadius: 16, backgroundColor: theme.surfaceElevated }}
+      backgroundStyle={{ backgroundColor: 'transparent' }}
+    >
+      <View style={s.popoverContent}>
+        {action.popoverContent}
+      </View>
+    </Popover>
   );
 }
 
@@ -215,5 +252,10 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     color: theme.text,
     fontSize: 13,
     fontWeight: '700',
+  },
+  popoverContent: {
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    width: 280,
   },
 });
