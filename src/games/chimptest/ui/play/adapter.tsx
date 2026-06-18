@@ -79,6 +79,9 @@ function useChimpTestAdapter({
   }: PuzzleRenderState<ChimpTestPlaySession, ChimpTestAction>) => {
     const currentCount = session?.currentCount ?? 0;
     const maxCount = session?.puzzle.maxCount ?? 0;
+    const startCount = session?.puzzle.startCount ?? 0;
+    const roundNumber = currentCount - startCount + 1;
+    const totalRounds = maxCount - startCount + 1;
 
     const handleCellTap = (row: number, col: number) => {
       const currentSession = sessionRef.current;
@@ -89,7 +92,7 @@ function useChimpTestAdapter({
       const result = runChimpTestAction(currentSession, { kind: 'tap', row, col, elapsedSeconds });
       if (!result.changed) return;
 
-      if (result.effects.some((e) => e.type === 'wrong-tap')) {
+      if (result.effects.some((e) => e.type === 'wrong-tap') || result.session.status === 'won') {
         void runShellAction({ kind: 'tap', row, col, elapsedSeconds });
         return;
       }
@@ -103,7 +106,7 @@ function useChimpTestAdapter({
         {
           key: 'round',
           label: strings.play.metadataLabels.round,
-          value: `${currentCount} / ${maxCount}`,
+          value: `${roundNumber} / ${totalRounds}`,
         },
         {
           key: 'difficulty',
