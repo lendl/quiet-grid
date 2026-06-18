@@ -1,0 +1,4 @@
+Version 1.1.4
+
+- Chimp Test added: memorize and tap numbers before they disappear
+- Bug fixes and stability improvements

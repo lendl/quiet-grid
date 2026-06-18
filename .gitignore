@@ -8,7 +8,6 @@ web-build/
 expo-env.d.ts
 
 # Android / iOS builds
-android/
 ios/
 *.apk
 *.ipa

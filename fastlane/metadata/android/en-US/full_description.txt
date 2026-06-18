@@ -1,0 +1,17 @@
+Quiet Grid is a collection of logic puzzles for Android. No ads, no tracking, no internet connection required — everything runs entirely on your device.
+
+**Puzzles included:**
+
+• Takuzu — Fill a grid with 0s and 1s: each row and column must have equal counts, no three in a row, and no two rows or columns may be identical.
+• Minesweeper — Classic grid puzzle. Uncover all safe cells without triggering a mine.
+• Nonogram (Beta) — Deduce which cells to fill based on number clues along rows and columns.
+• Sudoku (Beta) — Place digits 1–9 so every row, column, and 3×3 box contains each digit exactly once.
+• Word Search (Beta) — Find hidden words in a grid of letters.
+
+Each puzzle type offers Easy, Medium, Hard, and Expert difficulty levels.
+
+**Privacy by design:**
+
+Quiet Grid does not use the internet, request dangerous permissions, or collect any data. All progress and settings are stored locally on your device.
+
+Available in English, Dutch, German, French, and Spanish.
