@@ -8,6 +8,11 @@ A privacy-first logic puzzle app for Android, built with React Native (Expo) and
 
 No ads. No account. No internet required. Everything stays on your device.
 
+<img src="assets/sceenshots/mobile/01-play-sudoku-offline.png" width="220" alt="Play sudoku offline">
+<img src="assets/sceenshots/mobile/02-no-account-no-internet.png" width="220" alt="No account, no internet">
+<img src="assets/sceenshots/mobile/03-four-difficulty-levels.png" width="220" alt="Four difficulty levels">
+<img src="assets/sceenshots/mobile/04-multiple-puzzle-types.png" width="220" alt="Multiple puzzle types">
+
 ## Puzzles
 
 | Game | Status |
