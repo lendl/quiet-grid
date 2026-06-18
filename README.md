@@ -16,6 +16,7 @@ No ads. No account. No internet required. Everything stays on your device.
     <td><img src="assets/sceenshots/mobile/04-multiple-puzzle-types.png" width="220" alt="Multiple puzzle types"></td>
   </tr>
 </table>
+
 ## Puzzles
 
 | Game | Status |
