@@ -30,7 +30,7 @@ jobs:
         run: npm ci
 
       - name: Decode keystore
-        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode --ignore-garbage > android/app/release.keystore
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/release.keystore
 
       - name: Build release APK
         working-directory: android
@@ -39,7 +39,9 @@ jobs:
           ANDROID_STORE_PASSWORD: ${{ secrets.KEYSTORE_STORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
-        run: ./gradlew assembleRelease
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease
 
       - name: Generate SHA-256 checksum
         run: |
