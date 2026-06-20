@@ -30,7 +30,7 @@ jobs:
         run: npm ci
 
       - name: Decode keystore
-        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/release.keystore
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode --ignore-garbage > android/app/release.keystore
 
       - name: Build release APK
         working-directory: android
