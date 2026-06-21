@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, ActivityIndicator, Text, StyleSheet, Easing } from 'react-native';
 import type { Theme as NavigationTheme } from '@react-navigation/native';
-import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
+import { DefaultTheme, NavigationContainer, createNavigationContainerRef } from '@react-navigation/native';
 import {
   createStackNavigator,
   type StackCardStyleInterpolator,
@@ -10,6 +10,8 @@ import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import type { RootStackParamList } from './types';
 import { hasSeenWelcome } from '../utils/settingsStorage';
+import { loadActiveSessionState } from '../utils/activeSessionStateStorage';
+import type { ActiveSession } from '../shell/activeSessionTypes';
 import MainTabs             from './MainTabs';
 import WelcomeScreen         from '../screens/WelcomeScreen';
 import GameScreen            from '../screens/GameScreen';
@@ -22,6 +24,7 @@ import SupportInfoScreen     from '../screens/SupportInfoScreen';
 import TechniqueLessonScreen from '../screens/TechniqueLessonScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
+const navigationRef = createNavigationContainerRef<RootStackParamList>();
 
 // MD3 shared-axis horizontal transition: small translate + fade, no full-width iOS slide.
 const md3CardStyleInterpolator: StackCardStyleInterpolator = ({ current, next }) => ({
@@ -44,6 +47,7 @@ export default function AppNavigator() {
   const { strings } = useLanguage();
   const { theme, isDark } = useTheme();
   const [initialRoute, setInitialRoute] = useState<'MainTabs' | 'Welcome' | null>(null);
+  const [startupSession, setStartupSession] = useState<ActiveSession | null>(null);
   const navigationTheme = useMemo<NavigationTheme>(() => ({
     ...DefaultTheme,
     dark: isDark,
@@ -61,9 +65,10 @@ export default function AppNavigator() {
   useEffect(() => {
     let mounted = true;
 
-    void hasSeenWelcome().then((seen) => {
+    void Promise.all([hasSeenWelcome(), loadActiveSessionState()]).then(([seen, session]) => {
       if (mounted) {
         setInitialRoute(seen ? 'MainTabs' : 'Welcome');
+        setStartupSession(seen ? session : null);
       }
     });
 
@@ -71,6 +76,16 @@ export default function AppNavigator() {
       mounted = false;
     };
   }, []);
+
+  const handleNavigationReady = useCallback(() => {
+    if (startupSession && navigationRef.isReady()) {
+      navigationRef.navigate('PuzzlePlay', {
+        puzzleTypeId: startupSession.gameId,
+        difficulty: startupSession.puzzle.difficulty,
+        resume: true,
+      });
+    }
+  }, [startupSession]);
 
   if (!initialRoute) {
     return (
@@ -82,7 +97,7 @@ export default function AppNavigator() {
   }
 
   return (
-    <NavigationContainer theme={navigationTheme}>
+    <NavigationContainer ref={navigationRef} theme={navigationTheme} onReady={handleNavigationReady}>
       <Stack.Navigator
         initialRouteName={initialRoute}
         screenOptions={{
