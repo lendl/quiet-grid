@@ -19,7 +19,6 @@ type Props = {
   minScale?: number;
   maxScale?: number;
   resetThreshold?: number;
-  panEnabled?: boolean;
   onZoomStateChange?: (isZoomed: boolean) => void;
   onRegisterReset?: (reset: (() => void) | null) => void;
   autoFocus?: {
@@ -45,7 +44,6 @@ export default function ZoomableBoardSurface({
   minScale = 1,
   maxScale = 2.5,
   resetThreshold = 1.02,
-  panEnabled = true,
   onZoomStateChange,
   onRegisterReset,
   autoFocus,
@@ -201,9 +199,8 @@ export default function ZoomableBoardSurface({
     });
 
   const pan = Gesture.Pan()
-    .enabled(panEnabled)
-    .minDistance(6)
     .maxPointers(1)
+    .minDistance(6)
     .onStart(() => {
       startX.value = translateX.value;
       startY.value = translateY.value;

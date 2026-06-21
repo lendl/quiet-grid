@@ -1,3 +1,4 @@
+import { Dimensions } from 'react-native';
 import catalogEntries from '../puzzles/all';
 import type { NonogramCatalogEntry } from './codecs/codec';
 import {
@@ -10,6 +11,32 @@ import {
 import type { NonogramPuzzle, NonogramSession } from '../types';
 import { createEmptyNonogramBoard } from '../types';
 import { pickRandomPuzzleForDifficulty } from '../../shared/randomPuzzleSelection';
+import { createNonogramBoardLayout } from '../../../app/shell/boardLayout';
+
+const MIN_SWIPE_CELL_SIZE = 30;
+const CONTAINER_PADDING = 32;
+
+function fitsOnScreen(rows: number, cols: number): boolean {
+  const { width } = Dimensions.get('window');
+  const containerWidth = Math.max(200, width - CONTAINER_PADDING);
+  const worstRowClues = Array.from(
+    { length: rows },
+    () => Array.from({ length: Math.ceil(cols / 2) }, () => 1),
+  );
+  const worstColClues = Array.from(
+    { length: cols },
+    () => Array.from({ length: Math.ceil(rows / 2) }, () => 1),
+  );
+  const { cellSize } = createNonogramBoardLayout({
+    containerWidth,
+    rows,
+    cols,
+    rowClues: worstRowClues,
+    colClues: worstColClues,
+    interactive: true,
+  });
+  return cellSize >= MIN_SWIPE_CELL_SIZE;
+}
 
 const BUILT_IN_BASE_SPECS = [
   { rows: 5, cols: 5, difficulties: ['easy', 'medium', 'hard', 'expert'] },
@@ -127,6 +154,9 @@ export function createNonogramSession(entry: NonogramCatalogEntry): NonogramSess
 export function createRandomNonogramSession(
   difficulty: NonogramCatalogEntry['difficulty'],
 ): NonogramSession | null {
-  const entry = getRandomNonogramEntry(difficulty);
+  const fittingEntries = getAllNonogramEntries().filter(
+    (entry) => fitsOnScreen(entry.rows, entry.cols),
+  );
+  const entry = pickRandomPuzzleForDifficulty('nonogram', fittingEntries, difficulty);
   return entry ? createNonogramSession(entry) : null;
 }

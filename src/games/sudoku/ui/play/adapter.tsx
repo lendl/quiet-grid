@@ -99,6 +99,7 @@ function buildBoardFeedbackEffects(
 function useSudokuAdapter({
   difficulty,
   betaFeaturesEnabled,
+  viewportGestureEnabled,
   goHome,
   navigate,
   setDialog,
@@ -446,14 +447,8 @@ function useSudokuAdapter({
         return (
           <View style={styles.boardArea} onLayout={handleGridLayout}>
             <View style={styles.gridContainer}>
-              {gridContainer.width > 0 && gridContainer.height > 0 ? (
-                <ZoomableBoardSurface
-                  panEnabled={isBoardZoomed}
-                  onZoomStateChange={setIsBoardZoomed}
-                  onRegisterReset={(reset) => {
-                    resetBoardZoomRef.current = reset;
-                  }}
-                >
+              {gridContainer.width > 0 && gridContainer.height > 0 ? (() => {
+                const grid = (
                   <SudokuPuzzleGrid
                     board={session.board}
                     givens={session.puzzle.givens}
@@ -472,8 +467,18 @@ function useSudokuAdapter({
                     containerHeight={gridContainer.height}
                     onCellPress={handleCellPress}
                   />
-                </ZoomableBoardSurface>
-              ) : null}
+                );
+                return viewportGestureEnabled ? (
+                  <ZoomableBoardSurface
+                    onZoomStateChange={setIsBoardZoomed}
+                    onRegisterReset={(reset) => {
+                      resetBoardZoomRef.current = reset;
+                    }}
+                  >
+                    {grid}
+                  </ZoomableBoardSurface>
+                ) : grid;
+              })() : null}
             </View>
             <SudokuInputBar
               selectedCell={visibleSelectedCell}

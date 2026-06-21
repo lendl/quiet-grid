@@ -19,6 +19,7 @@ export const sudokuDefinition: GameDefinition<SudokuPlaySession> = {
   get tagline() {
     return getSudokuStrings().tagline;
   },
+  gestureProfile: { mode: 'zoom', viewport: 'optional' },
   supports: {
     learning: true,
     scoring: true,

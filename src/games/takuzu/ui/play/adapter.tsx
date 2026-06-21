@@ -44,6 +44,7 @@ type PendingValidation = {
 
 function useTakuzuAdapter({
   difficulty,
+  viewportGestureEnabled,
   setDialog,
   goBack,
   goHome,
@@ -298,13 +299,8 @@ function useTakuzuAdapter({
       footer: null,
       main: (
         <View style={styles.gridArea} onLayout={handleGridLayout}>
-          {session && gridContainer.width > 0 ? (
-            <ZoomableBoardSurface
-              onZoomStateChange={setIsBoardZoomed}
-              onRegisterReset={(reset) => {
-                resetBoardZoomRef.current = reset;
-              }}
-            >
+          {session && gridContainer.width > 0 ? (() => {
+            const grid = (
               <TakuzuPuzzleGrid
                 board={session.board}
                 isGiven={session.isGiven}
@@ -319,8 +315,18 @@ function useTakuzuAdapter({
                 containerWidth={gridContainer.width}
                 containerHeight={gridContainer.height}
               />
-            </ZoomableBoardSurface>
-          ) : null}
+            );
+            return viewportGestureEnabled ? (
+              <ZoomableBoardSurface
+                onZoomStateChange={setIsBoardZoomed}
+                onRegisterReset={(reset) => {
+                  resetBoardZoomRef.current = reset;
+                }}
+              >
+                {grid}
+              </ZoomableBoardSurface>
+            ) : grid;
+          })() : null}
         </View>
       ),
     };

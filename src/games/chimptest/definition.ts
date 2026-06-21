@@ -17,6 +17,7 @@ export const chimpTestDefinition: GameDefinition<ChimpTestPlaySession> = {
   get tagline() {
     return getChimpTestStrings().tagline;
   },
+  gestureProfile: { mode: 'tap' },
   supports: {
     learning: true,
     scoring: true,

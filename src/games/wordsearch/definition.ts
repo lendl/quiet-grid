@@ -17,6 +17,7 @@ export const wordSearchDefinition: GameDefinition<WordSearchPlaySession> = {
   get tagline() {
     return getWordSearchStrings().tagline;
   },
+  gestureProfile: { mode: 'zoom', viewport: 'optional' },
   supports: {
     learning: true,
     scoring: true,

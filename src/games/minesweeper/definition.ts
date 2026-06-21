@@ -17,6 +17,7 @@ export const minesweeperDefinition: GameDefinition<MinesweeperPlaySession> = {
   get tagline() {
     return getMinesweeperStrings().tagline;
   },
+  gestureProfile: { mode: 'zoom', viewport: 'optional' },
   supports: {
     learning: true,
     scoring: true,

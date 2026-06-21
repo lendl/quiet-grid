@@ -38,6 +38,7 @@ const GRID_BOTTOM_PADDING = 24;
 
 function useMinesweeperAdapter({
   goHome,
+  viewportGestureEnabled,
 }: PuzzlePlayAdapterShellArgs): PuzzlePlayAdapterInstance<
   MinesweeperPlaySession,
   MinesweeperAction,
@@ -158,13 +159,8 @@ function useMinesweeperAdapter({
       ] : [],
       main: session ? (
         <View style={styles.gridArea} onLayout={handleGridLayout}>
-          {gridContainer.width > 0 && gridContainer.height > 0 ? (
-            <ZoomableBoardSurface
-              onZoomStateChange={setIsBoardZoomed}
-              onRegisterReset={(reset) => {
-                resetBoardZoomRef.current = reset;
-              }}
-            >
+          {gridContainer.width > 0 && gridContainer.height > 0 ? (() => {
+            const board = (
               <MinesweeperBoard
                 board={session.board}
                 containerWidth={gridContainer.width}
@@ -180,8 +176,18 @@ function useMinesweeperAdapter({
                 nextMoveEvidenceCells={nextMove.hint?.evidenceCells ?? []}
                 nextMoveSafeTargetCells={nextMove.hint?.targetCells ?? []}
               />
-            </ZoomableBoardSurface>
-          ) : null}
+            );
+            return viewportGestureEnabled ? (
+              <ZoomableBoardSurface
+                onZoomStateChange={setIsBoardZoomed}
+                onRegisterReset={(reset) => {
+                  resetBoardZoomRef.current = reset;
+                }}
+              >
+                {board}
+              </ZoomableBoardSurface>
+            ) : board;
+          })() : null}
         </View>
       ) : (
         <View style={styles.gridArea} />

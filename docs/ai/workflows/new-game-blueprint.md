@@ -26,7 +26,7 @@ src/games/<id>/
   - rules, actions, active puzzle shape, play contract, canonical techniques
 - `ui/`
   - play plus Learning Center rendering and wiring
-  - playable grid should use zoom/pan support (for example `ZoomableBoardSurface`) when grid size can exceed comfortable tap/read bounds
+  - playable grid wires zoom/pan support (for example `ZoomableBoardSurface`) only when `gestureProfile.mode === 'zoom'`; `viewport: required` always mounts it, `viewport: optional` lets the shell decide by screen size. `swipe` and `tap` modes never mount it — zoom and swipe cannot coexist in the same game
 - `content/`
   - game-facing copy, how to play lesson configs, localized content
 - `platform/`

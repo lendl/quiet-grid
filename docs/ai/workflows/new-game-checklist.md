@@ -45,7 +45,10 @@
 
 - [ ] Input model implemented in gameplay actions and play UI.
 - [ ] State updates in adapter use `sessionRef.current + setSession` directly for correct taps; only route through `runShellAction` for actions that require `handleEffects` (e.g. loss, win with side-effects).
-- [ ] Playable grid supports pinch-zoom and pan.
+- [ ] `definition.ts` declares `gestureProfile` as one of: `{ mode: 'tap' }`, `{ mode: 'swipe' }`, or `{ mode: 'zoom', viewport: 'required'|'optional' }`.
+- [ ] Zoom and swipe are not both enabled — the type enforces this but verify the play UI matches the declared mode.
+- [ ] For `zoom` mode: `ZoomableBoardSurface` is mounted (`required` always, `optional` defers to shell screen-size heuristic).
+- [ ] For `swipe` mode: puzzle sizes are filtered to what fits at minimum cell size on the current screen.
 - [ ] Grid visual conventions implemented (e.g. Nonogram 5-cell separators).
 - [ ] At least one full round played manually: correct taps through win, one wrong tap triggering loss, and a resume from a saved session.
 

@@ -19,6 +19,7 @@ export const nonogramDefinition: GameDefinition<NonogramPlaySession> = {
   get tagline() {
     return getNonogramStrings().tagline;
   },
+  gestureProfile: { mode: 'swipe' },
   supports: {
     learning: true,
     scoring: true,

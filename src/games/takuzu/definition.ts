@@ -19,6 +19,7 @@ export const takuzuDefinition: GameDefinition<TakuzuPlaySession> = {
   get tagline() {
     return getTakuzuStrings().tagline;
   },
+  gestureProfile: { mode: 'zoom', viewport: 'optional' },
   supports: {
     learning: true,
     scoring: true,

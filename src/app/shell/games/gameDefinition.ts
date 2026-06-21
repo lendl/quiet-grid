@@ -14,6 +14,10 @@ export interface GameDefinition<TSession = unknown> {
   features?: {
     explainTechnique?: boolean;
   };
+  gestureProfile:
+    | { mode: 'tap' }
+    | { mode: 'swipe' }
+    | { mode: 'zoom'; viewport: 'required' | 'optional' };
   supports: {
     learning: boolean;
     scoring: boolean;

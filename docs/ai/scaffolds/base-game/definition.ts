@@ -9,6 +9,7 @@ export const baseGameDefinitionTemplate = {
   get tagline() {
     return '__GAME_TAGLINE__';
   },
+  gestureProfile: '__{ mode: tap } | { mode: swipe } | { mode: zoom, viewport: required|optional }__',
   supports: {
     tutorial: true,
     learning: true,

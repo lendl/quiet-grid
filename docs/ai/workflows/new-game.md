@@ -16,6 +16,7 @@
    - whether technique explanation must ignore support actions when canonical progress exists
    - helper behavior on invalid grids
    - whether technique explanation should focus/select target cell in live play
+   - gesture profile: `swipe` (drag-to-fill, no zoom), `zoom` (tap/long-press + viewport zoom, with `viewport: required|optional`), or `tap` (tap/long-press only, no zoom) — zoom and swipe cannot coexist
    - game-specific grid conventions (for example, Nonogram 5-cell separators)
 
 4. Define canonical techniques.

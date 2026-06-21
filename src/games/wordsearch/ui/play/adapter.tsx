@@ -37,6 +37,7 @@ function formatThemeId(themeId: string): string {
 
 function useWordSearchAdapter({
   difficulty,
+  viewportGestureEnabled,
   goBack,
   setDialog,
 }: PuzzlePlayAdapterShellArgs): PuzzlePlayAdapterInstance<WordSearchPlaySession, WordSearchAction, never> {
@@ -261,14 +262,8 @@ function useWordSearchAdapter({
           </View>
 
           <View style={styles.gridArea} onLayout={handleGridLayout}>
-            {gridContainer.width > 0 && gridContainer.height > 0 ? (
-              <ZoomableBoardSurface
-                panEnabled={isBoardZoomed}
-                onZoomStateChange={setIsBoardZoomed}
-                onRegisterReset={(reset) => {
-                  resetBoardZoomRef.current = reset;
-                }}
-              >
+            {gridContainer.width > 0 && gridContainer.height > 0 ? (() => {
+              const grid = (
                 <WordSearchPuzzleGrid
                   puzzle={session.puzzle}
                   foundWordIds={session.foundWordIds}
@@ -281,8 +276,18 @@ function useWordSearchAdapter({
                   nextMoveTargetCells={nextMove.hint?.targetCells ?? []}
                   onCellTap={(row, col) => { void handleCellTap(row, col); }}
                 />
-              </ZoomableBoardSurface>
-            ) : null}
+              );
+              return viewportGestureEnabled ? (
+                <ZoomableBoardSurface
+                  onZoomStateChange={setIsBoardZoomed}
+                  onRegisterReset={(reset) => {
+                    resetBoardZoomRef.current = reset;
+                  }}
+                >
+                  {grid}
+                </ZoomableBoardSurface>
+              ) : grid;
+            })() : null}
           </View>
         </View>
       ) : (

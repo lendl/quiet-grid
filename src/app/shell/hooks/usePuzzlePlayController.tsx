@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useWindowDimensions } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import type { StackScreenProps } from '@react-navigation/stack';
 import type { RootStackParamList } from '../../navigation/types';
@@ -25,6 +26,10 @@ export function usePuzzlePlayController(props: Props, menuOpen = false): PuzzleP
   const isFocused = useIsFocused();
   const difficulty = props.route.params.difficulty ?? 'easy';
   const resumeRequested = props.route.params.resume === true;
+  const { width: screenWidth } = useWindowDimensions();
+  const gestureProfile = definition.gestureProfile;
+  const viewportGestureEnabled = gestureProfile.mode === 'zoom'
+    && (gestureProfile.viewport === 'required' || screenWidth < 600);
 
   const [betaFeaturesEnabled, setBetaFeaturesEnabled] = useState(false);
 
@@ -50,6 +55,7 @@ export function usePuzzlePlayController(props: Props, menuOpen = false): PuzzleP
     difficulty,
     resumeRequested,
     betaFeaturesEnabled,
+    viewportGestureEnabled,
     setDialog,
     goHome,
     goBack,

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import type { LayoutChangeEvent } from 'react-native';
 import { StyleSheet, Text, View } from 'react-native';
 import { Switch } from 'react-native-paper';
@@ -8,7 +8,6 @@ import { getAppStrings } from '../../../../app/i18n';
 import { useTheme } from '../../../../app/context/ThemeContext';
 import { useNextMoveHelper } from '../../../../app/shell/games/useNextMoveHelper';
 import { clearActiveSessionState } from '../../../../app/utils/activeSessionStateStorage';
-import ZoomableBoardSurface from '../../../../app/components/ZoomableBoardSurface';
 import type {
   PuzzleImmediateActionRunner,
   PuzzleHeaderAction,
@@ -30,6 +29,7 @@ import type { NonogramActiveSession } from '../../activePuzzle';
 
 function useNonogramAdapter({
   difficulty,
+  viewportGestureEnabled,
   setDialog,
   goHome,
   goBack,
@@ -41,16 +41,12 @@ function useNonogramAdapter({
   const nextMove = useNextMoveHelper((session: NonogramPlaySession) => (
     getNonogramNextMoveHint(session.puzzle, session.board)
   ));
-  const [isBoardZoomed, setIsBoardZoomed] = useState(false);
   const [inputMode, setInputMode] = useState<'fill' | 'cross'>('fill');
-  const resetBoardZoomRef = useRef<(() => void) | null>(null);
   const [gridContainer, setGridContainer] = useState({ width: 0, height: 0 });
 
   const resetAdapterState = useCallback(() => {
     nextMove.reset();
-    setIsBoardZoomed(false);
     setInputMode('fill');
-    resetBoardZoomRef.current = null;
   }, [nextMove.reset]);
 
   const handleMissingPuzzle = useCallback(async () => {
@@ -105,19 +101,9 @@ function useNonogramAdapter({
         <HintPopoverContent title={nextMove.hint.title} body={nextMove.hint.body} />
       ) : undefined,
     };
-    const resetZoomHeaderAction: PuzzleHeaderAction = {
-      key: 'reset-zoom',
-      accessibilityLabel: 'Reset zoom',
-      iconName: 'refresh-outline',
-      onPress: () => {
-        resetBoardZoomRef.current?.();
-      },
-    };
 
     return {
-      headerActions: isBoardZoomed
-        ? [resetZoomHeaderAction, nextMoveHeaderAction]
-        : [nextMoveHeaderAction],
+      headerActions: [nextMoveHeaderAction],
       headerMeta: session ? [
         {
           key: 'size',
@@ -133,35 +119,27 @@ function useNonogramAdapter({
       main: session ? (
         <View style={styles.boardArea} onLayout={handleGridLayout}>
           {gridContainer.width > 0 && gridContainer.height > 0 ? (
-            <ZoomableBoardSurface
-              panEnabled={isBoardZoomed}
-              onZoomStateChange={setIsBoardZoomed}
-              onRegisterReset={(reset) => {
-                resetBoardZoomRef.current = reset;
+            <NonogramPuzzleGrid
+              puzzle={session.puzzle}
+              board={session.board}
+              containerWidth={gridContainer.width}
+              containerHeight={gridContainer.height}
+              interactive
+              allowSwipe
+              inputMode={inputMode}
+              onCellTap={(row, col) => {
+                nextMove.reset();
+                void runImmediateAction({ kind: 'tap', row, col, mode: inputMode });
               }}
-            >
-              <NonogramPuzzleGrid
-                puzzle={session.puzzle}
-                board={session.board}
-                containerWidth={gridContainer.width}
-                containerHeight={gridContainer.height}
-                interactive
-                allowSwipe={!isBoardZoomed}
-                inputMode={inputMode}
-                onCellTap={(row, col) => {
-                  nextMove.reset();
-                  void runImmediateAction({ kind: 'tap', row, col, mode: inputMode });
-                }}
-                onCellSwipe={(cells, value) => {
-                  nextMove.reset();
-                  void runImmediateAction({ kind: 'swipe', cells, value });
-                }}
-                nextMoveEvidenceCells={nextMove.hint?.evidenceCells ?? []}
-                nextMoveTargetCells={nextMove.hint?.targetCells ?? []}
-                nextMoveHighlightRows={nextMove.hint?.lineOrientation === 'row' ? [nextMove.hint.lineIndex] : []}
-                nextMoveHighlightCols={nextMove.hint?.lineOrientation === 'col' ? [nextMove.hint.lineIndex] : []}
-              />
-            </ZoomableBoardSurface>
+              onCellSwipe={(cells, value) => {
+                nextMove.reset();
+                void runImmediateAction({ kind: 'swipe', cells, value });
+              }}
+              nextMoveEvidenceCells={nextMove.hint?.evidenceCells ?? []}
+              nextMoveTargetCells={nextMove.hint?.targetCells ?? []}
+              nextMoveHighlightRows={nextMove.hint?.lineOrientation === 'row' ? [nextMove.hint.lineIndex] : []}
+              nextMoveHighlightCols={nextMove.hint?.lineOrientation === 'col' ? [nextMove.hint.lineIndex] : []}
+            />
           ) : null}
         </View>
       ) : (
@@ -186,7 +164,6 @@ function useNonogramAdapter({
     gridContainer.width,
     handleGridLayout,
     inputMode,
-    isBoardZoomed,
     nextMove,
     strings,
     theme,
