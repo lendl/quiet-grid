@@ -3,6 +3,8 @@ import type { MinesweeperBoard, MinesweeperPuzzle } from '../types';
 import { countFlaggedCells, createMinesweeperBoard, createMinesweeperPuzzle } from './rules';
 import { formatElapsed } from '../../../app/utils/formatElapsed';
 import { computeAccuracyPct, computeFinalScore } from '../../../app/utils/scoring';
+
+const TIME_TO_ZERO_SECONDS = { easy: 300, medium: 450, hard: 600, expert: 900 };
 import type { PuzzlePlayContract } from '../../../app/shell/playContract';
 import type { SessionResult } from '../../../app/shell/types';
 
@@ -28,7 +30,7 @@ export function buildMinesweeperResult(
     gameId: 'minesweeper',
     difficulty: session.puzzle.difficulty,
     status: solved ? 'solved' : 'failed',
-    score: solved ? computeFinalScore(session.puzzle.difficulty, elapsedSeconds, 0) : 0,
+    score: solved ? computeFinalScore(session.puzzle.difficulty, elapsedSeconds, 0, TIME_TO_ZERO_SECONDS) : 0,
     accuracy: computeAccuracyPct(0),
     elapsedSeconds,
     streak: 0,

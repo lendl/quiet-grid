@@ -1,4 +1,5 @@
 import { formatElapsed } from '../../../app/utils/formatElapsed';
+import { MIN_SCORE } from '../../../app/utils/scoring';
 import type { PuzzlePlayContract } from '../../../app/shell/playContract';
 import type { SessionResult } from '../../../app/shell/types';
 import type { ChimpTestActiveSession, ChimpTestSession } from '../types';
@@ -21,7 +22,7 @@ export function buildChimpTestResult(
     gameId: 'chimptest',
     difficulty: session.puzzle.difficulty,
     status: solved ? 'solved' : 'failed',
-    score: solved ? Math.max(0, 50_000 - Math.round(totalRoundTime * 500)) : 0,
+    score: solved ? Math.max(MIN_SCORE, 50_000 - Math.round(totalRoundTime * 500)) : 0,
     accuracy: solved ? 100 : 0,
     elapsedSeconds,
     streak: 0,

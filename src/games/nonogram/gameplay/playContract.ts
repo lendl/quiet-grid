@@ -1,4 +1,5 @@
 import { formatElapsed } from '../../../app/utils/formatElapsed';
+import { MIN_SCORE } from '../../../app/utils/scoring';
 import type { PuzzlePlayContract } from '../../../app/shell/playContract';
 import type { SessionResult } from '../../../app/shell/types';
 import { createRandomNonogramSession } from '../platform/puzzleData';
@@ -26,7 +27,7 @@ export function buildNonogramResult(
     gameId: 'nonogram',
     difficulty: session.puzzle.difficulty,
     status: solved ? 'solved' : 'failed',
-    score: solved ? Math.max(0, 10_000 - (elapsedSeconds * 10)) : 0,
+    score: solved ? Math.max(MIN_SCORE, 10_000 - (elapsedSeconds * 10)) : 0,
     accuracy: solved ? 100 : 0,
     elapsedSeconds,
     streak: 0,
@@ -69,7 +70,7 @@ export const nonogramPlayContract: PuzzlePlayContract<
         gameId: 'nonogram',
         difficulty: session.puzzle.difficulty,
         status: 'solved',
-        score: Math.max(0, 10_000 - (elapsedSeconds * 10)),
+        score: Math.max(MIN_SCORE, 10_000 - (elapsedSeconds * 10)),
         accuracy: 100,
         elapsedSeconds,
       }

@@ -1,5 +1,7 @@
 import { formatElapsed } from '../../../app/utils/formatElapsed';
 import { computeAccuracyPct, computeFinalScore } from '../../../app/utils/scoring';
+
+const TIME_TO_ZERO_SECONDS = { easy: 600, medium: 900, hard: 1200, expert: 1800 };
 import { makeEmptyBooleanGrid } from '../../../app/utils/activeSessionStateStorage';
 import type { PuzzlePlayContract } from '../../../app/shell/playContract';
 import type { SessionResult } from '../../../app/shell/types';
@@ -74,7 +76,7 @@ export function buildSudokuResult(
     gameId: 'sudoku',
     difficulty: session.puzzle.difficulty,
     status: solved ? 'solved' : 'failed',
-    score: solved ? computeFinalScore(session.puzzle.difficulty, elapsedSeconds, session.accuracyDrops) : 0,
+    score: solved ? computeFinalScore(session.puzzle.difficulty, elapsedSeconds, session.accuracyDrops, TIME_TO_ZERO_SECONDS) : 0,
     accuracy: computeAccuracyPct(session.accuracyDrops),
     elapsedSeconds,
     streak: 0,
@@ -143,7 +145,7 @@ export const sudokuPlayContract: PuzzlePlayContract<
         gameId: 'sudoku',
         difficulty: session.puzzle.difficulty,
         status: 'solved',
-        score: computeFinalScore(session.puzzle.difficulty, elapsedSeconds, session.accuracyDrops),
+        score: computeFinalScore(session.puzzle.difficulty, elapsedSeconds, session.accuracyDrops, TIME_TO_ZERO_SECONDS),
         accuracy: computeAccuracyPct(session.accuracyDrops),
         elapsedSeconds,
       }

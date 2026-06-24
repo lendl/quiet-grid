@@ -1,4 +1,5 @@
 import { formatElapsed } from '../../../app/utils/formatElapsed';
+import { MIN_SCORE } from '../../../app/utils/scoring';
 import type { PuzzlePlayContract } from '../../../app/shell/playContract';
 import type { SessionResult } from '../../../app/shell/types';
 import {
@@ -18,19 +19,22 @@ export interface WordSearchHudState {
 
 export type WordSearchPlaySession = WordSearchSession;
 
+const SKIPPED_WORD_BONUS = 300;
+
+function computeWordSearchScore(session: WordSearchPlaySession, elapsedSeconds: number): number {
+  const base = Math.max(MIN_SCORE, 15_000 - (elapsedSeconds * 8));
+  const skipped = session.puzzle.words.length - session.foundWordIds.length;
+  return base + skipped * SKIPPED_WORD_BONUS;
+}
+
 export function buildWordSearchResult(session: WordSearchPlaySession, elapsedSeconds = 0): SessionResult {
   const solved = isWordSearchSolved(session);
-  const progress = session.puzzle.words.length === 0
-    ? 0
-    : session.foundWordIds.length / session.puzzle.words.length;
 
   return {
     gameId: 'wordsearch',
     difficulty: session.puzzle.difficulty,
     status: solved ? 'solved' : 'failed',
-    score: solved
-      ? Math.max(0, 15_000 - (elapsedSeconds * 8))
-      : Math.round(progress * 1_000),
+    score: solved ? computeWordSearchScore(session, elapsedSeconds) : 0,
     accuracy: 100,
     elapsedSeconds,
     streak: 0,
@@ -83,7 +87,7 @@ export const wordSearchPlayContract: PuzzlePlayContract<
         gameId: 'wordsearch',
         difficulty: session.puzzle.difficulty,
         status: 'solved',
-        score: Math.max(0, 15_000 - (elapsedSeconds * 8)),
+        score: computeWordSearchScore(session, elapsedSeconds),
         accuracy: 100,
         elapsedSeconds,
       }

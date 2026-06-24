@@ -2,6 +2,8 @@ import type { TakuzuActiveSession } from './activePuzzle';
 import type { Grid, LineKey, Puzzle } from '../types';
 import { formatElapsed } from '../../../app/utils/formatElapsed';
 import { computeAccuracyPct, computeFinalScore } from '../../../app/utils/scoring';
+
+const TIME_TO_ZERO_SECONDS = { easy: 300, medium: 450, hard: 600, expert: 900 };
 import { decodeMask, decodePuzzle, decodeSolution, getRandomPuzzle } from '../platform/puzzleData';
 import { isBoardSolved } from './rules/validation';
 import { makeEmptyBooleanGrid } from '../../../app/utils/activeSessionStateStorage';
@@ -63,7 +65,7 @@ export function buildTakuzuResult(
     difficulty: session.puzzle.difficulty,
     status: solved ? 'solved' : 'failed',
     score: solved
-      ? computeFinalScore(session.puzzle.difficulty, elapsedSeconds, session.accuracyDrops)
+      ? computeFinalScore(session.puzzle.difficulty, elapsedSeconds, session.accuracyDrops, TIME_TO_ZERO_SECONDS)
       : 0,
     accuracy: computeAccuracyPct(session.accuracyDrops),
     elapsedSeconds,
@@ -122,7 +124,7 @@ export const takuzuPlayContract: PuzzlePlayContract<
       gameId: 'takuzu',
       difficulty: session.puzzle.difficulty,
       status: 'solved',
-      score: computeFinalScore(session.puzzle.difficulty, elapsedSeconds, session.accuracyDrops),
+      score: computeFinalScore(session.puzzle.difficulty, elapsedSeconds, session.accuracyDrops, TIME_TO_ZERO_SECONDS),
       accuracy: computeAccuracyPct(session.accuracyDrops),
       elapsedSeconds,
     };
