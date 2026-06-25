@@ -4,7 +4,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Button, TouchableRipple } from 'react-native-paper';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import type { StackScreenProps } from '@react-navigation/stack';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useTheme } from '../context/ThemeContext';
 import type { RootStackParamList } from '../navigation/types';
 import type { Theme } from '../theme';
@@ -16,7 +16,7 @@ import type { SudokuBoard, SudokuNotes } from '../../games/sudoku/types';
 import { createEmptySudokuNotes } from '../../games/sudoku/types';
 import type { SudokuHintTargetCell } from '../../games/sudoku/gameplay/analysis/nextMove';
 
-type Props = StackScreenProps<RootStackParamList, 'TechniqueLesson'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'TechniqueLesson'>;
 
 function buildNotesFromBoard(board: SudokuBoard, givens: SudokuBoard): SudokuNotes {
   const notes = createEmptySudokuNotes(9, 9);

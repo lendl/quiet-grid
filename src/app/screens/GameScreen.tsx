@@ -1,9 +1,9 @@
 import React from 'react';
-import type { StackScreenProps } from '@react-navigation/stack';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import GameTabs from '../navigation/GameTabs';
 import type { RootStackParamList } from '../navigation/types';
 
-type Props = StackScreenProps<RootStackParamList, 'Game'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'Game'>;
 
 export default function GameScreen({ route }: Props) {
   return (

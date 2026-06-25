@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Divider } from 'react-native-paper';
 import Ionicons from '@react-native-vector-icons/ionicons';
-import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import GamePageShell from '../../components/GamePageShell';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
-import type { GameTabParamList } from '../../navigation/types';
 import { getGameDefinition } from '../../shell/games/gameRegistry';
 import type { Theme } from '../../theme';
+import type { GameId } from '../../../games/shared/types';
 
-type Props = BottomTabScreenProps<GameTabParamList, 'Rules'>;
+type Props = {
+  gameId: GameId;
+};
 
 function SectionHeader({ icon, title, styles }: { icon: React.ComponentProps<typeof Ionicons>['name']; title: string; styles: ReturnType<typeof makeStyles> }) {
   const { theme } = useTheme();
@@ -36,116 +36,105 @@ function Accordion({ title, children, styles }: { title: string; children: React
   );
 }
 
-export default function GameRulesTab({ route }: Props) {
+export default function GameRulesTab({ gameId }: Props) {
   const { strings } = useLanguage();
   const { theme } = useTheme();
-  const definition = getGameDefinition(route.params.gameId);
+  const definition = getGameDefinition(gameId);
   const { howToPlay } = definition.content;
   const s = makeStyles(theme);
 
   return (
-    <GamePageShell
-      activeTab="Games"
-      headerMode="brand"
-      contentTransitionDirection="forward"
-      gameNav={{
-        context: 'tabs',
-        activeTab: 'Rules',
-        gameId: route.params.gameId,
-      }}
-    >
-      <ScrollView contentContainerStyle={s.scroll}>
+    <ScrollView contentContainerStyle={s.scroll}>
 
-        <SectionHeader icon="trophy-outline" title={strings.howToPlay.goalTitle} styles={s} />
-        <Text style={s.bodyText}>{howToPlay.goal}</Text>
+      <SectionHeader icon="trophy-outline" title={strings.howToPlay.goalTitle} styles={s} />
+      <Text style={s.bodyText}>{howToPlay.goal}</Text>
 
-        <Divider style={s.divider} />
+      <Divider style={s.divider} />
 
-        <SectionHeader icon="hand-left-outline" title={strings.howToPlay.controlsTitle} styles={s} />
-        <Text style={s.bodyText}>{howToPlay.controls}</Text>
+      <SectionHeader icon="hand-left-outline" title={strings.howToPlay.controlsTitle} styles={s} />
+      <Text style={s.bodyText}>{howToPlay.controls}</Text>
 
-        {!!howToPlay.wrongMove && (
-          <>
-            <Divider style={s.divider} />
-            <SectionHeader icon="warning-outline" title={strings.howToPlay.wrongMoveTitle} styles={s} />
-            <Text style={s.bodyText}>{howToPlay.wrongMove}</Text>
-          </>
-        )}
+      {!!howToPlay.wrongMove && (
+        <>
+          <Divider style={s.divider} />
+          <SectionHeader icon="warning-outline" title={strings.howToPlay.wrongMoveTitle} styles={s} />
+          <Text style={s.bodyText}>{howToPlay.wrongMove}</Text>
+        </>
+      )}
 
-        <Divider style={s.divider} />
+      <Divider style={s.divider} />
 
-        <SectionHeader icon="document-text-outline" title={strings.howToPlay.rulesTitle} styles={s} />
-        <View style={s.ruleList}>
-          {howToPlay.rules.map((rule) => (
-            <View key={rule.num} style={s.ruleRow}>
-              <View style={s.badge}><Text style={s.badgeText}>{rule.num}</Text></View>
-              <View style={s.ruleBody}>
-                <Text style={s.ruleTitle}>{rule.title}</Text>
-                <Text style={s.ruleText}>{rule.body}</Text>
+      <SectionHeader icon="document-text-outline" title={strings.howToPlay.rulesTitle} styles={s} />
+      <View style={s.ruleList}>
+        {howToPlay.rules.map((rule) => (
+          <View key={rule.num} style={s.ruleRow}>
+            <View style={s.badge}><Text style={s.badgeText}>{rule.num}</Text></View>
+            <View style={s.ruleBody}>
+              <Text style={s.ruleTitle}>{rule.title}</Text>
+              <Text style={s.ruleText}>{rule.body}</Text>
+            </View>
+          </View>
+        ))}
+      </View>
+
+      {howToPlay.techniques.length > 0 && (
+        <>
+          <Divider style={s.divider} />
+          <Accordion title={strings.howToPlay.techniquesTitle} styles={s}>
+            <View style={s.techniqueList}>
+              {howToPlay.techniques.map((technique) => (
+                <View key={technique.key} style={s.techniqueItem}>
+                  <Text style={s.techniqueTitle}>{technique.title}</Text>
+                  <Text style={s.techniqueText}>{technique.body}</Text>
+                </View>
+              ))}
+            </View>
+          </Accordion>
+        </>
+      )}
+
+      {!!howToPlay.scoring && (
+        <>
+          <Divider style={s.divider} />
+          <Accordion title={strings.howToPlay.scoringTitle} styles={s}>
+            <Text style={s.bodyText}>{howToPlay.scoring}</Text>
+          </Accordion>
+        </>
+      )}
+
+      {howToPlay.tips.length > 0 && (
+        <>
+          <Divider style={s.divider} />
+          <Accordion title={strings.howToPlay.tipsTitle} styles={s}>
+            {howToPlay.tips.map((tip) => (
+              <View key={tip.key} style={s.tipItem}>
+                <Text style={s.tipTitle}>{tip.title}</Text>
+                <Text style={s.tipText}>{tip.body}</Text>
+              </View>
+            ))}
+          </Accordion>
+        </>
+      )}
+
+      <Divider style={s.divider} />
+
+      <Accordion title={strings.howToPlay.inGameIconsTitle} styles={s}>
+        <View style={s.iconList}>
+          {strings.howToPlay.inGameIcons.map((item) => (
+            <View key={item.label} style={s.iconRow}>
+              <View style={s.iconBadge}>
+                <Ionicons name={item.icon as React.ComponentProps<typeof Ionicons>['name']} size={20} color={theme.textSecondary} />
+              </View>
+              <View style={s.iconBody}>
+                <Text style={s.iconLabel}>{item.label}</Text>
+                <Text style={s.iconDescription}>{item.description}</Text>
               </View>
             </View>
           ))}
         </View>
+      </Accordion>
 
-        {howToPlay.techniques.length > 0 && (
-          <>
-            <Divider style={s.divider} />
-            <Accordion title={strings.howToPlay.techniquesTitle} styles={s}>
-              <View style={s.techniqueList}>
-                {howToPlay.techniques.map((technique) => (
-                  <View key={technique.key} style={s.techniqueItem}>
-                    <Text style={s.techniqueTitle}>{technique.title}</Text>
-                    <Text style={s.techniqueText}>{technique.body}</Text>
-                  </View>
-                ))}
-              </View>
-            </Accordion>
-          </>
-        )}
-
-        {!!howToPlay.scoring && (
-          <>
-            <Divider style={s.divider} />
-            <Accordion title={strings.howToPlay.scoringTitle} styles={s}>
-              <Text style={s.bodyText}>{howToPlay.scoring}</Text>
-            </Accordion>
-          </>
-        )}
-
-        {howToPlay.tips.length > 0 && (
-          <>
-            <Divider style={s.divider} />
-            <Accordion title={strings.howToPlay.tipsTitle} styles={s}>
-              {howToPlay.tips.map((tip) => (
-                <View key={tip.key} style={s.tipItem}>
-                  <Text style={s.tipTitle}>{tip.title}</Text>
-                  <Text style={s.tipText}>{tip.body}</Text>
-                </View>
-              ))}
-            </Accordion>
-          </>
-        )}
-
-        <Divider style={s.divider} />
-
-        <Accordion title={strings.howToPlay.inGameIconsTitle} styles={s}>
-          <View style={s.iconList}>
-            {strings.howToPlay.inGameIcons.map((item) => (
-              <View key={item.label} style={s.iconRow}>
-                <View style={s.iconBadge}>
-                  <Ionicons name={item.icon as React.ComponentProps<typeof Ionicons>['name']} size={20} color={theme.textSecondary} />
-                </View>
-                <View style={s.iconBody}>
-                  <Text style={s.iconLabel}>{item.label}</Text>
-                  <Text style={s.iconDescription}>{item.description}</Text>
-                </View>
-              </View>
-            ))}
-          </View>
-        </Accordion>
-
-      </ScrollView>
-    </GamePageShell>
+    </ScrollView>
   );
 }
 

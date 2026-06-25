@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { StackActions, useNavigation, useNavigationState } from '@react-navigation/native';
-import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import type { StackNavigationProp } from '@react-navigation/stack';
+import { StackActions, useNavigation } from '@react-navigation/native';
+import type { NavigationProp } from '@react-navigation/native';
 import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
 import { TouchableRipple } from 'react-native-paper';
 import { useLanguage } from '../context/LanguageContext';
@@ -22,15 +21,16 @@ type BaseProps = {
   gameId: GameId;
 };
 
-type TabContextProps = BaseProps & {
-  context: 'tabs';
+type InlineContextProps = BaseProps & {
+  context: 'inline';
+  onNavigate: (tab: GameTabName, direction: TransitionDirection) => void;
 };
 
 type RootContextProps = BaseProps & {
   context: 'root';
 };
 
-type Props = TabContextProps | RootContextProps;
+type Props = InlineContextProps | RootContextProps;
 
 type NavItem = {
   key: GameTabName;
@@ -41,8 +41,7 @@ export default function GamePageNav(props: Props) {
   const { strings } = useLanguage();
   const { theme } = useTheme();
   const s = useMemo(() => makeStyles(theme), [theme]);
-  const tabNavigation = useNavigation<BottomTabNavigationProp<GameTabParamList>>();
-  const rootNavigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const items = useMemo<NavItem[]>(() => {
     return [
       { key: 'Play', label: strings.common.play },
@@ -50,22 +49,18 @@ export default function GamePageNav(props: Props) {
       { key: 'Stats', label: strings.common.stats },
     ];
   }, [strings]);
-  const resolvedActiveTab = useNavigationState((state) => {
-    const routeName = state.routeNames[state.index];
-    return items.some((item) => item.key === routeName)
-      ? routeName as GameTabName
-      : props.activeTab;
-  });
-  const [rowWidth, setRowWidth] = useState(0);
-  const [labelLayouts, setLabelLayouts] = useState<Record<string, { width: number; x: number }>>({});
+
+  const resolvedActiveTab = props.activeTab;
   const activeIndex = useMemo(
     () => items.findIndex((item) => item.key === resolvedActiveTab),
     [items, resolvedActiveTab],
   );
+
+  const [rowWidth, setRowWidth] = useState(0);
+  const [labelLayouts, setLabelLayouts] = useState<Record<string, { width: number; x: number }>>({});
   const indicatorX = useRef(new Animated.Value(0)).current;
   const indicatorWidth = useRef(new Animated.Value(0)).current;
   const indicatorAnimation = useRef<Animated.CompositeAnimation | null>(null);
-  const navigationAttempt = useRef(0);
 
   const segmentWidth = rowWidth > 0 ? rowWidth / items.length : 0;
 
@@ -87,7 +82,6 @@ export default function GamePageNav(props: Props) {
 
   useEffect(() => {
     indicatorAnimation.current?.stop();
-    navigationAttempt.current += 1;
 
     const metrics = getIndicatorMetrics(activeIndex);
     if (!metrics) {
@@ -109,15 +103,12 @@ export default function GamePageNav(props: Props) {
       return;
     }
 
-    if (props.context === 'tabs') {
-      tabNavigation.navigate(target, {
-        gameId: props.gameId,
-        transitionDirection: direction,
-      });
+    if (props.context === 'inline') {
+      props.onNavigate(target, direction);
       return;
     }
 
-    rootNavigation.dispatch(StackActions.replace('Game', {
+    navigation.dispatch(StackActions.replace('Game', {
       gameId: props.gameId,
       initialTab: target,
       initialDirection: direction,
@@ -133,7 +124,6 @@ export default function GamePageNav(props: Props) {
 
     const metrics = getIndicatorMetrics(targetIndex);
     if (metrics) {
-      navigationAttempt.current += 1;
       indicatorAnimation.current?.stop();
 
       const animation = Animated.parallel([
@@ -152,10 +142,9 @@ export default function GamePageNav(props: Props) {
       ]);
 
       indicatorAnimation.current = animation;
-      animation.start();
+      animation.start(() => { indicatorAnimation.current = null; });
     }
 
-    // Navigate immediately so the content transition and indicator slide together.
     navigateTo(target, direction);
   };
 

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
-import type { StackScreenProps } from '@react-navigation/stack';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { getGameAnalysisAdapter } from '../analysisRegistry';
 import OutcomeScreenLayout, { type OutcomeScreenMetrics } from '../components/OutcomeScreenLayout';
 import GamePageShell from '../components/GamePageShell';
@@ -15,7 +15,7 @@ import { formatDifficultyLabel, getDifficultyColor } from '../utils/format';
 import { formatElapsed } from '../utils/formatElapsed';
 import { startGame } from '../utils/gameNavigation';
 
-type Props = StackScreenProps<RootStackParamList, 'Loss'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'Loss'>;
 
 function buildLossAccents(theme: Theme, difficultyColor: string, scale: number) {
   const sized = (value: number) => Math.round(value * scale);

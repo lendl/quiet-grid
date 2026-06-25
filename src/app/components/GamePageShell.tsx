@@ -14,17 +14,11 @@ import type { GameTabParamList, MainTabParamList, RootStackParamList, Transition
 import type { GameId } from '../../games/shared/types';
 import type { Theme } from '../theme';
 
-type GameNavConfig =
-  | {
-    context: 'tabs';
-    activeTab: keyof GameTabParamList;
-    gameId: GameId;
-  }
-  | {
-    context: 'root';
-    activeTab: keyof GameTabParamList;
-    gameId: GameId;
-  };
+type GameNavConfig = {
+  context: 'root';
+  activeTab: keyof GameTabParamList;
+  gameId: GameId;
+};
 
 type Props = {
   children?: React.ReactNode;

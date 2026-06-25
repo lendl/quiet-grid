@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useWindowDimensions } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
-import type { StackScreenProps } from '@react-navigation/stack';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/types';
 import { returnToHome } from '../../navigation/returnToHome';
 import {
@@ -16,7 +16,7 @@ import type { PuzzlePlayLayoutState } from '../playScreenTypes';
 import { useLeavePuzzleDialog } from './useLeavePuzzleDialog';
 import { usePuzzleControllerBootstrap } from './usePuzzleControllerBootstrap';
 
-type Props = StackScreenProps<RootStackParamList, 'PuzzlePlay'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'PuzzlePlay'>;
 
 export function usePuzzlePlayController(props: Props, menuOpen = false): PuzzlePlayLayoutState {
   const strings = getAppStrings();

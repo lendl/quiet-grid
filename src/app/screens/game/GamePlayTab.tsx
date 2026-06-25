@@ -2,26 +2,26 @@ import React, { useCallback, useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Divider, TouchableRipple } from 'react-native-paper';
 import { useFocusEffect, useNavigation, type NavigationProp } from '@react-navigation/native';
-import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import ActivePuzzleReplaceDialog from '../../components/ActivePuzzleReplaceDialog';
-import GamePageShell from '../../components/GamePageShell';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useActivePuzzleReplacement } from '../../hooks/useActivePuzzleReplacement';
-import type { GameTabParamList, RootStackParamList } from '../../navigation/types';
+import type { RootStackParamList } from '../../navigation/types';
 import { getGameDefinition } from '../../shell/games/gameRegistry';
 import type { Theme } from '../../theme';
 import type { Difficulty } from '../../types';
 import { getDifficultyColor } from '../../utils/format';
 import { startGame } from '../../utils/gameNavigation';
+import type { GameId } from '../../../games/shared/types';
 
-type Props = BottomTabScreenProps<GameTabParamList, 'Play'>;
+type Props = {
+  gameId: GameId;
+};
 
-export default function GamePlayTab({ route }: Props) {
+export default function GamePlayTab({ gameId }: Props) {
   const { strings } = useLanguage();
   const { theme } = useTheme();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const { gameId } = route.params;
   const definition = getGameDefinition(gameId);
   const s = useMemo(() => makeStyles(theme), [theme]);
   const {
@@ -51,16 +51,7 @@ export default function GamePlayTab({ route }: Props) {
   }));
 
   return (
-    <GamePageShell
-      activeTab="Games"
-      headerMode="brand"
-      contentTransitionDirection="forward"
-      gameNav={{
-        context: 'tabs',
-        activeTab: 'Play',
-        gameId,
-      }}
-    >
+    <>
       <ScrollView contentContainerStyle={s.scroll}>
         <View style={s.header}>
           <Text style={s.tagline}>{definition.tagline}</Text>
@@ -94,7 +85,7 @@ export default function GamePlayTab({ route }: Props) {
         onStartNew={handleGiveUpAndStartNew}
         onDismiss={dismissDialog}
       />
-    </GamePageShell>
+    </>
   );
 }
 
@@ -102,11 +93,6 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   scroll: { padding: 20, gap: 0 },
   header: {
     gap: 6,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '900',
-    color: theme.text,
   },
   tagline: {
     fontSize: 15,

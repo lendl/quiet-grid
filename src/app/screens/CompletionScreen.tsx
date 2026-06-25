@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
-import type { StackScreenProps } from '@react-navigation/stack';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import OutcomeScreenLayout, { type OutcomeScreenMetrics } from '../components/OutcomeScreenLayout';
 import GamePageShell from '../components/GamePageShell';
 import { useLanguage } from '../context/LanguageContext';
@@ -16,7 +16,7 @@ import { startGame } from '../utils/gameNavigation';
 
 const CELEBRATION_ICONS = ['🎉', '🏆', '⭐', '✨', '🎈', '💜'] as const;
 
-type Props = StackScreenProps<RootStackParamList, 'Completion'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'Completion'>;
 
 type VariantCopy = {
   eyebrow: string;

@@ -4,7 +4,7 @@ import { Button, Divider } from 'react-native-paper';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { StackActions, useNavigation } from '@react-navigation/native';
 import type { NavigationProp } from '@react-navigation/native';
-import type { StackScreenProps } from '@react-navigation/stack';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import GamePageShell from '../components/GamePageShell';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
@@ -13,7 +13,7 @@ import type { RootStackParamList } from '../navigation/types';
 import type { Theme } from '../theme';
 import { markGameHowToPlaySeen } from '../utils/settingsStorage';
 
-type Props = StackScreenProps<RootStackParamList, 'HowToPlay'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'HowToPlay'>;
 
 function SectionHeader({ icon, title, styles }: { icon: React.ComponentProps<typeof Ionicons>['name']; title: string; styles: ReturnType<typeof makeStyles> }) {
   const { theme } = useTheme();

@@ -2,7 +2,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, useWindowDimensions } from 'react-native';
 import { Button } from 'react-native-paper';
-import type { StackScreenProps } from '@react-navigation/stack';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import AppScreen from '../components/AppScreen';
 import { useLanguage } from '../context/LanguageContext';
@@ -13,7 +13,7 @@ import { withAlpha } from '../utils/color';
 import { markWelcomeSeen } from '../utils/settingsStorage';
 import type { Theme } from '../theme';
 
-type Props = StackScreenProps<RootStackParamList, 'Welcome'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'Welcome'>;
 const SWIPE_DISTANCE_THRESHOLD = 48;
 const SWIPE_VELOCITY_THRESHOLD = 420;
 

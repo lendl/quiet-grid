@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Divider, TouchableRipple } from 'react-native-paper';
-import type { StackScreenProps } from '@react-navigation/stack';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import GlobalPageShell from '../components/GlobalPageShell';
 import { getLocalizedSupportInfoContent } from '../content/supportInfo';
 import { useLanguage } from '../context/LanguageContext';
@@ -9,7 +9,7 @@ import { useTheme } from '../context/ThemeContext';
 import type { RootStackParamList } from '../navigation/types';
 import type { Theme } from '../theme';
 
-type Props = StackScreenProps<RootStackParamList, 'SupportInfo'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'SupportInfo'>;
 
 export default function SupportInfoScreen({ navigation, route }: Props) {
   const { strings } = useLanguage();

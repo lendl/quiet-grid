@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { Button } from 'react-native-paper';
 import { StackActions } from '@react-navigation/native';
-import type { StackScreenProps } from '@react-navigation/stack';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import GamePageShell from '../components/GamePageShell';
 import { useLanguage } from '../context/LanguageContext';
@@ -18,7 +18,7 @@ import type { RootStackParamList } from '../navigation/types';
 import type { Theme } from '../theme';
 import { getGameAnalysisAdapter } from '../analysisRegistry';
 
-type Props = StackScreenProps<RootStackParamList, 'Analysis'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'Analysis'>;
 const SWIPE_DISTANCE_THRESHOLD = 48;
 const SWIPE_VELOCITY_THRESHOLD = 420;
 

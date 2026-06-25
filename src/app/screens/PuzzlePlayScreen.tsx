@@ -4,7 +4,7 @@ import Ionicons from '@react-native-vector-icons/ionicons';
 import { StyleSheet, Text, View } from 'react-native';
 import { TouchableRipple } from 'react-native-paper';
 import Popover, { PopoverPlacement } from 'react-native-popover-view';
-import type { StackScreenProps } from '@react-navigation/stack';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import PuzzlePlayScaffold from '../components/PuzzlePlayScaffold';
 import { useLanguage } from '../context/LanguageContext';
@@ -16,7 +16,7 @@ import type { Theme } from '../theme';
 import { formatElapsed } from '../utils/formatElapsed';
 import { loadShowTimerInPlay } from '../utils/settingsStorage';
 
-type Props = StackScreenProps<RootStackParamList, 'PuzzlePlay'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'PuzzlePlay'>;
 
 export default function PuzzlePlayScreen(props: Props) {
   const { strings } = useLanguage();
