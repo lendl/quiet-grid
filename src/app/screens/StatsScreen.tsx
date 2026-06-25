@@ -9,6 +9,7 @@ import AppDialog from '../components/AppDialog';
 import GlobalPageShell from '../components/GlobalPageShell';
 import { gameRegistry } from '../shell/games/gameRegistry';
 import { clearPlayerData } from '../utils/statsStorage';
+import { getPuzzleStats, getStatsSummary } from '../utils/statsUtils';
 import type { MainTabParamList } from '../navigation/types';
 import type { GameId } from '../types';
 import type { Theme } from '../theme';
@@ -40,6 +41,19 @@ export default function StatsScreen({ navigation, route }: Props) {
     return undefined;
   }, []));
 
+  const availableDefinitions = useMemo(() => {
+    if (!stats) return [];
+    return gameRegistry
+      .map(definition => {
+        const gameStats = getPuzzleStats(stats, definition.id);
+        const { totalPlayed } = getStatsSummary(gameStats);
+        return { definition, totalPlayed };
+      })
+      .filter(({ totalPlayed }) => totalPlayed > 0)
+      .sort((a, b) => b.totalPlayed - a.totalPlayed)
+      .map(({ definition }) => definition);
+  }, [stats]);
+
   if (!stats) {
     return (
       <GlobalPageShell activeTab="Stats" />
@@ -47,8 +61,6 @@ export default function StatsScreen({ navigation, route }: Props) {
   }
 
   const handleClear = () => setClearDialogVisible(true);
-
-  const availableDefinitions = gameRegistry;
   const hasActiveDefinition = activeFilter === 'all'
     || availableDefinitions.some((definition) => definition.id === activeFilter);
   const effectiveFilter: GlobalStatsFilter = scopedDefinition
@@ -88,6 +100,7 @@ export default function StatsScreen({ navigation, route }: Props) {
                 selected={effectiveFilter === 'all'}
                 onPress={() => setActiveFilter('all')}
                 compact
+                showSelectedCheck={false}
               >
                 {strings.common.all}
               </Chip>
