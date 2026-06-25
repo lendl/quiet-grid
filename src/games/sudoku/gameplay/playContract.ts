@@ -1,8 +1,8 @@
 import { formatElapsed } from '../../../app/utils/formatElapsed';
 import { computeAccuracyPct, computeFinalScore } from '../../../app/utils/scoring';
+import { makeEmptyBooleanGrid } from '../../../app/utils/activeSessionStateStorage';
 
 const TIME_TO_ZERO_SECONDS = { easy: 600, medium: 900, hard: 1200, expert: 1800 };
-import { makeEmptyBooleanGrid } from '../../../app/utils/activeSessionStateStorage';
 import type { PuzzlePlayContract } from '../../../app/shell/playContract';
 import type { SessionResult } from '../../../app/shell/types';
 import { pickRandomPuzzleForDifficulty } from '../../shared/randomPuzzleSelection';

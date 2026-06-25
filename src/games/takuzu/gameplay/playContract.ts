@@ -2,13 +2,13 @@ import type { TakuzuActiveSession } from './activePuzzle';
 import type { Grid, LineKey, Puzzle } from '../types';
 import { formatElapsed } from '../../../app/utils/formatElapsed';
 import { computeAccuracyPct, computeFinalScore } from '../../../app/utils/scoring';
-
-const TIME_TO_ZERO_SECONDS = { easy: 300, medium: 450, hard: 600, expert: 900 };
 import { decodeMask, decodePuzzle, decodeSolution, getRandomPuzzle } from '../platform/puzzleData';
 import { isBoardSolved } from './rules/validation';
 import { makeEmptyBooleanGrid } from '../../../app/utils/activeSessionStateStorage';
 import type { PuzzlePlayContract } from '../../../app/shell/playContract';
 import type { SessionResult } from '../../../app/shell/types';
+
+const TIME_TO_ZERO_SECONDS = { easy: 300, medium: 450, hard: 600, expert: 900 };
 
 export interface TakuzuPlaySession {
   puzzle: Puzzle;

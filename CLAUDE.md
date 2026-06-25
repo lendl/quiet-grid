@@ -13,11 +13,11 @@
 - Run Takuzu engine CLI: `npm run engine -- --game=takuzu`
 - Run Nonogram engine CLI: `npm run engine -- --game=nonogram`
 
-There is no automated test script. Validate changes with lint and `npx tsc --noEmit`.
-
 ## After making changes
 
 Always run `npx tsc --noEmit` after editing TypeScript files and fix any errors before finishing.
+
+Always run `npm run test:regression` after any change and fix any failures before finishing.
 
 ## TypeScript file conventions
 

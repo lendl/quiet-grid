@@ -9,10 +9,12 @@ const { buildNonogramResult } = require(path.join(ROOT, 'src', 'games', 'nonogra
 const { buildSudokuResult } = require(path.join(ROOT, 'src', 'games', 'sudoku', 'gameplay', 'playContract.ts'));
 const { buildTakuzuResult } = require(path.join(ROOT, 'src', 'games', 'takuzu', 'gameplay', 'playContract.ts'));
 
+const DEFAULT_TIME_CAPS = { easy: 300, medium: 450, hard: 600, expert: 900 };
+
 function registerTests() {
   test('scoring helpers clamp and scale predictably', () => {
-    assert.equal(computeFinalScore('easy', 60, 0), 8000);
-    assert.equal(computeFinalScore('medium', 0, 1), 9500);
+    assert.equal(computeFinalScore('easy', 60, 0, DEFAULT_TIME_CAPS), 8000);
+    assert.equal(computeFinalScore('medium', 0, 1, DEFAULT_TIME_CAPS), 9500);
     assert.equal(computeAccuracyPct(3), 70);
     assert.equal(computeAccuracyPct(15), 0);
   });
@@ -33,7 +35,7 @@ function registerTests() {
       gameId: 'takuzu',
       difficulty: 'easy',
       status: 'solved',
-      score: computeFinalScore('easy', 45, 2),
+      score: computeFinalScore('easy', 45, 2, DEFAULT_TIME_CAPS),
       accuracy: computeAccuracyPct(2),
       elapsedSeconds: 45,
       streak: 0,
@@ -64,7 +66,7 @@ function registerTests() {
       gameId: 'minesweeper',
       difficulty: 'hard',
       status: 'solved',
-      score: computeFinalScore('hard', 120, 0),
+      score: computeFinalScore('hard', 120, 0, DEFAULT_TIME_CAPS),
       accuracy: 100,
       elapsedSeconds: 120,
       streak: 0,

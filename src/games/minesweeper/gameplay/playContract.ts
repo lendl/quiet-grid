@@ -3,10 +3,10 @@ import type { MinesweeperBoard, MinesweeperPuzzle } from '../types';
 import { countFlaggedCells, createMinesweeperBoard, createMinesweeperPuzzle } from './rules';
 import { formatElapsed } from '../../../app/utils/formatElapsed';
 import { computeAccuracyPct, computeFinalScore } from '../../../app/utils/scoring';
-
-const TIME_TO_ZERO_SECONDS = { easy: 300, medium: 450, hard: 600, expert: 900 };
 import type { PuzzlePlayContract } from '../../../app/shell/playContract';
 import type { SessionResult } from '../../../app/shell/types';
+
+const TIME_TO_ZERO_SECONDS = { easy: 300, medium: 450, hard: 600, expert: 900 };
 
 export interface MinesweeperPlaySession {
   puzzle: MinesweeperPuzzle;
