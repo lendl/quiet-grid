@@ -37,7 +37,7 @@
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^25.9.1",
     "@types/react": "~19.2.0",
-    "babel-preset-expo": "~56.0.14",
+    "babel-preset-expo": "~57.0.0",
     "better-sqlite3": "^12.8.0",
     "eslint": "^10.2.1",
     "eslint-plugin-react-hooks": "^7.1.1",
