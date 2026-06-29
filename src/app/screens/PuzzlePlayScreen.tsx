@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { StackActions } from '@react-navigation/native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { StyleSheet, Text, View } from 'react-native';
@@ -144,7 +144,9 @@ interface HeaderPopoverButtonProps {
 }
 
 function HeaderPopoverButton({ action, theme, s }: HeaderPopoverButtonProps) {
-  const isVisible = !!(action.active && action.popoverContent != null);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  const isVisible = mounted && !!(action.active && action.popoverContent != null);
 
   return (
     <Popover

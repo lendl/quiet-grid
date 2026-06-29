@@ -33,7 +33,7 @@ const en: WordSearchI18n = {
         hide: 'Hide next word hint',
       },
       hiddenWord: {
-        locked: 'Solve the hidden word from the grid whenever you are ready.',
+        locked: 'Find all the words to unlock the hidden word.',
         revealed: (clue: string, word: string) => `${clue}: ${word}`,
         solvedTitle: 'Hidden word found!',
         enterMode: 'Solve hidden word',
@@ -46,20 +46,6 @@ const en: WordSearchI18n = {
       nextMove: {
         title: (word: string) => `Find "${word}"`,
         body: 'Start from the highlighted letter and trace the full word in one straight line.',
-      },
-    },
-    tutorial: {
-      progressLabel: (step: number, total: number) => `Lesson ${step} of ${total}`,
-      exitLabel: {
-        skip: 'Skip tutorial',
-        end: 'Open Word Search',
-      },
-      checkpoint: {
-        prompt: 'You want to select STAR. After tapping S, what do you tap next?',
-        validOption: 'R — the last letter',
-        invalidOption: 'T — the next letter',
-        correctFeedback: 'Correct — tap the first letter, then the last. The path is traced automatically.',
-        wrongFeedback: 'Not quite. Tap the first and last letter only, not each letter in between.',
       },
     },
   },
@@ -81,7 +67,7 @@ const en: WordSearchI18n = {
       {
         num: '3',
         title: 'Solve the hidden word',
-        body: 'The hidden-word letters fill the empty cells in reading order — left to right, top to bottom. Enter hidden-word mode and tap each letter in sequence.',
+        body: 'The hidden-word letters fill the empty cells in reading order — left to right, top to bottom. Once all words are found, tap each letter in sequence to win.',
       },
     ],
     techniques: [],
@@ -110,32 +96,6 @@ const en: WordSearchI18n = {
       title: 'Word Search has no rule-failure loss',
       body: 'Invalid selections are no-ops in Word Search. Keep scanning and continue the puzzle.',
       icon: '🔎',
-    },
-  },
-  tutorialLessons: {
-    'win-condition': {
-      title: 'Find the hidden word to win',
-      body: 'The listed words are theme clues — finding them helps you identify the hidden bonus word. Finding the hidden word is the only way to win.',
-      summary: 'Regular words are clues. The hidden word is the goal.',
-      continueLabel: 'Next lesson',
-    },
-    'selection': {
-      title: 'Tap start, then tap end',
-      body: 'Tap the first letter of a word, then the last. The game traces the path — horizontal, vertical, diagonal, or a single corner turn.',
-      summary: 'Two taps select a word.',
-      continueLabel: 'Next lesson',
-    },
-    'no-penalty': {
-      title: 'Wrong guesses just disappear',
-      body: 'If no word is found the selection resets — no penalty. Scan freely and try any start and end combination you like.',
-      summary: 'Nothing to lose — keep scanning.',
-      continueLabel: 'Next lesson',
-    },
-    'hidden-word': {
-      title: 'Find the hidden word',
-      body: 'Tap the key icon to enter hidden-word mode. The hidden-word letters sit in the empty cells, reading left to right then top to bottom. The footer tracks your progress — tap each letter in order to win.',
-      summary: 'Empty cells spell the hidden word in reading order.',
-      continueLabel: 'Start puzzle',
     },
   },
 };

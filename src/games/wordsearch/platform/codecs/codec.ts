@@ -6,7 +6,7 @@ import type {
   WordSearchDirection,
   WordSearchLanguage,
 } from '../../types';
-import { collectEmptyCells, directionToDelta, toGridKey } from '../../engine/gridUtils';
+import { directionToDelta } from '../../engine/gridUtils';
 
 
 export interface WordSearchCatalogEntry {
@@ -30,6 +30,7 @@ export interface WordSearchCatalogEntry {
     clue: string;
     positions: Array<{ row: number; col: number }>;
   };
+  noiseFill: Array<{ row: number; col: number; letter: string }>;
   diversitySignature: string;
   quality: {
     overlapRatio: number;
@@ -122,6 +123,7 @@ export function normalizeWordSearchCatalogEntry(entry: WordSearchCatalogEntry): 
       clue: entry.hiddenWord.clue,
       positions: entry.hiddenWord.positions.map((cell) => ({ ...cell })),
     },
+    noiseFill: (entry.noiseFill ?? []).map((cell) => ({ ...cell })),
     diversitySignature: entry.diversitySignature,
     quality: { ...entry.quality },
   };
@@ -171,6 +173,12 @@ export function materializeWordSearchCatalogEntry(
   normalized.hiddenWord.positions.forEach((cell, index) => {
     if (isInside(normalized.rows, normalized.cols, cell.row, cell.col)) {
       grid[cell.row][cell.col] = hiddenWord[index] ?? '';
+    }
+  });
+
+  normalized.noiseFill.forEach(({ row, col, letter }) => {
+    if (isInside(normalized.rows, normalized.cols, row, col)) {
+      grid[row][col] = letter;
     }
   });
 

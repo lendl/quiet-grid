@@ -9,7 +9,11 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "rootDir": "..",
-    "outDir": "../../dist/engine"
+    "outDir": "../../dist/engine",
+    "paths": {
+      "react-native": ["../stubs/react-native"],
+      "react-native/*": ["../stubs/react-native"]
+    }
   },
   "include": ["./**/*.ts"]
 }

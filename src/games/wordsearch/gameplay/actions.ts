@@ -299,12 +299,16 @@ export function runWordSearchAction(
     return { changed: false, session };
   }
 
+  const nextFoundWordIds = [...session.foundWordIds, pendingWord.id];
+  const allWordsFound = nextFoundWordIds.length >= session.puzzle.words.length;
+
   return {
     changed: true,
     session: {
       ...cloneWordSearchSession(session),
-      foundWordIds: [...session.foundWordIds, pendingWord.id],
+      foundWordIds: nextFoundWordIds,
       tempSelection: null,
+      hiddenWordMode: !session.hiddenWordSolved && allWordsFound,
     },
   };
 }

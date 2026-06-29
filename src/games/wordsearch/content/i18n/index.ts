@@ -9,19 +9,6 @@ import de from './de';
 import fr from './fr';
 import es from './es';
 
-export type WordSearchTutorialLessonKey =
-  | 'win-condition'
-  | 'selection'
-  | 'no-penalty'
-  | 'hidden-word';
-
-export interface WordSearchTutorialLessonCopy {
-  title: string;
-  body: string;
-  summary: string;
-  continueLabel: string;
-}
-
 export interface WordSearchStrings {
   title: string;
   shortTitle: string;
@@ -59,27 +46,12 @@ export interface WordSearchStrings {
       body: string;
     };
   };
-  tutorial: {
-    progressLabel(step: number, total: number): string;
-    exitLabel: {
-      skip: string;
-      end: string;
-    };
-    checkpoint: {
-      prompt: string;
-      validOption: string;
-      invalidOption: string;
-      correctFeedback: string;
-      wrongFeedback: string;
-    };
-  };
 }
 
 export interface WordSearchI18n {
   strings: WordSearchStrings;
   howToPlay: HowToPlayContent;
   loss: LossContent;
-  tutorialLessons: Record<WordSearchTutorialLessonKey, WordSearchTutorialLessonCopy>;
 }
 
 const CONTENT: LocalizedGameContent<WordSearchI18n> = {
@@ -106,6 +78,3 @@ export function getWordSearchLossContent(): LossContent {
   return getWordSearchI18n().loss;
 }
 
-export function getWordSearchTutorialLessonCopies(): Record<WordSearchTutorialLessonKey, WordSearchTutorialLessonCopy> {
-  return getWordSearchI18n().tutorialLessons;
-}

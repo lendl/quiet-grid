@@ -42,7 +42,7 @@ function toPreferredLanguages(value: readonly string[] | undefined): WordSearchL
 }
 
 function formatWordSearchEntry(entry: WordSearchEngineEntry): string {
-  return `  { id: '${entry.id}', schemaVersion: 1, difficulty: '${entry.difficulty}', rows: ${entry.rows}, cols: ${entry.cols}, language: '${entry.language}', themeId: '${entry.themeId}', words: ${JSON.stringify(entry.words)}, hiddenWord: ${JSON.stringify(entry.hiddenWord)}, diversitySignature: ${JSON.stringify(entry.diversitySignature)}, quality: ${JSON.stringify(entry.quality)} },`;
+  return `  { id: '${entry.id}', schemaVersion: 1, difficulty: '${entry.difficulty}', rows: ${entry.rows}, cols: ${entry.cols}, language: '${entry.language}', themeId: '${entry.themeId}', words: ${JSON.stringify(entry.words)}, hiddenWord: ${JSON.stringify(entry.hiddenWord)}, noiseFill: ${JSON.stringify(entry.noiseFill)}, diversitySignature: ${JSON.stringify(entry.diversitySignature)}, quality: ${JSON.stringify(entry.quality)} },`;
 }
 
 export const wordSearchEngineDefinition: EngineGameDefinition<WordSearchEngineEntry> = {
@@ -57,8 +57,20 @@ export const wordSearchEngineDefinition: EngineGameDefinition<WordSearchEngineEn
     normalizeParsedEntry: (entry) => normalizeWordSearchCatalogEntry(entry as WordSearchCatalogEntry) as WordSearchEngineEntry,
   },
   listAllowedSizes,
-  listAllowedDifficulties: () => WORD_SEARCH_DIFFICULTIES,
-  pickTargetDifficulty: () => WORD_SEARCH_DIFFICULTIES[Math.floor(Math.random() * WORD_SEARCH_DIFFICULTIES.length)],
+  listAllowedDifficulties: (encodedSize) => {
+    const { rows, cols } = decodeSize(encodedSize);
+    return WORD_SEARCH_DIFFICULTIES.filter((d) =>
+      WORD_SEARCH_DIFFICULTY_CONFIG[d].sizeOptions.some((s) => s.rows === rows && s.cols === cols),
+    );
+  },
+  pickTargetDifficulty: (encodedSize) => {
+    const { rows, cols } = decodeSize(encodedSize);
+    const allowed = WORD_SEARCH_DIFFICULTIES.filter((d) =>
+      WORD_SEARCH_DIFFICULTY_CONFIG[d].sizeOptions.some((s) => s.rows === rows && s.cols === cols),
+    );
+    const pool = allowed.length > 0 ? allowed : WORD_SEARCH_DIFFICULTIES;
+    return pool[Math.floor(Math.random() * pool.length)]!;
+  },
   describeSizeOptions: (encodedSize) => {
     const { rows, cols } = decodeSize(encodedSize);
     return [`${rows}x${cols}`];

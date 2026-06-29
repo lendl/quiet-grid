@@ -10,7 +10,7 @@ import { WORD_SEARCH_DIFFICULTY_CONFIG } from '../games/wordsearch/engine/constr
 import { wordSearchSeedCorpus } from '../games/wordsearch/engine/seedCorpus';
 import type { WordSearchLanguage } from '../games/wordsearch/types';
 
-const MAX_ATTEMPTS = 100;
+const MAX_ATTEMPTS = 200;
 const WORD_SEARCH_LANGUAGES = ['en', 'nl', 'de', 'fr', 'es'] as const;
 const WORD_SEARCH_DIFFICULTIES = ['easy', 'medium', 'hard', 'expert'] as const;
 
@@ -329,7 +329,11 @@ function main(): void {
     }
   }
 
-  const selectedSizes = forcedSize === null ? [...allowedSizes] : [forcedSize];
+  const selectedSizes = forcedSize !== null
+    ? [forcedSize]
+    : forcedDifficulty !== null
+      ? allowedSizes.filter((size) => game.listAllowedDifficulties(size).includes(forcedDifficulty))
+      : [...allowedSizes];
   const db = openDb();
   let totalGenerated = 0;
   let catalogEntries = readGameCatalog(game);

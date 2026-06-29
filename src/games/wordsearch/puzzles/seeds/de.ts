@@ -13,98 +13,147 @@ const de: WordSearchThemeSeed[] = [
       'Kabeljau', 'Forelle', 'Lachs', 'Oktopus', 'Krabbe', 'Garnele', 'Ameise', 'Wespe', 'Biene', 'Libelle',
       'Geier', 'Truthahn', 'Fasan', 'Rebhuhn', 'Huhn', 'Hahn', 'Ente', 'Gans', 'Flamingo', 'Pelikan',
       'Chamaeleon', 'Iguana', 'Python', 'Boa', 'Viper', 'Skorpion', 'Spinne', 'Vogelspinne', 'Termite', 'Heuschrecke',
-      'Kaefer', 'Schmetterling', 'Motte', 'Seepferdchen', 'Rochen', 'Thunfisch', 'Makrele', 'Sardine', 'Auster', 'Muschel'
-    ]
+      'Kaefer', 'Schmetterling', 'Motte', 'Seepferdchen', 'Rochen', 'Thunfisch', 'Makrele', 'Sardine', 'Auster', 'Muschel',
+      'Papagei', 'Pinguin', 'Straus', 'Sperling', 'Rotkehlchen', 'Pfau', 'Tukan', 'Storch', 'Kranich',
+      'Krokodil', 'Alligator', 'Gecko', 'Kobra', 'Mamba',
+      'Leuchtkaefer', 'Muecke', 'Raupe', 'Floh', 'Hornisse', 'Hummel', 'Kakerlake',
+      'Aal', 'Tintenfisch', 'Hummer', 'Qualle', 'Orca', 'Henne', 'Stier', 'Hering', 'Seestern',
+    ],
   },
   {
-    themeId: 'obst',
+    themeId: 'essen',
     words: [
-      'Apfel', 'Birne', 'Banane', 'Mango', 'Kiwi', 'Traube', 'Kirsche', 'Pflaume', 'Pfirsich', 'Nektarine',
-      'Aprikose', 'Erdbeere', 'Himbeere', 'Brombeere', 'Beere', 'Mispel', 'Papaya', 'Guave', 'Litschi', 'Rambutan',
-      'Durian', 'Pomelo', 'Limette', 'Zitrone', 'Orange', 'Mandarine', 'Kumquat', 'Avocado', 'Datteln', 'Feige',
-      'Cranberry', 'Tomate', 'Wassermelone', 'Honigmelone', 'Cantaloupe', 'Olive', 'Kokosnuss', 'Feijoa', 'Kaki', 'Longan',
-      'Salak', 'Rambai', 'SchwarzeJohannisbeere', 'RoteJohannisbeere', 'Heidelbeere', 'Quitte', 'Passionsfrucht', 'Grapefruit', 'Tamarinde', 'Jujube'
-    ]
+      'Apfel', 'Birne', 'Banane', 'Mango', 'Kiwi', 'Traube', 'Kirsche', 'Pflaume', 'Pfirsich', 'Aprikose',
+      'Erdbeere', 'Himbeere', 'Brombeere', 'Heidelbeere', 'Zitrone', 'Limette', 'Orange', 'Mandarine', 'Grapefruit', 'Avocado',
+      'Kokosnuss', 'Wassermelone', 'Ananas', 'Papaya', 'Feige', 'Preiselbeere', 'Melone', 'Datteln', 'Guave', 'Granatapfel',
+      'Karotte', 'Kartoffel', 'Zwiebel', 'Knoblauch', 'Erbse', 'Bohne', 'Mais', 'Brokkoli', 'Spinat', 'Salat',
+      'Kohl', 'Tomate', 'Gurke', 'Paprika', 'Pilz', 'Sellerie', 'Lauch', 'Kuerbis', 'Zucchini', 'Blumenkohl',
+      'Spargel', 'Rotebeete', 'Gruenkohl', 'Radieschen', 'Linse', 'Aubergine',
+      'Suppe', 'Eintopf', 'Toast', 'Nudeln', 'Pizza', 'Curry', 'Steak', 'Burger', 'Sandwich', 'Pfannkuchen',
+      'Waffel', 'Muffin', 'Keks', 'Kuchen', 'Donut', 'Brownie', 'Brot', 'Omelett', 'Wurst', 'Pudding',
+      'Broetchen', 'Granola', 'Crepe', 'Croissant', 'Sushi', 'Taco', 'Risotto', 'Lasagne', 'Kebab', 'Paella',
+      'Ramen', 'Bagel', 'Falafel', 'Nachos', 'Knoedel',
+      'Schinken', 'Ei', 'Reis', 'Rind', 'Speck', 'Lamm', 'Honig', 'Marmelade', 'Kaese', 'Butter',
+      'Milch', 'Joghurt', 'Sahne', 'Tee', 'Kaffee', 'Saft', 'Schokolade', 'Ingwer', 'Zucker', 'Mehl',
+      'Sirup', 'Vanille', 'Zimt',
+      'Wasser', 'Limonade', 'Milchshake', 'Kakao', 'Apfelschorle', 'Smoothie', 'Tofu',
+    ],
   },
   {
-    themeId: 'sportarten',
+    themeId: 'natur',
+    words: [
+      'Rose', 'Tulpe', 'Sonnenblume', 'Margerite', 'Lavendel', 'Lilie', 'Orchidee', 'Mohn', 'Iris', 'Veilchen',
+      'Nelke', 'Dahlie', 'Narzisse', 'Jasmin', 'Hibiskus', 'Magnolie', 'Glockenblume', 'Krokus', 'Primel', 'Heidekraut',
+      'Klee', 'Flieder', 'Pfingstrose', 'Glyzinie', 'Fingerhut',
+      'Eiche', 'Birke', 'Ahorn', 'Weide', 'Kiefer', 'Palme', 'Fichte', 'Buche', 'Zeder', 'Ulme',
+      'Esche', 'Pappel', 'Zypresse', 'Laerche', 'Sequoia', 'Platane',
+      'Farn', 'Efeu', 'Kaktus', 'Aloe', 'Loewenzahn', 'Brennnessel', 'Distel', 'Moos', 'Bambus', 'Rebe',
+      'Regen', 'Schnee', 'Sturm', 'Donner', 'Blitz', 'Nebel', 'Wolke', 'Wind', 'Frost', 'Hagel',
+      'Eis', 'Regenbogen', 'Blizzard', 'Tornado', 'Hurrikan', 'Nieseln', 'Brise', 'Schneeflocke', 'Aurora', 'Sonnenschein',
+      'Wald', 'Fluss', 'See', 'Berg', 'Tal', 'Strand', 'Wueste', 'Ozean', 'Klippe', 'Hoehle',
+      'Wasserfall', 'Insel', 'Wiese', 'Gletscher', 'Vulkan', 'Dschungel', 'Schlucht', 'Sumpf', 'Steppe', 'Duene',
+      'Teich', 'Bach', 'Moor', 'Lagune', 'Riff', 'Hochebene', 'Savanne', 'Tundra', 'Fjord', 'Bucht',
+      'Kamm', 'Gipfel', 'Kiesel',
+      'Fruehling', 'Sommer', 'Herbst', 'Winter', 'Sonnenaufgang', 'Abendrot', 'Eklipse', 'Gezeiten', 'Pollen', 'Erde',
+    ],
+  },
+  {
+    themeId: 'sport',
     words: [
       'Fussball', 'Handball', 'Basketball', 'Volleyball', 'Hockey', 'Tennis', 'Badminton', 'Squash', 'Rugby', 'Baseball',
       'Softball', 'Leichtathletik', 'Sprint', 'Marathon', 'Triathlon', 'Schwimmen', 'Wasserball', 'Tauchen', 'Fechten', 'Judo',
-      'Karate', 'Taekwondo', 'Boxen', 'Ringen', 'Turnen', 'Golf', 'Cricket', 'Skifahren', 'Snowboarden', 'Schlittschuhlauf',
+      'Karate', 'Taekwondo', 'Boxen', 'Ringen', 'Turnen', 'Golf', 'Cricket', 'Skifahren', 'Snowboarden', 'Eislaufen',
       'Curling', 'Rudern', 'Segeln', 'Surfen', 'Kitesurfen', 'Windsurfen', 'Kanufahren', 'Kajakfahren', 'Bogenschiessen', 'Darts',
-      'Billard', 'Snooker', 'Esports', 'Gewichtheben', 'Reiten', 'Wandern', 'Klettern', 'Radfahren', 'Mountainbike', 'Joggen'
-    ]
+      'Billard', 'Snooker', 'Esports', 'Gewichtheben', 'Reiten', 'Wandern', 'Klettern', 'Radfahren', 'Joggen', 'Rodeln',
+      'Racket', 'Helm', 'Handschuhe', 'Schlaeger', 'Netz', 'Tor', 'Ring', 'Puck', 'Pfeil', 'Bogen',
+      'Matte', 'Bahn', 'Pfeife', 'Pokal', 'Medaille', 'Paddel', 'Seil', 'Sattel', 'Ski', 'Trikot',
+      'Stollen',
+    ],
   },
   {
     themeId: 'kleidung',
     words: [
       'Tshirt', 'Pullover', 'Strickjacke', 'Jacke', 'Bluse', 'Hemd', 'Polo', 'Top', 'Hose', 'Jeans',
-      'Leggings', 'Rock', 'Kleid', 'Shorts', 'Pyjama', 'Unterhose', 'Bh', 'Socken', 'Strumpfhose', 'Muetze',
-      'Schal', 'Kappe', 'Hut', 'Turnschuhe', 'Stiefel', 'Sandalen', 'Absaetze', 'Hausschuhe', 'Guertel', 'Bikini',
-      'Badeanzug', 'Overall', 'Anzug', 'Sakko', 'Blazer', 'Hoodie', 'Poncho', 'Kimono', 'Trainingsanzug', 'Sporthose',
-      'Sportshirt', 'Oberhemd', 'Weste', 'Kniestruempfe', 'Steppweste', 'Regenjacke', 'Winterjacke', 'Parka', 'Sweatshirt', 'Cardigan'
-    ]
+      'Leggings', 'Rock', 'Kleid', 'Shorts', 'Pyjama', 'Socken', 'Strumpfhose', 'Muetze', 'Schal', 'Kappe',
+      'Hut', 'Turnschuhe', 'Stiefel', 'Sandalen', 'Absaetze', 'Hausschuhe', 'Guertel', 'Bikini', 'Badeanzug', 'Overall',
+      'Anzug', 'Sakko', 'Blazer', 'Hoodie', 'Poncho', 'Kimono', 'Trainingsanzug', 'Weste', 'Regenjacke', 'Winterjacke',
+      'Parka', 'Handschuhe', 'Faustlinge', 'Latzhose', 'Jumpsuit', 'Bademantel', 'Tunika', 'Kilt', 'Cardigan', 'Sweatshirt',
+      'Halskette', 'Armband', 'Ohrring', 'Uhr', 'Sonnenbrille', 'Handtasche', 'Geldboerse', 'Regenschirm', 'Haarband', 'Krawatte',
+      'Fliege', 'Band',
+      'Baumwolle', 'Seide', 'Wolle', 'Leinen', 'Denim', 'Samt', 'Leder', 'Polyester', 'Nylon', 'Fleece',
+      'Kaschmir', 'Satin', 'Wildleder',
+    ],
   },
   {
-    themeId: 'fahrzeuge',
+    themeId: 'transport',
     words: [
       'Auto', 'Bus', 'Fahrrad', 'Motorrad', 'Roller', 'Tretroller', 'Traktor', 'Gabelstapler', 'Krankenwagen', 'Taxi',
       'Limousine', 'Wohnmobil', 'Caravan', 'Zug', 'Ubahn', 'Strassenbahn', 'Monorail', 'Boot', 'Segelboot', 'Motorboot',
       'Uboot', 'Flugzeug', 'Hubschrauber', 'Zeppelin', 'Drohne', 'Raumschiff', 'Quad', 'Schneemobil', 'Panzer',
       'Bulldozer', 'Bagger', 'Kranwagen', 'Betonmischer', 'Golfcart', 'Segway', 'Hovercraft', 'Jetski', 'Schnellboot', 'Gokart',
-      'Lastenrad', 'Rennrad', 'Mountainbike', 'Lastwagen', 'Minivan', 'Cabrio', 'Coupe', 'Stufenheck', 'Roadster'
-    ]
+      'Lastenrad', 'Rennrad', 'Mountainbike', 'Lastwagen', 'Minivan', 'Cabrio', 'Coupe', 'Stufenheck', 'Roadster',
+    ],
   },
   {
-    themeId: 'getraenke',
+    themeId: 'zuhause',
     words: [
-      'Wasser', 'Tee', 'Kaffee', 'Espresso', 'Cappuccino', 'Latte', 'Cola', 'Orangenlimonade', 'Limonade', 'Eistee',
-      'Eiskaffee', 'Smoothie', 'Milkshake', 'Saft', 'Apfelsaft', 'Birnensaft', 'Traubensaft', 'Mangosaft', 'Beerensaft', 'Tomatensaft',
-      'Bruehe', 'Sojamilch', 'Hafermilch', 'Mandelmilch', 'Buttermilch', 'Kakaomilch', 'Joghurtshake', 'Kokoswasser', 'Fruchtsaft',
-      'Tonic', 'GingerAle', 'Sportgetraenk', 'EnergyDrink', 'Kraeutertee', 'Fruchtmix', 'Zitronensaft', 'Limettensaft',
-      'Milch', 'Kaffeesahne',
-    ]
+      'Messer', 'Gabel', 'Loeffel', 'Wender', 'Schneebesen', 'Zange', 'Schaeler', 'Reibe', 'Sieb', 'Waage',
+      'Pfanne', 'Wok', 'Topf', 'Blender', 'Toaster', 'Wasserkocher', 'Mikrowelle', 'Ofen', 'Herd', 'Grill',
+      'Kelle', 'Schuessel', 'Teller', 'Becher', 'Mixer', 'Tablett', 'Rost', 'Tasse', 'Glas', 'Krug',
+      'Flasche', 'Teekanne', 'Tiefkuehler',
+      'Kueche', 'Schlafzimmer', 'Badezimmer', 'Flur', 'Dachboden', 'Keller', 'Garage', 'Garten', 'Balkon', 'Buero',
+      'Veranda', 'Terrasse', 'Speisekammer', 'Kinderzimmer', 'Wohnzimmer', 'Korridor', 'Diele',
+      'Stuhl', 'Sofa', 'Tisch', 'Schreibtisch', 'Bett', 'Regal', 'Kleiderschrank', 'Schublade', 'Lampe', 'Spiegel',
+      'Teppich', 'Vorhang', 'Kissen', 'Decke', 'Schrank', 'Buecherregal', 'Sessel', 'Hocker', 'Liege', 'Kommode',
+      'Kamin', 'Anrichte', 'Nachtschrank', 'Kopfteil', 'Haengematte', 'Babybett', 'Vase', 'Rahmen', 'Tuermatte',
+      'Kuehlschrank', 'Waschmaschine', 'Trockner', 'Staubsauger', 'Spuelmaschine', 'Fernseher', 'Heizung', 'Ventilator', 'Radio', 'Buegeleisen',
+      'Drucker', 'Laptop', 'Telefon',
+      'Besen', 'Mopp', 'Eimer', 'Handtuch', 'Seife', 'Kerze', 'Uhr', 'Tuer', 'Fenster', 'Schluessel',
+      'Dusche', 'Badewanne', 'Korb', 'Haken', 'Schwamm',
+      'Schaufel', 'Spaten', 'Harke', 'Hacke', 'Pflanzkelle', 'Schubkarre', 'Rasenmaeher', 'Sprinkler', 'Schlauch', 'Gewaechshaus',
+      'Schuppen', 'Zaun', 'Gartentor', 'Hecke', 'Busch', 'Rasen', 'Blumentopf', 'Pflanzkasten', 'Kompost', 'Mulch',
+      'Gartenschere', 'Leiter', 'Rankgitter', 'Vogelbad', 'Weg',
+    ],
   },
   {
-    themeId: 'pflanzen',
+    themeId: 'weltraum',
     words: [
-      'Rose', 'Tulpe', 'Narzisse', 'Sonnenblume', 'Gaensebluemchen', 'Lavendel', 'Orchidee', 'Veilchen', 'Geranie', 'Hortensie',
-      'Efeu', 'Farn', 'Aloe', 'Kaktus', 'Sukkulente', 'Eiche', 'Buche', 'Birke', 'Ahorn', 'Weide',
-      'Fichte', 'Kiefer', 'Palme', 'Bambus', 'Jasmin', 'Magnolie', 'Hibiskus', 'Kamille', 'Minze', 'Basilikum',
-      'Thymian', 'Rosmarin', 'Salbei', 'Petersilie', 'Koriander', 'Dill', 'Lorbeer', 'Brennnessel', 'Loewenzahn', 'Klatschmohn',
-      'Lilie', 'Iris', 'Dahlie', 'Begonie', 'Azalee', 'Rhododendron', 'Lavatera', 'Passionsblume', 'Oleander', 'Nelke'
-    ]
+      'Weltraum', 'Universum', 'Kosmos', 'Stern', 'Planet', 'Mond', 'Sonne', 'Komet', 'Meteor',
+      'Milchstrasse', 'Nebel', 'Cluster', 'Supernova', 'Schwarzesloch', 'Galaxie', 'Quasar', 'Pulsar', 'Nebula', 'Vakuum',
+      'Raumschiff', 'Rakete', 'Shuttle', 'Satellit', 'Teleskop', 'Observatorium', 'Astronaut', 'Kosmonaut', 'Raumstation', 'Orbit',
+      'Bahn', 'Schwerkraft', 'Lichtjahr', 'Sternbild', 'Horizont', 'Atmosphaere', 'Exoplanet', 'Dunkelheit', 'Raumkern', 'Sternsystem',
+      'Plasma', 'Materie', 'Antimaterie', 'Strahlung', 'Sonnenwind', 'Sonnenflare', 'Krater', 'Kern', 'Mantel',
+    ],
   },
   {
-    themeId: 'kuechengeraete',
+    themeId: 'farben',
     words: [
-      'Messer', 'Gabel', 'Loeffel', 'Pfannenwender', 'Schneebesen', 'Zange', 'Schneidebrett', 'Kochmesser', 'Schaelmesser', 'Sparschaeler',
-      'Reibe', 'Sieb', 'Durchschlag', 'Messbecher', 'Waage', 'Pfanne', 'Wok', 'Stieltopf', 'Bratpfanne', 'Auflaufform',
-      'Backblech', 'Mixer', 'Blender', 'Stabmixer', 'Toaster', 'Wasserkocher', 'Fritteuse', 'Airfryer', 'Mikrowelle', 'Ofen',
-      'Herd', 'Grill', 'Thermometer', 'Kuechenschere', 'Korkenzieher', 'Flaschenoeffner', 'Dosenoeffner', 'Stoessel', 'Moerser',
-      'Spritzbeutel', 'Nudelholz', 'Schaumloeffel', 'Greifzange', 'Schuessel', 'Teller', 'Becher', 'Servierplatte', 'Suppenkelle', 'Servierloeffel'
-    ]
+      'Rot', 'Gelb', 'Weiss', 'Rosa', 'Grau', 'Gold', 'Ocker', 'Lila', 'Ecru', 'Aqua',
+      'Jade', 'Lachs', 'Blau', 'Gruen', 'Braun', 'Rost', 'Bernstein', 'Olive', 'Mauve', 'Cyan',
+      'Elfenbein', 'Beige', 'Bronze', 'Kupfer', 'Violett', 'Schwarz', 'Azur', 'Taupe', 'Creme', 'Sepia',
+      'Koralle', 'Indigo', 'Kobalt', 'Silber', 'Orange', 'Marine', 'Senf', 'Lavendel', 'Tuerkis', 'Magenta',
+      'Fuchsia', 'Karmin', 'Anthrazit', 'Bordeaux', 'Kastanie', 'Mint', 'Hellblau', 'Terrakotta', 'Sandfarbe',
+    ],
   },
   {
-    themeId: 'berufe',
+    themeId: 'koerper',
     words: [
-      'Arzt', 'Krankenschwester', 'Tischler', 'Klempner', 'Elektriker', 'Baecker', 'Metzger', 'Koch', 'Pilot', 'Fahrer',
-      'Feuerwehrmann', 'Polizist', 'Anwalt', 'Richter', 'Notar', 'Maler', 'Maurer', 'Architekt', 'Ingenieur', 'Programmierer',
-      'Designer', 'Journalist', 'Schriftsteller', 'Dichter', 'Schauspieler', 'Saenger', 'Musiker', 'Gaertner', 'Bauer', 'Friseur',
-      'Mechaniker', 'Rezeptionist', 'Trainer', 'Coach', 'Lehrer', 'Professor', 'Verkaeufer', 'Barista', 'Kellner', 'Apotheker',
-      'Labortechniker', 'Pfleger', 'Therapeut', 'Psychologe', 'Dolmetscher', 'Uebersetzer', 'Fotograf', 'Kuenstler', 'Stuckateur', 'Optiker'
-    ]
+      'Auge', 'Ohr', 'Arm', 'Bein', 'Hufte', 'Kiefer', 'Zeh', 'Rippe', 'Lippe', 'Zahnfleisch',
+      'Schienbein', 'Knie', 'Nase', 'Ruecken', 'Hals', 'Ferse', 'Hand', 'Fuss', 'Nagel', 'Haar',
+      'Haut', 'Knochen', 'Kinn', 'Braue', 'Handflaeche', 'Wade', 'Handgelenk', 'Knoechel', 'Daumen', 'Ellbogen',
+      'Wange', 'Brust', 'Wirbelsaeule', 'Oberschenkel', 'Kopfhaut', 'Herz', 'Bauch', 'Gehirn', 'Zahn', 'Finger',
+      'Schlaefen', 'Zunge', 'Achsel', 'Niere', 'Muskel', 'Augenlid', 'Schulter', 'Magen', 'Stirn', 'Kniescheibe',
+    ],
   },
   {
-    themeId: 'familie',
+    themeId: 'schule',
     words: [
-      'Vater', 'Mutter', 'Sohn', 'Tochter', 'Bruder', 'Schwester', 'Opa', 'Oma', 'Onkel', 'Tante',
-      'Neffe', 'Nichte', 'Pate', 'Patin', 'Patenkind', 'Schwiegervater', 'Schwiegermutter', 'Schwiegersohn', 'Schwiegertochter', 'Schwager',
-      'Schwaegerin', 'Stiefvater', 'Stiefmutter', 'Stiefbruder', 'Stiefschwester', 'Pflegevater', 'Pflegemutter', 'Pflegekind', 'Haushalt', 'Familie',
-      'Enkelkind', 'Enkelsohn', 'Enkeltochter', 'Cousin', 'Cousine', 'Braeutigam', 'Braut', 'Ehemann', 'Ehefrau', 'Partner',
-      'Verlobte', 'Nachkomme', 'Vorfahr', 'Nachfahren', 'Kind', 'Baby', 'Kleinkind', 'Teenager', 'Erwachsene', 'Senior'
-    ]
+      'Stift', 'Tinte', 'Buch', 'Tisch', 'Kleber', 'Klebeband', 'Pruefung', 'Test', 'Quiz', 'Tafel',
+      'Lineal', 'Kreide', 'Farbe', 'Globus', 'Atlas', 'Klasse', 'Note', 'Punkte', 'Mittag', 'Lernen',
+      'Bleistift', 'Mappe', 'Ordner', 'Heftklammer', 'Buntstift', 'Radiergummi', 'Marker', 'Spind', 'Lektion', 'Pause',
+      'Tagebuch', 'Zirkel', 'Palette', 'Schrank', 'Scanner', 'Notizbuch', 'Rucksack', 'Schere', 'Lehrbuch', 'Arbeitsbuch',
+      'Hausaufgaben', 'Kalender', 'Stundenplan', 'Bibliothek', 'Klassenzimmer', 'Lehrer', 'Schueler', 'Wissenschaft',
+    ],
   },
   {
     themeId: 'emotionen',
@@ -113,8 +162,18 @@ const de: WordSearchThemeSeed[] = [
       'Genervt', 'Entspannt', 'Hilflos', 'Selbstsicher', 'Einsam', 'Heiter', 'Duester', 'Boese', 'Aufgeregt', 'Gelassen',
       'Besorgt', 'Erleichtert', 'Verwirrt', 'Bezaubert', 'Belustigt', 'Frustriert', 'Hoffnungsvoll', 'Verzweifelt', 'Dankbar', 'Neugierig',
       'Beschaemt', 'Schuldig', 'Schuechtern', 'Beunruhigt', 'Panisch', 'Zornig', 'Zufrieden', 'Geruehrt', 'Erfreut', 'Abgeneigt',
-      'Ekel', 'Neid', 'Eifersucht', 'Reue', 'Verwundert', 'Entsetzt', 'Verdutzt', 'Euphorisch', 'Melancholisch', 'Liebevoll'
-    ]
+      'Ekel', 'Neid', 'Eifersucht', 'Reue', 'Verwundert', 'Entsetzt', 'Verdutzt', 'Euphorisch', 'Melancholisch', 'Liebevoll',
+    ],
+  },
+  {
+    themeId: 'familie',
+    words: [
+      'Vater', 'Mutter', 'Sohn', 'Tochter', 'Bruder', 'Schwester', 'Opa', 'Oma', 'Onkel', 'Tante',
+      'Neffe', 'Nichte', 'Pate', 'Patin', 'Patenkind', 'Schwiegervater', 'Schwiegerin', 'Schwiegersohn', 'Schwager',
+      'Schwaegerin', 'Stiefvater', 'Stiefmutter', 'Stiefbruder', 'Stiefschwester', 'Pflegevater', 'Pflegemutter', 'Pflegekind', 'Haushalt', 'Familie',
+      'Enkelkind', 'Enkelsohn', 'Enkeltochter', 'Cousin', 'Cousine', 'Braeutigam', 'Braut', 'Ehemann', 'Ehefrau', 'Partner',
+      'Verlobte', 'Nachkomme', 'Vorfahr', 'Nachfahren', 'Kind', 'Baby', 'Kleinkind', 'Teenager', 'Erwachsene', 'Senior',
+    ],
   },
   {
     themeId: 'eigenschaften',
@@ -123,8 +182,8 @@ const de: WordSearchThemeSeed[] = [
       'Ruhig', 'Cool', 'Lustig', 'Ernst', 'Zuverlaessig', 'Ehrgeizig', 'Sozial', 'Genau', 'Flexibel', 'Einfallsreich',
       'Bescheiden', 'Offenherzig', 'Entschlossen', 'Optimistisch', 'Pessimistisch', 'Charismatisch', 'Lernbegierig', 'Hingebungsvoll', 'Aufmerksam', 'Treu',
       'Sanft', 'Streng', 'Sensibel', 'Gelassen', 'Feurig', 'Ordentlich', 'Chaotisch', 'Froehlich', 'Nuechtern', 'Logisch',
-      'Empathisch', 'Praktisch', 'Zielstrebig', 'Geschickt', 'Standhaft', 'Integer', 'Selbststaendig', 'Sorgfaeltig', 'Mutig', 'Energiegeladen'
-    ]
+      'Empathisch', 'Praktisch', 'Zielstrebig', 'Geschickt', 'Standhaft', 'Integer', 'Selbststaendig', 'Sorgfaeltig', 'Mutig', 'Energiegeladen',
+    ],
   },
   {
     themeId: 'hobbys',
@@ -134,19 +193,19 @@ const de: WordSearchThemeSeed[] = [
       'Skifahren', 'Yoga', 'Meditation', 'Bouldern', 'Klettern', 'Fotografie', 'Filmen', 'Schneiden', 'Sticken', 'Holzarbeiten',
       'Modellbau', 'Sammeln', 'Schach', 'Karten', 'Puzzeln', 'Kalligrafie', 'Schauspiel', 'Trommeln',
       'Brauen', 'Basteln', 'Schmieden', 'Modellieren', 'Toepfern',
-      'Gravieren', 'Weben', 'Spinnen', 'Ausmalen', 'Jonglieren', 'Braten', 'Roessten', 'Wuerzen', 'Zimmern',
-      'Schweissen', 'Loeten', 'Programmieren', 'Bloggen', 'Vloggen', 'Streamen', 'Fitness', 'Modellieren', 'Schmieden'
-    ]
+      'Gravieren', 'Weben', 'Spinnen', 'Ausmalen', 'Jonglieren', 'Braten', 'Zimmern',
+      'Schweissen', 'Loeten', 'Programmieren', 'Bloggen', 'Vloggen', 'Streamen', 'Fitness',
+    ],
   },
   {
     themeId: 'werkzeuge',
     words: [
-      'Hammer', 'Saege', 'Meissel', 'Feile', 'Zange', 'Seitenschneider', 'Wasserwaage', 'Massband', 'Rollmass', 'Schraubendreher',
-      'Kreuzschlitz', 'Schlitzkopf', 'Gabelschluessel', 'Steckschluessel', 'Schraubenschluessel', 'Cutter', 'Schere', 'Heissklebepistole', 'Tacker', 'Loetkolben',
-      'Bohrmaschine', 'Akkubohrer', 'Schleifmaschine', 'Schleifer', 'Fraese', 'Rohrschneider', 'Schraubstock', 'Farbschaber', 'Pinsel', 'Rolle',
+      'Hammer', 'Saege', 'Meissel', 'Feile', 'Zange', 'Seitenzange', 'Wasserwaage', 'Massband', 'Rollmass', 'Schrauber',
+      'Kreuzschlitz', 'Schlitzkopf', 'Ringschluessel', 'Nusskopf', 'Cutter', 'Schere', 'Tacker', 'Loetkolben',
+      'Bohrmaschine', 'Akkubohrer', 'Bandschleifer', 'Schleifer', 'Fraese', 'Rohrschneider', 'Schraubstock', 'Farbschaber', 'Pinsel', 'Rolle',
       'Kelle', 'Spachtel', 'Holzbohrer', 'Metallbohrer', 'Lochsaege', 'Klemme', 'Handsaege', 'Buegelsaege', 'Gummihammer', 'Klauenhammer',
-      'Multitool', 'Abisolierzange', 'Kabelmesser', 'Drahtschneider', 'Kreuzlaser', 'Heissluftgeraet', 'Entgrater', 'Hobel', 'Spitzmeissel', 'Schlagbohrer'
-    ]
+      'Multitool', 'Abisolierzange', 'Kabelmesser', 'Drahtschneider', 'Kreuzlaser', 'Entgrater', 'Hobel', 'Spitzmeissel', 'Schlagbohrer',
+    ],
   },
   {
     themeId: 'elektronik',
@@ -154,19 +213,25 @@ const de: WordSearchThemeSeed[] = [
       'Laptop', 'Tablet', 'Smartphone', 'Computer', 'Monitor', 'Tastatur', 'Maus', 'Headset', 'Kopfhoerer', 'Lautsprecher',
       'Mikrofon', 'Kamera', 'Router', 'Modem', 'Drucker', 'Scanner', 'Fernseher', 'Projektor', 'Controller', 'Konsole',
       'Smartwatch', 'Ladegeraet', 'Powerbank', 'USBstick', 'Festplatte', 'SSD', 'Drohne', 'Webcam', 'Bildschirm', 'Soundkarte',
-      'Mainboard', 'Prozessor', 'Grafikkarte', 'Adapter', 'Akku', 'Sensor', 'Bluetooth', 'Wifi', 'Ethernet', 'Mikrochip'
-    ]
+      'Mainboard', 'Prozessor', 'Grafikkarte', 'Adapter', 'Akku', 'Sensor', 'Bluetooth', 'Wifi', 'Ethernet', 'Mikrochip',
+    ],
   },
   {
-    themeId: 'weltraum',
+    themeId: 'musik',
     words: [
-      'Weltraum', 'Universum', 'Kosmos', 'Stern', 'Planet', 'Mond', 'Sonne', 'Komet', 'Meteor',
-      'Milchstrasse', 'Nebel', 'Cluster', 'Supernova', 'Schwarzesloch', 'Galaxie', 'Quasar', 'Pulsar', 'Nebula', 'Vakuum',
-      'Raumschiff', 'Rakete', 'Shuttle', 'Satellit', 'Teleskop', 'Observatorium', 'Astronaut', 'Kosmonaut', 'Raumstation', 'Orbit',
-      'Bahn', 'Schwerkraft', 'Lichtjahr', 'Sternbild', 'Horizont', 'Atmosphaere', 'Exoplanet', 'Dunkelheit', 'Raumkern', 'Sternsystem',
-      'Plasma', 'Materie', 'Antimaterie', 'Strahlung', 'Sonnenwind', 'Sonnenflare', 'Krater', 'Kern', 'Mantel'
-    ]
-  }
+      'Trommel', 'Gitarre', 'Klavier', 'Geige', 'Trompete', 'Floete', 'Harfe', 'Cello', 'Tuba', 'Posaune',
+      'Klarinette', 'Akkordeon', 'Ukulele', 'Banjo', 'Saxofon', 'Keyboard', 'Blockfloete', 'Xylofon', 'Glocke', 'Becken',
+      'Gong', 'Bass', 'Tamburin', 'Mundharmonika', 'Bratsche', 'Dreieck', 'Dudelsack', 'Synthesizer', 'Mikrofon', 'Cembalo',
+      'Takt', 'Melodie', 'Rhythmus', 'Refrain', 'Tempo', 'Tonhoehe', 'Akkord', 'Harmonie', 'Konzert', 'Album',
+      'Lied', 'Saenger', 'Band', 'Solo', 'Duett', 'Orchester', 'Akustisch', 'Liedtext', 'Strophe', 'Bruecke',
+      'Riff', 'Groove', 'Remix', 'Track', 'Zugabe', 'Stimme', 'Chor', 'Probe', 'Festival', 'Buehne',
+      'Studio', 'Komponist', 'Dirigent', 'Lautstaerke', 'Ton',
+      'Jazz', 'Blues', 'Rock', 'Pop', 'Klassik', 'Folk', 'Reggae', 'Gospel', 'Oper', 'Rap',
+      'Soul', 'Country', 'Funk', 'Disco', 'Punk', 'Metal', 'Techno', 'Indie', 'Ballade', 'Tanz',
+      'Swing', 'Walzer', 'Grunge', 'Elektro', 'Latein', 'Lautsprecher', 'Kopfhoerer', 'Vinyl', 'Platte', 'Kassette',
+      'Plattenteller', 'Stereoanlage', 'Verstaerker', 'Jukebox', 'Karaoke', 'Podcast', 'Mixer',
+    ],
+  },
 ];
 
 export default de;

@@ -5,7 +5,7 @@ import {
   WORD_SEARCH_DIFFICULTY_CONFIG,
   WORD_SEARCH_QUALITY_THRESHOLDS,
 } from './constraints';
-import { collectEmptyCells, directionToDelta, toGridKey } from './gridUtils';
+import { directionToDelta, toGridKey } from './gridUtils';
 import { wordSearchSeedCorpus } from './seedCorpus';
 
 interface Placement {
@@ -147,15 +147,6 @@ function hasCoverageViolation(placements: readonly Placement[]): boolean {
   return sets.some((s, i) => [...s].every((k) => unionWithout(i).has(k)));
 }
 
-function pathSpellsWord(
-  grid: string[][],
-  positions: readonly { row: number; col: number }[],
-  word: string,
-): boolean {
-  if (positions.length !== word.length) return false;
-  return positions.every((p, i) => grid[p.row]?.[p.col] === word[i]);
-}
-
 function positionsMatch(
   a: readonly { row: number; col: number }[],
   b: readonly { row: number; col: number }[],
@@ -167,67 +158,115 @@ function positionsMatch(
   return a.every((p, i) => p.row === b[n - 1 - i]!.row && p.col === b[n - 1 - i]!.col);
 }
 
-function hasGhostOccurrence(
+// Scans the grid once across all directions and checks every placed word in a
+// single pass instead of performing a full grid scan per word. Maps each word
+// text (and its reverse) to its intended positions so any occurrence at a
+// different position is detected immediately.
+function hasAnyGhostOccurrence(
   grid: string[][],
-  wordText: string,
-  intendedPositions: readonly { row: number; col: number }[],
+  placements: readonly Placement[],
   maxBends: number,
 ): boolean {
   const rows = grid.length;
   const cols = grid[0]?.length ?? 0;
-  const rev = wordText.split('').reverse().join('');
+  const allDirs = Object.keys(directionToDelta) as WordSearchDirection[];
 
-  function checkPath(positions: { row: number; col: number }[]): boolean {
-    if (positionsMatch(positions, intendedPositions)) return false;
-    return pathSpellsWord(grid, positions, wordText)
-      || pathSpellsWord(grid, positions, rev);
+  // Build lookup: word text and its reverse → list of intended position arrays.
+  // A list is needed because two words can be reverses of each other.
+  const intendedByText = new Map<string, Array<readonly { row: number; col: number }[]>>();
+  const addIntended = (text: string, positions: readonly { row: number; col: number }[]) => {
+    if (!intendedByText.has(text)) intendedByText.set(text, []);
+    intendedByText.get(text)!.push(positions);
+  };
+  for (const p of placements) {
+    addIntended(p.word, p.positions);
+    addIntended(p.word.split('').reverse().join(''), p.positions);
   }
 
-  // Straight-line scan in all 8 directions
-  const allDirs = Object.keys(directionToDelta) as WordSearchDirection[];
+  const wordLengths = new Set(placements.map((p) => p.word.length));
+
+  // Single straight-line pass in all 8 directions.
   for (const dir of allDirs) {
     const d = directionToDelta[dir];
     for (let row = 0; row < rows; row += 1) {
       for (let col = 0; col < cols; col += 1) {
-        const positions: { row: number; col: number }[] = [];
-        let valid = true;
-        for (let i = 0; i < wordText.length; i += 1) {
-          const r = row + d.row * i;
-          const c = col + d.col * i;
-          if (r < 0 || r >= rows || c < 0 || c >= cols) { valid = false; break; }
+        const positions: Array<{ row: number; col: number }> = [];
+        let seq = '';
+        let r = row;
+        let c = col;
+        while (r >= 0 && r < rows && c >= 0 && c < cols) {
+          const cell = grid[r][c];
+          if (cell === '') break; // empty cells are never part of a word
           positions.push({ row: r, col: c });
+          seq += cell;
+          if (wordLengths.has(seq.length)) {
+            const intendedList = intendedByText.get(seq);
+            if (intendedList !== undefined) {
+              const isIntended = intendedList.some((intended) => positionsMatch(positions, intended));
+              if (!isIntended) return true;
+            }
+          }
+          r += d.row;
+          c += d.col;
         }
-        if (valid && checkPath(positions)) return true;
       }
     }
   }
 
-  // Single-bend scan (orthogonal L-shapes)
-  if (maxBends >= 1 && wordText.length >= 3) {
+  // Single bent-path pass (hard/expert only).
+  if (maxBends >= 1) {
     for (const dir1 of ORTHOGONAL_DIRECTIONS) {
       const d1 = directionToDelta[dir1];
       for (const dir2 of perpendicularDirs(dir1)) {
         const d2 = directionToDelta[dir2];
-        for (let bendAt = 1; bendAt <= wordText.length - 2; bendAt += 1) {
-          for (let row = 0; row < rows; row += 1) {
-            for (let col = 0; col < cols; col += 1) {
-              const positions: { row: number; col: number }[] = [];
-              let valid = true;
-              for (let i = 0; i <= bendAt; i += 1) {
-                const r = row + d1.row * i;
-                const c = col + d1.col * i;
-                if (r < 0 || r >= rows || c < 0 || c >= cols) { valid = false; break; }
-                positions.push({ row: r, col: c });
+        for (let row = 0; row < rows; row += 1) {
+          for (let col = 0; col < cols; col += 1) {
+            let seg1 = '';
+            let r1 = row;
+            let c1 = col;
+            while (r1 >= 0 && r1 < rows && c1 >= 0 && c1 < cols) {
+              const cell1 = grid[r1][c1];
+              if (cell1 === '') break; // empty cell — no bent path continues through here
+              seg1 += cell1;
+              if (seg1.length >= 2) {
+                let seg2 = '';
+                let r2 = r1 + d2.row;
+                let c2 = c1 + d2.col;
+                while (r2 >= 0 && r2 < rows && c2 >= 0 && c2 < cols) {
+                  const cell2 = grid[r2][c2];
+                  if (cell2 === '') break; // empty cell — bent path ends here
+                  seg2 += cell2;
+                  const fullLen = seg1.length + seg2.length;
+                  if (wordLengths.has(fullLen)) {
+                    const seq = seg1 + seg2;
+                    const intendedList = intendedByText.get(seq);
+                    if (intendedList !== undefined) {
+                      // Build positions only on a potential match.
+                      const bentPositions: Array<{ row: number; col: number }> = [];
+                      let pr = row;
+                      let pc = col;
+                      for (let i = 0; i < seg1.length; i += 1) {
+                        bentPositions.push({ row: pr, col: pc });
+                        pr += d1.row;
+                        pc += d1.col;
+                      }
+                      let qr = r1 + d2.row;
+                      let qc = c1 + d2.col;
+                      for (let j = 0; j < seg2.length; j += 1) {
+                        bentPositions.push({ row: qr, col: qc });
+                        qr += d2.row;
+                        qc += d2.col;
+                      }
+                      const isIntended = intendedList.some((intended) => positionsMatch(bentPositions, intended));
+                      if (!isIntended) return true;
+                    }
+                  }
+                  r2 += d2.row;
+                  c2 += d2.col;
+                }
               }
-              if (!valid) continue;
-              const corner = positions[bendAt]!;
-              for (let j = 1; j <= wordText.length - 1 - bendAt; j += 1) {
-                const r = corner.row + d2.row * j;
-                const c = corner.col + d2.col * j;
-                if (r < 0 || r >= rows || c < 0 || c >= cols) { valid = false; break; }
-                positions.push({ row: r, col: c });
-              }
-              if (valid && checkPath(positions)) return true;
+              r1 += d1.row;
+              c1 += d1.col;
             }
           }
         }
@@ -238,28 +277,146 @@ function hasGhostOccurrence(
   return false;
 }
 
+// Score a candidate placement, prioritising positions that cover currently-empty
+// (uncovered) cells. This steers words toward sparse areas of the grid so the
+// final empty-cell count more reliably matches the committed hidden word length.
+// Covering currently-uncovered cells is the primary objective; overlap and
+// clustering serve as tiebreakers between equally-covering placements.
+function scoreBackwardsPlacement(
+  grid: string[][],
+  positions: Array<{ row: number; col: number }>,
+  word: string,
+  overlapFrequency: number,
+  clustering: number,
+  uncovered: ReadonlySet<number>,
+): number {
+  let overlapCount = 0;
+  let uncoveredCoverage = 0;
+  let centerBias = 0;
+  const centerRow = (grid.length - 1) / 2;
+  const centerCol = ((grid[0]?.length ?? grid.length) - 1) / 2;
+
+  positions.forEach((cell, index) => {
+    const key = toGridKey(cell);
+    if (uncovered.has(key)) {
+      uncoveredCoverage += 1;
+    }
+    const existing = grid[cell.row][cell.col];
+    if (existing === word[index]) {
+      overlapCount += 1;
+    }
+    centerBias += Math.abs(cell.row - centerRow) + Math.abs(cell.col - centerCol);
+  });
+
+  return uncoveredCoverage * 200
+    + overlapCount * overlapFrequency * 10
+    - centerBias * clustering * 0.1
+    + Math.random();
+}
+
+// Place a fixed set of words, scoring each candidate position by how many
+// currently-uncovered cells it fills. This steers words toward empty areas
+// of the grid, improving fill accuracy so the final empty-cell count matches
+// the committed hidden word length more reliably.
+
 function buildGrid(
   words: string[],
   rows: number,
   cols: number,
   difficulty: PuzzleDifficulty,
+  seedGrid?: string[][],
 ): GridBuildResult {
   const config = WORD_SEARCH_DIFFICULTY_CONFIG[difficulty];
-  const grid = createEmptyGrid(rows, cols);
+  const grid = seedGrid ?? createEmptyGrid(rows, cols);
   const placements: Placement[] = [];
+
+  // Track which cells are still empty so placement scoring can prioritise them.
+  // Pre-seeded cells (word letters or '#' sentinels for reserved positions) are
+  // excluded — they are not available and must not attract the uncovered-coverage bonus.
+  const uncovered = new Set<number>();
+  for (let r = 0; r < rows; r += 1) {
+    for (let c = 0; c < cols; c += 1) {
+      if (grid[r][c] === '') {
+        uncovered.add(r * 1000 + c);
+      }
+    }
+  }
+
+  // Reusable position buffer — pre-allocated once per buildGrid call so the hot
+  // candidate loop never allocates. Max word length is bounded by max(rows, cols).
+  const posBuffer: Array<{ row: number; col: number }> = Array.from(
+    { length: Math.max(rows, cols) + 1 },
+    () => ({ row: 0, col: 0 }),
+  );
+
+  // Fills posBuffer[0..wordLen-1] for a straight path and returns true.
+  // Start bounds are pre-validated by the caller so no bounds check is needed.
+  function fillStraight(startRow: number, startCol: number, dRow: number, dCol: number, wordLen: number): void {
+    for (let i = 0; i < wordLen; i += 1) {
+      posBuffer[i].row = startRow + dRow * i;
+      posBuffer[i].col = startCol + dCol * i;
+    }
+  }
+
+  // Fills posBuffer[0..wordLen-1] for a bent path. Returns false if any cell is out of bounds.
+  function fillBent(startRow: number, startCol: number, d1Row: number, d1Col: number, d2Row: number, d2Col: number, wordLen: number, bendAt: number): boolean {
+    for (let i = 0; i <= bendAt; i += 1) {
+      posBuffer[i].row = startRow + d1Row * i;
+      posBuffer[i].col = startCol + d1Col * i;
+      if (posBuffer[i].row < 0 || posBuffer[i].row >= rows || posBuffer[i].col < 0 || posBuffer[i].col >= cols) return false;
+    }
+    const cornerRow = posBuffer[bendAt].row;
+    const cornerCol = posBuffer[bendAt].col;
+    for (let j = 1; j <= wordLen - 1 - bendAt; j += 1) {
+      posBuffer[bendAt + j].row = cornerRow + d2Row * j;
+      posBuffer[bendAt + j].col = cornerCol + d2Col * j;
+      if (posBuffer[bendAt + j].row < 0 || posBuffer[bendAt + j].row >= rows || posBuffer[bendAt + j].col < 0 || posBuffer[bendAt + j].col >= cols) return false;
+    }
+    return true;
+  }
+
+  // Checks posBuffer[0..wordLen-1] for conflicts with the current grid.
+  function canPlaceBuffer(wordLen: number, word: string): boolean {
+    for (let i = 0; i < wordLen; i += 1) {
+      const existing = grid[posBuffer[i].row][posBuffer[i].col];
+      if (existing !== '' && existing !== word[i]) return false;
+    }
+    return true;
+  }
+
+  // Scores posBuffer[0..wordLen-1] for placement quality.
+  function scoreBuffer(wordLen: number, word: string): number {
+    let overlapCount = 0;
+    let uncoveredCoverage = 0;
+    let centerBias = 0;
+    const centerRow = (rows - 1) / 2;
+    const centerCol = (cols - 1) / 2;
+    for (let i = 0; i < wordLen; i += 1) {
+      const cell = posBuffer[i];
+      if (uncovered.has(cell.row * 1000 + cell.col)) uncoveredCoverage += 1;
+      if (grid[cell.row][cell.col] === word[i]) overlapCount += 1;
+      centerBias += Math.abs(cell.row - centerRow) + Math.abs(cell.col - centerCol);
+    }
+    return uncoveredCoverage * 200
+      + overlapCount * config.overlapFrequency * 10
+      - centerBias * config.clustering * 0.1
+      + Math.random();
+  }
+
+  // Snapshots posBuffer[0..wordLen-1] into a new array — called only when a new
+  // best placement is found, so allocations happen rarely rather than per-check.
+  function snapshotBuffer(wordLen: number): Array<{ row: number; col: number }> {
+    return Array.from({ length: wordLen }, (_, i) => ({ row: posBuffer[i].row, col: posBuffer[i].col }));
+  }
 
   for (let wordIndex = 0; wordIndex < words.length; wordIndex += 1) {
     const word = words[wordIndex]!;
+    const wordLen = word.length;
     let bestPlacement: Placement | null = null;
     let bestScore = Number.NEGATIVE_INFINITY;
 
     for (const direction of config.allowedDirections) {
       const delta = directionToDelta[direction];
-      const wordLen = word.length;
-
-      // Pre-compute the valid start-cell range for this direction+length.
-      // This eliminates all positions where the word would exit the grid,
-      // so no bounds check is needed when building positions below.
       const minRow = delta.row < 0 ? wordLen - 1 : 0;
       const maxRow = delta.row > 0 ? rows - wordLen : rows - 1;
       const minCol = delta.col < 0 ? wordLen - 1 : 0;
@@ -271,23 +428,9 @@ function buildGrid(
 
       for (let row = minRow; row <= maxRow; row += 1) {
         for (let col = minCol; col <= maxCol; col += 1) {
-          const positions = Array.from({ length: wordLen }, (_, i) => ({
-            row: row + delta.row * i,
-            col: col + delta.col * i,
-          }));
-
-          if (!canPlace(grid, positions, word)) {
-            continue;
-          }
-
-          const score = computePlacementScore(
-            grid,
-            positions,
-            word,
-            config.overlapFrequency,
-            config.clustering,
-          );
-
+          fillStraight(row, col, delta.row, delta.col, wordLen);
+          if (!canPlaceBuffer(wordLen, word)) continue;
+          const score = scoreBuffer(wordLen, word);
           if (score > bestScore) {
             bestScore = score;
             bestPlacement = {
@@ -295,25 +438,25 @@ function buildGrid(
               word,
               start: { row, col },
               direction,
-              positions,
+              positions: snapshotBuffer(wordLen),
             };
           }
         }
       }
     }
 
-    // Bent placements (hard/expert, max 1 orthogonal bend)
-    if (config.maxBends >= 1 && word.length >= 3) {
+    // Bent placements (hard/expert, max 1 orthogonal bend).
+    if (config.maxBends >= 1 && wordLen >= 3) {
       for (const direction1 of ORTHOGONAL_DIRECTIONS) {
+        const d1 = directionToDelta[direction1];
         for (const direction2 of perpendicularDirs(direction1)) {
-          for (let bendAt = 1; bendAt <= word.length - 2; bendAt += 1) {
+          const d2 = directionToDelta[direction2];
+          for (let bendAt = 1; bendAt <= wordLen - 2; bendAt += 1) {
             for (let row = 0; row < rows; row += 1) {
               for (let col = 0; col < cols; col += 1) {
-                const positions = buildBentPositions(rows, cols, { row, col }, direction1, direction2, word.length, bendAt);
-                if (!positions || !canPlace(grid, positions, word)) {
-                  continue;
-                }
-                const score = computePlacementScore(grid, positions, word, config.overlapFrequency, config.clustering);
+                if (!fillBent(row, col, d1.row, d1.col, d2.row, d2.col, wordLen, bendAt)) continue;
+                if (!canPlaceBuffer(wordLen, word)) continue;
+                const score = scoreBuffer(wordLen, word);
                 if (score > bestScore) {
                   bestScore = score;
                   bestPlacement = {
@@ -323,7 +466,7 @@ function buildGrid(
                     direction: direction1,
                     bendAt,
                     direction2,
-                    positions,
+                    positions: snapshotBuffer(wordLen),
                   };
                 }
               }
@@ -339,12 +482,13 @@ function buildGrid(
 
     placeWord(grid, bestPlacement.positions, bestPlacement.word);
     placements.push(bestPlacement);
+
+    for (const pos of bestPlacement.positions) {
+      uncovered.delete(toGridKey(pos));
+    }
   }
 
-  return {
-    grid,
-    words: placements,
-  };
+  return { grid, words: placements };
 }
 
 function pickTheme(language: WordSearchLanguage, preferredThemeIds?: readonly string[]) {
@@ -573,6 +717,92 @@ function buildDifficultyRatedScore(
   return Number((tierBase[difficulty] + (normalizedQuality * 24.9)).toFixed(1));
 }
 
+function buildLetterPool(grid: string[][]): string[] {
+  const letters: string[] = [];
+  for (const row of grid) {
+    for (const cell of row) {
+      if (cell !== '' && cell !== '#') letters.push(cell);
+    }
+  }
+  return letters;
+}
+
+// Pick `count` random grid positions and return them sorted into reading order
+// (top-to-bottom, left-to-right) so the hidden word is read naturally.
+function pickReservedPositions(
+  rows: number,
+  cols: number,
+  count: number,
+): Array<{ row: number; col: number }> {
+  const positions: Array<{ row: number; col: number }> = [];
+  for (let r = 0; r < rows; r += 1) {
+    for (let c = 0; c < cols; c += 1) {
+      positions.push({ row: r, col: c });
+    }
+  }
+  for (let i = 0; i < count && i < positions.length; i += 1) {
+    const j = i + Math.floor(Math.random() * (positions.length - i));
+    const tmp = positions[i]!;
+    positions[i] = positions[j]!;
+    positions[j] = tmp;
+  }
+  return positions
+    .slice(0, count)
+    .sort((a, b) => (a.row !== b.row ? a.row - b.row : a.col - b.col));
+}
+
+// Greedily select `count` words from `allWords` by maximising letter
+// intersection with the already-selected set. Words that share letters are
+// more likely to overlap when placed, which raises the overlap ratio and
+// reduces variance in the empty-cell count. A small random jitter keeps
+// results varied across attempts while still preferring compatible words.
+function pickByLetterAffinity(allWords: string[], count: number): string[] {
+  if (allWords.length <= count) {
+    return [...allWords].sort((a, b) => b.length - a.length);
+  }
+
+  const shuffled = [...allWords].sort(() => Math.random() - 0.5);
+
+  const selected: string[] = [];
+  const remaining = new Set(shuffled);
+  const poolFreq = new Map<string, number>();
+
+  // Seed with the longest word in the shuffled subset so large words always
+  // get placed when the grid is most open.
+  const seed = shuffled.reduce((best, w) => (w.length > best.length ? w : best), shuffled[0]!);
+  selected.push(seed);
+  remaining.delete(seed);
+  for (const ch of seed) {
+    poolFreq.set(ch, (poolFreq.get(ch) ?? 0) + 1);
+  }
+
+  while (selected.length < count && remaining.size > 0) {
+    let bestWord = '';
+    let bestScore = Number.NEGATIVE_INFINITY;
+    for (const word of remaining) {
+      let intersection = 0;
+      const seen = new Map<string, number>();
+      for (const ch of word) {
+        const used = seen.get(ch) ?? 0;
+        if (used < (poolFreq.get(ch) ?? 0)) intersection += 1;
+        seen.set(ch, used + 1);
+      }
+      const score = intersection + Math.random() * 0.5;
+      if (score > bestScore) {
+        bestScore = score;
+        bestWord = word;
+      }
+    }
+    selected.push(bestWord);
+    remaining.delete(bestWord);
+    for (const ch of bestWord) {
+      poolFreq.set(ch, (poolFreq.get(ch) ?? 0) + 1);
+    }
+  }
+
+  return selected.sort((a, b) => b.length - a.length);
+}
+
 export function generateWordSearchPuzzle(
   rows: number,
   cols: number,
@@ -594,72 +824,84 @@ export function generateWordSearchPuzzle(
   const difficultyConfig = WORD_SEARCH_DIFFICULTY_CONFIG[difficulty];
   const config = difficultyConfig.wordLengthProfile;
   const totalCells = rows * cols;
-  const maxPlacementWords = Math.min(
-    allWords.length,
-    difficultyConfig.wordCount.max,
-    Math.ceil(totalCells / Math.max(1, config.min)),
-  );
+  const maxHiddenWordLength = Math.max(rows, cols);
+  const avgWordLength = (config.min + config.max) / 2;
 
-  // Pre-build a length → candidates map so each attempt pays O(1) for the hidden-word check
-  // instead of scanning all theme words every time.
-  const hiddenWordByLength = new Map<number, string[]>();
+  // Build a flat pool of hidden word candidates from all theme words in the
+  // reachable length range. The hidden word is chosen before grid construction
+  // so cells are reserved for it upfront — placement is built around the hidden
+  // word rather than the hidden word being determined by leftover cells.
+  const hiddenWordPool: string[] = [];
   for (const word of theme.words) {
     const normalized = normalizeWordToken(word);
-    if (normalized.length >= 3) {
-      const bucket = hiddenWordByLength.get(normalized.length);
-      if (bucket) {
-        bucket.push(normalized);
-      } else {
-        hiddenWordByLength.set(normalized.length, [normalized]);
-      }
+    if (normalized.length >= 3 && normalized.length <= maxHiddenWordLength) {
+      hiddenWordPool.push(normalized);
     }
   }
-
-  const availableHiddenLengths = [...hiddenWordByLength.keys()];
-  if (availableHiddenLengths.length === 0) {
+  if (hiddenWordPool.length === 0) {
     return null;
   }
-
-  // Estimate average word length to guide word-count selection toward a target fill.
-  const avgWordLength = (config.min + config.max) / 2;
 
   let selectedPlacements: Placement[] | null = null;
   let selectedHiddenWord: string | null = null;
   let selectedHiddenPositions: Array<{ row: number; col: number }> | null = null;
+  let selectedNoiseFill: Array<{ row: number; col: number; letter: string }> = [];
   let selectedQuality: WordSearchQualityMetrics | null = null;
   let selectedSignature: string | null = null;
 
   for (let attempt = 0; attempt < 300; attempt += 1) {
-    // Pick a random target hidden-word length and derive how many regular words
-    // to place so the grid is filled to leave roughly that many empty cells.
-    // Using 0.85 as an empirical fill-efficiency factor (accounts for ~15% overlap).
-    const targetHiddenLength = randomFrom(availableHiddenLengths);
-    const targetFill = totalCells - targetHiddenLength;
-    const estimatedWordCount = Math.round(targetFill / (avgWordLength * 0.85));
+    // Pick the hidden word first. Its positions are reserved in the grid before
+    // any visible word is placed, so the placer is guaranteed to leave exactly
+    // hiddenWord.length empty cells — no exact-match lookup or noise correction needed.
+    const hiddenWord = randomFrom(hiddenWordPool);
+    const hiddenLength = hiddenWord.length;
+    const availableCells = totalCells - hiddenLength;
+
+    // Reserve random positions for the hidden word, sorted into reading order.
+    const reservedPositions = pickReservedPositions(rows, cols, hiddenLength);
+    const reservedKeys = new Set(reservedPositions.map((p) => p.row * 1000 + p.col));
+
+    // Pre-seed the grid with '#' sentinels. canPlaceBuffer rejects any word that
+    // tries to occupy a '#' cell, so the placer avoids these positions naturally.
+    const grid = createEmptyGrid(rows, cols);
+    for (const pos of reservedPositions) {
+      grid[pos.row][pos.col] = '#';
+    }
+
     const targetWordCount = Math.max(
       difficultyConfig.wordCount.min,
-      Math.min(maxPlacementWords, estimatedWordCount),
+      Math.min(
+        Math.min(allWords.length, difficultyConfig.wordCount.max, Math.ceil(availableCells / Math.max(1, config.min))),
+        Math.round(availableCells / (avgWordLength * difficultyConfig.fillEfficiency)),
+      ),
     );
+    const candidateWords = pickByLetterAffinity(allWords, targetWordCount);
 
-    const shuffled = [...allWords].sort(() => Math.random() - 0.5);
-    // Sort longest-first so large words are placed when the grid is most open.
-    const candidateWords = shuffled.slice(0, targetWordCount).sort((a, b) => b.length - a.length);
-
-    const { grid, words: placements } = buildGrid(candidateWords, rows, cols, difficulty);
+    const { words: placements } = buildGrid(candidateWords, rows, cols, difficulty, grid);
     if (placements.length === 0) {
       continue;
     }
 
-    // Reject if any word's cells are fully covered by another word's cells.
     if (hasCoverageViolation(placements)) {
       continue;
     }
 
-    // Check hidden-word match first — it's O(1) and cheaper than the quality BFS.
-    const emptyCells = collectEmptyCells(grid);
-    const hiddenCandidates = hiddenWordByLength.get(emptyCells.length);
-    if (!hiddenCandidates) {
-      continue;
+    // Noise-fill any cells left empty by the placer (excluding reserved positions).
+    // These are stored in the catalog entry so the grid can be reproduced exactly.
+    const letterPool = buildLetterPool(grid);
+    if (letterPool.length > 0) {
+      for (let r = 0; r < rows; r += 1) {
+        for (let c = 0; c < cols; c += 1) {
+          if (grid[r][c] === '' && !reservedKeys.has(r * 1000 + c)) {
+            grid[r][c] = randomFrom(letterPool);
+          }
+        }
+      }
+    }
+
+    // Clear sentinels — reserved cells are now the hidden word positions.
+    for (const pos of reservedPositions) {
+      grid[pos.row][pos.col] = '';
     }
 
     const quality = buildQualityMetrics(rows, cols, placements);
@@ -667,18 +909,31 @@ export function generateWordSearchPuzzle(
       continue;
     }
 
-    // Reject if any word accidentally spells itself (forward or backward) at another
-    // location in the grid — either as a straight line or single-bend path.
-    const ghostDetected = placements.some(
-      (p) => hasGhostOccurrence(grid, p.word, p.positions, difficultyConfig.maxBends),
-    );
-    if (ghostDetected) {
+    if (hasAnyGhostOccurrence(grid, placements, difficultyConfig.maxBends)) {
       continue;
     }
 
+    const wordCells = new Set<number>();
+    for (const p of placements) {
+      for (const pos of p.positions) {
+        wordCells.add(pos.row * 1000 + pos.col);
+      }
+    }
+    const noiseFill: Array<{ row: number; col: number; letter: string }> = [];
+    for (let r = 0; r < rows; r += 1) {
+      for (let c = 0; c < cols; c += 1) {
+        const key = r * 1000 + c;
+        const letter = grid[r][c];
+        if (letter !== '' && !wordCells.has(key) && !reservedKeys.has(key)) {
+          noiseFill.push({ row: r, col: c, letter });
+        }
+      }
+    }
+
     selectedPlacements = placements;
-    selectedHiddenWord = randomFrom(hiddenCandidates);
-    selectedHiddenPositions = emptyCells;
+    selectedHiddenWord = hiddenWord;
+    selectedHiddenPositions = reservedPositions;
+    selectedNoiseFill = noiseFill;
     selectedQuality = quality;
     selectedSignature = buildDiversitySignature(rows, cols, placements);
     break;
@@ -709,6 +964,7 @@ export function generateWordSearchPuzzle(
       clue: theme.themeId,
       positions: selectedHiddenPositions,
     },
+    noiseFill: selectedNoiseFill,
     diversitySignature: selectedSignature,
     quality: selectedQuality,
   };

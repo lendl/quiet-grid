@@ -215,51 +215,28 @@ function useWordSearchAdapter({
         : [hiddenWordHeaderAction, nextMoveHeaderAction],
       headerMeta: session ? [
         {
-          key: 'size',
-          label: strings.play.metadataLabels.size,
-          value: `${session.puzzle.rows}x${session.puzzle.cols}`,
-        },
-        {
           key: 'difficulty',
           label: strings.play.metadataLabels.difficulty,
           value: strings.difficultyLabels[session.puzzle.difficulty],
         },
-        {
-          key: 'theme',
-          label: strings.play.metadataLabels.theme,
-          value: formatThemeId(session.puzzle.themeId),
-        },
-        {
-          key: 'found',
-          label: strings.play.metadataLabels.found,
-          value: `${session.foundWordIds.length}/${session.puzzle.words.length}`,
-        },
       ] : [],
       main: session ? (
         <View style={styles.mainArea}>
-          <View style={styles.wordListRow}>
-            {sortedWords.map((word) => {
+          <Text style={styles.wordList}>
+            {sortedWords.map((word, index) => {
               const found = session.foundWordIds.includes(word.id);
               return (
-                <View
-                  key={word.id}
-                  style={[
-                    styles.wordChip,
-                    found ? styles.wordChipFound : null,
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.wordChipText,
-                      found ? styles.wordChipTextFound : null,
-                    ]}
-                  >
+                <React.Fragment key={word.id}>
+                  <Text style={[styles.wordItem, found ? styles.wordItemFound : null]}>
                     {word.word}
                   </Text>
-                </View>
+                  {index < sortedWords.length - 1 ? (
+                    <Text style={styles.wordSeparator}>{' · '}</Text>
+                  ) : null}
+                </React.Fragment>
               );
             })}
-          </View>
+          </Text>
 
           <View style={styles.gridArea} onLayout={handleGridLayout}>
             {gridContainer.width > 0 && gridContainer.height > 0 ? (() => {
@@ -310,6 +287,7 @@ function useWordSearchAdapter({
           ) : (
             <View style={styles.hiddenWordCard}>
               <Text style={styles.hiddenWordLabel}>
+                <Text style={styles.hiddenWordThemeLabel}>{strings.play.metadataLabels.theme}{': '}</Text>
                 {formatThemeId(session.puzzle.hiddenWord.clue)}
               </Text>
               <Text style={styles.hiddenWordLetters}>
@@ -374,33 +352,24 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     paddingTop: 4,
     paddingBottom: 6,
   },
-  wordListRow: {
-    flexDirection: 'row',
+  wordList: {
+    fontSize: 13,
+    lineHeight: 20,
+    color: theme.text,
     flexWrap: 'wrap',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    gap: 6,
   },
-  wordChip: {
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: withAlpha(theme.border, 0.6),
-    backgroundColor: withAlpha(theme.panelSurface, 0.8),
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-  },
-  wordChipFound: {
-    borderColor: withAlpha(theme.success, 0.5),
-    backgroundColor: withAlpha(theme.success, 0.14),
-  },
-  wordChipText: {
-    color: theme.textSecondary,
-    fontSize: 12,
-    lineHeight: 16,
+  wordItem: {
+    fontSize: 13,
     fontWeight: '700',
+    color: theme.text,
   },
-  wordChipTextFound: {
-    color: theme.success,
+  wordItemFound: {
+    textDecorationLine: 'line-through',
+    color: theme.textSecondary,
+  },
+  wordSeparator: {
+    color: withAlpha(theme.textSecondary, 0.5),
+    fontSize: 13,
   },
   gridArea: {
     flex: 1,
@@ -438,6 +407,10 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
     backgroundColor: withAlpha(theme.surfaceElevated, 0.92),
     paddingHorizontal: 12,
     paddingVertical: 10,
+  },
+  hiddenWordThemeLabel: {
+    color: theme.textSecondary,
+    fontWeight: '400',
   },
   hiddenWordLabel: {
     color: theme.text,

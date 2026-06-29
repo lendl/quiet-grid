@@ -5,13 +5,13 @@
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
-    "engine": "ts-node --project src/engine/tsconfig.json src/engine/index.ts",
+    "engine": "tsx --tsconfig src/engine/tsconfig.json src/engine/index.ts",
     "lint": "eslint src App.tsx",
     "lint:fix": "eslint src App.tsx --fix",
     "test:regression": "node tests/regression/run.cjs",
     "typecheck:app": "tsc --noEmit",
     "typecheck:engine": "tsc --noEmit --project src/engine/tsconfig.json",
-    "check:wordsearch": "ts-node --project src/engine/tsconfig.json src/engine/checkWordSearchCatalog.ts"
+    "check:wordsearch": "tsx --tsconfig src/engine/tsconfig.json src/engine/checkWordSearchCatalog.ts"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
@@ -43,6 +43,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "^17.5.0",
     "ts-node": "^10.9.2",
+    "tsx": "^4.22.4",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.59.1"
   },
