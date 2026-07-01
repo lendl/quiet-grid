@@ -22,21 +22,16 @@ export interface WordSearchCatalogEntry {
     word: string;
     start: WordSearchCellRef;
     direction: WordSearchDirection;
-    bendAt?: number;
-    direction2?: WordSearchDirection;
   }>;
   hiddenWord: {
     word: string;
     clue: string;
     positions: Array<{ row: number; col: number }>;
   };
-  noiseFill: Array<{ row: number; col: number; letter: string }>;
   diversitySignature: string;
   quality: {
     overlapRatio: number;
     directionEntropy: number;
-    spreadRatio: number;
-    deadZoneRatio: number;
     score: number;
   };
 }
@@ -67,36 +62,15 @@ function normalizeWordToken(value: string): string {
 }
 
 function buildPositions(
-  rows: number,
-  cols: number,
   start: WordSearchCellRef,
   direction: WordSearchDirection,
   length: number,
-  bendAt?: number,
-  direction2?: WordSearchDirection,
 ): WordSearchCellRef[] {
-  const d1 = directionToDelta[direction];
-
-  if (bendAt === undefined || direction2 === undefined) {
-    return Array.from({ length }, (_, index) => ({
-      row: start.row + (d1.row * index),
-      col: start.col + (d1.col * index),
-    }));
-  }
-
-  const d2 = directionToDelta[direction2];
-  const positions: WordSearchCellRef[] = [];
-
-  // First leg: bendAt+1 cells from start in direction
-  for (let i = 0; i <= bendAt; i++) {
-    positions.push({ row: start.row + d1.row * i, col: start.col + d1.col * i });
-  }
-  // Second leg: remaining cells from corner in direction2
-  const corner = positions[bendAt];
-  for (let j = 1; j <= length - 1 - bendAt; j++) {
-    positions.push({ row: corner.row + d2.row * j, col: corner.col + d2.col * j });
-  }
-  return positions;
+  const delta = directionToDelta[direction];
+  return Array.from({ length }, (_, index) => ({
+    row: start.row + (delta.row * index),
+    col: start.col + (delta.col * index),
+  }));
 }
 
 function isInside(rows: number, cols: number, row: number, col: number): boolean {
@@ -113,9 +87,6 @@ export function normalizeWordSearchCatalogEntry(entry: WordSearchCatalogEntry): 
       ...word,
       word: normalizeWordToken(word.word),
       start: { ...word.start },
-      ...(word.bendAt !== undefined && word.direction2 !== undefined
-        ? { bendAt: word.bendAt, direction2: word.direction2 }
-        : {}),
     })),
     hiddenWord: {
       ...entry.hiddenWord,
@@ -123,7 +94,6 @@ export function normalizeWordSearchCatalogEntry(entry: WordSearchCatalogEntry): 
       clue: entry.hiddenWord.clue,
       positions: entry.hiddenWord.positions.map((cell) => ({ ...cell })),
     },
-    noiseFill: (entry.noiseFill ?? []).map((cell) => ({ ...cell })),
     diversitySignature: entry.diversitySignature,
     quality: { ...entry.quality },
   };
@@ -139,15 +109,7 @@ export function materializeWordSearchCatalogEntry(
   );
 
   const resolvedWords = normalized.words.map((word) => {
-    const positions = buildPositions(
-      normalized.rows,
-      normalized.cols,
-      word.start,
-      word.direction,
-      word.word.length,
-      word.bendAt,
-      word.direction2,
-    );
+    const positions = buildPositions(word.start, word.direction, word.word.length);
     positions.forEach((cell, index) => {
       if (!isInside(normalized.rows, normalized.cols, cell.row, cell.col)) {
         throw new Error(`Word Search catalog entry ${normalized.id} has out-of-bounds placement.`);
@@ -176,11 +138,10 @@ export function materializeWordSearchCatalogEntry(
     }
   });
 
-  normalized.noiseFill.forEach(({ row, col, letter }) => {
-    if (isInside(normalized.rows, normalized.cols, row, col)) {
-      grid[row][col] = letter;
-    }
-  });
+  const hasGap = grid.some((row) => row.some((cell) => cell === ''));
+  if (hasGap) {
+    throw new Error(`Word Search catalog entry ${normalized.id} has cells not covered by any word or the hidden word.`);
+  }
 
   return {
     id: normalized.id,
