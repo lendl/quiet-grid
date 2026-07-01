@@ -30,5 +30,6 @@ register({
 require('./sessionResults.cjs').registerTests();
 require('./shellContracts.cjs').registerTests();
 require('./persistenceNavigation.cjs').registerTests();
+require('./wordsearchEngine.cjs').registerTests();
 
 void runAllTests();
