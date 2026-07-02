@@ -22,6 +22,8 @@ const {
 
 const { buildFullCoverageGrid } = require(path.join(ROOT, 'src', 'games', 'wordsearch', 'engine', 'placement.ts'));
 
+const { wordSearchSeedCorpus } = require(path.join(ROOT, 'src', 'games', 'wordsearch', 'engine', 'seedCorpus.ts'));
+
 function registerTests() {
   test('buildHiddenWordPool normalizes, dedupes, and drops words under 3 letters', () => {
     const pool = buildHiddenWordPool(['Cat', 'cat', 'Ox', 'Dog!']);
@@ -171,6 +173,70 @@ function registerTests() {
     const config = { allowedDirections: ['right'], overlapFrequency: 0.1 };
     const result = buildFullCoverageGrid(2, 2, ['ELEPHANT'], new Set(), config);
     assert.equal(result, null);
+  });
+
+  test('buildFullCoverageGrid reliably tiles a realistic 8x8 grid even when early placements would otherwise strand a cell', () => {
+    // A word list wide enough in length (3-8) and count to resemble a real
+    // theme, but small enough that a design without real backtracking
+    // reach fails close to 100% of the time on 8x8 grids in practice --
+    // this is a regression guard for the Task 11 finding.
+    const words = [
+      'CAT', 'DOG', 'OWL', 'ANT', 'BEE', 'FOX', 'RAT', 'PIG', 'COW', 'BAT',
+      'HEN', 'ELK', 'RAM', 'YAK', 'EWE', 'SOW', 'ASS', 'BOA', 'JAY', 'KOI',
+      'WOLF', 'BEAR', 'DEER', 'LION', 'SEAL', 'HARE', 'MOLE', 'TOAD', 'CRAB', 'MOTH',
+      'HORSE', 'SHEEP', 'GOOSE', 'SNAKE', 'MOUSE', 'SKUNK', 'HERON', 'STORK', 'SHARK', 'ZEBRA',
+      'RABBIT', 'BEAVER', 'WEASEL', 'SPIDER', 'CRICKET', 'DOLPHIN',
+    ];
+    const config = { allowedDirections: ['right', 'down'], overlapFrequency: 0.15 };
+    let successes = 0;
+    const attempts = 20;
+    for (let attempt = 0; attempt < attempts; attempt += 1) {
+      const result = buildFullCoverageGrid(8, 8, words, new Set(), config);
+      if (!result) continue;
+      successes += 1;
+      result.grid.forEach((row) => row.forEach((cell) => {
+        assert.notEqual(cell, '', 'every cell must be covered by a word');
+      }));
+      const usedWords = new Set();
+      result.placements.forEach((placement) => {
+        assert.ok(!usedWords.has(placement.word), `word ${placement.word} placed more than once`);
+        usedWords.add(placement.word);
+      });
+    }
+    assert.ok(
+      successes >= attempts * 0.8,
+      `expected at least 80% success across ${attempts} attempts on a realistic 8x8 grid, got ${successes}`,
+    );
+  });
+
+  test('buildFullCoverageGrid reliably tiles a 14x14 grid against the real animals theme corpus', () => {
+    // Uses the actual seed corpus (not a hand-picked synthetic list) so this
+    // test tracks real-world word availability. An earlier synthetic
+    // 24-word, long-word-skewed list was found (via direct investigation)
+    // to be an unrealistically thin pool relative to real themes (which run
+    // 50-145 words per docs/ai/context/wordsearch-corpus.md) -- 24 words
+    // could not reliably cover 196 cells regardless of algorithm quality,
+    // which was a data problem, not an algorithm bug. The real 135-word
+    // "animals" theme, filtered/normalized the same way generator.ts does,
+    // measured 19/20 (95%) success directly against this scenario.
+    const normalize = (word) => word.normalize('NFKD').replace(/[^A-Za-z]/g, '').toUpperCase();
+    const theme = wordSearchSeedCorpus.en.find((t) => t.themeId === 'animals');
+    const words = [...new Set(theme.words.map(normalize))].filter((w) => w.length >= 3 && w.length <= 14);
+    const config = { allowedDirections: ['right', 'left', 'down', 'up', 'down-right', 'up-right'], overlapFrequency: 0.28 };
+    const startedAt = Date.now();
+    let successes = 0;
+    const attempts = 10;
+    for (let attempt = 0; attempt < attempts; attempt += 1) {
+      const result = buildFullCoverageGrid(14, 14, words, new Set(), config);
+      if (!result) continue;
+      successes += 1;
+      result.grid.forEach((row) => row.forEach((cell) => {
+        assert.notEqual(cell, '', 'every cell must be covered by a word');
+      }));
+    }
+    const elapsedMs = Date.now() - startedAt;
+    assert.ok(successes >= attempts * 0.6, `expected at least 60% success across ${attempts} attempts against the real corpus, got ${successes}`);
+    assert.ok(elapsedMs < 60000, `expected ${attempts} attempts to finish in under 60s total, took ${elapsedMs}ms`);
   });
 }
 
