@@ -20,6 +20,8 @@ const {
   buildDifficultyRatedScore,
 } = require(path.join(ROOT, 'src', 'games', 'wordsearch', 'engine', 'quality.ts'));
 
+const { buildFullCoverageGrid } = require(path.join(ROOT, 'src', 'games', 'wordsearch', 'engine', 'placement.ts'));
+
 function registerTests() {
   test('buildHiddenWordPool normalizes, dedupes, and drops words under 3 letters', () => {
     const pool = buildHiddenWordPool(['Cat', 'cat', 'Ox', 'Dog!']);
@@ -116,6 +118,59 @@ function registerTests() {
     const easyScore = buildDifficultyRatedScore('easy', 1);
     const expertScore = buildDifficultyRatedScore('expert', 1);
     assert.ok(expertScore > easyScore);
+  });
+
+  test('buildFullCoverageGrid tiles every cell of a 3x3 grid with no gaps left', () => {
+    const words = ['CAT', 'DOG', 'OWL', 'ANT', 'BEE'];
+    const config = { allowedDirections: ['right', 'down'], overlapFrequency: 0.2 };
+    let sawSuccess = false;
+    for (let attempt = 0; attempt < 20 && !sawSuccess; attempt += 1) {
+      const result = buildFullCoverageGrid(3, 3, words, new Set(), config);
+      if (!result) continue;
+      sawSuccess = true;
+      result.grid.forEach((row) => row.forEach((cell) => {
+        assert.notEqual(cell, '', 'every cell must be covered by a word');
+        assert.notEqual(cell, '#', 'no reserved sentinel should remain uncovered');
+      }));
+      const usedWords = new Set();
+      result.placements.forEach((placement) => {
+        assert.ok(!usedWords.has(placement.word), `word ${placement.word} placed more than once`);
+        usedWords.add(placement.word);
+        placement.positions.forEach((cell) => {
+          assert.ok(cell.row >= 0 && cell.row < 3 && cell.col >= 0 && cell.col < 3);
+        });
+      });
+    }
+    assert.ok(sawSuccess, 'expected at least one successful full-coverage tiling across 20 attempts');
+  });
+
+  test('buildFullCoverageGrid leaves reserved cells untouched by word placements', () => {
+    // 4x4 (not 3x3): with word length 3 and only right/down directions, a 3x3
+    // grid forces every placement to span a full row or column, so reserving
+    // a corner cell makes the remaining 8 cells combinatorially uncoverable
+    // (verified by brute force) regardless of which words are used. At 4x4,
+    // row 0 and column 0 each have a second valid start offset that avoids
+    // the reserved corner, giving a full tiling with zero overlap needed.
+    const words = ['CAT', 'DOG', 'OWL', 'ANT', 'BEE'];
+    const config = { allowedDirections: ['right', 'down'], overlapFrequency: 0.2 };
+    const reserved = new Set([0 * 1000 + 0]);
+    for (let attempt = 0; attempt < 20; attempt += 1) {
+      const result = buildFullCoverageGrid(4, 4, words, reserved, config);
+      if (!result) continue;
+      result.placements.forEach((placement) => {
+        placement.positions.forEach((cell) => {
+          assert.ok(!(cell.row === 0 && cell.col === 0), 'word placement must not use a reserved cell');
+        });
+      });
+      return;
+    }
+    assert.fail('expected at least one successful tiling across 20 attempts');
+  });
+
+  test('buildFullCoverageGrid returns null when no word can possibly fit the grid', () => {
+    const config = { allowedDirections: ['right'], overlapFrequency: 0.1 };
+    const result = buildFullCoverageGrid(2, 2, ['ELEPHANT'], new Set(), config);
+    assert.equal(result, null);
   });
 }
 
