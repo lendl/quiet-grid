@@ -9,6 +9,7 @@ import {
 import { WORD_SEARCH_DIFFICULTY_CONFIG } from '../games/wordsearch/engine/constraints';
 import { wordSearchSeedCorpus } from '../games/wordsearch/engine/seedCorpus';
 import type { WordSearchLanguage } from '../games/wordsearch/types';
+import { getWordSearchGenerationStats, resetWordSearchGenerationStats } from '../games/wordsearch/engine/generator';
 
 const MAX_ATTEMPTS = 200;
 const WORD_SEARCH_LANGUAGES = ['en', 'nl', 'de', 'fr', 'es'] as const;
@@ -294,6 +295,9 @@ function main(): void {
   }
 
   const game = getEngineGameDefinition(parseGameArg());
+  if (game.id === 'wordsearch') {
+    resetWordSearchGenerationStats();
+  }
   const requestedCount = parseRequestedCount();
   const replaceCatalog = process.argv.includes('--replace');
   const reclassifyExisting = process.argv.includes('--reclassify-existing');
@@ -439,6 +443,13 @@ function main(): void {
 
   if (replaceCatalog || totalGenerated > 0) {
     writeGameCatalog(game, catalogEntries);
+  }
+  if (game.id === 'wordsearch') {
+    const gateStats = getWordSearchGenerationStats();
+    console.log('\nWord Search rejection gate breakdown (this run):');
+    Object.entries(gateStats).forEach(([gate, count]) => {
+      console.log(`  ${gate}: ${count}`);
+    });
   }
   console.log(`\nDone. Generated ${totalGenerated} new ${game.title} puzzle(s).`);
   db.close();
