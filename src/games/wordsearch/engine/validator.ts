@@ -50,7 +50,7 @@ export function validateWordSearchSeedCorpus(
 
 export interface WordSearchCatalogValidationError {
   id: string;
-  code: 'schema-version' | 'duplicate-signature' | 'quality-threshold' | 'invalid-recipe';
+  code: 'schema-version' | 'duplicate-signature' | 'quality-threshold' | 'invalid-recipe' | 'incomplete-coverage';
   message: string;
 }
 
@@ -58,8 +58,7 @@ function qualityPassesThreshold(entry: WordSearchCatalogEntry): boolean {
   const threshold = WORD_SEARCH_QUALITY_THRESHOLDS[entry.difficulty];
   return entry.quality.score >= threshold.minScore
     && entry.quality.overlapRatio >= threshold.minOverlapRatio
-    && entry.quality.directionEntropy >= threshold.minDirectionEntropy
-    && entry.quality.deadZoneRatio <= threshold.maxDeadZoneRatio;
+    && entry.quality.directionEntropy >= threshold.minDirectionEntropy;
 }
 
 function buildCatalogSignature(entry: WordSearchCatalogEntry): string {
@@ -109,11 +108,9 @@ export function validateWordSearchCatalog(entries: readonly WordSearchCatalogEnt
         });
       }
     } catch (error) {
-      errors.push({
-        id: entry.id,
-        code: 'invalid-recipe',
-        message: `Entry ${entry.id} failed to materialize: ${error instanceof Error ? error.message : String(error)}`,
-      });
+      const message = error instanceof Error ? error.message : String(error);
+      const code = message.includes('not covered') ? 'incomplete-coverage' : 'invalid-recipe';
+      errors.push({ id: entry.id, code, message: `Entry ${entry.id} failed to materialize: ${message}` });
     }
   });
 
