@@ -19,7 +19,7 @@ import type { Theme } from '../../../../app/theme';
 import { withAlpha } from '../../../../app/utils/color';
 import { getWordSearchStrings } from '../../content/strings';
 import { getWordSearchNextMoveHint } from '../../gameplay/analysis/nextMove';
-import { buildBentPaths, runWordSearchAction, type WordSearchAction } from '../../gameplay/actions';
+import { runWordSearchAction, type WordSearchAction } from '../../gameplay/actions';
 import {
   wordSearchPlayContract,
   type WordSearchHudState,
@@ -130,46 +130,13 @@ function useWordSearchAdapter({
         cell: { row, col },
       });
 
-      // Try L-shapes alongside the straight line — needed when the second leg is
-      // exactly one cell (e.g. COW where C→O is down and O→W is right): the
-      // diagonal C→W is geometrically valid but is NOT the intended bent path.
-      const bentPaths = buildBentPaths(currentSession.tempSelection.start, { row, col });
-
       if (updatePreview.changed) {
-        // Straight path aligned — but check L-shapes first when a bent word
-        // matches, so a diagonal never wins over the correct L-shape.
-        for (const bentPath of bentPaths) {
-          const bentPreview = runWordSearchAction(
-            { ...currentSession, tempSelection: { start: bentPath[0]!, end: bentPath[bentPath.length - 1]!, path: bentPath } },
-            { type: 'commit-selection' },
-          );
-          if (bentPreview.changed && bentPreview.session.foundWordIds.length > currentSession.foundWordIds.length) {
-            await applyAction({ type: 'set-selection', path: bentPath });
-            await applyAction({ type: 'commit-selection' });
-            return;
-          }
-        }
-
-        // No bent word matched — commit straight and leave visible.
         await applyAction({ type: 'update-selection', cell: { row, col } });
         await applyAction({ type: 'commit-selection' });
         return;
       }
 
-      // Straight line doesn't align — try L-shaped bent paths.
-      for (const bentPath of bentPaths) {
-        const preview = runWordSearchAction(
-          { ...currentSession, tempSelection: { start: bentPath[0]!, end: bentPath[bentPath.length - 1]!, path: bentPath } },
-          { type: 'commit-selection' },
-        );
-        if (preview.changed && preview.session.foundWordIds.length > currentSession.foundWordIds.length) {
-          await applyAction({ type: 'set-selection', path: bentPath });
-          await applyAction({ type: 'commit-selection' });
-          return;
-        }
-      }
-
-      // No match on any path — start a new selection here.
+      // Straight line doesn't align with the existing selection — start fresh here.
       await applyAction({ type: 'begin-selection', cell: { row, col } });
     };
 

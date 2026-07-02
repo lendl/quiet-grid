@@ -65,35 +65,6 @@ function buildStraightPath(start: WordSearchCellRef, end: WordSearchCellRef): Wo
   return path;
 }
 
-export function buildBentPaths(
-  start: WordSearchCellRef,
-  end: WordSearchCellRef,
-): WordSearchCellRef[][] {
-  if (start.row === end.row || start.col === end.col) {
-    return [];
-  }
-
-  const paths: WordSearchCellRef[][] = [];
-
-  // Horizontal-first L: start → (start.row, end.col) → end
-  const corner1 = { row: start.row, col: end.col };
-  const leg1a = buildStraightPath(start, corner1);
-  const leg1b = buildStraightPath(corner1, end);
-  if (leg1a && leg1b) {
-    paths.push([...leg1a, ...leg1b.slice(1)]);
-  }
-
-  // Vertical-first L: start → (end.row, start.col) → end
-  const corner2 = { row: end.row, col: start.col };
-  const leg2a = buildStraightPath(start, corner2);
-  const leg2b = buildStraightPath(corner2, end);
-  if (leg2a && leg2b) {
-    paths.push([...leg2a, ...leg2b.slice(1)]);
-  }
-
-  return paths;
-}
-
 function cellsEqual(a: WordSearchCellRef, b: WordSearchCellRef): boolean {
   return a.row === b.row && a.col === b.col;
 }
