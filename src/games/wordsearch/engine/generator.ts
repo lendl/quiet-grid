@@ -13,7 +13,6 @@ export interface WordSearchGenerationStats {
   hiddenWordUnavailable: number;
   emptyWordPool: number;
   placementFailed: number;
-  wordCountOutOfBand: number;
   coverageViolation: number;
   qualityBelowThreshold: number;
   incompleteCoverage: number;
@@ -26,7 +25,6 @@ function createEmptyStats(): WordSearchGenerationStats {
     hiddenWordUnavailable: 0,
     emptyWordPool: 0,
     placementFailed: 0,
-    wordCountOutOfBand: 0,
     coverageViolation: 0,
     qualityBelowThreshold: 0,
     incompleteCoverage: 0,
@@ -104,7 +102,6 @@ export function generateWordSearchPuzzle(
   const theme = pickTheme(language, options?.preferredThemeIds);
 
   const maxFit = Math.max(rows, cols);
-  const lengthProfile = config.wordLengthProfile;
   const normalizedThemeWords = [...new Set(theme.words.map(normalizeWordToken))];
 
   const hiddenWordPool = buildHiddenWordPool(normalizedThemeWords);
@@ -116,10 +113,14 @@ export function generateWordSearchPuzzle(
   const reservedHiddenWord = reserveHiddenWordCells(hiddenWord, rows, cols);
   const reservedCells = new Set(reservedHiddenWord.positions.map((cell) => toGridKey(cell)));
 
+  // Every theme word is eligible for every difficulty — the only hard
+  // constraint is that a word must physically fit a straight line in the
+  // grid. Difficulty comes from direction freedom and overlap density
+  // (constraints.ts), not from filtering which words are usable.
   const wordPool = normalizedThemeWords.filter((word) => (
     word !== hiddenWord
-    && word.length >= lengthProfile.min
-    && word.length <= Math.min(lengthProfile.max, maxFit)
+    && word.length >= 3
+    && word.length <= maxFit
   ));
   if (wordPool.length === 0) {
     stats.emptyWordPool += 1;
@@ -133,15 +134,10 @@ export function generateWordSearchPuzzle(
   }
   const { grid, placements } = result;
 
-  // Gates below run cheapest-first: word count band (O(1)) → non-domination
-  // (O(placements^2)) → quality metrics (O(placements)) → hidden-word overlay
-  // and gap check (O(rows*cols)) → duplicate-occurrence ghost scan
-  // (O(8 * rows * cols * word-lengths), the most expensive check, last.
-
-  if (placements.length < config.wordCount.min || placements.length > config.wordCount.max) {
-    stats.wordCountOutOfBand += 1;
-    return null;
-  }
+  // Gates below run cheapest-first: non-domination (O(placements^2)) →
+  // quality metrics (O(placements)) → hidden-word overlay and gap check
+  // (O(rows*cols)) → duplicate-occurrence ghost scan (O(8 * rows * cols *
+  // word-lengths), the most expensive check, last.
 
   if (hasCoverageViolation(placements)) {
     stats.coverageViolation += 1;
