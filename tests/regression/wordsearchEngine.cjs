@@ -14,6 +14,12 @@ const {
   hasDuplicateOccurrence,
 } = require(path.join(ROOT, 'src', 'games', 'wordsearch', 'engine', 'generationChecks.ts'));
 
+const {
+  buildQualityMetrics,
+  passesQualityThreshold,
+  buildDifficultyRatedScore,
+} = require(path.join(ROOT, 'src', 'games', 'wordsearch', 'engine', 'quality.ts'));
+
 function registerTests() {
   test('buildHiddenWordPool normalizes, dedupes, and drops words under 3 letters', () => {
     const pool = buildHiddenWordPool(['Cat', 'cat', 'Ox', 'Dog!']);
@@ -81,6 +87,35 @@ function registerTests() {
       { word: 'DOG', positions: [{ row: 2, col: 0 }, { row: 2, col: 1 }, { row: 2, col: 2 }] },
     ];
     assert.equal(hasDuplicateOccurrence(grid, words), false);
+  });
+
+  test('buildQualityMetrics reports zero overlap and zero entropy for a single non-overlapping word', () => {
+    const placements = [
+      { word: 'CAT', direction: 'right', positions: [{ row: 0, col: 0 }, { row: 0, col: 1 }, { row: 0, col: 2 }] },
+    ];
+    const metrics = buildQualityMetrics(placements);
+    assert.equal(metrics.overlapRatio, 0);
+    assert.equal(metrics.directionEntropy, 0);
+  });
+
+  test('buildQualityMetrics reports positive overlap when words share cells', () => {
+    const placements = [
+      { word: 'CAT', direction: 'right', positions: [{ row: 0, col: 0 }, { row: 0, col: 1 }, { row: 0, col: 2 }] },
+      { word: 'TAP', direction: 'down', positions: [{ row: 0, col: 2 }, { row: 1, col: 2 }, { row: 2, col: 2 }] },
+    ];
+    const metrics = buildQualityMetrics(placements);
+    assert.ok(metrics.overlapRatio > 0);
+  });
+
+  test('passesQualityThreshold rejects an all-zero score against the expert threshold', () => {
+    const lowQuality = { overlapRatio: 0, directionEntropy: 0, score: 0 };
+    assert.equal(passesQualityThreshold('expert', lowQuality), false);
+  });
+
+  test('buildDifficultyRatedScore ranks a higher difficulty above a lower one at equal relative quality', () => {
+    const easyScore = buildDifficultyRatedScore('easy', 1);
+    const expertScore = buildDifficultyRatedScore('expert', 1);
+    assert.ok(expertScore > easyScore);
   });
 }
 
