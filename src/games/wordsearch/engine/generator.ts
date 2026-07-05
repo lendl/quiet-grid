@@ -2,12 +2,23 @@ import type { PuzzleDifficulty } from '../../shared/types';
 import type { WordSearchCatalogEntry } from '../platform/codecs/codec';
 import type { WordSearchLanguage } from '../types';
 import { WORD_SEARCH_DIFFICULTY_CONFIG } from './constraints';
-import { buildFullCoverageGrid } from './placement';
+import { buildFullCoverageGrid, type PlacementResult } from './placement';
 import { hasCoverageViolation, hasDuplicateOccurrence } from './generationChecks';
-import { buildHiddenWordPool, pickHiddenWord, reserveHiddenWordCells } from './hiddenWord';
+import { buildHiddenWordPool, pickHiddenWord, reserveHiddenWordCells, type ReservedHiddenWord } from './hiddenWord';
 import { buildQualityMetrics, passesQualityThreshold, buildDifficultyRatedScore } from './quality';
 import { toGridKey } from './gridUtils';
 import { wordSearchSeedCorpus } from './seedCorpus';
+
+// The hidden word's reserved cells act as random obstacles the full-coverage
+// tiling must route around. A single unlucky scatter (or an unusually long
+// hidden word) can make an otherwise-easy grid unsolvable even though the
+// same theme/size succeeds most of the time with a different hidden word
+// (confirmed by direct measurement: the same pool/grid went from ~91% success
+// with zero reserved cells down to ~50% with 14). Retrying just this cheap
+// step a few times before giving up recovers most of that bad luck without
+// burning a full outer CLI attempt, which would also re-pick language and
+// theme for no reason.
+const MAX_HIDDEN_WORD_ATTEMPTS = 5;
 
 export interface WordSearchGenerationStats {
   hiddenWordUnavailable: number;
@@ -105,34 +116,48 @@ export function generateWordSearchPuzzle(
   const normalizedThemeWords = [...new Set(theme.words.map(normalizeWordToken))];
 
   const hiddenWordPool = buildHiddenWordPool(normalizedThemeWords);
-  const hiddenWord = pickHiddenWord(hiddenWordPool, rows, cols);
-  if (!hiddenWord) {
-    stats.hiddenWordUnavailable += 1;
-    return null;
-  }
-  const reservedHiddenWord = reserveHiddenWordCells(hiddenWord, rows, cols);
-  const reservedCells = new Set(reservedHiddenWord.positions.map((cell) => toGridKey(cell)));
 
-  // Every theme word is eligible for every difficulty — the only hard
-  // constraint is that a word must physically fit a straight line in the
-  // grid. Difficulty comes from direction freedom and overlap density
-  // (constraints.ts), not from filtering which words are usable.
-  const wordPool = normalizedThemeWords.filter((word) => (
-    word !== hiddenWord
-    && word.length >= 3
-    && word.length <= maxFit
-  ));
-  if (wordPool.length === 0) {
-    stats.emptyWordPool += 1;
-    return null;
+  let hiddenWord: string | undefined;
+  let reservedHiddenWord: ReservedHiddenWord | undefined;
+  let placementResult: PlacementResult | undefined;
+
+  for (let attempt = 0; attempt < MAX_HIDDEN_WORD_ATTEMPTS; attempt += 1) {
+    const candidateHiddenWord = pickHiddenWord(hiddenWordPool, rows, cols);
+    if (!candidateHiddenWord) {
+      stats.hiddenWordUnavailable += 1;
+      return null;
+    }
+    const candidateReserved = reserveHiddenWordCells(candidateHiddenWord, rows, cols);
+    const candidateReservedCells = new Set(candidateReserved.positions.map((cell) => toGridKey(cell)));
+
+    // Every theme word is eligible for every difficulty — the only hard
+    // constraint is that a word must physically fit a straight line in the
+    // grid. Difficulty comes from direction freedom and overlap density
+    // (constraints.ts), not from filtering which words are usable.
+    const candidateWordPool = normalizedThemeWords.filter((word) => (
+      word !== candidateHiddenWord
+      && word.length >= 3
+      && word.length <= maxFit
+    ));
+    if (candidateWordPool.length === 0) {
+      stats.emptyWordPool += 1;
+      return null;
+    }
+
+    const candidateResult = buildFullCoverageGrid(rows, cols, candidateWordPool, candidateReservedCells, config);
+    if (candidateResult) {
+      hiddenWord = candidateHiddenWord;
+      reservedHiddenWord = candidateReserved;
+      placementResult = candidateResult;
+      break;
+    }
   }
 
-  const result = buildFullCoverageGrid(rows, cols, wordPool, reservedCells, config);
-  if (!result) {
+  if (!placementResult || !hiddenWord || !reservedHiddenWord) {
     stats.placementFailed += 1;
     return null;
   }
-  const { grid, placements } = result;
+  const { grid, placements } = placementResult;
 
   // Gates below run cheapest-first: non-domination (O(placements^2)) →
   // quality metrics (O(placements)) → hidden-word overlay and gap check
