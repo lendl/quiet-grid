@@ -71,9 +71,9 @@ export default function ChimpTestGrid({
                 top,
                 left,
                 borderRadius,
-                backgroundColor: theme.surface,
-                borderColor: isWrongCell ? WRONG_TAP_BORDER : theme.border,
-                borderWidth: isWrongCell ? 2 : 1.5,
+                backgroundColor: theme.surfaceElevated,
+                borderColor: isWrongCell ? WRONG_TAP_BORDER : theme.primary,
+                borderWidth: isWrongCell ? 4 : 3,
               },
             ]}
           >
@@ -101,9 +101,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.18,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 5,
   },
   cellNumber: {
     fontWeight: '700',
