@@ -96,7 +96,7 @@ function SudokuPuzzleGrid({
     gap: GAP,
     padding: FRAME_PADDING + GRID_PADDING,
     minCellSize: 18,
-    maxCellSize: 56,
+    maxCellSize: 90,
   }), [containerHeight, containerWidth]);
   const {
     activeSpinKeys,
@@ -166,7 +166,7 @@ function SudokuPuzzleGrid({
   const gridHeight = SUDOKU_SIZE * layout.cellSize + Math.max(0, SUDOKU_SIZE - 1) * GAP;
   const gridOriginX = layout.borderWidth + layout.padding;
   const gridOriginY = layout.borderWidth + layout.padding;
-  const noteFontSize = Math.max(8, layout.cellSize * 0.18);
+  const noteFontSize = Math.max(11, layout.cellSize * 0.22);
   const selectedCellKey = selectedCell
     ? buildSudokuCellKey(selectedCell.row, selectedCell.col)
     : null;
@@ -244,11 +244,11 @@ function SudokuPuzzleGrid({
                     ? withAlpha(theme.primaryLight, isDark ? 0.44 : 0.24)
                     : isInPenalizedUnit
                       ? withAlpha(theme.difficultyExpert, isDark ? 0.52 : 0.32)
-                      : withAlpha(theme.border, isDark ? 0.84 : 0.66);
+                      : withAlpha(theme.border, isDark ? 0.95 : 0.85);
             const faceColor = isPlacementTarget
               ? withAlpha(theme.success, isDark ? 0.26 : 0.14)
               : isSelectedCell
-                ? withAlpha(theme.primary, isDark ? 0.2 : 0.12)
+                ? withAlpha(theme.primary, isDark ? 0.4 : 0.35)
               : isEliminationTarget
                 ? withAlpha(theme.difficultyHard, isDark ? 0.18 : 0.1)
                 : isEvidenceCell
@@ -274,6 +274,7 @@ function SudokuPuzzleGrid({
                     width: rect.width,
                     height: rect.height,
                     borderColor,
+                    borderWidth: isSelectedCell ? 3 : 2,
                     backgroundColor: locked ? tokens.cellSunkenFill : tokens.cellRaisedFill,
                   },
                 ]}
@@ -292,7 +293,9 @@ function SudokuPuzzleGrid({
                     style={[
                       styles.cellValue,
                       {
-                        color: withAlpha(theme.text, locked ? (isDark ? 0.92 : 0.84) : (isDark ? 0.98 : 0.9)),
+                        color: given
+                          ? withAlpha(theme.text, isDark ? 0.92 : 0.84)
+                          : withAlpha(theme.primary, isDark ? 0.98 : 0.9),
                         fontWeight: locked ? '800' : '700',
                         fontSize: layout.cellSize * 0.58,
                       },
@@ -422,7 +425,7 @@ function SudokuPuzzleGrid({
                   >
                     <Animated.Text
                       style={{
-                        color: locked
+                        color: given
                           ? withAlpha(theme.text, isDark ? 0.92 : 0.84)
                           : showShake
                             ? withAlpha(theme.difficultyExpert, isDark ? 0.98 : 0.88)
