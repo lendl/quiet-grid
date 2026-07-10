@@ -15,6 +15,7 @@ The context files below are general guardrails that apply to any work in this co
 - `context/difficulties.md`
 - `context/mistake-policy.md`
 - `context/feedback-effects.md`
+- `context/board-visual-accessibility.md` — tap-target/contrast conventions for grid UIs, per-game visual-identity caveats
 - `context/context-maps.md` — per-subsystem file maps and gotchas; load instead of the full docs when editing one area
 
 ## Workflows (new game only)

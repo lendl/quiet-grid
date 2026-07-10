@@ -96,6 +96,22 @@ Use these packets when AI is editing one subsystem and should not load the whole
 - Do not scatter persistence rules across screens.
 - Do not ship a new game without updating `activeSessionStateStorage.ts` — missing normalization causes silent session corruption, not a typecheck error.
 
+## Board visual accessibility
+
+### User goal
+- Grid tap targets, contrast, and edge padding stay readable for players with low vision or motor/memory impairment.
+
+### Architecture goal
+- Load `docs/ai/context/board-visual-accessibility.md` for the baseline recipe (border width/alpha, given-vs-entered color coding, tablet `maxCellSize`, edge padding, selected-cell emphasis) and which games have an established look and feel that overrides it.
+
+### File map
+- `src/app/shell/boardLayout.ts`, `src/app/shell/renderTokens.ts`
+- `src/games/<id>/ui/play/components/*Grid*.tsx`, `src/games/<id>/ui/play/adapter.tsx`
+
+### Mistakes to avoid
+- Do not treat this summary as the rule source when `docs/ai/context/board-visual-accessibility.md` exists.
+- Do not blanket-apply the recipe to a game with an established visual identity without checking first (see minesweeper in that doc).
+
 ## Engine generation
 
 ### User goal
