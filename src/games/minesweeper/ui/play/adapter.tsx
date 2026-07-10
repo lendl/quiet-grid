@@ -33,7 +33,7 @@ import {
   type MinesweeperPlaySession,
 } from '../../gameplay/playContract';
 
-const GRID_HORIZONTAL_PADDING = 12;
+const GRID_HORIZONTAL_PADDING = 24;
 const GRID_BOTTOM_PADDING = 24;
 
 function useMinesweeperAdapter({

@@ -152,7 +152,9 @@ function MinesweeperBoard({
                   ? withAlpha(theme.success, isDark ? 0.84 : 0.68)
                   : evidenceKeys.has(key)
                     ? withAlpha(theme.primary, isDark ? 0.64 : 0.46)
-                    : withAlpha(theme.gridCellBorder, isDark ? 0.84 : 0.62);
+                    : cell.state === 'hidden'
+                      ? withAlpha(theme.primary, isDark ? 0.55 : 0.42)
+                      : withAlpha(theme.gridCellBorder, isDark ? 0.92 : 0.85);
               const faceColor = isFocused
                 ? withAlpha(theme.primary, isDark ? 0.22 : 0.14)
                 : mineTargetKeys.has(key)
