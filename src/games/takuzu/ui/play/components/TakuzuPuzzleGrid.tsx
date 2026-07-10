@@ -135,7 +135,8 @@ function TakuzuPuzzleGrid({
           {board.map((row, rowIndex) => row.map((value, colIndex) => {
             const key = `${rowIndex}:${colIndex}`;
             const rect = getGridCellRect(layout, rowIndex, colIndex);
-            const locked = isGiven[rowIndex][colIndex] || finishedCells[rowIndex][colIndex];
+            const given = isGiven[rowIndex][colIndex];
+            const locked = given || finishedCells[rowIndex][colIndex];
             const showTarget = targetKeys.has(key);
             const showEvidence = evidenceKeys.has(key);
             const showHighlight = highlightedRows.has(rowIndex) || highlightedCols.has(colIndex);
@@ -155,7 +156,7 @@ function TakuzuPuzzleGrid({
                       ? withAlpha(theme.primaryLight, isDark ? 0.92 : 0.72)
                       : showEvidence
                         ? withAlpha(theme.primary, isDark ? 0.64 : 0.42)
-                        : withAlpha(theme.border, isDark ? 0.84 : 0.62),
+                        : withAlpha(theme.border, isDark ? 0.95 : 0.85),
                     backgroundColor: locked ? tokens.cellSunkenFill : tokens.cellRaisedFill,
                   },
                 ]}
@@ -186,7 +187,9 @@ function TakuzuPuzzleGrid({
                     style={[
                       styles.cellValue,
                       {
-                        color: withAlpha(theme.text, locked ? (isDark ? 0.92 : 0.84) : (isDark ? 0.98 : 0.9)),
+                        color: given
+                          ? withAlpha(theme.text, isDark ? 0.92 : 0.84)
+                          : withAlpha(theme.primary, isDark ? 0.98 : 0.9),
                         fontWeight: locked ? '800' : '700',
                         fontSize: layout.cellSize * 0.46,
                       },
@@ -203,7 +206,8 @@ function TakuzuPuzzleGrid({
           {board.map((row, rowIndex) => row.map((value, colIndex) => {
             const key = `${rowIndex}:${colIndex}`;
             const rect = getGridCellRect(layout, rowIndex, colIndex);
-            const locked = isGiven[rowIndex][colIndex] || finishedCells[rowIndex][colIndex];
+            const given = isGiven[rowIndex][colIndex];
+            const locked = given || finishedCells[rowIndex][colIndex];
             const showSpin = activeSpinKeys.has(key) && value !== null;
             const showShake = activeShakeKeys.has(key) && value !== null;
 
@@ -242,7 +246,9 @@ function TakuzuPuzzleGrid({
                       style={{
                         color: showShake
                           ? withAlpha(theme.difficultyExpert, isDark ? 0.98 : 0.9)
-                          : withAlpha(theme.text, isDark ? 0.98 : 0.88),
+                          : given
+                            ? withAlpha(theme.text, isDark ? 0.98 : 0.88)
+                            : withAlpha(theme.primaryLight, isDark ? 0.98 : 0.82),
                         fontWeight: locked ? '800' : '700',
                         fontSize: layout.cellSize * 0.46,
                         fontFamily: 'monospace',
@@ -297,7 +303,7 @@ const styles = StyleSheet.create({
   },
   cellFrame: {
     position: 'absolute',
-    borderWidth: 1,
+    borderWidth: 2,
     borderRadius: CELL_RADIUS,
     alignItems: 'center',
     justifyContent: 'center',
