@@ -98,7 +98,7 @@ export default function WordSearchPuzzleGrid({
     gap: GAP,
     padding: FRAME_PADDING + GRID_PADDING,
     minCellSize: 18,
-    maxCellSize: 54,
+    maxCellSize: 90,
   }), [containerHeight, containerWidth, puzzle.cols, puzzle.rows]);
   const dragCellKeyRef = useRef<string | null>(null);
   const foundCellKeys = useMemo(() => {
@@ -279,7 +279,6 @@ export default function WordSearchPuzzleGrid({
             const isInCrosshair = crosshairStart !== null
               && !isTemp && !isFound && !isSelectionStart && !isSelectionEnd && !isTarget && !isEvidence
               && (rowIndex === crosshairStart.row || colIndex === crosshairStart.col);
-            const isOddRow = rowIndex % 2 === 1;
             const borderColor = isHiddenTarget
               ? withAlpha(theme.difficultyMedium, isDark ? 0.92 : 0.78)
               : isTarget
@@ -292,7 +291,7 @@ export default function WordSearchPuzzleGrid({
                     ? withAlpha(theme.success, isDark ? 0.68 : 0.52)
                     : isEvidence
                       ? withAlpha(theme.primary, isDark ? 0.7 : 0.46)
-                      : withAlpha(theme.border, isDark ? 0.84 : 0.62);
+                      : withAlpha(theme.border, isDark ? 0.95 : 0.85);
             const faceColor = isHiddenTarget
               ? withAlpha(theme.difficultyMedium, isDark ? 0.24 : 0.18)
               : isTarget
@@ -307,9 +306,7 @@ export default function WordSearchPuzzleGrid({
                       ? withAlpha(theme.primary, isDark ? 0.12 : 0.08)
                       : isInCrosshair
                         ? withAlpha(theme.primary, isDark ? 0.1 : 0.06)
-                        : isOddRow
-                          ? withAlpha(theme.text, isDark ? 0.05 : 0.03)
-                          : tokens.cellRaisedFill;
+                        : tokens.cellRaisedFill;
 
             return (
               <View
@@ -395,7 +392,7 @@ const styles = StyleSheet.create({
   },
   cellFrame: {
     position: 'absolute',
-    borderWidth: 1,
+    borderWidth: 2,
     borderRadius: CELL_RADIUS,
     alignItems: 'center',
     justifyContent: 'center',

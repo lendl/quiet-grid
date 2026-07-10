@@ -315,9 +315,9 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   mainArea: {
     flex: 1,
     gap: 8,
-    paddingHorizontal: 8,
-    paddingTop: 4,
-    paddingBottom: 6,
+    paddingHorizontal: 24,
+    paddingTop: 16,
+    paddingBottom: 16,
   },
   wordList: {
     fontSize: 13,
