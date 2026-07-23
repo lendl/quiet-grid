@@ -1,40 +1,43 @@
-# Dependencies
-node_modules/
+# Gradle
+.gradle/
+build/
+app/build/
 
-# Expo
-.expo/
-dist/
-web-build/
-expo-env.d.ts
+# Local config
+local.properties
 
-# Android / iOS builds
-ios/
-*.apk
-*.ipa
-*.aab
+# IntelliJ / Android Studio
+.idea/
+*.iml
+*.ipr
+*.iws
+.navigation/
+captures/
+.externalNativeBuild/
+.cxx/
 
-# Environment
+# VS Code
+.vscode/
+
+# Signing / secrets
+*.jks
+!debug.keystore
+credentials/
 .env
 .env.local
 .env.*.local
 
-# Editor
-.vscode/
-.idea/
-*.swp
-*.swo
+# Build outputs
+*.apk
+*.apk.sha256
+*.aab
 
 # OS
 .DS_Store
 Thumbs.db
 
 # Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# TypeScript
-*.tsbuildinfo
+*.log
 
 # Git worktrees
 .worktrees/
@@ -43,11 +46,6 @@ yarn-error.log*
 # Local planning docs
 docs/superpowers/
 
-# Engine tracking database
-src/engine/puzzles.db
-
-# Android signing credentials
-credentials/
 # Squad: ignore runtime state (logs, inbox, sessions)
 .squad/orchestration-log/
 .squad/log/

@@ -16,24 +16,16 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 24
-          cache: npm
-
       - uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: temurin
-
-      - name: Install dependencies
-        run: npm ci
+          cache: gradle
 
       - name: Decode keystore
-        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/release.keystore
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > app/release.keystore
 
       - name: Build release APK
-        working-directory: android
         env:
           ANDROID_KEYSTORE_PATH: release.keystore
           ANDROID_STORE_PASSWORD: ${{ secrets.KEYSTORE_STORE_PASSWORD }}
@@ -45,13 +37,13 @@ jobs:
 
       - name: Generate SHA-256 checksum
         run: |
-          APK=$(ls android/app/build/outputs/apk/release/quiet-grid-v*.apk)
+          APK=$(ls app/build/outputs/apk/release/quiet-grid-v*.apk)
           sha256sum "$APK" | awk '{print $1}' > "${APK}.sha256"
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            android/app/build/outputs/apk/release/quiet-grid-v*.apk
-            android/app/build/outputs/apk/release/quiet-grid-v*.apk.sha256
+            app/build/outputs/apk/release/quiet-grid-v*.apk
+            app/build/outputs/apk/release/quiet-grid-v*.apk.sha256
           generate_release_notes: true

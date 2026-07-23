@@ -4,18 +4,9 @@
   <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" height="60">
 </a>
 
-A privacy-first logic puzzle app for Android, built with React Native (Expo) and TypeScript.
+A privacy-first logic puzzle app for Android, built natively with Kotlin and Jetpack Compose.
 
 No ads. No account. No internet required. Everything stays on your device.
-
-<table>
-  <tr>
-    <td><img src="assets/sceenshots/mobile/01-play-sudoku-offline.png" width="220" alt="Play sudoku offline"></td>
-    <td><img src="assets/sceenshots/mobile/02-no-account-no-internet.png" width="220" alt="No account, no internet"></td>
-    <td><img src="assets/sceenshots/mobile/03-four-difficulty-levels.png" width="220" alt="Four difficulty levels"></td>
-    <td><img src="assets/sceenshots/mobile/04-multiple-puzzle-types.png" width="220" alt="Multiple puzzle types"></td>
-  </tr>
-</table>
 
 ## Puzzles
 
@@ -25,7 +16,7 @@ No ads. No account. No internet required. Everything stays on your device.
 | Minesweeper | Available |
 | Nonogram | Beta |
 | Sudoku | Available |
-| Word Search | Beta |
+| Word Search | Available |
 | Chimp Test | Available |
 
 Each puzzle type has Easy, Medium, Hard, and Expert difficulty levels.
@@ -38,28 +29,18 @@ English, Dutch, German, French, Spanish.
 
 ### Requirements
 
-- Node.js 18+
-- Android emulator via [Android Studio](https://developer.android.com/studio), or a physical Android device with [Expo Go](https://expo.dev/client)
+- [Android Studio](https://developer.android.com/studio) (or a JDK 17 + Android SDK setup for command-line builds)
+- An Android emulator, or a physical Android device (minSdk 26 / Android 8.0+)
 
 > Android only. iOS and web are not supported.
 
-### Install and run
+### Build and run
 
 ```bash
-npm install
-npm run android
+./gradlew installDebug
 ```
 
-## Generating puzzles
-
-Puzzle catalogs are generated offline using a CLI in `src/engine/`. Game-owned engine plugins live in `src/games/<id>/engine/` and append to `src/games/<id>/puzzles/all.ts`. A local SQLite file (`src/engine/puzzles.db`, gitignored) tracks seen puzzles to avoid duplicates.
-
-```bash
-npm run engine -- --game=takuzu
-npm run engine -- --game=takuzu --size=8
-npm run engine -- --game=nonogram
-npm run engine -- --game=nonogram --size=5 --difficulty=easy 25
-```
+Or open the project root in Android Studio and run the `app` configuration.
 
 ## Privacy
 
