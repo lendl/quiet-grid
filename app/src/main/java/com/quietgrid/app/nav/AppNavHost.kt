@@ -229,7 +229,7 @@ fun AppNavHost() {
                         onFinished = { result ->
                             if (result.solved) {
                                 CompletionExtras.set(CompletionHighlight.WordList(result.words))
-                                goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
+                                goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
                             } else {
                                 goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
                             }

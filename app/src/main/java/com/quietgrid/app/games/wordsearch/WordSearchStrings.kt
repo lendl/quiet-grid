@@ -16,3 +16,6 @@ fun wordSearchDifficultyDescriptionRes(difficulty: Difficulty): Int = when (diff
     Difficulty.HARD -> R.string.wordsearch_difficulty_desc_hard
     Difficulty.EXPERT -> R.string.wordsearch_difficulty_desc_expert
 }
+
+fun wordSearchThemeLabel(clue: String): String =
+    clue.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }

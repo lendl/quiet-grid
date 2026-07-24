@@ -6,12 +6,17 @@ import kotlin.math.sign
 private const val MAX_SCORE = 15_000
 private const val MIN_SCORE = 1_000
 private const val SKIPPED_WORD_BONUS = 300
+private const val ACCURACY_SCORE_COST = 500
+private const val ACCURACY_DROP_STEP = 10
 
 fun wordSearchScore(elapsedSeconds: Int, session: WordSearchSession): Int {
     val base = max(MIN_SCORE, MAX_SCORE - elapsedSeconds * 8)
     val skipped = session.puzzle.words.size - session.foundWordIds.size
-    return base + skipped * SKIPPED_WORD_BONUS
+    val accuracyPenalty = session.accuracyDrops * ACCURACY_SCORE_COST
+    return max(MIN_SCORE, base + skipped * SKIPPED_WORD_BONUS - accuracyPenalty)
 }
+
+fun wordSearchAccuracyPct(accuracyDrops: Int): Int = max(0, 100 - accuracyDrops * ACCURACY_DROP_STEP)
 
 private fun isInsideGrid(puzzle: WordSearchPuzzleEntry, cell: WSCellRef): Boolean =
     cell.row in 0 until puzzle.rows && cell.col in 0 until puzzle.cols
@@ -100,7 +105,11 @@ fun wsInputHiddenWordCell(session: WordSearchSession, cell: WSCellRef): WordSear
 
     if (expected != cell) {
         if (session.hiddenWordProgress.isEmpty()) return null
-        return session.copy(hiddenWordProgress = emptyList(), tempSelection = null)
+        return session.copy(
+            hiddenWordProgress = emptyList(),
+            tempSelection = null,
+            accuracyDrops = session.accuracyDrops + 1,
+        )
     }
 
     val progress = session.hiddenWordProgress + cell
@@ -156,4 +165,5 @@ fun wsNextMoveHint(session: WordSearchSession): WSNextMoveHint? {
 fun isWordSearchSolved(session: WordSearchSession): Boolean = session.hiddenWordSolved
 
 fun wordSearchHasMeaningfulProgress(session: WordSearchSession): Boolean =
-    session.foundWordIds.isNotEmpty() || session.hiddenWordProgress.isNotEmpty() || session.hiddenWordSolved
+    session.foundWordIds.isNotEmpty() || session.hiddenWordProgress.isNotEmpty() ||
+        session.hiddenWordSolved || session.accuracyDrops > 0

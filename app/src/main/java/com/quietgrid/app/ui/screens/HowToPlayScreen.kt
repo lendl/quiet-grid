@@ -345,4 +345,9 @@ private fun WordSearchHowToPlay() {
         TechniqueItem(R.string.wordsearch_tip_1_title, R.string.wordsearch_tip_1_body)
         TechniqueItem(R.string.wordsearch_tip_2_title, R.string.wordsearch_tip_2_body)
     }
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    Accordion(stringResource(R.string.how_to_play_scoring_title)) {
+        BodyText(stringResource(R.string.wordsearch_how_to_play_scoring))
+    }
 }

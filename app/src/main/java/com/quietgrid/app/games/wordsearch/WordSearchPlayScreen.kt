@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.VpnKey
 import androidx.compose.material.icons.filled.ZoomOutMap
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -94,6 +95,12 @@ fun WordSearchPlayScreen(
                         Text(stringResource(R.string.wordsearch_found_label), style = MaterialTheme.typography.labelSmall)
                         Text("${session.foundWordIds.size} / ${session.puzzle.words.size}", style = MaterialTheme.typography.titleMedium)
                     }
+                    if (!session.hiddenWordSolved) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(stringResource(R.string.wordsearch_theme_label), style = MaterialTheme.typography.labelSmall)
+                            Text(wordSearchThemeLabel(session.puzzle.hiddenWord.clue), style = MaterialTheme.typography.titleMedium)
+                        }
+                    }
                     Column(horizontalAlignment = Alignment.End) {
                         Text(stringResource(R.string.wordsearch_difficulty_label), style = MaterialTheme.typography.labelSmall)
                         Text(stringResource(wordSearchDifficultyLabelRes(displayDifficulty)), style = MaterialTheme.typography.titleMedium)
@@ -104,6 +111,17 @@ fun WordSearchPlayScreen(
                         Icon(
                             imageVector = Icons.Filled.ZoomOutMap,
                             contentDescription = stringResource(R.string.wordsearch_reset_zoom),
+                        )
+                    }
+                }
+                if (session != null && !session.hiddenWordSolved) {
+                    IconButton(onClick = { viewModel.onToggleHiddenWordMode() }) {
+                        Icon(
+                            imageVector = Icons.Filled.VpnKey,
+                            contentDescription = stringResource(
+                                if (session.hiddenWordMode) R.string.wordsearch_hidden_word_exit_mode else R.string.wordsearch_hidden_word_enter_mode,
+                            ),
+                            tint = if (session.hiddenWordMode) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }
@@ -145,28 +163,28 @@ fun WordSearchPlayScreen(
             modifier = Modifier.padding(top = 4.dp, bottom = 12.dp),
         )
 
-        if (session != null) {
-            val allFound = session.foundWordIds.size >= session.puzzle.words.size
-            if (allFound && !session.hiddenWordSolved) {
-                Card(Modifier.fillMaxWidth().padding(bottom = 8.dp)) {
-                    Column(Modifier.padding(12.dp)) {
+        if (session != null && !session.hiddenWordSolved) {
+            Card(Modifier.fillMaxWidth().padding(bottom = 8.dp)) {
+                Column(Modifier.padding(12.dp)) {
+                    val progressText = session.puzzle.hiddenWord.word.indices.joinToString(" ") { index ->
+                        val cell = session.hiddenWordProgress.getOrNull(index)
+                        if (cell != null) session.puzzle.grid[cell.row][cell.col] else "_"
+                    }
+                    Text(progressText, style = MaterialTheme.typography.titleSmall)
+                    Text(
+                        stringResource(
+                            if (session.hiddenWordMode) R.string.wordsearch_hidden_word_instructions else R.string.wordsearch_hidden_word_locked,
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                    if (session.hiddenWordMode) {
                         Text(
-                            "${session.puzzle.hiddenWord.clue}?",
-                            style = MaterialTheme.typography.titleSmall,
-                        )
-                        Text(
-                            stringResource(R.string.wordsearch_hidden_word_instructions),
+                            stringResource(R.string.wordsearch_hidden_word_reset_on_mistake),
                             style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }
-            } else if (!allFound) {
-                Text(
-                    stringResource(R.string.wordsearch_hidden_word_locked),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(bottom = 8.dp),
-                )
             }
         }
 

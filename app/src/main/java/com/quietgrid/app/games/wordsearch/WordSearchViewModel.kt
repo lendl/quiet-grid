@@ -29,6 +29,7 @@ data class WordSearchResult(
     val difficulty: Difficulty,
     val solved: Boolean,
     val score: Int,
+    val accuracyPct: Int,
     val elapsedSeconds: Int,
     val lossReason: String?,
     val isFirstSolve: Boolean = false,
@@ -73,6 +74,7 @@ class WordSearchPlayViewModel(
             hiddenWordMode = false,
             hiddenWordProgress = emptyList(),
             hiddenWordSolved = false,
+            accuracyDrops = 0,
         )
     }
 
@@ -90,6 +92,7 @@ class WordSearchPlayViewModel(
                     hiddenWordMode = persisted.hiddenWordMode,
                     hiddenWordProgress = persisted.hiddenWordProgress,
                     hiddenWordSolved = persisted.hiddenWordSolved,
+                    accuracyDrops = persisted.accuracyDrops,
                 )
             }
         }
@@ -160,7 +163,7 @@ class WordSearchPlayViewModel(
 
     fun onToggleHiddenWordMode() {
         val current = session ?: return
-        if (finalized || current.foundWordIds.size < current.puzzle.words.size) return
+        if (finalized || current.hiddenWordSolved) return
         nextMoveHint = null
         session = wsToggleHiddenWordMode(current) ?: return
     }
@@ -195,6 +198,7 @@ class WordSearchPlayViewModel(
                     difficulty = difficulty,
                     solved = true,
                     score = score,
+                    accuracyPct = wordSearchAccuracyPct(current.accuracyDrops),
                     elapsedSeconds = elapsedSeconds.toInt(),
                     lossReason = null,
                     isFirstSolve = previous.solved == 0,
@@ -217,6 +221,7 @@ class WordSearchPlayViewModel(
                     difficulty = difficulty,
                     solved = false,
                     score = 0,
+                    accuracyPct = 0,
                     elapsedSeconds = elapsedSeconds.toInt(),
                     lossReason = reason,
                 ),
@@ -235,6 +240,7 @@ class WordSearchPlayViewModel(
                 hiddenWordMode = current.hiddenWordMode,
                 hiddenWordProgress = current.hiddenWordProgress,
                 hiddenWordSolved = current.hiddenWordSolved,
+                accuracyDrops = current.accuracyDrops,
             ),
         )
         viewModelScope.launch {
