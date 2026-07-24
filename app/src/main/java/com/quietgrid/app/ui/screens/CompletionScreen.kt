@@ -2,12 +2,10 @@ package com.quietgrid.app.ui.screens
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -34,6 +32,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,6 +54,8 @@ import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
 import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
 import com.quietgrid.app.ui.components.ConfettiBurst
+import kotlinx.coroutines.delay
+import kotlin.math.roundToInt
 
 private val CELEBRATION_ICONS = listOf("🎉", "🏆", "⭐", "✨", "🎈", "💜")
 
@@ -71,8 +74,8 @@ fun CompletionScreen(
     isFirstSolve: Boolean,
     isNewHighScore: Boolean,
     onPlayAgain: () -> Unit,
+    onOtherDifficulty: () -> Unit,
     onTryAnotherGame: () -> Unit,
-    onViewStats: () -> Unit,
 ) {
     val eyebrowRes: Int
     val titleRes: Int
@@ -108,12 +111,19 @@ fun CompletionScreen(
     }
     val accentColor = difficultyColor(difficulty)
     val icon = pickCelebrationIcon(score, accuracyPct, variantSeed)
+    val isFlawless = gameId in FLAWLESS_ELIGIBLE_GAMES && accuracyPct == 100
+
+    val highlight = remember { CompletionExtras.consume() }
+    val picture = (highlight as? CompletionHighlight.Picture)?.solution?.takeIf { it.isNotEmpty() }
+    val words = (highlight as? CompletionHighlight.WordList)?.words?.takeIf { it.isNotEmpty() }
 
     val stats by AppContainer.statsRepository.statsFor(gameId).collectAsState(initial = null)
     val streak = stats?.forDifficulty(difficulty)?.currentStreak ?: 0
 
     val pageOpacity = remember { Animatable(0f) }
     val contentOffsetY = remember { Animatable(24f) }
+    val pictureScale = remember { Animatable(0.6f) }
+    val scoreProgress = remember { Animatable(0f) }
     var showConfetti by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         pageOpacity.animateTo(1f, animationSpec = tween(220))
@@ -122,35 +132,23 @@ fun CompletionScreen(
     LaunchedEffect(Unit) {
         contentOffsetY.animateTo(0f, animationSpec = tween(320, easing = FastOutSlowInEasing))
     }
-
-    val infinite = rememberInfiniteTransition(label = "completionAccents")
-    val iconFloat by infinite.animateFloat(
-        initialValue = 0f,
-        targetValue = -14f,
-        animationSpec = infiniteRepeatable(tween(1100, easing = FastOutSlowInEasing), RepeatMode.Reverse),
-        label = "iconFloat",
-    )
-    val accentPulse by infinite.animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(tween(1800, easing = LinearEasing), RepeatMode.Reverse),
-        label = "accentPulse",
-    )
+    LaunchedEffect(Unit) {
+        pictureScale.animateTo(
+            1f,
+            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
+        )
+    }
+    LaunchedEffect(score) {
+        delay(200)
+        scoreProgress.animateTo(1f, animationSpec = tween(650, easing = FastOutSlowInEasing))
+    }
 
     Box(Modifier.fillMaxSize()) {
-        Column(
-            Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-                .graphicsLayer {
-                    alpha = pageOpacity.value
-                    translationY = contentOffsetY.value
-                },
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
+        Column(Modifier.fillMaxSize().padding(16.dp)) {
             Row(
-                Modifier.fillMaxWidth(),
+                Modifier
+                    .fillMaxWidth()
+                    .graphicsLayer { alpha = pageOpacity.value },
                 horizontalArrangement = Arrangement.End,
             ) {
                 Row(
@@ -165,123 +163,180 @@ fun CompletionScreen(
                     Text(stringResource(eyebrowRes), style = MaterialTheme.typography.labelMedium, color = accentColor)
                 }
                 if (streak >= 2) {
-                    Row(
-                        Modifier
-                            .padding(start = 8.dp)
-                            .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f), CircleShape)
-                            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.7f), CircleShape)
-                            .padding(horizontal = 12.dp, vertical = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    ) {
-                        Text("🔥", style = MaterialTheme.typography.labelMedium)
-                        Text(
-                            stringResource(R.string.completion_streak_badge, streak),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary,
-                        )
+                    BadgePill(
+                        modifier = Modifier.padding(start = 8.dp),
+                        borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
+                        textColor = MaterialTheme.colorScheme.primary,
+                        emoji = "🔥",
+                        text = stringResource(R.string.completion_streak_badge, streak),
+                    )
+                }
+                if (isFlawless) {
+                    BadgePill(
+                        modifier = Modifier.padding(start = 8.dp),
+                        borderColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f),
+                        textColor = MaterialTheme.colorScheme.tertiary,
+                        emoji = "💯",
+                        text = stringResource(R.string.completion_flawless_badge),
+                    )
+                }
+            }
+
+            Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Column(
+                    Modifier.graphicsLayer {
+                        alpha = pageOpacity.value
+                        translationY = contentOffsetY.value
+                    },
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Box(Modifier.fillMaxWidth().height(150.dp), contentAlignment = Alignment.Center) {
+                        if (picture != null) {
+                            NonogramMiniPicture(
+                                solution = picture,
+                                fillColor = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier
+                                    .size(130.dp)
+                                    .graphicsLayer { scaleX = pictureScale.value; scaleY = pictureScale.value },
+                            )
+                        } else {
+                            Box(
+                                Modifier
+                                    .size(96.dp)
+                                    .graphicsLayer { scaleX = pictureScale.value; scaleY = pictureScale.value }
+                                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f), CircleShape)
+                                    .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f), CircleShape),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Text(icon, fontSize = 40.sp)
+                            }
+                        }
                     }
-                }
-            }
 
-            Box(Modifier.fillMaxWidth().height(180.dp), contentAlignment = Alignment.Center) {
-                Box(
-                    Modifier
-                        .size(170.dp)
-                        .graphicsLayer { alpha = 0.12f + accentPulse * 0.2f }
-                        .border(1.dp, accentColor.copy(alpha = 0.4f), CircleShape),
-                )
-                Text(
-                    "✦",
-                    color = accentColor,
-                    fontSize = 18.sp,
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(top = 8.dp, end = 24.dp)
-                        .graphicsLayer { alpha = 0.3f + accentPulse * 0.5f },
-                )
-                Text(
-                    "✦",
-                    color = MaterialTheme.colorScheme.tertiary,
-                    fontSize = 16.sp,
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(bottom = 16.dp, start = 20.dp)
-                        .graphicsLayer { alpha = 0.3f + (1f - accentPulse) * 0.5f },
-                )
-                Box(
-                    Modifier
-                        .size(96.dp)
-                        .graphicsLayer { translationY = iconFloat }
-                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f), CircleShape)
-                        .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f), CircleShape),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(icon, fontSize = 40.sp)
-                }
-            }
+                    Text(stringResource(titleRes), style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center, modifier = Modifier.padding(top = 4.dp))
+                    Text(
+                        stringResource(bodyRes),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(top = 6.dp),
+                    )
+                    Text(
+                        stringResource(difficultyLabelRes),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = accentColor,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(top = 8.dp),
+                    )
 
-            Text(stringResource(titleRes), style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center, modifier = Modifier.padding(top = 4.dp))
-            Text(
-                stringResource(bodyRes),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = 6.dp),
-            )
-            Text(
-                stringResource(difficultyLabelRes),
-                style = MaterialTheme.typography.labelLarge,
-                color = accentColor,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = 8.dp),
-            )
+                    if (words != null) {
+                        Column(Modifier.padding(top = 14.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                stringResource(R.string.completion_words_found),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                            Text(
+                                words.joinToString(" · "),
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(top = 2.dp),
+                            )
+                        }
+                    }
 
-            Column(Modifier.padding(top = 20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    stringResource(R.string.completion_score),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Text(
-                    score.toString(),
-                    style = MaterialTheme.typography.displayMedium,
-                    fontWeight = FontWeight.Black,
-                    modifier = Modifier.padding(top = 2.dp),
-                )
+                    Column(Modifier.padding(top = 20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            stringResource(R.string.completion_score),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Text(
+                            (score * scoreProgress.value).roundToInt().toString(),
+                            style = MaterialTheme.typography.displayMedium,
+                            fontWeight = FontWeight.Black,
+                            modifier = Modifier.padding(top = 2.dp),
+                        )
 
-                Row(
-                    Modifier.padding(top = 14.dp),
-                    horizontalArrangement = Arrangement.spacedBy(18.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    MetaItem(stringResource(R.string.completion_elapsed_time), formatElapsed(elapsedSeconds))
-                    Box(Modifier.width(1.dp).height(28.dp).background(MaterialTheme.colorScheme.outlineVariant))
-                    MetaItem(stringResource(R.string.completion_accuracy), "$accuracyPct%")
-                }
-            }
+                        Row(
+                            Modifier.padding(top = 14.dp),
+                            horizontalArrangement = Arrangement.spacedBy(18.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            MetaItem(stringResource(R.string.completion_elapsed_time), formatElapsed(elapsedSeconds))
+                            Box(Modifier.width(1.dp).height(28.dp).background(MaterialTheme.colorScheme.outlineVariant))
+                            MetaItem(stringResource(R.string.completion_accuracy), "$accuracyPct%")
+                        }
+                    }
 
-            Button(onClick = onPlayAgain, modifier = Modifier.fillMaxWidth().padding(top = 24.dp)) {
-                Text(stringResource(R.string.completion_play_again))
-            }
+                    Button(onClick = onPlayAgain, modifier = Modifier.fillMaxWidth().padding(top = 24.dp)) {
+                        Text(stringResource(R.string.completion_play_again))
+                    }
 
-            Row(
-                Modifier.fillMaxWidth().padding(top = 8.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                TextButton(onClick = onTryAnotherGame) {
-                    Text(stringResource(R.string.completion_try_another_game), color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-                Box(Modifier.width(1.dp).height(16.dp).background(MaterialTheme.colorScheme.outlineVariant))
-                TextButton(onClick = onViewStats) {
-                    Text(stringResource(R.string.completion_view_stats), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Row(
+                        Modifier.fillMaxWidth().padding(top = 8.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        TextButton(onClick = onOtherDifficulty) {
+                            Text(stringResource(R.string.completion_other_difficulty), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                        Box(Modifier.width(1.dp).height(16.dp).background(MaterialTheme.colorScheme.outlineVariant))
+                        TextButton(onClick = onTryAnotherGame) {
+                            Text(stringResource(R.string.completion_try_another_game), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                    }
                 }
             }
         }
 
         if (showConfetti) {
             ConfettiBurst(Modifier.fillMaxSize())
+        }
+    }
+}
+
+private val FLAWLESS_ELIGIBLE_GAMES = setOf(GameId.TAKUZU, GameId.SUDOKU)
+
+@Composable
+private fun BadgePill(emoji: String, text: String, borderColor: Color, textColor: Color, modifier: Modifier = Modifier) {
+    Row(
+        modifier
+            .border(1.dp, borderColor, CircleShape)
+            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.7f), CircleShape)
+            .padding(horizontal = 12.dp, vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        Text(emoji, style = MaterialTheme.typography.labelMedium)
+        Text(text, style = MaterialTheme.typography.labelMedium, color = textColor)
+    }
+}
+
+/** Static (non-interactive) render of a solved nonogram's picture, no clue rails. */
+@Composable
+private fun NonogramMiniPicture(solution: List<List<Boolean>>, fillColor: Color, modifier: Modifier = Modifier) {
+    val rows = solution.size
+    val cols = solution.firstOrNull()?.size ?: 0
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
+    Canvas(modifier) {
+        if (rows == 0 || cols == 0) return@Canvas
+        val cellSize = minOf(size.width / cols, size.height / rows)
+        val gridWidth = cellSize * cols
+        val gridHeight = cellSize * rows
+        val offsetX = (size.width - gridWidth) / 2f
+        val offsetY = (size.height - gridHeight) / 2f
+        for (row in 0 until rows) {
+            for (col in 0 until cols) {
+                val topLeft = Offset(offsetX + col * cellSize, offsetY + row * cellSize)
+                val cellSizePx = Size(cellSize, cellSize)
+                drawRect(
+                    color = if (solution[row][col]) fillColor else outlineColor.copy(alpha = 0.25f),
+                    topLeft = topLeft,
+                    size = cellSizePx,
+                )
+            }
         }
     }
 }

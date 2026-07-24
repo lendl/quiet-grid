@@ -22,6 +22,9 @@ import kotlinx.serialization.json.Json
 
 private val json = Json { ignoreUnknownKeys = true }
 
+/** Lets the last move's feedback finish playing before the win/loss screen cuts in. */
+private const val FINISH_TRANSITION_DELAY_MS = 450L
+
 data class NonogramResult(
     val difficulty: Difficulty,
     val solved: Boolean,
@@ -30,6 +33,7 @@ data class NonogramResult(
     val lossReason: String?,
     val isFirstSolve: Boolean = false,
     val isNewHighScore: Boolean = false,
+    val solution: List<List<Boolean>> = emptyList(),
 )
 
 class NonogramPlayViewModel(
@@ -146,10 +150,12 @@ class NonogramPlayViewModel(
         if (finalized) return
         finalized = true
         val score = nonogramScore(elapsedSeconds.toInt())
+        val solution = session?.solution ?: emptyList()
         viewModelScope.launch {
             val previous = statsRepository.statsFor(GameId.NONOGRAM).first().forDifficulty(difficulty)
             statsRepository.recordResult(GameId.NONOGRAM, difficulty, solved = true, score = score)
             sessionRepository.clear()
+            delay(FINISH_TRANSITION_DELAY_MS)
             _result.emit(
                 NonogramResult(
                     difficulty = difficulty,
@@ -159,6 +165,7 @@ class NonogramPlayViewModel(
                     lossReason = null,
                     isFirstSolve = previous.solved == 0,
                     isNewHighScore = previous.solved > 0 && score > previous.bestScore,
+                    solution = solution,
                 ),
             )
         }
@@ -170,6 +177,7 @@ class NonogramPlayViewModel(
         viewModelScope.launch {
             statsRepository.recordResult(GameId.NONOGRAM, difficulty, solved = false, score = 0)
             sessionRepository.clear()
+            delay(FINISH_TRANSITION_DELAY_MS)
             _result.emit(
                 NonogramResult(
                     difficulty = difficulty,

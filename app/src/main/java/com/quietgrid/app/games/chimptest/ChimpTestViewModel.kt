@@ -22,6 +22,9 @@ import kotlinx.serialization.json.Json
 private val json = Json { ignoreUnknownKeys = true }
 private const val WRONG_TAP_REVEAL_MS = 700L
 
+/** Lets the last move's feedback finish playing before the win/loss screen cuts in. */
+private const val FINISH_TRANSITION_DELAY_MS = 450L
+
 data class ChimpTestResult(
     val difficulty: Difficulty,
     val solved: Boolean,
@@ -127,6 +130,7 @@ class ChimpTestPlayViewModel(
             val previous = statsRepository.statsFor(GameId.CHIMPTEST).first().forDifficulty(difficulty)
             statsRepository.recordResult(GameId.CHIMPTEST, difficulty, solved = true, score = score)
             sessionRepository.clear()
+            delay(FINISH_TRANSITION_DELAY_MS)
             _result.emit(
                 ChimpTestResult(
                     difficulty = difficulty,
@@ -147,6 +151,7 @@ class ChimpTestPlayViewModel(
         viewModelScope.launch {
             statsRepository.recordResult(GameId.CHIMPTEST, difficulty, solved = false, score = 0)
             sessionRepository.clear()
+            delay(FINISH_TRANSITION_DELAY_MS)
             _result.emit(
                 ChimpTestResult(
                     difficulty = difficulty,

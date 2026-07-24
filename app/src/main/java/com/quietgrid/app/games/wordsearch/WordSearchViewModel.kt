@@ -22,6 +22,9 @@ import kotlinx.serialization.json.Json
 
 private val json = Json { ignoreUnknownKeys = true }
 
+/** Lets the last move's feedback finish playing before the win/loss screen cuts in. */
+private const val FINISH_TRANSITION_DELAY_MS = 450L
+
 data class WordSearchResult(
     val difficulty: Difficulty,
     val solved: Boolean,
@@ -30,6 +33,7 @@ data class WordSearchResult(
     val lossReason: String?,
     val isFirstSolve: Boolean = false,
     val isNewHighScore: Boolean = false,
+    val words: List<String> = emptyList(),
 )
 
 class WordSearchPlayViewModel(
@@ -185,6 +189,7 @@ class WordSearchPlayViewModel(
             val previous = statsRepository.statsFor(GameId.WORDSEARCH).first().forDifficulty(difficulty)
             statsRepository.recordResult(GameId.WORDSEARCH, difficulty, solved = true, score = score)
             sessionRepository.clear()
+            delay(FINISH_TRANSITION_DELAY_MS)
             _result.emit(
                 WordSearchResult(
                     difficulty = difficulty,
@@ -194,6 +199,7 @@ class WordSearchPlayViewModel(
                     lossReason = null,
                     isFirstSolve = previous.solved == 0,
                     isNewHighScore = previous.solved > 0 && score > previous.bestScore,
+                    words = current.puzzle.words.map { it.word },
                 ),
             )
         }
@@ -205,6 +211,7 @@ class WordSearchPlayViewModel(
         viewModelScope.launch {
             statsRepository.recordResult(GameId.WORDSEARCH, difficulty, solved = false, score = 0)
             sessionRepository.clear()
+            delay(FINISH_TRANSITION_DELAY_MS)
             _result.emit(
                 WordSearchResult(
                     difficulty = difficulty,

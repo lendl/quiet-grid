@@ -21,6 +21,9 @@ import kotlinx.serialization.json.Json
 
 private val json = Json { ignoreUnknownKeys = true }
 
+/** Lets the last move's feedback finish playing before the win/loss screen cuts in. */
+private const val FINISH_TRANSITION_DELAY_MS = 450L
+
 data class MinesweeperResult(
     val difficulty: Difficulty,
     val solved: Boolean,
@@ -131,6 +134,7 @@ class MinesweeperPlayViewModel(
             val previous = statsRepository.statsFor(GameId.MINESWEEPER).first().forDifficulty(difficulty)
             statsRepository.recordResult(GameId.MINESWEEPER, difficulty, solved = true, score = score)
             sessionRepository.clear()
+            delay(FINISH_TRANSITION_DELAY_MS)
             _result.emit(
                 MinesweeperResult(
                     difficulty = difficulty,
@@ -151,6 +155,7 @@ class MinesweeperPlayViewModel(
         viewModelScope.launch {
             statsRepository.recordResult(GameId.MINESWEEPER, difficulty, solved = false, score = 0)
             sessionRepository.clear()
+            delay(FINISH_TRANSITION_DELAY_MS)
             _result.emit(
                 MinesweeperResult(
                     difficulty = difficulty,

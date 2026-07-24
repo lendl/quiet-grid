@@ -23,6 +23,9 @@ import kotlinx.serialization.json.Json
 private val json = Json { ignoreUnknownKeys = true }
 private const val VALIDATION_DELAY_MS = 800L
 
+/** Lets the last move's feedback finish playing before the win/loss screen cuts in. */
+private const val FINISH_TRANSITION_DELAY_MS = 450L
+
 data class SudokuResult(
     val difficulty: Difficulty,
     val solved: Boolean,
@@ -232,6 +235,7 @@ class SudokuPlayViewModel(
             val previous = statsRepository.statsFor(GameId.SUDOKU).first().forDifficulty(difficulty)
             statsRepository.recordResult(GameId.SUDOKU, difficulty, solved = true, score = score)
             sessionRepository.clear()
+            delay(FINISH_TRANSITION_DELAY_MS)
             _result.emit(
                 SudokuResult(
                     difficulty = difficulty,
@@ -253,6 +257,7 @@ class SudokuPlayViewModel(
         viewModelScope.launch {
             statsRepository.recordResult(GameId.SUDOKU, difficulty, solved = false, score = 0)
             sessionRepository.clear()
+            delay(FINISH_TRANSITION_DELAY_MS)
             _result.emit(
                 SudokuResult(
                     difficulty = difficulty,

@@ -1,34 +1,43 @@
 package com.quietgrid.app.ui.screens
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.formatElapsed
 import com.quietgrid.app.games.chimptest.chimpDifficultyLabelRes
-import com.quietgrid.app.games.nonogram.nonogramDifficultyLabelRes
 import com.quietgrid.app.games.minesweeper.minesweeperDifficultyLabelRes
+import com.quietgrid.app.games.nonogram.nonogramDifficultyLabelRes
 import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
 import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
@@ -39,6 +48,8 @@ fun LossScreen(
     difficulty: Difficulty,
     elapsedSeconds: Int,
     reason: String,
+    onRetry: () -> Unit,
+    onOtherDifficulty: () -> Unit,
     onTryAnotherGame: () -> Unit,
 ) {
     val eyebrowRes: Int
@@ -94,43 +105,101 @@ fun LossScreen(
         GameId.WORDSEARCH -> wordSearchDifficultyLabelRes(difficulty)
         else -> chimpDifficultyLabelRes(difficulty)
     }
+    val icon = if (reason == "abandoned") "⏸" else "💥"
+    val errorColor = MaterialTheme.colorScheme.error
 
-    val visibleState = remember { MutableTransitionState(false) }
-    LaunchedEffect(Unit) { visibleState.targetState = true }
+    val pageOpacity = remember { Animatable(0f) }
+    val contentOffsetY = remember { Animatable(24f) }
+    LaunchedEffect(Unit) {
+        pageOpacity.animateTo(1f, animationSpec = tween(220))
+    }
+    LaunchedEffect(Unit) {
+        contentOffsetY.animateTo(0f, animationSpec = tween(320, easing = FastOutSlowInEasing))
+    }
 
-    Box(Modifier.fillMaxSize()) {
-        AnimatedVisibility(
-            visibleState = visibleState,
-            enter = fadeIn() + slideInVertically(initialOffsetY = { it / 8 }),
+    Column(Modifier.fillMaxSize().padding(16.dp)) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .graphicsLayer { alpha = pageOpacity.value },
+            horizontalArrangement = Arrangement.End,
         ) {
-            Column(
+            Row(
                 Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
+                    .border(1.dp, errorColor, CircleShape)
+                    .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.7f), CircleShape)
+                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Text(stringResource(eyebrowRes), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.error)
-                Text(stringResource(titleRes), style = MaterialTheme.typography.headlineSmall, modifier = Modifier.padding(top = 4.dp, bottom = 8.dp))
-                Text(stringResource(bodyRes), style = MaterialTheme.typography.bodyMedium)
+                Box(Modifier.size(10.dp).background(errorColor, CircleShape))
+                Text(stringResource(eyebrowRes), style = MaterialTheme.typography.labelMedium, color = errorColor)
+            }
+        }
 
-                Card(Modifier.fillMaxWidth().padding(top = 24.dp)) {
-                    Column(Modifier.padding(16.dp)) {
-                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text(stringResource(R.string.loss_difficulty))
-                            Text(stringResource(difficultyLabelRes))
-                        }
-                        Row(Modifier.fillMaxWidth().padding(top = 4.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text(stringResource(R.string.loss_elapsed_time))
-                            Text(formatElapsed(elapsedSeconds))
-                        }
-                    }
+        Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+            Column(
+                Modifier.graphicsLayer {
+                    alpha = pageOpacity.value
+                    translationY = contentOffsetY.value
+                },
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Box(
+                    Modifier
+                        .size(96.dp)
+                        .background(errorColor.copy(alpha = 0.12f), CircleShape)
+                        .border(1.dp, errorColor.copy(alpha = 0.3f), CircleShape),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(icon, fontSize = 40.sp)
                 }
 
-                Button(onClick = onTryAnotherGame, modifier = Modifier.fillMaxWidth().padding(top = 24.dp)) {
-                    Text(stringResource(R.string.loss_try_another_game))
+                Text(stringResource(titleRes), style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center, modifier = Modifier.padding(top = 12.dp))
+                Text(
+                    stringResource(bodyRes),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(top = 6.dp),
+                )
+
+                Row(
+                    Modifier.padding(top = 20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(18.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    MetaItem(stringResource(R.string.loss_difficulty), stringResource(difficultyLabelRes))
+                    Box(Modifier.width(1.dp).height(28.dp).background(MaterialTheme.colorScheme.outlineVariant))
+                    MetaItem(stringResource(R.string.loss_elapsed_time), formatElapsed(elapsedSeconds))
+                }
+
+                Button(onClick = onRetry, modifier = Modifier.fillMaxWidth().padding(top = 24.dp)) {
+                    Text(stringResource(R.string.loss_try_again))
+                }
+
+                Row(
+                    Modifier.fillMaxWidth().padding(top = 8.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    TextButton(onClick = onOtherDifficulty) {
+                        Text(stringResource(R.string.loss_other_difficulty), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    Box(Modifier.width(1.dp).height(16.dp).background(MaterialTheme.colorScheme.outlineVariant))
+                    TextButton(onClick = onTryAnotherGame) {
+                        Text(stringResource(R.string.loss_try_another_game), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun MetaItem(label: String, value: String) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(value, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 2.dp))
     }
 }

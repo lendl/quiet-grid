@@ -94,12 +94,16 @@
     <string name="completion_elapsed_time">Verstrichene Zeit</string>
     <string name="completion_accuracy">Genauigkeit</string>
     <string name="completion_try_another_game">Anderes Spiel versuchen</string>
-    <string name="completion_view_stats">Dein Fortschritt</string>
+    <string name="completion_other_difficulty">Andere Schwierigkeit</string>
     <string name="completion_play_again">Nochmals spielen</string>
     <string name="completion_streak_badge">%1$d Rätsel in Folge</string>
+    <string name="completion_flawless_badge">Fehlerfrei</string>
+    <string name="completion_words_found">Gefundene Wörter</string>
 
     <string name="loss_difficulty">Schwierigkeitsgrad</string>
     <string name="loss_elapsed_time">Verstrichene Zeit</string>
+    <string name="loss_try_again">Nochmals versuchen</string>
+    <string name="loss_other_difficulty">Andere Schwierigkeit</string>
     <string name="loss_try_another_game">Anderes Spiel versuchen</string>
 
     <string name="common_all">Alle</string>

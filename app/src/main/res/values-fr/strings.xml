@@ -94,12 +94,16 @@
     <string name="completion_elapsed_time">Temps écoulé</string>
     <string name="completion_accuracy">Précision</string>
     <string name="completion_try_another_game">Essayer un autre jeu</string>
-    <string name="completion_view_stats">Votre progression</string>
+    <string name="completion_other_difficulty">Autre difficulté</string>
     <string name="completion_play_again">Rejouer</string>
     <string name="completion_streak_badge">Série de %1$d puzzles</string>
+    <string name="completion_flawless_badge">Sans faute</string>
+    <string name="completion_words_found">Mots trouvés</string>
 
     <string name="loss_difficulty">Difficulté</string>
     <string name="loss_elapsed_time">Temps écoulé</string>
+    <string name="loss_try_again">Réessayer</string>
+    <string name="loss_other_difficulty">Autre difficulté</string>
     <string name="loss_try_another_game">Essayer un autre jeu</string>
 
     <string name="common_all">Tous</string>

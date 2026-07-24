@@ -1,5 +1,8 @@
 package com.quietgrid.app.nav
 
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -32,6 +35,8 @@ import com.quietgrid.app.ui.components.AppTab
 import com.quietgrid.app.ui.components.AppTopBar
 import com.quietgrid.app.ui.components.BottomNavBar
 import com.quietgrid.app.ui.components.GlobalMenu
+import com.quietgrid.app.ui.screens.CompletionExtras
+import com.quietgrid.app.ui.screens.CompletionHighlight
 import com.quietgrid.app.ui.screens.CompletionScreen
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -186,6 +191,7 @@ fun AppNavHost() {
                         onBack = { navController.popBackStack() },
                         onFinished = { result ->
                             if (result.solved) {
+                                CompletionExtras.set(CompletionHighlight.Picture(result.solution))
                                 goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
                             } else {
                                 goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
@@ -222,6 +228,7 @@ fun AppNavHost() {
                         onBack = { navController.popBackStack() },
                         onFinished = { result ->
                             if (result.solved) {
+                                CompletionExtras.set(CompletionHighlight.WordList(result.words))
                                 goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
                             } else {
                                 goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
@@ -254,28 +261,31 @@ fun AppNavHost() {
                     navArgument("isFirstSolve") { type = NavType.BoolType },
                     navArgument("isNewHighScore") { type = NavType.BoolType },
                 ),
+                enterTransition = { fadeIn(animationSpec = tween(180)) },
+                exitTransition = { fadeOut(animationSpec = tween(150)) },
             ) { entry ->
+                val completionGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
+                val completionDifficulty = Difficulty.fromKey(entry.arguments?.getString("difficulty") ?: "easy")
                 CompletionScreen(
-                    gameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") },
-                    difficulty = Difficulty.fromKey(entry.arguments?.getString("difficulty") ?: "easy"),
+                    gameId = completionGameId,
+                    difficulty = completionDifficulty,
                     score = entry.arguments?.getInt("score") ?: 0,
                     accuracyPct = entry.arguments?.getInt("accuracyPct") ?: 100,
                     elapsedSeconds = entry.arguments?.getInt("elapsedSeconds") ?: 0,
                     isFirstSolve = entry.arguments?.getBoolean("isFirstSolve") ?: false,
                     isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
                     onPlayAgain = {
-                        val playGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
-                        val playDifficulty = Difficulty.fromKey(entry.arguments?.getString("difficulty") ?: "easy")
-                        navController.navigate(Routes.play(playGameId, playDifficulty, resume = false)) {
+                        navController.navigate(Routes.play(completionGameId, completionDifficulty, resume = false)) {
+                            popUpTo(Routes.TABS) { inclusive = false }
+                        }
+                    },
+                    onOtherDifficulty = {
+                        navController.navigate(Routes.picker(completionGameId)) {
                             popUpTo(Routes.TABS) { inclusive = false }
                         }
                     },
                     onTryAnotherGame = {
                         selectedTab = AppTab.GAMES
-                        navController.popBackStack(Routes.TABS, inclusive = false)
-                    },
-                    onViewStats = {
-                        selectedTab = AppTab.STATS
                         navController.popBackStack(Routes.TABS, inclusive = false)
                     },
                 )
@@ -289,12 +299,26 @@ fun AppNavHost() {
                     navArgument("elapsedSeconds") { type = NavType.IntType },
                     navArgument("reason") { type = NavType.StringType },
                 ),
+                enterTransition = { fadeIn(animationSpec = tween(180)) },
+                exitTransition = { fadeOut(animationSpec = tween(150)) },
             ) { entry ->
+                val lossGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
+                val lossDifficulty = Difficulty.fromKey(entry.arguments?.getString("difficulty") ?: "easy")
                 LossScreen(
-                    gameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") },
-                    difficulty = Difficulty.fromKey(entry.arguments?.getString("difficulty") ?: "easy"),
+                    gameId = lossGameId,
+                    difficulty = lossDifficulty,
                     elapsedSeconds = entry.arguments?.getInt("elapsedSeconds") ?: 0,
                     reason = entry.arguments?.getString("reason") ?: "abandoned",
+                    onRetry = {
+                        navController.navigate(Routes.play(lossGameId, lossDifficulty, resume = false)) {
+                            popUpTo(Routes.TABS) { inclusive = false }
+                        }
+                    },
+                    onOtherDifficulty = {
+                        navController.navigate(Routes.picker(lossGameId)) {
+                            popUpTo(Routes.TABS) { inclusive = false }
+                        }
+                    },
                     onTryAnotherGame = {
                         selectedTab = AppTab.GAMES
                         navController.popBackStack(Routes.TABS, inclusive = false)

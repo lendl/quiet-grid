@@ -107,13 +107,17 @@
     <string name="completion_elapsed_time">Elapsed time</string>
     <string name="completion_accuracy">Accuracy</string>
     <string name="completion_try_another_game">Try Another Game</string>
-    <string name="completion_view_stats">Your Progress</string>
+    <string name="completion_other_difficulty">Other Difficulty</string>
     <string name="completion_play_again">Play Again</string>
     <string name="completion_streak_badge">%1$d puzzle streak</string>
+    <string name="completion_flawless_badge">Flawless</string>
+    <string name="completion_words_found">Words found</string>
 
     <!-- loss -->
     <string name="loss_difficulty">Difficulty</string>
     <string name="loss_elapsed_time">Elapsed time</string>
+    <string name="loss_try_again">Try Again</string>
+    <string name="loss_other_difficulty">Other Difficulty</string>
     <string name="loss_try_another_game">Try Another Game</string>
 
     <!-- stats -->
