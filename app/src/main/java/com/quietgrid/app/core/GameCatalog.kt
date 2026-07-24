@@ -14,8 +14,8 @@ enum class GameId(val key: String) {
 
 data class GameMeta(
     val id: GameId,
-    @StringRes val titleRes: Int,
-    @StringRes val taglineRes: Int,
+    @param:StringRes val titleRes: Int,
+    @param:StringRes val taglineRes: Int,
     val beta: Boolean = false,
 )
 

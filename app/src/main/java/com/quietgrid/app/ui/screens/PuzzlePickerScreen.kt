@@ -134,13 +134,11 @@ private fun GamePlayPickerTab(
                     )
                     Column(Modifier.padding(start = 12.dp)) {
                         Text(stringResource(labelRes), style = MaterialTheme.typography.titleSmall)
-                        if (descriptionRes != null) {
-                            Text(
-                                stringResource(descriptionRes),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
+                        Text(
+                            stringResource(descriptionRes),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
                     }
                 }
             }
