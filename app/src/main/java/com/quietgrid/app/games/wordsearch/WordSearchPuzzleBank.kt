@@ -2,6 +2,7 @@ package com.quietgrid.app.games.wordsearch
 
 import android.content.Context
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.engine.wordsearch.WordSearchPuzzleEntry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString

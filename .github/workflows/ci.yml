@@ -32,4 +32,4 @@ jobs:
         run: ./gradlew compileDebugKotlin
 
       - name: Unit tests
-        run: ./gradlew testDebugUnitTest
+        run: ./gradlew testDebugUnitTest :engine:test :cli:test

@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import com.quietgrid.app.ui.components.FeedbackText
+import com.quietgrid.engine.sudoku.SudokuGrid
 
 /**
  * Draws the classic thick 3x3 box-separator lines and outer frame as a single overlay spanning

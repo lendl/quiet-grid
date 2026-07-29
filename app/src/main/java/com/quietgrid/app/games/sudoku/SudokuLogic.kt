@@ -1,6 +1,8 @@
 package com.quietgrid.app.games.sudoku
 
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.engine.sudoku.SudokuGrid
+import com.quietgrid.engine.sudoku.SudokuPuzzleEntry
 import kotlin.math.max
 import kotlin.math.roundToInt
 

@@ -1,19 +1,9 @@
 package com.quietgrid.app.games.takuzu
 
+import com.quietgrid.engine.takuzu.TakuzuCellValue
+import com.quietgrid.engine.takuzu.TakuzuGrid
+import com.quietgrid.engine.takuzu.TakuzuPuzzleEntry
 import kotlinx.serialization.Serializable
-
-/** 0, 1, or null (empty). */
-typealias TakuzuCellValue = Int?
-typealias TakuzuGrid = List<List<TakuzuCellValue>>
-
-@Serializable
-data class TakuzuPuzzleEntry(
-    val id: String,
-    val size: Int,
-    val difficulty: String,
-    val solution: String,
-    val mask: String,
-)
 
 data class TakuzuSession(
     val puzzle: TakuzuPuzzleEntry,

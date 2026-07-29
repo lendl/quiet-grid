@@ -1,25 +1,15 @@
 package com.quietgrid.app.games.nonogram
 
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.engine.nonogram.NonogramCellValue
+import com.quietgrid.engine.nonogram.NonogramGrid
+import com.quietgrid.engine.nonogram.NonogramPuzzleEntry
+import com.quietgrid.engine.nonogram.buildNonogramClues
+import com.quietgrid.engine.nonogram.isNonogramLineComplete
 import kotlin.math.max
 
 private const val MAX_SCORE = 10_000
 private const val MIN_SCORE = 1_000
-
-fun buildNonogramClues(line: List<Boolean>): List<Int> {
-    val clues = mutableListOf<Int>()
-    var run = 0
-    for (cell in line) {
-        if (cell) {
-            run += 1
-        } else if (run > 0) {
-            clues.add(run)
-            run = 0
-        }
-    }
-    if (run > 0) clues.add(run)
-    return if (clues.isNotEmpty()) clues else listOf(0)
-}
 
 private fun buildClueSet(solution: List<List<Boolean>>): Pair<List<List<Int>>, List<List<Int>>> {
     val rowClues = solution.map { buildNonogramClues(it) }
@@ -45,22 +35,6 @@ fun createNonogramSession(entry: NonogramPuzzleEntry): NonogramSession = Nonogra
     board = List(entry.rows) { List(entry.cols) { null } },
     solution = entry.solution,
 )
-
-/** True if the filled/empty run-lengths in [line] exactly match [clues] (position-agnostic shape check). */
-fun isNonogramLineComplete(line: List<NonogramCellValue>, clues: List<Int>): Boolean {
-    val segments = mutableListOf<Int>()
-    var run = 0
-    for (cell in line) {
-        if (cell == 1) {
-            run += 1
-        } else if (run > 0) {
-            segments.add(run)
-            run = 0
-        }
-    }
-    if (run > 0) segments.add(run)
-    return segments.size == clues.size && segments.indices.all { segments[it] == clues[it] }
-}
 
 private fun isLineCorrectlyComplete(cells: List<NonogramCellValue>, clues: List<Int>, solutionLine: List<Boolean>): Boolean =
     isNonogramLineComplete(cells, clues) && cells.indices.all { cells[it] != 1 || solutionLine[it] }

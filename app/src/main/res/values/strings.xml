@@ -424,6 +424,12 @@
     <string name="sudoku_hint_technique_hidden_pair">Hidden pair</string>
     <string name="sudoku_hint_technique_pointing_pair_triple">Pointing pair/triple</string>
     <string name="sudoku_hint_technique_box_line_reduction">Box-line reduction</string>
+    <string name="sudoku_hint_technique_x_wing">X-wing</string>
+    <string name="sudoku_hint_technique_swordfish">Swordfish</string>
+    <string name="sudoku_hint_technique_xy_wing">XY-wing</string>
+    <string name="sudoku_hint_technique_xyz_wing">XYZ-wing</string>
+    <string name="sudoku_hint_technique_coloring">Simple coloring</string>
+    <string name="sudoku_hint_technique_chains">Forcing chain</string>
     <string name="sudoku_how_to_play_goal">Place each digit 1–9 exactly once in every row, column, and 3×3 box.</string>
     <string name="sudoku_how_to_play_controls">Tap a cell to select it, then tap a digit button to place it. Toggle Notes mode to pencil in candidates instead.</string>
     <string name="sudoku_how_to_play_wrong_move">A duplicate digit in the same row, column, or box is highlighted as a conflict.</string>

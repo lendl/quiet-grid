@@ -327,6 +327,12 @@
     <string name="sudoku_hint_elimination_title">%1$s: eliminar %2$s</string>
     <string name="sudoku_hint_locked_candidates_body">Los dígitos %1$s están bloqueados dentro de %2$s, así que quítalos de las demás celdas resaltadas en %3$s.</string>
     <string name="sudoku_hint_elimination_body">%1$s elimina %2$s de %3$s. Las celdas resaltadas ya no dejan un lugar válido para esos candidatos ahí.</string>
+    <string name="sudoku_hint_technique_x_wing">X-Wing</string>
+    <string name="sudoku_hint_technique_swordfish">Swordfish</string>
+    <string name="sudoku_hint_technique_xy_wing">XY-Wing</string>
+    <string name="sudoku_hint_technique_xyz_wing">XYZ-Wing</string>
+    <string name="sudoku_hint_technique_coloring">Coloreado simple</string>
+    <string name="sudoku_hint_technique_chains">Cadena forzada</string>
     <string name="sudoku_how_to_play_goal">Coloca cada dígito del 1 al 9 exactamente una vez en cada fila, columna y caja de 3×3.</string>
     <string name="sudoku_how_to_play_controls">Toca una celda para seleccionarla, luego toca un botón de dígito para colocarlo. Activa el modo notas para anotar candidatos en su lugar.</string>
     <string name="sudoku_how_to_play_wrong_move">Un dígito repetido en la misma fila, columna o caja se resalta como conflicto.</string>

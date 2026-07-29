@@ -10,6 +10,12 @@ Quiet Grid is a native Android app (Kotlin, Jetpack Compose). The repo root is t
 - Lint: `./gradlew lint`
 - Unit tests: `./gradlew testDebugUnitTest`
 
+## Shared puzzle engine
+
+- `engine/` — pure Kotlin/JVM module (no Android deps) holding canonical puzzle rules, solving techniques, and difficulty scoring for sudoku, takuzu, nonogram, and wordsearch. `app/` depends on it for live hints/validation; `cli/` depends on it for offline generation. See `docs/superpowers/specs/2026-07-24-shared-puzzle-engine-design.md`.
+- `cli/` — offline puzzle generator (`./gradlew :cli:run --args="generate --game <sudoku|takuzu|nonogram|wordsearch> --difficulty <easy|medium|hard|expert> --count <n> --out app/src/main/assets"`). Writes/merges generated puzzles directly into the committed `*_puzzles.json` asset files `*PuzzleBank.kt` already loads — never ships in the APK, never runs on-device.
+- Fast unit tests for rules/techniques/generators: `./gradlew :engine:test :cli:test` (plain JVM, no emulator needed).
+
 ## After making changes
 
 Always run `./gradlew compileDebugKotlin` after editing Kotlin files and fix any errors before finishing. Follow with `./gradlew assembleDebug` to confirm the full build (resources, manifest, packaging) still succeeds.

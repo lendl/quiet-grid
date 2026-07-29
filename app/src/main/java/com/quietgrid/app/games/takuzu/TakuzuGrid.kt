@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import com.quietgrid.app.ui.components.FeedbackText
+import com.quietgrid.engine.takuzu.TakuzuGrid
 
 private val GAP = 2.dp
 

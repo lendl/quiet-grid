@@ -1,5 +1,10 @@
 package com.quietgrid.app.games.takuzu
 
+import com.quietgrid.engine.takuzu.TakuzuCellValue
+import com.quietgrid.engine.takuzu.TakuzuGrid
+import com.quietgrid.engine.takuzu.findAvoidTrioMoveInLine
+import com.quietgrid.engine.takuzu.findPairMoveInLine
+
 /**
  * Ports the RN app's Takuzu next-move hint techniques (src/games/takuzu/gameplay/analysis).
  * Recovery techniques run first (something on the board already breaks a rule); progress
@@ -126,23 +131,6 @@ private fun highlightRowsFor(kind: TakuzuLineKind, lineIndex: Int): List<Int> = 
 private fun highlightColsFor(kind: TakuzuLineKind, lineIndex: Int): List<Int> = if (kind == TakuzuLineKind.COLUMN) listOf(lineIndex) else emptyList()
 private fun highlightRowsFor2(kind: TakuzuLineKind, a: Int, b: Int): List<Int> = if (kind == TakuzuLineKind.ROW) listOf(a, b) else emptyList()
 private fun highlightColsFor2(kind: TakuzuLineKind, a: Int, b: Int): List<Int> = if (kind == TakuzuLineKind.COLUMN) listOf(a, b) else emptyList()
-
-private fun findPairMoveInLine(line: List<TakuzuCellValue>): Pair<Int, Int>? {
-    for (index in 0..line.size - 3) {
-        val first = line[index]; val second = line[index + 1]; val third = line[index + 2]
-        if (first != null && first == second && third == null) return (index + 2) to otherValue(first)
-        if (first == null && second != null && second == third) return index to otherValue(second)
-    }
-    return null
-}
-
-private fun findAvoidTrioMoveInLine(line: List<TakuzuCellValue>): Pair<Int, Int>? {
-    for (index in 0..line.size - 3) {
-        val first = line[index]; val second = line[index + 1]; val third = line[index + 2]
-        if (first != null && first == third && second == null) return (index + 1) to otherValue(first)
-    }
-    return null
-}
 
 private fun findTripleMismatch(board: TakuzuGrid): TakuzuNextMoveHint.AvoidTriosRepair? {
     val size = board.size

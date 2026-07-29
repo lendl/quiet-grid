@@ -1,5 +1,7 @@
 package com.quietgrid.app.games.wordsearch
 
+import com.quietgrid.engine.wordsearch.WSCellRef
+import com.quietgrid.engine.wordsearch.WordSearchPuzzleEntry
 import kotlin.math.max
 import kotlin.math.sign
 

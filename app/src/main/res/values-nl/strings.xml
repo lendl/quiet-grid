@@ -327,6 +327,12 @@
     <string name="sudoku_hint_elimination_title">%1$s: schrap %2$s</string>
     <string name="sudoku_hint_locked_candidates_body">De cijfers %1$s zitten opgesloten in %2$s, dus verwijder ze uit de andere gemarkeerde cellen in %3$s.</string>
     <string name="sudoku_hint_elimination_body">%1$s verwijdert %2$s uit %3$s. De gemarkeerde cellen laten die kandidaten daar geen geldige plek meer.</string>
+    <string name="sudoku_hint_technique_x_wing">X-Wing</string>
+    <string name="sudoku_hint_technique_swordfish">Swordfish</string>
+    <string name="sudoku_hint_technique_xy_wing">XY-Wing</string>
+    <string name="sudoku_hint_technique_xyz_wing">XYZ-Wing</string>
+    <string name="sudoku_hint_technique_coloring">Eenvoudig kleuren</string>
+    <string name="sudoku_hint_technique_chains">Gedwongen keten</string>
     <string name="sudoku_how_to_play_goal">Plaats elk cijfer 1–9 precies één keer in elke rij, kolom en 3×3-box.</string>
     <string name="sudoku_how_to_play_controls">Tik op een cel om hem te selecteren, tik dan op een cijferknop om te plaatsen. Schakel naar notitiemodus om kandidaten in te vullen.</string>
     <string name="sudoku_how_to_play_wrong_move">Een dubbel cijfer in dezelfde rij, kolom of box wordt gemarkeerd als conflict.</string>

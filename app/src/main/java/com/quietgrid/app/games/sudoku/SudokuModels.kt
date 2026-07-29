@@ -1,19 +1,11 @@
 package com.quietgrid.app.games.sudoku
 
+import com.quietgrid.engine.sudoku.SudokuCellValue
+import com.quietgrid.engine.sudoku.SudokuGrid
+import com.quietgrid.engine.sudoku.SudokuPuzzleEntry
 import kotlinx.serialization.Serializable
 
-typealias SudokuCellValue = Int?
-typealias SudokuGrid = List<List<SudokuCellValue>>
-
 enum class SudokuInputMode { DIGIT, NOTES }
-
-@Serializable
-data class SudokuPuzzleEntry(
-    val id: String,
-    val difficulty: String,
-    val givens: List<List<Int?>>,
-    val solution: List<List<Int>>,
-)
 
 data class SudokuSession(
     val puzzle: SudokuPuzzleEntry,

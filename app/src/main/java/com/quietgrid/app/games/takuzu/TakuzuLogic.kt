@@ -1,6 +1,8 @@
 package com.quietgrid.app.games.takuzu
 
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.engine.takuzu.TakuzuGrid
+import com.quietgrid.engine.takuzu.TakuzuPuzzleEntry
 import kotlin.math.max
 import kotlin.math.roundToInt
 

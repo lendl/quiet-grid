@@ -1,19 +1,9 @@
 package com.quietgrid.app.games.nonogram
 
+import com.quietgrid.engine.nonogram.NonogramCellValue
+import com.quietgrid.engine.nonogram.NonogramGrid
+import com.quietgrid.engine.nonogram.NonogramPuzzleEntry
 import kotlinx.serialization.Serializable
-
-/** 0 = marked empty, 1 = filled, null = blank. */
-typealias NonogramCellValue = Int?
-typealias NonogramGrid = List<List<NonogramCellValue>>
-
-@Serializable
-data class NonogramPuzzleEntry(
-    val id: String,
-    val difficulty: String,
-    val rows: Int,
-    val cols: Int,
-    val solution: List<List<Boolean>>,
-)
 
 data class NonogramPuzzle(
     val id: String,

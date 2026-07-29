@@ -327,6 +327,12 @@
     <string name="sudoku_hint_elimination_title">%1$s: %2$s streichen</string>
     <string name="sudoku_hint_locked_candidates_body">Die Ziffern %1$s sind in %2$s eingeschlossen, also entferne sie aus den anderen markierten Zellen in %3$s.</string>
     <string name="sudoku_hint_elimination_body">%1$s entfernt %2$s aus %3$s. Die markierten Zellen lassen diesen Kandidaten dort kein gültiges Zuhause mehr.</string>
+    <string name="sudoku_hint_technique_x_wing">X-Wing</string>
+    <string name="sudoku_hint_technique_swordfish">Swordfish</string>
+    <string name="sudoku_hint_technique_xy_wing">XY-Wing</string>
+    <string name="sudoku_hint_technique_xyz_wing">XYZ-Wing</string>
+    <string name="sudoku_hint_technique_coloring">Einfache Färbung</string>
+    <string name="sudoku_hint_technique_chains">Erzwingende Kette</string>
     <string name="sudoku_how_to_play_goal">Platziere jede Ziffer 1–9 genau einmal in jeder Zeile, Spalte und 3×3-Box.</string>
     <string name="sudoku_how_to_play_controls">Tippe auf eine Zelle, um sie auszuwählen, dann auf eine Zifferntaste, um sie zu setzen. Schalte in den Notizmodus, um Kandidaten einzutragen.</string>
     <string name="sudoku_how_to_play_wrong_move">Eine doppelte Ziffer in der gleichen Zeile, Spalte oder Box wird als Konflikt hervorgehoben.</string>

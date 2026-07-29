@@ -1,5 +1,7 @@
 package com.quietgrid.app.games.sudoku
 
+import com.quietgrid.engine.sudoku.SudokuGrid
+
 typealias SudokuUnitKey = String
 
 enum class SudokuUnitState { INCOMPLETE, CORRECT, INCORRECT }

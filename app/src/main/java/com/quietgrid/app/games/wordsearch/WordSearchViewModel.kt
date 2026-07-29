@@ -11,6 +11,7 @@ import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.ActiveSessionEnvelope
 import com.quietgrid.app.data.SessionRepository
 import com.quietgrid.app.data.StatsRepository
+import com.quietgrid.engine.wordsearch.WSCellRef
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow

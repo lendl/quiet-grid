@@ -327,6 +327,12 @@
     <string name="sudoku_hint_elimination_title">%1$s : retirer %2$s</string>
     <string name="sudoku_hint_locked_candidates_body">Les chiffres %1$s sont verrouillés dans %2$s, retire-les donc des autres cases mises en évidence dans %3$s.</string>
     <string name="sudoku_hint_elimination_body">%1$s retire %2$s de %3$s. Les cases mises en évidence ne laissent plus de place valide à ces candidats ici.</string>
+    <string name="sudoku_hint_technique_x_wing">X-Wing</string>
+    <string name="sudoku_hint_technique_swordfish">Swordfish</string>
+    <string name="sudoku_hint_technique_xy_wing">XY-Wing</string>
+    <string name="sudoku_hint_technique_xyz_wing">XYZ-Wing</string>
+    <string name="sudoku_hint_technique_coloring">Coloriage simple</string>
+    <string name="sudoku_hint_technique_chains">Chaîne forcée</string>
     <string name="sudoku_how_to_play_goal">Place chaque chiffre de 1 à 9 exactement une fois dans chaque ligne, colonne et boîte 3×3.</string>
     <string name="sudoku_how_to_play_controls">Appuie sur une case pour la sélectionner, puis sur un chiffre pour le placer. Active le mode notes pour saisir des candidats à la place.</string>
     <string name="sudoku_how_to_play_wrong_move">Un chiffre en double dans la même ligne, colonne ou boîte est mis en évidence comme conflit.</string>

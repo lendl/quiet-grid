@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
+import com.quietgrid.engine.nonogram.NonogramGrid
+import com.quietgrid.engine.nonogram.isNonogramLineComplete
 import kotlin.math.floor
 
 @Composable

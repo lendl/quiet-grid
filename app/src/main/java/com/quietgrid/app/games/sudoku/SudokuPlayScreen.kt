@@ -45,6 +45,7 @@ import com.quietgrid.app.ui.components.BoardEntrance
 import com.quietgrid.app.ui.components.ElapsedTimerText
 import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.ZoomableBoardSurface
+import com.quietgrid.engine.sudoku.SudokuTechnique
 
 /**
  * Material3's OutlinedButton hardcodes an internal Row with a 58dp minWidth that no external
@@ -248,7 +249,7 @@ fun SudokuPlayScreen(
 }
 
 @Composable
-private fun houseLabel(house: SudokuHouseRef): String = stringResource(
+private fun houseLabel(house: SudokuHouseRefUi): String = stringResource(
     when (house.kind) {
         "row" -> R.string.sudoku_hint_row
         "column" -> R.string.sudoku_hint_column
@@ -267,6 +268,12 @@ private fun techniqueLabelRes(technique: SudokuTechnique): Int = when (technique
     SudokuTechnique.HIDDEN_PAIR -> R.string.sudoku_hint_technique_hidden_pair
     SudokuTechnique.POINTING_PAIR_TRIPLE -> R.string.sudoku_hint_technique_pointing_pair_triple
     SudokuTechnique.BOX_LINE_REDUCTION -> R.string.sudoku_hint_technique_box_line_reduction
+    SudokuTechnique.X_WING -> R.string.sudoku_hint_technique_x_wing
+    SudokuTechnique.SWORDFISH -> R.string.sudoku_hint_technique_swordfish
+    SudokuTechnique.XY_WING -> R.string.sudoku_hint_technique_xy_wing
+    SudokuTechnique.XYZ_WING -> R.string.sudoku_hint_technique_xyz_wing
+    SudokuTechnique.COLORING -> R.string.sudoku_hint_technique_coloring
+    SudokuTechnique.CHAINS -> R.string.sudoku_hint_technique_chains
 }
 
 @Composable
@@ -299,7 +306,7 @@ private fun resolveSudokuHintText(hint: SudokuNextMoveHint): Pair<String, String
             stringResource(
                 R.string.sudoku_hint_locked_candidates_body,
                 digitsLabel,
-                houseLabel(hint.sourceHouse),
+                hint.sourceHouse?.let { houseLabel(it) } ?: "",
                 hint.targetHouse?.let { houseLabel(it) } ?: "",
             )
         } else {
