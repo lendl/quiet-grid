@@ -17,23 +17,29 @@ data class ActiveSessionEnvelope(
     val payload: String,
 )
 
+interface SessionStore {
+    val activeSession: Flow<ActiveSessionEnvelope?>
+    suspend fun save(envelope: ActiveSessionEnvelope)
+    suspend fun clear()
+}
+
 private val json = Json { ignoreUnknownKeys = true }
 private val ACTIVE_SESSION_KEY = stringPreferencesKey("active_session")
 
-class SessionRepository(private val context: Context) {
-    val activeSession: Flow<ActiveSessionEnvelope?> = context.appDataStore.data.map { prefs ->
+class SessionRepository(private val context: Context) : SessionStore {
+    override val activeSession: Flow<ActiveSessionEnvelope?> = context.appDataStore.data.map { prefs ->
         prefs[ACTIVE_SESSION_KEY]?.let { raw ->
             runCatching { json.decodeFromString<ActiveSessionEnvelope>(raw) }.getOrNull()
         }
     }
 
-    suspend fun save(envelope: ActiveSessionEnvelope) {
+    override suspend fun save(envelope: ActiveSessionEnvelope) {
         context.appDataStore.edit { prefs ->
             prefs[ACTIVE_SESSION_KEY] = json.encodeToString(envelope)
         }
     }
 
-    suspend fun clear() {
+    override suspend fun clear() {
         context.appDataStore.edit { prefs -> prefs.remove(ACTIVE_SESSION_KEY) }
     }
 }

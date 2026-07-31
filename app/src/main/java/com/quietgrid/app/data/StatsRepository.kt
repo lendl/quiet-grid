@@ -29,21 +29,26 @@ data class GameStats(
         byDifficulty[difficulty.key] ?: DifficultyStats()
 }
 
+interface StatsStore {
+    fun statsFor(gameId: GameId): Flow<GameStats>
+    suspend fun recordResult(gameId: GameId, difficulty: Difficulty, solved: Boolean, score: Int)
+}
+
 private val json = Json { ignoreUnknownKeys = true }
 
-class StatsRepository(private val context: Context) {
+class StatsRepository(private val context: Context) : StatsStore {
     private fun keyFor(gameId: GameId) = stringPreferencesKey("stats_${gameId.key}")
 
     fun statsForGames(gameIds: List<GameId>): Flow<Map<GameId, GameStats>> =
         combine(gameIds.map { id -> statsFor(id).map { id to it } }) { pairs -> pairs.toMap() }
 
-    fun statsFor(gameId: GameId): Flow<GameStats> = context.appDataStore.data.map { prefs ->
+    override fun statsFor(gameId: GameId): Flow<GameStats> = context.appDataStore.data.map { prefs ->
         prefs[keyFor(gameId)]?.let { raw ->
             runCatching { json.decodeFromString<GameStats>(raw) }.getOrNull()
         } ?: GameStats()
     }
 
-    suspend fun recordResult(gameId: GameId, difficulty: Difficulty, solved: Boolean, score: Int) {
+    override suspend fun recordResult(gameId: GameId, difficulty: Difficulty, solved: Boolean, score: Int) {
         context.appDataStore.edit { prefs ->
             val key = keyFor(gameId)
             val current = prefs[key]?.let { runCatching { json.decodeFromString<GameStats>(it) }.getOrNull() }

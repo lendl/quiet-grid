@@ -8,23 +8,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
-import com.quietgrid.app.data.ActiveSessionEnvelope
-import com.quietgrid.app.data.SessionRepository
-import com.quietgrid.app.data.StatsRepository
+import com.quietgrid.app.data.SessionStore
+import com.quietgrid.app.data.StatsStore
+import com.quietgrid.app.session.PuzzleAdapter
+import com.quietgrid.app.session.PuzzleOutcome
+import com.quietgrid.app.session.PuzzleSessionController
 import com.quietgrid.engine.wordsearch.WSCellRef
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 private val json = Json { ignoreUnknownKeys = true }
-
-/** Lets the last move's feedback finish playing before the win/loss screen cuts in. */
-private const val FINISH_TRANSITION_DELAY_MS = 450L
 
 data class WordSearchResult(
     val difficulty: Difficulty,
@@ -38,35 +32,10 @@ data class WordSearchResult(
     val words: List<String> = emptyList(),
 )
 
-class WordSearchPlayViewModel(
-    private val appContext: Context,
-    private val sessionRepository: SessionRepository,
-    private val statsRepository: StatsRepository,
-    private val requestedDifficulty: Difficulty,
-    private val resume: Boolean,
-) : ViewModel() {
+private class WordSearchPuzzleAdapter(private val appContext: Context) : PuzzleAdapter<WordSearchSession, WordSearchResult> {
+    override val gameId: GameId = GameId.WORDSEARCH
 
-    var session by mutableStateOf<WordSearchSession?>(null)
-        private set
-    var elapsedSeconds by mutableStateOf(0.0)
-        private set
-    var nextMoveHint by mutableStateOf<WSNextMoveHint?>(null)
-        private set
-
-    private var difficulty: Difficulty = requestedDifficulty
-    private var finalized = false
-
-    private val _result = MutableSharedFlow<WordSearchResult>(extraBufferCapacity = 1)
-    val result: SharedFlow<WordSearchResult> = _result
-
-    init {
-        viewModelScope.launch {
-            session = if (resume) restoreOrCreate() else freshSession(requestedDifficulty)
-            runTicker()
-        }
-    }
-
-    private suspend fun freshSession(difficulty: Difficulty): WordSearchSession? {
+    override suspend fun freshSession(difficulty: Difficulty): WordSearchSession? {
         val entry = WordSearchPuzzleBank.randomPuzzle(appContext, difficulty) ?: return null
         return WordSearchSession(
             puzzle = entry,
@@ -79,42 +48,81 @@ class WordSearchPlayViewModel(
         )
     }
 
-    private suspend fun restoreOrCreate(): WordSearchSession? {
-        val envelope = sessionRepository.activeSession.first()
-        if (envelope != null && envelope.gameId == GameId.WORDSEARCH.key) {
-            val persisted = runCatching { json.decodeFromString<WordSearchPersistedSession>(envelope.payload) }.getOrNull()
-            if (persisted != null) {
-                elapsedSeconds = envelope.elapsedSeconds
-                difficulty = Difficulty.fromKey(persisted.puzzle.difficulty)
-                return WordSearchSession(
-                    puzzle = persisted.puzzle,
-                    foundWordIds = persisted.foundWordIds,
-                    tempSelection = null,
-                    hiddenWordMode = persisted.hiddenWordMode,
-                    hiddenWordProgress = persisted.hiddenWordProgress,
-                    hiddenWordSolved = persisted.hiddenWordSolved,
-                    accuracyDrops = persisted.accuracyDrops,
-                )
-            }
-        }
-        return freshSession(requestedDifficulty)
+    override fun restoreSession(payload: String, elapsedSeconds: Double): WordSearchSession? {
+        val persisted = runCatching { json.decodeFromString<WordSearchPersistedSession>(payload) }.getOrNull() ?: return null
+        return WordSearchSession(
+            puzzle = persisted.puzzle,
+            foundWordIds = persisted.foundWordIds,
+            tempSelection = null,
+            hiddenWordMode = persisted.hiddenWordMode,
+            hiddenWordProgress = persisted.hiddenWordProgress,
+            hiddenWordSolved = persisted.hiddenWordSolved,
+            accuracyDrops = persisted.accuracyDrops,
+        )
     }
 
-    private suspend fun runTicker() {
-        while (true) {
-            delay(1000)
-            if (finalized || session == null) continue
-            elapsedSeconds += 1.0
-            persistIfMeaningful()
-        }
+    override fun difficultyOf(session: WordSearchSession): Difficulty = Difficulty.fromKey(session.puzzle.difficulty)
+
+    override fun hasMeaningfulProgress(session: WordSearchSession): Boolean = wordSearchHasMeaningfulProgress(session)
+
+    override fun encode(session: WordSearchSession): String = json.encodeToString(
+        WordSearchPersistedSession(
+            puzzle = session.puzzle,
+            foundWordIds = session.foundWordIds,
+            hiddenWordMode = session.hiddenWordMode,
+            hiddenWordProgress = session.hiddenWordProgress,
+            hiddenWordSolved = session.hiddenWordSolved,
+            accuracyDrops = session.accuracyDrops,
+        ),
+    )
+
+    override fun scoreOnWin(session: WordSearchSession, difficulty: Difficulty, elapsedSeconds: Int): Int =
+        wordSearchScore(elapsedSeconds, session)
+
+    override fun buildResult(session: WordSearchSession?, outcome: PuzzleOutcome): WordSearchResult = WordSearchResult(
+        difficulty = outcome.difficulty,
+        solved = outcome.solved,
+        score = outcome.score,
+        accuracyPct = if (outcome.solved) wordSearchAccuracyPct(session?.accuracyDrops ?: 0) else 0,
+        elapsedSeconds = outcome.elapsedSeconds,
+        lossReason = outcome.lossReason,
+        isFirstSolve = outcome.isFirstSolve,
+        isNewHighScore = outcome.isNewHighScore,
+        words = session?.puzzle?.words?.map { it.word } ?: emptyList(),
+    )
+}
+
+class WordSearchPlayViewModel(
+    appContext: Context,
+    sessionRepository: SessionStore,
+    statsRepository: StatsStore,
+    requestedDifficulty: Difficulty,
+    resume: Boolean,
+) : ViewModel() {
+
+    private val controller = PuzzleSessionController(
+        scope = viewModelScope,
+        sessionStore = sessionRepository,
+        statsStore = statsRepository,
+        adapter = WordSearchPuzzleAdapter(appContext),
+    )
+
+    val session get() = controller.session
+    val elapsedSeconds get() = controller.elapsedSeconds
+    val result = controller.result
+
+    var nextMoveHint by mutableStateOf<WSNextMoveHint?>(null)
+        private set
+
+    init {
+        controller.start(requestedDifficulty, resume)
     }
 
     private fun onCommitSelection() {
         val current = session ?: return
-        if (finalized || current.hiddenWordMode) return
+        if (current.hiddenWordMode) return
         val updated = wsCommitSelection(current) ?: return
-        session = updated
-        persistIfMeaningful()
+        controller.updateSession(updated)
     }
 
     /**
@@ -127,7 +135,6 @@ class WordSearchPlayViewModel(
      */
     fun onCellTap(row: Int, col: Int) {
         val current = session ?: return
-        if (finalized) return
         if (current.hiddenWordMode) {
             onHiddenWordCellTap(row, col)
             return
@@ -136,41 +143,41 @@ class WordSearchPlayViewModel(
         val cell = WSCellRef(row, col)
         val existingSelection = current.tempSelection
         if (existingSelection != null && cell in existingSelection.path) {
-            session = wsClearSelection(current) ?: current
+            controller.updateSession(wsClearSelection(current) ?: current, persist = false)
             return
         }
         if (existingSelection == null) {
-            session = wsBeginSelection(current, cell) ?: return
+            val started = wsBeginSelection(current, cell) ?: return
+            controller.updateSession(started, persist = false)
             return
         }
         val updated = wsUpdateSelection(current, cell)
         if (updated != null) {
-            session = updated
+            controller.updateSession(updated, persist = false)
             onCommitSelection()
         } else {
-            session = wsBeginSelection(current, cell) ?: return
+            val started = wsBeginSelection(current, cell) ?: return
+            controller.updateSession(started, persist = false)
         }
     }
 
     fun onHiddenWordCellTap(row: Int, col: Int) {
         val current = session ?: return
-        if (finalized) return
         nextMoveHint = null
         val updated = wsInputHiddenWordCell(current, WSCellRef(row, col)) ?: return
-        session = updated
-        persistIfMeaningful()
-        if (updated.hiddenWordSolved) finishAsWin()
+        controller.updateSession(updated)
+        if (updated.hiddenWordSolved) controller.finishAsWin()
     }
 
     fun onToggleHiddenWordMode() {
         val current = session ?: return
-        if (finalized || current.hiddenWordSolved) return
+        if (current.hiddenWordSolved) return
         nextMoveHint = null
-        session = wsToggleHiddenWordMode(current) ?: return
+        controller.updateSession(wsToggleHiddenWordMode(current) ?: current, persist = false)
     }
 
     fun toggleNextMoveHint() {
-        if (finalized) return
+        if (controller.isFinalized) return
         if (nextMoveHint != null) {
             nextMoveHint = null
             return
@@ -179,79 +186,5 @@ class WordSearchPlayViewModel(
         nextMoveHint = wsNextMoveHint(current)
     }
 
-    fun endPuzzle() {
-        if (finalized) return
-        finishAsLoss("abandoned")
-    }
-
-    private fun finishAsWin() {
-        if (finalized) return
-        finalized = true
-        val current = session ?: return
-        val score = wordSearchScore(elapsedSeconds.toInt(), current)
-        viewModelScope.launch {
-            val previous = statsRepository.statsFor(GameId.WORDSEARCH).first().forDifficulty(difficulty)
-            statsRepository.recordResult(GameId.WORDSEARCH, difficulty, solved = true, score = score)
-            sessionRepository.clear()
-            delay(FINISH_TRANSITION_DELAY_MS)
-            _result.emit(
-                WordSearchResult(
-                    difficulty = difficulty,
-                    solved = true,
-                    score = score,
-                    accuracyPct = wordSearchAccuracyPct(current.accuracyDrops),
-                    elapsedSeconds = elapsedSeconds.toInt(),
-                    lossReason = null,
-                    isFirstSolve = previous.solved == 0,
-                    isNewHighScore = previous.solved > 0 && score > previous.bestScore,
-                    words = current.puzzle.words.map { it.word },
-                ),
-            )
-        }
-    }
-
-    private fun finishAsLoss(reason: String) {
-        if (finalized) return
-        finalized = true
-        viewModelScope.launch {
-            statsRepository.recordResult(GameId.WORDSEARCH, difficulty, solved = false, score = 0)
-            sessionRepository.clear()
-            delay(FINISH_TRANSITION_DELAY_MS)
-            _result.emit(
-                WordSearchResult(
-                    difficulty = difficulty,
-                    solved = false,
-                    score = 0,
-                    accuracyPct = 0,
-                    elapsedSeconds = elapsedSeconds.toInt(),
-                    lossReason = reason,
-                ),
-            )
-        }
-    }
-
-    private fun persistIfMeaningful() {
-        val current = session ?: return
-        if (finalized) return
-        if (!wordSearchHasMeaningfulProgress(current)) return
-        val payload = json.encodeToString(
-            WordSearchPersistedSession(
-                puzzle = current.puzzle,
-                foundWordIds = current.foundWordIds,
-                hiddenWordMode = current.hiddenWordMode,
-                hiddenWordProgress = current.hiddenWordProgress,
-                hiddenWordSolved = current.hiddenWordSolved,
-                accuracyDrops = current.accuracyDrops,
-            ),
-        )
-        viewModelScope.launch {
-            sessionRepository.save(
-                ActiveSessionEnvelope(
-                    gameId = GameId.WORDSEARCH.key,
-                    elapsedSeconds = elapsedSeconds,
-                    payload = payload,
-                ),
-            )
-        }
-    }
+    fun endPuzzle() = controller.endPuzzle()
 }

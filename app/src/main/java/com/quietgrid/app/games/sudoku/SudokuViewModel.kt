@@ -8,14 +8,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
-import com.quietgrid.app.data.ActiveSessionEnvelope
-import com.quietgrid.app.data.SessionRepository
-import com.quietgrid.app.data.StatsRepository
+import com.quietgrid.app.data.SessionStore
+import com.quietgrid.app.data.StatsStore
+import com.quietgrid.app.session.PuzzleAdapter
+import com.quietgrid.app.session.PuzzleOutcome
+import com.quietgrid.app.session.PuzzleSessionController
 import com.quietgrid.engine.sudoku.SudokuGrid
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -23,9 +22,6 @@ import kotlinx.serialization.json.Json
 
 private val json = Json { ignoreUnknownKeys = true }
 private const val VALIDATION_DELAY_MS = 800L
-
-/** Lets the last move's feedback finish playing before the win/loss screen cuts in. */
-private const val FINISH_TRANSITION_DELAY_MS = 450L
 
 data class SudokuResult(
     val difficulty: Difficulty,
@@ -38,18 +34,77 @@ data class SudokuResult(
     val isNewHighScore: Boolean = false,
 )
 
+private class SudokuPuzzleAdapter(private val appContext: Context) : PuzzleAdapter<SudokuSession, SudokuResult> {
+    override val gameId: GameId = GameId.SUDOKU
+
+    override suspend fun freshSession(difficulty: Difficulty): SudokuSession? {
+        val entry = SudokuPuzzleBank.randomPuzzle(appContext, difficulty) ?: return null
+        return createSudokuSession(entry)
+    }
+
+    override fun restoreSession(payload: String, elapsedSeconds: Double): SudokuSession? {
+        val persisted = runCatching { json.decodeFromString<SudokuPersistedSession>(payload) }.getOrNull() ?: return null
+        return SudokuSession(
+            puzzle = persisted.puzzle,
+            board = List(9) { r -> List(9) { c -> persisted.board[r * 9 + c] } },
+            notes = List(9) { r -> List(9) { c -> persisted.notes[r * 9 + c].toSet() } },
+            inputMode = persisted.inputMode,
+            accuracyDrops = persisted.accuracyDrops,
+            finishedCells = List(9) { r -> List(9) { c -> persisted.finishedCells[r * 9 + c] } },
+            penalizedUnitKeys = persisted.penalizedUnitKeys,
+        )
+    }
+
+    override fun difficultyOf(session: SudokuSession): Difficulty = Difficulty.fromKey(session.puzzle.difficulty)
+
+    override fun hasMeaningfulProgress(session: SudokuSession): Boolean = sudokuHasMeaningfulProgress(session)
+
+    override fun encode(session: SudokuSession): String = json.encodeToString(
+        SudokuPersistedSession(
+            puzzle = session.puzzle,
+            board = session.board.flatten(),
+            notes = session.notes.flatten().map { it.toList() },
+            inputMode = session.inputMode,
+            accuracyDrops = session.accuracyDrops,
+            finishedCells = session.finishedCells.flatten(),
+            penalizedUnitKeys = session.penalizedUnitKeys,
+        ),
+    )
+
+    override fun scoreOnWin(session: SudokuSession, difficulty: Difficulty, elapsedSeconds: Int): Int =
+        sudokuScore(difficulty, elapsedSeconds, session.accuracyDrops)
+
+    override fun buildResult(session: SudokuSession?, outcome: PuzzleOutcome): SudokuResult = SudokuResult(
+        difficulty = outcome.difficulty,
+        solved = outcome.solved,
+        score = outcome.score,
+        accuracyPct = if (outcome.solved) sudokuAccuracyPct(session?.accuracyDrops ?: 0) else 0,
+        elapsedSeconds = outcome.elapsedSeconds,
+        lossReason = outcome.lossReason,
+        isFirstSolve = outcome.isFirstSolve,
+        isNewHighScore = outcome.isNewHighScore,
+    )
+}
+
 class SudokuPlayViewModel(
-    private val appContext: Context,
-    private val sessionRepository: SessionRepository,
-    private val statsRepository: StatsRepository,
-    private val requestedDifficulty: Difficulty,
-    private val resume: Boolean,
+    appContext: Context,
+    sessionRepository: SessionStore,
+    statsRepository: StatsStore,
+    requestedDifficulty: Difficulty,
+    resume: Boolean,
 ) : ViewModel() {
 
-    var session by mutableStateOf<SudokuSession?>(null)
-        private set
-    var elapsedSeconds by mutableStateOf(0.0)
-        private set
+    private val controller = PuzzleSessionController(
+        scope = viewModelScope,
+        sessionStore = sessionRepository,
+        statsStore = statsRepository,
+        adapter = SudokuPuzzleAdapter(appContext),
+    )
+
+    val session get() = controller.session
+    val elapsedSeconds get() = controller.elapsedSeconds
+    val result = controller.result
+
     var selectedCell by mutableStateOf<Pair<Int, Int>?>(null)
         private set
     var feedbackCorrectRows by mutableStateOf<Set<Int>>(emptySet())
@@ -69,55 +124,12 @@ class SudokuPlayViewModel(
     var nextMoveHintActive by mutableStateOf(false)
         private set
 
-    private var difficulty: Difficulty = requestedDifficulty
-    private var finalized = false
     private var pendingUnitKeys = mutableSetOf<SudokuUnitKey>()
     private var pendingBoard: SudokuGrid? = null
     private var validationJob: kotlinx.coroutines.Job? = null
 
-    private val _result = MutableSharedFlow<SudokuResult>(extraBufferCapacity = 1)
-    val result: SharedFlow<SudokuResult> = _result
-
     init {
-        viewModelScope.launch {
-            session = if (resume) restoreOrCreate() else freshSession(requestedDifficulty)
-            runTicker()
-        }
-    }
-
-    private suspend fun freshSession(difficulty: Difficulty): SudokuSession? {
-        val entry = SudokuPuzzleBank.randomPuzzle(appContext, difficulty) ?: return null
-        return createSudokuSession(entry)
-    }
-
-    private suspend fun restoreOrCreate(): SudokuSession? {
-        val envelope = sessionRepository.activeSession.first()
-        if (envelope != null && envelope.gameId == GameId.SUDOKU.key) {
-            val persisted = runCatching { json.decodeFromString<SudokuPersistedSession>(envelope.payload) }.getOrNull()
-            if (persisted != null) {
-                elapsedSeconds = envelope.elapsedSeconds
-                difficulty = Difficulty.fromKey(persisted.puzzle.difficulty)
-                return SudokuSession(
-                    puzzle = persisted.puzzle,
-                    board = List(9) { r -> List(9) { c -> persisted.board[r * 9 + c] } },
-                    notes = List(9) { r -> List(9) { c -> persisted.notes[r * 9 + c].toSet() } },
-                    inputMode = persisted.inputMode,
-                    accuracyDrops = persisted.accuracyDrops,
-                    finishedCells = List(9) { r -> List(9) { c -> persisted.finishedCells[r * 9 + c] } },
-                    penalizedUnitKeys = persisted.penalizedUnitKeys,
-                )
-            }
-        }
-        return freshSession(requestedDifficulty)
-    }
-
-    private suspend fun runTicker() {
-        while (true) {
-            delay(1000)
-            if (finalized || session == null) continue
-            elapsedSeconds += 1.0
-            persistIfMeaningful()
-        }
+        controller.start(requestedDifficulty, resume)
     }
 
     fun onCellPress(row: Int, col: Int) {
@@ -132,13 +144,15 @@ class SudokuPlayViewModel(
     fun onToggleNoteMode() {
         val current = session ?: return
         if (selectedCell == null) return
-        session = current.copy(inputMode = if (current.inputMode == SudokuInputMode.DIGIT) SudokuInputMode.NOTES else SudokuInputMode.DIGIT)
+        controller.updateSession(
+            current.copy(inputMode = if (current.inputMode == SudokuInputMode.DIGIT) SudokuInputMode.NOTES else SudokuInputMode.DIGIT),
+            persist = false,
+        )
     }
 
     fun onPressDigit(digit: Int) {
         val current = session ?: return
         val (row, col) = selectedCell ?: return
-        if (finalized) return
 
         val nextSession: SudokuSession? = if (current.inputMode == SudokuInputMode.NOTES) {
             applySudokuToggleNote(current, row, col, digit)
@@ -151,8 +165,7 @@ class SudokuPlayViewModel(
 
         nextMoveHint = null
         nextMoveHintActive = false
-        session = updated
-        persistIfMeaningful()
+        controller.updateSession(updated)
 
         if (current.inputMode == SudokuInputMode.NOTES) return
 
@@ -181,7 +194,7 @@ class SudokuPlayViewModel(
         pendingBoard = null
 
         val result = applySudokuFinalizeValidation(current, board, unitKeys)
-        session = result.session
+        controller.updateSession(result.session)
 
         feedbackCorrectRows = result.effect.correctRowIndexes.toSet()
         feedbackCorrectCols = result.effect.correctColIndexes.toSet()
@@ -203,20 +216,15 @@ class SudokuPlayViewModel(
             }
         }
 
-        persistIfMeaningful()
-
         if (isSudokuSolved(result.session.board, result.session.puzzle.solution)) {
-            finishAsWin()
+            controller.finishAsWin()
         }
     }
 
-    fun endPuzzle() {
-        if (finalized) return
-        finishAsLoss("abandoned")
-    }
+    fun endPuzzle() = controller.endPuzzle()
 
     fun toggleNextMoveHint() {
-        if (finalized) return
+        if (controller.isFinalized) return
         if (nextMoveHintActive) {
             nextMoveHintActive = false
             nextMoveHint = null
@@ -225,76 +233,5 @@ class SudokuPlayViewModel(
         val current = session ?: return
         nextMoveHintActive = true
         nextMoveHint = getSudokuNextMoveHint(current.board)
-    }
-
-    private fun finishAsWin() {
-        if (finalized) return
-        finalized = true
-        val current = session ?: return
-        val score = sudokuScore(difficulty, elapsedSeconds.toInt(), current.accuracyDrops)
-        viewModelScope.launch {
-            val previous = statsRepository.statsFor(GameId.SUDOKU).first().forDifficulty(difficulty)
-            statsRepository.recordResult(GameId.SUDOKU, difficulty, solved = true, score = score)
-            sessionRepository.clear()
-            delay(FINISH_TRANSITION_DELAY_MS)
-            _result.emit(
-                SudokuResult(
-                    difficulty = difficulty,
-                    solved = true,
-                    score = score,
-                    accuracyPct = sudokuAccuracyPct(current.accuracyDrops),
-                    elapsedSeconds = elapsedSeconds.toInt(),
-                    lossReason = null,
-                    isFirstSolve = previous.solved == 0,
-                    isNewHighScore = previous.solved > 0 && score > previous.bestScore,
-                ),
-            )
-        }
-    }
-
-    private fun finishAsLoss(reason: String) {
-        if (finalized) return
-        finalized = true
-        viewModelScope.launch {
-            statsRepository.recordResult(GameId.SUDOKU, difficulty, solved = false, score = 0)
-            sessionRepository.clear()
-            delay(FINISH_TRANSITION_DELAY_MS)
-            _result.emit(
-                SudokuResult(
-                    difficulty = difficulty,
-                    solved = false,
-                    score = 0,
-                    accuracyPct = 0,
-                    elapsedSeconds = elapsedSeconds.toInt(),
-                    lossReason = reason,
-                ),
-            )
-        }
-    }
-
-    private fun persistIfMeaningful() {
-        val current = session ?: return
-        if (finalized) return
-        if (!sudokuHasMeaningfulProgress(current)) return
-        val payload = json.encodeToString(
-            SudokuPersistedSession(
-                puzzle = current.puzzle,
-                board = current.board.flatten(),
-                notes = current.notes.flatten().map { it.toList() },
-                inputMode = current.inputMode,
-                accuracyDrops = current.accuracyDrops,
-                finishedCells = current.finishedCells.flatten(),
-                penalizedUnitKeys = current.penalizedUnitKeys,
-            ),
-        )
-        viewModelScope.launch {
-            sessionRepository.save(
-                ActiveSessionEnvelope(
-                    gameId = GameId.SUDOKU.key,
-                    elapsedSeconds = elapsedSeconds,
-                    payload = payload,
-                ),
-            )
-        }
     }
 }

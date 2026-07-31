@@ -8,23 +8,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
-import com.quietgrid.app.data.ActiveSessionEnvelope
-import com.quietgrid.app.data.SessionRepository
-import com.quietgrid.app.data.StatsRepository
+import com.quietgrid.app.data.SessionStore
+import com.quietgrid.app.data.StatsStore
+import com.quietgrid.app.session.PuzzleAdapter
+import com.quietgrid.app.session.PuzzleOutcome
+import com.quietgrid.app.session.PuzzleSessionController
 import com.quietgrid.engine.nonogram.NonogramPuzzleEntry
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 private val json = Json { ignoreUnknownKeys = true }
-
-/** Lets the last move's feedback finish playing before the win/loss screen cuts in. */
-private const val FINISH_TRANSITION_DELAY_MS = 450L
 
 data class NonogramResult(
     val difficulty: Difficulty,
@@ -37,95 +31,106 @@ data class NonogramResult(
     val solution: List<List<Boolean>> = emptyList(),
 )
 
+private class NonogramPuzzleAdapter(private val appContext: Context) : PuzzleAdapter<NonogramSession, NonogramResult> {
+    override val gameId: GameId = GameId.NONOGRAM
+
+    override suspend fun freshSession(difficulty: Difficulty): NonogramSession? {
+        val entry = NonogramPuzzleBank.randomPuzzle(appContext, difficulty) ?: return null
+        return createNonogramSession(entry)
+    }
+
+    override fun restoreSession(payload: String, elapsedSeconds: Double): NonogramSession? {
+        val persisted = runCatching { json.decodeFromString<NonogramPersistedSession>(payload) }.getOrNull() ?: return null
+        val puzzle = buildNonogramPuzzle(persisted.entry)
+        val cols = persisted.entry.cols
+        return NonogramSession(
+            puzzle = puzzle,
+            board = List(persisted.entry.rows) { r -> List(cols) { c -> persisted.board[r * cols + c] } },
+            solution = persisted.entry.solution,
+        )
+    }
+
+    override fun difficultyOf(session: NonogramSession): Difficulty = Difficulty.fromKey(session.puzzle.difficulty)
+
+    override fun hasMeaningfulProgress(session: NonogramSession): Boolean = nonogramHasMeaningfulProgress(session)
+
+    override fun encode(session: NonogramSession): String {
+        val entry = NonogramPuzzleEntry(
+            id = session.puzzle.id,
+            difficulty = session.puzzle.difficulty,
+            rows = session.puzzle.rows,
+            cols = session.puzzle.cols,
+            solution = session.solution,
+        )
+        return json.encodeToString(NonogramPersistedSession(entry = entry, board = session.board.flatten()))
+    }
+
+    override fun scoreOnWin(session: NonogramSession, difficulty: Difficulty, elapsedSeconds: Int): Int =
+        nonogramScore(elapsedSeconds)
+
+    override fun buildResult(session: NonogramSession?, outcome: PuzzleOutcome): NonogramResult = NonogramResult(
+        difficulty = outcome.difficulty,
+        solved = outcome.solved,
+        score = outcome.score,
+        elapsedSeconds = outcome.elapsedSeconds,
+        lossReason = outcome.lossReason,
+        isFirstSolve = outcome.isFirstSolve,
+        isNewHighScore = outcome.isNewHighScore,
+        solution = session?.solution ?: emptyList(),
+    )
+}
+
 class NonogramPlayViewModel(
-    private val appContext: Context,
-    private val sessionRepository: SessionRepository,
-    private val statsRepository: StatsRepository,
-    private val requestedDifficulty: Difficulty,
-    private val resume: Boolean,
+    appContext: Context,
+    sessionRepository: SessionStore,
+    statsRepository: StatsStore,
+    requestedDifficulty: Difficulty,
+    resume: Boolean,
 ) : ViewModel() {
 
-    var session by mutableStateOf<NonogramSession?>(null)
-        private set
-    var elapsedSeconds by mutableStateOf(0.0)
-        private set
+    private val controller = PuzzleSessionController(
+        scope = viewModelScope,
+        sessionStore = sessionRepository,
+        statsStore = statsRepository,
+        adapter = NonogramPuzzleAdapter(appContext),
+    )
+
+    val session get() = controller.session
+    val elapsedSeconds get() = controller.elapsedSeconds
+    val result = controller.result
+
     var inputMode by mutableStateOf(NonogramInputMode.FILL)
     var nextMoveHint by mutableStateOf<NonogramNextMoveHint?>(null)
         private set
     var nextMoveHintActive by mutableStateOf(false)
         private set
 
-    private var difficulty: Difficulty = requestedDifficulty
-    private var finalized = false
-
-    private val _result = MutableSharedFlow<NonogramResult>(extraBufferCapacity = 1)
-    val result: SharedFlow<NonogramResult> = _result
-
     init {
-        viewModelScope.launch {
-            session = if (resume) restoreOrCreate() else freshSession(requestedDifficulty)
-            runTicker()
-        }
-    }
-
-    private suspend fun freshSession(difficulty: Difficulty): NonogramSession? {
-        val entry = NonogramPuzzleBank.randomPuzzle(appContext, difficulty) ?: return null
-        return createNonogramSession(entry)
-    }
-
-    private suspend fun restoreOrCreate(): NonogramSession? {
-        val envelope = sessionRepository.activeSession.first()
-        if (envelope != null && envelope.gameId == GameId.NONOGRAM.key) {
-            val persisted = runCatching { json.decodeFromString<NonogramPersistedSession>(envelope.payload) }.getOrNull()
-            if (persisted != null) {
-                elapsedSeconds = envelope.elapsedSeconds
-                difficulty = Difficulty.fromKey(persisted.entry.difficulty)
-                val puzzle = buildNonogramPuzzle(persisted.entry)
-                val cols = persisted.entry.cols
-                return NonogramSession(
-                    puzzle = puzzle,
-                    board = List(persisted.entry.rows) { r -> List(cols) { c -> persisted.board[r * cols + c] } },
-                    solution = persisted.entry.solution,
-                )
-            }
-        }
-        return freshSession(requestedDifficulty)
-    }
-
-    private suspend fun runTicker() {
-        while (true) {
-            delay(1000)
-            if (finalized || session == null) continue
-            elapsedSeconds += 1.0
-            persistIfMeaningful()
-        }
+        controller.start(requestedDifficulty, resume)
     }
 
     fun onCellTap(row: Int, col: Int) {
         val current = session ?: return
-        if (finalized) return
         val updated = applyNonogramTap(current, row, col, inputMode) ?: return
         nextMoveHint = null
         nextMoveHintActive = false
-        session = updated
-        persistIfMeaningful()
+        controller.updateSession(updated)
         checkSolved(updated)
     }
 
     fun onDragPaint(cells: List<Pair<Int, Int>>) {
         val current = session ?: return
-        if (finalized || cells.isEmpty()) return
+        if (cells.isEmpty()) return
         val value = if (inputMode == NonogramInputMode.FILL) 1 else 0
         val updated = applyNonogramPaint(current, cells, value) ?: return
         nextMoveHint = null
         nextMoveHintActive = false
-        session = updated
-        persistIfMeaningful()
+        controller.updateSession(updated)
         checkSolved(updated)
     }
 
     fun toggleNextMoveHint() {
-        if (finalized) return
+        if (controller.isFinalized) return
         if (nextMoveHintActive) {
             nextMoveHintActive = false
             nextMoveHint = null
@@ -138,81 +143,9 @@ class NonogramPlayViewModel(
 
     private fun checkSolved(current: NonogramSession) {
         if (isNonogramSolved(current.board, current.solution)) {
-            finishAsWin()
+            controller.finishAsWin()
         }
     }
 
-    fun endPuzzle() {
-        if (finalized) return
-        finishAsLoss("abandoned")
-    }
-
-    private fun finishAsWin() {
-        if (finalized) return
-        finalized = true
-        val score = nonogramScore(elapsedSeconds.toInt())
-        val solution = session?.solution ?: emptyList()
-        viewModelScope.launch {
-            val previous = statsRepository.statsFor(GameId.NONOGRAM).first().forDifficulty(difficulty)
-            statsRepository.recordResult(GameId.NONOGRAM, difficulty, solved = true, score = score)
-            sessionRepository.clear()
-            delay(FINISH_TRANSITION_DELAY_MS)
-            _result.emit(
-                NonogramResult(
-                    difficulty = difficulty,
-                    solved = true,
-                    score = score,
-                    elapsedSeconds = elapsedSeconds.toInt(),
-                    lossReason = null,
-                    isFirstSolve = previous.solved == 0,
-                    isNewHighScore = previous.solved > 0 && score > previous.bestScore,
-                    solution = solution,
-                ),
-            )
-        }
-    }
-
-    private fun finishAsLoss(reason: String) {
-        if (finalized) return
-        finalized = true
-        viewModelScope.launch {
-            statsRepository.recordResult(GameId.NONOGRAM, difficulty, solved = false, score = 0)
-            sessionRepository.clear()
-            delay(FINISH_TRANSITION_DELAY_MS)
-            _result.emit(
-                NonogramResult(
-                    difficulty = difficulty,
-                    solved = false,
-                    score = 0,
-                    elapsedSeconds = elapsedSeconds.toInt(),
-                    lossReason = reason,
-                ),
-            )
-        }
-    }
-
-    private fun persistIfMeaningful() {
-        val current = session ?: return
-        if (finalized) return
-        if (!nonogramHasMeaningfulProgress(current)) return
-        val entry = NonogramPuzzleEntry(
-            id = current.puzzle.id,
-            difficulty = current.puzzle.difficulty,
-            rows = current.puzzle.rows,
-            cols = current.puzzle.cols,
-            solution = current.solution,
-        )
-        val payload = json.encodeToString(
-            NonogramPersistedSession(entry = entry, board = current.board.flatten()),
-        )
-        viewModelScope.launch {
-            sessionRepository.save(
-                ActiveSessionEnvelope(
-                    gameId = GameId.NONOGRAM.key,
-                    elapsedSeconds = elapsedSeconds,
-                    payload = payload,
-                ),
-            )
-        }
-    }
+    fun endPuzzle() = controller.endPuzzle()
 }

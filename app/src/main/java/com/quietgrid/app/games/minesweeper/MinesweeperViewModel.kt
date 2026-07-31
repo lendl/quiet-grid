@@ -7,22 +7,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
-import com.quietgrid.app.data.ActiveSessionEnvelope
-import com.quietgrid.app.data.SessionRepository
-import com.quietgrid.app.data.StatsRepository
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
+import com.quietgrid.app.data.SessionStore
+import com.quietgrid.app.data.StatsStore
+import com.quietgrid.app.session.PuzzleAdapter
+import com.quietgrid.app.session.PuzzleOutcome
+import com.quietgrid.app.session.PuzzleSessionController
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 private val json = Json { ignoreUnknownKeys = true }
-
-/** Lets the last move's feedback finish playing before the win/loss screen cuts in. */
-private const val FINISH_TRANSITION_DELAY_MS = 450L
 
 data class MinesweeperResult(
     val difficulty: Difficulty,
@@ -34,58 +28,69 @@ data class MinesweeperResult(
     val isNewHighScore: Boolean = false,
 )
 
+private class MinesweeperPuzzleAdapter : PuzzleAdapter<MinesweeperSession, MinesweeperResult> {
+    override val gameId: GameId = GameId.MINESWEEPER
+
+    override suspend fun freshSession(difficulty: Difficulty): MinesweeperSession =
+        createMinesweeperSession(difficulty)
+
+    override fun restoreSession(payload: String, elapsedSeconds: Double): MinesweeperSession? {
+        val persisted = runCatching { json.decodeFromString<MinesweeperPersistedSession>(payload) }.getOrNull()
+            ?: return null
+        if (persisted.board.status != MinesweeperStatus.PLAYING) return null
+        return MinesweeperSession(puzzle = persisted.puzzle, board = persisted.board)
+    }
+
+    override fun difficultyOf(session: MinesweeperSession): Difficulty = Difficulty.fromKey(session.puzzle.difficulty)
+
+    override fun hasMeaningfulProgress(session: MinesweeperSession): Boolean =
+        minesweeperHasMeaningfulProgress(session)
+
+    override fun encode(session: MinesweeperSession): String =
+        json.encodeToString(MinesweeperPersistedSession(puzzle = session.puzzle, board = session.board))
+
+    override fun scoreOnWin(session: MinesweeperSession, difficulty: Difficulty, elapsedSeconds: Int): Int =
+        minesweeperScore(difficulty, elapsedSeconds)
+
+    override fun buildResult(session: MinesweeperSession?, outcome: PuzzleOutcome): MinesweeperResult =
+        MinesweeperResult(
+            difficulty = outcome.difficulty,
+            solved = outcome.solved,
+            score = outcome.score,
+            elapsedSeconds = outcome.elapsedSeconds,
+            lossReason = outcome.lossReason,
+            isFirstSolve = outcome.isFirstSolve,
+            isNewHighScore = outcome.isNewHighScore,
+        )
+}
+
 class MinesweeperPlayViewModel(
-    private val sessionRepository: SessionRepository,
-    private val statsRepository: StatsRepository,
-    private val requestedDifficulty: Difficulty,
-    private val resume: Boolean,
+    sessionRepository: SessionStore,
+    statsRepository: StatsStore,
+    requestedDifficulty: Difficulty,
+    resume: Boolean,
 ) : ViewModel() {
 
-    var session by mutableStateOf<MinesweeperSession?>(null)
-        private set
-    var elapsedSeconds by mutableStateOf(0.0)
-        private set
+    private val controller = PuzzleSessionController(
+        scope = viewModelScope,
+        sessionStore = sessionRepository,
+        statsStore = statsRepository,
+        adapter = MinesweeperPuzzleAdapter(),
+    )
+
+    val session get() = controller.session
+    val elapsedSeconds get() = controller.elapsedSeconds
+    val result = controller.result
+
     var nextMoveHint by mutableStateOf<MinesweeperNextMoveHint?>(null)
         private set
 
-    private var difficulty: Difficulty = requestedDifficulty
-    private var finalized = false
-
-    private val _result = MutableSharedFlow<MinesweeperResult>(extraBufferCapacity = 1)
-    val result: SharedFlow<MinesweeperResult> = _result
-
     init {
-        viewModelScope.launch {
-            session = if (resume) restoreOrCreate() else createMinesweeperSession(requestedDifficulty)
-            runTicker()
-        }
-    }
-
-    private suspend fun restoreOrCreate(): MinesweeperSession {
-        val envelope = sessionRepository.activeSession.first()
-        if (envelope != null && envelope.gameId == GameId.MINESWEEPER.key) {
-            val persisted = runCatching { json.decodeFromString<MinesweeperPersistedSession>(envelope.payload) }.getOrNull()
-            if (persisted != null && persisted.board.status == MinesweeperStatus.PLAYING) {
-                elapsedSeconds = envelope.elapsedSeconds
-                difficulty = Difficulty.fromKey(persisted.puzzle.difficulty)
-                return MinesweeperSession(puzzle = persisted.puzzle, board = persisted.board)
-            }
-        }
-        return createMinesweeperSession(requestedDifficulty)
-    }
-
-    private suspend fun runTicker() {
-        while (true) {
-            delay(1000)
-            if (finalized || session == null) continue
-            elapsedSeconds += 1.0
-            persistIfMeaningful()
-        }
+        controller.start(requestedDifficulty, resume)
     }
 
     fun onReveal(row: Int, col: Int) {
         val current = session ?: return
-        if (finalized) return
         val nextBoard = revealMinesweeperCell(current.board, current.puzzle, row, col)
         if (nextBoard == current.board) return
         nextMoveHint = null
@@ -94,7 +99,6 @@ class MinesweeperPlayViewModel(
 
     fun onToggleFlag(row: Int, col: Int) {
         val current = session ?: return
-        if (finalized) return
         val nextBoard = toggleMinesweeperFlag(current.board, row, col)
         if (nextBoard == current.board) return
         nextMoveHint = null
@@ -102,7 +106,7 @@ class MinesweeperPlayViewModel(
     }
 
     fun toggleNextMoveHint() {
-        if (finalized) return
+        if (controller.isFinalized) return
         if (nextMoveHint != null) {
             nextMoveHint = null
             return
@@ -113,74 +117,18 @@ class MinesweeperPlayViewModel(
 
     private fun applyBoard(current: MinesweeperSession, nextBoard: MinesweeperBoard) {
         val updated = current.copy(board = nextBoard)
-        session = updated
         when (nextBoard.status) {
-            MinesweeperStatus.WON -> finishAsWin()
-            MinesweeperStatus.LOST -> finishAsLoss("rule-failure")
-            MinesweeperStatus.PLAYING -> persistIfMeaningful()
+            MinesweeperStatus.WON -> {
+                controller.updateSession(updated, persist = false)
+                controller.finishAsWin()
+            }
+            MinesweeperStatus.LOST -> {
+                controller.updateSession(updated, persist = false)
+                controller.finishAsLoss("rule-failure")
+            }
+            MinesweeperStatus.PLAYING -> controller.updateSession(updated)
         }
     }
 
-    fun endPuzzle() {
-        if (finalized) return
-        finishAsLoss("abandoned")
-    }
-
-    private fun finishAsWin() {
-        if (finalized) return
-        finalized = true
-        val score = minesweeperScore(difficulty, elapsedSeconds.toInt())
-        viewModelScope.launch {
-            val previous = statsRepository.statsFor(GameId.MINESWEEPER).first().forDifficulty(difficulty)
-            statsRepository.recordResult(GameId.MINESWEEPER, difficulty, solved = true, score = score)
-            sessionRepository.clear()
-            delay(FINISH_TRANSITION_DELAY_MS)
-            _result.emit(
-                MinesweeperResult(
-                    difficulty = difficulty,
-                    solved = true,
-                    score = score,
-                    elapsedSeconds = elapsedSeconds.toInt(),
-                    lossReason = null,
-                    isFirstSolve = previous.solved == 0,
-                    isNewHighScore = previous.solved > 0 && score > previous.bestScore,
-                ),
-            )
-        }
-    }
-
-    private fun finishAsLoss(reason: String) {
-        if (finalized) return
-        finalized = true
-        viewModelScope.launch {
-            statsRepository.recordResult(GameId.MINESWEEPER, difficulty, solved = false, score = 0)
-            sessionRepository.clear()
-            delay(FINISH_TRANSITION_DELAY_MS)
-            _result.emit(
-                MinesweeperResult(
-                    difficulty = difficulty,
-                    solved = false,
-                    score = 0,
-                    elapsedSeconds = elapsedSeconds.toInt(),
-                    lossReason = reason,
-                ),
-            )
-        }
-    }
-
-    private fun persistIfMeaningful() {
-        val current = session ?: return
-        if (finalized) return
-        if (!minesweeperHasMeaningfulProgress(current)) return
-        val payload = json.encodeToString(MinesweeperPersistedSession(puzzle = current.puzzle, board = current.board))
-        viewModelScope.launch {
-            sessionRepository.save(
-                ActiveSessionEnvelope(
-                    gameId = GameId.MINESWEEPER.key,
-                    elapsedSeconds = elapsedSeconds,
-                    payload = payload,
-                ),
-            )
-        }
-    }
+    fun endPuzzle() = controller.endPuzzle()
 }
