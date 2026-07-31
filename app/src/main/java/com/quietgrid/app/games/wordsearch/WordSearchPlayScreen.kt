@@ -12,17 +12,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.VpnKey
 import androidx.compose.material.icons.filled.ZoomOutMap
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,16 +34,15 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.data.AppContainer
-import com.quietgrid.app.ui.components.BoardEntrance
+import com.quietgrid.app.ui.components.CollectPuzzleResult
 import com.quietgrid.app.ui.components.ElapsedTimerText
+import com.quietgrid.app.ui.components.EndPuzzleDialog
 import com.quietgrid.app.ui.components.GameBackButton
-import com.quietgrid.app.ui.components.ZoomableBoardSurface
+import com.quietgrid.app.ui.components.PuzzleBoardContainer
+import com.quietgrid.app.ui.components.rememberPuzzleViewModel
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -58,23 +53,17 @@ fun WordSearchPlayScreen(
     onFinished: (WordSearchResult) -> Unit,
 ) {
     val context = LocalContext.current.applicationContext
-    val viewModel: WordSearchPlayViewModel = viewModel(
-        factory = viewModelFactory {
-            initializer {
-                WordSearchPlayViewModel(
-                    appContext = context,
-                    sessionRepository = AppContainer.sessionRepository,
-                    statsRepository = AppContainer.statsRepository,
-                    requestedDifficulty = difficulty,
-                    resume = resume,
-                )
-            }
-        },
-    )
-
-    LaunchedEffect(viewModel) {
-        viewModel.result.collect { result -> onFinished(result) }
+    val viewModel = rememberPuzzleViewModel {
+        WordSearchPlayViewModel(
+            appContext = context,
+            sessionRepository = AppContainer.sessionRepository,
+            statsRepository = AppContainer.statsRepository,
+            requestedDifficulty = difficulty,
+            resume = resume,
+        )
     }
+
+    CollectPuzzleResult(viewModel.result, onFinished)
 
     var showEndDialog by remember { mutableStateOf(false) }
     var isBoardZoomed by remember { mutableStateOf(false) }
@@ -188,38 +177,35 @@ fun WordSearchPlayScreen(
             }
         }
 
-        Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+        PuzzleBoardContainer(
+            visible = session != null,
+            playFresh = !resume,
+            onZoomChange = { isBoardZoomed = it },
+            resetTrigger = resetZoomTrigger,
+        ) {
             if (session != null) {
-                BoardEntrance(playFresh = !resume, modifier = Modifier.fillMaxSize()) {
-                    ZoomableBoardSurface(
-                        Modifier.fillMaxSize(),
-                        onZoomChange = { isBoardZoomed = it },
-                        resetTrigger = resetZoomTrigger,
-                    ) {
-                        Box(Modifier.fillMaxSize().padding(8.dp)) {
-                            WordSearchGrid(
-                                puzzle = session.puzzle,
-                                foundWordIds = session.foundWordIds,
-                                tempSelection = session.tempSelection,
-                                hiddenWordMode = session.hiddenWordMode,
-                                hiddenWordProgress = session.hiddenWordProgress,
-                                onCellTap = viewModel::onCellTap,
-                                onHiddenWordTap = viewModel::onHiddenWordCellTap,
-                                nextMoveEvidenceCells = hint?.let {
-                                    when (it) {
-                                        is WSNextMoveHint.FindWord -> it.evidenceCells
-                                        is WSNextMoveHint.FindHiddenLetter -> it.evidenceCells
-                                    }
-                                } ?: emptyList(),
-                                nextMoveTargetCells = hint?.let {
-                                    when (it) {
-                                        is WSNextMoveHint.FindWord -> it.targetCells
-                                        is WSNextMoveHint.FindHiddenLetter -> it.targetCells
-                                    }
-                                } ?: emptyList(),
-                            )
-                        }
-                    }
+                Box(Modifier.fillMaxSize().padding(8.dp)) {
+                    WordSearchGrid(
+                        puzzle = session.puzzle,
+                        foundWordIds = session.foundWordIds,
+                        tempSelection = session.tempSelection,
+                        hiddenWordMode = session.hiddenWordMode,
+                        hiddenWordProgress = session.hiddenWordProgress,
+                        onCellTap = viewModel::onCellTap,
+                        onHiddenWordTap = viewModel::onHiddenWordCellTap,
+                        nextMoveEvidenceCells = hint?.let {
+                            when (it) {
+                                is WSNextMoveHint.FindWord -> it.evidenceCells
+                                is WSNextMoveHint.FindHiddenLetter -> it.evidenceCells
+                            }
+                        } ?: emptyList(),
+                        nextMoveTargetCells = hint?.let {
+                            when (it) {
+                                is WSNextMoveHint.FindWord -> it.targetCells
+                                is WSNextMoveHint.FindHiddenLetter -> it.targetCells
+                            }
+                        } ?: emptyList(),
+                    )
                 }
             }
         }
@@ -257,20 +243,12 @@ fun WordSearchPlayScreen(
         }
     }
 
-    if (showEndDialog) {
-        AlertDialog(
-            onDismissRequest = { showEndDialog = false },
-            title = { Text(stringResource(R.string.puzzle_play_end_dialog_title)) },
-            text = { Text(stringResource(R.string.puzzle_play_end_dialog_message)) },
-            confirmButton = {
-                Button(onClick = {
-                    showEndDialog = false
-                    viewModel.endPuzzle()
-                }) { Text(stringResource(R.string.puzzle_play_end_dialog_confirm)) }
-            },
-            dismissButton = {
-                OutlinedButton(onClick = { showEndDialog = false }) { Text(stringResource(R.string.common_cancel)) }
-            },
-        )
-    }
+    EndPuzzleDialog(
+        visible = showEndDialog,
+        onDismiss = { showEndDialog = false },
+        onConfirm = {
+            showEndDialog = false
+            viewModel.endPuzzle()
+        },
+    )
 }

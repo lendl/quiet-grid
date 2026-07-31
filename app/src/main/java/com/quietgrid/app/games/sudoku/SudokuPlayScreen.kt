@@ -14,18 +14,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.outlined.Create
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,16 +31,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.data.AppContainer
-import com.quietgrid.app.ui.components.BoardEntrance
+import com.quietgrid.app.ui.components.CollectPuzzleResult
 import com.quietgrid.app.ui.components.ElapsedTimerText
+import com.quietgrid.app.ui.components.EndPuzzleDialog
 import com.quietgrid.app.ui.components.GameBackButton
-import com.quietgrid.app.ui.components.ZoomableBoardSurface
+import com.quietgrid.app.ui.components.PuzzleBoardContainer
+import com.quietgrid.app.ui.components.rememberPuzzleViewModel
 import com.quietgrid.engine.sudoku.SudokuTechnique
 
 /**
@@ -90,23 +85,17 @@ fun SudokuPlayScreen(
     onFinished: (SudokuResult) -> Unit,
 ) {
     val context = LocalContext.current.applicationContext
-    val viewModel: SudokuPlayViewModel = viewModel(
-        factory = viewModelFactory {
-            initializer {
-                SudokuPlayViewModel(
-                    appContext = context,
-                    sessionRepository = AppContainer.sessionRepository,
-                    statsRepository = AppContainer.statsRepository,
-                    requestedDifficulty = difficulty,
-                    resume = resume,
-                )
-            }
-        },
-    )
-
-    LaunchedEffect(viewModel) {
-        viewModel.result.collect { result -> onFinished(result) }
+    val viewModel = rememberPuzzleViewModel {
+        SudokuPlayViewModel(
+            appContext = context,
+            sessionRepository = AppContainer.sessionRepository,
+            statsRepository = AppContainer.statsRepository,
+            requestedDifficulty = difficulty,
+            resume = resume,
+        )
     }
+
+    CollectPuzzleResult(viewModel.result, onFinished)
 
     var showEndDialog by remember { mutableStateOf(false) }
     val session = viewModel.session
@@ -166,33 +155,29 @@ fun SudokuPlayScreen(
             }
         }
 
-        Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+        PuzzleBoardContainer(visible = session != null, playFresh = !resume) {
             if (session != null) {
-                BoardEntrance(playFresh = !resume, modifier = Modifier.fillMaxSize()) {
-                    ZoomableBoardSurface(Modifier.fillMaxSize()) {
-                        Box(Modifier.fillMaxSize().padding(8.dp)) {
-                            SudokuGrid(
-                                board = session.board,
-                                givens = session.puzzle.givens,
-                                notes = session.notes,
-                                finishedCells = session.finishedCells,
-                                selectedCell = viewModel.selectedCell,
-                                feedbackCorrectRows = viewModel.feedbackCorrectRows,
-                                feedbackCorrectCols = viewModel.feedbackCorrectCols,
-                                feedbackCorrectBoxes = viewModel.feedbackCorrectBoxes,
-                                feedbackIncorrectRows = viewModel.feedbackIncorrectRows,
-                                feedbackIncorrectCols = viewModel.feedbackIncorrectCols,
-                                feedbackIncorrectBoxes = viewModel.feedbackIncorrectBoxes,
-                                onCellPress = viewModel::onCellPress,
-                                hintEvidenceCells = hint?.evidenceCells?.toSet() ?: emptySet(),
-                                hintTargetCells = hint?.targetCells?.toSet() ?: emptySet(),
-                                hintPlacementTarget = (hint as? SudokuPlacementHint)?.let { Triple(it.row, it.col, it.digit) },
-                                hintHighlightRows = hint?.highlightRows?.toSet() ?: emptySet(),
-                                hintHighlightCols = hint?.highlightCols?.toSet() ?: emptySet(),
-                                hintHighlightBoxes = hint?.highlightBoxes?.toSet() ?: emptySet(),
-                            )
-                        }
-                    }
+                Box(Modifier.fillMaxSize().padding(8.dp)) {
+                    SudokuGrid(
+                        board = session.board,
+                        givens = session.puzzle.givens,
+                        notes = session.notes,
+                        finishedCells = session.finishedCells,
+                        selectedCell = viewModel.selectedCell,
+                        feedbackCorrectRows = viewModel.feedbackCorrectRows,
+                        feedbackCorrectCols = viewModel.feedbackCorrectCols,
+                        feedbackCorrectBoxes = viewModel.feedbackCorrectBoxes,
+                        feedbackIncorrectRows = viewModel.feedbackIncorrectRows,
+                        feedbackIncorrectCols = viewModel.feedbackIncorrectCols,
+                        feedbackIncorrectBoxes = viewModel.feedbackIncorrectBoxes,
+                        onCellPress = viewModel::onCellPress,
+                        hintEvidenceCells = hint?.evidenceCells?.toSet() ?: emptySet(),
+                        hintTargetCells = hint?.targetCells?.toSet() ?: emptySet(),
+                        hintPlacementTarget = (hint as? SudokuPlacementHint)?.let { Triple(it.row, it.col, it.digit) },
+                        hintHighlightRows = hint?.highlightRows?.toSet() ?: emptySet(),
+                        hintHighlightCols = hint?.highlightCols?.toSet() ?: emptySet(),
+                        hintHighlightBoxes = hint?.highlightBoxes?.toSet() ?: emptySet(),
+                    )
                 }
             }
         }
@@ -230,22 +215,14 @@ fun SudokuPlayScreen(
         }
     }
 
-    if (showEndDialog) {
-        AlertDialog(
-            onDismissRequest = { showEndDialog = false },
-            title = { Text(stringResource(R.string.puzzle_play_end_dialog_title)) },
-            text = { Text(stringResource(R.string.puzzle_play_end_dialog_message)) },
-            confirmButton = {
-                Button(onClick = {
-                    showEndDialog = false
-                    viewModel.endPuzzle()
-                }) { Text(stringResource(R.string.puzzle_play_end_dialog_confirm)) }
-            },
-            dismissButton = {
-                OutlinedButton(onClick = { showEndDialog = false }) { Text(stringResource(R.string.common_cancel)) }
-            },
-        )
-    }
+    EndPuzzleDialog(
+        visible = showEndDialog,
+        onDismiss = { showEndDialog = false },
+        onConfirm = {
+            showEndDialog = false
+            viewModel.endPuzzle()
+        },
+    )
 }
 
 @Composable
