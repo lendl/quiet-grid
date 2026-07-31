@@ -2,7 +2,13 @@ package com.quietgrid.engine.takuzu
 
 enum class TakuzuTechnique { FIND_PAIRS, AVOID_TRIOS, COMPLETE_LINES, ELIMINATE_FILLED_LINES, ELIMINATE_IMPOSSIBLE_COMBINATIONS }
 
-data class TakuzuMove(val row: Int, val col: Int, val value: Int, val technique: TakuzuTechnique)
+data class TakuzuMove(
+    val row: Int,
+    val col: Int,
+    val value: Int,
+    val technique: TakuzuTechnique,
+    val matchingLineIndex: Int? = null,
+)
 
 fun findPairMoveInLine(line: List<TakuzuCellValue>): Pair<Int, Int>? {
     for (index in 0..line.size - 3) {
@@ -51,33 +57,32 @@ fun findAvoidTriosMove(board: TakuzuGrid): TakuzuMove? {
     return null
 }
 
-fun findCompleteLinesMove(board: TakuzuGrid): TakuzuMove? {
-    val size = board.size
+fun findCompleteLineMove(line: List<TakuzuCellValue>, size: Int): Pair<Int, Int>? {
     val half = size / 2
-    for (row in 0 until size) {
-        val line = board[row]
-        val zeroes = countValue(line, 0)
-        val ones = countValue(line, 1)
-        if (zeroes == half || ones == half) {
-            val fillValue = if (zeroes == half) 1 else 0
-            val col = line.indexOfFirst { it == null }
-            if (col != -1) return TakuzuMove(row, col, fillValue, TakuzuTechnique.COMPLETE_LINES)
-        }
-    }
-    for (col in 0 until size) {
-        val line = getColumn(board, col)
-        val zeroes = countValue(line, 0)
-        val ones = countValue(line, 1)
-        if (zeroes == half || ones == half) {
-            val fillValue = if (zeroes == half) 1 else 0
-            val row = line.indexOfFirst { it == null }
-            if (row != -1) return TakuzuMove(row, col, fillValue, TakuzuTechnique.COMPLETE_LINES)
-        }
+    val zeroes = countValue(line, 0)
+    val ones = countValue(line, 1)
+    if (zeroes == half || ones == half) {
+        val fillValue = if (zeroes == half) 1 else 0
+        val index = line.indexOfFirst { it == null }
+        if (index != -1) return index to fillValue
     }
     return null
 }
 
-private fun findEliminateFilledLinesRowMove(board: TakuzuGrid): TakuzuMove? {
+fun findCompleteLinesMove(board: TakuzuGrid): TakuzuMove? {
+    val size = board.size
+    for (row in 0 until size) {
+        val move = findCompleteLineMove(board[row], size) ?: continue
+        return TakuzuMove(row, move.first, move.second, TakuzuTechnique.COMPLETE_LINES)
+    }
+    for (col in 0 until size) {
+        val move = findCompleteLineMove(getColumn(board, col), size) ?: continue
+        return TakuzuMove(move.first, col, move.second, TakuzuTechnique.COMPLETE_LINES)
+    }
+    return null
+}
+
+fun findEliminateFilledLinesRowMove(board: TakuzuGrid): TakuzuMove? {
     val size = board.size
     val completeRows = board.indices.filter { r -> board[r].all { it != null } }
     for (row in 0 until size) {
@@ -89,13 +94,13 @@ private fun findEliminateFilledLinesRowMove(board: TakuzuGrid): TakuzuMove? {
             val matches = line.indices.all { c -> line[c] == null || line[c] == board[complete][c] }
             if (!matches) continue
             val col = emptyCols[0]
-            return TakuzuMove(row, col, otherValue(board[complete][col]!!), TakuzuTechnique.ELIMINATE_FILLED_LINES)
+            return TakuzuMove(row, col, otherValue(board[complete][col]!!), TakuzuTechnique.ELIMINATE_FILLED_LINES, matchingLineIndex = complete)
         }
     }
     return null
 }
 
-private fun findEliminateFilledLinesColumnMove(board: TakuzuGrid): TakuzuMove? {
+fun findEliminateFilledLinesColumnMove(board: TakuzuGrid): TakuzuMove? {
     val size = board.size
     val completeCols = (0 until size).filter { c -> getColumn(board, c).all { it != null } }
     for (col in 0 until size) {
@@ -108,7 +113,7 @@ private fun findEliminateFilledLinesColumnMove(board: TakuzuGrid): TakuzuMove? {
             val matches = line.indices.all { r -> line[r] == null || line[r] == completeLine[r] }
             if (!matches) continue
             val row = emptyRows[0]
-            return TakuzuMove(row, col, otherValue(completeLine[row]!!), TakuzuTechnique.ELIMINATE_FILLED_LINES)
+            return TakuzuMove(row, col, otherValue(completeLine[row]!!), TakuzuTechnique.ELIMINATE_FILLED_LINES, matchingLineIndex = complete)
         }
     }
     return null

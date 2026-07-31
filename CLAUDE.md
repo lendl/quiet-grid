@@ -15,6 +15,14 @@ Quiet Grid is a native Android app (Kotlin, Jetpack Compose). The repo root is t
 - `engine/` — pure Kotlin/JVM module (no Android deps) holding canonical puzzle rules, solving techniques, and difficulty scoring for sudoku, takuzu, nonogram, and wordsearch. `app/` depends on it for live hints/validation; `cli/` depends on it for offline generation. See `docs/superpowers/specs/2026-07-24-shared-puzzle-engine-design.md`.
 - `cli/` — offline puzzle generator (`./gradlew :cli:run --args="generate --game <sudoku|takuzu|nonogram|wordsearch> --difficulty <easy|medium|hard|expert> --count <n> --out app/src/main/assets"`). Writes/merges generated puzzles directly into the committed `*_puzzles.json` asset files `*PuzzleBank.kt` already loads — never ships in the APK, never runs on-device.
 - Fast unit tests for rules/techniques/generators: `./gradlew :engine:test :cli:test` (plain JVM, no emulator needed).
+- New games' move-finding, solving-technique, and validity logic belongs in `:engine` first
+  (`engine/src/main/kotlin/com/quietgrid/engine/<game>/`), with the `:app` layer delegating to it
+  rather than re-deriving board-scanning or validity logic locally in `games/<id>/`. Takuzu's
+  `:app` hint code drifted into exactly this (see `TakuzuNextMove.kt`'s history) before being
+  brought back in line — treat that as the canonical example of what not to repeat. This
+  convention is enforced at review time, not by a test: cross-module semantic duplication isn't
+  something static analysis can detect. (What *is* mechanically enforced: `:engine` has zero
+  Android dependencies, checked by `EngineArchitectureTest` in `:engine`'s test source set.)
 
 ## After making changes
 

@@ -2,8 +2,14 @@ package com.quietgrid.app.games.takuzu
 
 import com.quietgrid.engine.takuzu.TakuzuCellValue
 import com.quietgrid.engine.takuzu.TakuzuGrid
+import com.quietgrid.engine.takuzu.countValue
 import com.quietgrid.engine.takuzu.findAvoidTrioMoveInLine
+import com.quietgrid.engine.takuzu.findCompleteLineMove
+import com.quietgrid.engine.takuzu.findEliminateFilledLinesColumnMove
+import com.quietgrid.engine.takuzu.findEliminateFilledLinesRowMove
 import com.quietgrid.engine.takuzu.findPairMoveInLine
+import com.quietgrid.engine.takuzu.getColumn
+import com.quietgrid.engine.takuzu.otherValue
 
 /**
  * Ports the RN app's Takuzu next-move hint techniques (src/games/takuzu/gameplay/analysis).
@@ -12,6 +18,13 @@ import com.quietgrid.engine.takuzu.findPairMoveInLine
  * eliminate-impossible-combinations (a branch-and-prove search over line completions), is not
  * ported here — it is rare in practice, and puzzles that only have it available fall back to
  * the generic "paused" hint below instead of a specific technique.
+ *
+ * Progress techniques delegate their move-finding to :engine's canonical TakuzuMoves functions
+ * (findPairMoveInLine/findAvoidTrioMoveInLine/findCompleteLineMove/findEliminateFilledLines*Move);
+ * only the UI-specific evidence/highlight-cell formatting lives here. Recovery techniques
+ * (findTripleMismatch/findBalanceMismatch/findDuplicateMismatch below) are NOT delegated — they
+ * locate *where* an already-invalid board breaks a rule for a repair-hint UI, which has no
+ * :engine equivalent (engine only exposes yes/no validity checks).
  */
 
 enum class TakuzuLineKind { ROW, COLUMN }
@@ -109,12 +122,6 @@ sealed interface TakuzuNextMoveHint {
         override val highlightCols: List<Int>,
     ) : TakuzuNextMoveHint
 }
-
-private fun otherValue(value: Int): Int = if (value == 0) 1 else 0
-
-private fun getColumn(board: TakuzuGrid, col: Int): List<TakuzuCellValue> = board.map { it[col] }
-
-private fun countValue(line: List<TakuzuCellValue>, value: Int): Int = line.count { it == value }
 
 private fun getLine(board: TakuzuGrid, kind: TakuzuLineKind, index: Int): List<TakuzuCellValue> =
     if (kind == TakuzuLineKind.ROW) board[index] else getColumn(board, index)
@@ -302,24 +309,13 @@ private fun buildAvoidTriosHint(board: TakuzuGrid, kind: TakuzuLineKind, lineInd
 
 private fun completeLines(board: TakuzuGrid): TakuzuNextMoveHint.CompleteLines? {
     val size = board.size
-    val half = size / 2
     for (row in 0 until size) {
-        val line = board[row]
-        val zeroes = countValue(line, 0); val ones = countValue(line, 1)
-        if (zeroes == half || ones == half) {
-            val fillValue = if (zeroes == half) 1 else 0
-            val col = line.indexOfFirst { it == null }
-            if (col != -1) return buildCompleteLinesHint(board, TakuzuLineKind.ROW, row, col, fillValue)
-        }
+        val move = findCompleteLineMove(board[row], size) ?: continue
+        return buildCompleteLinesHint(board, TakuzuLineKind.ROW, row, move.first, move.second)
     }
     for (col in 0 until size) {
-        val line = getColumn(board, col)
-        val zeroes = countValue(line, 0); val ones = countValue(line, 1)
-        if (zeroes == half || ones == half) {
-            val fillValue = if (zeroes == half) 1 else 0
-            val row = line.indexOfFirst { it == null }
-            if (row != -1) return buildCompleteLinesHint(board, TakuzuLineKind.COLUMN, col, row, fillValue)
-        }
+        val move = findCompleteLineMove(getColumn(board, col), size) ?: continue
+        return buildCompleteLinesHint(board, TakuzuLineKind.COLUMN, col, move.first, move.second)
     }
     return null
 }
@@ -336,44 +332,14 @@ private fun buildCompleteLinesHint(board: TakuzuGrid, kind: TakuzuLineKind, line
     )
 }
 
-private fun eliminateFilledLines(board: TakuzuGrid): TakuzuNextMoveHint.EliminateFilledLines? =
-    eliminateFilledLinesRow(board) ?: eliminateFilledLinesColumn(board)
-
-private fun eliminateFilledLinesRow(board: TakuzuGrid): TakuzuNextMoveHint.EliminateFilledLines? {
-    val size = board.size
-    val completeRows = board.indices.filter { r -> board[r].all { it != null } }
-    for (row in 0 until size) {
-        val line = board[row]
-        val emptyCols = line.indices.filter { line[it] == null }
-        if (emptyCols.size != 2) continue
-        for (complete in completeRows) {
-            if (complete == row) continue
-            val matches = line.indices.all { c -> line[c] == null || line[c] == board[complete][c] }
-            if (!matches) continue
-            val col = emptyCols[0]
-            val value = otherValue(board[complete][col]!!)
-            return buildEliminateFilledLinesHint(board, TakuzuLineKind.ROW, row, complete, col, value)
-        }
+private fun eliminateFilledLines(board: TakuzuGrid): TakuzuNextMoveHint.EliminateFilledLines? {
+    val rowMove = findEliminateFilledLinesRowMove(board)
+    if (rowMove != null) {
+        return buildEliminateFilledLinesHint(board, TakuzuLineKind.ROW, rowMove.row, rowMove.matchingLineIndex!!, rowMove.col, rowMove.value)
     }
-    return null
-}
-
-private fun eliminateFilledLinesColumn(board: TakuzuGrid): TakuzuNextMoveHint.EliminateFilledLines? {
-    val size = board.size
-    val completeCols = (0 until size).filter { c -> getColumn(board, c).all { it != null } }
-    for (col in 0 until size) {
-        val line = getColumn(board, col)
-        val emptyRows = line.indices.filter { line[it] == null }
-        if (emptyRows.size != 2) continue
-        for (complete in completeCols) {
-            if (complete == col) continue
-            val completeLine = getColumn(board, complete)
-            val matches = line.indices.all { r -> line[r] == null || line[r] == completeLine[r] }
-            if (!matches) continue
-            val row = emptyRows[0]
-            val value = otherValue(completeLine[row]!!)
-            return buildEliminateFilledLinesHint(board, TakuzuLineKind.COLUMN, col, complete, row, value)
-        }
+    val colMove = findEliminateFilledLinesColumnMove(board)
+    if (colMove != null) {
+        return buildEliminateFilledLinesHint(board, TakuzuLineKind.COLUMN, colMove.col, colMove.matchingLineIndex!!, colMove.row, colMove.value)
     }
     return null
 }

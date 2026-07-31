@@ -51,4 +51,22 @@ class TakuzuMovesTest {
         )
         assertNull(findEliminateFilledLinesMove(board))
     }
+
+    @Test
+    fun `findCompleteLineMove finds the remaining index once half the values are used`() {
+        val move = findCompleteLineMove(listOf(0, 0, 1, null), size = 4)
+        assertEquals(3 to 1, move)
+    }
+
+    @Test
+    fun `findEliminateFilledLinesMove reports the matching complete row`() {
+        val board: TakuzuGrid = listOf(
+            listOf(0, 1, 0, 1),
+            listOf(0, 1, null, null),
+            listOf(null, null, null, null),
+            listOf(null, null, null, null),
+        )
+        val move = findEliminateFilledLinesMove(board)
+        assertEquals(TakuzuMove(1, 2, 1, TakuzuTechnique.ELIMINATE_FILLED_LINES, matchingLineIndex = 0), move)
+    }
 }
