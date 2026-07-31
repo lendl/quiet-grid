@@ -30,6 +30,11 @@
     <string name="games_coming_soon">Próximamente</string>
     <string name="games_beta_disclaimer">Estos juegos aún están en pruebas y pueden tener problemas.</string>
     <string name="games_active_puzzle_waiting">Tu puzzle te espera</string>
+    <string name="game_takuzu_name">Takuzu</string>
+    <string name="game_nonogram_name">Nonograma</string>
+    <string name="game_minesweeper_name">Buscaminas</string>
+    <string name="game_sudoku_name">Sudoku</string>
+    <string name="game_wordsearch_name">Sopa de letras</string>
 
     <string name="settings_title">Ajustes</string>
     <string name="settings_subtitle">Elige tu tema, idioma y visualización del temporizador.</string>
@@ -136,6 +141,29 @@
     <string name="support_rate_quiet_grid">Valorar Quiet Grid</string>
     <string name="support_opens_play_store">Abre Play Store</string>
 
+    <!-- support info -->
+    <string name="support_info_back">Atrás</string>
+    <string name="support_info_privacy_title">Privacidad</string>
+    <string name="support_info_privacy_intro">Quiet Grid funciona completamente sin conexión. Ningún dato sale de tu dispositivo.</string>
+    <string name="support_info_privacy_heading_1">Qué recopila Quiet Grid</string>
+    <string name="support_info_privacy_body_1">Quiet Grid no recopila, transmite, vende ni comparte datos personales. La app no requiere una cuenta y no envía datos a nosotros ni a terceros.</string>
+    <string name="support_info_privacy_heading_2">Qué permanece en este dispositivo</string>
+    <string name="support_info_privacy_body_2">Quiet Grid almacena una pequeña cantidad de datos de la app localmente para que funcione como se espera. Esto incluye la preferencia de tema, las estadísticas locales y el progreso del puzzle activo.</string>
+    <string name="support_info_privacy_heading_3">Anuncios, análisis y seguimiento</string>
+    <string name="support_info_privacy_body_3">Quiet Grid no utiliza anuncios, análisis, seguimiento, servicios de informes de fallos ni servicios en línea de terceros.</string>
+    <string name="support_info_about_title">Acerca de Quiet Grid</string>
+    <string name="support_info_about_intro">Quiet Grid es una app de puzzles centrada en la privacidad, creada para una concentración tranquila.</string>
+    <string name="support_info_about_heading_1">Para qué sirve la app</string>
+    <string name="support_info_about_body_1">Quiet Grid mantiene los puzzles lógicos ligeros, completamente sin conexión, sin anuncios y gratuitos. El objetivo es simple: reglas claras, un ritmo de apoyo y sin distracciones.</string>
+    <string name="support_info_about_heading_2">Qué incluye Quiet Grid</string>
+    <string name="support_info_about_body_2">Quiet Grid actualmente incluye varios juegos de puzzles, con estadísticas locales, temas claro y oscuro, y sin cuentas.</string>
+    <string name="support_info_licenses_title">Licencias de código abierto</string>
+    <string name="support_info_licenses_intro">Quiet Grid es software de código abierto.</string>
+    <string name="support_info_licenses_heading_1">Licencia del proyecto</string>
+    <string name="support_info_licenses_body_1">El código fuente de Quiet Grid está disponible bajo la Licencia Pública General de GNU v3.0.</string>
+    <string name="support_info_licenses_heading_2">Paquetes de terceros</string>
+    <string name="support_info_licenses_body_2">Quiet Grid también utiliza paquetes de código abierto que mantienen sus propias licencias. Puedes revisar el código fuente completo y la lista de paquetes en el repositorio del proyecto.</string>
+
     <string name="chimp_title">Chimp Test</string>
     <string name="chimp_short_title">Chimp</string>
     <string name="chimp_tagline">Toca los números en orden antes de que desaparezcan.</string>
@@ -233,6 +261,57 @@
     <string name="takuzu_loss_abandoned_title">Puzzle sin terminar</string>
     <string name="takuzu_loss_abandoned_body">Terminaste este puzzle antes de resolverlo.</string>
 
+    <!-- Nonogram -->
+    <string name="nonogram_tagline">Rellena celdas para cumplir las pistas de fila y columna.</string>
+    <string name="nonogram_difficulty_easy">Fácil</string>
+    <string name="nonogram_difficulty_medium">Medio</string>
+    <string name="nonogram_difficulty_hard">Difícil</string>
+    <string name="nonogram_difficulty_expert">Experto</string>
+    <string name="nonogram_difficulty_desc_easy">Patrones de pistas pequeños con aperturas claras.</string>
+    <string name="nonogram_difficulty_desc_medium">Cuadrículas equilibradas que requieren deducción constante.</string>
+    <string name="nonogram_difficulty_desc_hard">Conjuntos de pistas más ajustados que requieren comprobaciones de solapamiento más profundas.</string>
+    <string name="nonogram_difficulty_desc_expert">Cuadrículas densas con movimientos forzados menos evidentes.</string>
+    <string name="nonogram_size_label">Tamaño</string>
+    <string name="nonogram_difficulty_label">Dificultad</string>
+    <string name="nonogram_how_to_play_goal">Rellena celdas para formar exactamente los bloques descritos por cada pista de fila y columna.</string>
+    <string name="nonogram_how_to_play_controls">Toca una celda para alternar: vacía → rellena → tachada. Desliza sobre las celdas para pintarlas todas con el mismo estado.</string>
+    <string name="nonogram_how_to_play_wrong_move">Si una fila o columna ya no puede cumplir sus pistas, se marca como inválida.</string>
+    <string name="nonogram_rule_1_title">Lee las pistas</string>
+    <string name="nonogram_rule_1_body">Los números de pista listan las longitudes de los bloques de izquierda a derecha (o de arriba abajo), con al menos un espacio entre cada bloque.</string>
+    <string name="nonogram_rule_2_title">Usa el solapamiento</string>
+    <string name="nonogram_rule_2_body">Si toda colocación válida de un bloque cubre la misma celda, esa celda debe estar rellena.</string>
+    <string name="nonogram_rule_3_title">Fuerza celdas vacías</string>
+    <string name="nonogram_rule_3_body">Las celdas que no pueden pertenecer a ninguna colocación válida de bloque deben permanecer vacías.</string>
+    <string name="nonogram_rule_4_title">Termina cada línea</string>
+    <string name="nonogram_rule_4_body">Una vez que una línea está completa, las celdas restantes de esa línea deben permanecer vacías.</string>
+    <string name="nonogram_technique_1_title">Relleno por solapamiento</string>
+    <string name="nonogram_technique_1_body">Desliza un bloque entre su posición válida más a la izquierda y más a la derecha — cualquier celda cubierta en ambos extremos debe estar rellena.</string>
+    <string name="nonogram_technique_2_title">Vacío forzado</string>
+    <string name="nonogram_technique_2_body">Si ningún bloque puede alcanzar legalmente una celda en ninguna disposición válida, márcala como vacía.</string>
+    <string name="nonogram_technique_3_title">Línea completa</string>
+    <string name="nonogram_technique_3_body">Una vez que todos los bloques de una línea están completamente colocados, cada celda restante de esa línea debe estar vacía.</string>
+    <string name="nonogram_hint_show">Show next move hint</string>
+    <string name="nonogram_hint_hide">Hide next move hint</string>
+    <string name="nonogram_hint_line_row">Fila %1$d</string>
+    <string name="nonogram_hint_line_col">Columna %1$d</string>
+    <string name="nonogram_hint_invalid_title">Línea inválida</string>
+    <string name="nonogram_hint_invalid_body">%1$s ya no puede cumplir sus pistas.</string>
+    <string name="nonogram_hint_overlap_fill_title">Relleno por solapamiento</string>
+    <string name="nonogram_hint_overlap_fill_body_one">Rellena la 1 celda solapada en %1$s.</string>
+    <string name="nonogram_hint_overlap_fill_body_other">Rellena las %2$d celdas solapadas en %1$s.</string>
+    <string name="nonogram_hint_forced_empty_title">Vacío forzado</string>
+    <string name="nonogram_hint_forced_empty_body_one">Marca la 1 celda en %1$s como vacía.</string>
+    <string name="nonogram_hint_forced_empty_body_other">Marca las %2$d celdas en %1$s como vacías.</string>
+    <string name="nonogram_hint_complete_line_title">Línea completa</string>
+    <string name="nonogram_hint_complete_line_body_one">Termina %1$s marcando la 1 celda restante como vacía.</string>
+    <string name="nonogram_hint_complete_line_body_other">Termina %1$s marcando las %2$d celdas restantes como vacías.</string>
+    <string name="nonogram_how_to_play_scoring">La puntuación empieza en 10.000 y baja mientras corre el tiempo. Resolver más rápido gana una puntuación más alta.</string>
+    <string name="nonogram_loss_abandoned_eyebrow">Puzzle terminado</string>
+    <string name="nonogram_loss_abandoned_title">Puzzle sin terminar</string>
+    <string name="nonogram_loss_abandoned_body">Terminaste este puzzle antes de resolverlo.</string>
+    <string name="nonogram_input_mode_fill">Rellenar</string>
+    <string name="nonogram_input_mode_cross">Marcar vacío</string>
+
     <!-- Minesweeper -->
     <string name="minesweeper_title">Buscaminas</string>
     <string name="minesweeper_tagline">Limpia la cuadrícula sin abrir ninguna mina.</string>
@@ -327,6 +406,12 @@
     <string name="sudoku_hint_elimination_title">%1$s: eliminar %2$s</string>
     <string name="sudoku_hint_locked_candidates_body">Los dígitos %1$s están bloqueados dentro de %2$s, así que quítalos de las demás celdas resaltadas en %3$s.</string>
     <string name="sudoku_hint_elimination_body">%1$s elimina %2$s de %3$s. Las celdas resaltadas ya no dejan un lugar válido para esos candidatos ahí.</string>
+    <string name="sudoku_hint_technique_naked_single">Único desnudo</string>
+    <string name="sudoku_hint_technique_hidden_single">Único oculto</string>
+    <string name="sudoku_hint_technique_naked_pair">Par desnudo</string>
+    <string name="sudoku_hint_technique_hidden_pair">Par oculto</string>
+    <string name="sudoku_hint_technique_pointing_pair_triple">Par/trío apuntador</string>
+    <string name="sudoku_hint_technique_box_line_reduction">Reducción caja-línea</string>
     <string name="sudoku_hint_technique_x_wing">X-Wing</string>
     <string name="sudoku_hint_technique_swordfish">Swordfish</string>
     <string name="sudoku_hint_technique_xy_wing">XY-Wing</string>
@@ -378,6 +463,7 @@
     <string name="wordsearch_hidden_word_exit_mode">Salir del modo de palabra oculta</string>
     <string name="wordsearch_hidden_word_instructions">Las letras de la palabra oculta están en las casillas vacías, de izquierda a derecha y de arriba a abajo. Tócalas en orden.</string>
     <string name="wordsearch_hidden_word_reset_on_mistake">Una pulsación incorrecta en la palabra oculta reinicia tu progreso y cuesta precisión.</string>
+    <string name="wordsearch_reset_zoom">Restablecer zoom</string>
     <string name="wordsearch_next_move_show">Show next word hint</string>
     <string name="wordsearch_next_move_hide">Hide next word hint</string>
     <string name="wordsearch_next_move_title">Find \"%1$s\"</string>
@@ -397,7 +483,7 @@
     <string name="wordsearch_tip_1_body">Encuentra primero iniciales poco comunes en la cuadrícula y luego expande en todas las direcciones permitidas.</string>
     <string name="wordsearch_tip_2_title">Completa una línea a la vez</string>
     <string name="wordsearch_tip_2_body">Comienza una selección, arrastra hasta el punto final y confirma. Iniciar una nueva selección reemplaza la temporal.</string>
-    <string name="wordsearch_how_to_play_scoring">Empieza en 15.000 y baja mientras corre el tiempo. Cada palabra sin encontrar al resolver la palabra oculta suma un bonus de 300 puntos. Cada pulsación incorrecta en la palabra oculta cuesta 500 puntos y un 10 % de precisión.</string>
+    <string name="wordsearch_how_to_play_scoring">Empieza en 15.000 y baja mientras corre el tiempo. Cada palabra sin encontrar al resolver la palabra oculta suma un bonus de 300 puntos. Cada pulsación incorrecta en la palabra oculta cuesta 500 puntos y un 10 %% de precisión.</string>
     <string name="wordsearch_loss_abandoned_eyebrow">Puzzle terminado</string>
     <string name="wordsearch_loss_abandoned_title">Sesión de Sopa de Letras terminada</string>
     <string name="wordsearch_loss_abandoned_body">Terminaste esta sesión de Sopa de Letras antes de resolver todas las palabras y la palabra oculta.</string>

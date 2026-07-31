@@ -495,7 +495,7 @@
     <string name="wordsearch_tip_1_body">Find uncommon initials in the grid first, then expand in all allowed directions.</string>
     <string name="wordsearch_tip_2_title">Commit one line at a time</string>
     <string name="wordsearch_tip_2_body">Begin a selection, drag to the endpoint, and commit. Starting a new selection replaces the temporary one.</string>
-    <string name="wordsearch_how_to_play_scoring">Starts at 15,000 and drops while the timer runs. Each word left unfound when you solve the hidden word adds a 300-point bonus. Each wrong hidden-word tap costs 500 points and 10% accuracy.</string>
+    <string name="wordsearch_how_to_play_scoring">Starts at 15,000 and drops while the timer runs. Each word left unfound when you solve the hidden word adds a 300-point bonus. Each wrong hidden-word tap costs 500 points and 10%% accuracy.</string>
     <string name="wordsearch_loss_abandoned_eyebrow">Puzzle ended</string>
     <string name="wordsearch_loss_abandoned_title">Word Search session ended</string>
     <string name="wordsearch_loss_abandoned_body">You ended this Word Search session before solving every listed word and the hidden word.</string>

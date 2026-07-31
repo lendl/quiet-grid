@@ -30,6 +30,11 @@
     <string name="games_coming_soon">Demnächst verfügbar</string>
     <string name="games_beta_disclaimer">Diese Spiele befinden sich noch in der Entwicklung und können Fehler enthalten.</string>
     <string name="games_active_puzzle_waiting">Dein Rätsel wartet</string>
+    <string name="game_takuzu_name">Takuzu</string>
+    <string name="game_nonogram_name">Nonogramm</string>
+    <string name="game_minesweeper_name">Minesweeper</string>
+    <string name="game_sudoku_name">Sudoku</string>
+    <string name="game_wordsearch_name">Wortsuche</string>
 
     <string name="settings_title">Einstellungen</string>
     <string name="settings_subtitle">Wähle Design, Sprache und Timer-Anzeige.</string>
@@ -136,6 +141,29 @@
     <string name="support_rate_quiet_grid">Quiet Grid bewerten</string>
     <string name="support_opens_play_store">Öffnet Play Store</string>
 
+    <!-- support info -->
+    <string name="support_info_back">Zurück</string>
+    <string name="support_info_privacy_title">Datenschutz</string>
+    <string name="support_info_privacy_intro">Quiet Grid funktioniert vollständig offline. Es verlassen keine Daten dein Gerät.</string>
+    <string name="support_info_privacy_heading_1">Was Quiet Grid sammelt</string>
+    <string name="support_info_privacy_body_1">Quiet Grid sammelt, überträgt, verkauft oder teilt keine persönlichen Daten. Die App benötigt kein Konto und sendet keine Daten an uns oder Dritte.</string>
+    <string name="support_info_privacy_heading_2">Was auf diesem Gerät bleibt</string>
+    <string name="support_info_privacy_body_2">Quiet Grid speichert eine kleine Menge an App-Daten lokal, damit die App wie erwartet funktioniert. Dazu gehören Designeinstellung, lokale Statistiken und der Fortschritt des aktiven Rätsels.</string>
+    <string name="support_info_privacy_heading_3">Werbung, Analyse und Tracking</string>
+    <string name="support_info_privacy_body_3">Quiet Grid verwendet keine Werbung, Analysetools, Tracking, Absturzberichtsdienste oder Online-Dienste von Drittanbietern.</string>
+    <string name="support_info_about_title">Über Quiet Grid</string>
+    <string name="support_info_about_intro">Quiet Grid ist eine auf Privatsphäre ausgerichtete Rätsel-App für ruhige Konzentration.</string>
+    <string name="support_info_about_heading_1">Wofür die App gedacht ist</string>
+    <string name="support_info_about_body_1">Quiet Grid hält Logikrätsel schlank, vollständig offline, werbefrei und kostenlos nutzbar. Das Ziel ist einfach: klare Regeln, unterstützendes Tempo und keine Ablenkungen.</string>
+    <string name="support_info_about_heading_2">Was Quiet Grid enthält</string>
+    <string name="support_info_about_body_2">Quiet Grid enthält derzeit mehrere Rätselspiele mit lokalen Statistiken, dunklem und hellem Design und ohne Konten.</string>
+    <string name="support_info_licenses_title">Open-Source-Lizenzen</string>
+    <string name="support_info_licenses_intro">Quiet Grid ist Open-Source-Software.</string>
+    <string name="support_info_licenses_heading_1">Projektlizenz</string>
+    <string name="support_info_licenses_body_1">Der Quellcode von Quiet Grid ist unter der GNU General Public License v3.0 verfügbar.</string>
+    <string name="support_info_licenses_heading_2">Pakete von Drittanbietern</string>
+    <string name="support_info_licenses_body_2">Quiet Grid verwendet außerdem Open-Source-Pakete, die ihre eigenen Lizenzen behalten. Den vollständigen Quellcode und die Paketliste findest du im Projekt-Repository.</string>
+
     <string name="chimp_title">Chimp Test</string>
     <string name="chimp_short_title">Chimp</string>
     <string name="chimp_tagline">Tippe die Zahlen der Reihe nach an, bevor sie verschwinden.</string>
@@ -233,6 +261,57 @@
     <string name="takuzu_loss_abandoned_title">Rätsel unfertig</string>
     <string name="takuzu_loss_abandoned_body">Du hast dieses Rätsel beendet, bevor es gelöst war.</string>
 
+    <!-- Nonogram -->
+    <string name="nonogram_tagline">Fülle Zellen, um die Zeilen- und Spaltenhinweise zu erfüllen.</string>
+    <string name="nonogram_difficulty_easy">Leicht</string>
+    <string name="nonogram_difficulty_medium">Mittel</string>
+    <string name="nonogram_difficulty_hard">Schwer</string>
+    <string name="nonogram_difficulty_expert">Experte</string>
+    <string name="nonogram_difficulty_desc_easy">Kleine Hinweismuster mit klaren Einstiegen.</string>
+    <string name="nonogram_difficulty_desc_medium">Ausgewogene Raster, die stetige Schlussfolgerungen erfordern.</string>
+    <string name="nonogram_difficulty_desc_hard">Engere Hinweissätze, die tiefere Überlappungsprüfungen erfordern.</string>
+    <string name="nonogram_difficulty_desc_expert">Dichte Raster mit weniger offensichtlichen erzwungenen Zügen.</string>
+    <string name="nonogram_size_label">Größe</string>
+    <string name="nonogram_difficulty_label">Schwierigkeit</string>
+    <string name="nonogram_how_to_play_goal">Fülle Zellen, um genau die Blöcke zu bilden, die jeder Zeilen- und Spaltenhinweis beschreibt.</string>
+    <string name="nonogram_how_to_play_controls">Tippe auf eine Zelle, um durchzuschalten: leer → gefüllt → durchgestrichen. Wische über Zellen, um sie alle mit demselben Zustand zu bemalen.</string>
+    <string name="nonogram_how_to_play_wrong_move">Wenn eine Zeile oder Spalte ihre Hinweise nicht mehr erfüllen kann, wird sie als ungültig markiert.</string>
+    <string name="nonogram_rule_1_title">Lies die Hinweise</string>
+    <string name="nonogram_rule_1_body">Hinweiszahlen listen Blocklängen von links nach rechts (oder oben nach unten) auf, mit mindestens einer Lücke zwischen jedem Block.</string>
+    <string name="nonogram_rule_2_title">Nutze Überlappung</string>
+    <string name="nonogram_rule_2_body">Wenn jede gültige Platzierung eines Blocks dieselbe Zelle abdeckt, muss diese Zelle gefüllt sein.</string>
+    <string name="nonogram_rule_3_title">Erzwinge Leerstellen</string>
+    <string name="nonogram_rule_3_body">Zellen, die zu keiner gültigen Blockplatzierung gehören können, müssen leer bleiben.</string>
+    <string name="nonogram_rule_4_title">Beende jede Linie</string>
+    <string name="nonogram_rule_4_body">Sobald eine Linie vollständig ist, müssen die restlichen Zellen dieser Linie leer bleiben.</string>
+    <string name="nonogram_technique_1_title">Überlappungsfüllung</string>
+    <string name="nonogram_technique_1_body">Schiebe einen Block zwischen seiner am weitesten links und am weitesten rechts gültigen Position — jede in beiden Extremen abgedeckte Zelle muss gefüllt sein.</string>
+    <string name="nonogram_technique_2_title">Erzwungene Leerstelle</string>
+    <string name="nonogram_technique_2_body">Wenn kein Block eine Zelle in irgendeiner gültigen Anordnung legal erreichen kann, markiere sie als leer.</string>
+    <string name="nonogram_technique_3_title">Vollständige Linie</string>
+    <string name="nonogram_technique_3_body">Sobald alle Blöcke einer Linie vollständig platziert sind, muss jede verbleibende Zelle dieser Linie leer sein.</string>
+    <string name="nonogram_hint_show">Show next move hint</string>
+    <string name="nonogram_hint_hide">Hide next move hint</string>
+    <string name="nonogram_hint_line_row">Zeile %1$d</string>
+    <string name="nonogram_hint_line_col">Spalte %1$d</string>
+    <string name="nonogram_hint_invalid_title">Ungültige Linie</string>
+    <string name="nonogram_hint_invalid_body">%1$s kann ihre Hinweise nicht mehr erfüllen.</string>
+    <string name="nonogram_hint_overlap_fill_title">Überlappungsfüllung</string>
+    <string name="nonogram_hint_overlap_fill_body_one">Fülle die 1 überlappende Zelle in %1$s.</string>
+    <string name="nonogram_hint_overlap_fill_body_other">Fülle die %2$d überlappenden Zellen in %1$s.</string>
+    <string name="nonogram_hint_forced_empty_title">Erzwungene Leerstelle</string>
+    <string name="nonogram_hint_forced_empty_body_one">Markiere die 1 Zelle in %1$s als leer.</string>
+    <string name="nonogram_hint_forced_empty_body_other">Markiere die %2$d Zellen in %1$s als leer.</string>
+    <string name="nonogram_hint_complete_line_title">Vollständige Linie</string>
+    <string name="nonogram_hint_complete_line_body_one">Beende %1$s, indem du die 1 verbleibende Zelle als leer markierst.</string>
+    <string name="nonogram_hint_complete_line_body_other">Beende %1$s, indem du die %2$d verbleibenden Zellen als leer markierst.</string>
+    <string name="nonogram_how_to_play_scoring">Die Punktzahl startet bei 10.000 und sinkt, während die Zeit läuft. Schnelleres Lösen bringt eine höhere Punktzahl.</string>
+    <string name="nonogram_loss_abandoned_eyebrow">Rätsel beendet</string>
+    <string name="nonogram_loss_abandoned_title">Rätsel unfertig</string>
+    <string name="nonogram_loss_abandoned_body">Du hast dieses Rätsel beendet, bevor es gelöst war.</string>
+    <string name="nonogram_input_mode_fill">Füllen</string>
+    <string name="nonogram_input_mode_cross">Leer markieren</string>
+
     <!-- Minesweeper -->
     <string name="minesweeper_title">Minesweeper</string>
     <string name="minesweeper_tagline">Räume das Raster frei, ohne eine Mine zu öffnen.</string>
@@ -327,6 +406,12 @@
     <string name="sudoku_hint_elimination_title">%1$s: %2$s streichen</string>
     <string name="sudoku_hint_locked_candidates_body">Die Ziffern %1$s sind in %2$s eingeschlossen, also entferne sie aus den anderen markierten Zellen in %3$s.</string>
     <string name="sudoku_hint_elimination_body">%1$s entfernt %2$s aus %3$s. Die markierten Zellen lassen diesen Kandidaten dort kein gültiges Zuhause mehr.</string>
+    <string name="sudoku_hint_technique_naked_single">Nacktes Einzel</string>
+    <string name="sudoku_hint_technique_hidden_single">Verstecktes Einzel</string>
+    <string name="sudoku_hint_technique_naked_pair">Nacktes Paar</string>
+    <string name="sudoku_hint_technique_hidden_pair">Verstecktes Paar</string>
+    <string name="sudoku_hint_technique_pointing_pair_triple">Zeigendes Paar/Trio</string>
+    <string name="sudoku_hint_technique_box_line_reduction">Box-Linien-Reduktion</string>
     <string name="sudoku_hint_technique_x_wing">X-Wing</string>
     <string name="sudoku_hint_technique_swordfish">Swordfish</string>
     <string name="sudoku_hint_technique_xy_wing">XY-Wing</string>
@@ -378,6 +463,7 @@
     <string name="wordsearch_hidden_word_exit_mode">Modus für verstecktes Wort verlassen</string>
     <string name="wordsearch_hidden_word_instructions">Die Buchstaben des versteckten Worts befinden sich in den leeren Feldern, von links nach rechts und von oben nach unten. Tippe sie der Reihe nach an.</string>
     <string name="wordsearch_hidden_word_reset_on_mistake">Ein falscher Tipp auf das versteckte Wort setzt deinen Fortschritt zurück und kostet Genauigkeit.</string>
+    <string name="wordsearch_reset_zoom">Zoom zurücksetzen</string>
     <string name="wordsearch_next_move_show">Show next word hint</string>
     <string name="wordsearch_next_move_hide">Hide next word hint</string>
     <string name="wordsearch_next_move_title">Find \"%1$s\"</string>
@@ -397,7 +483,7 @@
     <string name="wordsearch_tip_1_body">Finde zuerst ungewöhnliche Anfangsbuchstaben im Raster und erweitere dann in alle erlaubten Richtungen.</string>
     <string name="wordsearch_tip_2_title">Vollende eine Linie nach der anderen</string>
     <string name="wordsearch_tip_2_body">Beginne eine Auswahl, ziehe zum Endpunkt und bestätige. Eine neue Auswahl zu beginnen ersetzt die temporäre.</string>
-    <string name="wordsearch_how_to_play_scoring">Beginnt bei 15.000 und sinkt, während die Zeit läuft. Jedes beim Lösen des versteckten Worts noch nicht gefundene Wort bringt einen Bonus von 300 Punkten. Jeder falsche Tipp beim versteckten Wort kostet 500 Punkte und 10 % Genauigkeit.</string>
+    <string name="wordsearch_how_to_play_scoring">Beginnt bei 15.000 und sinkt, während die Zeit läuft. Jedes beim Lösen des versteckten Worts noch nicht gefundene Wort bringt einen Bonus von 300 Punkten. Jeder falsche Tipp beim versteckten Wort kostet 500 Punkte und 10 %% Genauigkeit.</string>
     <string name="wordsearch_loss_abandoned_eyebrow">Rätsel beendet</string>
     <string name="wordsearch_loss_abandoned_title">Wortsuche-Sitzung beendet</string>
     <string name="wordsearch_loss_abandoned_body">Du hast diese Wortsuche beendet, bevor du alle Wörter und das versteckte Wort gelöst hast.</string>

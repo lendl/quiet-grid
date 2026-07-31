@@ -30,6 +30,11 @@
     <string name="games_coming_soon">Binnenkort beschikbaar</string>
     <string name="games_beta_disclaimer">Deze spellen zijn nog in ontwikkeling en kunnen problemen bevatten.</string>
     <string name="games_active_puzzle_waiting">Je puzzel wacht op je</string>
+    <string name="game_takuzu_name">Takuzu</string>
+    <string name="game_nonogram_name">Nonogram</string>
+    <string name="game_minesweeper_name">Mijnenveger</string>
+    <string name="game_sudoku_name">Sudoku</string>
+    <string name="game_wordsearch_name">Woordzoeker</string>
 
     <string name="settings_title">Instellingen</string>
     <string name="settings_subtitle">Kies je thema, taal en timerweergave.</string>
@@ -136,6 +141,29 @@
     <string name="support_rate_quiet_grid">Beoordeel Quiet Grid</string>
     <string name="support_opens_play_store">Opent Play Store</string>
 
+    <!-- support info -->
+    <string name="support_info_back">Terug</string>
+    <string name="support_info_privacy_title">Privacy</string>
+    <string name="support_info_privacy_intro">Quiet Grid werkt volledig offline. Er verlaten geen gegevens je apparaat.</string>
+    <string name="support_info_privacy_heading_1">Wat Quiet Grid verzamelt</string>
+    <string name="support_info_privacy_body_1">Quiet Grid verzamelt, verzendt, verkoopt of deelt geen persoonlijke gegevens. De app vereist geen account en verstuurt geen gegevens naar ons of naar derden.</string>
+    <string name="support_info_privacy_heading_2">Wat op dit apparaat blijft</string>
+    <string name="support_info_privacy_body_2">Quiet Grid slaat een kleine hoeveelheid app-gegevens lokaal op zodat de app werkt zoals verwacht. Dit omvat de themavoorkeur, lokale statistieken en de voortgang van de actieve puzzel.</string>
+    <string name="support_info_privacy_heading_3">Advertenties, analyse en tracking</string>
+    <string name="support_info_privacy_body_3">Quiet Grid gebruikt geen advertenties, analyses, tracking, crashrapportagediensten of online diensten van derden.</string>
+    <string name="support_info_about_title">Over Quiet Grid</string>
+    <string name="support_info_about_intro">Quiet Grid is een privacygerichte puzzel-app, gemaakt voor rustige concentratie.</string>
+    <string name="support_info_about_heading_1">Waar de app voor bedoeld is</string>
+    <string name="support_info_about_body_1">Quiet Grid houdt logicapuzzels licht, volledig offline, advertentievrij en gratis te gebruiken. Het doel is simpel: duidelijke regels, ondersteunend tempo en geen afleiding.</string>
+    <string name="support_info_about_heading_2">Wat Quiet Grid bevat</string>
+    <string name="support_info_about_body_2">Quiet Grid bevat momenteel meerdere puzzelspellen, met lokale statistieken, donkere en lichte thema\'s, en geen accounts.</string>
+    <string name="support_info_licenses_title">Opensource-licenties</string>
+    <string name="support_info_licenses_intro">Quiet Grid is opensourcesoftware.</string>
+    <string name="support_info_licenses_heading_1">Projectlicentie</string>
+    <string name="support_info_licenses_body_1">De broncode van Quiet Grid is beschikbaar onder de GNU General Public License v3.0.</string>
+    <string name="support_info_licenses_heading_2">Pakketten van derden</string>
+    <string name="support_info_licenses_body_2">Quiet Grid gebruikt ook opensourcepakketten die hun eigen licenties behouden. Je kunt de volledige broncode en pakketlijst bekijken in de projectrepository.</string>
+
     <string name="chimp_title">Chimp Test</string>
     <string name="chimp_short_title">Chimp</string>
     <string name="chimp_tagline">Tik de cijfers op volgorde aan voordat ze verdwijnen.</string>
@@ -233,6 +261,57 @@
     <string name="takuzu_loss_abandoned_title">Puzzel niet af</string>
     <string name="takuzu_loss_abandoned_body">Je hebt deze puzzel beëindigd voordat hij was opgelost.</string>
 
+    <!-- Nonogram -->
+    <string name="nonogram_tagline">Vul cellen om aan de rij- en kolomhints te voldoen.</string>
+    <string name="nonogram_difficulty_easy">Makkelijk</string>
+    <string name="nonogram_difficulty_medium">Gemiddeld</string>
+    <string name="nonogram_difficulty_hard">Moeilijk</string>
+    <string name="nonogram_difficulty_expert">Expert</string>
+    <string name="nonogram_difficulty_desc_easy">Kleine hintpatronen met duidelijke openingen.</string>
+    <string name="nonogram_difficulty_desc_medium">Uitgebalanceerde rasters die gestage deductie vereisen.</string>
+    <string name="nonogram_difficulty_desc_hard">Krappere hintsets die diepere overlapcontroles vereisen.</string>
+    <string name="nonogram_difficulty_desc_expert">Dichte rasters met minder voor de hand liggende gedwongen zetten.</string>
+    <string name="nonogram_size_label">Grootte</string>
+    <string name="nonogram_difficulty_label">Niveau</string>
+    <string name="nonogram_how_to_play_goal">Vul cellen om precies de blokken te vormen die elke rij- en kolomhint beschrijft.</string>
+    <string name="nonogram_how_to_play_controls">Tik op een cel om te wisselen: leeg → gevuld → doorgestreept. Veeg over cellen om ze allemaal dezelfde status te geven.</string>
+    <string name="nonogram_how_to_play_wrong_move">Als een rij of kolom niet meer aan zijn hints kan voldoen, wordt hij als ongeldig gemarkeerd.</string>
+    <string name="nonogram_rule_1_title">Lees de hints</string>
+    <string name="nonogram_rule_1_body">Hintgetallen geven bloklengtes van links naar rechts (of boven naar beneden), met minstens één opening tussen elk blok.</string>
+    <string name="nonogram_rule_2_title">Gebruik overlap</string>
+    <string name="nonogram_rule_2_body">Als elke geldige plaatsing van een blok dezelfde cel bedekt, moet die cel gevuld zijn.</string>
+    <string name="nonogram_rule_3_title">Dwing lege cellen af</string>
+    <string name="nonogram_rule_3_body">Cellen die bij geen enkele geldige blokplaatsing kunnen horen, moeten leeg blijven.</string>
+    <string name="nonogram_rule_4_title">Maak elke lijn af</string>
+    <string name="nonogram_rule_4_body">Zodra een lijn compleet is, moeten de resterende cellen in die lijn leeg blijven.</string>
+    <string name="nonogram_technique_1_title">Overlapvulling</string>
+    <string name="nonogram_technique_1_body">Schuif een blok tussen zijn meest linkse en meest rechtse geldige positie — elke cel die in beide uitersten bedekt wordt, moet gevuld zijn.</string>
+    <string name="nonogram_technique_2_title">Gedwongen leeg</string>
+    <string name="nonogram_technique_2_body">Als geen enkel blok een cel legaal kan bereiken in enige geldige opstelling, markeer hem dan als leeg.</string>
+    <string name="nonogram_technique_3_title">Complete lijn</string>
+    <string name="nonogram_technique_3_body">Zodra alle blokken in een lijn volledig geplaatst zijn, moet elke resterende cel in die lijn leeg zijn.</string>
+    <string name="nonogram_hint_show">Show next move hint</string>
+    <string name="nonogram_hint_hide">Hide next move hint</string>
+    <string name="nonogram_hint_line_row">Rij %1$d</string>
+    <string name="nonogram_hint_line_col">Kolom %1$d</string>
+    <string name="nonogram_hint_invalid_title">Ongeldige lijn</string>
+    <string name="nonogram_hint_invalid_body">%1$s kan niet meer aan zijn hints voldoen.</string>
+    <string name="nonogram_hint_overlap_fill_title">Overlapvulling</string>
+    <string name="nonogram_hint_overlap_fill_body_one">Vul de 1 overlappende cel in %1$s.</string>
+    <string name="nonogram_hint_overlap_fill_body_other">Vul de %2$d overlappende cellen in %1$s.</string>
+    <string name="nonogram_hint_forced_empty_title">Gedwongen leeg</string>
+    <string name="nonogram_hint_forced_empty_body_one">Markeer de 1 cel in %1$s als leeg.</string>
+    <string name="nonogram_hint_forced_empty_body_other">Markeer de %2$d cellen in %1$s als leeg.</string>
+    <string name="nonogram_hint_complete_line_title">Complete lijn</string>
+    <string name="nonogram_hint_complete_line_body_one">Maak %1$s af door de 1 resterende cel leeg te markeren.</string>
+    <string name="nonogram_hint_complete_line_body_other">Maak %1$s af door de %2$d resterende cellen leeg te markeren.</string>
+    <string name="nonogram_how_to_play_scoring">De score begint op 10.000 en daalt terwijl de tijd loopt. Sneller oplossen levert een hogere score op.</string>
+    <string name="nonogram_loss_abandoned_eyebrow">Puzzel beëindigd</string>
+    <string name="nonogram_loss_abandoned_title">Puzzel niet af</string>
+    <string name="nonogram_loss_abandoned_body">Je hebt deze puzzel beëindigd voordat hij was opgelost.</string>
+    <string name="nonogram_input_mode_fill">Vullen</string>
+    <string name="nonogram_input_mode_cross">Leeg markeren</string>
+
     <!-- Minesweeper -->
     <string name="minesweeper_title">Mijnenveger</string>
     <string name="minesweeper_tagline">Maak het rooster vrij zonder een mijn te openen.</string>
@@ -327,6 +406,12 @@
     <string name="sudoku_hint_elimination_title">%1$s: schrap %2$s</string>
     <string name="sudoku_hint_locked_candidates_body">De cijfers %1$s zitten opgesloten in %2$s, dus verwijder ze uit de andere gemarkeerde cellen in %3$s.</string>
     <string name="sudoku_hint_elimination_body">%1$s verwijdert %2$s uit %3$s. De gemarkeerde cellen laten die kandidaten daar geen geldige plek meer.</string>
+    <string name="sudoku_hint_technique_naked_single">Naakte single</string>
+    <string name="sudoku_hint_technique_hidden_single">Verborgen single</string>
+    <string name="sudoku_hint_technique_naked_pair">Naakt paar</string>
+    <string name="sudoku_hint_technique_hidden_pair">Verborgen paar</string>
+    <string name="sudoku_hint_technique_pointing_pair_triple">Wijzend paar/drietal</string>
+    <string name="sudoku_hint_technique_box_line_reduction">Box-lijn-reductie</string>
     <string name="sudoku_hint_technique_x_wing">X-Wing</string>
     <string name="sudoku_hint_technique_swordfish">Swordfish</string>
     <string name="sudoku_hint_technique_xy_wing">XY-Wing</string>
@@ -378,6 +463,7 @@
     <string name="wordsearch_hidden_word_exit_mode">Verborgen-woordmodus verlaten</string>
     <string name="wordsearch_hidden_word_instructions">De letters van het verborgen woord staan in de lege cellen, van links naar rechts en van boven naar beneden. Tik ze op volgorde aan.</string>
     <string name="wordsearch_hidden_word_reset_on_mistake">Een verkeerde tik op het verborgen woord zet je voortgang terug en kost nauwkeurigheid.</string>
+    <string name="wordsearch_reset_zoom">Zoom resetten</string>
     <string name="wordsearch_next_move_show">Show next word hint</string>
     <string name="wordsearch_next_move_hide">Hide next word hint</string>
     <string name="wordsearch_next_move_title">Find \"%1$s\"</string>
@@ -397,7 +483,7 @@
     <string name="wordsearch_tip_1_body">Zoek eerst ongewone beginletters in het raster en breid dan uit in alle toegestane richtingen.</string>
     <string name="wordsearch_tip_2_title">Voltooi één lijn tegelijk</string>
     <string name="wordsearch_tip_2_body">Begin een selectie, sleep naar het eindpunt en bevestig. Een nieuwe selectie starten vervangt de tijdelijke selectie.</string>
-    <string name="wordsearch_how_to_play_scoring">Begint op 15.000 en daalt terwijl de tijd loopt. Elk woord dat nog niet gevonden is bij het oplossen van het verborgen woord levert een bonus van 300 punten op. Elke verkeerde tik op het verborgen woord kost 500 punten en 10% nauwkeurigheid.</string>
+    <string name="wordsearch_how_to_play_scoring">Begint op 15.000 en daalt terwijl de tijd loopt. Elk woord dat nog niet gevonden is bij het oplossen van het verborgen woord levert een bonus van 300 punten op. Elke verkeerde tik op het verborgen woord kost 500 punten en 10%% nauwkeurigheid.</string>
     <string name="wordsearch_loss_abandoned_eyebrow">Puzzel beëindigd</string>
     <string name="wordsearch_loss_abandoned_title">Woordzoeker-sessie beëindigd</string>
     <string name="wordsearch_loss_abandoned_body">Je hebt deze Woordzoeker-sessie beëindigd voordat je alle woorden en het verborgen woord had opgelost.</string>
