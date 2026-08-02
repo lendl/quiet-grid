@@ -47,6 +47,7 @@ import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.difficultyColor
 import com.quietgrid.app.core.formatElapsed
 import com.quietgrid.app.data.AppContainer
+import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
 import com.quietgrid.app.games.chimptest.chimpDifficultyLabelRes
 import com.quietgrid.app.games.minesweeper.minesweeperDifficultyLabelRes
 import com.quietgrid.app.games.nonogram.nonogramDifficultyLabelRes
@@ -107,6 +108,7 @@ fun CompletionScreen(
         GameId.MINESWEEPER -> minesweeperDifficultyLabelRes(difficulty)
         GameId.SUDOKU -> sudokuDifficultyLabelRes(difficulty)
         GameId.WORDSEARCH -> wordSearchDifficultyLabelRes(difficulty)
+        GameId.BLOCKFILL -> blockFillDifficultyLabelRes(difficulty)
         else -> chimpDifficultyLabelRes(difficulty)
     }
     val accentColor = difficultyColor(difficulty)

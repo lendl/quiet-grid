@@ -35,6 +35,7 @@ import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.formatElapsed
+import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
 import com.quietgrid.app.games.chimptest.chimpDifficultyLabelRes
 import com.quietgrid.app.games.minesweeper.minesweeperDifficultyLabelRes
 import com.quietgrid.app.games.nonogram.nonogramDifficultyLabelRes
@@ -86,6 +87,16 @@ fun LossScreen(
             titleRes = R.string.wordsearch_loss_abandoned_title
             bodyRes = R.string.wordsearch_loss_abandoned_body
         }
+        gameId == GameId.BLOCKFILL && reason == "abandoned" -> {
+            eyebrowRes = R.string.blockfill_loss_abandoned_eyebrow
+            titleRes = R.string.blockfill_loss_abandoned_title
+            bodyRes = R.string.blockfill_loss_abandoned_body
+        }
+        gameId == GameId.BLOCKFILL -> {
+            eyebrowRes = R.string.blockfill_loss_rule_failure_eyebrow
+            titleRes = R.string.blockfill_loss_rule_failure_title
+            bodyRes = R.string.blockfill_loss_rule_failure_body
+        }
         reason == "abandoned" -> {
             eyebrowRes = R.string.chimp_loss_abandoned_eyebrow
             titleRes = R.string.chimp_loss_abandoned_title
@@ -103,6 +114,7 @@ fun LossScreen(
         GameId.MINESWEEPER -> minesweeperDifficultyLabelRes(difficulty)
         GameId.SUDOKU -> sudokuDifficultyLabelRes(difficulty)
         GameId.WORDSEARCH -> wordSearchDifficultyLabelRes(difficulty)
+        GameId.BLOCKFILL -> blockFillDifficultyLabelRes(difficulty)
         else -> chimpDifficultyLabelRes(difficulty)
     }
     val icon = if (reason == "abandoned") "⏸" else "💥"

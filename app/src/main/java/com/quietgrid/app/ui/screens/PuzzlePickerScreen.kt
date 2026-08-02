@@ -32,6 +32,8 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.difficultyColor
 import com.quietgrid.app.data.AppContainer
+import com.quietgrid.app.games.blockfill.blockFillDifficultyDescriptionRes
+import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
 import com.quietgrid.app.games.chimptest.chimpDifficultyDescriptionRes
 import com.quietgrid.app.games.chimptest.chimpDifficultyLabelRes
 import com.quietgrid.app.games.minesweeper.minesweeperDifficultyDescriptionRes
@@ -106,6 +108,7 @@ private fun GamePlayPickerTab(
                     GameId.MINESWEEPER -> minesweeperDifficultyLabelRes(difficulty)
                     GameId.SUDOKU -> sudokuDifficultyLabelRes(difficulty)
                     GameId.WORDSEARCH -> wordSearchDifficultyLabelRes(difficulty)
+                    GameId.BLOCKFILL -> blockFillDifficultyLabelRes(difficulty)
                     else -> chimpDifficultyLabelRes(difficulty)
                 }
                 val descriptionRes = when (gameId) {
@@ -115,6 +118,7 @@ private fun GamePlayPickerTab(
                     GameId.MINESWEEPER -> minesweeperDifficultyDescriptionRes(difficulty)
                     GameId.SUDOKU -> sudokuDifficultyDescriptionRes(difficulty)
                     GameId.WORDSEARCH -> wordSearchDifficultyDescriptionRes(difficulty)
+                    GameId.BLOCKFILL -> blockFillDifficultyDescriptionRes(difficulty)
                 }
                 if (index > 0) HorizontalDivider()
                 Row(

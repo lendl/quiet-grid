@@ -25,6 +25,7 @@ import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.AppContainer
 import com.quietgrid.app.data.AppSettings
+import com.quietgrid.app.games.blockfill.BlockFillPlayScreen
 import com.quietgrid.app.games.chimptest.ChimpTestPlayScreen
 import com.quietgrid.app.games.minesweeper.MinesweeperPlayScreen
 import com.quietgrid.app.games.nonogram.NonogramPlayScreen
@@ -230,6 +231,18 @@ fun AppNavHost() {
                             if (result.solved) {
                                 CompletionExtras.set(CompletionHighlight.WordList(result.words))
                                 goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
+                            } else {
+                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
+                            }
+                        },
+                    )
+                    GameId.BLOCKFILL -> BlockFillPlayScreen(
+                        difficulty = difficulty,
+                        resume = resume,
+                        onBack = { navController.popBackStack() },
+                        onFinished = { result ->
+                            if (result.solved) {
+                                goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
                             } else {
                                 goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
                             }

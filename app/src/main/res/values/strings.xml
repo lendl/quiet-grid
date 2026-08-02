@@ -499,4 +499,41 @@
     <string name="wordsearch_loss_abandoned_eyebrow">Puzzle ended</string>
     <string name="wordsearch_loss_abandoned_title">Word Search session ended</string>
     <string name="wordsearch_loss_abandoned_body">You ended this Word Search session before solving every listed word and the hidden word.</string>
+
+    <!-- Block Fill -->
+    <string name="blockfill_title">Block Fill</string>
+    <string name="blockfill_tagline">Drag pieces onto the grid and clear full lines.</string>
+    <string name="blockfill_difficulty_easy">Easy</string>
+    <string name="blockfill_difficulty_medium">Medium</string>
+    <string name="blockfill_difficulty_hard">Hard</string>
+    <string name="blockfill_difficulty_expert">Expert</string>
+    <string name="blockfill_difficulty_desc_easy">Mostly clean, easy-to-place pieces. Reach 300 points.</string>
+    <string name="blockfill_difficulty_desc_medium">A wider mix of shapes. Reach 600 points.</string>
+    <string name="blockfill_difficulty_desc_hard">Awkward shapes start showing up often. Reach 1000 points.</string>
+    <string name="blockfill_difficulty_desc_expert">Dense board, mostly irregular pieces. Reach 1500 points.</string>
+    <string name="blockfill_how_to_play_goal">Drag every piece from the tray onto the 8x8 grid. Clear full rows and columns to score points, and reach the target score to solve the puzzle.</string>
+    <string name="blockfill_how_to_play_controls">Drag a piece from the tray below the board and drop it onto the grid. It can only be placed where every one of its cells lands on an empty square. Once all 3 tray pieces are placed, a new set of 3 appears.</string>
+    <string name="blockfill_how_to_play_wrong_move">There is no wrong move to undo — if none of your 3 current pieces can be placed anywhere on the board, the puzzle ends immediately.</string>
+    <string name="blockfill_rule_1_title">Clear full lines</string>
+    <string name="blockfill_rule_1_body">Filling every cell in a row or column clears that entire line and scores points.</string>
+    <string name="blockfill_rule_2_title">Plan ahead</string>
+    <string name="blockfill_rule_2_body">You always hold 3 pieces at once. A new batch only arrives once all 3 are placed, so think about where all three will fit before committing to the first.</string>
+    <string name="blockfill_rule_3_title">Combine clears for bonus points</string>
+    <string name="blockfill_rule_3_body">Clearing more than one line at once, or clearing lines on consecutive placements, scores extra bonus points on top of the base line-clear score.</string>
+    <string name="blockfill_rule_4_title">No valid moves ends the puzzle</string>
+    <string name="blockfill_rule_4_body">If none of your 3 current pieces fit anywhere on the board, the puzzle ends. Keep the board from getting too fragmented.</string>
+    <string name="blockfill_tip_1_title">Prefer clean lines over odd corners</string>
+    <string name="blockfill_tip_1_body">Solid pieces (squares, rectangles, straight lines) clear predictably. Irregular shapes tend to leave small unusable gaps — place them early, while the board still has room to absorb the awkward leftover.</string>
+    <string name="blockfill_tip_2_title">Save straight pieces for the finishing blow</string>
+    <string name="blockfill_tip_2_body">Building the board up close to full, then dropping a long straight piece to clear it, is the most reliable way to bank a big score.</string>
+    <string name="blockfill_how_to_play_scoring">Placing a piece scores nothing on its own — only clearing a line scores points. Clearing multiple lines at once, or clearing on consecutive placements, adds further bonuses. Clearing the entire board scores the largest bonus. Solving the puzzle itself also earns a separate score based on how quickly you finish — starting at 50,000 and dropping over time.</string>
+    <string name="blockfill_score_label">Score</string>
+    <string name="blockfill_target_label">Target</string>
+    <string name="blockfill_difficulty_label">Difficulty</string>
+    <string name="blockfill_loss_abandoned_eyebrow">Puzzle ended</string>
+    <string name="blockfill_loss_abandoned_title">Puzzle unfinished</string>
+    <string name="blockfill_loss_abandoned_body">You ended this puzzle before it was solved.</string>
+    <string name="blockfill_loss_rule_failure_eyebrow">Puzzle lost</string>
+    <string name="blockfill_loss_rule_failure_title">No moves left</string>
+    <string name="blockfill_loss_rule_failure_body">None of your remaining pieces could be placed anywhere on the board.</string>
 </resources>

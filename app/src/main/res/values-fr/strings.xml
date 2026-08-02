@@ -487,4 +487,41 @@
     <string name="wordsearch_loss_abandoned_eyebrow">Puzzle terminé</string>
     <string name="wordsearch_loss_abandoned_title">Partie de mots mêlés terminée</string>
     <string name="wordsearch_loss_abandoned_body">Vous avez quitté cette partie de mots mêlés avant d\'avoir résolu tous les mots et le mot caché.</string>
+
+    <!-- Block Fill -->
+    <string name="blockfill_title">Block Fill</string>
+    <string name="blockfill_tagline">Glissez les pièces sur la grille et videz des lignes complètes.</string>
+    <string name="blockfill_difficulty_easy">Facile</string>
+    <string name="blockfill_difficulty_medium">Moyen</string>
+    <string name="blockfill_difficulty_hard">Difficile</string>
+    <string name="blockfill_difficulty_expert">Expert</string>
+    <string name="blockfill_difficulty_desc_easy">Des pièces simples, faciles à placer. Atteignez 300 points.</string>
+    <string name="blockfill_difficulty_desc_medium">Un plus large éventail de formes. Atteignez 600 points.</string>
+    <string name="blockfill_difficulty_desc_hard">Des formes gênantes apparaissent plus souvent. Atteignez 1000 points.</string>
+    <string name="blockfill_difficulty_desc_expert">Plateau dense, surtout des pièces irrégulières. Atteignez 1500 points.</string>
+    <string name="blockfill_how_to_play_goal">Glissez chaque pièce du plateau vers la grille 8x8. Videz des lignes et des colonnes complètes pour marquer des points, et atteignez le score cible pour résoudre le puzzle.</string>
+    <string name="blockfill_how_to_play_controls">Glissez une pièce du plateau sous la grille et déposez-la sur la grille. Elle ne peut être posée que si chacune de ses cases tombe sur une case vide. Une fois les 3 pièces posées, un nouveau lot de 3 apparaît.</string>
+    <string name="blockfill_how_to_play_wrong_move">Il n\'y a pas de mauvais coup à annuler — si aucune de vos 3 pièces actuelles ne peut être posée nulle part sur la grille, le puzzle se termine immédiatement.</string>
+    <string name="blockfill_rule_1_title">Videz des lignes complètes</string>
+    <string name="blockfill_rule_1_body">Remplir toutes les cases d\'une ligne ou d\'une colonne vide entièrement cette ligne et rapporte des points.</string>
+    <string name="blockfill_rule_2_title">Anticipez</string>
+    <string name="blockfill_rule_2_body">Vous avez toujours 3 pièces à la fois. Un nouveau lot n\'arrive que lorsque les 3 sont posées, alors réfléchissez à où les trois vont s\'insérer avant de placer la première.</string>
+    <string name="blockfill_rule_3_title">Combinez les videages pour des points bonus</string>
+    <string name="blockfill_rule_3_body">Vider plus d\'une ligne à la fois, ou vider sur des coups consécutifs, rapporte des points bonus en plus du score de base.</string>
+    <string name="blockfill_rule_4_title">Aucun coup valide termine le puzzle</string>
+    <string name="blockfill_rule_4_body">Si aucune de vos 3 pièces actuelles ne rentre nulle part sur la grille, le puzzle se termine. Évitez que la grille ne devienne trop fragmentée.</string>
+    <string name="blockfill_tip_1_title">Préférez les lignes nettes aux coins gênants</string>
+    <string name="blockfill_tip_1_body">Les pièces pleines (carrés, rectangles, lignes droites) se vident de façon prévisible. Les formes irrégulières laissent souvent de petits trous inutilisables — placez-les tôt, pendant que la grille a encore de la place pour absorber le reste gênant.</string>
+    <string name="blockfill_tip_2_title">Gardez les pièces droites pour le coup final</string>
+    <string name="blockfill_tip_2_body">Remplir la grille presque entièrement puis déposer une longue pièce droite pour la vider est le moyen le plus fiable d\'engranger un gros score.</string>
+    <string name="blockfill_how_to_play_scoring">Poser une pièce ne rapporte rien en soi — seul le videage d\'une ligne rapporte des points. Vider plusieurs lignes à la fois, ou sur des coups consécutifs, ajoute d\'autres bonus. Vider toute la grille rapporte le plus gros bonus. Résoudre le puzzle rapporte aussi un score distinct basé sur votre rapidité — il commence à 50 000 et diminue avec le temps.</string>
+    <string name="blockfill_score_label">Score</string>
+    <string name="blockfill_target_label">Cible</string>
+    <string name="blockfill_difficulty_label">Difficulté</string>
+    <string name="blockfill_loss_abandoned_eyebrow">Puzzle terminé</string>
+    <string name="blockfill_loss_abandoned_title">Puzzle inachevé</string>
+    <string name="blockfill_loss_abandoned_body">Vous avez terminé ce puzzle avant qu\'il ne soit résolu.</string>
+    <string name="blockfill_loss_rule_failure_eyebrow">Puzzle perdu</string>
+    <string name="blockfill_loss_rule_failure_title">Plus aucun coup possible</string>
+    <string name="blockfill_loss_rule_failure_body">Aucune de vos pièces restantes ne pouvait être posée nulle part sur la grille.</string>
 </resources>

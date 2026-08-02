@@ -487,4 +487,41 @@
     <string name="wordsearch_loss_abandoned_eyebrow">Puzzel beëindigd</string>
     <string name="wordsearch_loss_abandoned_title">Woordzoeker-sessie beëindigd</string>
     <string name="wordsearch_loss_abandoned_body">Je hebt deze Woordzoeker-sessie beëindigd voordat je alle woorden en het verborgen woord had opgelost.</string>
+
+    <!-- Block Fill -->
+    <string name="blockfill_title">Block Fill</string>
+    <string name="blockfill_tagline">Sleep stukken op het bord en maak volle lijnen leeg.</string>
+    <string name="blockfill_difficulty_easy">Makkelijk</string>
+    <string name="blockfill_difficulty_medium">Gemiddeld</string>
+    <string name="blockfill_difficulty_hard">Moeilijk</string>
+    <string name="blockfill_difficulty_expert">Expert</string>
+    <string name="blockfill_difficulty_desc_easy">Vooral simpele, makkelijk te plaatsen stukken. Haal 300 punten.</string>
+    <string name="blockfill_difficulty_desc_medium">Een bredere mix aan vormen. Haal 600 punten.</string>
+    <string name="blockfill_difficulty_desc_hard">Onhandige vormen komen vaker voor. Haal 1000 punten.</string>
+    <string name="blockfill_difficulty_desc_expert">Vol bord, vooral onregelmatige stukken. Haal 1500 punten.</string>
+    <string name="blockfill_how_to_play_goal">Sleep elk stuk uit het vak naar het 8x8-bord. Maak volle rijen en kolommen leeg om punten te scoren en haal de doelscore om de puzzel op te lossen.</string>
+    <string name="blockfill_how_to_play_controls">Sleep een stuk uit het vak onder het bord en zet het op het bord neer. Het kan alleen geplaatst worden als elk van zijn vakjes op een leeg vakje valt. Zodra alle 3 de stukken geplaatst zijn, verschijnt er een nieuwe set van 3.</string>
+    <string name="blockfill_how_to_play_wrong_move">Er is geen foute zet om ongedaan te maken — als geen van je 3 huidige stukken ergens op het bord past, eindigt de puzzel meteen.</string>
+    <string name="blockfill_rule_1_title">Maak volle lijnen leeg</string>
+    <string name="blockfill_rule_1_body">Elk vakje van een rij of kolom vullen maakt die hele lijn leeg en levert punten op.</string>
+    <string name="blockfill_rule_2_title">Denk vooruit</string>
+    <string name="blockfill_rule_2_body">Je hebt altijd 3 stukken tegelijk. Een nieuwe set komt pas als alle 3 geplaatst zijn, dus bedenk waar alle drie zullen passen voordat je het eerste neerzet.</string>
+    <string name="blockfill_rule_3_title">Combineer leegmaken voor bonuspunten</string>
+    <string name="blockfill_rule_3_body">Meer dan één lijn tegelijk leegmaken, of leegmaken bij opeenvolgende zetten, levert extra bonuspunten op boven de basisscore.</string>
+    <string name="blockfill_rule_4_title">Geen geldige zetten beëindigt de puzzel</string>
+    <string name="blockfill_rule_4_body">Als geen van je 3 huidige stukken ergens op het bord past, eindigt de puzzel. Zorg dat het bord niet te versnipperd raakt.</string>
+    <string name="blockfill_tip_1_title">Kies liever rechte lijnen dan lastige hoeken</string>
+    <string name="blockfill_tip_1_body">Compacte stukken (vierkanten, rechthoeken, rechte lijnen) maken voorspelbaar leeg. Onregelmatige vormen laten vaak kleine onbruikbare gaten achter — plaats ze vroeg, terwijl het bord nog ruimte heeft om het lastige restje op te vangen.</string>
+    <string name="blockfill_tip_2_title">Bewaar rechte stukken voor de afwerking</string>
+    <string name="blockfill_tip_2_body">Het bord bijna vol bouwen en dan een lang recht stuk neerzetten om het leeg te maken is de meest betrouwbare manier om een hoge score binnen te halen.</string>
+    <string name="blockfill_how_to_play_scoring">Een stuk neerzetten levert op zichzelf niets op — alleen het leegmaken van een lijn levert punten op. Meerdere lijnen tegelijk leegmaken, of bij opeenvolgende zetten, geeft extra bonussen. Het hele bord leegmaken levert de grootste bonus op. Het oplossen van de puzzel zelf levert ook een aparte score op, gebaseerd op hoe snel je klaar bent — die begint op 50.000 en daalt na verloop van tijd.</string>
+    <string name="blockfill_score_label">Score</string>
+    <string name="blockfill_target_label">Doel</string>
+    <string name="blockfill_difficulty_label">Moeilijkheid</string>
+    <string name="blockfill_loss_abandoned_eyebrow">Puzzel beëindigd</string>
+    <string name="blockfill_loss_abandoned_title">Puzzel onafgemaakt</string>
+    <string name="blockfill_loss_abandoned_body">Je hebt deze puzzel beëindigd voordat hij was opgelost.</string>
+    <string name="blockfill_loss_rule_failure_eyebrow">Puzzel verloren</string>
+    <string name="blockfill_loss_rule_failure_title">Geen zetten meer</string>
+    <string name="blockfill_loss_rule_failure_body">Geen van je overgebleven stukken kon ergens op het bord geplaatst worden.</string>
 </resources>

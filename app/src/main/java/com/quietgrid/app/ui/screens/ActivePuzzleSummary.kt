@@ -38,6 +38,7 @@ fun buildActivePuzzleSummary(envelope: ActiveSessionEnvelope): ActivePuzzleSumma
         GameId.TAKUZU -> puzzleNode?.get("size")?.jsonPrimitive?.intOrNull?.let { "${it}x${it}" }
         GameId.CHIMPTEST -> puzzleNode?.get("gridSize")?.jsonPrimitive?.intOrNull?.let { "${it}x${it}" }
         GameId.SUDOKU -> "9x9"
+        GameId.BLOCKFILL -> "8x8"
         GameId.MINESWEEPER, GameId.NONOGRAM, GameId.WORDSEARCH -> {
             val rows = puzzleNode?.get("rows")?.jsonPrimitive?.intOrNull
             val cols = puzzleNode?.get("cols")?.jsonPrimitive?.intOrNull

@@ -487,4 +487,41 @@
     <string name="wordsearch_loss_abandoned_eyebrow">Puzzle terminado</string>
     <string name="wordsearch_loss_abandoned_title">Sesión de Sopa de Letras terminada</string>
     <string name="wordsearch_loss_abandoned_body">Terminaste esta sesión de Sopa de Letras antes de resolver todas las palabras y la palabra oculta.</string>
+
+    <!-- Block Fill -->
+    <string name="blockfill_title">Block Fill</string>
+    <string name="blockfill_tagline">Arrastra piezas a la cuadrícula y despeja líneas completas.</string>
+    <string name="blockfill_difficulty_easy">Fácil</string>
+    <string name="blockfill_difficulty_medium">Medio</string>
+    <string name="blockfill_difficulty_hard">Difícil</string>
+    <string name="blockfill_difficulty_expert">Experto</string>
+    <string name="blockfill_difficulty_desc_easy">Piezas sencillas y fáciles de colocar. Llega a 300 puntos.</string>
+    <string name="blockfill_difficulty_desc_medium">Una mezcla más amplia de formas. Llega a 600 puntos.</string>
+    <string name="blockfill_difficulty_desc_hard">Empiezan a aparecer formas incómodas con frecuencia. Llega a 1000 puntos.</string>
+    <string name="blockfill_difficulty_desc_expert">Tablero denso, mayormente piezas irregulares. Llega a 1500 puntos.</string>
+    <string name="blockfill_how_to_play_goal">Arrastra cada pieza de la bandeja a la cuadrícula de 8x8. Despeja filas y columnas completas para sumar puntos y alcanza la puntuación objetivo para resolver el rompecabezas.</string>
+    <string name="blockfill_how_to_play_controls">Arrastra una pieza de la bandeja bajo el tablero y suéltala en la cuadrícula. Solo se puede colocar donde todas sus celdas caigan en una casilla vacía. Cuando se coloquen las 3 piezas de la bandeja, aparece un nuevo grupo de 3.</string>
+    <string name="blockfill_how_to_play_wrong_move">No hay un movimiento incorrecto que deshacer — si ninguna de tus 3 piezas actuales cabe en algún lugar del tablero, el rompecabezas termina de inmediato.</string>
+    <string name="blockfill_rule_1_title">Despeja líneas completas</string>
+    <string name="blockfill_rule_1_body">Llenar todas las celdas de una fila o columna despeja esa línea entera y suma puntos.</string>
+    <string name="blockfill_rule_2_title">Planifica con antelación</string>
+    <string name="blockfill_rule_2_body">Siempre tienes 3 piezas a la vez. Un nuevo grupo solo llega cuando se colocan las 3, así que piensa dónde encajarán las tres antes de colocar la primera.</string>
+    <string name="blockfill_rule_3_title">Combina despejes para puntos extra</string>
+    <string name="blockfill_rule_3_body">Despejar más de una línea a la vez, o despejar en colocaciones consecutivas, suma puntos de bonificación extra sobre la puntuación base.</string>
+    <string name="blockfill_rule_4_title">Sin movimientos válidos, termina el rompecabezas</string>
+    <string name="blockfill_rule_4_body">Si ninguna de tus 3 piezas actuales cabe en el tablero, el rompecabezas termina. Evita que el tablero quede demasiado fragmentado.</string>
+    <string name="blockfill_tip_1_title">Prefiere líneas limpias a rincones incómodos</string>
+    <string name="blockfill_tip_1_body">Las piezas sólidas (cuadrados, rectángulos, líneas rectas) despejan de forma predecible. Las formas irregulares suelen dejar huecos pequeños e inútiles — colócalas pronto, mientras el tablero aún tiene espacio para absorber el sobrante incómodo.</string>
+    <string name="blockfill_tip_2_title">Guarda las piezas rectas para el golpe final</string>
+    <string name="blockfill_tip_2_body">Llenar el tablero casi por completo y luego soltar una pieza recta larga para despejarlo es la forma más fiable de conseguir una puntuación alta.</string>
+    <string name="blockfill_how_to_play_scoring">Colocar una pieza no suma puntos por sí sola — solo despejar una línea suma puntos. Despejar varias líneas a la vez, o en colocaciones consecutivas, agrega más bonificaciones. Despejar el tablero entero suma la mayor bonificación. Resolver el rompecabezas en sí también gana una puntuación aparte según lo rápido que termines — empieza en 50.000 y baja con el tiempo.</string>
+    <string name="blockfill_score_label">Puntuación</string>
+    <string name="blockfill_target_label">Objetivo</string>
+    <string name="blockfill_difficulty_label">Dificultad</string>
+    <string name="blockfill_loss_abandoned_eyebrow">Rompecabezas terminado</string>
+    <string name="blockfill_loss_abandoned_title">Rompecabezas sin terminar</string>
+    <string name="blockfill_loss_abandoned_body">Terminaste este rompecabezas antes de resolverlo.</string>
+    <string name="blockfill_loss_rule_failure_eyebrow">Rompecabezas perdido</string>
+    <string name="blockfill_loss_rule_failure_title">Sin movimientos</string>
+    <string name="blockfill_loss_rule_failure_body">Ninguna de tus piezas restantes podía colocarse en ningún lugar del tablero.</string>
 </resources>

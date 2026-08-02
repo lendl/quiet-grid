@@ -487,4 +487,41 @@
     <string name="wordsearch_loss_abandoned_eyebrow">Rätsel beendet</string>
     <string name="wordsearch_loss_abandoned_title">Wortsuche-Sitzung beendet</string>
     <string name="wordsearch_loss_abandoned_body">Du hast diese Wortsuche beendet, bevor du alle Wörter und das versteckte Wort gelöst hast.</string>
+
+    <!-- Block Fill -->
+    <string name="blockfill_title">Block Fill</string>
+    <string name="blockfill_tagline">Ziehe Teile aufs Feld und räume volle Linien.</string>
+    <string name="blockfill_difficulty_easy">Leicht</string>
+    <string name="blockfill_difficulty_medium">Mittel</string>
+    <string name="blockfill_difficulty_hard">Schwer</string>
+    <string name="blockfill_difficulty_expert">Experte</string>
+    <string name="blockfill_difficulty_desc_easy">Meist einfache, leicht platzierbare Teile. Erreiche 300 Punkte.</string>
+    <string name="blockfill_difficulty_desc_medium">Eine breitere Mischung an Formen. Erreiche 600 Punkte.</string>
+    <string name="blockfill_difficulty_desc_hard">Unhandliche Formen tauchen häufiger auf. Erreiche 1000 Punkte.</string>
+    <string name="blockfill_difficulty_desc_expert">Dichtes Feld, meist unregelmäßige Teile. Erreiche 1500 Punkte.</string>
+    <string name="blockfill_how_to_play_goal">Ziehe jedes Teil aus dem Vorrat auf das 8x8-Feld. Räume volle Reihen und Spalten, um Punkte zu sammeln, und erreiche die Zielpunktzahl, um das Rätsel zu lösen.</string>
+    <string name="blockfill_how_to_play_controls">Ziehe ein Teil aus dem Vorrat unter dem Feld und lege es auf das Feld ab. Es kann nur dort abgelegt werden, wo jede seiner Zellen auf ein leeres Feld fällt. Sobald alle 3 Teile abgelegt sind, erscheint ein neuer Satz von 3.</string>
+    <string name="blockfill_how_to_play_wrong_move">Es gibt keinen falschen Zug, den man rückgängig machen müsste — wenn keines deiner 3 aktuellen Teile irgendwo auf dem Feld platziert werden kann, endet das Rätsel sofort.</string>
+    <string name="blockfill_rule_1_title">Volle Linien räumen</string>
+    <string name="blockfill_rule_1_body">Wenn jede Zelle einer Reihe oder Spalte gefüllt ist, wird die ganze Linie geräumt und bringt Punkte.</string>
+    <string name="blockfill_rule_2_title">Vorausplanen</string>
+    <string name="blockfill_rule_2_body">Du hast immer 3 Teile gleichzeitig. Ein neuer Satz kommt erst, wenn alle 3 platziert sind — überlege dir also, wohin alle drei passen, bevor du das erste ablegst.</string>
+    <string name="blockfill_rule_3_title">Kombiniere Räumungen für Bonuspunkte</string>
+    <string name="blockfill_rule_3_body">Mehr als eine Linie auf einmal zu räumen, oder bei aufeinanderfolgenden Zügen zu räumen, bringt zusätzliche Bonuspunkte zur normalen Punktzahl.</string>
+    <string name="blockfill_rule_4_title">Keine gültigen Züge beenden das Rätsel</string>
+    <string name="blockfill_rule_4_body">Wenn keines deiner 3 aktuellen Teile irgendwo auf das Feld passt, endet das Rätsel. Halte das Feld nicht zu zersplittert.</string>
+    <string name="blockfill_tip_1_title">Bevorzuge klare Linien statt unhandlicher Ecken</string>
+    <string name="blockfill_tip_1_body">Kompakte Teile (Quadrate, Rechtecke, gerade Linien) räumen vorhersehbar. Unregelmäßige Formen hinterlassen oft kleine unbrauchbare Lücken — platziere sie früh, solange das Feld noch Platz hat, den unhandlichen Rest aufzunehmen.</string>
+    <string name="blockfill_tip_2_title">Hebe gerade Teile für den Schlussschlag auf</string>
+    <string name="blockfill_tip_2_body">Das Feld fast voll zu bauen und dann ein langes gerades Teil zum Räumen abzulegen, ist der zuverlässigste Weg, viele Punkte zu holen.</string>
+    <string name="blockfill_how_to_play_scoring">Ein Teil zu platzieren bringt allein keine Punkte — nur das Räumen einer Linie zahlt. Mehrere Linien auf einmal oder bei aufeinanderfolgenden Zügen zu räumen, bringt weitere Boni. Das ganze Feld zu leeren bringt den größten Bonus. Das Lösen des Rätsels selbst bringt zusätzlich eine eigene Punktzahl, die davon abhängt, wie schnell du fertig wirst — sie startet bei 50.000 und sinkt mit der Zeit.</string>
+    <string name="blockfill_score_label">Punkte</string>
+    <string name="blockfill_target_label">Ziel</string>
+    <string name="blockfill_difficulty_label">Schwierigkeit</string>
+    <string name="blockfill_loss_abandoned_eyebrow">Rätsel beendet</string>
+    <string name="blockfill_loss_abandoned_title">Rätsel unvollständig</string>
+    <string name="blockfill_loss_abandoned_body">Du hast dieses Rätsel beendet, bevor es gelöst war.</string>
+    <string name="blockfill_loss_rule_failure_eyebrow">Rätsel verloren</string>
+    <string name="blockfill_loss_rule_failure_title">Keine Züge mehr</string>
+    <string name="blockfill_loss_rule_failure_body">Keines deiner verbliebenen Teile konnte irgendwo auf dem Feld platziert werden.</string>
 </resources>

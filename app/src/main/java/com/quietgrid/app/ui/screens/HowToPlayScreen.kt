@@ -55,6 +55,7 @@ fun HowToPlayScreen(gameId: GameId) {
             GameId.MINESWEEPER -> MinesweeperHowToPlay()
             GameId.SUDOKU -> SudokuHowToPlay()
             GameId.WORDSEARCH -> WordSearchHowToPlay()
+            GameId.BLOCKFILL -> BlockFillHowToPlay()
         }
 
         HorizontalDivider(Modifier.padding(vertical = 20.dp))
@@ -349,5 +350,37 @@ private fun WordSearchHowToPlay() {
     HorizontalDivider(Modifier.padding(vertical = 20.dp))
     Accordion(stringResource(R.string.how_to_play_scoring_title)) {
         BodyText(stringResource(R.string.wordsearch_how_to_play_scoring))
+    }
+}
+
+@Composable
+private fun BlockFillHowToPlay() {
+    SectionHeader(Icons.Outlined.EmojiEvents, stringResource(R.string.how_to_play_goal_title))
+    BodyText(stringResource(R.string.blockfill_how_to_play_goal))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.PanTool, stringResource(R.string.how_to_play_controls_title))
+    BodyText(stringResource(R.string.blockfill_how_to_play_controls))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.WarningAmber, stringResource(R.string.how_to_play_wrong_move_title))
+    BodyText(stringResource(R.string.blockfill_how_to_play_wrong_move))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.Description, stringResource(R.string.how_to_play_rules_title))
+    RuleRow(1, R.string.blockfill_rule_1_title, R.string.blockfill_rule_1_body)
+    RuleRow(2, R.string.blockfill_rule_2_title, R.string.blockfill_rule_2_body)
+    RuleRow(3, R.string.blockfill_rule_3_title, R.string.blockfill_rule_3_body)
+    RuleRow(4, R.string.blockfill_rule_4_title, R.string.blockfill_rule_4_body)
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    Accordion(stringResource(R.string.how_to_play_tips_title)) {
+        TechniqueItem(R.string.blockfill_tip_1_title, R.string.blockfill_tip_1_body)
+        TechniqueItem(R.string.blockfill_tip_2_title, R.string.blockfill_tip_2_body)
+    }
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    Accordion(stringResource(R.string.how_to_play_scoring_title)) {
+        BodyText(stringResource(R.string.blockfill_how_to_play_scoring))
     }
 }
