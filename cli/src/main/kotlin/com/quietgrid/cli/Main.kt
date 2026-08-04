@@ -101,8 +101,9 @@ fun main(args: Array<String>) {
                 entries += generated
             }
             state.save()
-            appendPuzzleEntries("${command.outDir}/wordsearch_puzzles.json", entries, com.quietgrid.engine.wordsearch.WordSearchPuzzleEntry.serializer()) { it.id }
-            println("Generated ${entries.size}/${command.count} wordsearch puzzles ($locale/$difficulty) into ${command.outDir}/wordsearch_puzzles.json")
+            val outFile = "${command.outDir}/wordsearch_puzzles_${difficulty.key}.json"
+            appendPuzzleEntries(outFile, entries, com.quietgrid.engine.wordsearch.WordSearchPuzzleEntry.serializer()) { it.id }
+            println("Generated ${entries.size}/${command.count} wordsearch puzzles ($locale/$difficulty) into $outFile")
         }
         "wordguess" -> {
             val locale = command.locale

@@ -11,22 +11,21 @@ import kotlinx.serialization.json.Json
 private val json = Json { ignoreUnknownKeys = true }
 
 object WordSearchPuzzleBank {
-    private var cache: Map<String, List<WordSearchPuzzleEntry>>? = null
+    private val cache = mutableMapOf<String, List<WordSearchPuzzleEntry>>()
     private val lastPickedId = mutableMapOf<String, String>()
 
-    private suspend fun load(context: Context): Map<String, List<WordSearchPuzzleEntry>> {
-        cache?.let { return it }
+    private suspend fun load(context: Context, difficulty: Difficulty): List<WordSearchPuzzleEntry> {
+        cache[difficulty.key]?.let { return it }
         return withContext(Dispatchers.IO) {
-            val text = context.assets.open("wordsearch_puzzles.json").bufferedReader().use { it.readText() }
+            val text = context.assets.open("wordsearch_puzzles_${difficulty.key}.json").bufferedReader().use { it.readText() }
             val entries = json.decodeFromString<List<WordSearchPuzzleEntry>>(text)
-            val grouped = entries.groupBy { it.difficulty }
-            cache = grouped
-            grouped
+            cache[difficulty.key] = entries
+            entries
         }
     }
 
     suspend fun randomPuzzle(context: Context, difficulty: Difficulty): WordSearchPuzzleEntry? {
-        val pool = load(context)[difficulty.key] ?: return null
+        val pool = load(context, difficulty)
         if (pool.isEmpty()) return null
         val lastId = lastPickedId[difficulty.key]
         val candidates = if (pool.size > 1 && lastId != null) pool.filter { it.id != lastId } else pool
