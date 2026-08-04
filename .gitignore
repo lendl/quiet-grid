@@ -32,6 +32,9 @@ credentials/
 *.apk.sha256
 *.aab
 
+# Puzzle generation state (dev-only bookkeeping)
+.generation-state/
+
 # OS
 .DS_Store
 Thumbs.db

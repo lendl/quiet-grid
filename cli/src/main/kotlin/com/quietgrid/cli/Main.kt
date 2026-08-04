@@ -11,6 +11,7 @@ data class GenerateCommand(
     val difficulty: String,
     val count: Int,
     val outDir: String,
+    val locale: String,
 )
 
 private fun requireFlag(args: Array<String>, flag: String): String {
@@ -25,12 +26,13 @@ private fun optionalFlag(args: Array<String>, flag: String, default: String): St
 }
 
 fun parseArgs(args: Array<String>): GenerateCommand {
-    require(args.isNotEmpty() && args[0] == "generate") { "Usage: generate --game <id> --difficulty <d> [--count <n>] [--out <dir>]" }
+    require(args.isNotEmpty() && args[0] == "generate") { "Usage: generate --game <id> --difficulty <d> [--count <n>] [--out <dir>] [--locale <l>]" }
     return GenerateCommand(
         game = requireFlag(args, "--game"),
         difficulty = requireFlag(args, "--difficulty"),
         count = optionalFlag(args, "--count", "1").toInt(),
         outDir = optionalFlag(args, "--out", "app/src/main/assets"),
+        locale = optionalFlag(args, "--locale", "en"),
     )
 }
 
@@ -96,6 +98,32 @@ fun main(args: Array<String>) {
             state.save()
             appendPuzzleEntries("${command.outDir}/wordsearch_puzzles.json", entries, com.quietgrid.engine.wordsearch.WordSearchPuzzleEntry.serializer()) { it.id }
             println("Generated ${entries.size}/${command.count} wordsearch puzzles at $difficulty into ${command.outDir}/wordsearch_puzzles.json")
+        }
+        "wordguess" -> {
+            val locale = command.locale
+            val raw = com.quietgrid.cli.wordguess.loadWordGuessFrequencyWords(locale)
+            val tiers5 = com.quietgrid.cli.wordguess.buildWordGuessTiers(raw, wordLength = 5)
+            val tiers6 = com.quietgrid.cli.wordguess.buildWordGuessTiers(raw, wordLength = 6)
+            val state = GenerationState("${command.outDir}/.generation-state/wordguess-$locale.json")
+
+            val answerEntries = com.quietgrid.cli.wordguess.generateWordGuessAnswerEntries(locale, difficulty, tiers5, tiers6, command.count, state)
+            state.save()
+            appendPuzzleEntries(
+                "${command.outDir}/wordguess_puzzles.json",
+                answerEntries,
+                com.quietgrid.engine.wordguess.WordGuessPuzzleEntry.serializer(),
+            ) { "${it.locale}:${it.difficulty}:${it.word}" }
+
+            val dictionaryEntries = (tiers5.dictionary + tiers6.dictionary).map {
+                com.quietgrid.engine.wordguess.WordGuessDictionaryEntry(locale, it)
+            }
+            appendPuzzleEntries(
+                "${command.outDir}/wordguess_dictionary.json",
+                dictionaryEntries,
+                com.quietgrid.engine.wordguess.WordGuessDictionaryEntry.serializer(),
+            ) { "${it.locale}:${it.word}" }
+
+            println("Generated ${answerEntries.size}/${command.count} wordguess answers ($locale/$difficulty) + ${dictionaryEntries.size} dictionary words into ${command.outDir}")
         }
         else -> error("Unknown or not-yet-wired game '${command.game}'.")
     }

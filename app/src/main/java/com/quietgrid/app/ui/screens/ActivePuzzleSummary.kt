@@ -30,6 +30,7 @@ fun buildActivePuzzleSummary(envelope: ActiveSessionEnvelope): ActivePuzzleSumma
     val root = runCatching { json.parseToJsonElement(envelope.payload).jsonObject }.getOrNull()
     val puzzleNode = when (gameId) {
         GameId.NONOGRAM -> root?.get("entry")?.jsonObject
+        GameId.WORDGUESS -> root
         else -> root?.get("puzzle")?.jsonObject
     }
     val difficultyKey = puzzleNode?.get("difficulty")?.jsonPrimitive?.contentOrNull
@@ -44,6 +45,8 @@ fun buildActivePuzzleSummary(envelope: ActiveSessionEnvelope): ActivePuzzleSumma
             val cols = puzzleNode?.get("cols")?.jsonPrimitive?.intOrNull
             if (rows != null && cols != null) "${rows}x${cols}" else null
         }
+        // Word Guess isn't grid-shaped, so it has no dimensions chip to show here.
+        GameId.WORDGUESS -> null
     }
     return ActivePuzzleSummary(gameId, difficulty, dimensions, formatElapsed(envelope.elapsedSeconds.toInt()))
 }

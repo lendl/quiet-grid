@@ -53,6 +53,7 @@ import com.quietgrid.app.games.minesweeper.minesweeperDifficultyLabelRes
 import com.quietgrid.app.games.nonogram.nonogramDifficultyLabelRes
 import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
 import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
+import com.quietgrid.app.games.wordguess.wordGuessDifficultyLabelRes
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
 import com.quietgrid.app.ui.components.ConfettiBurst
 import kotlinx.coroutines.delay
@@ -109,6 +110,7 @@ fun CompletionScreen(
         GameId.SUDOKU -> sudokuDifficultyLabelRes(difficulty)
         GameId.WORDSEARCH -> wordSearchDifficultyLabelRes(difficulty)
         GameId.BLOCKFILL -> blockFillDifficultyLabelRes(difficulty)
+        GameId.WORDGUESS -> wordGuessDifficultyLabelRes(difficulty)
         else -> chimpDifficultyLabelRes(difficulty)
     }
     val accentColor = difficultyColor(difficulty)

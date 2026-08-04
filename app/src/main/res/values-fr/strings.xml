@@ -163,6 +163,8 @@
     <string name="support_info_licenses_body_1">Le code source de Quiet Grid est disponible sous licence GNU General Public License v3.0.</string>
     <string name="support_info_licenses_heading_2">Paquets tiers</string>
     <string name="support_info_licenses_body_2">Quiet Grid utilise également des paquets open source qui conservent leurs propres licences. Vous pouvez consulter le code source complet et la liste des paquets dans le dépôt du projet.</string>
+    <string name="support_info_licenses_heading_3">Listes de mots de Devine le Mot</string>
+    <string name="support_info_licenses_body_3">Les listes de mots de Devine le Mot proviennent des données de fréquence de mots du projet FrequencyWords (hermitdave/FrequencyWords sur GitHub), sous licence CC BY-SA 3.0.</string>
 
     <string name="chimp_title">Chimp Test</string>
     <string name="chimp_short_title">Chimp</string>
@@ -524,4 +526,37 @@
     <string name="blockfill_loss_rule_failure_eyebrow">Puzzle perdu</string>
     <string name="blockfill_loss_rule_failure_title">Plus aucun coup possible</string>
     <string name="blockfill_loss_rule_failure_body">Aucune de vos pièces restantes ne pouvait être posée nulle part sur la grille.</string>
+    <string name="wordguess_title">Devine le Mot</string>
+    <string name="wordguess_tagline">Devine le mot caché en six essais.</string>
+    <string name="wordguess_difficulty_easy">Facile</string>
+    <string name="wordguess_difficulty_medium">Moyen</string>
+    <string name="wordguess_difficulty_hard">Difficile</string>
+    <string name="wordguess_difficulty_expert">Expert</string>
+    <string name="wordguess_difficulty_desc_easy">Mots de 5 lettres, vocabulaire courant.</string>
+    <string name="wordguess_difficulty_desc_medium">Mots de 5 lettres, vocabulaire plus large incluant des mots plus rares.</string>
+    <string name="wordguess_difficulty_desc_hard">Mots de 6 lettres, vocabulaire courant.</string>
+    <string name="wordguess_difficulty_desc_expert">Mots de 6 lettres, vocabulaire plus large incluant des mots plus rares.</string>
+    <string name="wordguess_how_to_play_goal">Devine le mot caché en six essais. Après chaque essai, chaque lettre est colorée pour montrer si tu t\'en approches.</string>
+    <string name="wordguess_how_to_play_controls">Tape un essai avec le clavier à l\'écran puis valide-le. Ton essai doit être un vrai mot de la bonne longueur.</string>
+    <string name="wordguess_rule_1_title">Lire les couleurs</string>
+    <string name="wordguess_rule_1_body">Vert signifie que la lettre est au bon endroit. Jaune signifie que la lettre est dans le mot mais à une autre position. Gris signifie que la lettre n\'est pas dans le mot.</string>
+    <string name="wordguess_rule_2_title">Six essais</string>
+    <string name="wordguess_rule_2_body">Tu as six essais pour trouver le mot. Le puzzle se termine en défaite si tu les utilises tous sans trouver le mot.</string>
+    <string name="wordguess_rule_3_title">Les essais doivent être de vrais mots</string>
+    <string name="wordguess_rule_3_body">Chaque essai est vérifié dans un dictionnaire. Un essai qui n\'est pas un vrai mot est rejeté et ne consomme pas d\'essai.</string>
+    <string name="wordguess_tip_1_title">Commence large</string>
+    <string name="wordguess_tip_1_body">Commencer avec un mot aux lettres courantes et variées réduit les possibilités le plus vite.</string>
+    <string name="wordguess_tip_2_title">Réutilise ce que tu as appris</string>
+    <string name="wordguess_tip_2_body">Le clavier à l\'écran retient le meilleur état connu de chaque lettre, pour voir en un coup d\'œil quelles lettres valent encore la peine d\'être essayées.</string>
+    <string name="wordguess_how_to_play_scoring">Résoudre le puzzle rapporte des points selon la difficulté, le nombre d\'essais nécessaires et ta rapidité.</string>
+    <string name="wordguess_guesses_label">Essais</string>
+    <string name="wordguess_difficulty_label">Difficulté</string>
+    <string name="wordguess_invalid_word_message">Pas un mot valide</string>
+    <string name="wordguess_reveal_word_label">Le mot était</string>
+    <string name="wordguess_loss_abandoned_eyebrow">Puzzle terminé</string>
+    <string name="wordguess_loss_abandoned_title">Puzzle inachevé</string>
+    <string name="wordguess_loss_abandoned_body">Tu as terminé ce puzzle avant de le résoudre.</string>
+    <string name="wordguess_loss_rule_failure_eyebrow">Puzzle perdu</string>
+    <string name="wordguess_loss_rule_failure_title">Plus d\'essais</string>
+    <string name="wordguess_loss_rule_failure_body">Tu as utilisé tes six essais sans trouver le mot.</string>
 </resources>

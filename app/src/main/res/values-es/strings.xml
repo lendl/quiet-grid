@@ -163,6 +163,8 @@
     <string name="support_info_licenses_body_1">El código fuente de Quiet Grid está disponible bajo la Licencia Pública General de GNU v3.0.</string>
     <string name="support_info_licenses_heading_2">Paquetes de terceros</string>
     <string name="support_info_licenses_body_2">Quiet Grid también utiliza paquetes de código abierto que mantienen sus propias licencias. Puedes revisar el código fuente completo y la lista de paquetes en el repositorio del proyecto.</string>
+    <string name="support_info_licenses_heading_3">Listas de palabras de Adivina la Palabra</string>
+    <string name="support_info_licenses_body_3">Las listas de palabras de Adivina la Palabra se basan en datos de frecuencia de palabras del proyecto FrequencyWords (hermitdave/FrequencyWords en GitHub), con licencia CC BY-SA 3.0.</string>
 
     <string name="chimp_title">Chimp Test</string>
     <string name="chimp_short_title">Chimp</string>
@@ -524,4 +526,37 @@
     <string name="blockfill_loss_rule_failure_eyebrow">Rompecabezas perdido</string>
     <string name="blockfill_loss_rule_failure_title">Sin movimientos</string>
     <string name="blockfill_loss_rule_failure_body">Ninguna de tus piezas restantes podía colocarse en ningún lugar del tablero.</string>
+    <string name="wordguess_title">Adivina la Palabra</string>
+    <string name="wordguess_tagline">Adivina la palabra oculta en seis intentos.</string>
+    <string name="wordguess_difficulty_easy">Fácil</string>
+    <string name="wordguess_difficulty_medium">Medio</string>
+    <string name="wordguess_difficulty_hard">Difícil</string>
+    <string name="wordguess_difficulty_expert">Experto</string>
+    <string name="wordguess_difficulty_desc_easy">Palabras de 5 letras, vocabulario común.</string>
+    <string name="wordguess_difficulty_desc_medium">Palabras de 5 letras, vocabulario más amplio con palabras menos comunes.</string>
+    <string name="wordguess_difficulty_desc_hard">Palabras de 6 letras, vocabulario común.</string>
+    <string name="wordguess_difficulty_desc_expert">Palabras de 6 letras, vocabulario más amplio con palabras menos comunes.</string>
+    <string name="wordguess_how_to_play_goal">Adivina la palabra oculta en seis intentos. Tras cada intento, cada letra se colorea para mostrar cuánto te acercaste.</string>
+    <string name="wordguess_how_to_play_controls">Escribe un intento con el teclado en pantalla y envíalo. Tu intento debe ser una palabra real de la longitud correcta.</string>
+    <string name="wordguess_rule_1_title">Interpreta los colores</string>
+    <string name="wordguess_rule_1_body">Verde significa que esa letra está en el lugar correcto. Amarillo significa que la letra está en la palabra pero en otro lugar. Gris significa que la letra no está en la palabra.</string>
+    <string name="wordguess_rule_2_title">Seis intentos</string>
+    <string name="wordguess_rule_2_body">Tienes seis intentos para encontrar la palabra. El puzle termina en derrota si los usas todos sin acertar.</string>
+    <string name="wordguess_rule_3_title">Los intentos deben ser palabras reales</string>
+    <string name="wordguess_rule_3_body">Cada intento se comprueba contra un diccionario. Los intentos que no sean palabras reales se rechazan y no gastan un turno.</string>
+    <string name="wordguess_tip_1_title">Empieza con amplitud</string>
+    <string name="wordguess_tip_1_body">Empezar con una palabra que use letras comunes y variadas reduce las posibilidades más rápido.</string>
+    <string name="wordguess_tip_2_title">Aprovecha lo aprendido</string>
+    <string name="wordguess_tip_2_body">El teclado en pantalla recuerda el mejor estado conocido de cada letra, para que veas de un vistazo qué letras aún vale la pena probar.</string>
+    <string name="wordguess_how_to_play_scoring">Resolver el puzle otorga puntos según la dificultad, cuántos intentos necesitaste y lo rápido que terminaste.</string>
+    <string name="wordguess_guesses_label">Intentos</string>
+    <string name="wordguess_difficulty_label">Dificultad</string>
+    <string name="wordguess_invalid_word_message">No es una palabra válida</string>
+    <string name="wordguess_reveal_word_label">La palabra era</string>
+    <string name="wordguess_loss_abandoned_eyebrow">Puzle terminado</string>
+    <string name="wordguess_loss_abandoned_title">Puzle sin terminar</string>
+    <string name="wordguess_loss_abandoned_body">Terminaste este puzle antes de resolverlo.</string>
+    <string name="wordguess_loss_rule_failure_eyebrow">Puzle perdido</string>
+    <string name="wordguess_loss_rule_failure_title">Sin intentos</string>
+    <string name="wordguess_loss_rule_failure_body">Usaste los seis intentos sin encontrar la palabra.</string>
 </resources>

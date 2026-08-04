@@ -163,6 +163,8 @@
     <string name="support_info_licenses_body_1">De broncode van Quiet Grid is beschikbaar onder de GNU General Public License v3.0.</string>
     <string name="support_info_licenses_heading_2">Pakketten van derden</string>
     <string name="support_info_licenses_body_2">Quiet Grid gebruikt ook opensourcepakketten die hun eigen licenties behouden. Je kunt de volledige broncode en pakketlijst bekijken in de projectrepository.</string>
+    <string name="support_info_licenses_heading_3">Woordlijsten van Woord Raden</string>
+    <string name="support_info_licenses_body_3">De woordlijsten van Woord Raden zijn gebaseerd op woordfrequentiegegevens van het FrequencyWords-project (hermitdave/FrequencyWords op GitHub), onder CC BY-SA 3.0-licentie.</string>
 
     <string name="chimp_title">Chimp Test</string>
     <string name="chimp_short_title">Chimp</string>
@@ -524,4 +526,37 @@
     <string name="blockfill_loss_rule_failure_eyebrow">Puzzel verloren</string>
     <string name="blockfill_loss_rule_failure_title">Geen zetten meer</string>
     <string name="blockfill_loss_rule_failure_body">Geen van je overgebleven stukken kon ergens op het bord geplaatst worden.</string>
+    <string name="wordguess_title">Woord Raden</string>
+    <string name="wordguess_tagline">Raad het verborgen woord in zes pogingen.</string>
+    <string name="wordguess_difficulty_easy">Makkelijk</string>
+    <string name="wordguess_difficulty_medium">Gemiddeld</string>
+    <string name="wordguess_difficulty_hard">Moeilijk</string>
+    <string name="wordguess_difficulty_expert">Expert</string>
+    <string name="wordguess_difficulty_desc_easy">Woorden van 5 letters, veelvoorkomende woordenschat.</string>
+    <string name="wordguess_difficulty_desc_medium">Woorden van 5 letters, bredere woordenschat met zeldzamere woorden.</string>
+    <string name="wordguess_difficulty_desc_hard">Woorden van 6 letters, veelvoorkomende woordenschat.</string>
+    <string name="wordguess_difficulty_desc_expert">Woorden van 6 letters, bredere woordenschat met zeldzamere woorden.</string>
+    <string name="wordguess_how_to_play_goal">Raad het verborgen woord in zes pogingen. Na elke poging krijgt elke letter een kleur die laat zien hoe dicht je erbij zat.</string>
+    <string name="wordguess_how_to_play_controls">Typ een poging met het schermtoetsenbord en bevestig deze. Je poging moet een echt woord van de juiste lengte zijn.</string>
+    <string name="wordguess_rule_1_title">Lees de kleuren</string>
+    <string name="wordguess_rule_1_body">Groen betekent dat de letter op de juiste plek staat. Geel betekent dat de letter wel in het woord voorkomt, maar op een andere plek. Grijs betekent dat de letter niet in het woord voorkomt.</string>
+    <string name="wordguess_rule_2_title">Zes pogingen</string>
+    <string name="wordguess_rule_2_body">Je hebt zes pogingen om het woord te vinden. De puzzel eindigt in verlies als je ze allemaal gebruikt zonder het juiste woord te raden.</string>
+    <string name="wordguess_rule_3_title">Pogingen moeten echte woorden zijn</string>
+    <string name="wordguess_rule_3_body">Elke poging wordt gecontroleerd in een woordenboek. Een poging die geen echt woord is, wordt geweigerd en kost geen beurt.</string>
+    <string name="wordguess_tip_1_title">Begin breed</string>
+    <string name="wordguess_tip_1_body">Beginnen met een woord met veelvoorkomende, gevarieerde letters beperkt de mogelijkheden het snelst.</string>
+    <string name="wordguess_tip_2_title">Gebruik wat je hebt geleerd</string>
+    <string name="wordguess_tip_2_body">Het schermtoetsenbord onthoudt de best bekende status van elke letter, zodat je in één oogopslag ziet welke letters nog de moeite waard zijn.</string>
+    <string name="wordguess_how_to_play_scoring">Het oplossen van de puzzel levert punten op, afhankelijk van de moeilijkheidsgraad, het aantal benodigde pogingen en hoe snel je klaar was.</string>
+    <string name="wordguess_guesses_label">Pogingen</string>
+    <string name="wordguess_difficulty_label">Moeilijkheid</string>
+    <string name="wordguess_invalid_word_message">Geen geldig woord</string>
+    <string name="wordguess_reveal_word_label">Het woord was</string>
+    <string name="wordguess_loss_abandoned_eyebrow">Puzzel beëindigd</string>
+    <string name="wordguess_loss_abandoned_title">Puzzel onvoltooid</string>
+    <string name="wordguess_loss_abandoned_body">Je hebt deze puzzel beëindigd voordat hij was opgelost.</string>
+    <string name="wordguess_loss_rule_failure_eyebrow">Puzzel verloren</string>
+    <string name="wordguess_loss_rule_failure_title">Geen pogingen meer</string>
+    <string name="wordguess_loss_rule_failure_body">Je hebt al je zes pogingen gebruikt zonder het woord te vinden.</string>
 </resources>

@@ -44,6 +44,8 @@ import com.quietgrid.app.games.sudoku.sudokuDifficultyDescriptionRes
 import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
 import com.quietgrid.app.games.takuzu.takuzuDifficultyDescriptionRes
 import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
+import com.quietgrid.app.games.wordguess.wordGuessDifficultyDescriptionRes
+import com.quietgrid.app.games.wordguess.wordGuessDifficultyLabelRes
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyDescriptionRes
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
 import kotlinx.coroutines.flow.map
@@ -109,6 +111,7 @@ private fun GamePlayPickerTab(
                     GameId.SUDOKU -> sudokuDifficultyLabelRes(difficulty)
                     GameId.WORDSEARCH -> wordSearchDifficultyLabelRes(difficulty)
                     GameId.BLOCKFILL -> blockFillDifficultyLabelRes(difficulty)
+                    GameId.WORDGUESS -> wordGuessDifficultyLabelRes(difficulty)
                     else -> chimpDifficultyLabelRes(difficulty)
                 }
                 val descriptionRes = when (gameId) {
@@ -119,6 +122,7 @@ private fun GamePlayPickerTab(
                     GameId.SUDOKU -> sudokuDifficultyDescriptionRes(difficulty)
                     GameId.WORDSEARCH -> wordSearchDifficultyDescriptionRes(difficulty)
                     GameId.BLOCKFILL -> blockFillDifficultyDescriptionRes(difficulty)
+                    GameId.WORDGUESS -> wordGuessDifficultyDescriptionRes(difficulty)
                 }
                 if (index > 0) HorizontalDivider()
                 Row(

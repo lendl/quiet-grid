@@ -1,0 +1,5 @@
+the 100
+Apple 90
+grape 80
+a1b2c 70
+hi 60

@@ -56,6 +56,7 @@ fun HowToPlayScreen(gameId: GameId) {
             GameId.SUDOKU -> SudokuHowToPlay()
             GameId.WORDSEARCH -> WordSearchHowToPlay()
             GameId.BLOCKFILL -> BlockFillHowToPlay()
+            GameId.WORDGUESS -> WordGuessHowToPlay()
         }
 
         HorizontalDivider(Modifier.padding(vertical = 20.dp))
@@ -382,5 +383,32 @@ private fun BlockFillHowToPlay() {
     HorizontalDivider(Modifier.padding(vertical = 20.dp))
     Accordion(stringResource(R.string.how_to_play_scoring_title)) {
         BodyText(stringResource(R.string.blockfill_how_to_play_scoring))
+    }
+}
+
+@Composable
+private fun WordGuessHowToPlay() {
+    SectionHeader(Icons.Outlined.EmojiEvents, stringResource(R.string.how_to_play_goal_title))
+    BodyText(stringResource(R.string.wordguess_how_to_play_goal))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.PanTool, stringResource(R.string.how_to_play_controls_title))
+    BodyText(stringResource(R.string.wordguess_how_to_play_controls))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.Description, stringResource(R.string.how_to_play_rules_title))
+    RuleRow(1, R.string.wordguess_rule_1_title, R.string.wordguess_rule_1_body)
+    RuleRow(2, R.string.wordguess_rule_2_title, R.string.wordguess_rule_2_body)
+    RuleRow(3, R.string.wordguess_rule_3_title, R.string.wordguess_rule_3_body)
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    Accordion(stringResource(R.string.how_to_play_tips_title)) {
+        TechniqueItem(R.string.wordguess_tip_1_title, R.string.wordguess_tip_1_body)
+        TechniqueItem(R.string.wordguess_tip_2_title, R.string.wordguess_tip_2_body)
+    }
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    Accordion(stringResource(R.string.how_to_play_scoring_title)) {
+        BodyText(stringResource(R.string.wordguess_how_to_play_scoring))
     }
 }

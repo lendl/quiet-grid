@@ -163,6 +163,8 @@
     <string name="support_info_licenses_body_1">Der Quellcode von Quiet Grid ist unter der GNU General Public License v3.0 verfügbar.</string>
     <string name="support_info_licenses_heading_2">Pakete von Drittanbietern</string>
     <string name="support_info_licenses_body_2">Quiet Grid verwendet außerdem Open-Source-Pakete, die ihre eigenen Lizenzen behalten. Den vollständigen Quellcode und die Paketliste findest du im Projekt-Repository.</string>
+    <string name="support_info_licenses_heading_3">Wortlisten von Wort erraten</string>
+    <string name="support_info_licenses_body_3">Die Wortlisten von Wort erraten basieren auf Wort-Häufigkeitsdaten des FrequencyWords-Projekts (hermitdave/FrequencyWords auf GitHub), lizenziert unter CC BY-SA 3.0.</string>
 
     <string name="chimp_title">Chimp Test</string>
     <string name="chimp_short_title">Chimp</string>
@@ -524,4 +526,37 @@
     <string name="blockfill_loss_rule_failure_eyebrow">Rätsel verloren</string>
     <string name="blockfill_loss_rule_failure_title">Keine Züge mehr</string>
     <string name="blockfill_loss_rule_failure_body">Keines deiner verbliebenen Teile konnte irgendwo auf dem Feld platziert werden.</string>
+    <string name="wordguess_title">Wort erraten</string>
+    <string name="wordguess_tagline">Errate das versteckte Wort in sechs Versuchen.</string>
+    <string name="wordguess_difficulty_easy">Leicht</string>
+    <string name="wordguess_difficulty_medium">Mittel</string>
+    <string name="wordguess_difficulty_hard">Schwer</string>
+    <string name="wordguess_difficulty_expert">Experte</string>
+    <string name="wordguess_difficulty_desc_easy">5-Buchstaben-Wörter, geläufiger Wortschatz.</string>
+    <string name="wordguess_difficulty_desc_medium">5-Buchstaben-Wörter, breiterer Wortschatz mit selteneren Wörtern.</string>
+    <string name="wordguess_difficulty_desc_hard">6-Buchstaben-Wörter, geläufiger Wortschatz.</string>
+    <string name="wordguess_difficulty_desc_expert">6-Buchstaben-Wörter, breiterer Wortschatz mit selteneren Wörtern.</string>
+    <string name="wordguess_how_to_play_goal">Errate das versteckte Wort in sechs Versuchen. Nach jedem Versuch zeigt die Farbe jedes Buchstabens, wie nah du dran warst.</string>
+    <string name="wordguess_how_to_play_controls">Tippe einen Versuch über die Bildschirmtastatur ein und bestätige ihn. Dein Versuch muss ein echtes Wort mit der richtigen Länge sein.</string>
+    <string name="wordguess_rule_1_title">Die Farben lesen</string>
+    <string name="wordguess_rule_1_body">Grün bedeutet, der Buchstabe steht an der richtigen Stelle. Gelb bedeutet, der Buchstabe kommt im Wort vor, aber an anderer Stelle. Grau bedeutet, der Buchstabe kommt im Wort nicht vor.</string>
+    <string name="wordguess_rule_2_title">Sechs Versuche</string>
+    <string name="wordguess_rule_2_body">Du hast sechs Versuche, das Wort zu finden. Nutzt du alle auf, ohne richtig zu raten, endet das Rätsel als Niederlage.</string>
+    <string name="wordguess_rule_3_title">Versuche müssen echte Wörter sein</string>
+    <string name="wordguess_rule_3_body">Jeder Versuch wird gegen ein Wörterbuch geprüft. Kein echtes Wort wird abgelehnt und verbraucht keinen Versuch.</string>
+    <string name="wordguess_tip_1_title">Breit einsteigen</string>
+    <string name="wordguess_tip_1_body">Ein Startwort mit häufigen, unterschiedlichen Buchstaben grenzt die Möglichkeiten am schnellsten ein.</string>
+    <string name="wordguess_tip_2_title">Nutze, was du weißt</string>
+    <string name="wordguess_tip_2_body">Die Bildschirmtastatur merkt sich den besten bekannten Status jedes Buchstabens, sodass du auf einen Blick siehst, welche Buchstaben noch lohnenswert sind.</string>
+    <string name="wordguess_how_to_play_scoring">Das Lösen des Rätsels bringt Punkte, abhängig von der Schwierigkeit, der Anzahl der benötigten Versuche und deiner Geschwindigkeit.</string>
+    <string name="wordguess_guesses_label">Versuche</string>
+    <string name="wordguess_difficulty_label">Schwierigkeit</string>
+    <string name="wordguess_invalid_word_message">Kein gültiges Wort</string>
+    <string name="wordguess_reveal_word_label">Das Wort war</string>
+    <string name="wordguess_loss_abandoned_eyebrow">Rätsel beendet</string>
+    <string name="wordguess_loss_abandoned_title">Rätsel unvollständig</string>
+    <string name="wordguess_loss_abandoned_body">Du hast dieses Rätsel beendet, bevor es gelöst war.</string>
+    <string name="wordguess_loss_rule_failure_eyebrow">Rätsel verloren</string>
+    <string name="wordguess_loss_rule_failure_title">Keine Versuche mehr</string>
+    <string name="wordguess_loss_rule_failure_body">Du hast alle sechs Versuche verbraucht, ohne das Wort zu finden.</string>
 </resources>

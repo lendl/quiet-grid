@@ -31,6 +31,7 @@ import com.quietgrid.app.games.minesweeper.MinesweeperPlayScreen
 import com.quietgrid.app.games.nonogram.NonogramPlayScreen
 import com.quietgrid.app.games.sudoku.SudokuPlayScreen
 import com.quietgrid.app.games.takuzu.TakuzuPlayScreen
+import com.quietgrid.app.games.wordguess.WordGuessPlayScreen
 import com.quietgrid.app.games.wordsearch.WordSearchPlayScreen
 import com.quietgrid.app.ui.components.AppTab
 import com.quietgrid.app.ui.components.AppTopBar
@@ -237,6 +238,18 @@ fun AppNavHost() {
                         },
                     )
                     GameId.BLOCKFILL -> BlockFillPlayScreen(
+                        difficulty = difficulty,
+                        resume = resume,
+                        onBack = { navController.popBackStack() },
+                        onFinished = { result ->
+                            if (result.solved) {
+                                goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
+                            } else {
+                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
+                            }
+                        },
+                    )
+                    GameId.WORDGUESS -> WordGuessPlayScreen(
                         difficulty = difficulty,
                         resume = resume,
                         onBack = { navController.popBackStack() },

@@ -32,6 +32,7 @@ import com.quietgrid.app.games.minesweeper.minesweeperDifficultyLabelRes
 import com.quietgrid.app.games.nonogram.nonogramDifficultyLabelRes
 import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
 import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
+import com.quietgrid.app.games.wordguess.wordGuessDifficultyLabelRes
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
 
 fun difficultyLabelRes(gameId: GameId, difficulty: Difficulty): Int = when (gameId) {
@@ -42,6 +43,7 @@ fun difficultyLabelRes(gameId: GameId, difficulty: Difficulty): Int = when (game
     GameId.WORDSEARCH -> wordSearchDifficultyLabelRes(difficulty)
     GameId.CHIMPTEST -> chimpDifficultyLabelRes(difficulty)
     GameId.BLOCKFILL -> blockFillDifficultyLabelRes(difficulty)
+    GameId.WORDGUESS -> wordGuessDifficultyLabelRes(difficulty)
 }
 
 private fun gameStreak(stats: GameStats): Int =

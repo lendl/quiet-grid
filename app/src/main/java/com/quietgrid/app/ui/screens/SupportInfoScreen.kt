@@ -42,6 +42,7 @@ private val INFO_CONTENT = mapOf(
         sections = listOf(
             InfoSection(R.string.support_info_licenses_heading_1, R.string.support_info_licenses_body_1),
             InfoSection(R.string.support_info_licenses_heading_2, R.string.support_info_licenses_body_2),
+            InfoSection(R.string.support_info_licenses_heading_3, R.string.support_info_licenses_body_3),
         ),
     ),
 )

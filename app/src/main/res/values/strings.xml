@@ -174,6 +174,8 @@
     <string name="support_info_licenses_body_1">Quiet Grid source code is available under the GNU General Public License v3.0.</string>
     <string name="support_info_licenses_heading_2">Third-party packages</string>
     <string name="support_info_licenses_body_2">Quiet Grid also uses open-source packages that keep their own licenses. You can review the full source code and package list in the project repository.</string>
+    <string name="support_info_licenses_heading_3">Word Guess word lists</string>
+    <string name="support_info_licenses_body_3">Word Guess\'s word lists are built from word-frequency data from the FrequencyWords project (hermitdave/FrequencyWords on GitHub), licensed CC BY-SA 3.0.</string>
 
     <!-- Chimp Test -->
     <string name="chimp_title">Chimp Test</string>
@@ -536,4 +538,37 @@
     <string name="blockfill_loss_rule_failure_eyebrow">Puzzle lost</string>
     <string name="blockfill_loss_rule_failure_title">No moves left</string>
     <string name="blockfill_loss_rule_failure_body">None of your remaining pieces could be placed anywhere on the board.</string>
+    <string name="wordguess_title">Word Guess</string>
+    <string name="wordguess_tagline">Guess the hidden word in six tries.</string>
+    <string name="wordguess_difficulty_easy">Easy</string>
+    <string name="wordguess_difficulty_medium">Medium</string>
+    <string name="wordguess_difficulty_hard">Hard</string>
+    <string name="wordguess_difficulty_expert">Expert</string>
+    <string name="wordguess_difficulty_desc_easy">5-letter words, common vocabulary.</string>
+    <string name="wordguess_difficulty_desc_medium">5-letter words, a wider vocabulary including rarer words.</string>
+    <string name="wordguess_difficulty_desc_hard">6-letter words, common vocabulary.</string>
+    <string name="wordguess_difficulty_desc_expert">6-letter words, a wider vocabulary including rarer words.</string>
+    <string name="wordguess_how_to_play_goal">Guess the hidden word in six tries. After each guess, every letter is colored to show how close you were.</string>
+    <string name="wordguess_how_to_play_controls">Type a guess using the on-screen keyboard and submit it. Your guess must be a real word of the correct length.</string>
+    <string name="wordguess_rule_1_title">Read the colors</string>
+    <string name="wordguess_rule_1_body">Green means that letter is in the correct spot. Yellow means the letter is in the word but in a different spot. Gray means the letter is not in the word at all.</string>
+    <string name="wordguess_rule_2_title">Six guesses</string>
+    <string name="wordguess_rule_2_body">You have six guesses to find the word. The puzzle ends in a loss if you use them all without guessing correctly.</string>
+    <string name="wordguess_rule_3_title">Guesses must be real words</string>
+    <string name="wordguess_rule_3_body">Each guess is checked against a dictionary. Guesses that aren\'t real words are rejected and don\'t use up a try.</string>
+    <string name="wordguess_tip_1_title">Start broad</string>
+    <string name="wordguess_tip_1_body">Opening with a word that uses common, varied letters narrows down the possibilities fastest.</string>
+    <string name="wordguess_tip_2_title">Reuse what you\'ve learned</string>
+    <string name="wordguess_tip_2_body">The on-screen keyboard remembers every letter\'s best-known state, so you can see at a glance which letters are still worth trying.</string>
+    <string name="wordguess_how_to_play_scoring">Solving the puzzle scores points based on the difficulty, how many guesses you needed, and how quickly you finished.</string>
+    <string name="wordguess_guesses_label">Guesses</string>
+    <string name="wordguess_difficulty_label">Difficulty</string>
+    <string name="wordguess_invalid_word_message">Not a valid word</string>
+    <string name="wordguess_reveal_word_label">The word was</string>
+    <string name="wordguess_loss_abandoned_eyebrow">Puzzle ended</string>
+    <string name="wordguess_loss_abandoned_title">Puzzle unfinished</string>
+    <string name="wordguess_loss_abandoned_body">You ended this puzzle before it was solved.</string>
+    <string name="wordguess_loss_rule_failure_eyebrow">Puzzle lost</string>
+    <string name="wordguess_loss_rule_failure_title">Out of guesses</string>
+    <string name="wordguess_loss_rule_failure_body">You used all six guesses without finding the word.</string>
 </resources>

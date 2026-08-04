@@ -25,4 +25,13 @@ class ArgsTest {
         assertEquals(1, command.count)
         assertEquals("app/src/main/assets", command.outDir)
     }
+
+    @Test
+    fun `parseArgs reads an optional locale flag, defaulting to en`() {
+        val withLocale = parseArgs(arrayOf("generate", "--game", "wordguess", "--difficulty", "easy", "--locale", "de"))
+        assertEquals("de", withLocale.locale)
+
+        val withoutLocale = parseArgs(arrayOf("generate", "--game", "wordguess", "--difficulty", "easy"))
+        assertEquals("en", withoutLocale.locale)
+    }
 }
