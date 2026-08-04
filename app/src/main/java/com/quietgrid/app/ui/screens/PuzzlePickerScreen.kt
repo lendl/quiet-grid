@@ -131,7 +131,7 @@ private fun GamePlayPickerTab(
                         .clickable {
                             if (activeGameKey != null) pendingDifficulty = difficulty else onPickDifficulty(difficulty)
                         }
-                        .padding(vertical = 14.dp),
+                        .padding(vertical = 18.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Box(
@@ -140,12 +140,13 @@ private fun GamePlayPickerTab(
                             .clip(CircleShape)
                             .background(difficultyColor(difficulty)),
                     )
-                    Column(Modifier.padding(start = 12.dp)) {
-                        Text(stringResource(labelRes), style = MaterialTheme.typography.titleSmall)
+                    Column(Modifier.padding(start = 14.dp)) {
+                        Text(stringResource(labelRes), style = MaterialTheme.typography.titleLarge)
                         Text(
                             stringResource(descriptionRes),
-                            style = MaterialTheme.typography.bodySmall,
+                            style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = 2.dp),
                         )
                     }
                 }
