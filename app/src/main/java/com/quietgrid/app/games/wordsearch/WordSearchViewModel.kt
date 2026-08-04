@@ -129,9 +129,8 @@ class WordSearchPlayViewModel(
      * Tap-to-select: tapping a cell already in the active selection clears it; tapping with no
      * selection starts one; tapping again tries to extend the selection in a straight line and
      * commits immediately if it lines up, otherwise starts a fresh selection at the tapped cell.
-     * Mirrors the RN app's actual play-screen behavior (WordSearchPuzzleGrid is used with
-     * allowDrag={false} there), which is tap-only rather than drag-select — drag is instead
-     * reserved for panning the board once zoomed in.
+     * This is the fallback path for a gesture that never left its starting cell — a continuous
+     * drag across cells is handled instead by [onCellDragStart]/[onCellDragMove]/[onCellDragEnd].
      */
     fun onCellTap(row: Int, col: Int) {
         val current = session ?: return
@@ -159,6 +158,30 @@ class WordSearchPlayViewModel(
             val started = wsBeginSelection(current, cell) ?: return
             controller.updateSession(started, persist = false)
         }
+    }
+
+    /**
+     * Drag-to-select: continuous press-and-drag across cells, as an alternative to tap-to-select.
+     * Starts a fresh selection at the drag's origin cell, extends it live as the finger crosses
+     * new cells (only while they stay in a straight line from the origin), and commits on release.
+     */
+    fun onCellDragStart(row: Int, col: Int) {
+        val current = session ?: return
+        if (current.hiddenWordMode) return
+        nextMoveHint = null
+        val started = wsBeginSelection(current, WSCellRef(row, col)) ?: return
+        controller.updateSession(started, persist = false)
+    }
+
+    fun onCellDragMove(row: Int, col: Int) {
+        val current = session ?: return
+        if (current.hiddenWordMode) return
+        val updated = wsUpdateSelection(current, WSCellRef(row, col)) ?: return
+        controller.updateSession(updated, persist = false)
+    }
+
+    fun onCellDragEnd() {
+        onCommitSelection()
     }
 
     fun onHiddenWordCellTap(row: Int, col: Int) {

@@ -192,6 +192,9 @@ fun WordSearchPlayScreen(
                         hiddenWordMode = session.hiddenWordMode,
                         hiddenWordProgress = session.hiddenWordProgress,
                         onCellTap = viewModel::onCellTap,
+                        onCellDragStart = viewModel::onCellDragStart,
+                        onCellDragMove = viewModel::onCellDragMove,
+                        onCellDragEnd = viewModel::onCellDragEnd,
                         onHiddenWordTap = viewModel::onHiddenWordCellTap,
                         nextMoveEvidenceCells = hint?.let {
                             when (it) {

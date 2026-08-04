@@ -38,6 +38,9 @@ fun WordSearchGrid(
     hiddenWordMode: Boolean,
     hiddenWordProgress: List<WSCellRef>,
     onCellTap: (row: Int, col: Int) -> Unit,
+    onCellDragStart: (row: Int, col: Int) -> Unit,
+    onCellDragMove: (row: Int, col: Int) -> Unit,
+    onCellDragEnd: () -> Unit,
     onHiddenWordTap: (row: Int, col: Int) -> Unit,
     nextMoveEvidenceCells: List<WSCellRef> = emptyList(),
     nextMoveTargetCells: List<WSCellRef> = emptyList(),
@@ -75,6 +78,8 @@ fun WordSearchGrid(
                         val startCell = cellAt(startXDp, startYDp)
                         val pointerId = down.id
                         var claimedByPan = false
+                        var lastCell = startCell
+                        var dragged = false
 
                         if (hiddenWordMode && startCell != null) {
                             onHiddenWordTap(startCell.row, startCell.col)
@@ -88,13 +93,31 @@ fun WordSearchGrid(
                                 change.consume()
                                 break
                             }
+                            // Selection supports both tap-to-select (see below) and drag-to-select:
+                            // once the finger crosses into a new cell we treat the gesture as a drag
+                            // and extend the selection live, still yielding to panning once claimed.
+                            if (!hiddenWordMode && !claimedByPan && startCell != null) {
+                                val xDp = Dp(change.position.x / density)
+                                val yDp = Dp(change.position.y / density)
+                                val cell = cellAt(xDp, yDp)
+                                if (cell != null && cell != lastCell) {
+                                    if (!dragged) {
+                                        onCellDragStart(startCell.row, startCell.col)
+                                        dragged = true
+                                    }
+                                    onCellDragMove(cell.row, cell.col)
+                                    lastCell = cell
+                                }
+                            }
                             change.consume()
                         }
 
-                        // Selection is tap-only (matching the RN app): this frees up single-finger
-                        // drag for panning the board once zoomed in, instead of the two conflicting.
                         if (!hiddenWordMode && !claimedByPan) {
-                            startCell?.let { onCellTap(it.row, it.col) }
+                            if (dragged) {
+                                onCellDragEnd()
+                            } else {
+                                startCell?.let { onCellTap(it.row, it.col) }
+                            }
                         }
                     }
                 },
