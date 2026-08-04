@@ -42,6 +42,34 @@ English, Dutch, German, French, Spanish.
 
 Or open the project root in Android Studio and run the `app` configuration.
 
+## Puzzle generation
+
+Puzzle banks are generated offline by the `:cli` module (backed by shared rules in `:engine`) and committed as static assets — never generated on-device.
+
+```bash
+./gradlew :cli:run --args="generate --game <game> --difficulty <difficulty> [--count <n>] [--out <dir>] [--locale <locale>]"
+```
+
+| Flag | Required | Default | Notes |
+| --- | --- | --- | --- |
+| `--game` | yes | — | `sudoku`, `takuzu`, `nonogram`, `wordsearch`, `wordguess` |
+| `--difficulty` | yes | — | `easy`, `medium`, `hard`, `expert` |
+| `--count` | no | `1` | number of puzzles to attempt |
+| `--out` | no | `app/src/main/assets` | output dir; merges into that game's `*_puzzles.json` |
+| `--locale` | no | `en` | `wordsearch` and `wordguess` only — `en`, `nl`, `de`, `fr`, `es` |
+
+`nonogram` requires existing seed puzzles already present in `<out>/nonogram_puzzles.json` (variants are generated from those seeds). Generation is deduplicated per game (and per locale, for `wordsearch`/`wordguess`) via state files under `<out>/.generation-state/`.
+
+Examples:
+
+```bash
+# 20 Dutch word search puzzles, medium difficulty
+./gradlew :cli:run --args="generate --game wordsearch --difficulty medium --count 20 --locale nl"
+
+# 10 hard sudoku puzzles
+./gradlew :cli:run --args="generate --game sudoku --difficulty hard --count 10"
+```
+
 ## Privacy
 
 All data is stored on-device. No network requests are made. See [PRIVACY.md](PRIVACY.md).

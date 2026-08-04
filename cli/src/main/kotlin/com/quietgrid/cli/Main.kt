@@ -87,17 +87,22 @@ fun main(args: Array<String>) {
         }
         "wordsearch" -> {
             val sizes = com.quietgrid.engine.wordsearch.wordSearchAllowedSizes(difficulty)
-            val state = GenerationState("${command.outDir}/.generation-state/wordsearch.json")
-            val entries = (1..command.count).mapNotNull {
+            val locale = command.locale
+            val state = GenerationState("${command.outDir}/.generation-state/wordsearch-$locale.json")
+            val maxTotalAttempts = command.count * 30
+            val entries = mutableListOf<com.quietgrid.engine.wordsearch.WordSearchPuzzleEntry>()
+            var attempts = 0
+            while (entries.size < command.count && attempts < maxTotalAttempts) {
+                attempts++
                 val (rows, cols) = sizes.random()
-                val candidate = com.quietgrid.cli.wordsearch.generateWordSearchPuzzle(rows, cols, difficulty) ?: return@mapNotNull null
-                if (state.hasTried(candidate.id)) return@mapNotNull null
-                state.recordTried(candidate.id, "valid")
-                candidate
+                val generated = com.quietgrid.cli.wordsearch.generateWordSearchPuzzle(rows, cols, difficulty, preferredLanguages = listOf(locale)) ?: continue
+                if (state.hasTried(generated.id)) continue
+                state.recordTried(generated.id, "valid")
+                entries += generated
             }
             state.save()
             appendPuzzleEntries("${command.outDir}/wordsearch_puzzles.json", entries, com.quietgrid.engine.wordsearch.WordSearchPuzzleEntry.serializer()) { it.id }
-            println("Generated ${entries.size}/${command.count} wordsearch puzzles at $difficulty into ${command.outDir}/wordsearch_puzzles.json")
+            println("Generated ${entries.size}/${command.count} wordsearch puzzles ($locale/$difficulty) into ${command.outDir}/wordsearch_puzzles.json")
         }
         "wordguess" -> {
             val locale = command.locale
