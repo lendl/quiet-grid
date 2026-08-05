@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +22,7 @@ import com.quietgrid.engine.wordguess.LetterState
 @Composable
 private fun WordGuessTile(letter: Char?, state: LetterState?) {
     val (background, foreground) = wordGuessLetterColors(state)
+    val icon = wordGuessLetterIcon(state)
     Box(
         modifier = Modifier
             .size(48.dp)
@@ -33,6 +36,17 @@ private fun WordGuessTile(letter: Char?, state: LetterState?) {
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = foreground,
+            )
+        }
+        if (icon != null) {
+            Icon(
+                icon,
+                contentDescription = null,
+                tint = foreground,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(2.dp)
+                    .size(12.dp),
             )
         }
     }

@@ -1,8 +1,12 @@
 package com.quietgrid.app.games.wordguess
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.outlined.Circle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.quietgrid.app.ui.theme.LocalIsPencilTheme
 import com.quietgrid.engine.wordguess.LetterState
 
@@ -27,5 +31,17 @@ fun wordGuessLetterColors(state: LetterState?): Pair<Color, Color> {
         } else {
             Color(0xFF1F7A3D) to Color.White
         }
+    }
+}
+
+/** Non-color cue for colorblind players: check = right letter/right spot, ring = right letter/wrong spot, none = absent.
+ *  Only shown in Pencil theme — elsewhere color already carries the distinction and the icon is just visual noise. */
+@Composable
+fun wordGuessLetterIcon(state: LetterState?): ImageVector? {
+    if (!LocalIsPencilTheme.current) return null
+    return when (state) {
+        LetterState.CORRECT -> Icons.Filled.Check
+        LetterState.PRESENT -> Icons.Outlined.Circle
+        else -> null
     }
 }

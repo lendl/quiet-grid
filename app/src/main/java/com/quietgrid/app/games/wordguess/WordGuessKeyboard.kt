@@ -29,6 +29,7 @@ private const val WORDGUESS_KEYBOARD_ROW_3 = "zxcvbnm"
 @Composable
 private fun WordGuessKey(label: String, state: LetterState?, widthDp: Int = 32, onClick: () -> Unit) {
     val (background, foreground) = wordGuessLetterColors(state)
+    val icon = wordGuessLetterIcon(state)
     Surface(
         onClick = onClick,
         color = background,
@@ -37,6 +38,17 @@ private fun WordGuessKey(label: String, state: LetterState?, widthDp: Int = 32, 
     ) {
         Box(contentAlignment = Alignment.Center) {
             Text(label.uppercase(), color = foreground, fontWeight = FontWeight.Bold)
+            if (icon != null) {
+                Icon(
+                    icon,
+                    contentDescription = null,
+                    tint = foreground,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(1.dp)
+                        .size(11.dp),
+                )
+            }
         }
     }
 }
