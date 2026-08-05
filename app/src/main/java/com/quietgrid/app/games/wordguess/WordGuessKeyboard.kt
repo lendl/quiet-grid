@@ -55,7 +55,6 @@ private fun WordGuessKey(label: String, state: LetterState?, widthDp: Int = 32, 
 
 @Composable
 fun WordGuessKeyboard(
-    extraKeys: List<Char>,
     keyboardState: Map<Char, LetterState>,
     onLetter: (Char) -> Unit,
     onBackspace: () -> Unit,
@@ -86,13 +85,6 @@ fun WordGuessKeyboard(
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(Icons.AutoMirrored.Filled.Backspace, contentDescription = null)
-                }
-            }
-        }
-        if (extraKeys.isNotEmpty()) {
-            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                for (ch in extraKeys) {
-                    WordGuessKey(ch.toString(), keyboardState[ch]) { onLetter(ch) }
                 }
             }
         }

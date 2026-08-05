@@ -56,15 +56,8 @@ fun WordGuessPlayScreen(
     var showEndDialog by remember { mutableStateOf(false) }
     var currentInput by remember { mutableStateOf("") }
     var invalidFlash by remember { mutableStateOf(false) }
-    var extraKeys by remember { mutableStateOf<List<Char>>(emptyList()) }
 
     val session = viewModel.session
-
-    LaunchedEffect(session?.locale) {
-        val locale = session?.locale ?: return@LaunchedEffect
-        val dictionary = WordGuessPuzzleBank.loadDictionary(context, locale)
-        extraKeys = dictionary.flatMap { it.toList() }.filter { it !in 'a'..'z' }.distinct().sorted()
-    }
 
     LaunchedEffect(invalidFlash) {
         if (invalidFlash) {
@@ -138,7 +131,6 @@ fun WordGuessPlayScreen(
         if (session != null && session.status == WordGuessStatus.PLAYING) {
             val keyboardState = foldWordGuessKeyboardState(session.guesses.map { it.guess to it.feedback })
             WordGuessKeyboard(
-                extraKeys = extraKeys,
                 keyboardState = keyboardState,
                 onLetter = { ch -> if (currentInput.length < session.wordLength) currentInput += ch },
                 onBackspace = { currentInput = currentInput.dropLast(1) },

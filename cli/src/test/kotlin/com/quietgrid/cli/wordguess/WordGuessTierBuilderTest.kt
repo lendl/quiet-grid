@@ -21,10 +21,19 @@ class WordGuessTierBuilderTest {
     }
 
     @Test
-    fun `buildWordGuessTiers keeps accented letters`() {
-        val raw = listOf("weiss", "weiß", "mango")
+    fun `buildWordGuessTiers ascii-folds accented letters`() {
+        val raw = listOf("café", "mango")
         val tiers = buildWordGuessTiers(raw, wordLength = 4, commonSize = 10, fullSize = 10)
-        assertTrue("weiß" in tiers.full)
+        assertEquals(listOf("cafe"), tiers.full)
+    }
+
+    @Test
+    fun `buildWordGuessTiers folds eszett to double-s, which can shift word length`() {
+        val raw = listOf("weiß")
+        val foldedLength = buildWordGuessTiers(raw, wordLength = 5, commonSize = 10, fullSize = 10)
+        assertTrue("weiss" in foldedLength.full)
+        val originalLength = buildWordGuessTiers(raw, wordLength = 4, commonSize = 10, fullSize = 10)
+        assertTrue(originalLength.full.isEmpty())
     }
 
     @Test
