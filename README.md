@@ -12,12 +12,14 @@ No ads. No account. No internet required. Everything stays on your device.
 
 | Game | Status |
 | --- | --- |
+| Chimp Test | Available |
 | Takuzu | Available |
-| Minesweeper | Available |
 | Nonogram | Beta |
+| Minesweeper | Available |
 | Sudoku | Available |
 | Word Search | Available |
-| Chimp Test | Available |
+| Block Fill | Beta |
+| Word Guess | Beta |
 
 Each puzzle type has Easy, Medium, Hard, and Expert difficulty levels.
 
