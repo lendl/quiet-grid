@@ -104,6 +104,7 @@
     <string name="completion_streak_badge">Racha de %1$d puzzles</string>
     <string name="completion_flawless_badge">Impecable</string>
     <string name="completion_words_found">Palabras encontradas</string>
+    <string name="completion_solution_word">Solución</string>
 
     <string name="loss_difficulty">Dificultad</string>
     <string name="loss_elapsed_time">Tiempo transcurrido</string>

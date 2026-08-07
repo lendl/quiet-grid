@@ -2,7 +2,7 @@ package com.quietgrid.app.ui.screens
 
 /** Game-specific completion flourish that doesn't fit the flat scalar completion route args. */
 sealed interface CompletionHighlight {
-    data class WordList(val words: List<String>) : CompletionHighlight
+    data class WordList(val words: List<String>, val solutionWord: String? = null) : CompletionHighlight
     data class Picture(val solution: List<List<Boolean>>) : CompletionHighlight
 }
 

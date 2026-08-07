@@ -34,6 +34,7 @@ data class WordSearchResult(
     val isFirstSolve: Boolean = false,
     val isNewHighScore: Boolean = false,
     val words: List<String> = emptyList(),
+    val hiddenWord: String = "",
 )
 
 private class WordSearchPuzzleAdapter(private val appContext: Context) : PuzzleAdapter<WordSearchSession, WordSearchResult> {
@@ -93,6 +94,7 @@ private class WordSearchPuzzleAdapter(private val appContext: Context) : PuzzleA
         isFirstSolve = outcome.isFirstSolve,
         isNewHighScore = outcome.isNewHighScore,
         words = session?.puzzle?.words?.map { it.word } ?: emptyList(),
+        hiddenWord = session?.puzzle?.hiddenWord?.word ?: "",
     )
 }
 

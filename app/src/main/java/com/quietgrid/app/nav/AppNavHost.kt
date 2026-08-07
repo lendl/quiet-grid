@@ -232,7 +232,9 @@ fun AppNavHost() {
                         onBack = { navController.popBackStack() },
                         onFinished = { result ->
                             if (result.solved) {
-                                CompletionExtras.set(CompletionHighlight.WordList(result.words))
+                                CompletionExtras.set(
+                                    CompletionHighlight.WordList(result.words, result.hiddenWord.takeIf { it.isNotEmpty() }),
+                                )
                                 goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
                             } else {
                                 goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")

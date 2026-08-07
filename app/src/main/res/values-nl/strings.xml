@@ -104,6 +104,7 @@
     <string name="completion_streak_badge">%1$d puzzels op rij</string>
     <string name="completion_flawless_badge">Foutloos</string>
     <string name="completion_words_found">Gevonden woorden</string>
+    <string name="completion_solution_word">Oplossing</string>
 
     <string name="loss_difficulty">Moeilijkheid</string>
     <string name="loss_elapsed_time">Verstreken tijd</string>
