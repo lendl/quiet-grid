@@ -1,6 +1,7 @@
 plugins {
     id("org.jetbrains.kotlin.jvm")
     id("org.jetbrains.kotlin.plugin.serialization")
+    id("jacoco")
 }
 
 java {
@@ -17,4 +18,8 @@ dependencies {
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.lemonappdev:konsist:0.17.3")
+}
+
+tasks.named("jacocoTestReport") {
+    dependsOn(tasks.named("test"))
 }

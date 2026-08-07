@@ -30,8 +30,9 @@ import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.core.difficultyColor
-import com.quietgrid.app.data.AppContainer
+import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.games.blockfill.blockFillDifficultyDescriptionRes
 import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
 import com.quietgrid.app.games.chimptest.chimpDifficultyDescriptionRes
@@ -96,7 +97,8 @@ private fun GamePlayPickerTab(
     onPickDifficulty: (Difficulty) -> Unit,
     onResumeActiveGame: (GameId) -> Unit,
 ) {
-    val activeGameKey by AppContainer.sessionRepository.activeSession
+    val repositories: RepositoriesViewModel = hiltViewModel()
+    val activeGameKey by repositories.sessionRepository.activeSession
         .map { it?.gameId }
         .collectAsState(initial = null)
     var pendingDifficulty by remember { mutableStateOf<Difficulty?>(null) }
@@ -179,7 +181,8 @@ private fun GamePlayPickerTab(
 
 @Composable
 private fun GameStatsTab(gameId: GameId) {
-    val stats by AppContainer.statsRepository.statsFor(gameId).collectAsState(initial = null)
+    val repositories: RepositoriesViewModel = hiltViewModel()
+    val stats by repositories.statsRepository.statsFor(gameId).collectAsState(initial = null)
     val currentStats = stats ?: return
     val overview = remember(currentStats) { buildStatsOverview(gameId, mapOf(gameId to currentStats)) }
 

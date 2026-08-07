@@ -14,6 +14,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -23,8 +24,8 @@ import androidx.navigation.navArgument
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
-import com.quietgrid.app.data.AppContainer
 import com.quietgrid.app.data.AppSettings
+import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.games.blockfill.BlockFillPlayScreen
 import com.quietgrid.app.games.chimptest.ChimpTestPlayScreen
 import com.quietgrid.app.games.minesweeper.MinesweeperPlayScreen
@@ -59,8 +60,9 @@ fun AppNavHost() {
     val isTabsRoute = currentRoute == Routes.TABS || currentRoute == null
     var selectedTab by remember { mutableStateOf(AppTab.GAMES) }
     val scope = rememberCoroutineScope()
-    val settings by AppContainer.settingsRepository.settings.collectAsState(initial = AppSettings())
-    val activeGameKey by AppContainer.sessionRepository.activeSession
+    val repositories: RepositoriesViewModel = hiltViewModel()
+    val settings by repositories.settingsRepository.settings.collectAsState(initial = AppSettings())
+    val activeGameKey by repositories.sessionRepository.activeSession
         .map { it?.gameId }
         .collectAsState(initial = null)
 
@@ -69,7 +71,7 @@ fun AppNavHost() {
             when {
                 isTabsRoute -> GlobalMenu(
                     themeMode = settings.themeMode,
-                    onThemeModeChange = { mode -> scope.launch { AppContainer.settingsRepository.setThemeMode(mode) } },
+                    onThemeModeChange = { mode -> scope.launch { repositories.settingsRepository.setThemeMode(mode) } },
                     hasActiveSession = activeGameKey != null,
                     onContinueSession = {
                         val gameId = GameId.entries.firstOrNull { it.key == activeGameKey } ?: return@GlobalMenu
@@ -82,7 +84,7 @@ fun AppNavHost() {
                     }
                     GlobalMenu(
                         themeMode = settings.themeMode,
-                        onThemeModeChange = { mode -> scope.launch { AppContainer.settingsRepository.setThemeMode(mode) } },
+                        onThemeModeChange = { mode -> scope.launch { repositories.settingsRepository.setThemeMode(mode) } },
                         hasActiveSession = activeGameKey != null,
                         onContinueSession = {
                             val gameId = GameId.entries.firstOrNull { it.key == activeGameKey } ?: return@GlobalMenu
@@ -99,7 +101,7 @@ fun AppNavHost() {
                     val infoTitleRes = infoKey?.let { supportInfoTitleRes(it) }
                     GlobalMenu(
                         themeMode = settings.themeMode,
-                        onThemeModeChange = { mode -> scope.launch { AppContainer.settingsRepository.setThemeMode(mode) } },
+                        onThemeModeChange = { mode -> scope.launch { repositories.settingsRepository.setThemeMode(mode) } },
                         hasActiveSession = activeGameKey != null,
                         onContinueSession = {
                             val gameId = GameId.entries.firstOrNull { it.key == activeGameKey } ?: return@GlobalMenu

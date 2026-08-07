@@ -28,13 +28,15 @@ import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
-import com.quietgrid.app.data.AppContainer
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.quietgrid.app.data.RepositoriesViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun StatsScreen() {
+    val repositories: RepositoriesViewModel = hiltViewModel()
     val gameIds = remember { GameCatalog.games.map { it.id } }
-    val statsByGame by AppContainer.statsRepository.statsForGames(gameIds)
+    val statsByGame by repositories.statsRepository.statsForGames(gameIds)
         .collectAsState(initial = emptyMap())
     val playedGameIds = remember(statsByGame) {
         GameCatalog.games
@@ -96,8 +98,8 @@ fun StatsScreen() {
             confirmButton = {
                 Button(onClick = {
                     scope.launch {
-                        AppContainer.statsRepository.clearAll()
-                        AppContainer.sessionRepository.clear()
+                        repositories.statsRepository.clearAll()
+                        repositories.sessionRepository.clear()
                     }
                     showClearDialog = false
                 }) { Text(stringResource(R.string.stats_clear_data)) }

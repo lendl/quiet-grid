@@ -33,15 +33,17 @@ import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.core.GameMeta
-import com.quietgrid.app.data.AppContainer
 import com.quietgrid.app.data.AppSettings
+import com.quietgrid.app.data.RepositoriesViewModel
 
 @Composable
 fun GamesScreen(onOpenGame: (GameId) -> Unit, onResumeGame: (GameId) -> Unit) {
-    val activeEnvelope by AppContainer.sessionRepository.activeSession.collectAsState(initial = null)
+    val repositories: RepositoriesViewModel = hiltViewModel()
+    val activeEnvelope by repositories.sessionRepository.activeSession.collectAsState(initial = null)
     val activeSummary = activeEnvelope?.let { buildActivePuzzleSummary(it) }
-    val settings by AppContainer.settingsRepository.settings.collectAsState(initial = AppSettings())
+    val settings by repositories.settingsRepository.settings.collectAsState(initial = AppSettings())
 
     @Composable
     fun sortedBy(list: List<GameMeta>) = list

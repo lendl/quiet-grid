@@ -38,9 +38,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.os.LocaleListCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.R
-import com.quietgrid.app.data.AppContainer
 import com.quietgrid.app.data.AppSettings
+import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.data.ThemeMode
 import kotlinx.coroutines.launch
 
@@ -70,8 +71,9 @@ private val LANGUAGE_OPTIONS = listOf(
 
 @Composable
 fun SettingsScreen() {
+    val repositories: RepositoriesViewModel = hiltViewModel()
     val scope = rememberCoroutineScope()
-    val settings by AppContainer.settingsRepository.settings.collectAsState(initial = AppSettings())
+    val settings by repositories.settingsRepository.settings.collectAsState(initial = AppSettings())
     var themeMenuOpen by remember { mutableStateOf(false) }
     var languageMenuOpen by remember { mutableStateOf(false) }
     val currentLocales = AppCompatDelegate.getApplicationLocales()
@@ -102,7 +104,7 @@ fun SettingsScreen() {
                         text = { Text(stringResource(option.labelRes)) },
                         onClick = {
                             themeMenuOpen = false
-                            scope.launch { AppContainer.settingsRepository.setThemeMode(option.mode) }
+                            scope.launch { repositories.settingsRepository.setThemeMode(option.mode) }
                         },
                     )
                 }
@@ -153,7 +155,7 @@ fun SettingsScreen() {
             label = stringResource(R.string.settings_show_timer_in_play_label),
             detail = stringResource(R.string.settings_show_timer_in_play_detail),
             checked = settings.showTimerInPlay,
-            onCheckedChange = { scope.launch { AppContainer.settingsRepository.setShowTimerInPlay(it) } },
+            onCheckedChange = { scope.launch { repositories.settingsRepository.setShowTimerInPlay(it) } },
         )
 
         SettingsSectionTitle(stringResource(R.string.settings_tutorials))
@@ -162,7 +164,7 @@ fun SettingsScreen() {
             label = stringResource(R.string.settings_beta_games_label),
             detail = stringResource(R.string.settings_beta_games_detail),
             checked = settings.betaGamesEnabled,
-            onCheckedChange = { scope.launch { AppContainer.settingsRepository.setBetaGamesEnabled(it) } },
+            onCheckedChange = { scope.launch { repositories.settingsRepository.setBetaGamesEnabled(it) } },
         )
     }
 }

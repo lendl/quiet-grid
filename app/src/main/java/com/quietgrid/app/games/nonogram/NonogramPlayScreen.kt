@@ -23,18 +23,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
-import com.quietgrid.app.data.AppContainer
 import com.quietgrid.app.ui.components.CollectPuzzleResult
 import com.quietgrid.app.ui.components.ElapsedTimerText
 import com.quietgrid.app.ui.components.EndPuzzleDialog
 import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
-import com.quietgrid.app.ui.components.rememberPuzzleViewModel
 
 @Composable
 fun NonogramPlayScreen(
@@ -43,16 +41,9 @@ fun NonogramPlayScreen(
     onBack: () -> Unit,
     onFinished: (NonogramResult) -> Unit,
 ) {
-    val context = LocalContext.current.applicationContext
-    val viewModel = rememberPuzzleViewModel {
-        NonogramPlayViewModel(
-            appContext = context,
-            sessionRepository = AppContainer.sessionRepository,
-            statsRepository = AppContainer.statsRepository,
-            requestedDifficulty = difficulty,
-            resume = resume,
-        )
-    }
+    val viewModel = hiltViewModel<NonogramPlayViewModel, NonogramPlayViewModel.Factory>(
+        creationCallback = { factory -> factory.create(difficulty, resume) },
+    )
 
     CollectPuzzleResult(viewModel.result, onFinished)
 

@@ -9,16 +9,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.quietgrid.app.data.AppContainer
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.data.AppSettings
+import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.data.ThemeMode
 import com.quietgrid.app.nav.AppNavHost
 import com.quietgrid.app.ui.theme.QuietGridTheme
 import com.quietgrid.app.ui.theme.ResolvedTheme
+import dagger.hilt.android.AndroidEntryPoint
 
 // AppCompatActivity (not plain ComponentActivity) is required for AppCompatDelegate's per-app
 // language switching (Settings > Language) to actually recreate the activity with the new
 // locale on API levels before 33 — without it, setApplicationLocales() silently no-ops.
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,10 +33,10 @@ class MainActivity : AppCompatActivity() {
             statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
         )
-        AppContainer.init(applicationContext)
 
         setContent {
-            val settings by AppContainer.settingsRepository.settings.collectAsState(initial = AppSettings())
+            val repositories: RepositoriesViewModel = hiltViewModel()
+            val settings by repositories.settingsRepository.settings.collectAsState(initial = AppSettings())
             val systemDark = isSystemInDarkTheme()
             val resolvedTheme = when (settings.themeMode) {
                 ThemeMode.SYSTEM -> if (systemDark) ResolvedTheme.DARK else ResolvedTheme.LIGHT

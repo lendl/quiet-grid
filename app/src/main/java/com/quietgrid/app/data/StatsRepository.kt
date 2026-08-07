@@ -1,6 +1,7 @@
 package com.quietgrid.app.data
 
-import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.quietgrid.app.core.Difficulty
@@ -12,6 +13,8 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Serializable
 data class DifficultyStats(
@@ -36,20 +39,21 @@ interface StatsStore {
 
 private val json = Json { ignoreUnknownKeys = true }
 
-class StatsRepository(private val context: Context) : StatsStore {
+@Singleton
+class StatsRepository @Inject constructor(private val dataStore: DataStore<Preferences>) : StatsStore {
     private fun keyFor(gameId: GameId) = stringPreferencesKey("stats_${gameId.key}")
 
     fun statsForGames(gameIds: List<GameId>): Flow<Map<GameId, GameStats>> =
         combine(gameIds.map { id -> statsFor(id).map { id to it } }) { pairs -> pairs.toMap() }
 
-    override fun statsFor(gameId: GameId): Flow<GameStats> = context.appDataStore.data.map { prefs ->
+    override fun statsFor(gameId: GameId): Flow<GameStats> = dataStore.data.map { prefs ->
         prefs[keyFor(gameId)]?.let { raw ->
             runCatching { json.decodeFromString<GameStats>(raw) }.getOrNull()
         } ?: GameStats()
     }
 
     override suspend fun recordResult(gameId: GameId, difficulty: Difficulty, solved: Boolean, score: Int) {
-        context.appDataStore.edit { prefs ->
+        dataStore.edit { prefs ->
             val key = keyFor(gameId)
             val current = prefs[key]?.let { runCatching { json.decodeFromString<GameStats>(it) }.getOrNull() }
                 ?: GameStats()
@@ -66,11 +70,11 @@ class StatsRepository(private val context: Context) : StatsStore {
     }
 
     suspend fun clear(gameId: GameId) {
-        context.appDataStore.edit { prefs -> prefs.remove(keyFor(gameId)) }
+        dataStore.edit { prefs -> prefs.remove(keyFor(gameId)) }
     }
 
     suspend fun clearAll() {
-        context.appDataStore.edit { prefs ->
+        dataStore.edit { prefs ->
             GameId.entries.forEach { prefs.remove(keyFor(it)) }
         }
     }

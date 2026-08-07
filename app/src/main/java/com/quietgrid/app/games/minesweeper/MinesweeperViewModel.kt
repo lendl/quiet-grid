@@ -12,6 +12,9 @@ import com.quietgrid.app.data.StatsStore
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -64,12 +67,17 @@ private class MinesweeperPuzzleAdapter : PuzzleAdapter<MinesweeperSession, Mines
         )
 }
 
-class MinesweeperPlayViewModel(
+class MinesweeperPlayViewModel @AssistedInject constructor(
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
-    requestedDifficulty: Difficulty,
-    resume: Boolean,
+    @Assisted requestedDifficulty: Difficulty,
+    @Assisted resume: Boolean,
 ) : ViewModel() {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(requestedDifficulty: Difficulty, resume: Boolean): MinesweeperPlayViewModel
+    }
 
     private val controller = PuzzleSessionController(
         scope = viewModelScope,

@@ -28,15 +28,14 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
-import com.quietgrid.app.data.AppContainer
 import com.quietgrid.app.ui.components.CollectPuzzleResult
 import com.quietgrid.app.ui.components.ElapsedTimerText
 import com.quietgrid.app.ui.components.EndPuzzleDialog
 import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
-import com.quietgrid.app.ui.components.rememberPuzzleViewModel
 import kotlin.math.roundToInt
 
 // How far above the touch point the floating drag piece hovers, so the user's thumb never
@@ -51,14 +50,9 @@ fun BlockFillPlayScreen(
     onBack: () -> Unit,
     onFinished: (BlockFillResult) -> Unit,
 ) {
-    val viewModel = rememberPuzzleViewModel {
-        BlockFillPlayViewModel(
-            sessionRepository = AppContainer.sessionRepository,
-            statsRepository = AppContainer.statsRepository,
-            requestedDifficulty = difficulty,
-            resume = resume,
-        )
-    }
+    val viewModel = hiltViewModel<BlockFillPlayViewModel, BlockFillPlayViewModel.Factory>(
+        creationCallback = { factory -> factory.create(difficulty, resume) },
+    )
 
     CollectPuzzleResult(viewModel.result, onFinished)
 

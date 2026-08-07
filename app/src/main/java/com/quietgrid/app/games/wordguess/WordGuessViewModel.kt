@@ -10,6 +10,10 @@ import com.quietgrid.app.data.StatsStore
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -90,13 +94,18 @@ private class WordGuessPuzzleAdapter(private val appContext: Context) : PuzzleAd
     )
 }
 
-class WordGuessPlayViewModel(
-    appContext: Context,
+class WordGuessPlayViewModel @AssistedInject constructor(
+    @ApplicationContext appContext: Context,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
-    requestedDifficulty: Difficulty,
-    resume: Boolean,
+    @Assisted requestedDifficulty: Difficulty,
+    @Assisted resume: Boolean,
 ) : ViewModel() {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(requestedDifficulty: Difficulty, resume: Boolean): WordGuessPlayViewModel
+    }
 
     private val controller = PuzzleSessionController(
         scope = viewModelScope,

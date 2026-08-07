@@ -9,6 +9,9 @@ import com.quietgrid.app.data.StatsStore
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlin.math.max
 import kotlin.math.round
 import kotlinx.serialization.decodeFromString
@@ -82,12 +85,17 @@ private class BlockFillPuzzleAdapter : PuzzleAdapter<BlockFillSession, BlockFill
     )
 }
 
-class BlockFillPlayViewModel(
+class BlockFillPlayViewModel @AssistedInject constructor(
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
-    requestedDifficulty: Difficulty,
-    resume: Boolean,
+    @Assisted requestedDifficulty: Difficulty,
+    @Assisted resume: Boolean,
 ) : ViewModel() {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(requestedDifficulty: Difficulty, resume: Boolean): BlockFillPlayViewModel
+    }
 
     private val controller = PuzzleSessionController(
         scope = viewModelScope,

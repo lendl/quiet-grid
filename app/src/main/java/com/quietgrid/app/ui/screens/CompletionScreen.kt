@@ -45,8 +45,9 @@ import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.difficultyColor
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.core.formatElapsed
-import com.quietgrid.app.data.AppContainer
+import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
 import com.quietgrid.app.games.chimptest.chimpDifficultyLabelRes
 import com.quietgrid.app.games.minesweeper.minesweeperDifficultyLabelRes
@@ -121,7 +122,8 @@ fun CompletionScreen(
     val picture = (highlight as? CompletionHighlight.Picture)?.solution?.takeIf { it.isNotEmpty() }
     val words = (highlight as? CompletionHighlight.WordList)?.words?.takeIf { it.isNotEmpty() }
 
-    val stats by AppContainer.statsRepository.statsFor(gameId).collectAsState(initial = null)
+    val repositories: RepositoriesViewModel = hiltViewModel()
+    val stats by repositories.statsRepository.statsFor(gameId).collectAsState(initial = null)
     val streak = stats?.forDifficulty(difficulty)?.currentStreak ?: 0
 
     val pageOpacity = remember { Animatable(0f) }

@@ -9,6 +9,9 @@ import com.quietgrid.app.data.StatsStore
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
@@ -67,12 +70,17 @@ private class ChimpTestPuzzleAdapter : PuzzleAdapter<ChimpTestSession, ChimpTest
     )
 }
 
-class ChimpTestPlayViewModel(
+class ChimpTestPlayViewModel @AssistedInject constructor(
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
-    requestedDifficulty: Difficulty,
-    resume: Boolean,
+    @Assisted requestedDifficulty: Difficulty,
+    @Assisted resume: Boolean,
 ) : ViewModel() {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(requestedDifficulty: Difficulty, resume: Boolean): ChimpTestPlayViewModel
+    }
 
     private val controller = PuzzleSessionController(
         scope = viewModelScope,

@@ -14,6 +14,10 @@ import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
 import com.quietgrid.engine.wordsearch.WSCellRef
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -92,13 +96,18 @@ private class WordSearchPuzzleAdapter(private val appContext: Context) : PuzzleA
     )
 }
 
-class WordSearchPlayViewModel(
-    appContext: Context,
+class WordSearchPlayViewModel @AssistedInject constructor(
+    @ApplicationContext appContext: Context,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
-    requestedDifficulty: Difficulty,
-    resume: Boolean,
+    @Assisted requestedDifficulty: Difficulty,
+    @Assisted resume: Boolean,
 ) : ViewModel() {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(requestedDifficulty: Difficulty, resume: Boolean): WordSearchPlayViewModel
+    }
 
     private val controller = PuzzleSessionController(
         scope = viewModelScope,
