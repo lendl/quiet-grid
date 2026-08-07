@@ -346,7 +346,7 @@ fun revealMinesweeperCell(board: MinesweeperBoard, puzzle: MinesweeperPuzzle, ro
 }
 
 fun toggleMinesweeperFlag(board: MinesweeperBoard, row: Int, col: Int): MinesweeperBoard {
-    if (!(row in 0 until board.rows && col in 0 until board.cols) || board.status != MinesweeperStatus.PLAYING || !board.generated) return board
+    if (!(row in 0 until board.rows && col in 0 until board.cols) || board.status != MinesweeperStatus.PLAYING) return board
 
     val cell = board.cells[row][col]
     if (cell.state == MinesweeperCellState.REVEALED) return board

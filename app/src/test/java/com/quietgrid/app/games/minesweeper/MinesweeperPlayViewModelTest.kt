@@ -29,13 +29,12 @@ class MinesweeperPlayViewModelTest {
     }
 
     @Test
-    fun `flagging before the board is generated is a no-op`() {
+    fun `flagging before the board is generated still flags the cell`() {
         val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), Difficulty.EASY, resume = false)
-        val before = viewModel.session
 
         viewModel.onToggleFlag(0, 0)
 
-        assertEquals(before, viewModel.session)
+        assertEquals(MinesweeperCellState.FLAGGED, viewModel.session!!.board.cells[0][0].state)
     }
 
     @Test

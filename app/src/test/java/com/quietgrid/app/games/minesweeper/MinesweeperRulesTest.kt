@@ -104,12 +104,12 @@ class MinesweeperRulesTest {
     }
 
     @Test
-    fun `toggling a flag before the board is generated is a no-op`() {
+    fun `toggling a flag before the board is generated still flags the cell`() {
         val board = threeByThreeSingleMineBoard().copy(generated = false)
 
         val result = toggleMinesweeperFlag(board, row = 1, col = 1)
 
-        assertEquals(board, result)
+        assertEquals(MinesweeperCellState.FLAGGED, result.cells[1][1].state)
     }
 
     @Test
