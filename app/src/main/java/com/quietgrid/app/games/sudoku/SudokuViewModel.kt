@@ -17,6 +17,7 @@ import com.quietgrid.engine.sudoku.SudokuGrid
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -90,6 +91,7 @@ private class SudokuPuzzleAdapter(private val appContext: Context) : PuzzleAdapt
     )
 }
 
+@HiltViewModel(assistedFactory = SudokuPlayViewModel.Factory::class)
 class SudokuPlayViewModel @AssistedInject constructor(
     @ApplicationContext appContext: Context,
     sessionRepository: SessionStore,

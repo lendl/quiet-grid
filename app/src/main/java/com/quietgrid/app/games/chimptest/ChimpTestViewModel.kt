@@ -12,6 +12,7 @@ import com.quietgrid.app.session.PuzzleSessionController
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
@@ -70,6 +71,7 @@ private class ChimpTestPuzzleAdapter : PuzzleAdapter<ChimpTestSession, ChimpTest
     )
 }
 
+@HiltViewModel(assistedFactory = ChimpTestPlayViewModel.Factory::class)
 class ChimpTestPlayViewModel @AssistedInject constructor(
     sessionRepository: SessionStore,
     statsRepository: StatsStore,

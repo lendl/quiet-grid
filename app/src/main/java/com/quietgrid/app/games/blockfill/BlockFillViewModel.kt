@@ -12,6 +12,7 @@ import com.quietgrid.app.session.PuzzleSessionController
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlin.math.max
 import kotlin.math.round
 import kotlinx.serialization.decodeFromString
@@ -85,6 +86,7 @@ private class BlockFillPuzzleAdapter : PuzzleAdapter<BlockFillSession, BlockFill
     )
 }
 
+@HiltViewModel(assistedFactory = BlockFillPlayViewModel.Factory::class)
 class BlockFillPlayViewModel @AssistedInject constructor(
     sessionRepository: SessionStore,
     statsRepository: StatsStore,

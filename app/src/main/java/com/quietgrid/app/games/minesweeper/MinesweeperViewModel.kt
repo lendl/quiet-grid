@@ -15,6 +15,7 @@ import com.quietgrid.app.session.PuzzleSessionController
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -67,6 +68,7 @@ private class MinesweeperPuzzleAdapter : PuzzleAdapter<MinesweeperSession, Mines
         )
 }
 
+@HiltViewModel(assistedFactory = MinesweeperPlayViewModel.Factory::class)
 class MinesweeperPlayViewModel @AssistedInject constructor(
     sessionRepository: SessionStore,
     statsRepository: StatsStore,

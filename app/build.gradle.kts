@@ -18,8 +18,8 @@ android {
         applicationId = "com.quietgrid.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 18
-        versionName = "1.2.1"
+        versionCode = 21
+        versionName = "1.2.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -45,6 +45,9 @@ android {
             isShrinkResources = true
             signingConfig = signingConfigs.getByName("release")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            ndk {
+                debugSymbolLevel = "FULL"
+            }
         }
         getByName("debug") {
             signingConfig = signingConfigs.getByName("debug")

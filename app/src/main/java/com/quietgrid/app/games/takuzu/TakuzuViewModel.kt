@@ -17,6 +17,7 @@ import com.quietgrid.engine.takuzu.TakuzuGrid
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -89,6 +90,7 @@ private class TakuzuPuzzleAdapter(private val appContext: Context) : PuzzleAdapt
     )
 }
 
+@HiltViewModel(assistedFactory = TakuzuPlayViewModel.Factory::class)
 class TakuzuPlayViewModel @AssistedInject constructor(
     @ApplicationContext appContext: Context,
     sessionRepository: SessionStore,
