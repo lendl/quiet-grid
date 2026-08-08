@@ -261,6 +261,9 @@ fun AppNavHost() {
                             if (result.solved) {
                                 goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
                             } else {
+                                if (result.targetWord.isNotEmpty()) {
+                                    CompletionExtras.set(CompletionHighlight.RevealWord(result.targetWord))
+                                }
                                 goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
                             }
                         },

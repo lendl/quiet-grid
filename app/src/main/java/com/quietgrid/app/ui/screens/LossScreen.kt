@@ -132,6 +132,9 @@ fun LossScreen(
     val icon = if (reason == "abandoned") "⏸" else "💥"
     val errorColor = MaterialTheme.colorScheme.error
 
+    val highlight = remember { CompletionExtras.consume() }
+    val revealWord = (highlight as? CompletionHighlight.RevealWord)?.word?.takeIf { it.isNotEmpty() }
+
     val pageOpacity = remember { Animatable(0f) }
     val contentOffsetY = remember { Animatable(24f) }
     LaunchedEffect(Unit) {
@@ -187,6 +190,23 @@ fun LossScreen(
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(top = 6.dp),
                 )
+
+                if (revealWord != null) {
+                    Column(Modifier.padding(top = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            stringResource(R.string.wordguess_reveal_word_label),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Text(
+                            revealWord.uppercase(),
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(top = 2.dp),
+                        )
+                    }
+                }
 
                 Row(
                     Modifier.padding(top = 20.dp),
