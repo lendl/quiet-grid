@@ -2,6 +2,7 @@
 .gradle/
 build/
 app/build/
+bin/
 
 # Local config
 local.properties
