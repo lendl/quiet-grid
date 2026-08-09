@@ -9,7 +9,7 @@
 <li><b>Sudoku</b> — Place digits 1–9 so every row, column, and 3×3 box contains each digit exactly once.</li>
 <li><b>Word Search</b> — Find hidden words in a grid of letters.</li>
 <li><b>Block Fill</b> (Beta) — Drag pieces onto the grid and clear full lines.</li>
-<li><b>Word Guess</b> (Beta) — Guess the hidden word in six tries.</li>
+<li><b>Word Guess</b> — Guess the hidden word in six tries.</li>
 </ul>
 
 <p>Each puzzle type offers Easy, Medium, Hard, and Expert difficulty levels.</p>

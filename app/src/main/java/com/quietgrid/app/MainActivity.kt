@@ -7,8 +7,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.RepositoriesViewModel
@@ -43,6 +45,20 @@ class MainActivity : AppCompatActivity() {
                 ThemeMode.LIGHT -> ResolvedTheme.LIGHT
                 ThemeMode.DARK -> ResolvedTheme.DARK
                 ThemeMode.PENCIL -> ResolvedTheme.PENCIL
+            }
+
+            // SystemBarStyle.auto() above only tracks the OS's own dark-mode setting at activity
+            // creation, not this app's resolved theme (which can diverge -- e.g. Light/Pencil
+            // picked while the phone itself is in system dark mode) and never updates again on
+            // in-app theme switches. Explicitly drive status/nav bar icon color from resolvedTheme
+            // instead, so a light background (Light or Pencil) always gets dark icons and it stays
+            // correct across live theme changes.
+            LaunchedEffect(resolvedTheme) {
+                val useDarkIcons = resolvedTheme != ResolvedTheme.DARK
+                WindowCompat.getInsetsController(window, window.decorView).apply {
+                    isAppearanceLightStatusBars = useDarkIcons
+                    isAppearanceLightNavigationBars = useDarkIcons
+                }
             }
 
             QuietGridTheme(resolvedTheme = resolvedTheme) {

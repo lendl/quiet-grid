@@ -178,8 +178,6 @@
     <string name="chimp_difficulty_desc_medium">5×5-Raster. Merke dir bis zu 9 Zahlen.</string>
     <string name="chimp_difficulty_desc_hard">6×6-Raster. Merke dir bis zu 11 Zahlen.</string>
     <string name="chimp_difficulty_desc_expert">7×7-Raster. Merke dir bis zu 13 Zahlen.</string>
-    <string name="chimp_round_label">Runde</string>
-    <string name="chimp_difficulty_label">Schwierigkeit</string>
     <string name="chimp_how_to_play_goal">Tippe jede Zahl in aufsteigender Reihenfolge an, bevor die zuvor getippten aus dem Blickfeld verschwinden.</string>
     <string name="chimp_how_to_play_controls">Tippe die nächste Zahl in der Folge an. Jede korrekt angetippte Zahl verschwindet sofort – merke dir also, wo die verbleibenden Zahlen sind.</string>
     <string name="chimp_how_to_play_wrong_move">Wenn du ein Feld antippst, das nicht die nächste Zahl ist, endet das Rätsel sofort.</string>
@@ -213,8 +211,6 @@
     <string name="takuzu_difficulty_desc_medium">Ausgewogene Eröffnungen, die etwas weiter vorausdenken lassen.</string>
     <string name="takuzu_difficulty_desc_hard">Engere Aufstellungen mit weniger freien Informationen und stärkerer Mustererkennung.</string>
     <string name="takuzu_difficulty_desc_expert">Spärliche Eröffnungen mit anhaltendem Deduktionsdruck über das gesamte Rätsel.</string>
-    <string name="takuzu_size_label">Größe</string>
-    <string name="takuzu_difficulty_label">Schwierigkeit</string>
     <string name="takuzu_cell_label">Zelle</string>
     <string name="takuzu_how_to_play_goal">Fülle jede Zelle mit einer 0 oder 1 nach drei Regeln.</string>
     <string name="takuzu_how_to_play_controls">Tippe auf eine Zelle, um zu wechseln: leer → 0 → 1 → leer.</string>
@@ -274,8 +270,6 @@
     <string name="nonogram_difficulty_desc_medium">Ausgewogene Raster, die stetige Schlussfolgerungen erfordern.</string>
     <string name="nonogram_difficulty_desc_hard">Engere Hinweissätze, die tiefere Überlappungsprüfungen erfordern.</string>
     <string name="nonogram_difficulty_desc_expert">Dichte Raster mit weniger offensichtlichen erzwungenen Zügen.</string>
-    <string name="nonogram_size_label">Größe</string>
-    <string name="nonogram_difficulty_label">Schwierigkeit</string>
     <string name="nonogram_how_to_play_goal">Fülle Zellen, um genau die Blöcke zu bilden, die jeder Zeilen- und Spaltenhinweis beschreibt.</string>
     <string name="nonogram_how_to_play_controls">Tippe auf eine Zelle, um durchzuschalten: leer → gefüllt → durchgestrichen. Wische über Zellen, um sie alle mit demselben Zustand zu bemalen.</string>
     <string name="nonogram_how_to_play_wrong_move">Wenn eine Zeile oder Spalte ihre Hinweise nicht mehr erfüllen kann, wird sie als ungültig markiert.</string>
@@ -327,7 +321,6 @@
     <string name="minesweeper_difficulty_desc_hard">Engere Bereiche, die sorgfältiges Markieren und Verfolgen von Hinweisen belohnen.</string>
     <string name="minesweeper_difficulty_desc_expert">Dichte Minenfelder mit von Anfang an sehr wenig Spielraum.</string>
     <string name="minesweeper_size_label">Größe</string>
-    <string name="minesweeper_difficulty_label">Schwierigkeit</string>
     <string name="minesweeper_mines_left_label">Minen</string>
     <string name="minesweeper_how_to_play_goal">Decke jedes sichere Feld auf, ohne eine Mine zu öffnen.</string>
     <string name="minesweeper_how_to_play_controls">Tippe zum Aufdecken eines Feldes. Halte gedrückt, um eine Flagge zu setzen oder zu entfernen.</string>
@@ -388,8 +381,6 @@
     <string name="sudoku_difficulty_desc_hard">Spärliche Gitter für reichere Zuganalyse und Validierung.</string>
     <string name="sudoku_difficulty_desc_expert">Sehr spärliche Gitter für fortgeschrittene Ketten- und Coloring-Deduktionen.</string>
     <string name="sudoku_size_label">Größe</string>
-    <string name="sudoku_difficulty_label">Schwierigkeit</string>
-    <string name="sudoku_filled_label">Gefüllt</string>
     <string name="sudoku_notes_mode_label">Notizen</string>
     <string name="sudoku_hint_show">Show next move hint</string>
     <string name="sudoku_hint_hide">Hide next move hint</string>
@@ -457,15 +448,10 @@
     <string name="wordsearch_difficulty_desc_hard">Alle Richtungen einschließlich rückwärts mit dichterer Überlappung.</string>
     <string name="wordsearch_difficulty_desc_expert">Größte Raster mit Wörtern in allen Richtungen und starker Überlappung.</string>
     <string name="wordsearch_size_label">Größe</string>
-    <string name="wordsearch_difficulty_label">Schwierigkeit</string>
-    <string name="wordsearch_found_label">Gefunden</string>
     <string name="wordsearch_theme_label">Thema</string>
-    <string name="wordsearch_hidden_word_locked">Entdecke es früh für Bonuspunkte, oder finde alle Wörter, um es automatisch freizuschalten.</string>
     <string name="wordsearch_hidden_word_solved_title">Verstecktes Wort gefunden!</string>
     <string name="wordsearch_hidden_word_enter_mode">Verstecktes Wort lösen</string>
     <string name="wordsearch_hidden_word_exit_mode">Modus für verstecktes Wort verlassen</string>
-    <string name="wordsearch_hidden_word_instructions">Die Buchstaben des versteckten Worts befinden sich in den leeren Feldern, von links nach rechts und von oben nach unten. Tippe sie der Reihe nach an.</string>
-    <string name="wordsearch_hidden_word_reset_on_mistake">Ein falscher Tipp auf das versteckte Wort setzt deinen Fortschritt zurück und kostet Genauigkeit.</string>
     <string name="wordsearch_reset_zoom">Zoom zurücksetzen</string>
     <string name="wordsearch_next_move_show">Show next word hint</string>
     <string name="wordsearch_next_move_hide">Hide next word hint</string>
@@ -520,7 +506,6 @@
     <string name="blockfill_how_to_play_scoring">Ein Teil zu platzieren bringt allein keine Punkte — nur das Räumen einer Linie zahlt. Mehrere Linien auf einmal oder bei aufeinanderfolgenden Zügen zu räumen, bringt weitere Boni. Das ganze Feld zu leeren bringt den größten Bonus. Das Lösen des Rätsels selbst bringt zusätzlich eine eigene Punktzahl, die davon abhängt, wie schnell du fertig wirst — sie startet bei 50.000 und sinkt mit der Zeit.</string>
     <string name="blockfill_score_label">Punkte</string>
     <string name="blockfill_target_label">Ziel</string>
-    <string name="blockfill_difficulty_label">Schwierigkeit</string>
     <string name="blockfill_loss_abandoned_eyebrow">Rätsel beendet</string>
     <string name="blockfill_loss_abandoned_title">Rätsel unvollständig</string>
     <string name="blockfill_loss_abandoned_body">Du hast dieses Rätsel beendet, bevor es gelöst war.</string>
@@ -550,8 +535,6 @@
     <string name="wordguess_tip_2_title">Nutze, was du weißt</string>
     <string name="wordguess_tip_2_body">Die Bildschirmtastatur merkt sich den besten bekannten Status jedes Buchstabens, sodass du auf einen Blick siehst, welche Buchstaben noch lohnenswert sind.</string>
     <string name="wordguess_how_to_play_scoring">Das Lösen des Rätsels bringt Punkte, abhängig von der Schwierigkeit, der Anzahl der benötigten Versuche und deiner Geschwindigkeit.</string>
-    <string name="wordguess_guesses_label">Versuche</string>
-    <string name="wordguess_difficulty_label">Schwierigkeit</string>
     <string name="wordguess_invalid_word_message">Kein gültiges Wort</string>
     <string name="wordguess_reveal_word_label">Das Wort war</string>
     <string name="wordguess_loss_abandoned_eyebrow">Rätsel beendet</string>

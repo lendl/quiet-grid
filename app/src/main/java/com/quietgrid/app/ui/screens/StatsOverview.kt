@@ -123,7 +123,7 @@ fun StatsOverviewContent(overview: StatsOverviewModel, modifier: Modifier = Modi
             overview.rows.forEachIndexed { index, row ->
                 if (index > 0) HorizontalDivider()
                 Row(
-                    Modifier.fillMaxWidth().padding(vertical = 12.dp),
+                    Modifier.fillMaxWidth().padding(vertical = 18.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Box(
@@ -132,17 +132,17 @@ fun StatsOverviewContent(overview: StatsOverviewModel, modifier: Modifier = Modi
                             .clip(CircleShape)
                             .background(difficultyColor(row.difficulty)),
                     )
-                    Column(Modifier.padding(start = 10.dp).weight(1f)) {
-                        Text(stringResource(row.labelRes), style = MaterialTheme.typography.titleSmall)
+                    Column(Modifier.padding(start = 14.dp).weight(1f)) {
+                        Text(stringResource(row.labelRes), style = MaterialTheme.typography.titleLarge)
                         Text(
                             "${stringResource(R.string.stats_solved)}: ${row.solved}/${row.played}  ·  ${stringResource(R.string.stats_win_rate)}: ${row.winRate}%",
-                            style = MaterialTheme.typography.bodySmall,
+                            style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                     Text(
                         "${stringResource(R.string.stats_best_score)}: ${row.bestScore}",
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }

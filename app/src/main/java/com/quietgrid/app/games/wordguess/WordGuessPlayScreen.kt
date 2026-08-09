@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -25,6 +24,7 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.ui.components.CollectPuzzleResult
 import com.quietgrid.app.ui.components.ElapsedTimerText
 import com.quietgrid.app.ui.components.EndPuzzleDialog
+import com.quietgrid.app.ui.components.EndPuzzleIconButton
 import com.quietgrid.app.ui.components.FeedbackText
 import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
@@ -66,22 +66,10 @@ fun WordGuessPlayScreen(
             GameBackButton(onBack)
             Row(
                 Modifier.weight(1f),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                if (session != null) {
-                    Column {
-                        Text(stringResource(R.string.wordguess_guesses_label), style = MaterialTheme.typography.labelSmall)
-                        Text("${session.guesses.size} / $WORD_GUESS_MAX_GUESSES", style = MaterialTheme.typography.titleMedium)
-                    }
-                    Column(horizontalAlignment = Alignment.End) {
-                        Text(stringResource(R.string.wordguess_difficulty_label), style = MaterialTheme.typography.labelSmall)
-                        Text(stringResource(wordGuessDifficultyLabelRes(Difficulty.fromKey(session.difficulty))), style = MaterialTheme.typography.titleMedium)
-                    }
-                }
-                TextButton(onClick = { showEndDialog = true }) {
-                    Text(stringResource(R.string.common_end_puzzle))
-                }
+                EndPuzzleIconButton(onClick = { showEndDialog = true })
             }
         }
 

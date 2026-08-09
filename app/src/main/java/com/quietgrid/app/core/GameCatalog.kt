@@ -30,7 +30,7 @@ object GameCatalog {
         GameMeta(GameId.SUDOKU, R.string.sudoku_title, R.string.sudoku_tagline),
         GameMeta(GameId.WORDSEARCH, R.string.wordsearch_title, R.string.wordsearch_tagline),
         GameMeta(GameId.BLOCKFILL, R.string.blockfill_title, R.string.blockfill_tagline, beta = true),
-        GameMeta(GameId.WORDGUESS, R.string.wordguess_title, R.string.wordguess_tagline, beta = true),
+        GameMeta(GameId.WORDGUESS, R.string.wordguess_title, R.string.wordguess_tagline),
     )
 
     fun get(id: GameId): GameMeta = games.first { it.id == id }

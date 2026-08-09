@@ -178,8 +178,6 @@
     <string name="chimp_difficulty_desc_medium">Grille 5×5. Mémorisez jusqu\'à 9 chiffres.</string>
     <string name="chimp_difficulty_desc_hard">Grille 6×6. Mémorisez jusqu\'à 11 chiffres.</string>
     <string name="chimp_difficulty_desc_expert">Grille 7×7. Mémorisez jusqu\'à 13 chiffres.</string>
-    <string name="chimp_round_label">Manche</string>
-    <string name="chimp_difficulty_label">Difficulté</string>
     <string name="chimp_how_to_play_goal">Touchez chaque chiffre dans l\'ordre croissant avant que les précédents ne disparaissent de la vue.</string>
     <string name="chimp_how_to_play_controls">Touchez le prochain chiffre de la séquence. Chaque chiffre correctement touché disparaît immédiatement, vous devez donc retenir où se trouvent les autres.</string>
     <string name="chimp_how_to_play_wrong_move">Toucher une case qui n\'est pas le prochain chiffre met fin au puzzle immédiatement.</string>
@@ -213,8 +211,6 @@
     <string name="takuzu_difficulty_desc_medium">Ouvertures équilibrées qui demandent de lire la grille un peu plus loin.</string>
     <string name="takuzu_difficulty_desc_hard">Configurations serrées avec moins d\'informations libres et un travail de motifs plus poussé.</string>
     <string name="takuzu_difficulty_desc_expert">Ouvertures clairsemées avec une pression de déduction soutenue sur tout le puzzle.</string>
-    <string name="takuzu_size_label">Taille</string>
-    <string name="takuzu_difficulty_label">Difficulté</string>
     <string name="takuzu_cell_label">Cellule</string>
     <string name="takuzu_how_to_play_goal">Remplis chaque case avec un 0 ou un 1 en suivant trois règles.</string>
     <string name="takuzu_how_to_play_controls">Appuie sur une case pour cycler : vide → 0 → 1 → vide.</string>
@@ -274,8 +270,6 @@
     <string name="nonogram_difficulty_desc_medium">Grilles équilibrées demandant une déduction régulière.</string>
     <string name="nonogram_difficulty_desc_hard">Ensembles d\'indices plus serrés nécessitant des vérifications de chevauchement plus poussées.</string>
     <string name="nonogram_difficulty_desc_expert">Grilles denses avec des coups forcés moins évidents.</string>
-    <string name="nonogram_size_label">Taille</string>
-    <string name="nonogram_difficulty_label">Difficulté</string>
     <string name="nonogram_how_to_play_goal">Remplis les cases pour former exactement les blocs décrits par chaque indice de ligne et de colonne.</string>
     <string name="nonogram_how_to_play_controls">Appuie sur une case pour faire défiler : vide → remplie → barrée. Fais glisser ton doigt sur les cases pour leur appliquer le même état.</string>
     <string name="nonogram_how_to_play_wrong_move">Si une ligne ou une colonne ne peut plus correspondre à ses indices, elle est marquée comme invalide.</string>
@@ -327,7 +321,6 @@
     <string name="minesweeper_difficulty_desc_hard">Des espaces plus serrés qui récompensent un marquage soigneux et un suivi des indices.</string>
     <string name="minesweeper_difficulty_desc_expert">Des champs de mines denses avec très peu d\'espace dès le départ.</string>
     <string name="minesweeper_size_label">Taille</string>
-    <string name="minesweeper_difficulty_label">Difficulté</string>
     <string name="minesweeper_mines_left_label">Mines</string>
     <string name="minesweeper_how_to_play_goal">Révèle chaque case sûre sans ouvrir de mine.</string>
     <string name="minesweeper_how_to_play_controls">Appuie pour révéler une case. Appuie longuement pour placer ou retirer un drapeau.</string>
@@ -388,8 +381,6 @@
     <string name="sudoku_difficulty_desc_hard">Grilles clairsemées réservées à une analyse de coups et à une validation plus riches.</string>
     <string name="sudoku_difficulty_desc_expert">Grilles très clairsemées réservées aux déductions avancées par chaînes et coloriage.</string>
     <string name="sudoku_size_label">Taille</string>
-    <string name="sudoku_difficulty_label">Difficulté</string>
-    <string name="sudoku_filled_label">Rempli</string>
     <string name="sudoku_notes_mode_label">Notes</string>
     <string name="sudoku_hint_show">Show next move hint</string>
     <string name="sudoku_hint_hide">Hide next move hint</string>
@@ -457,15 +448,10 @@
     <string name="wordsearch_difficulty_desc_hard">Toutes les directions, y compris à l\'envers, avec des chevauchements plus denses.</string>
     <string name="wordsearch_difficulty_desc_expert">Plus grandes grilles avec des mots dans toutes les directions et un chevauchement important.</string>
     <string name="wordsearch_size_label">Taille</string>
-    <string name="wordsearch_difficulty_label">Difficulté</string>
-    <string name="wordsearch_found_label">Trouvés</string>
     <string name="wordsearch_theme_label">Thème</string>
-    <string name="wordsearch_hidden_word_locked">Repérez-le tôt pour un bonus de points, ou trouvez tous les mots pour le révéler automatiquement.</string>
     <string name="wordsearch_hidden_word_solved_title">Mot caché trouvé !</string>
     <string name="wordsearch_hidden_word_enter_mode">Résoudre le mot caché</string>
     <string name="wordsearch_hidden_word_exit_mode">Quitter le mode mot caché</string>
-    <string name="wordsearch_hidden_word_instructions">Les lettres du mot caché se trouvent dans les cases vides, de gauche à droite puis de haut en bas. Touchez-les dans l\'ordre.</string>
-    <string name="wordsearch_hidden_word_reset_on_mistake">Une mauvaise case du mot caché réinitialise votre progression et coûte de la précision.</string>
     <string name="wordsearch_reset_zoom">Réinitialiser le zoom</string>
     <string name="wordsearch_next_move_show">Show next word hint</string>
     <string name="wordsearch_next_move_hide">Hide next word hint</string>
@@ -520,7 +506,6 @@
     <string name="blockfill_how_to_play_scoring">Poser une pièce ne rapporte rien en soi — seul le videage d\'une ligne rapporte des points. Vider plusieurs lignes à la fois, ou sur des coups consécutifs, ajoute d\'autres bonus. Vider toute la grille rapporte le plus gros bonus. Résoudre le puzzle rapporte aussi un score distinct basé sur votre rapidité — il commence à 50 000 et diminue avec le temps.</string>
     <string name="blockfill_score_label">Score</string>
     <string name="blockfill_target_label">Cible</string>
-    <string name="blockfill_difficulty_label">Difficulté</string>
     <string name="blockfill_loss_abandoned_eyebrow">Puzzle terminé</string>
     <string name="blockfill_loss_abandoned_title">Puzzle inachevé</string>
     <string name="blockfill_loss_abandoned_body">Vous avez terminé ce puzzle avant qu\'il ne soit résolu.</string>
@@ -550,8 +535,6 @@
     <string name="wordguess_tip_2_title">Réutilise ce que tu as appris</string>
     <string name="wordguess_tip_2_body">Le clavier à l\'écran retient le meilleur état connu de chaque lettre, pour voir en un coup d\'œil quelles lettres valent encore la peine d\'être essayées.</string>
     <string name="wordguess_how_to_play_scoring">Résoudre le puzzle rapporte des points selon la difficulté, le nombre d\'essais nécessaires et ta rapidité.</string>
-    <string name="wordguess_guesses_label">Essais</string>
-    <string name="wordguess_difficulty_label">Difficulté</string>
     <string name="wordguess_invalid_word_message">Pas un mot valide</string>
     <string name="wordguess_reveal_word_label">Le mot était</string>
     <string name="wordguess_loss_abandoned_eyebrow">Puzzle terminé</string>

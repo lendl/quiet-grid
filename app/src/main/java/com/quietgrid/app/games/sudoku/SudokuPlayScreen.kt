@@ -20,7 +20,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,6 +35,7 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.ui.components.CollectPuzzleResult
 import com.quietgrid.app.ui.components.ElapsedTimerText
 import com.quietgrid.app.ui.components.EndPuzzleDialog
+import com.quietgrid.app.ui.components.EndPuzzleIconButton
 import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
 import com.quietgrid.engine.sudoku.SudokuTechnique
@@ -99,18 +99,6 @@ fun SudokuPlayScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                if (session != null) {
-                    val displayDifficulty = Difficulty.fromKey(session.puzzle.difficulty)
-                    val filledCount = session.board.sumOf { row -> row.count { it != null } }
-                    Column {
-                        Text(stringResource(R.string.sudoku_filled_label), style = MaterialTheme.typography.labelSmall)
-                        Text("$filledCount / 81", style = MaterialTheme.typography.titleMedium)
-                    }
-                    Column(horizontalAlignment = Alignment.End) {
-                        Text(stringResource(R.string.sudoku_difficulty_label), style = MaterialTheme.typography.labelSmall)
-                        Text(stringResource(sudokuDifficultyLabelRes(displayDifficulty)), style = MaterialTheme.typography.titleMedium)
-                    }
-                }
                 IconButton(onClick = { viewModel.toggleNextMoveHint() }) {
                     Icon(
                         imageVector = Icons.Filled.Lightbulb,
@@ -120,9 +108,7 @@ fun SudokuPlayScreen(
                         tint = if (viewModel.nextMoveHintActive) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
-                TextButton(onClick = { showEndDialog = true }) {
-                    Text(stringResource(R.string.common_end_puzzle))
-                }
+                EndPuzzleIconButton(onClick = { showEndDialog = true })
             }
         }
 

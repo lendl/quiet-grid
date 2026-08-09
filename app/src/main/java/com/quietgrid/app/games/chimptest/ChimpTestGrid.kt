@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
@@ -22,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
+import com.quietgrid.app.ui.components.FeedbackText
 
 private val GAP = 6.dp
 private val WRONG_TAP_BORDER = Color(0xFFEF4444)
@@ -66,7 +66,7 @@ fun ChimpTestGrid(
                     contentAlignment = Alignment.Center,
                 ) {
                     if (!isMemoryPhase) {
-                        BasicText(
+                        FeedbackText(
                             text = cell.number.toString(),
                             style = TextStyle(
                                 fontSize = fontSize,
@@ -74,6 +74,8 @@ fun ChimpTestGrid(
                                 color = MaterialTheme.colorScheme.onSurface,
                                 textAlign = TextAlign.Center,
                             ),
+                            isCorrect = false,
+                            isIncorrect = isWrongCell,
                         )
                     }
                 }

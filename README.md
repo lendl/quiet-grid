@@ -19,7 +19,7 @@ No ads. No account. No internet required. Everything stays on your device.
 | Sudoku | Available |
 | Word Search | Available |
 | Block Fill | Beta |
-| Word Guess | Beta |
+| Word Guess | Available |
 
 Each puzzle type has Easy, Medium, Hard, and Expert difficulty levels.
 

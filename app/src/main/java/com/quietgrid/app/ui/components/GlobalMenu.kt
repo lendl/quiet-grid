@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,7 +19,6 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.LightMode
-import androidx.compose.material.icons.outlined.SettingsSuggest
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -46,16 +46,27 @@ enum class AppTab { GAMES, STATS, SETTINGS, SUPPORT }
 
 private val THEME_CYCLE = listOf(ThemeMode.DARK, ThemeMode.LIGHT, ThemeMode.PENCIL)
 
-private fun nextThemeMode(current: ThemeMode): ThemeMode {
-    val index = THEME_CYCLE.indexOf(current)
+// SYSTEM is deliberately never a distinct step here: it's folded into whichever of DARK/LIGHT it
+// currently resolves to, both for the icon shown and for where the cycle advances from. Showing a
+// separate "system" icon (e.g. a settings-gear glyph) reads as a config icon, not a theme toggle,
+// and advancing from a fixed starting point regardless of what SYSTEM actually resolved to made
+// the first tap after a fresh install a no-op look (system already dark -> tapping "switches" to
+// an explicit Dark that looks identical). Resolving SYSTEM to its effective mode first fixes both.
+private fun nextThemeMode(current: ThemeMode, systemIsDark: Boolean): ThemeMode {
+    val effective = if (current == ThemeMode.SYSTEM) {
+        if (systemIsDark) ThemeMode.DARK else ThemeMode.LIGHT
+    } else {
+        current
+    }
+    val index = THEME_CYCLE.indexOf(effective)
     return if (index == -1) THEME_CYCLE[0] else THEME_CYCLE[(index + 1) % THEME_CYCLE.size]
 }
 
-private fun themeCycleIcon(mode: ThemeMode): ImageVector = when (mode) {
+private fun themeCycleIcon(mode: ThemeMode, systemIsDark: Boolean): ImageVector = when (mode) {
     ThemeMode.DARK -> Icons.Outlined.DarkMode
     ThemeMode.LIGHT -> Icons.Outlined.LightMode
     ThemeMode.PENCIL -> Icons.Outlined.Edit
-    ThemeMode.SYSTEM -> Icons.Outlined.SettingsSuggest
+    ThemeMode.SYSTEM -> if (systemIsDark) Icons.Outlined.DarkMode else Icons.Outlined.LightMode
 }
 
 /**
@@ -78,6 +89,7 @@ fun GlobalMenu(
     showBottomDivider: Boolean = true,
 ) {
     val context = LocalContext.current
+    val systemIsDark = isSystemInDarkTheme()
 
     Column(
         Modifier
@@ -143,8 +155,8 @@ fun GlobalMenu(
                     contentDescription = stringResource(R.string.home_open_repo),
                 )
             }
-            IconButton(onClick = { onThemeModeChange(nextThemeMode(themeMode)) }) {
-                Icon(themeCycleIcon(themeMode), contentDescription = stringResource(R.string.home_change_theme))
+            IconButton(onClick = { onThemeModeChange(nextThemeMode(themeMode, systemIsDark)) }) {
+                Icon(themeCycleIcon(themeMode, systemIsDark), contentDescription = stringResource(R.string.home_change_theme))
             }
         }
         if (showBottomDivider) HorizontalDivider()

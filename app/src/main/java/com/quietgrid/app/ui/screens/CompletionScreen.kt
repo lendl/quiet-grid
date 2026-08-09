@@ -289,8 +289,10 @@ fun CompletionScreen(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             MetaItem(stringResource(R.string.completion_elapsed_time), formatElapsed(elapsedSeconds))
-                            Box(Modifier.width(1.dp).height(28.dp).background(MaterialTheme.colorScheme.outlineVariant))
-                            MetaItem(stringResource(R.string.completion_accuracy), "$accuracyPct%")
+                            if (gameId in ACCURACY_TRACKED_GAMES) {
+                                Box(Modifier.width(1.dp).height(28.dp).background(MaterialTheme.colorScheme.outlineVariant))
+                                MetaItem(stringResource(R.string.completion_accuracy), "$accuracyPct%")
+                            }
                         }
                     }
 
@@ -322,6 +324,7 @@ fun CompletionScreen(
 }
 
 private val FLAWLESS_ELIGIBLE_GAMES = setOf(GameId.TAKUZU, GameId.SUDOKU)
+private val ACCURACY_TRACKED_GAMES = setOf(GameId.TAKUZU, GameId.SUDOKU, GameId.WORDSEARCH)
 
 @Composable
 private fun BadgePill(emoji: String, text: String, borderColor: Color, textColor: Color, modifier: Modifier = Modifier) {

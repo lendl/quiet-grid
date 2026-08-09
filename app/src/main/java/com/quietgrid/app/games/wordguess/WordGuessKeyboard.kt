@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -61,18 +62,22 @@ fun WordGuessKeyboard(
     onEnter: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier.background(Color.Transparent).padding(4.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+    Column(
+        modifier.fillMaxWidth().background(Color.Transparent).padding(4.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)) {
             for (ch in WORDGUESS_KEYBOARD_ROW_1) {
                 WordGuessKey(ch.toString(), keyboardState[ch]) { onLetter(ch) }
             }
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)) {
             for (ch in WORDGUESS_KEYBOARD_ROW_2) {
                 WordGuessKey(ch.toString(), keyboardState[ch]) { onLetter(ch) }
             }
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)) {
             WordGuessKey("Enter", state = null, widthDp = 56) { onEnter() }
             for (ch in WORDGUESS_KEYBOARD_ROW_3) {
                 WordGuessKey(ch.toString(), keyboardState[ch]) { onLetter(ch) }

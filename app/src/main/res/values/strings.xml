@@ -190,8 +190,6 @@
     <string name="chimp_difficulty_desc_medium">5×5 grid. Remember up to 9 numbers.</string>
     <string name="chimp_difficulty_desc_hard">6×6 grid. Remember up to 11 numbers.</string>
     <string name="chimp_difficulty_desc_expert">7×7 grid. Remember up to 13 numbers.</string>
-    <string name="chimp_round_label">Round</string>
-    <string name="chimp_difficulty_label">Difficulty</string>
     <string name="chimp_how_to_play_goal">Tap every number in ascending order before the earlier ones disappear from view.</string>
     <string name="chimp_how_to_play_controls">Tap the next number in sequence. Each correctly tapped number disappears immediately, so you must remember where the remaining ones are.</string>
     <string name="chimp_how_to_play_wrong_move">Tapping any cell that is not the next number in sequence ends the puzzle immediately.</string>
@@ -225,8 +223,6 @@
     <string name="takuzu_difficulty_desc_medium">Balanced openings that ask you to read the grid a bit further ahead.</string>
     <string name="takuzu_difficulty_desc_hard">Tighter setups with less free information and stronger pattern work.</string>
     <string name="takuzu_difficulty_desc_expert">Sparse openings with sustained deduction pressure across the whole puzzle.</string>
-    <string name="takuzu_size_label">Size</string>
-    <string name="takuzu_difficulty_label">Difficulty</string>
     <string name="takuzu_cell_label">Cell</string>
     <string name="takuzu_how_to_play_goal">Fill every cell with a 0 or 1 following three rules.</string>
     <string name="takuzu_how_to_play_controls">Tap any cell to cycle through empty → 0 → 1 → empty.</string>
@@ -286,8 +282,6 @@
     <string name="nonogram_difficulty_desc_medium">Balanced grids that need steady deduction.</string>
     <string name="nonogram_difficulty_desc_hard">Tighter clue sets that require deeper overlap checks.</string>
     <string name="nonogram_difficulty_desc_expert">Dense grids with less obvious forced moves.</string>
-    <string name="nonogram_size_label">Size</string>
-    <string name="nonogram_difficulty_label">Difficulty</string>
     <string name="nonogram_how_to_play_goal">Fill cells to form the exact blocks described by each row and column clue.</string>
     <string name="nonogram_how_to_play_controls">Tap a cell to cycle: blank → filled → empty. Swipe across cells to paint them all with the same state.</string>
     <string name="nonogram_how_to_play_wrong_move">If a row or column can no longer match its clues, it is marked as invalid.</string>
@@ -339,7 +333,6 @@
     <string name="minesweeper_difficulty_desc_hard">Tighter spaces that reward careful flagging and clue tracking.</string>
     <string name="minesweeper_difficulty_desc_expert">Dense minefields with very little breathing room from the start.</string>
     <string name="minesweeper_size_label">Size</string>
-    <string name="minesweeper_difficulty_label">Difficulty</string>
     <string name="minesweeper_mines_left_label">Mines</string>
     <string name="minesweeper_how_to_play_goal">Reveal every safe cell without opening a mine.</string>
     <string name="minesweeper_how_to_play_controls">Tap to reveal a cell. Long-press to place or remove a flag.</string>
@@ -400,8 +393,6 @@
     <string name="sudoku_difficulty_desc_hard">Sparse grids reserved for richer move analysis and validation work.</string>
     <string name="sudoku_difficulty_desc_expert">Very sparse grids reserved for advanced chain and coloring deductions.</string>
     <string name="sudoku_size_label">Size</string>
-    <string name="sudoku_difficulty_label">Difficulty</string>
-    <string name="sudoku_filled_label">Filled</string>
     <string name="sudoku_notes_mode_label">Notes</string>
     <string name="sudoku_hint_show">Show next move hint</string>
     <string name="sudoku_hint_hide">Hide next move hint</string>
@@ -469,15 +460,10 @@
     <string name="wordsearch_difficulty_desc_hard">All directions including backwards with denser overlaps.</string>
     <string name="wordsearch_difficulty_desc_expert">Largest grids with full-direction words and heavy overlap.</string>
     <string name="wordsearch_size_label">Size</string>
-    <string name="wordsearch_difficulty_label">Difficulty</string>
-    <string name="wordsearch_found_label">Found</string>
     <string name="wordsearch_theme_label">Theme</string>
-    <string name="wordsearch_hidden_word_locked">Spot it early for bonus points, or find all the words to reveal it automatically.</string>
     <string name="wordsearch_hidden_word_solved_title">Hidden word found!</string>
     <string name="wordsearch_hidden_word_enter_mode">Solve hidden word</string>
     <string name="wordsearch_hidden_word_exit_mode">Exit hidden-word mode</string>
-    <string name="wordsearch_hidden_word_instructions">The hidden-word letters sit in the empty cells, left to right then top to bottom. Tap them in order.</string>
-    <string name="wordsearch_hidden_word_reset_on_mistake">A wrong hidden-word tap resets your progress and costs accuracy.</string>
     <string name="wordsearch_reset_zoom">Reset zoom</string>
     <string name="wordsearch_next_move_show">Show next word hint</string>
     <string name="wordsearch_next_move_hide">Hide next word hint</string>
@@ -532,7 +518,6 @@
     <string name="blockfill_how_to_play_scoring">Placing a piece scores nothing on its own — only clearing a line scores points. Clearing multiple lines at once, or clearing on consecutive placements, adds further bonuses. Clearing the entire board scores the largest bonus. Solving the puzzle itself also earns a separate score based on how quickly you finish — starting at 50,000 and dropping over time.</string>
     <string name="blockfill_score_label">Score</string>
     <string name="blockfill_target_label">Target</string>
-    <string name="blockfill_difficulty_label">Difficulty</string>
     <string name="blockfill_loss_abandoned_eyebrow">Puzzle ended</string>
     <string name="blockfill_loss_abandoned_title">Puzzle unfinished</string>
     <string name="blockfill_loss_abandoned_body">You ended this puzzle before it was solved.</string>
@@ -562,8 +547,6 @@
     <string name="wordguess_tip_2_title">Reuse what you\'ve learned</string>
     <string name="wordguess_tip_2_body">The on-screen keyboard remembers every letter\'s best-known state, so you can see at a glance which letters are still worth trying.</string>
     <string name="wordguess_how_to_play_scoring">Solving the puzzle scores points based on the difficulty, how many guesses you needed, and how quickly you finished.</string>
-    <string name="wordguess_guesses_label">Guesses</string>
-    <string name="wordguess_difficulty_label">Difficulty</string>
     <string name="wordguess_invalid_word_message">Not a valid word</string>
     <string name="wordguess_reveal_word_label">The word was</string>
     <string name="wordguess_loss_abandoned_eyebrow">Puzzle ended</string>

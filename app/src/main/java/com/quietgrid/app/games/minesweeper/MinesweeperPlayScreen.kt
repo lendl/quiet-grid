@@ -14,7 +14,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +29,7 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.ui.components.CollectPuzzleResult
 import com.quietgrid.app.ui.components.ElapsedTimerText
 import com.quietgrid.app.ui.components.EndPuzzleDialog
+import com.quietgrid.app.ui.components.EndPuzzleIconButton
 import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
 
@@ -58,15 +58,10 @@ fun MinesweeperPlayScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (session != null) {
-                    val displayDifficulty = Difficulty.fromKey(session.puzzle.difficulty)
                     val minesLeft = maxOf(0, session.board.mines - countFlaggedMinesweeperCells(session.board))
                     Column {
                         Text(stringResource(R.string.minesweeper_mines_left_label), style = MaterialTheme.typography.labelSmall)
                         Text(minesLeft.toString(), style = MaterialTheme.typography.titleMedium)
-                    }
-                    Column(horizontalAlignment = Alignment.End) {
-                        Text(stringResource(R.string.minesweeper_difficulty_label), style = MaterialTheme.typography.labelSmall)
-                        Text(stringResource(minesweeperDifficultyLabelRes(displayDifficulty)), style = MaterialTheme.typography.titleMedium)
                     }
                 }
                 IconButton(onClick = { viewModel.toggleNextMoveHint() }) {
@@ -78,9 +73,7 @@ fun MinesweeperPlayScreen(
                         tint = if (viewModel.nextMoveHint != null) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
-                TextButton(onClick = { showEndDialog = true }) {
-                    Text(stringResource(R.string.common_end_puzzle))
-                }
+                EndPuzzleIconButton(onClick = { showEndDialog = true })
             }
         }
 

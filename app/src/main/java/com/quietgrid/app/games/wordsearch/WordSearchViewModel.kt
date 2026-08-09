@@ -19,6 +19,8 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -126,6 +128,10 @@ class WordSearchPlayViewModel @AssistedInject constructor(
 
     var nextMoveHint by mutableStateOf<WSNextMoveHint?>(null)
         private set
+    var wrongHiddenWordTap by mutableStateOf(false)
+        private set
+    var wrongSelectionCells by mutableStateOf<List<WSCellRef>>(emptyList())
+        private set
 
     init {
         controller.start(requestedDifficulty, resume)
@@ -134,7 +140,12 @@ class WordSearchPlayViewModel @AssistedInject constructor(
     private fun onCommitSelection() {
         val current = session ?: return
         if (current.hiddenWordMode) return
+        val path = current.tempSelection?.path.orEmpty()
         val updated = wsCommitSelection(current) ?: return
+        if (updated.foundWordIds.size == current.foundWordIds.size) {
+            wrongSelectionCells = path
+            viewModelScope.launch { delay(300); wrongSelectionCells = emptyList() }
+        }
         controller.updateSession(updated)
     }
 
@@ -200,7 +211,12 @@ class WordSearchPlayViewModel @AssistedInject constructor(
     fun onHiddenWordCellTap(row: Int, col: Int) {
         val current = session ?: return
         nextMoveHint = null
-        val updated = wsInputHiddenWordCell(current, WSCellRef(row, col)) ?: return
+        val updated = wsInputHiddenWordCell(current, WSCellRef(row, col))
+        if (updated == null || updated.hiddenWordProgress.size < current.hiddenWordProgress.size) {
+            wrongHiddenWordTap = true
+            viewModelScope.launch { delay(500); wrongHiddenWordTap = false }
+        }
+        if (updated == null) return
         controller.updateSession(updated)
         if (updated.hiddenWordSolved) controller.finishAsWin()
     }

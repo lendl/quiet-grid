@@ -19,7 +19,7 @@ fun wordGuessLetterColors(state: LetterState?): Pair<Color, Color> {
         LetterState.ABSENT -> if (pencil) {
             Color(0xFF616161) to Color.White
         } else {
-            MaterialTheme.colorScheme.surfaceVariant to MaterialTheme.colorScheme.onSurfaceVariant
+            Color(0xFF787C7E) to Color.Black
         }
         LetterState.PRESENT -> if (pencil) {
             Color(0xFF9E9E9E) to Color.Black

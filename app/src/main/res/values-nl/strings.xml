@@ -178,8 +178,6 @@
     <string name="chimp_difficulty_desc_medium">5×5 raster. Onthoud tot 9 cijfers.</string>
     <string name="chimp_difficulty_desc_hard">6×6 raster. Onthoud tot 11 cijfers.</string>
     <string name="chimp_difficulty_desc_expert">7×7 raster. Onthoud tot 13 cijfers.</string>
-    <string name="chimp_round_label">Ronde</string>
-    <string name="chimp_difficulty_label">Moeilijkheid</string>
     <string name="chimp_how_to_play_goal">Tik elk cijfer in oplopende volgorde aan voordat de vorige uit het zicht verdwijnen.</string>
     <string name="chimp_how_to_play_controls">Tik het volgende cijfer in de reeks aan. Elk correct aangetikt cijfer verdwijnt meteen, dus je moet onthouden waar de resterende cijfers staan.</string>
     <string name="chimp_how_to_play_wrong_move">Een cel aantikken die niet het volgende cijfer is, beëindigt de puzzel onmiddellijk.</string>
@@ -213,8 +211,6 @@
     <string name="takuzu_difficulty_desc_medium">Gebalanceerde openingen die je vragen iets verder vooruit te lezen.</string>
     <string name="takuzu_difficulty_desc_hard">Strakkere opzetten met minder vrije informatie en sterkere patroonherkenning.</string>
     <string name="takuzu_difficulty_desc_expert">Schaarse openingen met aanhoudende deductiedruk over het hele bord.</string>
-    <string name="takuzu_size_label">Grootte</string>
-    <string name="takuzu_difficulty_label">Niveau</string>
     <string name="takuzu_cell_label">Cel</string>
     <string name="takuzu_how_to_play_goal">Vul elke cel met een 0 of 1 op basis van drie regels.</string>
     <string name="takuzu_how_to_play_controls">Tik op een cel om te wisselen: leeg → 0 → 1 → leeg.</string>
@@ -274,8 +270,6 @@
     <string name="nonogram_difficulty_desc_medium">Uitgebalanceerde rasters die gestage deductie vereisen.</string>
     <string name="nonogram_difficulty_desc_hard">Krappere hintsets die diepere overlapcontroles vereisen.</string>
     <string name="nonogram_difficulty_desc_expert">Dichte rasters met minder voor de hand liggende gedwongen zetten.</string>
-    <string name="nonogram_size_label">Grootte</string>
-    <string name="nonogram_difficulty_label">Niveau</string>
     <string name="nonogram_how_to_play_goal">Vul cellen om precies de blokken te vormen die elke rij- en kolomhint beschrijft.</string>
     <string name="nonogram_how_to_play_controls">Tik op een cel om te wisselen: leeg → gevuld → doorgestreept. Veeg over cellen om ze allemaal dezelfde status te geven.</string>
     <string name="nonogram_how_to_play_wrong_move">Als een rij of kolom niet meer aan zijn hints kan voldoen, wordt hij als ongeldig gemarkeerd.</string>
@@ -327,7 +321,6 @@
     <string name="minesweeper_difficulty_desc_hard">Strakkere ruimtes die zorgvuldig markeren en aanwijzingen volgen belonen.</string>
     <string name="minesweeper_difficulty_desc_expert">Dichte mijnenvelden met vanaf het begin heel weinig ademruimte.</string>
     <string name="minesweeper_size_label">Grootte</string>
-    <string name="minesweeper_difficulty_label">Niveau</string>
     <string name="minesweeper_mines_left_label">Mijnen</string>
     <string name="minesweeper_how_to_play_goal">Onthul elk veilig vak zonder een mijn te openen.</string>
     <string name="minesweeper_how_to_play_controls">Tik om een cel te onthullen. Houd ingedrukt om een vlag te plaatsen of verwijderen.</string>
@@ -388,8 +381,6 @@
     <string name="sudoku_difficulty_desc_hard">Schaarse roosters bedoeld voor rijkere zetanalyse en validatie.</string>
     <string name="sudoku_difficulty_desc_expert">Zeer schaarse roosters bedoeld voor gevorderde ketting- en kleurdeducties.</string>
     <string name="sudoku_size_label">Grootte</string>
-    <string name="sudoku_difficulty_label">Niveau</string>
-    <string name="sudoku_filled_label">Ingevuld</string>
     <string name="sudoku_notes_mode_label">Notities</string>
     <string name="sudoku_hint_show">Show next move hint</string>
     <string name="sudoku_hint_hide">Hide next move hint</string>
@@ -457,15 +448,10 @@
     <string name="wordsearch_difficulty_desc_hard">Alle richtingen, ook achterwaarts, met dichtere overlap.</string>
     <string name="wordsearch_difficulty_desc_expert">Grootste roosters met woorden in alle richtingen en zware overlap.</string>
     <string name="wordsearch_size_label">Grootte</string>
-    <string name="wordsearch_difficulty_label">Niveau</string>
-    <string name="wordsearch_found_label">Gevonden</string>
     <string name="wordsearch_theme_label">Thema</string>
-    <string name="wordsearch_hidden_word_locked">Ontdek het vroeg voor bonuspunten, of vind alle woorden om het automatisch te onthullen.</string>
     <string name="wordsearch_hidden_word_solved_title">Verborgen woord gevonden!</string>
     <string name="wordsearch_hidden_word_enter_mode">Verborgen woord oplossen</string>
     <string name="wordsearch_hidden_word_exit_mode">Verborgen-woordmodus verlaten</string>
-    <string name="wordsearch_hidden_word_instructions">De letters van het verborgen woord staan in de lege cellen, van links naar rechts en van boven naar beneden. Tik ze op volgorde aan.</string>
-    <string name="wordsearch_hidden_word_reset_on_mistake">Een verkeerde tik op het verborgen woord zet je voortgang terug en kost nauwkeurigheid.</string>
     <string name="wordsearch_reset_zoom">Zoom resetten</string>
     <string name="wordsearch_next_move_show">Show next word hint</string>
     <string name="wordsearch_next_move_hide">Hide next word hint</string>
@@ -520,7 +506,6 @@
     <string name="blockfill_how_to_play_scoring">Een stuk neerzetten levert op zichzelf niets op — alleen het leegmaken van een lijn levert punten op. Meerdere lijnen tegelijk leegmaken, of bij opeenvolgende zetten, geeft extra bonussen. Het hele bord leegmaken levert de grootste bonus op. Het oplossen van de puzzel zelf levert ook een aparte score op, gebaseerd op hoe snel je klaar bent — die begint op 50.000 en daalt na verloop van tijd.</string>
     <string name="blockfill_score_label">Score</string>
     <string name="blockfill_target_label">Doel</string>
-    <string name="blockfill_difficulty_label">Moeilijkheid</string>
     <string name="blockfill_loss_abandoned_eyebrow">Puzzel beëindigd</string>
     <string name="blockfill_loss_abandoned_title">Puzzel onafgemaakt</string>
     <string name="blockfill_loss_abandoned_body">Je hebt deze puzzel beëindigd voordat hij was opgelost.</string>
@@ -550,8 +535,6 @@
     <string name="wordguess_tip_2_title">Gebruik wat je hebt geleerd</string>
     <string name="wordguess_tip_2_body">Het schermtoetsenbord onthoudt de best bekende status van elke letter, zodat je in één oogopslag ziet welke letters nog de moeite waard zijn.</string>
     <string name="wordguess_how_to_play_scoring">Het oplossen van de puzzel levert punten op, afhankelijk van de moeilijkheidsgraad, het aantal benodigde pogingen en hoe snel je klaar was.</string>
-    <string name="wordguess_guesses_label">Pogingen</string>
-    <string name="wordguess_difficulty_label">Moeilijkheid</string>
     <string name="wordguess_invalid_word_message">Geen geldig woord</string>
     <string name="wordguess_reveal_word_label">Het woord was</string>
     <string name="wordguess_loss_abandoned_eyebrow">Puzzel beëindigd</string>

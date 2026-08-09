@@ -44,12 +44,14 @@ fun WordSearchGrid(
     onHiddenWordTap: (row: Int, col: Int) -> Unit,
     nextMoveEvidenceCells: List<WSCellRef> = emptyList(),
     nextMoveTargetCells: List<WSCellRef> = emptyList(),
+    wrongSelectionCells: List<WSCellRef> = emptyList(),
 ) {
     val foundCells = remember(foundWordIds, puzzle) {
         puzzle.words.filter { it.id in foundWordIds }.flatMap { it.positions }.toSet()
     }
     val selectedCells = remember(tempSelection) { tempSelection?.path?.toSet() ?: emptySet() }
     val hiddenProgressCells = remember(hiddenWordProgress) { hiddenWordProgress.toSet() }
+    val wrongSelectionCellSet = remember(wrongSelectionCells) { wrongSelectionCells.toSet() }
     val selectionStart = tempSelection?.path?.firstOrNull()
     val selectionEnd = tempSelection?.path?.lastOrNull()
     val evidenceCellSet = remember(nextMoveEvidenceCells) { nextMoveEvidenceCells.toSet() }
@@ -133,8 +135,10 @@ fun WordSearchGrid(
                     val isInCrosshair = !isSelected && !isFound && !isHiddenProgress &&
                         selectionStart != null && (cell.row == selectionStart.row || cell.col == selectionStart.col)
                     val isHintCell = cell in evidenceCellSet || cell in targetCellSet
+                    val isWrongSelection = cell in wrongSelectionCellSet
 
                     val backgroundColor = when {
+                        isWrongSelection -> MaterialTheme.colorScheme.error.copy(alpha = 0.6f)
                         isSelected && isSelectionEndpoint -> MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
                         isSelected -> MaterialTheme.colorScheme.primary
                         isHiddenProgress -> MaterialTheme.colorScheme.secondary
@@ -163,7 +167,7 @@ fun WordSearchGrid(
                             style = TextStyle(
                                 fontSize = fontSize,
                                 fontWeight = FontWeight.SemiBold,
-                                color = if (isSelected || isHiddenProgress) Color.White else MaterialTheme.colorScheme.onSurface,
+                                color = if (isSelected || isHiddenProgress || isWrongSelection) Color.White else MaterialTheme.colorScheme.onSurface,
                                 textAlign = TextAlign.Center,
                             ),
                         )
