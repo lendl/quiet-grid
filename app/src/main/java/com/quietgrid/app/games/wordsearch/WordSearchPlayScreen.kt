@@ -2,11 +2,15 @@ package com.quietgrid.app.games.wordsearch
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.ZoomOutMap
@@ -112,49 +116,105 @@ fun WordSearchPlayScreen(
             modifier = Modifier.padding(top = 4.dp, bottom = 12.dp),
         )
 
-        PuzzleBoardContainer(
-            visible = session != null,
-            playFresh = !resume,
-            onZoomChange = { isBoardZoomed = it },
-            resetTrigger = resetZoomTrigger,
-        ) {
-            if (session != null) {
-                Box(Modifier.fillMaxSize().padding(8.dp)) {
-                    WordSearchGrid(
-                        puzzle = session.puzzle,
-                        foundWordIds = session.foundWordIds,
-                        tempSelection = session.tempSelection,
-                        hiddenWordMode = session.hiddenWordMode,
-                        hiddenWordProgress = session.hiddenWordProgress,
-                        onCellTap = viewModel::onCellTap,
-                        onCellDragStart = viewModel::onCellDragStart,
-                        onCellDragMove = viewModel::onCellDragMove,
-                        onCellDragEnd = viewModel::onCellDragEnd,
-                        onHiddenWordTap = viewModel::onHiddenWordCellTap,
-                        nextMoveEvidenceCells = hint?.let {
-                            when (it) {
-                                is WSNextMoveHint.FindWord -> it.evidenceCells
-                                is WSNextMoveHint.FindHiddenLetter -> it.evidenceCells
+        BoxWithConstraints(Modifier.weight(1f).fillMaxWidth()) {
+            val sideBySide = shouldShowWordListSideBySide(maxWidth, maxHeight)
+            if (sideBySide) {
+                Row(Modifier.fillMaxSize()) {
+                    PuzzleBoardContainer(
+                        visible = session != null,
+                        playFresh = !resume,
+                        onZoomChange = { isBoardZoomed = it },
+                        resetTrigger = resetZoomTrigger,
+                    ) {
+                        if (session != null) {
+                            Box(Modifier.fillMaxSize().padding(8.dp)) {
+                                WordSearchGrid(
+                                    puzzle = session.puzzle,
+                                    foundWordIds = session.foundWordIds,
+                                    tempSelection = session.tempSelection,
+                                    hiddenWordMode = session.hiddenWordMode,
+                                    hiddenWordProgress = session.hiddenWordProgress,
+                                    onCellTap = viewModel::onCellTap,
+                                    onCellDragStart = viewModel::onCellDragStart,
+                                    onCellDragMove = viewModel::onCellDragMove,
+                                    onCellDragEnd = viewModel::onCellDragEnd,
+                                    onHiddenWordTap = viewModel::onHiddenWordCellTap,
+                                    nextMoveEvidenceCells = hint?.let {
+                                        when (it) {
+                                            is WSNextMoveHint.FindWord -> it.evidenceCells
+                                            is WSNextMoveHint.FindHiddenLetter -> it.evidenceCells
+                                        }
+                                    } ?: emptyList(),
+                                    nextMoveTargetCells = hint?.let {
+                                        when (it) {
+                                            is WSNextMoveHint.FindWord -> it.targetCells
+                                            is WSNextMoveHint.FindHiddenLetter -> it.targetCells
+                                        }
+                                    } ?: emptyList(),
+                                    wrongSelectionCells = viewModel.wrongSelectionCells,
+                                )
                             }
-                        } ?: emptyList(),
-                        nextMoveTargetCells = hint?.let {
-                            when (it) {
-                                is WSNextMoveHint.FindWord -> it.targetCells
-                                is WSNextMoveHint.FindHiddenLetter -> it.targetCells
+                        }
+                    }
+                    if (session != null) {
+                        Spacer(Modifier.width(12.dp))
+                        WordSearchWordStrip(
+                            session = session,
+                            onToggleHiddenWordMode = viewModel::onToggleHiddenWordMode,
+                            wrongHiddenWordTap = viewModel.wrongHiddenWordTap,
+                            isSideColumn = true,
+                            modifier = Modifier.width(160.dp).fillMaxHeight(),
+                        )
+                    }
+                }
+            } else {
+                Column(Modifier.fillMaxSize()) {
+                    PuzzleBoardContainer(
+                        visible = session != null,
+                        playFresh = !resume,
+                        onZoomChange = { isBoardZoomed = it },
+                        resetTrigger = resetZoomTrigger,
+                    ) {
+                        if (session != null) {
+                            Box(Modifier.fillMaxSize().padding(8.dp)) {
+                                WordSearchGrid(
+                                    puzzle = session.puzzle,
+                                    foundWordIds = session.foundWordIds,
+                                    tempSelection = session.tempSelection,
+                                    hiddenWordMode = session.hiddenWordMode,
+                                    hiddenWordProgress = session.hiddenWordProgress,
+                                    onCellTap = viewModel::onCellTap,
+                                    onCellDragStart = viewModel::onCellDragStart,
+                                    onCellDragMove = viewModel::onCellDragMove,
+                                    onCellDragEnd = viewModel::onCellDragEnd,
+                                    onHiddenWordTap = viewModel::onHiddenWordCellTap,
+                                    nextMoveEvidenceCells = hint?.let {
+                                        when (it) {
+                                            is WSNextMoveHint.FindWord -> it.evidenceCells
+                                            is WSNextMoveHint.FindHiddenLetter -> it.evidenceCells
+                                        }
+                                    } ?: emptyList(),
+                                    nextMoveTargetCells = hint?.let {
+                                        when (it) {
+                                            is WSNextMoveHint.FindWord -> it.targetCells
+                                            is WSNextMoveHint.FindHiddenLetter -> it.targetCells
+                                        }
+                                    } ?: emptyList(),
+                                    wrongSelectionCells = viewModel.wrongSelectionCells,
+                                )
                             }
-                        } ?: emptyList(),
-                        wrongSelectionCells = viewModel.wrongSelectionCells,
-                    )
+                        }
+                    }
+
+                    if (session != null) {
+                        WordSearchWordStrip(
+                            session = session,
+                            onToggleHiddenWordMode = viewModel::onToggleHiddenWordMode,
+                            wrongHiddenWordTap = viewModel.wrongHiddenWordTap,
+                        )
+                    }
                 }
             }
-        }
-
-        if (session != null) {
-            WordSearchWordStrip(
-                session = session,
-                onToggleHiddenWordMode = viewModel::onToggleHiddenWordMode,
-                wrongHiddenWordTap = viewModel.wrongHiddenWordTap,
-            )
         }
     }
 
