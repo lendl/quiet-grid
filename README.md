@@ -1,6 +1,4 @@
-# Quiet Grid: Logic Puzzles
-
-<img src="docs/logo.svg" alt="Quiet Grid logo" width="96" height="96">
+# <img src="docs/logo.svg" alt="" width="32" height="32" valign="middle"> Quiet Grid: Logic Puzzles
 
 <a href="https://play.google.com/store/apps/details?id=com.quietgrid.app">
   <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" height="60">
