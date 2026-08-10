@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
@@ -29,14 +31,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.Image
 import com.quietgrid.app.R
 import com.quietgrid.app.core.REPO_URL
 import com.quietgrid.app.data.ThemeMode
@@ -110,12 +110,21 @@ fun GlobalMenu(
             Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Image(
-                painter = painterResource(R.drawable.ic_launcher_foreground),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.size(32.dp).clip(CircleShape),
-            )
+            val cellColor = MaterialTheme.colorScheme.onBackground
+            val accentCellColor = MaterialTheme.colorScheme.secondary
+            Column(
+                modifier = Modifier.size(32.dp),
+                verticalArrangement = Arrangement.spacedBy(3.dp),
+            ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(3.dp)) {
+                    Box(Modifier.size(14.dp).clip(RoundedCornerShape(4.dp)).background(cellColor))
+                    Box(Modifier.size(14.dp).clip(RoundedCornerShape(4.dp)).background(cellColor))
+                }
+                Row(horizontalArrangement = Arrangement.spacedBy(3.dp)) {
+                    Box(Modifier.size(14.dp).clip(RoundedCornerShape(4.dp)).background(cellColor))
+                    Box(Modifier.size(14.dp).clip(RoundedCornerShape(4.dp)).background(accentCellColor))
+                }
+            }
             val brandTitle = if (subtitle != null) {
                 "${stringResource(R.string.app_name)} - $subtitle"
             } else {

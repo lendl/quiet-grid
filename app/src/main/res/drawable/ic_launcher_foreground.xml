@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 2x2 quadrant-block glyph, centered in the 66dp adaptive-icon safe zone. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#F0F6FC"
+        android:pathData="
+            M37,32 H47 A5,5 0 0 1 52,37 V47 A5,5 0 0 1 47,52 H37 A5,5 0 0 1 32,47 V37 A5,5 0 0 1 37,32 Z
+            M61,32 H71 A5,5 0 0 1 76,37 V47 A5,5 0 0 1 71,52 H61 A5,5 0 0 1 56,47 V37 A5,5 0 0 1 61,32 Z
+            M37,56 H47 A5,5 0 0 1 52,61 V71 A5,5 0 0 1 47,76 H37 A5,5 0 0 1 32,71 V61 A5,5 0 0 1 37,56 Z
+        " />
+    <path
+        android:fillColor="#DAB9FF"
+        android:pathData="M61,56 H71 A5,5 0 0 1 76,61 V71 A5,5 0 0 1 71,76 H61 A5,5 0 0 1 56,71 V61 A5,5 0 0 1 61,56 Z" />
+</vector>

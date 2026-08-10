@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Single-tone silhouette for Android 13+ themed icons; the launcher applies its own tint.
+    Inset noticeably tighter than the foreground layer's safe zone: on-device testing showed
+    launchers crop themed/monochrome icons harder than the nominal 66dp safe circle promises,
+    clipping outer content that a same-size foreground glyph would have shown fine.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="
+            M40,36 H48 A4,4 0 0 1 52,40 V48 A4,4 0 0 1 48,52 H40 A4,4 0 0 1 36,48 V40 A4,4 0 0 1 40,36 Z
+            M60,36 H68 A4,4 0 0 1 72,40 V48 A4,4 0 0 1 68,52 H60 A4,4 0 0 1 56,48 V40 A4,4 0 0 1 60,36 Z
+            M40,56 H48 A4,4 0 0 1 52,60 V68 A4,4 0 0 1 48,72 H40 A4,4 0 0 1 36,68 V60 A4,4 0 0 1 40,56 Z
+            M60,56 H68 A4,4 0 0 1 72,60 V68 A4,4 0 0 1 68,72 H60 A4,4 0 0 1 56,68 V60 A4,4 0 0 1 60,56 Z
+        " />
+</vector>
