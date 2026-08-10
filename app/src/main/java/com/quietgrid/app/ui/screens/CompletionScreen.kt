@@ -120,8 +120,7 @@ fun CompletionScreen(
 
     val highlight = remember { CompletionExtras.consume() }
     val picture = (highlight as? CompletionHighlight.Picture)?.solution?.takeIf { it.isNotEmpty() }
-    val words = (highlight as? CompletionHighlight.WordList)?.words?.takeIf { it.isNotEmpty() }
-    val solutionWord = (highlight as? CompletionHighlight.WordList)?.solutionWord
+    val themeIcon = (highlight as? CompletionHighlight.ThemeIcon)?.icon
 
     val repositories: RepositoriesViewModel = hiltViewModel()
     val stats by repositories.statsRepository.statsFor(gameId).collectAsState(initial = null)
@@ -215,7 +214,7 @@ fun CompletionScreen(
                                     .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f), CircleShape),
                                 contentAlignment = Alignment.Center,
                             ) {
-                                Text(icon, fontSize = 40.sp)
+                                Text(themeIcon ?: icon, fontSize = 40.sp)
                             }
                         }
                     }
@@ -235,40 +234,6 @@ fun CompletionScreen(
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(top = 8.dp),
                     )
-
-                    if (words != null) {
-                        Column(Modifier.padding(top = 14.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                stringResource(R.string.completion_words_found),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                            Text(
-                                words.joinToString(" · "),
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.padding(top = 2.dp),
-                            )
-                        }
-                    }
-
-                    if (!solutionWord.isNullOrEmpty()) {
-                        Column(Modifier.padding(top = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                stringResource(R.string.completion_solution_word),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                            Text(
-                                solutionWord,
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.padding(top = 2.dp),
-                            )
-                        }
-                    }
 
                     Column(Modifier.padding(top = 20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(

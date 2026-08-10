@@ -38,13 +38,14 @@ data class WordSearchResult(
     val isNewHighScore: Boolean = false,
     val words: List<String> = emptyList(),
     val hiddenWord: String = "",
+    val themeId: String = "",
 )
 
 private class WordSearchPuzzleAdapter(private val appContext: Context) : PuzzleAdapter<WordSearchSession, WordSearchResult> {
     override val gameId: GameId = GameId.WORDSEARCH
 
     override suspend fun freshSession(difficulty: Difficulty): WordSearchSession? {
-        val entry = WordSearchPuzzleBank.randomPuzzle(appContext, difficulty) ?: return null
+        val entry = WordSearchPuzzleBank.randomPuzzle(appContext, currentWordSearchLocale(), difficulty) ?: return null
         return WordSearchSession(
             puzzle = entry,
             foundWordIds = emptyList(),
@@ -98,6 +99,7 @@ private class WordSearchPuzzleAdapter(private val appContext: Context) : PuzzleA
         isNewHighScore = outcome.isNewHighScore,
         words = session?.puzzle?.words?.map { it.word } ?: emptyList(),
         hiddenWord = session?.puzzle?.hiddenWord?.word ?: "",
+        themeId = session?.puzzle?.themeId ?: "",
     )
 }
 
@@ -151,10 +153,13 @@ class WordSearchPlayViewModel @AssistedInject constructor(
 
     /**
      * Tap-to-select: tapping a cell already in the active selection clears it; tapping with no
-     * selection starts one; tapping again tries to extend the selection in a straight line and
-     * commits immediately if it lines up, otherwise starts a fresh selection at the tapped cell.
-     * This is the fallback path for a gesture that never left its starting cell — a continuous
-     * drag across cells is handled instead by [onCellDragStart]/[onCellDragMove]/[onCellDragEnd].
+     * selection starts one; tapping again extends the selection in a straight line — completing
+     * a real word commits it immediately, but an intermediate cell that doesn't (yet) complete one
+     * just keeps the selection extended so the player can keep tapping letters in sequence, rather
+     * than losing progress. Tapping a cell that would break the straight line abandons the old
+     * selection and starts fresh there. This is the fallback path for a gesture that never left its
+     * starting cell — a continuous drag across cells is handled instead by
+     * [onCellDragStart]/[onCellDragMove]/[onCellDragEnd].
      */
     fun onCellTap(row: Int, col: Int) {
         val current = session ?: return
@@ -177,7 +182,8 @@ class WordSearchPlayViewModel @AssistedInject constructor(
         val updated = wsUpdateSelection(current, cell)
         if (updated != null) {
             controller.updateSession(updated, persist = false)
-            onCommitSelection()
+            val matched = wsMatchSelection(updated) ?: return
+            controller.updateSession(matched)
         } else {
             val started = wsBeginSelection(current, cell) ?: return
             controller.updateSession(started, persist = false)

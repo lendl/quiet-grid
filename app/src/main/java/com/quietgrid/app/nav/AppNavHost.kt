@@ -34,6 +34,7 @@ import com.quietgrid.app.games.sudoku.SudokuPlayScreen
 import com.quietgrid.app.games.takuzu.TakuzuPlayScreen
 import com.quietgrid.app.games.wordguess.WordGuessPlayScreen
 import com.quietgrid.app.games.wordsearch.WordSearchPlayScreen
+import com.quietgrid.app.games.wordsearch.wordSearchThemeIcon
 import com.quietgrid.app.ui.components.AppTab
 import com.quietgrid.app.ui.components.AppTopBar
 import com.quietgrid.app.ui.components.BottomNavBar
@@ -232,9 +233,7 @@ fun AppNavHost() {
                         onBack = { navController.popBackStack() },
                         onFinished = { result ->
                             if (result.solved) {
-                                CompletionExtras.set(
-                                    CompletionHighlight.WordList(result.words, result.hiddenWord.takeIf { it.isNotEmpty() }),
-                                )
+                                wordSearchThemeIcon(result.themeId)?.let { CompletionExtras.set(CompletionHighlight.ThemeIcon(it)) }
                                 goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
                             } else {
                                 goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")

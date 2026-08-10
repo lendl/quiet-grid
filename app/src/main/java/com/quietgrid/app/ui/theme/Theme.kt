@@ -33,26 +33,25 @@ private val QuietGridTypography = BaseTypography.copy(
     titleSmall = BaseTypography.titleSmall.copy(fontFamily = PlusJakartaSansBold, fontWeight = FontWeight.Bold),
 )
 
-// Matches the RN app's single-accent violet branding (src/app/theme/index.ts): primary/primaryLight
-// are the same across dark and light mode. Secondary/tertiary are derived violet tones — RN has no
-// separate brand hues, so these stay in the same family instead of inventing unrelated colors.
-val QuietGridPrimary = Color(0xFF7C3AED)
-val QuietGridPrimaryLight = Color(0xFFA78BFA)
-val QuietGridTertiaryAccent = Color(0xFF9061E8)
-
+// Brand hue seeds (single-accent violet family, matches the RN app's src/app/theme/index.ts —
+// no separate brand hues, secondary/tertiary are just other violet tones): primary #7C3AED,
+// secondary #A78BFA, tertiary #9061E8. Each role below is generated from these seeds via proper
+// M3 HCT tone assignment (light: base tone 40, container tone 90; dark: base tone 80, container
+// tone 30) rather than reusing one hex across both schemes — a flat saturated violet at tone ~50
+// reads fine on white but glows/vibrates on a dark surface.
 private val DarkColors = darkColorScheme(
-    primary = QuietGridPrimary,
-    onPrimary = Color(0xFFFFFFFF),
-    primaryContainer = Color(0xFF2C1F52),
-    onPrimaryContainer = Color(0xFFE4D9FF),
-    secondary = QuietGridPrimaryLight,
-    onSecondary = Color(0xFF1F242D),
-    secondaryContainer = Color(0xFF322A4A),
-    onSecondaryContainer = Color(0xFFE4D9FF),
-    tertiary = QuietGridTertiaryAccent,
-    onTertiary = Color(0xFFFFFFFF),
-    tertiaryContainer = Color(0xFF3A2960),
-    onTertiaryContainer = Color(0xFFE4D9FF),
+    primary = Color(0xFFDAB9FF),
+    onPrimary = Color(0xFF360097),
+    primaryContainer = Color(0xFF5110C6),
+    onPrimaryContainer = Color(0xFFEDDCFF),
+    secondary = Color(0xFFD0BCFF),
+    onSecondary = Color(0xFF29207E),
+    secondaryContainer = Color(0xFF463699),
+    onSecondaryContainer = Color(0xFFE8DDFF),
+    tertiary = Color(0xFFD7BAFF),
+    onTertiary = Color(0xFF31108E),
+    tertiaryContainer = Color(0xFF502AA9),
+    onTertiaryContainer = Color(0xFFECDCFF),
     background = Color(0xFF0D1117),
     onBackground = Color(0xFFF0F6FC),
     surface = Color(0xFF161B22),
@@ -64,18 +63,18 @@ private val DarkColors = darkColorScheme(
 )
 
 private val LightColors = lightColorScheme(
-    primary = QuietGridPrimary,
+    primary = Color(0xFF7131E3),
     onPrimary = Color(0xFFFFFFFF),
-    primaryContainer = Color(0xFFECE3FF),
-    onPrimaryContainer = Color(0xFF3A1F7A),
-    secondary = QuietGridPrimaryLight,
-    onSecondary = Color(0xFF1F2328),
-    secondaryContainer = Color(0xFFEFE9FF),
-    onSecondaryContainer = Color(0xFF3A1F7A),
-    tertiary = QuietGridTertiaryAccent,
+    primaryContainer = Color(0xFFEDDCFF),
+    onPrimaryContainer = Color(0xFF1F0060),
+    secondary = Color(0xFF624DB4),
+    onSecondary = Color(0xFFFFFFFF),
+    secondaryContainer = Color(0xFFE8DDFF),
+    onSecondaryContainer = Color(0xFF000A63),
+    tertiary = Color(0xFF6D42C5),
     onTertiary = Color(0xFFFFFFFF),
-    tertiaryContainer = Color(0xFFF1E8FF),
-    onTertiaryContainer = Color(0xFF3A1F7A),
+    tertiaryContainer = Color(0xFFECDCFF),
+    onTertiaryContainer = Color(0xFF140067),
     background = Color(0xFFF6F8FA),
     onBackground = Color(0xFF1F2328),
     surface = Color(0xFFFFFFFF),

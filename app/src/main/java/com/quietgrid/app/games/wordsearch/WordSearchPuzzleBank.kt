@@ -24,14 +24,16 @@ object WordSearchPuzzleBank {
         }
     }
 
-    suspend fun randomPuzzle(context: Context, difficulty: Difficulty): WordSearchPuzzleEntry? {
-        val pool = load(context, difficulty)
-        if (pool.isEmpty()) return null
-        val lastId = lastPickedId[difficulty.key]
+    suspend fun randomPuzzle(context: Context, locale: String, difficulty: Difficulty): WordSearchPuzzleEntry? {
+        val all = load(context, difficulty)
+        if (all.isEmpty()) return null
+        val pool = all.filter { it.locale == locale }.ifEmpty { all.filter { it.locale == "en" } }.ifEmpty { all }
+        val key = "$locale:${difficulty.key}"
+        val lastId = lastPickedId[key]
         val candidates = if (pool.size > 1 && lastId != null) pool.filter { it.id != lastId } else pool
         val choices = candidates.ifEmpty { pool }
         val chosen = choices.random()
-        lastPickedId[difficulty.key] = chosen.id
+        lastPickedId[key] = chosen.id
         return chosen
     }
 }

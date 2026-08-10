@@ -86,5 +86,6 @@ fun generateWordSearchPuzzle(rows: Int, cols: Int, difficulty: Difficulty, prefe
         grid = grid.map { it.toList() },
         words = placements.map { WSWordEntry(it.id, it.word, it.positions) },
         hiddenWord = WSHiddenWord(hidden, theme.themeId, reserved.positions),
+        locale = language,
     )
 }

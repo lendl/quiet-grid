@@ -23,4 +23,5 @@ data class WordSearchPuzzleEntry(
     val grid: List<List<String>>,
     val words: List<WSWordEntry>,
     val hiddenWord: WSHiddenWord,
+    val locale: String = "en",
 )

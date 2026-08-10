@@ -103,8 +103,6 @@
     <string name="completion_play_again">Rejouer</string>
     <string name="completion_streak_badge">Série de %1$d puzzles</string>
     <string name="completion_flawless_badge">Sans faute</string>
-    <string name="completion_words_found">Mots trouvés</string>
-    <string name="completion_solution_word">Solution</string>
 
     <string name="loss_difficulty">Difficulté</string>
     <string name="loss_elapsed_time">Temps écoulé</string>

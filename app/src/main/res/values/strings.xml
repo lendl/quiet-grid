@@ -111,8 +111,6 @@
     <string name="completion_play_again">Play Again</string>
     <string name="completion_streak_badge">%1$d puzzle streak</string>
     <string name="completion_flawless_badge">Flawless</string>
-    <string name="completion_words_found">Words found</string>
-    <string name="completion_solution_word">Solution</string>
 
     <!-- loss -->
     <string name="loss_difficulty">Difficulty</string>

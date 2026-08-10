@@ -76,11 +76,12 @@ fun wsClearSelection(session: WordSearchSession): WordSearchSession? {
     return session.copy(tempSelection = null)
 }
 
-fun wsCommitSelection(session: WordSearchSession): WordSearchSession? {
+/** Matches the active selection against pending words; returns null (no session change) if it doesn't complete one yet. */
+fun wsMatchSelection(session: WordSearchSession): WordSearchSession? {
     val selection = session.tempSelection ?: return null
     val pendingWord = session.puzzle.words.firstOrNull {
         it.id !in session.foundWordIds && pathMatchesWord(selection.path, it.positions)
-    } ?: return session.copy(tempSelection = null)
+    } ?: return null
 
     val nextFoundWordIds = session.foundWordIds + pendingWord.id
     val allWordsFound = nextFoundWordIds.size >= session.puzzle.words.size
@@ -89,6 +90,11 @@ fun wsCommitSelection(session: WordSearchSession): WordSearchSession? {
         tempSelection = null,
         hiddenWordMode = !session.hiddenWordSolved && allWordsFound,
     )
+}
+
+fun wsCommitSelection(session: WordSearchSession): WordSearchSession? {
+    if (session.tempSelection == null) return null
+    return wsMatchSelection(session) ?: session.copy(tempSelection = null)
 }
 
 fun wsToggleHiddenWordMode(session: WordSearchSession): WordSearchSession? {

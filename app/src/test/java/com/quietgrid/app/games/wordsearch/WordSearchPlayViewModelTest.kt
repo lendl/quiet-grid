@@ -42,7 +42,7 @@ class WordSearchPlayViewModelTest {
     @Before
     fun setUp() {
         mockkObject(WordSearchPuzzleBank)
-        coEvery { WordSearchPuzzleBank.randomPuzzle(any(), any()) } returns puzzleEntry
+        coEvery { WordSearchPuzzleBank.randomPuzzle(any(), any(), any()) } returns puzzleEntry
     }
 
     @After
@@ -68,6 +68,22 @@ class WordSearchPlayViewModelTest {
         viewModel.onCellTap(0, 0)
 
         assertEquals(listOf(WSCellRef(0, 0)), viewModel.session?.tempSelection?.path)
+    }
+
+    @Test
+    fun `tapping a word letter by letter keeps progress on intermediate taps and finds it on the last`() {
+        val viewModel = newViewModel()
+
+        viewModel.onCellTap(0, 0)
+        viewModel.onCellTap(0, 1)
+
+        assertEquals(listOf(WSCellRef(0, 0), WSCellRef(0, 1)), viewModel.session?.tempSelection?.path)
+        assertEquals(emptyList<String>(), viewModel.session?.foundWordIds)
+
+        viewModel.onCellTap(0, 2)
+
+        assertEquals(listOf("cat"), viewModel.session?.foundWordIds)
+        assertEquals(null, viewModel.session?.tempSelection)
     }
 
     @Test

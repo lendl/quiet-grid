@@ -103,8 +103,6 @@
     <string name="completion_play_again">Nochmals spielen</string>
     <string name="completion_streak_badge">%1$d Rätsel in Folge</string>
     <string name="completion_flawless_badge">Fehlerfrei</string>
-    <string name="completion_words_found">Gefundene Wörter</string>
-    <string name="completion_solution_word">Lösung</string>
 
     <string name="loss_difficulty">Schwierigkeitsgrad</string>
     <string name="loss_elapsed_time">Verstrichene Zeit</string>
