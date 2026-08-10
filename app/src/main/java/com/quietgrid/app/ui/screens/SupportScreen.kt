@@ -2,6 +2,7 @@ package com.quietgrid.app.ui.screens
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,9 +10,11 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -19,8 +22,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
 import com.quietgrid.app.core.ISSUES_URL
@@ -55,8 +62,62 @@ fun SupportScreen(onOpenInfo: (String) -> Unit) {
 
         SupportSection(title = stringResource(R.string.support_about_section)) {
             SupportRow(stringResource(R.string.support_about_quiet_grid), "") { onOpenInfo("about") }
-            SupportRow(stringResource(R.string.support_rate_quiet_grid), stringResource(R.string.support_opens_play_store), external = true) { openRateApp() }
         }
+
+        ShowYourSupportSection(onRate = { openRateApp() }, onStar = { openUrl(REPO_URL) })
+    }
+}
+
+@Composable
+private fun ShowYourSupportSection(onRate: () -> Unit, onStar: () -> Unit) {
+    Column {
+        Text(stringResource(R.string.support_show_your_support), style = MaterialTheme.typography.titleSmall)
+        Text(
+            stringResource(R.string.support_show_your_support_subtitle),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(bottom = 12.dp, top = 2.dp),
+        )
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            SupportCallToActionButton(
+                label = stringResource(R.string.support_rate_on_play_store),
+                icon = Icons.Filled.PlayArrow,
+                modifier = Modifier.weight(1f),
+                onClick = onRate,
+            )
+            SupportCallToActionButton(
+                label = stringResource(R.string.support_star_on_github),
+                iconRes = R.drawable.ic_github,
+                modifier = Modifier.weight(1f),
+                onClick = onStar,
+            )
+        }
+    }
+}
+
+@Composable
+private fun SupportCallToActionButton(
+    label: String,
+    modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
+    iconRes: Int? = null,
+    onClick: () -> Unit,
+) {
+    Column(
+        modifier
+            .clip(RoundedCornerShape(12.dp))
+            .background(color = MaterialTheme.colorScheme.surfaceVariant)
+            .clickable(onClick = onClick)
+            .padding(vertical = 16.dp, horizontal = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        if (icon != null) {
+            Icon(imageVector = icon, contentDescription = null)
+        } else if (iconRes != null) {
+            Icon(painter = painterResource(iconRes), contentDescription = null)
+        }
+        Text(label, style = MaterialTheme.typography.labelLarge, textAlign = TextAlign.Center)
     }
 }
 

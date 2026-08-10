@@ -137,8 +137,10 @@
     <string name="support_opens_github">Abre GitHub</string>
     <string name="support_licenses">Licencias de código abierto</string>
     <string name="support_about_quiet_grid">Acerca de Quiet Grid</string>
-    <string name="support_rate_quiet_grid">Valorar Quiet Grid</string>
-    <string name="support_opens_play_store">Abre Play Store</string>
+    <string name="support_show_your_support">Muestra tu apoyo</string>
+    <string name="support_show_your_support_subtitle">Ayuda más de lo que crees.</string>
+    <string name="support_rate_on_play_store">Valorar en Play Store</string>
+    <string name="support_star_on_github">Estrella en GitHub</string>
 
     <!-- support info -->
     <string name="support_info_back">Atrás</string>
