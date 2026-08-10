@@ -1,0 +1,6 @@
+Version 1.2.8
+
+- Minesweeper, Block Fill, and Word Guess games added
+- New app icon and branding
+- Tablet layout for Word Search
+- Bug fixes and stability improvements
