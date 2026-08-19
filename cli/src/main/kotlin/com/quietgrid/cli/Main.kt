@@ -1,7 +1,10 @@
 package com.quietgrid.cli
 
+import com.quietgrid.cli.animaldoku.generateAnimalDokuPuzzle
 import com.quietgrid.cli.sudoku.generateSudokuPuzzle
 import com.quietgrid.cli.takuzu.generateTakuzuPuzzle
+import com.quietgrid.engine.animaldoku.ANIMALDOKU_SIZES_BY_DIFFICULTY
+import com.quietgrid.engine.animaldoku.AnimalDokuPuzzleEntry
 import com.quietgrid.engine.core.Difficulty
 import com.quietgrid.engine.sudoku.SudokuPuzzleEntry
 import com.quietgrid.engine.takuzu.TakuzuPuzzleEntry
@@ -130,6 +133,25 @@ fun main(args: Array<String>) {
             ) { "${it.locale}:${it.word}" }
 
             println("Generated ${answerEntries.size}/${command.count} wordguess answers ($locale/$difficulty) + ${dictionaryEntries.size} dictionary words into ${command.outDir}")
+        }
+        "animaldoku" -> {
+            val sizes = ANIMALDOKU_SIZES_BY_DIFFICULTY.getValue(difficulty)
+            val state = GenerationState("${command.outDir}/.generation-state/animaldoku.json")
+            val maxTotalAttempts = command.count * 30
+            val entries = mutableListOf<AnimalDokuPuzzleEntry>()
+            var attempts = 0
+            while (entries.size < command.count && attempts < maxTotalAttempts) {
+                attempts++
+                val size = sizes.random()
+                val candidate = generateAnimalDokuPuzzle(size, difficulty, idPrefix = "ad$size") ?: continue
+                val dedupeKey = candidate.solution.toString() + candidate.regions.toString()
+                if (state.hasTried(dedupeKey)) continue
+                state.recordTried(dedupeKey, "valid")
+                entries += candidate
+            }
+            state.save()
+            appendPuzzleEntries("${command.outDir}/animaldoku_puzzles.json", entries, AnimalDokuPuzzleEntry.serializer()) { it.id }
+            println("Generated ${entries.size}/${command.count} animaldoku puzzles at $difficulty into ${command.outDir}/animaldoku_puzzles.json")
         }
         else -> error("Unknown or not-yet-wired game '${command.game}'.")
     }

@@ -555,4 +555,33 @@
     <string name="wordguess_loss_rule_failure_eyebrow">Puzzle lost</string>
     <string name="wordguess_loss_rule_failure_title">Out of guesses</string>
     <string name="wordguess_loss_rule_failure_body">You used all six guesses without finding the word.</string>
+
+    <!-- AnimalDoku -->
+    <string name="animaldoku_title">AnimalDoku</string>
+    <string name="animaldoku_tagline">Place one animal per row, column, and colored region.</string>
+    <string name="animaldoku_difficulty_easy">Easy</string>
+    <string name="animaldoku_difficulty_medium">Medium</string>
+    <string name="animaldoku_difficulty_hard">Hard</string>
+    <string name="animaldoku_difficulty_expert">Expert</string>
+    <string name="animaldoku_difficulty_desc_easy">Small grids solved with straightforward row, column, and region checks.</string>
+    <string name="animaldoku_difficulty_desc_medium">Slightly larger grids that call for weighing pairs of possible spots.</string>
+    <string name="animaldoku_difficulty_desc_hard">Bigger, tighter grids needing short chains of deduction to place every animal.</string>
+    <string name="animaldoku_difficulty_desc_expert">The largest grids, reserved for deep multi-step chain reasoning.</string>
+    <string name="animaldoku_how_to_play_goal">Place one animal in every row, column, and colored region — no two animals may touch, even diagonally.</string>
+    <string name="animaldoku_how_to_play_controls">Tap an empty cell to mark it, tap again to clear it. Drag across cells to mark or clear several at once. Double-tap a cell to place your animal there.</string>
+    <string name="animaldoku_how_to_play_wrong_move">A wrong double-tap locks the cell as an X and costs one heart. Lose all 3 hearts and the puzzle ends.</string>
+    <string name="animaldoku_rule_1_title">One animal per row and column</string>
+    <string name="animaldoku_rule_1_body">Every row and every column holds exactly one animal.</string>
+    <string name="animaldoku_rule_2_title">One animal per region</string>
+    <string name="animaldoku_rule_2_body">Every colored region holds exactly one animal.</string>
+    <string name="animaldoku_rule_3_title">No touching</string>
+    <string name="animaldoku_rule_3_body">Animals can\'t be placed next to each other, including diagonally.</string>
+    <string name="animaldoku_rule_4_title">Placements are final</string>
+    <string name="animaldoku_rule_4_body">Once you double-tap a cell, correct or wrong, it can\'t be changed again.</string>
+    <string name="animaldoku_loss_abandoned_eyebrow">Puzzle ended</string>
+    <string name="animaldoku_loss_abandoned_title">Puzzle unfinished</string>
+    <string name="animaldoku_loss_abandoned_body">You chose to stop before this puzzle was solved.</string>
+    <string name="animaldoku_loss_rule_failure_eyebrow">Puzzle lost</string>
+    <string name="animaldoku_loss_rule_failure_title">Out of hearts</string>
+    <string name="animaldoku_loss_rule_failure_body">Three wrong opens cost you all your hearts and ended the puzzle.</string>
 </resources>

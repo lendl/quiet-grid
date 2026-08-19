@@ -543,4 +543,32 @@
     <string name="wordguess_loss_rule_failure_eyebrow">Puzzle perdu</string>
     <string name="wordguess_loss_rule_failure_title">Plus d\'essais</string>
     <string name="wordguess_loss_rule_failure_body">Tu as utilisé tes six essais sans trouver le mot.</string>
+
+    <!-- AnimalDoku -->
+    <string name="animaldoku_tagline">Place un animal par ligne, colonne et région colorée.</string>
+    <string name="animaldoku_difficulty_easy">Facile</string>
+    <string name="animaldoku_difficulty_medium">Moyen</string>
+    <string name="animaldoku_difficulty_hard">Difficile</string>
+    <string name="animaldoku_difficulty_expert">Expert</string>
+    <string name="animaldoku_difficulty_desc_easy">Petites grilles résolues avec des vérifications simples de ligne, colonne et région.</string>
+    <string name="animaldoku_difficulty_desc_medium">Grilles un peu plus grandes qui demandent de peser des paires d\'emplacements possibles.</string>
+    <string name="animaldoku_difficulty_desc_hard">Grilles plus grandes et plus serrées nécessitant de courtes chaînes de déduction pour placer chaque animal.</string>
+    <string name="animaldoku_difficulty_desc_expert">Les plus grandes grilles, réservées à un raisonnement en chaîne profond et en plusieurs étapes.</string>
+    <string name="animaldoku_how_to_play_goal">Place un animal dans chaque ligne, colonne et région colorée — deux animaux ne peuvent pas se toucher, même en diagonale.</string>
+    <string name="animaldoku_how_to_play_controls">Appuie sur une case vide pour la marquer, appuie à nouveau pour l\'effacer. Fais glisser sur plusieurs cases pour les marquer ou les effacer d\'un coup. Appuie deux fois sur une case pour y placer ton animal.</string>
+    <string name="animaldoku_how_to_play_wrong_move">Un double appui incorrect verrouille la case avec un X et coûte un cœur. Perds tes 3 cœurs et le puzzle se termine.</string>
+    <string name="animaldoku_rule_1_title">Un animal par ligne et colonne</string>
+    <string name="animaldoku_rule_1_body">Chaque ligne et chaque colonne contient exactement un animal.</string>
+    <string name="animaldoku_rule_2_title">Un animal par région</string>
+    <string name="animaldoku_rule_2_body">Chaque région colorée contient exactement un animal.</string>
+    <string name="animaldoku_rule_3_title">Pas de contact</string>
+    <string name="animaldoku_rule_3_body">Les animaux ne peuvent pas être placés l\'un à côté de l\'autre, même en diagonale.</string>
+    <string name="animaldoku_rule_4_title">Les placements sont définitifs</string>
+    <string name="animaldoku_rule_4_body">Une fois que tu appuies deux fois sur une case, correcte ou non, elle ne peut plus être modifiée.</string>
+    <string name="animaldoku_loss_abandoned_eyebrow">Puzzle terminé</string>
+    <string name="animaldoku_loss_abandoned_title">Puzzle inachevé</string>
+    <string name="animaldoku_loss_abandoned_body">Tu as choisi d\'arrêter avant que ce puzzle soit résolu.</string>
+    <string name="animaldoku_loss_rule_failure_eyebrow">Puzzle perdu</string>
+    <string name="animaldoku_loss_rule_failure_title">Plus de cœurs</string>
+    <string name="animaldoku_loss_rule_failure_body">Trois ouvertures incorrectes t\'ont coûté tous tes cœurs et ont mis fin au puzzle.</string>
 </resources>

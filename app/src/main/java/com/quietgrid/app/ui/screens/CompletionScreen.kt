@@ -48,6 +48,7 @@ import com.quietgrid.app.core.difficultyColor
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.core.formatElapsed
 import com.quietgrid.app.data.RepositoriesViewModel
+import com.quietgrid.app.games.animaldoku.animalDokuDifficultyLabelRes
 import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
 import com.quietgrid.app.games.chimptest.chimpDifficultyLabelRes
 import com.quietgrid.app.games.minesweeper.minesweeperDifficultyLabelRes
@@ -112,6 +113,7 @@ fun CompletionScreen(
         GameId.WORDSEARCH -> wordSearchDifficultyLabelRes(difficulty)
         GameId.BLOCKFILL -> blockFillDifficultyLabelRes(difficulty)
         GameId.WORDGUESS -> wordGuessDifficultyLabelRes(difficulty)
+        GameId.ANIMALDOKU -> animalDokuDifficultyLabelRes(difficulty)
         else -> chimpDifficultyLabelRes(difficulty)
     }
     val accentColor = difficultyColor(difficulty)

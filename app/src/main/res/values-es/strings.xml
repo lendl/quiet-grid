@@ -543,4 +543,32 @@
     <string name="wordguess_loss_rule_failure_eyebrow">Puzle perdido</string>
     <string name="wordguess_loss_rule_failure_title">Sin intentos</string>
     <string name="wordguess_loss_rule_failure_body">Usaste los seis intentos sin encontrar la palabra.</string>
+
+    <!-- AnimalDoku -->
+    <string name="animaldoku_tagline">Coloca un animal por fila, columna y región de color.</string>
+    <string name="animaldoku_difficulty_easy">Fácil</string>
+    <string name="animaldoku_difficulty_medium">Medio</string>
+    <string name="animaldoku_difficulty_hard">Difícil</string>
+    <string name="animaldoku_difficulty_expert">Experto</string>
+    <string name="animaldoku_difficulty_desc_easy">Cuadrículas pequeñas resueltas con comprobaciones sencillas de fila, columna y región.</string>
+    <string name="animaldoku_difficulty_desc_medium">Cuadrículas algo más grandes que requieren sopesar pares de posibles ubicaciones.</string>
+    <string name="animaldoku_difficulty_desc_hard">Cuadrículas más grandes y ajustadas que requieren cadenas cortas de deducción para colocar cada animal.</string>
+    <string name="animaldoku_difficulty_desc_expert">Las cuadrículas más grandes, reservadas para un razonamiento en cadena profundo y de varios pasos.</string>
+    <string name="animaldoku_how_to_play_goal">Coloca un animal en cada fila, columna y región de color — dos animales no pueden tocarse, ni siquiera en diagonal.</string>
+    <string name="animaldoku_how_to_play_controls">Toca una celda vacía para marcarla, tócala de nuevo para vaciarla. Arrastra por varias celdas para marcarlas o vaciarlas a la vez. Toca dos veces una celda para colocar tu animal ahí.</string>
+    <string name="animaldoku_how_to_play_wrong_move">Un doble toque incorrecto bloquea la celda con una X y cuesta un corazón. Pierde los 3 corazones y el puzzle termina.</string>
+    <string name="animaldoku_rule_1_title">Un animal por fila y columna</string>
+    <string name="animaldoku_rule_1_body">Cada fila y cada columna contiene exactamente un animal.</string>
+    <string name="animaldoku_rule_2_title">Un animal por región</string>
+    <string name="animaldoku_rule_2_body">Cada región de color contiene exactamente un animal.</string>
+    <string name="animaldoku_rule_3_title">Sin contacto</string>
+    <string name="animaldoku_rule_3_body">Los animales no pueden colocarse uno junto a otro, ni siquiera en diagonal.</string>
+    <string name="animaldoku_rule_4_title">Las colocaciones son definitivas</string>
+    <string name="animaldoku_rule_4_body">Una vez que tocas dos veces una celda, correcta o incorrecta, ya no se puede cambiar.</string>
+    <string name="animaldoku_loss_abandoned_eyebrow">Puzzle terminado</string>
+    <string name="animaldoku_loss_abandoned_title">Puzzle sin terminar</string>
+    <string name="animaldoku_loss_abandoned_body">Elegiste detenerte antes de resolver este puzzle.</string>
+    <string name="animaldoku_loss_rule_failure_eyebrow">Puzzle perdido</string>
+    <string name="animaldoku_loss_rule_failure_title">Sin corazones</string>
+    <string name="animaldoku_loss_rule_failure_body">Tres aperturas incorrectas te costaron todos los corazones y terminaron el puzzle.</string>
 </resources>

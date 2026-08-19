@@ -33,6 +33,8 @@ import com.quietgrid.app.core.GameId
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.core.difficultyColor
 import com.quietgrid.app.data.RepositoriesViewModel
+import com.quietgrid.app.games.animaldoku.animalDokuDifficultyDescriptionRes
+import com.quietgrid.app.games.animaldoku.animalDokuDifficultyLabelRes
 import com.quietgrid.app.games.blockfill.blockFillDifficultyDescriptionRes
 import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
 import com.quietgrid.app.games.chimptest.chimpDifficultyDescriptionRes
@@ -91,6 +93,12 @@ fun PuzzlePickerScreen(
     }
 }
 
+/**
+ * Difficulties that should be shown as pickable for a given game. Defaults to all four; override
+ * here for a game whose puzzle bank doesn't yet cover every difficulty.
+ */
+private fun pickableDifficultiesFor(gameId: GameId): List<Difficulty> = Difficulty.entries
+
 @Composable
 private fun GamePlayPickerTab(
     gameId: GameId,
@@ -105,7 +113,7 @@ private fun GamePlayPickerTab(
 
     Column(Modifier.fillMaxWidth().padding(16.dp)) {
         Column {
-            Difficulty.entries.forEachIndexed { index, difficulty ->
+            pickableDifficultiesFor(gameId).forEachIndexed { index, difficulty ->
                 val labelRes = when (gameId) {
                     GameId.TAKUZU -> takuzuDifficultyLabelRes(difficulty)
                     GameId.NONOGRAM -> nonogramDifficultyLabelRes(difficulty)
@@ -114,6 +122,7 @@ private fun GamePlayPickerTab(
                     GameId.WORDSEARCH -> wordSearchDifficultyLabelRes(difficulty)
                     GameId.BLOCKFILL -> blockFillDifficultyLabelRes(difficulty)
                     GameId.WORDGUESS -> wordGuessDifficultyLabelRes(difficulty)
+                    GameId.ANIMALDOKU -> animalDokuDifficultyLabelRes(difficulty)
                     else -> chimpDifficultyLabelRes(difficulty)
                 }
                 val descriptionRes = when (gameId) {
@@ -125,6 +134,7 @@ private fun GamePlayPickerTab(
                     GameId.WORDSEARCH -> wordSearchDifficultyDescriptionRes(difficulty)
                     GameId.BLOCKFILL -> blockFillDifficultyDescriptionRes(difficulty)
                     GameId.WORDGUESS -> wordGuessDifficultyDescriptionRes(difficulty)
+                    GameId.ANIMALDOKU -> animalDokuDifficultyDescriptionRes(difficulty)
                 }
                 if (index > 0) HorizontalDivider()
                 Row(

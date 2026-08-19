@@ -47,6 +47,9 @@ fun buildActivePuzzleSummary(envelope: ActiveSessionEnvelope): ActivePuzzleSumma
         }
         // Word Guess isn't grid-shaped, so it has no dimensions chip to show here.
         GameId.WORDGUESS -> null
+        // AnimalDoku's size varies per puzzle (unlike Sudoku's fixed 9x9), so read it from the
+        // persisted puzzle payload.
+        GameId.ANIMALDOKU -> puzzleNode?.get("size")?.jsonPrimitive?.intOrNull?.let { "${it}x${it}" }
     }
     return ActivePuzzleSummary(gameId, difficulty, dimensions, formatElapsed(envelope.elapsedSeconds.toInt()))
 }

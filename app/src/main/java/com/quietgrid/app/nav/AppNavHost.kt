@@ -26,6 +26,7 @@ import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.RepositoriesViewModel
+import com.quietgrid.app.games.animaldoku.AnimalDokuPlayScreen
 import com.quietgrid.app.games.blockfill.BlockFillPlayScreen
 import com.quietgrid.app.games.chimptest.ChimpTestPlayScreen
 import com.quietgrid.app.games.minesweeper.MinesweeperPlayScreen
@@ -263,6 +264,18 @@ fun AppNavHost() {
                                 if (result.targetWord.isNotEmpty()) {
                                     CompletionExtras.set(CompletionHighlight.RevealWord(result.targetWord))
                                 }
+                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
+                            }
+                        },
+                    )
+                    GameId.ANIMALDOKU -> AnimalDokuPlayScreen(
+                        difficulty = difficulty,
+                        resume = resume,
+                        onBack = { navController.popBackStack() },
+                        onFinished = { result ->
+                            if (result.solved) {
+                                goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
+                            } else {
                                 goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
                             }
                         },

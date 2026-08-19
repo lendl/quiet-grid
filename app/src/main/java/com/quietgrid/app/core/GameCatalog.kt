@@ -12,6 +12,7 @@ enum class GameId(val key: String) {
     WORDSEARCH("wordsearch"),
     BLOCKFILL("blockfill"),
     WORDGUESS("wordguess"),
+    ANIMALDOKU("animaldoku"),
 }
 
 data class GameMeta(
@@ -31,6 +32,7 @@ object GameCatalog {
         GameMeta(GameId.WORDSEARCH, R.string.wordsearch_title, R.string.wordsearch_tagline),
         GameMeta(GameId.BLOCKFILL, R.string.blockfill_title, R.string.blockfill_tagline, beta = true),
         GameMeta(GameId.WORDGUESS, R.string.wordguess_title, R.string.wordguess_tagline),
+        GameMeta(GameId.ANIMALDOKU, R.string.animaldoku_title, R.string.animaldoku_tagline, beta = true),
     )
 
     fun get(id: GameId): GameMeta = games.first { it.id == id }

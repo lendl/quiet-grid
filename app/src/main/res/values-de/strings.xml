@@ -543,4 +543,32 @@
     <string name="wordguess_loss_rule_failure_eyebrow">Rätsel verloren</string>
     <string name="wordguess_loss_rule_failure_title">Keine Versuche mehr</string>
     <string name="wordguess_loss_rule_failure_body">Du hast alle sechs Versuche verbraucht, ohne das Wort zu finden.</string>
+
+    <!-- AnimalDoku -->
+    <string name="animaldoku_tagline">Platziere ein Tier pro Zeile, Spalte und farbiger Region.</string>
+    <string name="animaldoku_difficulty_easy">Leicht</string>
+    <string name="animaldoku_difficulty_medium">Mittel</string>
+    <string name="animaldoku_difficulty_hard">Schwer</string>
+    <string name="animaldoku_difficulty_expert">Experte</string>
+    <string name="animaldoku_difficulty_desc_easy">Kleine Raster, gelöst mit einfachen Zeilen-, Spalten- und Regionsprüfungen.</string>
+    <string name="animaldoku_difficulty_desc_medium">Etwas größere Raster, die das Abwägen möglicher Platzpaare erfordern.</string>
+    <string name="animaldoku_difficulty_desc_hard">Größere, engere Raster, die kurze Schlussfolgerungsketten erfordern, um jedes Tier zu platzieren.</string>
+    <string name="animaldoku_difficulty_desc_expert">Die größten Raster, vorbehalten für tiefes, mehrstufiges Kettendenken.</string>
+    <string name="animaldoku_how_to_play_goal">Platziere ein Tier in jeder Zeile, Spalte und farbigen Region — keine zwei Tiere dürfen sich berühren, auch nicht diagonal.</string>
+    <string name="animaldoku_how_to_play_controls">Tippe auf eine leere Zelle, um sie zu markieren, tippe erneut, um sie zu leeren. Ziehe über mehrere Zellen, um sie auf einmal zu markieren oder zu leeren. Doppeltippe auf eine Zelle, um dein Tier dort zu platzieren.</string>
+    <string name="animaldoku_how_to_play_wrong_move">Ein falscher Doppeltipp sperrt die Zelle als X und kostet ein Herz. Verliere alle 3 Herzen und das Rätsel endet.</string>
+    <string name="animaldoku_rule_1_title">Ein Tier pro Zeile und Spalte</string>
+    <string name="animaldoku_rule_1_body">Jede Zeile und jede Spalte enthält genau ein Tier.</string>
+    <string name="animaldoku_rule_2_title">Ein Tier pro Region</string>
+    <string name="animaldoku_rule_2_body">Jede farbige Region enthält genau ein Tier.</string>
+    <string name="animaldoku_rule_3_title">Kein Berühren</string>
+    <string name="animaldoku_rule_3_body">Tiere dürfen nicht nebeneinander platziert werden, auch nicht diagonal.</string>
+    <string name="animaldoku_rule_4_title">Platzierungen sind endgültig</string>
+    <string name="animaldoku_rule_4_body">Sobald du eine Zelle doppelt tippst, richtig oder falsch, kann sie nicht mehr geändert werden.</string>
+    <string name="animaldoku_loss_abandoned_eyebrow">Rätsel beendet</string>
+    <string name="animaldoku_loss_abandoned_title">Rätsel unvollständig</string>
+    <string name="animaldoku_loss_abandoned_body">Du hast dieses Rätsel beendet, bevor es gelöst war.</string>
+    <string name="animaldoku_loss_rule_failure_eyebrow">Rätsel verloren</string>
+    <string name="animaldoku_loss_rule_failure_title">Keine Herzen mehr</string>
+    <string name="animaldoku_loss_rule_failure_body">Drei falsche Öffnungen haben dich alle Herzen gekostet und das Rätsel beendet.</string>
 </resources>

@@ -543,4 +543,32 @@
     <string name="wordguess_loss_rule_failure_eyebrow">Puzzel verloren</string>
     <string name="wordguess_loss_rule_failure_title">Geen pogingen meer</string>
     <string name="wordguess_loss_rule_failure_body">Je hebt al je zes pogingen gebruikt zonder het woord te vinden.</string>
+
+    <!-- AnimalDoku -->
+    <string name="animaldoku_tagline">Plaats één dier per rij, kolom en gekleurde regio.</string>
+    <string name="animaldoku_difficulty_easy">Makkelijk</string>
+    <string name="animaldoku_difficulty_medium">Gemiddeld</string>
+    <string name="animaldoku_difficulty_hard">Moeilijk</string>
+    <string name="animaldoku_difficulty_expert">Expert</string>
+    <string name="animaldoku_difficulty_desc_easy">Kleine roosters opgelost met eenvoudige rij-, kolom- en regiocontroles.</string>
+    <string name="animaldoku_difficulty_desc_medium">Iets grotere roosters waarbij je paren van mogelijke plekken tegen elkaar moet afwegen.</string>
+    <string name="animaldoku_difficulty_desc_hard">Grotere, krappere roosters die korte redeneerketens vereisen om elk dier te plaatsen.</string>
+    <string name="animaldoku_difficulty_desc_expert">De grootste roosters, voorbehouden aan diepgaand redeneren in meerdere stappen.</string>
+    <string name="animaldoku_how_to_play_goal">Plaats één dier in elke rij, kolom en gekleurde regio — geen twee dieren mogen elkaar raken, ook niet diagonaal.</string>
+    <string name="animaldoku_how_to_play_controls">Tik op een lege cel om hem te markeren, tik nogmaals om hem te wissen. Sleep over cellen om er meerdere tegelijk te markeren of wissen. Dubbeltik op een cel om je dier daar te plaatsen.</string>
+    <string name="animaldoku_how_to_play_wrong_move">Een verkeerde dubbeltik vergrendelt de cel als een X en kost een hartje. Verlies alle 3 hartjes en de puzzel eindigt.</string>
+    <string name="animaldoku_rule_1_title">Eén dier per rij en kolom</string>
+    <string name="animaldoku_rule_1_body">Elke rij en elke kolom bevat precies één dier.</string>
+    <string name="animaldoku_rule_2_title">Eén dier per regio</string>
+    <string name="animaldoku_rule_2_body">Elke gekleurde regio bevat precies één dier.</string>
+    <string name="animaldoku_rule_3_title">Geen aanraken</string>
+    <string name="animaldoku_rule_3_body">Dieren mogen niet naast elkaar geplaatst worden, ook niet diagonaal.</string>
+    <string name="animaldoku_rule_4_title">Plaatsingen zijn definitief</string>
+    <string name="animaldoku_rule_4_body">Zodra je dubbeltikt op een cel, goed of fout, kan hij niet meer veranderd worden.</string>
+    <string name="animaldoku_loss_abandoned_eyebrow">Puzzel beëindigd</string>
+    <string name="animaldoku_loss_abandoned_title">Puzzel onvoltooid</string>
+    <string name="animaldoku_loss_abandoned_body">Je hebt ervoor gekozen te stoppen voordat deze puzzel was opgelost.</string>
+    <string name="animaldoku_loss_rule_failure_eyebrow">Puzzel verloren</string>
+    <string name="animaldoku_loss_rule_failure_title">Geen hartjes meer</string>
+    <string name="animaldoku_loss_rule_failure_body">Drie foute openingen kostten je al je hartjes en beëindigden de puzzel.</string>
 </resources>
