@@ -2,7 +2,6 @@ package com.quietgrid.engine.takuzu
 
 import kotlinx.serialization.Serializable
 
-/** 0, 1, or null (empty). */
 typealias TakuzuCellValue = Int?
 typealias TakuzuGrid = List<List<TakuzuCellValue>>
 

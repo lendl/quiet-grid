@@ -11,7 +11,6 @@ import com.quietgrid.app.core.formatElapsed
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.RepositoriesViewModel
 
-/** Renders the elapsed-time label, or nothing when the user has disabled it in Settings. */
 @Composable
 fun ElapsedTimerText(elapsedSeconds: Int, modifier: Modifier = Modifier) {
     val repositories: RepositoriesViewModel = hiltViewModel()

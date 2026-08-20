@@ -7,18 +7,12 @@ data class AnimalDokuPuzzleEntry(
     val id: String,
     val size: Int,
     val difficulty: String,
-    /** regions[row][col] = region id, 0 until size. */
     val regions: List<List<Int>>,
-    /** solution[row] = column of the animal in that row. */
     val solution: List<Int>,
 )
 
 private val ORTHOGONAL_DELTAS = listOf(-1 to 0, 1 to 0, 0 to -1, 0 to 1)
 
-/**
- * True if [regions] is a size x size grid using exactly the ids 0 until size, each id's cells
- * forming a single 4-connected (orthogonal-adjacency) component.
- */
 fun isValidAnimalDokuRegionGrid(size: Int, regions: List<List<Int>>): Boolean {
     if (regions.size != size || regions.any { it.size != size }) return false
 

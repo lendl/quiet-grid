@@ -15,8 +15,6 @@ class WordGuessKeyboardStateTest {
 
     @Test
     fun `foldWordGuessKeyboardState upgrades a letter from PRESENT to CORRECT across guesses`() {
-        // First guess: 'd' is present-elsewhere (target "dog", guess "bad" -> d at index2 not index0).
-        // Second guess: 'd' lands in the correct spot.
         val guesses = listOf(
             "bad" to evaluateGuess(target = "dog", guess = "bad"),
             "dog" to evaluateGuess(target = "dog", guess = "dog"),

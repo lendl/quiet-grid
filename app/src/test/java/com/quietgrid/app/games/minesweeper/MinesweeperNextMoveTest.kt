@@ -35,8 +35,6 @@ class MinesweeperNextMoveTest {
 
     @Test
     fun `a single clue fully explained by forced mines has nothing left to hint`() {
-        // A 1x2 board: (0,0) is a revealed "1" clue whose only neighbor is the hidden (0,1) --
-        // that neighbor is fully forced as the clue's one mine, leaving nothing to report.
         val board = boardOf(
             rows = 1,
             cols = 2,
@@ -51,9 +49,6 @@ class MinesweeperNextMoveTest {
 
     @Test
     fun `a shared hidden neighbor forced by one clue makes another clue's remaining neighbor safe`() {
-        // clueA=(0,0) "1" has hidden neighbors X=(0,1) and Y=(1,0). clueB=(1,2) "1" has X as its
-        // only hidden neighbor, so X is directly forced as a mine. That leaves clueA's quota
-        // already met by X, making its other hidden neighbor Y a guaranteed-safe tile.
         val board = boardOf(
             rows = 2,
             cols = 3,

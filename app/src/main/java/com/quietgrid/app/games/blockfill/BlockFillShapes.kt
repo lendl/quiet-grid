@@ -61,10 +61,6 @@ val ALL_SHAPES: List<BlockFillShapeDef> = listOf(
     ),
 )
 
-// Relative weights per shape family, per difficulty key ("easy"/"medium"/"hard"/"expert"). Arbitrary
-// units, not required to sum to 100. Ported verbatim from the RN branch's design-spec numbers.
-// Individual oriented pieces within a family split that family's weight evenly, so a family with more
-// orientations (L/J has 8) doesn't implicitly dominate a family with fewer (plus has 1).
 val SHAPE_WEIGHTS_BY_DIFFICULTY: Map<String, Map<BlockFillShapeFamily, Int>> = mapOf(
     "easy" to mapOf(
         BlockFillShapeFamily.SINGLE to 20, BlockFillShapeFamily.DOMINO to 16, BlockFillShapeFamily.STRAIGHT3 to 14,
@@ -102,11 +98,6 @@ private val SHAPES_BY_FAMILY: Map<BlockFillShapeFamily, List<BlockFillShapeDef>>
 fun shapeDefToPiece(shape: BlockFillShapeDef): BlockFillPiece =
     BlockFillPiece(shapeId = shape.id, family = shape.family, cells = shape.cells)
 
-/**
- * Weighted-random single piece draw for the given difficulty key. Family weight is split evenly
- * across that family's oriented variants so a family with more orientations doesn't implicitly
- * dominate one with fewer, beyond what the weight table itself intends.
- */
 fun drawWeightedPiece(difficulty: String, random: Random = Random.Default): BlockFillPiece {
     val familyWeights = SHAPE_WEIGHTS_BY_DIFFICULTY.getValue(difficulty)
     val entries = mutableListOf<Pair<BlockFillShapeDef, Double>>()

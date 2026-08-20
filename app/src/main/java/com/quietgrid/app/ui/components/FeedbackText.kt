@@ -15,11 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.TextStyle
 
-/**
- * A cell value that spins once when [isCorrect] flips true (a completed line/unit matched the
- * solution) and shakes once when [isIncorrect] flips true (it didn't). Mirrors the RN app's
- * per-cell spin/shake board feedback instead of a static border-color flash alone.
- */
 @Composable
 fun FeedbackText(
     text: String,
@@ -31,11 +26,6 @@ fun FeedbackText(
     val rotation = remember { Animatable(0f) }
     val shakeX = remember { Animatable(0f) }
 
-    // isCorrect/isIncorrect get cleared by the caller ~500ms after they flip true (to end the
-    // border-color flash). Keying the animation LaunchedEffect directly on those booleans means
-    // that clear can cancel the animation mid-flight, leaving it stuck partway. Instead, count
-    // rising edges and key the animation on the counter so it always runs to completion once
-    // started, regardless of what the flag does afterward.
     var spinTrigger by remember { mutableStateOf(0) }
     LaunchedEffect(isCorrect) {
         if (isCorrect) spinTrigger++

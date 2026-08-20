@@ -40,13 +40,6 @@ import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
 import com.quietgrid.engine.sudoku.SudokuTechnique
 
-/**
- * Material3's OutlinedButton hardcodes an internal Row with a 58dp minWidth that no external
- * modifier can shrink below — fine on its own, but fatal for 10 buttons sharing one row on a
- * phone width (each gets ~29dp), since the digit text centers inside that phantom 58dp box and
- * ends up clipped entirely outside the button's actual visible bounds. This is a bare [Surface]
- * instead, which enforces no minimum size at all, so it can actually shrink to its weighted share.
- */
 @Composable
 private fun SudokuPadButton(
     active: Boolean,

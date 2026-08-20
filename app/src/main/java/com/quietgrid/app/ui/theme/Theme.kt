@@ -14,12 +14,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import com.quietgrid.app.R
 
-/** True when the grayscale "pencil" theme is active — use to strip hue from feedback/state colors. */
 val LocalIsPencilTheme = compositionLocalOf { false }
 
-// Matches the RN app's brand font (@expo-google-fonts/plus-jakarta-sans) — used there for headings
-// and card titles while body text stays on the platform default, so only title/headline styles pick
-// this up here too.
 val PlusJakartaSansBold = FontFamily(Font(R.font.plus_jakarta_sans_bold, FontWeight.Bold))
 val PlusJakartaSansExtraBold = FontFamily(Font(R.font.plus_jakarta_sans_extrabold, FontWeight.ExtraBold))
 
@@ -33,12 +29,6 @@ private val QuietGridTypography = BaseTypography.copy(
     titleSmall = BaseTypography.titleSmall.copy(fontFamily = PlusJakartaSansBold, fontWeight = FontWeight.Bold),
 )
 
-// Brand hue seeds (single-accent violet family, matches the RN app's src/app/theme/index.ts —
-// no separate brand hues, secondary/tertiary are just other violet tones): primary #7C3AED,
-// secondary #A78BFA, tertiary #9061E8. Each role below is generated from these seeds via proper
-// M3 HCT tone assignment (light: base tone 40, container tone 90; dark: base tone 80, container
-// tone 30) rather than reusing one hex across both schemes — a flat saturated violet at tone ~50
-// reads fine on white but glows/vibrates on a dark surface.
 private val DarkColors = darkColorScheme(
     primary = Color(0xFFDAB9FF),
     onPrimary = Color(0xFF360097),
@@ -85,8 +75,6 @@ private val LightColors = lightColorScheme(
     outlineVariant = Color(0xFFD0D7DE),
 )
 
-// Grayscale palette (no hue anywhere) so the app reads correctly for colorblind players
-// and matches the RN app's "pencil" theme intent — a paper-and-graphite look, not just dark/light.
 private val PencilColors = lightColorScheme(
     primary = Color(0xFF000000),
     onPrimary = Color(0xFFFFFFFF),

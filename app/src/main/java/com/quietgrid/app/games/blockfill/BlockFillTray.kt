@@ -52,18 +52,6 @@ fun BlockFillTray(
                 if (piece != null) {
                     BlockFillPieceGlyph(
                         piece = piece,
-                        // onGloballyPositioned and pointerInput share this same Box, so the root-space
-                        // origin reported here lines up with the local touch offset detectDragGestures
-                        // reports below -- piece origin (root) + local offset = root-space touch point.
-                        // The raw LayoutCoordinates object is passed up rather than a pre-computed
-                        // positionInRoot() snapshot, so the caller can resolve positionInRoot() at the
-                        // moment it's actually needed -- it may go stale behind an entrance animation
-                        // otherwise (see BlockFillPlayScreen's pieceCoordinates state for details).
-                        // A manual down+drag loop instead of detectDragGestures: that helper only
-                        // fires onDragStart after the pointer moves past Compose's touch-slop
-                        // threshold, so the piece (and its floating overlay in BlockFillPlayScreen)
-                        // stayed invisible while the user was still just holding it in place.
-                        // awaitFirstDown() fires on the very first touch, before any movement.
                         modifier = Modifier
                             .onGloballyPositioned { coordinates -> onPieceMeasured(index, coordinates) }
                             .pointerInput(index, piece.shapeId) {
@@ -84,10 +72,6 @@ fun BlockFillTray(
     }
 }
 
-// Not private: BlockFillPlayScreen.kt reuses this (at board-cell scale) to render the floating
-// drag overlay, so the tray icon and the piece the user is actually dragging share one code path.
-// [elevated] defaults true -- both call sites (this tray and the floating drag piece) render a
-// piece that visually floats above the background, unlike the flush board/ghost/clear-effect cells.
 @Composable
 fun BlockFillPieceGlyph(
     piece: BlockFillPiece,

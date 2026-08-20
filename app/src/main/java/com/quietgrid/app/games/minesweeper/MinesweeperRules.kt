@@ -94,8 +94,6 @@ fun createMinesweeperBoard(puzzle: MinesweeperPuzzle): MinesweeperBoard = Minesw
     cells = List(puzzle.rows) { List(puzzle.cols) { MinesweeperCell(isMine = false) } },
 )
 
-// --- Working (mutable) board used only during generation/reveal, converted back to the immutable model. ---
-
 private class WorkingCell(var isMine: Boolean, var adjacentMines: Int = 0, var state: MinesweeperCellState = MinesweeperCellState.HIDDEN)
 private class WorkingBoard(val rows: Int, val cols: Int, var mines: Int, var generated: Boolean, val cells: Array<Array<WorkingCell>>, var status: MinesweeperStatus)
 

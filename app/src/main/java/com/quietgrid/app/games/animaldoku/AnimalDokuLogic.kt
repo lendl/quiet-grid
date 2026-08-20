@@ -14,13 +14,6 @@ fun applyAnimalDokuTap(session: AnimalDokuSession, row: Int, col: Int): AnimalDo
     return session.copy(cells = session.cells.replaceCell(row, col, next))
 }
 
-/**
- * Batches a mark/unmark drag across [visited] cells, all toward [markAll] (true = mark, false =
- * unmark). [markAll] must be the direction decided once at gesture start from the start cell's
- * original pre-drag state -- never re-derived here from the session's current (possibly
- * already-mutated-by-an-earlier-call-in-the-same-gesture) state, or the direction could flip
- * mid-swipe.
- */
 fun applyAnimalDokuDrag(session: AnimalDokuSession, markAll: Boolean, visited: List<Pair<Int, Int>>): AnimalDokuSession? {
     if (session.status != AnimalDokuStatus.PLAYING) return null
 

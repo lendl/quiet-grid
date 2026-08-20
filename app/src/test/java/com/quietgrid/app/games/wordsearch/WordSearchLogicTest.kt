@@ -11,7 +11,6 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** A 3x3 grid: row0 spells the single findable word "cat"; row1 is the hidden word "dog". */
 private val puzzle = WordSearchPuzzleEntry(
     id = "p",
     difficulty = Difficulty.EASY.key,
@@ -40,8 +39,6 @@ class WordSearchLogicTest {
         val allFound = freshSession().copy(foundWordIds = listOf("cat"))
         val noneFound = freshSession()
 
-        // Regular words are optional decoys around the real goal (the hidden word), so leaving one
-        // unfound ("skipped") actually adds a bonus rather than costing points.
         assertTrue(wordSearchScore(0, noneFound) > wordSearchScore(0, allFound))
         assertTrue(wordSearchScore(0, allFound) > wordSearchScore(100, allFound))
         assertTrue(wordSearchScore(0, allFound) > wordSearchScore(0, allFound.copy(accuracyDrops = 3)))

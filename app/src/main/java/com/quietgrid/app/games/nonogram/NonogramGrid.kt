@@ -115,7 +115,6 @@ fun NonogramBoard(
                     }
                 },
         ) {
-            // Row clue rails
             puzzle.rowClues.forEachIndexed { rowIndex, clues ->
                 val startSlot = rowClueDepth - clues.size
                 clues.forEachIndexed { i, clue ->
@@ -133,7 +132,6 @@ fun NonogramBoard(
                     }
                 }
             }
-            // Column clue rails
             puzzle.colClues.forEachIndexed { colIndex, clues ->
                 val startSlot = colClueDepth - clues.size
                 clues.forEachIndexed { i, clue ->
@@ -151,7 +149,6 @@ fun NonogramBoard(
                     }
                 }
             }
-            // Cells
             for (row in 0 until puzzle.rows) {
                 for (col in 0 until puzzle.cols) {
                     val value = board[row][col]

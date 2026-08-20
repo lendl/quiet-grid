@@ -27,7 +27,6 @@ class WordSearchPlayViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    /** A single 1x3 horizontal word: "cat". */
     private val puzzleEntry = WordSearchPuzzleEntry(
         id = "test-wordsearch",
         difficulty = Difficulty.EASY.key,

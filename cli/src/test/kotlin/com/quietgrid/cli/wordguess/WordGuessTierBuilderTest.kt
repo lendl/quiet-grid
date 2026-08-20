@@ -38,7 +38,7 @@ class WordGuessTierBuilderTest {
 
     @Test
     fun `buildWordGuessTiers' common tier is a prefix of the full tier, sized independently`() {
-        val raw = (1..20).map { "w${it}xyz" } // 20 distinct 5-char-ish tokens; use a fixed 5-letter set instead
+        val raw = (1..20).map { "w${it}xyz" }
         val fiveLetterWords = listOf("aaaaa", "bbbbb", "ccccc", "ddddd", "eeeee")
         val tiers = buildWordGuessTiers(fiveLetterWords, wordLength = 5, commonSize = 2, fullSize = 4)
         assertEquals(listOf("aaaaa", "bbbbb"), tiers.common)

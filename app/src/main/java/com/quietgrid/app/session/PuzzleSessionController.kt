@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-/** Lets the last move's feedback finish playing before the win/loss screen cuts in. */
 private const val FINISH_TRANSITION_DELAY_MS = 450L
 private const val TICK_INTERVAL_MS = 1000L
 

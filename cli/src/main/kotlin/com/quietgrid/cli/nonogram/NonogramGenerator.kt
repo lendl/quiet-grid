@@ -52,7 +52,6 @@ private fun applySeededPermutation(solution: List<List<Boolean>>, seed: Long): L
     return rowOrder.map { r -> colOrder.map { c -> solution[r][c] } }
 }
 
-/** Builds one difficulty-classified nonogram variant from [seedSolution] via symmetry + seeded permutation. */
 fun generateNonogramVariant(
     seedSolution: List<List<Boolean>>,
     targetDifficulty: Difficulty,

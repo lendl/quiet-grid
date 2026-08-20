@@ -18,7 +18,6 @@ interface PuzzleAdapter<TSession, TResult> {
 
     suspend fun freshSession(difficulty: Difficulty): TSession?
 
-    /** Return null if the payload doesn't decode or isn't in a restorable state; caller falls back to [freshSession]. */
     fun restoreSession(payload: String, elapsedSeconds: Double): TSession?
 
     fun difficultyOf(session: TSession): Difficulty

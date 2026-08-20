@@ -1,7 +1,6 @@
 // engine/src/main/kotlin/com/quietgrid/engine/animaldoku/AnimalDokuSolverState.kt
 package com.quietgrid.engine.animaldoku
 
-/** Mutable solve-time state for one AnimalDoku attempt. Not thread-safe; clone via [copy] for hypothesis branches. */
 class AnimalDokuSolverState(val size: Int, val regionOf: List<List<Int>>) {
     val eliminated: Array<BooleanArray> = Array(size) { BooleanArray(size) }
     val placedCol: IntArray = IntArray(size) { -1 }
@@ -29,7 +28,6 @@ class AnimalDokuSolverState(val size: Int, val regionOf: List<List<Int>>) {
     fun candidatesInCol(col: Int): List<Pair<Int, Int>> =
         (0 until size).filter { row -> isCandidate(row, col) }.map { row -> row to col }
 
-    /** Places an animal at (row, col): solves its row/col/region and eliminates the 8 surrounding cells. */
     fun place(row: Int, col: Int) {
         check(placedCol[row] == -1) { "Row $row already has a placed animal." }
         placedCol[row] = col

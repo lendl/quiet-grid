@@ -19,12 +19,6 @@ data class ActivePuzzleSummary(
 
 private val json = Json { ignoreUnknownKeys = true }
 
-/**
- * Reads just enough of the saved session's payload (via generic JSON tree navigation, not a full
- * typed decode) to show a summary chip row on the "continue puzzle" card — mirrors RN's
- * getActivePuzzleDifficulty/getActivePuzzleDimensions, which inspect the same saved-puzzle shape
- * per game.
- */
 fun buildActivePuzzleSummary(envelope: ActiveSessionEnvelope): ActivePuzzleSummary? {
     val gameId = GameId.entries.firstOrNull { it.key == envelope.gameId } ?: return null
     val root = runCatching { json.parseToJsonElement(envelope.payload).jsonObject }.getOrNull()
@@ -45,10 +39,7 @@ fun buildActivePuzzleSummary(envelope: ActiveSessionEnvelope): ActivePuzzleSumma
             val cols = puzzleNode?.get("cols")?.jsonPrimitive?.intOrNull
             if (rows != null && cols != null) "${rows}x${cols}" else null
         }
-        // Word Guess isn't grid-shaped, so it has no dimensions chip to show here.
         GameId.WORDGUESS -> null
-        // AnimalDoku's size varies per puzzle (unlike Sudoku's fixed 9x9), so read it from the
-        // persisted puzzle payload.
         GameId.ANIMALDOKU -> puzzleNode?.get("size")?.jsonPrimitive?.intOrNull?.let { "${it}x${it}" }
     }
     return ActivePuzzleSummary(gameId, difficulty, dimensions, formatElapsed(envelope.elapsedSeconds.toInt()))

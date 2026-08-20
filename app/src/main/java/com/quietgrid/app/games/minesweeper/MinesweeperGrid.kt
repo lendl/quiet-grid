@@ -47,8 +47,6 @@ private val NUMBER_COLORS = mapOf(
     8 to Color(0xFF757575),
 )
 
-// Pencil theme strips hue everywhere else in the app; darker shade per count keeps counts
-// distinguishable without relying on color at all.
 private val PENCIL_NUMBER_COLORS = mapOf(
     1 to Color(0xFF666666),
     2 to Color(0xFF595959),
@@ -66,11 +64,6 @@ private fun minesweeperNumberColor(count: Int): Color {
     return colors[count] ?: MaterialTheme.colorScheme.onSurface
 }
 
-/**
- * A soft, thin sunken/raised edge highlight — a generic UI convention (not tied to any one
- * game's copyrighted art), used here to give unrevealed cells a subtle pressable "tile" look
- * and revealed cells a flat, opened look, without reading as a heavy painted-on border.
- */
 private fun Modifier.tileBevel(raised: Boolean): Modifier = drawBehind {
     val t = (size.minDimension * 0.06f).coerceAtMost(1.5.dp.toPx())
     val hi = Color.White.copy(alpha = if (raised) 0.55f else 0.15f)

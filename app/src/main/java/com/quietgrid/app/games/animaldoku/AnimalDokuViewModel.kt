@@ -122,7 +122,6 @@ class AnimalDokuPlayViewModel @AssistedInject constructor(
     val elapsedSeconds get() = controller.elapsedSeconds
     val result = controller.result
 
-    // Unused by the screen today; reserved for a future open-cell animation choreography pass.
     var lastOpenEvent by mutableStateOf<AnimalDokuOpenEvent?>(null)
         private set
 

@@ -95,9 +95,6 @@ fun WordSearchGrid(
                                 change.consume()
                                 break
                             }
-                            // Selection supports both tap-to-select (see below) and drag-to-select:
-                            // once the finger crosses into a new cell we treat the gesture as a drag
-                            // and extend the selection live, still yielding to panning once claimed.
                             if (!hiddenWordMode && !claimedByPan && startCell != null) {
                                 val xDp = Dp(change.position.x / density)
                                 val yDp = Dp(change.position.y / density)

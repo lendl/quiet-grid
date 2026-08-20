@@ -26,7 +26,6 @@ private data class ConfettiParticle(
     val rotationSpeed: Float,
 )
 
-/** One-shot confetti burst falling from the top of its bounds. Plays once and stops. */
 @Composable
 fun ConfettiBurst(modifier: Modifier = Modifier, particleCount: Int = 40) {
     val colors = listOf(

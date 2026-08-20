@@ -20,7 +20,6 @@ private val solutionGrid = listOf(
     listOf(3, 4, 5, 2, 8, 6, 1, 7, 9),
 )
 
-/** Only (0,0) and (0,1) are blank; every other cell is a given. */
 private val givensGrid: List<List<Int?>> = solutionGrid.mapIndexed { r, row ->
     row.mapIndexed { c, value -> if (r == 0 && (c == 0 || c == 1)) null else value }
 }

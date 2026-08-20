@@ -25,7 +25,6 @@ class NonogramPlayViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    /** A trivial 1x1 puzzle: the only cell must be filled. */
     private val puzzleEntry = NonogramPuzzleEntry(
         id = "test-nonogram",
         difficulty = Difficulty.EASY.key,

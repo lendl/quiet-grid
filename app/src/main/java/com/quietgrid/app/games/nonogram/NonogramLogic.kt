@@ -61,7 +61,6 @@ private fun cycleForMode(value: NonogramCellValue, mode: NonogramInputMode): Non
     NonogramInputMode.CROSS -> if (value == 0) null else 0
 }
 
-/** Tap cycles a single cell: blank -> target -> blank, per mode. Returns null if unchanged. */
 fun applyNonogramTap(session: NonogramSession, row: Int, col: Int, mode: NonogramInputMode): NonogramSession? {
     val current = session.board[row][col]
     val next = cycleForMode(current, mode)
@@ -73,7 +72,6 @@ fun applyNonogramTap(session: NonogramSession, row: Int, col: Int, mode: Nonogra
     return session.copy(board = board)
 }
 
-/** Drag-paint sets every listed cell to [value] uniformly (no toggling). Returns null if nothing changed. */
 fun applyNonogramPaint(session: NonogramSession, cells: List<Pair<Int, Int>>, value: Int): NonogramSession? {
     val board = session.board.map { it.toMutableList() }.toMutableList()
     var changed = false

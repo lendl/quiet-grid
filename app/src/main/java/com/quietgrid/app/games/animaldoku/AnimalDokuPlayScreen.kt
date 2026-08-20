@@ -59,8 +59,6 @@ fun AnimalDokuPlayScreen(
                 modifier = Modifier.padding(start = 12.dp).weight(1f),
             )
             if (session != null) {
-                // The just-lost heart's index is session.lives itself: hearts 0 until lives are
-                // still full, and lives is the first index that just became empty.
                 var wrongOpenTrigger by remember { mutableStateOf(0) }
                 LaunchedEffect(viewModel.lastOpenEvent) {
                     val event = viewModel.lastOpenEvent
@@ -108,12 +106,6 @@ fun AnimalDokuPlayScreen(
     )
 }
 
-/**
- * One heart in the lives row. [shakeTrigger] rising (its value going up) plays a one-shot "just
- * broke" shake -- only ever passed a nonzero/incrementing value for the specific heart that was
- * just lost, per [ANIMALDOKU_STARTING_LIVES] indexing at the call site. Mirrors
- * [com.quietgrid.app.ui.components.FeedbackText]'s run-to-completion shake pattern.
- */
 @Composable
 private fun AnimalDokuHeartIcon(filled: Boolean, shakeTrigger: Int, modifier: Modifier = Modifier) {
     val shakeX = remember { Animatable(0f) }

@@ -36,11 +36,6 @@ private fun scorePlacement(grid: List<List<String>>, positions: List<WSCellRef>,
     return uncoveredCoverage * 100.0 + overlapCount * overlapFrequency * 10.0 + Math.random()
 }
 
-// Finds the best-scoring valid straight-line placement for `word` anywhere in
-// the grid, across `directions`. Returns null if the word cannot be placed.
-// Used only by the fast fill pass (Phase 1) -- cheap because it doesn't need
-// to know how many OTHER words could also work, just the best spot for this
-// one word.
 private fun findBestPlacement(
     grid: List<MutableList<String>>, rows: Int, cols: Int, word: String, directions: List<WordSearchDirection>,
     uncovered: Set<Int>, overlapFrequency: Double,
@@ -69,9 +64,6 @@ private fun findBestPlacement(
     return best
 }
 
-// Finds the best-scoring valid placement of `word` that passes through
-// (mustCoverRow, mustCoverCol), in any of `directions`. Used by the repair
-// search (Phase 2) to guarantee a specific stuck cell gets covered.
 private fun findBestPlacementThroughCell(
     grid: List<MutableList<String>>, rows: Int, cols: Int, word: String, directions: List<WordSearchDirection>,
     mustCoverRow: Int, mustCoverCol: Int, uncovered: Set<Int>, overlapFrequency: Double,
@@ -103,37 +95,12 @@ private fun isOrthogonallyAdjacent(a: WSCellRef, b: WSCellRef): Boolean = kotlin
 
 private fun incrementCover(coverCounts: MutableMap<Int, Int>, key: Int) { coverCounts[key] = (coverCounts[key] ?: 0) + 1 }
 
-// Decrements the cover count for `key` and returns the new count. A cell is
-// only safe to clear/reopen once its count reaches 0 -- until then, some
-// other still-standing placement still needs that letter there.
 private fun decrementCover(coverCounts: MutableMap<Int, Int>, key: Int): Int {
     val next = (coverCounts[key] ?: 1) - 1
     if (next <= 0) coverCounts.remove(key) else coverCounts[key] = next
     return next
 }
 
-// Phase 2: bounded ITERATIVE local repair for whatever the fast fill
-// (Phase 1) left uncovered. No recursion anywhere in this function -- it's a
-// plain while loop -- so there is no stack-depth risk regardless of how many
-// repair steps are needed. At each step, finds the most-constrained
-// still-uncovered cell (fewest valid candidate words, among words not
-// currently tabu) and either places the best candidate directly, or -- if
-// it has none -- evicts an existing placement (from Phase 1 or an earlier
-// repair step) that is orthogonally adjacent to the stuck cell, freeing its
-// cells back up. `coverCounts` (a per-cell reference count) makes evicting
-// ANY placement safe: a cell is only cleared and reopened once every
-// placement touching it has been evicted, so removing one word never
-// corrupts a letter another, still-standing word still needs there. An
-// evicted word is placed on a short "tabu" list forbidding it from being
-// re-placed for the next TABU_TENURE steps -- without this, the search can
-// immediately re-place the same word right back where it was (or somewhere
-// that recreates the same conflict), oscillating forever instead of making
-// progress; the tabu list forces it to try a genuinely different
-// combination before that word becomes available again. This is a
-// heuristic, not a complete search -- it can fail to find a solution that
-// exists -- but the caller (generator orchestration) retries the whole
-// attempt with fresh randomization up to 200 times, which comfortably
-// absorbs that. Bounded by MAX_REPAIR_STEPS so it always terminates.
 private fun repairCoverage(
     grid: List<MutableList<String>>, rows: Int, cols: Int, wordPool: List<String>, uncovered: MutableSet<Int>,
     usedWords: MutableSet<String>, placements: MutableList<WordPlacement>, coverCounts: MutableMap<Int, Int>,
@@ -175,13 +142,6 @@ private fun repairCoverage(
             continue
         }
 
-        // No direct candidate for the most-constrained cell. Evict an existing
-        // placement adjacent to it to free up new options -- prefer the
-        // SMALLEST nearby placement (fewest cells), not the most recent one.
-        // Evicting a short word frees a small, easy-to-refill area; evicting a
-        // long word can free a large cluster that's disproportionately hard to
-        // fill back in, triggering a cascade of further evictions instead of
-        // making net progress.
         val targetRow = targetKey / 1000
         val targetCol = targetKey % 1000
         val nearbyPlacements = placements.filter { placement -> placement.positions.any { isOrthogonallyAdjacent(it, WSCellRef(targetRow, targetCol)) } }
@@ -215,10 +175,6 @@ fun buildFullCoverageGrid(
 
     val dedupedPool = wordPool.distinct()
 
-    // Phase 1: fast greedy fill. Cheap -- no candidate-counting, just the best
-    // spot for each word in turn, longest-first. Handles the easy majority of
-    // the grid quickly. Every placement here is tracked in `coverCounts` just
-    // like a Phase 2 placement, so Phase 2 can safely undo it later if needed.
     val spreadOrder = dedupedPool.sortedByDescending { it.length }
     var nextIdCounter = 1
     for (word in spreadOrder) {
@@ -232,8 +188,6 @@ fun buildFullCoverageGrid(
 
     if (uncovered.isEmpty()) return PlacementResult(grid, placements)
 
-    // Phase 2: bounded iterative local repair for whatever Phase 1 left
-    // uncovered (see repairCoverage above).
     val usedWords = placements.map { it.word }.toMutableSet()
     val nextId = intArrayOf(nextIdCounter)
     val repaired = repairCoverage(grid, rows, cols, dedupedPool, uncovered, usedWords, placements, coverCounts, nextId, allowedDirections, overlapFrequency)

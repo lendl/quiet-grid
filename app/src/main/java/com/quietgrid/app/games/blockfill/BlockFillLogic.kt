@@ -26,7 +26,6 @@ fun placePieceAt(board: BlockFillBoard, cells: List<Pair<Int, Int>>, anchorRow: 
     return next
 }
 
-/** Returns the board after clearing every full row/column, and how many lines were cleared. */
 fun clearFullLines(board: BlockFillBoard): Pair<BlockFillBoard, Int> {
     val fullRows = (0 until BLOCKFILL_BOARD_SIZE).filter { row -> board[row].all { it != null } }.toSet()
     val fullCols = (0 until BLOCKFILL_BOARD_SIZE).filter { col -> board.all { it[col] != null } }.toSet()
@@ -39,12 +38,6 @@ fun clearFullLines(board: BlockFillBoard): Pair<BlockFillBoard, Int> {
     return next to (fullRows.size + fullCols.size)
 }
 
-/**
- * Cells that would be cleared if `cells` were placed at the given anchor — both the piece's own
- * newly-placed cells and any pre-existing filled cells, wherever they fall in a row/column the
- * placement completes. Empty if the placement is invalid or would not clear any line. Used to
- * preview "these blocks will also be removed" while dragging.
- */
 fun previewClearedCells(board: BlockFillBoard, cells: List<Pair<Int, Int>>, anchorRow: Int, anchorCol: Int, family: BlockFillShapeFamily): List<Pair<Int, Int>> {
     if (!canPlacePieceAt(board, cells, anchorRow, anchorCol)) return emptyList()
 

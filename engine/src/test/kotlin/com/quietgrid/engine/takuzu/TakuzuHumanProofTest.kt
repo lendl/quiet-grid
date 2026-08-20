@@ -20,7 +20,6 @@ class TakuzuHumanProofTest {
             listOf(null, null, null, null),
             listOf(null, null, null, null),
         )
-        // find-pairs forces row0col3 = 1 first; place a second value manually to force a triple:
         val forced = board.map { it.toMutableList() }.toMutableList()
         forced[0][2] = 0
         val result = runHumanBranchProof(forced)
@@ -30,7 +29,6 @@ class TakuzuHumanProofTest {
 
     @Test
     fun `solves a fully-forceable 4x4 board to completion without contradiction or stall`() {
-        // A 4x4 board one cell away from complete via find-pairs only.
         val board: TakuzuGrid = listOf(
             listOf(0, 0, 1, null),
             listOf(1, 1, 0, 0),

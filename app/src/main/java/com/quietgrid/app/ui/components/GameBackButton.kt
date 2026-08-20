@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.quietgrid.app.R
 
-/** Small floating back arrow used on play/completion/loss screens instead of a full app bar. */
 @Composable
 fun GameBackButton(onBack: () -> Unit) {
     IconButton(onClick = onBack) {

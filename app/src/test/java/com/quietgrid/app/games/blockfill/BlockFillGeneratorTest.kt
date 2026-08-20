@@ -16,7 +16,6 @@ class BlockFillGeneratorTest {
         for (row in 0 until BLOCKFILL_BOARD_SIZE) {
             for (col in 0 until BLOCKFILL_BOARD_SIZE - 1) fullBoard = placePieceAt(fullBoard, listOf(0 to 0), row, col, BlockFillShapeFamily.SINGLE)
         }
-        // Only the last column of each row is open (1-wide) — a straight5 piece cannot fit anywhere.
         val straight5 = ALL_SHAPES.first { it.id == "straight5-h" }
         val tray = listOf(shapeDefToPiece(straight5), shapeDefToPiece(straight5), shapeDefToPiece(straight5))
         assertNull(bestClearFractionForTray(fullBoard, tray))
@@ -56,9 +55,6 @@ class BlockFillGeneratorTest {
 
     @Test
     fun `createBlockFillSession produces the right score target for every difficulty`() {
-        // Guards against a Difficulty#key <-> BLOCKFILL_DIFFICULTY_CONFIG / SHAPE_WEIGHTS_BY_DIFFICULTY
-        // map-key mismatch for hard/medium/expert, which would otherwise pass every other existing
-        // test (they all exercise "easy" only).
         val expectedScoreTargets = mapOf(
             Difficulty.EASY to 300,
             Difficulty.MEDIUM to 600,

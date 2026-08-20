@@ -1,6 +1,5 @@
 package com.quietgrid.engine.takuzu
 
-/** Counts solutions to [puzzle] via backtracking, stopping early once [maxCount] is reached. */
 fun countSolutions(puzzle: TakuzuGrid, maxCount: Int = 2): Int {
     val size = puzzle.size
     val grid: MutableList<MutableList<TakuzuCellValue>> = puzzle.map { it.toMutableList() }.toMutableList()
@@ -34,7 +33,6 @@ fun countSolutions(puzzle: TakuzuGrid, maxCount: Int = 2): Int {
 
 private const val MAX_BACKTRACKS = 10_000
 
-/** Generates a random valid, fully-filled, unique-lines takuzu solution grid via backtracking. */
 fun generateSolvedGrid(size: Int): TakuzuGrid? {
     val grid: MutableList<MutableList<TakuzuCellValue>> = MutableList(size) { MutableList(size) { null } }
     var backtracks = 0

@@ -62,7 +62,6 @@ class WordGuessLogicTest {
 
     @Test
     fun `submitWordGuess is a no-op when called on a finished session, returning unchanged session`() {
-        // Calling on WON: invalid guess that would normally be rejected is silently ignored
         val wonSession = freshSession().copy(status = WordGuessStatus.WON, guesses = listOf(
             WordGuessGuessRow("apple", listOf(LetterState.CORRECT, LetterState.CORRECT, LetterState.CORRECT, LetterState.CORRECT, LetterState.CORRECT))
         ))
@@ -70,7 +69,6 @@ class WordGuessLogicTest {
         assertEquals(wonSession, wonResult.session)
         assertEquals(WordGuessStatus.WON, wonResult.session.status)
 
-        // Calling on LOST: invalid guess is silently ignored
         val lostSession = freshSession().copy(status = WordGuessStatus.LOST, guesses = listOf(
             WordGuessGuessRow("grape", listOf(LetterState.ABSENT, LetterState.ABSENT, LetterState.ABSENT, LetterState.ABSENT, LetterState.ABSENT)),
             WordGuessGuessRow("mango", listOf(LetterState.ABSENT, LetterState.ABSENT, LetterState.ABSENT, LetterState.ABSENT, LetterState.ABSENT)),

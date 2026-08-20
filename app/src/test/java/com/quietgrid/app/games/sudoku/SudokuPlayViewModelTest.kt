@@ -25,7 +25,6 @@ class SudokuPlayViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    /** A famous solved sudoku grid, with a single given left blank at (0,0) = 5. */
     private val solutionGrid = listOf(
         listOf(5, 3, 4, 6, 7, 8, 9, 1, 2),
         listOf(6, 7, 2, 1, 9, 5, 3, 4, 8),

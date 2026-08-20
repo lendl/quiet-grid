@@ -19,7 +19,6 @@ val orderedTechniqueDispatchers: List<SudokuTechniqueDispatcher> = listOf(
     XyWingTechnique, XyzWingTechnique, ColoringTechnique, ChainsTechnique,
 )
 
-// Matches DEFAULT_SUDOKU_DIFFICULTY_WEIGHTS.techniqueWeights in RN's difficulty.ts (Task 23).
 private val TECHNIQUE_BASE_SCORES: Map<SudokuTechnique, Int> = mapOf(
     SudokuTechnique.NAKED_SINGLE to 2, SudokuTechnique.HIDDEN_SINGLE to 3, SudokuTechnique.NAKED_PAIR to 6,
     SudokuTechnique.HIDDEN_PAIR to 9, SudokuTechnique.POINTING_PAIR_TRIPLE to 10, SudokuTechnique.BOX_LINE_REDUCTION to 10,

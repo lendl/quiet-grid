@@ -16,7 +16,7 @@ data class DifficultyAuditEntry(
 
 @Serializable
 private data class GenerationStateFile(
-    val triedKeys: MutableMap<String, String> = mutableMapOf(), // dedupeKey -> status ("valid" | "invalid")
+    val triedKeys: MutableMap<String, String> = mutableMapOf(),
     val difficultyAudit: MutableList<DifficultyAuditEntry> = mutableListOf(),
 )
 

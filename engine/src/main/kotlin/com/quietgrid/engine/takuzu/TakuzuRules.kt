@@ -49,10 +49,6 @@ fun lineWouldDuplicateCompleteLine(
     completeLines: List<List<TakuzuCellValue>>,
 ): Boolean = completeLines.any { otherLine -> otherLine.indices.all { otherLine[it] == line[it] } }
 
-/**
- * Checks whether placing [value] at ([row], [col]) keeps the board legal, without mutating
- * [board] permanently — places, checks, and restores to null.
- */
 fun isCandidateLegal(board: MutableList<MutableList<TakuzuCellValue>>, row: Int, col: Int, value: Int): Boolean {
     val size = board.size
     board[row][col] = value

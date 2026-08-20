@@ -8,9 +8,6 @@ import org.junit.Test
 private fun cell(isMine: Boolean = false, adjacentMines: Int = 0, state: MinesweeperCellState = MinesweeperCellState.HIDDEN) =
     MinesweeperCell(isMine, adjacentMines, state)
 
-/** A 3x3 board with a single mine at (0,0); every other cell has 0 adjacent mines, so revealing
- * any safe cell cascades to reveal the entire non-mine area in one move. Board is pre-generated
- * so reveal/flag tests never touch the randomized generator. */
 private fun threeByThreeSingleMineBoard(): MinesweeperBoard {
     val cells = List(3) { r -> List(3) { c -> if (r == 0 && c == 0) cell(isMine = true) else cell() } }
         .mapIndexed { r, row -> row.mapIndexed { c, cellValue -> cellValue.copy(adjacentMines = if (r <= 1 && c <= 1 && !(r == 0 && c == 0)) 1 else 0) } }

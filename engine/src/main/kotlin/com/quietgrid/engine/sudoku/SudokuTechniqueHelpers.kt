@@ -58,7 +58,7 @@ fun buildPlacementMove(
 
 fun buildCandidateEliminationMove(
     technique: SudokuTechnique,
-    eliminations: List<Pair<Int, Int>>, // index, digit
+    eliminations: List<Pair<Int, Int>>,
     evidenceCells: List<Int>,
     houses: List<SudokuHouseRef>? = null,
     complexity: Int,

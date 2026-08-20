@@ -35,7 +35,6 @@ val WORD_SEARCH_QUALITY_THRESHOLDS: Map<Difficulty, WordSearchQualityThreshold> 
     Difficulty.EXPERT to WordSearchQualityThreshold(0.35, 0.08, 0.35),
 )
 
-/** rows x cols cross-product for [difficulty]'s size range -- ranges intentionally overlap at difficulty boundaries. */
 fun wordSearchAllowedSizes(difficulty: Difficulty): List<Pair<Int, Int>> {
     val range = WORD_SEARCH_DIFFICULTY_CONFIG.getValue(difficulty).sizeRange
     return (range.rowsMin..range.rowsMax).flatMap { rows -> (range.colsMin..range.colsMax).map { cols -> rows to cols } }

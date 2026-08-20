@@ -41,8 +41,6 @@ class SudokuNextMoveTest {
 
     @Test
     fun `findSudokuInvalidState flags a cell with no legal digit left`() {
-        // Row 0 uses digits 1-8 everywhere except (0,0); (1,0) supplies the missing 9, so (0,0)'s
-        // row+column+box union already covers every digit and it can never legally be filled.
         val board = blankBoard.mapIndexed { r, row ->
             when (r) {
                 0 -> listOf(null, 1, 2, 3, 4, 5, 6, 7, 8)

@@ -24,18 +24,14 @@ class SudokuTechniqueHelpersTest {
         assertTrue(arePeerIndexes(getCellIndex(0, 0), getCellIndex(0, 8)))
     }
 
-    // --- buildCandidateEliminationMove: dedup + sort ---------------------------------------
-
     @Test
     fun `buildCandidateEliminationMove dedups identical eliminations and sorts by row then col then digit`() {
-        // Deliberately scrambled input order, plus a literal duplicate of the (5,2,7) triple,
-        // so a broken sort or broken dedup would each independently fail this test.
         val eliminations = listOf(
             getCellIndex(5, 2) to 7,
             getCellIndex(1, 8) to 2,
             getCellIndex(0, 3) to 9,
             getCellIndex(1, 8) to 1,
-            getCellIndex(5, 2) to 7, // duplicate of the first entry
+            getCellIndex(5, 2) to 7,
         )
 
         val move = buildCandidateEliminationMove(
@@ -47,7 +43,6 @@ class SudokuTechniqueHelpersTest {
         )
 
         checkNotNull(move)
-        // 5 inputs, 1 exact duplicate -> 4 unique eliminations.
         assertEquals(4, move.eliminations.size)
         assertEquals(
             listOf(
@@ -59,8 +54,6 @@ class SudokuTechniqueHelpersTest {
             move.eliminations,
         )
     }
-
-    // --- buildPlacementMove: evidence-cell sort ---------------------------------------------
 
     @Test
     fun `buildPlacementMove sorts evidenceCells by row then col`() {
@@ -82,19 +75,13 @@ class SudokuTechniqueHelpersTest {
         )
     }
 
-    // --- collectHousesFromIndexes: house dedup + kind/index sort ---------------------------
-
     @Test
     fun `collectHousesFromIndexes dedups shared houses and sorts by kind then index`() {
-        // (0,0) and (0,3) share row 0; (0,0) and (3,0) share column 0 -> both are duplicate
-        // houses that must collapse to a single entry each.
         val indexes = listOf(getCellIndex(0, 0), getCellIndex(0, 3), getCellIndex(3, 0))
 
         val houses = collectHousesFromIndexes(indexes)
 
-        // 3 indexes x 3 house kinds = 9 raw contributions, minus 2 duplicates (row 0, column 0) = 7 unique houses.
         assertEquals(7, houses.size)
-        // "box" < "column" < "row" alphabetically -- verify that's the actual sort order produced.
         assertEquals(
             listOf(
                 SudokuHouseRef("box", 0),
@@ -109,13 +96,8 @@ class SudokuTechniqueHelpersTest {
         )
     }
 
-    // --- peerIntersectionIndexes: real intersection -----------------------------------------
-
     @Test
     fun `peerIntersectionIndexes returns exactly the shared peers of both cells`() {
-        // (4,4) and (4,0) share row 4. Their peer-set intersection is exactly the other row-4
-        // cells: col/box-only peers of one are not peers of the other, and the two input cells
-        // themselves are excluded (a cell is never its own peer).
         val result = peerIntersectionIndexes(listOf(getCellIndex(4, 4), getCellIndex(4, 0)))
 
         val expected = setOf(
@@ -124,20 +106,14 @@ class SudokuTechniqueHelpersTest {
         )
         assertEquals(expected, result.toSet())
 
-        // Spot-check cells that are peers of only one of the two inputs -- must NOT appear.
-        assertFalse(result.contains(getCellIndex(0, 4))) // column-4 peer of (4,4) only
-        assertFalse(result.contains(getCellIndex(3, 1))) // box-3 peer of (4,0) only
-        // The input cells themselves must never appear in their own intersection.
+        assertFalse(result.contains(getCellIndex(0, 4)))
+        assertFalse(result.contains(getCellIndex(3, 1)))
         assertFalse(result.contains(getCellIndex(4, 4)))
         assertFalse(result.contains(getCellIndex(4, 0)))
     }
 
-    // --- getHouseDigitMatches ----------------------------------------------------------------
-
     @Test
     fun `getHouseDigitMatches returns exactly the house cells that still carry the digit as a candidate`() {
-        // Placing 4 at (2,2) removes digit 4 from column 2, which knocks it out of the 3 box-3
-        // cells that sit in column 2, leaving exactly the other 6 box-3 cells as candidates.
         val board: SudokuGrid = List(9) { r -> List(9) { c -> if (r == 2 && c == 2) 4 else null } }
         val state = createBitmaskStateFromBoard(board)
 
@@ -153,8 +129,6 @@ class SudokuTechniqueHelpersTest {
         )
     }
 
-    // --- isSameCell / arePeerCells -----------------------------------------------------------
-
     @Test
     fun `isSameCell is true only for matching row and col`() {
         assertTrue(isSameCell(SudokuCellRef(2, 3), SudokuCellRef(2, 3)))
@@ -163,7 +137,7 @@ class SudokuTechniqueHelpersTest {
 
     @Test
     fun `arePeerCells is true for cells sharing a house and false otherwise`() {
-        assertTrue(arePeerCells(SudokuCellRef(0, 0), SudokuCellRef(0, 5))) // same row
-        assertFalse(arePeerCells(SudokuCellRef(0, 0), SudokuCellRef(5, 5))) // different row/col/box
+        assertTrue(arePeerCells(SudokuCellRef(0, 0), SudokuCellRef(0, 5)))
+        assertFalse(arePeerCells(SudokuCellRef(0, 0), SudokuCellRef(5, 5)))
     }
 }

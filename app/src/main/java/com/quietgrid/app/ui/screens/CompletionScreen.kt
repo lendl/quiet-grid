@@ -308,7 +308,6 @@ private fun BadgePill(emoji: String, text: String, borderColor: Color, textColor
     }
 }
 
-/** Static (non-interactive) render of a solved nonogram's picture, no clue rails. */
 @Composable
 private fun NonogramMiniPicture(solution: List<List<Boolean>>, fillColor: Color, modifier: Modifier = Modifier) {
     val rows = solution.size

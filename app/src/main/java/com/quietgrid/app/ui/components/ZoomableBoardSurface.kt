@@ -27,20 +27,8 @@ import kotlin.math.max
 private const val MIN_SCALE = 1f
 private const val MAX_SCALE = 3f
 
-// Extra pan range allowed beyond the board's own edge once zoomed in, so panning to an edge
-// still leaves room to navigate up to it instead of stopping flush against the board. This is
-// added purely to the pan clamp — it does NOT take layout space away from the board itself, so
-// the board renders at the same size as before; it only affects how far you can pan once zoomed.
 private val PAN_MARGIN = 96.dp
 
-/**
- * Wraps board content with two-finger pinch-to-zoom, always, plus single-finger pan once zoomed
- * in — matching the RN app's behavior. Single-finger touches are only claimed for panning once
- * the content is actually zoomed in (and only once the drag has moved past touch-slop, so a tap
- * still reaches the board's own tap handling underneath); at rest they pass through untouched.
- * Content is clipped to the viewport so zoomed-in content never draws outside its own bounds, and
- * [resetTrigger] can be bumped (e.g. from a "reset zoom" button) to snap back to the un-zoomed view.
- */
 @Composable
 fun ZoomableBoardSurface(
     modifier: Modifier = Modifier,

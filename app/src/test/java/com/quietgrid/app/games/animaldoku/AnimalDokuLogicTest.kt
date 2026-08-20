@@ -77,13 +77,6 @@ class AnimalDokuLogicTest {
 
     @Test
     fun `applyAnimalDokuDrag direction stays fixed across repeated calls within the same gesture`() {
-        // Regression test: onCellDrag fires once per newly-entered cell during a single continuous
-        // swipe, each firing mutating the session. markAll must stay whatever the gesture started
-        // with -- if it were re-derived from the (by-then-already-mutated) start cell's live state
-        // on a later firing, the direction would flip mid-swipe. Simulates two firings of the same
-        // gesture (markAll captured once, reused for both) and confirms the second firing keeps
-        // marking rather than flipping to unmark just because the start cell became MARKED after
-        // the first firing.
         val session = createAnimalDokuSession(TEST_PUZZLE)
         val afterFirstFiring = applyAnimalDokuDrag(session, markAll = true, visited = listOf(0 to 0, 0 to 1))
         checkNotNull(afterFirstFiring)
@@ -110,7 +103,6 @@ class AnimalDokuLogicTest {
     @Test
     fun `applyAnimalDokuOpen locks an incorrect cell as wrong and decrements lives`() {
         val session = createAnimalDokuSession(TEST_PUZZLE)
-        // Solution row 0's animal is at column 0; opening column 1 is wrong.
         val result = applyAnimalDokuOpen(session, 0, 1)
         checkNotNull(result)
         assertFalse(result.wasCorrect)

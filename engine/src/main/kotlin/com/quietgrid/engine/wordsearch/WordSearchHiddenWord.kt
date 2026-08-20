@@ -21,7 +21,6 @@ fun pickHiddenWord(pool: List<String>, rows: Int, cols: Int): String? {
 
 data class ReservedHiddenWord(val word: String, val positions: List<WSCellRef>)
 
-/** Reserves [word]'s length in random grid cells, sorted into reading order so the letters spell the word top-to-bottom, left-to-right. */
 fun reserveHiddenWordCells(word: String, rows: Int, cols: Int): ReservedHiddenWord {
     val allCells = mutableListOf<WSCellRef>()
     for (row in 0 until rows) for (col in 0 until cols) allCells.add(WSCellRef(row, col))

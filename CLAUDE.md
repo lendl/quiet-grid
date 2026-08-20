@@ -33,6 +33,7 @@ The user tests builds on their own device — don't run `adb install`/screenshot
 ## Kotlin file conventions
 
 - Use straight ASCII quotes (`'` and `"`) — never curly/smart quotes. This applies especially to locale string resources containing non-English text.
+- **No code documentation.** Don't write KDoc or explanatory comments in Kotlin source — not even for non-obvious WHY-level rationale. A durable finding worth keeping (e.g. a diagnostic result, a design tradeoff, a root-cause) belongs in project memory instead, not inline in code. Code should read as plain, self-explanatory logic with well-named identifiers carrying the intent.
 
 ## Terminology
 

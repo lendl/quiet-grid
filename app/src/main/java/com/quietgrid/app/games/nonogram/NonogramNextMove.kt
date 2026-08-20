@@ -6,19 +6,8 @@ import com.quietgrid.engine.nonogram.NonogramLineAnalysis
 import com.quietgrid.engine.nonogram.analyzeLine
 import com.quietgrid.engine.nonogram.isNonogramLineComplete
 
-/**
- * Ports the RN app's Nonogram next-move hint (src/games/nonogram/gameplay/analysis/nextMove.ts,
- * built on gameplay/rules/solver.ts). Unlike Sudoku/Takuzu, Nonogram has one technique, applied
- * uniformly per line: enumerate every valid placement of a line's clue-blocks consistent with
- * its current filled/empty cells; a blank cell covered by every placement must be filled
- * (overlap-fill), one covered by no placement must be empty (forced-empty), and a line whose
- * filled runs already match its clues has its remaining blanks forced empty too (complete-line).
- * A line with zero valid placements means a mistake was made (invalid-board). This is a full,
- * unreduced port — no techniques were skipped.
- */
-
 private data class LineCheck(
-    val orientation: String, // "row" | "col"
+    val orientation: String,
     val index: Int,
     val clues: List<Int>,
     val cells: List<NonogramCellValue>,

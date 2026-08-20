@@ -19,7 +19,6 @@ private const val GENERATION_ATTEMPTS = 160
 
 private fun shuffledDigits(): List<Int> = (1..9).shuffled()
 
-/** Builds a random valid, fully-solved 9x9 grid via the classic band/stack shuffle of a base pattern. */
 private fun createSolvedBoard(): List<List<Int>> {
     val digits = shuffledDigits()
     val rowBands = listOf(0, 1, 2).shuffled()
@@ -74,17 +73,11 @@ private fun classifyProgress(givens: List<List<Int?>>, targetDifficulty: Difficu
 
 private data class SudokuGenerationCandidate(val givens: List<List<Int?>>, val score: Int, val filledCells: Int)
 
-/** Matches RN's getTargetScoreCenter: midpoint of the target band, or min+160 for an open-ended (EXPERT) band. */
 private fun getTargetScoreCenter(targetDifficulty: Difficulty): Int {
     val profile = SUDOKU_DIFFICULTY_PROFILES.getValue(targetDifficulty)
     return if (profile.scoreMax != Int.MAX_VALUE) (profile.scoreMin + profile.scoreMax) / 2 else profile.scoreMin + 160
 }
 
-/**
- * Matches RN's isBetterSudokuGenerationCandidate: prefers the candidate closest to the target
- * difficulty's score-band center, then fewest givens, then (on a full tie) the higher score --
- * NOT simply "highest score wins" or "last candidate wins".
- */
 private fun isBetterCandidate(
     candidate: SudokuGenerationCandidate,
     candidateScoreDistance: Int,

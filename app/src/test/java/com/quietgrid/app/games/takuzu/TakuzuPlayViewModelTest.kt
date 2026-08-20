@@ -27,7 +27,6 @@ class TakuzuPlayViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    /** One ungiven cell at (0,0), solution value 0; every other cell is a given matching the solution. */
     private val solutionGrid = listOf(
         listOf(0, 1, 0, 1),
         listOf(1, 0, 1, 0),

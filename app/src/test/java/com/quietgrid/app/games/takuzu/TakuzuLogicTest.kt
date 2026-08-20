@@ -10,7 +10,6 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** 4x4 solution, with (0,0) and (0,1) left ungiven; every other cell is a given. */
 private val solutionGrid = listOf(
     listOf(0, 1, 0, 1),
     listOf(1, 0, 1, 0),
@@ -82,8 +81,6 @@ class TakuzuLogicTest {
     @Test
     fun `finalizing an incorrect row penalizes every line the wrong digits broke, once each`() {
         val session = createTakuzuSession(puzzleEntry)
-        // Swapping row 0's first two digits also breaks columns 0 and 1, since every other row is a given
-        // matching the solution -- accuracyDrops counts all three newly-mismatched lines (r0, c0, c1).
         val wrongBoard = session.board.mapIndexed { r, row -> row.mapIndexed { c, v -> if (r == 0) listOf(1, 0, 0, 1)[c] else v } }
 
         val result = applyTakuzuFinalizeValidation(session, wrongBoard, listOf("r0"))

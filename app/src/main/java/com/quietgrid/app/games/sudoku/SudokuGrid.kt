@@ -25,11 +25,6 @@ import androidx.compose.ui.unit.sp
 import com.quietgrid.app.ui.components.FeedbackText
 import com.quietgrid.engine.sudoku.SudokuGrid
 
-/**
- * Draws the classic thick 3x3 box-separator lines and outer frame as a single overlay spanning
- * the whole board, instead of per-cell borders (which can only draw a uniform border around one
- * cell at a time and can't produce a line shared cleanly between two neighboring cells).
- */
 private fun Modifier.sudokuBoxLines(cellSizePx: Float, color: androidx.compose.ui.graphics.Color): Modifier = drawWithContent {
     drawContent()
     val thin = 1.dp.toPx()

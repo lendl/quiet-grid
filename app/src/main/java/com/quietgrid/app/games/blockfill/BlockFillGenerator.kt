@@ -28,10 +28,6 @@ private fun shuffledPositions(random: Random): List<Pair<Int, Int>> {
     return positions
 }
 
-/**
- * Fills random individual cells up to preFillDensity, never allowing a fully-filled row or column
- * to result (a puzzle must never start with an already-clearable line).
- */
 private fun generatePreFilledBoard(preFillDensity: Double, random: Random): BlockFillBoard {
     val targetCount = Math.round(TOTAL_CELLS * preFillDensity).toInt()
     var board = createEmptyBoard()
@@ -56,14 +52,6 @@ private val PERMUTATIONS_OF_3: List<List<Int>> = listOf(
     listOf(0, 1, 2), listOf(0, 2, 1), listOf(1, 0, 2), listOf(1, 2, 0), listOf(2, 0, 1), listOf(2, 1, 0),
 )
 
-/**
- * Checks the start-fit guarantee and computes the feasibility-floor clear fraction in one pass:
- * tries every ordering of the 3 pieces, and within each ordering greedily places each piece at the
- * position that clears the most lines. Best-effort "optimal" placement, not an exhaustive search
- * over all placement combinations — with only 3 pieces and an 8x8 board this is cheap and good
- * enough to prove the puzzle is progressable. Returns null if no ordering can place all 3 pieces
- * at all (start-fit guarantee fails).
- */
 fun bestClearFractionForTray(board: BlockFillBoard, tray: List<BlockFillPiece>): Double? {
     var bestClearFraction: Double? = null
 
@@ -101,11 +89,6 @@ fun bestClearFractionForTray(board: BlockFillBoard, tray: List<BlockFillPiece>):
     return bestClearFraction
 }
 
-/**
- * Draws 3 pieces such that at least one is placeable against the given board, retrying the whole
- * draw up to retryCap times. A higher retryCap yields a more consistently "comfortable" batch
- * (Easy/Medium); a low retryCap barely enforces the guarantee, preserving real risk on Hard/Expert.
- */
 fun drawTray(difficulty: String, board: BlockFillBoard, refillRetryCap: Int, random: Random = Random.Default): List<BlockFillPiece?> {
     repeat(refillRetryCap) {
         val tray = listOf(drawWeightedPiece(difficulty, random), drawWeightedPiece(difficulty, random), drawWeightedPiece(difficulty, random))
@@ -113,8 +96,6 @@ fun drawTray(difficulty: String, board: BlockFillBoard, refillRetryCap: Int, ran
         if (anyFits) return tray
     }
 
-    // Retry budget exhausted (rare): force a guaranteed fit by replacing slot 0 with a single-cell
-    // piece, which fits anywhere the board isn't completely full.
     return listOf(
         BlockFillPiece(shapeId = "single", family = BlockFillShapeFamily.SINGLE, cells = listOf(0 to 0)),
         drawWeightedPiece(difficulty, random),

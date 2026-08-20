@@ -15,7 +15,6 @@ data class TakuzuSession(
     val penalizedLineKeys: List<String>,
 )
 
-/** Persisted shape: board/finishedCells as flattened lists, solution/isGiven re-derived from puzzle on restore. */
 @Serializable
 data class TakuzuPersistedSession(
     val puzzle: TakuzuPuzzleEntry,

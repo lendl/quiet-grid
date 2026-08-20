@@ -4,13 +4,6 @@ import kotlin.math.floor
 
 data class BlockFillDragAnchor(val row: Int, val col: Int)
 
-/**
- * Resolves a raw pointer position (in the board's own pixel space) to the board cell that would
- * become the dragged piece's anchor (its cells[0] origin), or null if the piece wouldn't fully fit
- * there. Computed fresh from raw pixel inputs every call — never re-derived from an already-snapped
- * value — to avoid the compounding-quantization bug class that broke the old React Native version's
- * drag-and-drop (anchor math applied more than once across separate layers).
- */
 fun resolveAnchorCell(
     pointerX: Float,
     pointerY: Float,

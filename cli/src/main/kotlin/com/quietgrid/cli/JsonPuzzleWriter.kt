@@ -10,10 +10,6 @@ import java.io.File
 
 private val json = Json { ignoreUnknownKeys = true }
 
-/**
- * Appends [newEntries] to the JSON array at [path], creating it if absent. Entries whose
- * [dedupeKey] already exists in the file are skipped (never duplicated, never overwritten).
- */
 fun <T> appendPuzzleEntries(path: String, newEntries: List<T>, serializer: KSerializer<T>, dedupeKey: (T) -> String) {
     val listSerializer = ListSerializer(serializer)
     val file = File(path)

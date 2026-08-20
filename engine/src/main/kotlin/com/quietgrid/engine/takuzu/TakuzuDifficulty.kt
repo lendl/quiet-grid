@@ -215,11 +215,6 @@ private fun passesSafetyRails(metrics: TakuzuDifficultyMetrics, bucket: TakuzuDi
     return true
 }
 
-/**
- * Checks whether [metrics] passes the safety rails for [difficulty]'s bucket at [size],
- * independent of whichever bucket the metrics would otherwise be classified into.
- * Mirrors the RN reference's standalone `passesDifficultyRails`.
- */
 fun passesTakuzuDifficultyRails(size: Int, difficulty: Difficulty, metrics: TakuzuDifficultyMetrics): Boolean {
     val bucket = TAKUZU_SUPPORTED_BUCKETS.find { it.size == size && it.difficulty == difficulty } ?: return false
     return passesSafetyRails(metrics, bucket)

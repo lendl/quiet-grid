@@ -56,8 +56,6 @@ fun runChimpTestAction(session: ChimpTestSession, row: Int, col: Int, elapsedSec
         return ChimpTestActionResult(changed = false, session = session, effects = emptyList())
     }
 
-    // Allow tapping hidden cells -- after the first tap all remaining cells lose their numbers
-    // but must still be tappable. Cells with number < nextExpected are already correctly tapped.
     val tappedCell = session.cells.firstOrNull {
         it.number >= session.nextExpected && it.row == row && it.col == col
     }
@@ -70,7 +68,6 @@ fun runChimpTestAction(session: ChimpTestSession, row: Int, col: Int, elapsedSec
         )
     }
 
-    // On the first tap, hide ALL remaining numbers (classic Chimp Test: memorise the rest).
     val isFirstTap = session.nextExpected == 1
     val newCells = session.cells.map { cell ->
         if (isFirstTap || cell.number == session.nextExpected) cell.copy(hidden = true) else cell

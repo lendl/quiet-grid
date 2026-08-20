@@ -4,13 +4,6 @@ data class AnimalDokuSolveStep(val technique: AnimalDokuTechnique, val chainDept
 
 data class AnimalDokuSolveResult(val solved: Boolean, val steps: List<AnimalDokuSolveStep>)
 
-/**
- * Repeatedly applies the easiest technique that currently produces a move (singleton, then
- * confinement, then pairing K=2..[maxPairingK], then chain/contradiction) until the puzzle is
- * fully solved or nothing applies. `solved = false` means either the layout isn't fully
- * human-solvable by these techniques, or it has more than one valid solution (see
- * [AnimalDokuSolveResult] doc on the public function this backs).
- */
 fun solveAnimalDoku(size: Int, regionOf: List<List<Int>>, maxPairingK: Int = 4): AnimalDokuSolveResult {
     val state = AnimalDokuSolverState(size, regionOf)
     val steps = mutableListOf<AnimalDokuSolveStep>()

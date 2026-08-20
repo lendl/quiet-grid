@@ -13,7 +13,6 @@ private fun positionsMatch(a: List<WSCellRef>, b: List<WSCellRef>): Boolean {
     return a.indices.all { a[it] == b[n - 1 - it] }
 }
 
-/** Scans the finished [grid] in all 8 directions and confirms every entry in [words] appears ONLY at its intended position -- forward or reversed, nowhere else. */
 fun hasDuplicateOccurrence(grid: List<List<String>>, words: List<Pair<String, List<WSCellRef>>>): Boolean {
     val rows = grid.size
     val cols = grid.firstOrNull()?.size ?: 0

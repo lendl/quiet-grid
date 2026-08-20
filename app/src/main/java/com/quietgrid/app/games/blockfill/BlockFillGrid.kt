@@ -57,8 +57,6 @@ private val FAMILY_COLORS = mapOf(
 
 private val PENCIL_FAMILY_COLOR = Color(0xFF808080)
 
-// Not private: BlockFillTray.kt (same package) reuses this for tray-piece and ghost-preview color
-// so the two don't drift into separate color tables for what's visually the same piece.
 @Composable
 fun blockFillFamilyColor(family: BlockFillShapeFamily): Color =
     if (LocalIsPencilTheme.current) PENCIL_FAMILY_COLOR else FAMILY_COLORS.getValue(family)
@@ -68,20 +66,6 @@ private const val BLOCK_BEVEL_FRACTION = 0.14f
 private val BLOCK_BORDER_WIDTH = 1.5.dp
 private val BLOCK_ELEVATION = 4.dp
 
-/**
- * A single carved/embossed block: three nested rounded-rect layers (full-size shadow base,
- * inset highlight, further-inset flat face) instead of flat rectangular strips. Because every
- * layer is clipped by the SAME outer rounded shape, the bevel ring tapers smoothly around the
- * corner instead of getting cut into jagged bands -- that mismatch (straight strips vs. a rounded
- * clip) is what made the earlier flat-strip bevel attempt look bad.
- *
- * [elevated] adds a real drop shadow for pieces that visually float above the background (tray
- * icons, the floating drag piece) -- flush board/ghost/clear-effect cells stay unelevated since
- * they sit directly on the grid and shouldn't cast a shadow onto their neighbors.
- *
- * Not private: BlockFillTray.kt reuses this for tray pieces so placed, ghost, tray, and
- * clear-effect blocks all render identically.
- */
 @Composable
 fun BlockFillCell(color: Color, size: Dp, modifier: Modifier = Modifier, borderColor: Color? = null, elevated: Boolean = false) {
     val shape = RoundedCornerShape(size * BLOCK_CORNER_FRACTION)
@@ -97,20 +81,12 @@ fun BlockFillCell(color: Color, size: Dp, modifier: Modifier = Modifier, borderC
             .clip(shape)
             .border(BLOCK_BORDER_WIDTH, outline, shape),
     ) {
-        // Shadow base: fills the whole cell, only its bottom/right margin ends up visible.
         Box(Modifier.size(size).background(shadowTone))
-        // Highlight ring: inset from the bottom/right by `bevel`, so only its top/left margin
-        // (over the shadow base) ends up visible once the face layer covers its center.
         Box(Modifier.size(size - bevel).background(highlightTone))
-        // Face: the flat base color, inset from the top/left by `bevel` so the highlight ring
-        // shows through evenly on the remaining top/left edge.
         Box(Modifier.offset(x = bevel, y = bevel).size(size - bevel * 2).background(color))
     }
 }
 
-/** What the board should overlay while a piece is being dragged: the piece's own cells (for the
- * ghost), the resolved anchor (null if the current pointer position isn't a legal drop), and which
- * pre-existing + ghost cells together would be cleared if dropped there right now. */
 data class BlockFillDragPreview(
     val pieceCells: List<Pair<Int, Int>>,
     val family: BlockFillShapeFamily,
@@ -123,9 +99,6 @@ private val BOARD_FRAME_CORNER_RADIUS = 6.dp
 private val BOARD_FRAME_BORDER_WIDTH = 1.dp
 private val GRID_LINE_WIDTH = 1.dp
 
-/** Thin grid lines between every cell, drawn on top of cell content -- same technique as the other
- * games' boards (see SudokuGrid's sudokuBoxLines) -- so the 8x8 subdivision reads clearly instead of
- * relying on a background-color gap between cells. */
 private fun Modifier.blockFillGridLines(cellSizePx: Float, color: Color): Modifier = drawWithContent {
     drawContent()
     val strokeWidth = GRID_LINE_WIDTH.toPx()
@@ -149,10 +122,6 @@ fun BlockFillGrid(
     val frameColor = MaterialTheme.colorScheme.surfaceVariant
     val frameBorderColor = MaterialTheme.colorScheme.outline
 
-    // Cells that just went from filled to empty (a line clear) get a brief fade+shrink overlay in
-    // their prior piece color before vanishing, instead of popping straight to empty. This lives
-    // entirely in the UI layer -- the board itself already transitions instantly/atomically -- so
-    // clearFullLines and session state stay untouched; the overlay is purely decorative.
     var previousBoard by remember { mutableStateOf(board) }
     var nextBatchId by remember { mutableStateOf(0L) }
     var clearingBatches by remember { mutableStateOf(listOf<BlockFillClearingBatch>()) }
@@ -185,8 +154,6 @@ fun BlockFillGrid(
                 emptySet()
             }
 
-            // Board frame: a bordered panel around the grid so it reads as a distinct object
-            // against the screen background, instead of the cells floating with no boundary.
             Box(
                 Modifier
                     .size(cellSize * BLOCKFILL_BOARD_SIZE + BOARD_FRAME_PADDING * 2)

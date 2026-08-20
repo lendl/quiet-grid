@@ -10,11 +10,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 
-/**
- * Wraps a freshly-started puzzle board with a one-shot fade+scale entrance.
- * When [playFresh] is false (resuming an in-progress puzzle), the content
- * appears immediately with no animation so resuming feels instant.
- */
 @Composable
 fun BoardEntrance(playFresh: Boolean, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     val visibleState = remember { MutableTransitionState(!playFresh) }

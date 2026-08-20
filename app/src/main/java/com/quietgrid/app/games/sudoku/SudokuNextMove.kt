@@ -7,25 +7,6 @@ import com.quietgrid.engine.sudoku.SudokuPlacementMove
 import com.quietgrid.engine.sudoku.SudokuTechnique
 import com.quietgrid.engine.sudoku.findNextMove
 
-/**
- * Live in-app hint, backed by :engine's full 12-technique score-ranked dispatcher (previously
- * this file hand-rolled 6 of the 12 techniques with "first match wins" selection instead of the
- * proper ranked dispatcher -- see the shared-puzzle-engine design doc for why that mattered for
- * difficulty scoring). All 12 techniques are now available for live hints too.
- *
- * [SudokuHouseRefUi] duplicates :engine's SudokuHouseRef shape under an app-local name so this
- * file's own types don't collide with the imported engine type of the same name.
- *
- * [SudokuPlacementHint.house] and [SudokuEliminationHint.sourceHouse]/[targetHouse] are populated
- * from the engine move's `houses` list (first two entries) rather than dropped: SudokuPlayScreen's
- * `houseLabel(...)` calls render them (hidden-single body text, and the locked-candidates body
- * text for pointing-pair/triple and box-line-reduction). Unlike the old hand-rolled file, not
- * every technique yields a clean single source/target house pair (e.g. x-wing spans 4 houses,
- * xyz-wing/chains carry none) -- both fields are nullable here so techniques whose evidence isn't
- * house-shaped just leave them null; the UI already falls back to the generic evidence/target-cell
- * phrasing for every technique other than the two locked-candidates ones.
- */
-
 data class SudokuHouseRefUi(val kind: String, val index: Int)
 
 sealed interface SudokuNextMoveHint {

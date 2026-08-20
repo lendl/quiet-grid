@@ -27,12 +27,6 @@ fun countValidLineCompletions(line: List<TakuzuCellValue>): Int =
         line.indices.all { line[it] == null || candidate[it] == line[it] }
     }
 
-/**
- * For each empty cell, tries both candidate values and runs the human-branch-proof on each. If
- * exactly one of the two branches contradicts, the other value is forced -- this is takuzu's
- * hardest/expert-tier canonical move, since it requires a hypothetical branch-and-prove step
- * rather than a direct pattern match.
- */
 fun findImpossibleCombinationMove(board: TakuzuGrid): TakuzuMove? {
     val size = board.size
     for (row in 0 until size) {

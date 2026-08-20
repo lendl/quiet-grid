@@ -1,18 +1,5 @@
 package com.quietgrid.app.games.minesweeper
 
-/**
- * Ports the player-facing half of the RN app's Minesweeper next-move hint
- * (src/games/minesweeper/gameplay/analysis/nextMove.ts). That 997-line file also builds a
- * multi-step "logical move" trace and mine-flagging hints for the deferred full Puzzle
- * Analysis screen; this port only covers what getMinesweeperNextMoveHint() actually calls: a
- * fixed-point forced-mine propagation (direct local + subset-difference deduction, used only to
- * seed reasoning — never surfaced as a flag suggestion itself) feeding five safe-reveal
- * techniques in RN's exact priority order (only-one-possible-mine, guaranteed-safe-tile,
- * single-mine-logic, full-clue-resolution, all-mines-accounted-for), falling back to a generic
- * "guess" hint. This is the complete logic behind the single-hint feature — nothing skipped
- * within that scope.
- */
-
 enum class MinesweeperHintPattern { ONLY_ONE_POSSIBLE_MINE, GUARANTEED_SAFE_TILE, SINGLE_MINE_LOGIC, FULL_CLUE_RESOLUTION, ALL_MINES_ACCOUNTED_FOR }
 
 sealed interface MinesweeperNextMoveHint {
@@ -92,10 +79,6 @@ private fun isSubset(subset: List<Pair<Int, Int>>, superset: List<Pair<Int, Int>
     return subset.all { it in supersetSet }
 }
 
-/** Fixed-point propagation: direct-local ("all remaining neighbors of a clue must be mines") and
- * subset-difference ("a bigger clue's extra neighbors over a smaller clue's must be mines") deduction.
- * Value is true when a cell was forced via subset-difference (used to label full-clue-resolution
- * vs all-mines-accounted-for hints later, matching RN's forcedMineReasons distinction). */
 private fun findForcedMineReasons(board: MinesweeperBoard, clues: List<MSClue>): Map<Pair<Int, Int>, Boolean> {
     val forced = mutableMapOf<Pair<Int, Int>, Boolean>()
     var changed = true

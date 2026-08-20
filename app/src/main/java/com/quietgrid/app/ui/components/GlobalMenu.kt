@@ -46,12 +46,6 @@ enum class AppTab { GAMES, STATS, SETTINGS, SUPPORT }
 
 private val THEME_CYCLE = listOf(ThemeMode.DARK, ThemeMode.LIGHT, ThemeMode.PENCIL)
 
-// SYSTEM is deliberately never a distinct step here: it's folded into whichever of DARK/LIGHT it
-// currently resolves to, both for the icon shown and for where the cycle advances from. Showing a
-// separate "system" icon (e.g. a settings-gear glyph) reads as a config icon, not a theme toggle,
-// and advancing from a fixed starting point regardless of what SYSTEM actually resolved to made
-// the first tap after a fresh install a no-op look (system already dark -> tapping "switches" to
-// an explicit Dark that looks identical). Resolving SYSTEM to its effective mode first fixes both.
 private fun nextThemeMode(current: ThemeMode, systemIsDark: Boolean): ThemeMode {
     val effective = if (current == ThemeMode.SYSTEM) {
         if (systemIsDark) ThemeMode.DARK else ThemeMode.LIGHT
@@ -69,16 +63,6 @@ private fun themeCycleIcon(mode: ThemeMode, systemIsDark: Boolean): ImageVector 
     ThemeMode.SYSTEM -> if (systemIsDark) Icons.Outlined.DarkMode else Icons.Outlined.LightMode
 }
 
-/**
- * Top-of-screen brand bar: app icon/name plus continue-session, GitHub, and theme actions.
- * Sits above the status bar inset (clock/battery/notification icons) and leaves tab switching
- * to the bottom [BottomNavBar], matching the Play Store's top-brand / bottom-icon-nav split.
- * Draws a thin bottom border so its extent reads clearly on pages with no tab row directly
- * underneath it (e.g. Settings), matching the Play Store's own top bar treatment. Pass
- * [showBottomDivider] = false when a page tab row (e.g. Play/Rules/Stats) follows immediately
- * below — that row should own the border underneath itself instead, not have one sandwiched
- * between it and the brand row above.
- */
 @Composable
 fun GlobalMenu(
     themeMode: ThemeMode,

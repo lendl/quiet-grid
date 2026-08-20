@@ -14,7 +14,6 @@ data class WordGuessTieredWords(
 private val combiningMarks = Regex("\\p{Mn}+")
 private val asciiLettersOnly = Regex("[a-z]+")
 
-/** Folds a word down to plain a-z: ß -> ss, then strips accents via NFD decomposition. */
 fun asciiFoldWord(word: String): String {
     val deSharpened = word.replace("ß", "ss")
     val decomposed = Normalizer.normalize(deSharpened, Normalizer.Form.NFD)

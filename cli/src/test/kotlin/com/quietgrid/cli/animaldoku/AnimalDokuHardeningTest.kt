@@ -11,13 +11,6 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/**
- * A single solution+region+repair attempt has a real, non-trivial chance of failing to reach
- * uniqueness (especially at size 7+) -- confirmed empirically earlier in this same effort. Retries
- * with fresh random seeds until one succeeds, so hardening tests aren't flaky against that baseline
- * probability. Returns the solution alongside the repaired puzzle since [hardenTowardDifficulty]
- * needs both.
- */
 private fun repairedPuzzleForTest(size: Int, maxSeedAttempts: Int = 20): Pair<IntArray, AnimalDokuRepairedPuzzle> {
     repeat(maxSeedAttempts) {
         val solution = generateSolutionPermutation(size) ?: return@repeat
@@ -28,16 +21,6 @@ private fun repairedPuzzleForTest(size: Int, maxSeedAttempts: Int = 20): Pair<In
     throw AssertionError("Could not repair a size-$size layout to uniqueness in $maxSeedAttempts seed attempts")
 }
 
-/**
- * Same as [repairedPuzzleForTest], but keeps trying fresh seeds until the baseline itself doesn't
- * already exceed [maxHardestTechniqueOrdinal] -- plain repair has no difficulty awareness at all,
- * so it can (rarely) hand back a layout that already needs harder reasoning than a ceiling-bounded
- * target allows, purely by chance, before hardening even starts. That's a real, expected, and
- * self-correcting outcome in production (the caller's classify-then-compare gate discards it and
- * retries a fresh seed), but it's not something [hardenTowardDifficulty] itself promises to fix, so
- * tests that specifically want to exercise the ceiling-respecting mutation logic need a compliant
- * starting point first.
- */
 private fun repairedPuzzleWithinCeilingForTest(
     size: Int,
     maxHardestTechniqueOrdinal: Int,
@@ -100,10 +83,6 @@ class AnimalDokuHardeningTest {
 
     @Test
     fun `hard rejects a mutation that would cross into chain territory even though it scores higher`() {
-        // This is the core safeguard the design calls for: Hard must never accept a mutation that
-        // pushes the hardest technique past PAIRING_3, even though CHAIN's ordinal is strictly
-        // higher and would otherwise win the lexicographic comparison. Hard's ceiling check runs
-        // before the comparison and rejects it outright.
         val maxOrdinal = maxHardestTechniqueOrdinalFor(Difficulty.HARD)
         assertEquals(AnimalDokuTechnique.PAIRING_3.ordinal, maxOrdinal)
         val best = HardnessKey(hardestTechniqueOrdinal = AnimalDokuTechnique.PAIRING_3.ordinal, hardestTechniqueRepeatCount = 1, maxChainDepth = 0)
@@ -161,9 +140,6 @@ class AnimalDokuHardeningTest {
 
     @Test
     fun `hardenTowardDifficulty stops early once the target tier is actually reached`() {
-        // A small, bounded search: if repair already landed on something that classifies at the
-        // target, hardening should return immediately without needing to mutate at all -- the
-        // resulting regions must be identical to the input.
         val (solution, repaired) = repairedPuzzleForTest(6)
         val alreadyClassified = com.quietgrid.engine.animaldoku.classifyAnimalDokuDifficulty(6, repaired.solveResult)
 

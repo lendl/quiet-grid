@@ -8,7 +8,6 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** A 2x2 puzzle solved as a checkerboard: (0,0) and (1,1) filled, the rest empty. */
 private val entry = NonogramPuzzleEntry(
     id = "p",
     difficulty = Difficulty.EASY.key,
@@ -59,7 +58,6 @@ class NonogramLogicTest {
 
     @Test
     fun `completing a row correctly auto-fills its remaining blanks as crossed`() {
-        // Row 0's clue is [1]; filling (0,0) correctly completes the row, so (0,1) auto-crosses.
         val session = createNonogramSession(entry)
 
         val result = applyNonogramTap(session, row = 0, col = 0, mode = NonogramInputMode.FILL)!!

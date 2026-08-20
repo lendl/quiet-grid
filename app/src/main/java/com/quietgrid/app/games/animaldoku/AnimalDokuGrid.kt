@@ -56,14 +56,6 @@ import kotlin.math.floor
 
 private const val DOUBLE_TAP_WINDOW_MS = 300L
 
-/**
- * Okabe-Ito colorblind-safe categorical palette (the 8-color reference set used throughout
- * accessibility-conscious data visualization), extended with one additional maroon for AnimalDoku's
- * 9-region ceiling. Chosen specifically because every prior ad hoc palette drifted into same-family
- * near-duplicates (blue vs indigo, green vs olive, purple vs indigo) that were hard to tell apart
- * once alpha-blended over the cell background -- this set is built to stay perceptually distinct
- * even under that blending, not just distinct at full saturation.
- */
 private val REGION_PALETTE = listOf(
     Color(0xFFE69F00), Color(0xFF56B4E9), Color(0xFF009E73), Color(0xFFF0E442),
     Color(0xFF0072B2), Color(0xFFD55E00), Color(0xFFCC79A7), Color(0xFF999999), Color(0xFF882255),
@@ -94,9 +86,6 @@ fun AnimalDokuGrid(
 
         var lastTapCell by remember { mutableStateOf<Pair<Int, Int>?>(null) }
         var lastTapTimeMs by remember { mutableStateOf(0L) }
-        // Pencil theme has no color channel to lean on, so region boundaries stay at full strength
-        // there -- they're the only way to tell regions apart. In the color theme, the palette
-        // itself now carries that job, so the drawn lines are just a light structural hint.
         val borderColor = if (isPencilTheme) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
         val borderStrokeWidth = if (isPencilTheme) 3.dp else 1.dp
 
@@ -108,12 +97,6 @@ fun AnimalDokuGrid(
                         val down = awaitFirstDown()
                         val pointerId = down.id
                         val startCell = offsetToCell(down.position, cellSizePx, size)
-                        // Captured once, at finger-down, and reused unchanged for every cell entered
-                        // during this gesture. onCellDrag fires once per newly-entered cell (so marks
-                        // appear live while dragging), and each firing mutates the session -- if the
-                        // batch direction were re-derived from the live cell state on every firing
-                        // instead of locked in here, the direction would flip mid-swipe the moment the
-                        // start cell's own state changed from the first firing.
                         val startCellState = startCell?.let { (r, c) -> cells[r][c] }
                         val startCellDraggable = startCellState == AnimalDokuCellState.EMPTY || startCellState == AnimalDokuCellState.MARKED
                         val markAll = startCellState == AnimalDokuCellState.EMPTY
@@ -128,9 +111,6 @@ fun AnimalDokuGrid(
                                 break
                             }
                             val cell = offsetToCell(change.position, cellSizePx, size)
-                            // Report every newly-entered cell immediately so marks appear live while
-                            // dragging, not only once the finger lifts. visited.add returns false for
-                            // cells already in the set, so re-crossing old cells doesn't re-fire.
                             if (cell != null && startCell != null && startCellDraggable && visited.add(cell) && visited.size > 1) {
                                 onCellDrag(markAll, visited.toList())
                             }
@@ -199,14 +179,6 @@ fun AnimalDokuGrid(
     }
 }
 
-/**
- * One cell's box, background, region-number overlay (via [pencilOverlay]), and the mark/animal
- * content itself -- with the full one-shot choreography: mark grows in from center, unmark shrinks
- * back out, a correct open makes the animal jump out then settle, a wrong open pops the X in, and
- * any state change at all also triggers a quick universal corner-squish on the whole cell. Every
- * animation here is one-shot (finite duration, never looping/repeating) matching this app's
- * established animation convention.
- */
 @Composable
 private fun AnimalDokuAnimatedCell(
     cellState: AnimalDokuCellState,
@@ -277,11 +249,6 @@ private fun AnimalDokuAnimatedCell(
     }
 }
 
-/**
- * The correct-open reveal: the animal briefly peeks (small, bottom-aligned) then jumps up and
- * settles front-facing (full size, centered) with a light bounce -- a one-shot, two-stage motion
- * that never repeats once settled.
- */
 @Composable
 private fun AnimalDokuCorrectReveal(region: Int, cellSize: Dp) {
     var settled by remember { mutableStateOf(false) }

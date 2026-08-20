@@ -14,7 +14,6 @@ sealed class AnimalDokuStep {
     ) : AnimalDokuStep()
 }
 
-/** A region, row, or column narrowed to exactly one remaining candidate cell forces that placement. */
 fun findSingleton(state: AnimalDokuSolverState): AnimalDokuStep.Placement? {
     for (region in 0 until state.size) {
         if (state.regionSolved[region]) continue
@@ -34,11 +33,6 @@ fun findSingleton(state: AnimalDokuSolverState): AnimalDokuStep.Placement? {
     return null
 }
 
-/**
- * Two directions of the same rule: a region confined to one row/column forces that line, or a
- * line whose only remaining candidates all belong to one region forces that region into the line.
- * Either way, eliminate the cells that can no longer hold the forced pairing's animal.
- */
 fun findConfinement(state: AnimalDokuSolverState): AnimalDokuStep.Elimination? {
     val size = state.size
 
@@ -109,15 +103,8 @@ private fun pairingTechniqueFor(k: Int): AnimalDokuTechnique = when {
     else -> AnimalDokuTechnique.PAIRING_4_PLUS
 }
 
-/**
- * If K unsolved regions' remaining candidates jointly span exactly K rows (or K columns), those
- * regions must occupy exactly those lines between them — eliminate every other region's
- * candidates from those lines.
- */
 fun findPairing(state: AnimalDokuSolverState, k: Int): AnimalDokuStep.Elimination? {
     val size = state.size
-    // A region with zero remaining candidates contributes no rows/cols and would trivially "fit"
-    // any K-combination; exclude it so only regions that can actually participate are considered.
     val unsolvedRegions = (0 until size).filter { !state.regionSolved[it] && state.candidatesInRegion(it).isNotEmpty() }
     if (unsolvedRegions.size < k) return null
     val technique = pairingTechniqueFor(k)
@@ -143,10 +130,6 @@ fun findPairing(state: AnimalDokuSolverState, k: Int): AnimalDokuStep.Eliminatio
     return null
 }
 
-/**
- * Capped well above the depth-3 "deep" floor (spec) so a genuine deep chain is always found while
- * bounding worst-case search on grids up to 9x9; unreached in practice long before hitting this.
- */
 private const val MAX_CHAIN_PROPAGATION_DEPTH = 10
 
 private fun propagateSingletons(state: AnimalDokuSolverState, maxDepth: Int): Int {
@@ -166,12 +149,6 @@ private fun hasContradiction(state: AnimalDokuSolverState): Boolean {
     return false
 }
 
-/**
- * Hypothesize each unsolved region's each remaining candidate cell in turn; if propagating baseline
- * eliminations (and any singletons they force) leads to a contradiction, that cell is impossible —
- * eliminate it. Depth = 1 (hypothesis alone contradicts) + however many intermediate forced
- * singleton placements were needed before the contradiction surfaced.
- */
 fun findChainContradiction(state: AnimalDokuSolverState): AnimalDokuStep.Elimination? {
     for (region in 0 until state.size) {
         if (state.regionSolved[region]) continue

@@ -76,7 +76,6 @@ fun wsClearSelection(session: WordSearchSession): WordSearchSession? {
     return session.copy(tempSelection = null)
 }
 
-/** Matches the active selection against pending words; returns null (no session change) if it doesn't complete one yet. */
 fun wsMatchSelection(session: WordSearchSession): WordSearchSession? {
     val selection = session.tempSelection ?: return null
     val pendingWord = session.puzzle.words.firstOrNull {

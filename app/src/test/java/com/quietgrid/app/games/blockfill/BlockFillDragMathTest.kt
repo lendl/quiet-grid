@@ -12,7 +12,6 @@ class BlockFillDragMathTest {
     @Test
     fun `resolveAnchorCell maps a pointer position to the correct cell`() {
         val board = createEmptyBoard()
-        // Pointer over cell (2, 3): originX + 3*cellSize + half, originY + 2*cellSize + half
         val anchor = resolveAnchorCell(
             pointerX = originX + 3 * cellSize + 5f,
             pointerY = originY + 2 * cellSize + 5f,
@@ -35,7 +34,7 @@ class BlockFillDragMathTest {
             boardOriginY = originY,
             cellSizePx = cellSize,
             board = board,
-            pieceCells = listOf(0 to 0, 0 to 1, 0 to 2), // 3-wide piece, anchored at the last column
+            pieceCells = listOf(0 to 0, 0 to 1, 0 to 2),
         )
         assertNull(anchor)
     }

@@ -1,7 +1,7 @@
 package com.quietgrid.engine.sudoku
 
 data class SudokuCellRef(val row: Int, val col: Int)
-data class SudokuHouseRef(val kind: String, val index: Int) // kind: "row" | "column" | "box"
+data class SudokuHouseRef(val kind: String, val index: Int)
 
 sealed class SudokuCanonicalMove {
     abstract val technique: SudokuTechnique
@@ -23,7 +23,7 @@ data class SudokuPlacementMove(
 data class SudokuCandidateEliminationMove(
     override val technique: SudokuTechnique,
     override val complexity: Int,
-    val eliminations: List<Triple<Int, Int, Int>>, // row, col, digit
+    val eliminations: List<Triple<Int, Int, Int>>,
     override val evidenceCells: List<SudokuCellRef>,
     override val houses: List<SudokuHouseRef>,
 ) : SudokuCanonicalMove()

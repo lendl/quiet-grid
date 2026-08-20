@@ -64,12 +64,6 @@ class BlockFillActionsTest {
 
     @Test
     fun `applyBlockFillPlacement loses when no piece in the tray fits`() {
-        // Leave exactly one empty cell per row and per column (a permutation of gaps), with two
-        // extra gaps folded into row 0 / column 0 so placing the single piece at (0, 0) doesn't
-        // complete either line. Every other row/column keeps exactly one gap, so clearFullLines
-        // clears nothing (nothing was ever fully filled), no tray refill is triggered, and — since
-        // no row or column ever has more than one empty cell — the leftover dominoes in the tray
-        // have no pair of adjacent empty cells anywhere on the board to land on -> LOST.
         val single = shapeDefToPiece(ALL_SHAPES.first { it.id == "single" })
         val domino = shapeDefToPiece(ALL_SHAPES.first { it.id == "domino-h" })
         val emptyCells = setOf(
@@ -98,11 +92,6 @@ class BlockFillActionsTest {
 
     @Test
     fun `applyBlockFillPlacement accumulates combo streak across consecutive line clears`() {
-        // Row 0 and row 1 each have 7 of 8 cells filled; a spare filled cell at (5, 5) keeps the
-        // board non-empty after either line clears, so neither placement gets the full-board-clear
-        // bonus muddying the comparison. Placing the tray's two singles at (0, 7) then (1, 7) clears
-        // one line each -- the second placement's comboStreakBeforeThisMove should be 1 (carried
-        // over from the first clear), so it must score strictly more than the first.
         val single = shapeDefToPiece(ALL_SHAPES.first { it.id == "single" })
         var board = createEmptyBoard()
         for (col in 0 until BLOCKFILL_BOARD_SIZE - 1) board = placePieceAt(board, listOf(0 to 0), 0, col, BlockFillShapeFamily.SINGLE)

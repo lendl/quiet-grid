@@ -20,7 +20,6 @@ fun wordSearchDifficultyDescriptionRes(difficulty: Difficulty): Int = when (diff
 fun wordSearchThemeLabel(clue: String): String =
     clue.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
 
-/** themeId is a raw corpus key, one per locale's word list (see wordsearch_seed_corpus.json) -- not itself localized. */
 private val WORDSEARCH_THEME_ICONS: Map<String, String> = mapOf(
     "animals" to "🐾", "dieren" to "🐾", "tiere" to "🐾", "animaux" to "🐾", "animales" to "🐾",
     "food" to "🍎", "eten" to "🍎", "essen" to "🍎", "nourriture" to "🍎", "comida" to "🍎",

@@ -3,7 +3,6 @@ package com.quietgrid.app.games.takuzu
 import com.quietgrid.engine.takuzu.TakuzuCellValue
 import com.quietgrid.engine.takuzu.TakuzuGrid
 
-/** Line key like "r0" or "c3". */
 typealias LineKey = String
 
 private fun lineIndexOf(lineKey: LineKey): Int = lineKey.substring(1).toInt()

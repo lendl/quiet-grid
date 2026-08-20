@@ -42,9 +42,6 @@ import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
 import kotlin.math.roundToInt
 
-// How far above the touch point the floating drag piece hovers, so the user's thumb never
-// covers the piece they're trying to place -- the on-grid ghost (BlockFillGrid) still tracks the
-// raw touch point exactly, this is a purely visual lift for the piece the finger is carrying.
 private val FLOATING_PIECE_LIFT = 72.dp
 
 @Composable
@@ -63,22 +60,10 @@ fun BlockFillPlayScreen(
     var showEndDialog by remember { mutableStateOf(false) }
     val session = viewModel.session
 
-    // Live LayoutCoordinates rather than a pre-computed Offset: the board sits inside
-    // PuzzleBoardContainer -> BoardEntrance, which animates in via a graphicsLayer scale, and
-    // positionInRoot() is affected by ancestor layer transforms. onGloballyPositioned isn't
-    // guaranteed to re-fire once that animation settles, so a snapshotted Offset can go stale by a
-    // few pixels on freshly-started puzzles. Storing the coordinates object and resolving
-    // positionInRoot()/size at the moment we actually need them (below) avoids that.
     var boardCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
-    // Same treatment for each tray piece's own Box, keyed by tray index. BlockFillTray reports
-    // this via onGloballyPositioned -- the same mechanism BlockFillGrid uses for boardCoordinates
-    // above -- so both live in the same coordinate space and can be combined with drag deltas
-    // below without a unit mismatch.
     var pieceCoordinates by remember { mutableStateOf(mapOf<Int, LayoutCoordinates>()) }
     var draggingPieceIndex by remember { mutableStateOf<Int?>(null) }
     var dragPointer by remember { mutableStateOf(Offset.Zero) }
-    // Rising-edge trigger for the invalid-drop shake below, same pattern as FeedbackText's
-    // isIncorrect handling elsewhere in the app.
     var rejectedDropTrigger by remember { mutableStateOf(0) }
     val rejectedDropShakeX = remember { Animatable(0f) }
     LaunchedEffect(rejectedDropTrigger) {
@@ -100,8 +85,6 @@ fun BlockFillPlayScreen(
             draggingPieceIndex = null
         }
     }
-    // Root-space origin of the screen's own outer Box, needed to convert dragPointer (root-space,
-    // like boardOrigin above) into an offset local to that Box for the floating drag piece below.
     var screenCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
 
     val currentSession = session
@@ -137,14 +120,6 @@ fun BlockFillPlayScreen(
     } else {
         null
     }
-    // onDragEnd below is invoked from inside BlockFillTray's pointerInput(index, piece.shapeId)
-    // coroutine, which is keyed only on index/shapeId -- neither changes mid-drag, so that
-    // coroutine (and the onDragEnd closure it captured when it first launched) never restarts
-    // during a drag. Reading `dragPreview` directly there would read whatever it was AT THE TIME
-    // the pointerInput block launched (effectively always null, since that's the pre-drag state),
-    // not its value when the finger lifts. rememberUpdatedState gives onDragEnd a handle whose
-    // .value is always the latest recomposition's dragPreview, regardless of when the closure
-    // holding it was created.
     val currentDragPreview = rememberUpdatedState(dragPreview)
 
     Box(Modifier.fillMaxSize().onGloballyPositioned { coordinates -> screenCoordinates = coordinates }) {
@@ -196,15 +171,6 @@ fun BlockFillPlayScreen(
                     },
                     onDragStart = { pieceIndex, startPosition ->
                         draggingPieceIndex = pieceIndex
-                        // `startPosition` is LOCAL to this tray piece's own Box (as reported by
-                        // detectDragGestures), not root-space like boardOrigin. Combine it with the
-                        // piece's own root-space origin (resolved fresh here via positionInRoot() on
-                        // the coordinates captured above via onPieceMeasured -- the same mechanism
-                        // BlockFillGrid uses for the board) to get a root-space starting point that
-                        // resolveAnchorCell can compare against boardOrigin correctly. Falling back to
-                        // startPosition alone (skipping the piece origin) would misplace the drag
-                        // preview relative to the finger on the very first frame -- the exact class of
-                        // bug that broke the original React Native prototype's anchor tracking.
                         val pieceOrigin = pieceCoordinates[pieceIndex]?.positionInRoot() ?: Offset.Zero
                         dragPointer = pieceOrigin + startPosition
                     },
@@ -225,10 +191,6 @@ fun BlockFillPlayScreen(
             }
         }
 
-        // The piece being dragged, rendered at board-cell scale and lifted above the raw touch
-        // point so the user's thumb doesn't hide it -- this is the only always-visible indicator of
-        // where the piece currently is; the on-grid ghost inside BlockFillGrid only lights up once
-        // the touch point resolves to a legal anchor, which isn't true for most of a drag gesture.
         val floatingPiece = currentSession?.tray?.getOrNull(draggingPieceIndex ?: -1)
         val screenOrigin = screenCoordinates?.positionInRoot()
         if (floatingPiece != null && screenOrigin != null) {

@@ -18,7 +18,6 @@ class AnimalDokuTypesTest {
 
     @Test
     fun `isValidAnimalDokuRegionGrid rejects a region split into two disconnected pieces`() {
-        // Region 0 occupies (0,0) and (0,2) with no path between them (col 1 belongs to region 1).
         val regions = listOf(
             listOf(0, 1, 0, 1),
             listOf(1, 1, 1, 1),
@@ -30,7 +29,6 @@ class AnimalDokuTypesTest {
 
     @Test
     fun `isValidAnimalDokuRegionGrid rejects a grid missing one of the N expected region ids`() {
-        // Only 3 distinct ids used (0,1,2) instead of the required 4 on a 4x4 grid.
         val regions = listOf(
             listOf(0, 0, 1, 1),
             listOf(0, 0, 1, 1),

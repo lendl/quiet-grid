@@ -37,7 +37,6 @@ fun createTakuzuSession(puzzle: TakuzuPuzzleEntry): TakuzuSession = TakuzuSessio
     penalizedLineKeys = emptyList(),
 )
 
-/** Cycles a cell empty -> 0 -> 1 -> empty. Returns null if the tap has no effect (given or locked cell). */
 fun applyTakuzuPressCell(session: TakuzuSession, row: Int, col: Int): TakuzuSession? {
     if (session.isGiven[row][col] || session.finishedCells[row][col]) return null
 
@@ -82,7 +81,6 @@ private fun mergeFinishedCells(
     return next
 }
 
-/** Runs delayed line validation for the given (row/col) line keys touched by a press. */
 fun applyTakuzuFinalizeValidation(session: TakuzuSession, board: TakuzuGrid, lineKeys: List<LineKey>): TakuzuFinalizeResult {
     val completedLineKeys = lineKeys.filter {
         getCompletedLineStateForKey(board, session.solution, it) != CompletedLineState.INCOMPLETE

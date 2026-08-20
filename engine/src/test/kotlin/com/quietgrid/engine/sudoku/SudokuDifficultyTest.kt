@@ -29,11 +29,6 @@ class SudokuDifficultyTest {
         assertEquals(Difficulty.EASY, classification!!.difficulty)
     }
 
-    // --- Synthetic move-list helpers -----------------------------------------------------
-    // The remaining tests build SudokuCanonicalMove lists directly rather than deriving them
-    // from traceHumanSolve, so each difficulty bucket and safety-rail branch can be exercised
-    // precisely without needing to hand-construct real minimal puzzles for every technique.
-
     private fun placement(technique: SudokuTechnique, complexity: Int) =
         SudokuPlacementMove(technique, complexity, 0, 0, 1, emptyList(), emptyList())
 
@@ -52,10 +47,10 @@ class SudokuDifficultyTest {
 
         assertEquals(3, metrics.stepCount)
         assertEquals(1, metrics.placementCount)
-        assertEquals(5, metrics.candidateEliminationCount) // 3 + 2 elimination targets
-        assertEquals(1, metrics.advancedStepCount) // only X_WING floors at HARD
+        assertEquals(5, metrics.candidateEliminationCount)
+        assertEquals(1, metrics.advancedStepCount)
         assertEquals(5.0 / 3.0, metrics.branchingFactor, 1e-9)
-        assertEquals(5, metrics.branchingScore) // max(1,3) + max(1,2)
+        assertEquals(5, metrics.branchingScore)
         assertEquals(SudokuTechnique.NAKED_SINGLE, metrics.openingTechnique)
         assertEquals(SudokuTechnique.X_WING, metrics.hardestTechnique)
         assertEquals(
@@ -77,10 +72,6 @@ class SudokuDifficultyTest {
         )
         val metrics = collectDifficultyMetrics(moves)
 
-        // techniqueScore = 1*2 (naked-single) + 1*6 (naked-pair) + 1*17 (x-wing) = 25
-        // stepCount*6 (18) + placementCount*4 (4) + candidateEliminationCount*3 (15)
-        //   + advancedStepCount*5 (5) + round(branchingFactor*10) (round(16.666..) = 17)
-        //   + branchingScore (5) + techniqueScore (25) = 89
         assertEquals(89, computeDifficultyScore(metrics))
     }
 
@@ -129,9 +120,6 @@ class SudokuDifficultyTest {
 
     @Test
     fun `classifyDifficulty bumps easy up to medium when the easy step-count safety rail is violated`() {
-        // Technique bucket alone would call this EASY (hardest technique is naked-single), but
-        // 65 steps exceeds the easy profile's maxStepCount of 64, so classification must walk up
-        // to the next difficulty and re-check its rails rather than settling for the raw bucket.
         val moves = List(65) { placement(SudokuTechnique.NAKED_SINGLE, complexity = 1) }
         val metrics = collectDifficultyMetrics(moves)
 
@@ -143,9 +131,6 @@ class SudokuDifficultyTest {
 
     @Test
     fun `classifyDifficulty returns null when even the expert safety rails are violated`() {
-        // Hardest technique is already CHAINS (expert's own ceiling technique), so the technique
-        // bucket starts at EXPERT with no higher bucket to escalate to. Exceeding expert's
-        // maxStepCount of 280 must therefore make classification give up and return null.
         val moves = List(281) { elimination(SudokuTechnique.CHAINS, complexity = 1, targets = 1) }
         val metrics = collectDifficultyMetrics(moves)
 

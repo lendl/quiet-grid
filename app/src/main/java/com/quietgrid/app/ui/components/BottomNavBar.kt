@@ -35,15 +35,8 @@ private val BOTTOM_NAV_ENTRIES = listOf(
     BottomNavEntry(AppTab.SUPPORT, R.string.tab_support, Icons.AutoMirrored.Filled.HelpOutline, Icons.AutoMirrored.Outlined.HelpOutline),
 )
 
-/**
- * Play Store-style bottom icon nav (icon + label per tab), padded for the system
- * navigation bar/gesture area automatically via [NavigationBar]'s default window insets.
- */
 @Composable
 fun BottomNavBar(selectedTab: AppTab, onSelectTab: (AppTab) -> Unit) {
-    // A subtly different tone than the page background — same idea as the Play Store's bottom
-    // bar — so its extent (and the system nav bar area it extends under, edge-to-edge) reads as
-    // one distinct band instead of blending into the content above it.
     NavigationBar(containerColor = MaterialTheme.colorScheme.surfaceVariant) {
         BOTTOM_NAV_ENTRIES.forEach { entry ->
             val selected = entry.tab == selectedTab

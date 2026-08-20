@@ -30,7 +30,7 @@ data class NonogramDifficultyMetrics(
 )
 
 private data class CanonicalStep(
-    val targetCells: List<Triple<Int, Int, Int>>, // row, col, value
+    val targetCells: List<Triple<Int, Int, Int>>,
     val placementCount: Int,
     val isRow: Boolean,
 )
@@ -83,7 +83,6 @@ private fun boardIsSolved(board: List<List<NonogramCellValue>>, solution: List<L
 
 private fun countClueSegments(clues: List<List<Int>>): Int = clues.sumOf { line -> line.count { it > 0 } }
 
-/** Returns null if the puzzle stalls before solving (would require a guess) -- such a puzzle must not ship. */
 fun analyzeNonogramDifficulty(rowClues: List<List<Int>>, colClues: List<List<Int>>, solution: List<List<Boolean>>): NonogramDifficultyMetrics? {
     val rows = rowClues.size
     val cols = colClues.size
@@ -102,12 +101,11 @@ fun analyzeNonogramDifficulty(rowClues: List<List<Int>>, colClues: List<List<Int
     }
 
     while (!boardIsSolved(board, solution) && steps < safetyLimit) {
-        val (beforeRows, beforeCols) = allLineAnalyses() // captured before the step below mutates the board
+        val (beforeRows, beforeCols) = allLineAnalyses()
         val step = getCanonicalStep(board, rowClues, colClues) ?: return null
 
         totalPlacements += step.placementCount
         maxPlacementsAtDeduction = max(maxPlacementsAtDeduction, step.placementCount)
-        // overlap-fill with exactly one target cell is the "very precise incremental reasoning" case
         val isOverlapFillSingleCell = step.targetCells.size == 1 && step.targetCells[0].third == 1
         if (isOverlapFillSingleCell) singleCellStepCount += 1
 

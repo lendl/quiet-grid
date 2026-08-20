@@ -20,7 +20,6 @@ data class AnimalDokuSession(
 @Serializable
 data class AnimalDokuPersistedSession(
     val puzzle: AnimalDokuPuzzleEntry,
-    /** Flattened row-major AnimalDokuCellState ordinals. */
     val cells: List<Int>,
     val lives: Int,
     val status: String,

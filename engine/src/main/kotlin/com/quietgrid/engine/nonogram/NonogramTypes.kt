@@ -2,7 +2,6 @@ package com.quietgrid.engine.nonogram
 
 import kotlinx.serialization.Serializable
 
-/** 0 = marked empty, 1 = filled, null = blank. */
 typealias NonogramCellValue = Int?
 typealias NonogramGrid = List<List<NonogramCellValue>>
 

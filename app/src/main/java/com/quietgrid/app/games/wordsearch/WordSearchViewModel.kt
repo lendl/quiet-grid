@@ -151,16 +151,6 @@ class WordSearchPlayViewModel @AssistedInject constructor(
         controller.updateSession(updated)
     }
 
-    /**
-     * Tap-to-select: tapping a cell already in the active selection clears it; tapping with no
-     * selection starts one; tapping again extends the selection in a straight line — completing
-     * a real word commits it immediately, but an intermediate cell that doesn't (yet) complete one
-     * just keeps the selection extended so the player can keep tapping letters in sequence, rather
-     * than losing progress. Tapping a cell that would break the straight line abandons the old
-     * selection and starts fresh there. This is the fallback path for a gesture that never left its
-     * starting cell — a continuous drag across cells is handled instead by
-     * [onCellDragStart]/[onCellDragMove]/[onCellDragEnd].
-     */
     fun onCellTap(row: Int, col: Int) {
         val current = session ?: return
         if (current.hiddenWordMode) {
@@ -190,11 +180,6 @@ class WordSearchPlayViewModel @AssistedInject constructor(
         }
     }
 
-    /**
-     * Drag-to-select: continuous press-and-drag across cells, as an alternative to tap-to-select.
-     * Starts a fresh selection at the drag's origin cell, extends it live as the finger crosses
-     * new cells (only while they stay in a straight line from the origin), and commits on release.
-     */
     fun onCellDragStart(row: Int, col: Int) {
         val current = session ?: return
         if (current.hiddenWordMode) return

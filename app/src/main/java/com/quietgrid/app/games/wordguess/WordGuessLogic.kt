@@ -9,7 +9,6 @@ sealed interface WordGuessSubmitResult {
 }
 
 fun submitWordGuess(session: WordGuessSession, dictionary: Set<String>, rawGuess: String): WordGuessSubmitResult {
-    // No-op when game is already finished (WON or LOST); callers should stop submitting guesses once status leaves PLAYING.
     if (session.status != WordGuessStatus.PLAYING) return WordGuessSubmitResult.Updated(session)
     val guess = rawGuess.lowercase()
     if (guess.length != session.wordLength) return WordGuessSubmitResult.InvalidWord

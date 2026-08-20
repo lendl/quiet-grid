@@ -7,7 +7,6 @@ import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** Classic valid, fully-solved 9x9 Sudoku grid used by multiple tests below. */
 private val SOLVED_SUDOKU_ROWS: List<List<Int>> = listOf(
     listOf(5, 3, 4, 6, 7, 8, 9, 1, 2),
     listOf(6, 7, 2, 1, 9, 5, 3, 4, 8),
@@ -27,7 +26,6 @@ class SudokuBitmaskTest {
     fun `createBitmaskStateFromBoard computes candidate masks that exclude row column and box peers`() {
         val board: SudokuGrid = List(9) { r -> List(9) { c -> if (r == 0 && c == 0) 5 else null } }
         val state = createBitmaskStateFromBoard(board)
-        // Row 0 peers, col 0 peers, and box 0 peers must not offer digit 5 as a candidate.
         assertEquals(0, state.candidateMask[getCellIndex(0, 4)] and digitToBit[5])
         assertEquals(0, state.candidateMask[getCellIndex(4, 0)] and digitToBit[5])
         assertEquals(0, state.candidateMask[getCellIndex(1, 1)] and digitToBit[5])
@@ -47,8 +45,6 @@ class SudokuBitmaskTest {
     fun `cellPeers for a corner cell has 20 entries (8 row + 8 col + 4 remaining box)`() {
         assertEquals(20, cellPeers[getCellIndex(0, 0)].size)
     }
-
-    // --- cloneBitmaskState independence -------------------------------------------------
 
     @Test
     fun `cloneBitmaskState board mutation on clone does not affect original`() {
@@ -95,7 +91,6 @@ class SudokuBitmaskTest {
         val original = createBitmaskStateFromBoard(board)
         val clone = cloneBitmaskState(original)
 
-        // Mutating the clone's row/col/box masks and unresolvedCount must not leak back to original.
         clone.rowMask[0] = FULL_MASK
         clone.colMask[0] = FULL_MASK
         clone.boxMask[0] = FULL_MASK
@@ -111,8 +106,6 @@ class SudokuBitmaskTest {
         assertNotEquals(FULL_MASK, original.boxMask[0])
         assertEquals(80, original.unresolvedCount)
     }
-
-    // --- duplicate-digit guard -----------------------------------------------------------
 
     @Test
     fun `createBitmaskStateFromBoard throws when the same digit appears twice in a row`() {
@@ -136,7 +129,6 @@ class SudokuBitmaskTest {
 
     @Test
     fun `createBitmaskStateFromBoard throws when the same digit appears twice in a box`() {
-        // (0,0) and (1,1) share box 0 but not a row or column.
         val board: SudokuGrid = List(9) { r ->
             List(9) { c -> if ((r == 0 && c == 0) || (r == 1 && c == 1)) 5 else null }
         }
@@ -155,8 +147,6 @@ class SudokuBitmaskTest {
         }
     }
 
-    // --- eliminateCandidate ----------------------------------------------------------------
-
     @Test
     fun `eliminateCandidate removes exactly the targeted bit and leaves other bits untouched`() {
         val board: SudokuGrid = List(9) { List(9) { null } }
@@ -169,7 +159,6 @@ class SudokuBitmaskTest {
         eliminateCandidate(state, index, 3)
 
         assertEquals(0, state.candidateMask[index] and digitToBit[3])
-        // Every other candidate bit that was present before remains present.
         assertEquals(maskBefore and digitToBit[3].inv(), state.candidateMask[index])
         assertTrue((state.candidateMask[index] and digitToBit[7]) != 0)
     }
@@ -180,8 +169,6 @@ class SudokuBitmaskTest {
         val state = createBitmaskStateFromBoard(board)
         val index = getCellIndex(0, 0)
         placeDigit(state, index, 6)
-        // Placing a digit clears the candidate mask for that cell; force it to a non-zero
-        // sentinel value to prove eliminateCandidate's guard checks board state, not mask state.
         state.candidateMask[index] = FULL_MASK
 
         eliminateCandidate(state, index, 6)
@@ -189,8 +176,6 @@ class SudokuBitmaskTest {
         assertEquals(FULL_MASK, state.candidateMask[index])
         assertEquals(6, state.board[index])
     }
-
-    // --- isSolved ----------------------------------------------------------------------------
 
     @Test
     fun `isSolved returns false for a partially-filled board`() {
@@ -206,8 +191,6 @@ class SudokuBitmaskTest {
         assertEquals(0, state.unresolvedCount)
     }
 
-    // --- cellPeers for a non-corner cell -------------------------------------------------
-
     @Test
     fun `cellPeers for the center cell has 20 entries and differs from the corner cell's peer set`() {
         val centerIndex = getCellIndex(4, 4)
@@ -218,7 +201,6 @@ class SudokuBitmaskTest {
 
         assertEquals(20, centerPeers.size)
         assertFalse(centerPeers.contains(centerIndex))
-        // Center cell's row/col/box peers must be the ones actually sharing its row, column, or box.
         assertTrue(centerPeers.contains(getCellIndex(4, 0)))
         assertTrue(centerPeers.contains(getCellIndex(0, 4)))
         assertTrue(centerPeers.contains(getCellIndex(3, 3)))

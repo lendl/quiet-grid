@@ -11,22 +11,6 @@ import com.quietgrid.engine.takuzu.findPairMoveInLine
 import com.quietgrid.engine.takuzu.getColumn
 import com.quietgrid.engine.takuzu.otherValue
 
-/**
- * Ports the RN app's Takuzu next-move hint techniques (src/games/takuzu/gameplay/analysis).
- * Recovery techniques run first (something on the board already breaks a rule); progress
- * techniques run next (a forced cell can be deduced). The deepest RN technique,
- * eliminate-impossible-combinations (a branch-and-prove search over line completions), is not
- * ported here — it is rare in practice, and puzzles that only have it available fall back to
- * the generic "paused" hint below instead of a specific technique.
- *
- * Progress techniques delegate their move-finding to :engine's canonical TakuzuMoves functions
- * (findPairMoveInLine/findAvoidTrioMoveInLine/findCompleteLineMove/findEliminateFilledLines*Move);
- * only the UI-specific evidence/highlight-cell formatting lives here. Recovery techniques
- * (findTripleMismatch/findBalanceMismatch/findDuplicateMismatch below) are NOT delegated — they
- * locate *where* an already-invalid board breaks a rule for a repair-hint UI, which has no
- * :engine equivalent (engine only exposes yes/no validity checks).
- */
-
 enum class TakuzuLineKind { ROW, COLUMN }
 
 sealed interface TakuzuNextMoveHint {

@@ -93,10 +93,6 @@ fun PuzzlePickerScreen(
     }
 }
 
-/**
- * Difficulties that should be shown as pickable for a given game. Defaults to all four; override
- * here for a game whose puzzle bank doesn't yet cover every difficulty.
- */
 private fun pickableDifficultiesFor(gameId: GameId): List<Difficulty> = Difficulty.entries
 
 @Composable

@@ -2,11 +2,6 @@ package com.quietgrid.app.games.blockfill
 
 import kotlin.random.Random
 
-/**
- * Applies placing tray piece [pieceIndex] at the given anchor: validates, places, clears lines,
- * scores, refills the tray once all 3 slots are empty, and checks win/loss. Returns null if the
- * move is illegal (session not playing, empty slot, or piece doesn't fit there) — caller no-ops.
- */
 fun applyBlockFillPlacement(
     session: BlockFillSession,
     pieceIndex: Int,

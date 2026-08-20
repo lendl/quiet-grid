@@ -76,7 +76,6 @@ private fun generateSparseMask(grid: TakuzuGrid, minReveal: Int, maxReveal: Int,
     return buildMaskFromRevealed(size, revealed)
 }
 
-/** Generates a single takuzu puzzle at [size]/[targetDifficulty], retrying internally on failed attempts. */
 fun generateTakuzuPuzzle(size: Int, targetDifficulty: Difficulty, idPrefix: String, maxAttempts: Int = 40): TakuzuPuzzleEntry? {
     require(size in TAKUZU_SUPPORTED_SIZES) {
         "Unsupported takuzu puzzle size: $size. Supported sizes: $TAKUZU_SUPPORTED_SIZES"
