@@ -37,6 +37,7 @@ import com.quietgrid.app.ui.components.EndPuzzleDialog
 import com.quietgrid.app.ui.components.EndPuzzleIconButton
 import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
+import com.quietgrid.app.ui.components.PuzzleLanguageFlag
 
 @Composable
 fun WordSearchPlayScreen(
@@ -88,6 +89,9 @@ fun WordSearchPlayScreen(
                         ),
                         tint = if (viewModel.nextMoveHint != null) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant,
                     )
+                }
+                if (session != null) {
+                    PuzzleLanguageFlag(session.puzzle.locale)
                 }
                 EndPuzzleIconButton(onClick = { showEndDialog = true })
             }

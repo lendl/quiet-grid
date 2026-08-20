@@ -56,6 +56,14 @@
     <string name="settings_language_german_detail">App auf Deutsch anzeigen.</string>
     <string name="settings_language_french_detail">App auf Französisch anzeigen.</string>
     <string name="settings_language_spanish_detail">App auf Spanisch anzeigen.</string>
+    <string name="settings_puzzle_language">Rätselsprache</string>
+    <string name="settings_puzzle_language_dropdown_detail">Sprache für Wort erraten- und Wortsuche-Rätsel.</string>
+    <string name="settings_puzzle_language_system_detail">Der App-Sprache folgen.</string>
+    <string name="settings_puzzle_language_english_detail">Englisch</string>
+    <string name="settings_puzzle_language_dutch_detail">Niederländisch</string>
+    <string name="settings_puzzle_language_german_detail">Deutsch</string>
+    <string name="settings_puzzle_language_french_detail">Französisch</string>
+    <string name="settings_puzzle_language_spanish_detail">Spanisch</string>
     <string name="settings_show_timer_in_play_label">Timer während des Spielens anzeigen</string>
     <string name="settings_show_timer_in_play_detail">Zeigt den verstrichenen Timer während eines laufenden Rätsels an.</string>
     <string name="settings_beta_games_label">Beta-Spiele aktivieren</string>
@@ -545,6 +553,7 @@
     <string name="wordguess_loss_rule_failure_body">Du hast alle sechs Versuche verbraucht, ohne das Wort zu finden.</string>
 
     <!-- AnimalDoku -->
+    <string name="animaldoku_title">AnimalDoku</string>
     <string name="animaldoku_tagline">Platziere ein Tier pro Zeile, Spalte und farbiger Region.</string>
     <string name="animaldoku_difficulty_easy">Leicht</string>
     <string name="animaldoku_difficulty_medium">Mittel</string>

@@ -60,6 +60,14 @@
     <string name="settings_language_german_detail">Show the app in German.</string>
     <string name="settings_language_french_detail">Show the app in French.</string>
     <string name="settings_language_spanish_detail">Show the app in Spanish.</string>
+    <string name="settings_puzzle_language">Puzzle language</string>
+    <string name="settings_puzzle_language_dropdown_detail">Language used for Word Guess and Word Search puzzles.</string>
+    <string name="settings_puzzle_language_system_detail">Follow the app language.</string>
+    <string name="settings_puzzle_language_english_detail">English</string>
+    <string name="settings_puzzle_language_dutch_detail">Dutch</string>
+    <string name="settings_puzzle_language_german_detail">German</string>
+    <string name="settings_puzzle_language_french_detail">French</string>
+    <string name="settings_puzzle_language_spanish_detail">Spanish</string>
     <string name="settings_show_timer_in_play_label">Show timer during play</string>
     <string name="settings_show_timer_in_play_detail">Shows the elapsed timer while a puzzle is in progress.</string>
     <string name="settings_beta_games_label">Enable beta games</string>

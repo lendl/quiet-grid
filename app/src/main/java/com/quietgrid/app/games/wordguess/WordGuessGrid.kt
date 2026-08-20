@@ -31,7 +31,7 @@ import kotlinx.coroutines.delay
 private const val WORD_GUESS_TILE_STAGGER_MS = 60L
 
 @Composable
-private fun WordGuessTile(letter: Char?, state: LetterState?, animateOnReveal: Boolean, revealDelayMs: Long) {
+private fun WordGuessTile(letter: Char?, state: LetterState?, isActiveRow: Boolean, animateOnReveal: Boolean, revealDelayMs: Long) {
     var revealed by remember { mutableStateOf(false) }
     val scale = remember { Animatable(1f) }
     LaunchedEffect(state) {
@@ -50,12 +50,14 @@ private fun WordGuessTile(letter: Char?, state: LetterState?, animateOnReveal: B
     val displayState = if (revealed) state else null
     val (background, foreground) = wordGuessLetterColors(displayState)
     val icon = wordGuessLetterIcon(displayState)
+    val borderWidth = if (isActiveRow) 2.dp else 1.dp
+    val borderColor = if (isActiveRow) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
     Box(
         modifier = Modifier
             .size(48.dp)
             .graphicsLayer(scaleX = scale.value, scaleY = scale.value)
             .background(background, RoundedCornerShape(6.dp))
-            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(6.dp)),
+            .border(borderWidth, borderColor, RoundedCornerShape(6.dp)),
         contentAlignment = Alignment.Center,
     ) {
         if (letter != null) {
@@ -105,6 +107,7 @@ fun WordGuessGrid(
                     WordGuessTile(
                         letter = letter,
                         state = state,
+                        isActiveRow = isCurrentRow,
                         animateOnReveal = animateRow,
                         revealDelayMs = colIndex * WORD_GUESS_TILE_STAGGER_MS,
                     )

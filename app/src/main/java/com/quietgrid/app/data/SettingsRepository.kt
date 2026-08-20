@@ -16,6 +16,7 @@ data class AppSettings(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val showTimerInPlay: Boolean = true,
     val betaGamesEnabled: Boolean = false,
+    val puzzleLanguage: String = "",
 )
 
 @Singleton
@@ -24,6 +25,7 @@ class SettingsRepository @Inject constructor(private val dataStore: DataStore<Pr
         val THEME_MODE = stringPreferencesKey("theme_mode")
         val SHOW_TIMER_IN_PLAY = booleanPreferencesKey("show_timer_in_play")
         val BETA_GAMES_ENABLED = booleanPreferencesKey("beta_games_enabled")
+        val PUZZLE_LANGUAGE = stringPreferencesKey("puzzle_language")
     }
 
     val settings: Flow<AppSettings> = dataStore.data.map { prefs ->
@@ -32,6 +34,7 @@ class SettingsRepository @Inject constructor(private val dataStore: DataStore<Pr
                 ?: ThemeMode.SYSTEM,
             showTimerInPlay = prefs[Keys.SHOW_TIMER_IN_PLAY] ?: true,
             betaGamesEnabled = prefs[Keys.BETA_GAMES_ENABLED] ?: false,
+            puzzleLanguage = prefs[Keys.PUZZLE_LANGUAGE] ?: "",
         )
     }
 
@@ -45,5 +48,9 @@ class SettingsRepository @Inject constructor(private val dataStore: DataStore<Pr
 
     suspend fun setBetaGamesEnabled(enabled: Boolean) {
         dataStore.edit { it[Keys.BETA_GAMES_ENABLED] = enabled }
+    }
+
+    suspend fun setPuzzleLanguage(languageTag: String) {
+        dataStore.edit { it[Keys.PUZZLE_LANGUAGE] = languageTag }
     }
 }

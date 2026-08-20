@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.SessionStore
+import com.quietgrid.app.data.SettingsRepository
 import com.quietgrid.app.data.StatsStore
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
@@ -15,6 +16,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -33,11 +35,14 @@ data class WordGuessResult(
     val targetWord: String = "",
 )
 
-private class WordGuessPuzzleAdapter(private val appContext: Context) : PuzzleAdapter<WordGuessSession, WordGuessResult> {
+private class WordGuessPuzzleAdapter(
+    private val appContext: Context,
+    private val settingsRepository: SettingsRepository,
+) : PuzzleAdapter<WordGuessSession, WordGuessResult> {
     override val gameId: GameId = GameId.WORDGUESS
 
     override suspend fun freshSession(difficulty: Difficulty): WordGuessSession? {
-        val locale = currentWordGuessLocale()
+        val locale = currentWordGuessLocale(settingsRepository.settings.first().puzzleLanguage)
         val entry = WordGuessPuzzleBank.randomPuzzle(appContext, locale, difficulty) ?: return null
         return WordGuessSession(
             puzzleId = entry.id,
@@ -100,6 +105,7 @@ class WordGuessPlayViewModel @AssistedInject constructor(
     @ApplicationContext appContext: Context,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
+    settingsRepository: SettingsRepository,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
 ) : ViewModel() {
@@ -113,7 +119,7 @@ class WordGuessPlayViewModel @AssistedInject constructor(
         scope = viewModelScope,
         sessionStore = sessionRepository,
         statsStore = statsRepository,
-        adapter = WordGuessPuzzleAdapter(appContext),
+        adapter = WordGuessPuzzleAdapter(appContext, settingsRepository),
     )
 
     val session get() = controller.session

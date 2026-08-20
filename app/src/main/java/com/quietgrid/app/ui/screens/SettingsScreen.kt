@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.os.LocaleListCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.R
+import com.quietgrid.app.core.localeFlagEmoji
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.data.ThemeMode
@@ -61,12 +62,21 @@ private val THEME_OPTIONS = listOf(
 private data class LanguageOption(val tag: String, val labelRes: Int, val flag: String)
 
 private val LANGUAGE_OPTIONS = listOf(
-    LanguageOption("", R.string.settings_language_system_detail, "🌐"),
-    LanguageOption("en", R.string.settings_language_english_detail, "🇬🇧"),
-    LanguageOption("nl", R.string.settings_language_dutch_detail, "🇳🇱"),
-    LanguageOption("de", R.string.settings_language_german_detail, "🇩🇪"),
-    LanguageOption("fr", R.string.settings_language_french_detail, "🇫🇷"),
-    LanguageOption("es", R.string.settings_language_spanish_detail, "🇪🇸"),
+    LanguageOption("", R.string.settings_language_system_detail, localeFlagEmoji("")),
+    LanguageOption("en", R.string.settings_language_english_detail, localeFlagEmoji("en")),
+    LanguageOption("nl", R.string.settings_language_dutch_detail, localeFlagEmoji("nl")),
+    LanguageOption("de", R.string.settings_language_german_detail, localeFlagEmoji("de")),
+    LanguageOption("fr", R.string.settings_language_french_detail, localeFlagEmoji("fr")),
+    LanguageOption("es", R.string.settings_language_spanish_detail, localeFlagEmoji("es")),
+)
+
+private val PUZZLE_LANGUAGE_OPTIONS = listOf(
+    LanguageOption("", R.string.settings_puzzle_language_system_detail, localeFlagEmoji("")),
+    LanguageOption("en", R.string.settings_puzzle_language_english_detail, localeFlagEmoji("en")),
+    LanguageOption("nl", R.string.settings_puzzle_language_dutch_detail, localeFlagEmoji("nl")),
+    LanguageOption("de", R.string.settings_puzzle_language_german_detail, localeFlagEmoji("de")),
+    LanguageOption("fr", R.string.settings_puzzle_language_french_detail, localeFlagEmoji("fr")),
+    LanguageOption("es", R.string.settings_puzzle_language_spanish_detail, localeFlagEmoji("es")),
 )
 
 @Composable
@@ -76,6 +86,7 @@ fun SettingsScreen() {
     val settings by repositories.settingsRepository.settings.collectAsState(initial = AppSettings())
     var themeMenuOpen by remember { mutableStateOf(false) }
     var languageMenuOpen by remember { mutableStateOf(false) }
+    var puzzleLanguageMenuOpen by remember { mutableStateOf(false) }
     val currentLocales = AppCompatDelegate.getApplicationLocales()
     val currentLanguageTag = if (currentLocales.isEmpty) "" else currentLocales[0]?.language ?: ""
 
@@ -148,6 +159,37 @@ fun SettingsScreen() {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(top = 4.dp),
         )
+
+        HorizontalDivider(Modifier.padding(vertical = 4.dp))
+
+        val selectedPuzzleLanguage = PUZZLE_LANGUAGE_OPTIONS.firstOrNull { it.tag == settings.puzzleLanguage } ?: PUZZLE_LANGUAGE_OPTIONS[0]
+        Box {
+            SettingsDropdownRow(
+                emoji = selectedPuzzleLanguage.flag,
+                label = stringResource(R.string.settings_puzzle_language),
+                detail = stringResource(R.string.settings_puzzle_language_dropdown_detail),
+                value = stringResource(selectedPuzzleLanguage.labelRes),
+                expanded = puzzleLanguageMenuOpen,
+                onClick = { puzzleLanguageMenuOpen = true },
+            )
+            DropdownMenu(expanded = puzzleLanguageMenuOpen, onDismissRequest = { puzzleLanguageMenuOpen = false }) {
+                PUZZLE_LANGUAGE_OPTIONS.forEach { option ->
+                    DropdownMenuItem(
+                        leadingIcon = { Text(option.flag, style = MaterialTheme.typography.titleMedium) },
+                        trailingIcon = {
+                            if (option.tag == settings.puzzleLanguage) {
+                                Icon(Icons.Filled.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                            }
+                        },
+                        text = { Text(stringResource(option.labelRes)) },
+                        onClick = {
+                            puzzleLanguageMenuOpen = false
+                            scope.launch { repositories.settingsRepository.setPuzzleLanguage(option.tag) }
+                        },
+                    )
+                }
+            }
+        }
 
         HorizontalDivider(Modifier.padding(vertical = 4.dp))
 

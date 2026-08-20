@@ -56,6 +56,14 @@
     <string name="settings_language_german_detail">Toon de app in het Duits.</string>
     <string name="settings_language_french_detail">Toon de app in het Frans.</string>
     <string name="settings_language_spanish_detail">Toon de app in het Spaans.</string>
+    <string name="settings_puzzle_language">Puzzeltaal</string>
+    <string name="settings_puzzle_language_dropdown_detail">Taal voor Woord Raden- en Woordzoeker-puzzels.</string>
+    <string name="settings_puzzle_language_system_detail">Volg de apptaal.</string>
+    <string name="settings_puzzle_language_english_detail">Engels</string>
+    <string name="settings_puzzle_language_dutch_detail">Nederlands</string>
+    <string name="settings_puzzle_language_german_detail">Duits</string>
+    <string name="settings_puzzle_language_french_detail">Frans</string>
+    <string name="settings_puzzle_language_spanish_detail">Spaans</string>
     <string name="settings_show_timer_in_play_label">Timer tonen tijdens spelen</string>
     <string name="settings_show_timer_in_play_detail">Toont de verstreken tijd terwijl een puzzel bezig is.</string>
     <string name="settings_beta_games_label">Bètaspellen inschakelen</string>
@@ -545,6 +553,7 @@
     <string name="wordguess_loss_rule_failure_body">Je hebt al je zes pogingen gebruikt zonder het woord te vinden.</string>
 
     <!-- AnimalDoku -->
+    <string name="animaldoku_title">AnimalDoku</string>
     <string name="animaldoku_tagline">Plaats één dier per rij, kolom en gekleurde regio.</string>
     <string name="animaldoku_difficulty_easy">Makkelijk</string>
     <string name="animaldoku_difficulty_medium">Gemiddeld</string>

@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.SessionStore
+import com.quietgrid.app.data.SettingsRepository
 import com.quietgrid.app.data.StatsStore
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
@@ -20,6 +21,7 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -41,11 +43,15 @@ data class WordSearchResult(
     val themeId: String = "",
 )
 
-private class WordSearchPuzzleAdapter(private val appContext: Context) : PuzzleAdapter<WordSearchSession, WordSearchResult> {
+private class WordSearchPuzzleAdapter(
+    private val appContext: Context,
+    private val settingsRepository: SettingsRepository,
+) : PuzzleAdapter<WordSearchSession, WordSearchResult> {
     override val gameId: GameId = GameId.WORDSEARCH
 
     override suspend fun freshSession(difficulty: Difficulty): WordSearchSession? {
-        val entry = WordSearchPuzzleBank.randomPuzzle(appContext, currentWordSearchLocale(), difficulty) ?: return null
+        val locale = currentWordSearchLocale(settingsRepository.settings.first().puzzleLanguage)
+        val entry = WordSearchPuzzleBank.randomPuzzle(appContext, locale, difficulty) ?: return null
         return WordSearchSession(
             puzzle = entry,
             foundWordIds = emptyList(),
@@ -108,6 +114,7 @@ class WordSearchPlayViewModel @AssistedInject constructor(
     @ApplicationContext appContext: Context,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
+    settingsRepository: SettingsRepository,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
 ) : ViewModel() {
@@ -121,7 +128,7 @@ class WordSearchPlayViewModel @AssistedInject constructor(
         scope = viewModelScope,
         sessionStore = sessionRepository,
         statsStore = statsRepository,
-        adapter = WordSearchPuzzleAdapter(appContext),
+        adapter = WordSearchPuzzleAdapter(appContext, settingsRepository),
     )
 
     val session get() = controller.session
