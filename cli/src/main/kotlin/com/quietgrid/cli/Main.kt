@@ -1,6 +1,7 @@
 package com.quietgrid.cli
 
-import com.quietgrid.cli.animaldoku.generateAnimalDokuPuzzle
+import com.quietgrid.cli.animaldoku.generateAnimalDokuPuzzleForSolution
+import com.quietgrid.cli.animaldoku.generateSolutionPermutation
 import com.quietgrid.cli.sudoku.generateSudokuPuzzle
 import com.quietgrid.cli.takuzu.generateTakuzuPuzzle
 import com.quietgrid.engine.animaldoku.ANIMALDOKU_SIZES_BY_DIFFICULTY
@@ -143,11 +144,12 @@ fun main(args: Array<String>) {
             while (entries.size < command.count && attempts < maxTotalAttempts) {
                 attempts++
                 val size = sizes.random()
-                val candidate = generateAnimalDokuPuzzle(size, difficulty, idPrefix = "ad$size") ?: continue
-                val dedupeKey = candidate.solution.toString() + candidate.regions.toString()
-                if (state.hasTried(dedupeKey)) continue
-                state.recordTried(dedupeKey, "valid")
-                entries += candidate
+                val solution = generateSolutionPermutation(size) ?: continue
+                val solutionKey = "$size:$difficulty:${solution.joinToString(",")}"
+                if (state.hasTried(solutionKey)) continue
+                val candidate = generateAnimalDokuPuzzleForSolution(size, solution, difficulty, idPrefix = "ad$size")
+                state.recordTried(solutionKey, if (candidate != null) "valid" else "failed")
+                if (candidate != null) entries += candidate
             }
             state.save()
             appendPuzzleEntries("${command.outDir}/animaldoku_puzzles.json", entries, AnimalDokuPuzzleEntry.serializer()) { it.id }

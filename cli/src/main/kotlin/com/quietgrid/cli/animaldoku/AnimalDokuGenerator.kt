@@ -203,14 +203,14 @@ internal fun defaultMaxAttemptsFor(targetDifficulty: Difficulty): Int = when (ta
     else -> 300
 }
 
-fun generateAnimalDokuPuzzle(
+fun generateAnimalDokuPuzzleForSolution(
     size: Int,
+    solution: IntArray,
     targetDifficulty: Difficulty,
     idPrefix: String,
-    maxAttempts: Int = defaultMaxAttemptsFor(targetDifficulty),
+    maxRegionAttempts: Int = defaultMaxAttemptsFor(targetDifficulty),
 ): AnimalDokuPuzzleEntry? {
-    repeat(maxAttempts) {
-        val solution = generateSolutionPermutation(size) ?: return@repeat
+    repeat(maxRegionAttempts) {
         val initialRegions = growRegions(size, solution) ?: return@repeat
         val repaired = repairRegionsTowardUniqueSolution(size, solution, initialRegions, REPAIR_ATTEMPTS_FOR_GENERATION) ?: return@repeat
 
@@ -240,6 +240,19 @@ fun generateAnimalDokuPuzzle(
             regions = finalRegions,
             solution = solution.toList(),
         )
+    }
+    return null
+}
+
+fun generateAnimalDokuPuzzle(
+    size: Int,
+    targetDifficulty: Difficulty,
+    idPrefix: String,
+    maxAttempts: Int = defaultMaxAttemptsFor(targetDifficulty),
+): AnimalDokuPuzzleEntry? {
+    repeat(maxAttempts) {
+        val solution = generateSolutionPermutation(size) ?: return@repeat
+        return generateAnimalDokuPuzzleForSolution(size, solution, targetDifficulty, idPrefix, maxRegionAttempts = maxAttempts) ?: return@repeat
     }
     return null
 }
