@@ -87,6 +87,68 @@
     <string name="how_to_play_quick_play">Juego rápido</string>
     <string name="how_to_play_choose_difficulty">Elegir dificultad</string>
 
+    <!-- quick start bottom sheet (shown once per game, first picker visit) -->
+    <string name="quick_start_title">Cómo jugar</string>
+    <string name="quick_start_examples_title">Ejemplos</string>
+
+    <string name="chimp_quickstart_goal">Toca los números en el orden correcto.</string>
+    <string name="chimp_quickstart_bullet_1">Un error y quedas eliminado.</string>
+    <string name="chimp_quickstart_bullet_2">La velocidad es esencial.</string>
+    <string name="chimp_quickstart_hook">Cuanto más rápido seas, mayor será tu puntuación.</string>
+
+    <string name="wordguess_quickstart_goal">Seis intentos para encontrar la palabra secreta.</string>
+    <string name="wordguess_quickstart_bullet_1">Cada intento debe ser una palabra válida.</string>
+    <string name="wordguess_quickstart_bullet_2">El color de las fichas muestra cuánto te acercaste.</string>
+    <string name="wordguess_quickstart_example_1_word">COLOR</string>
+    <string name="wordguess_quickstart_example_1_hint">R es la letra correcta en el lugar correcto</string>
+    <string name="wordguess_quickstart_example_2_word">LIGHT</string>
+    <string name="wordguess_quickstart_example_2_hint">I está en la palabra, en el lugar equivocado</string>
+    <string name="wordguess_quickstart_example_3_word">BROWN</string>
+    <string name="wordguess_quickstart_example_3_hint">W no está en la palabra en absoluto</string>
+    <string name="wordguess_quickstart_hook">Menos intentos y una solución más rápida dan una puntuación mayor.</string>
+
+    <string name="takuzu_quickstart_goal">Rellena la cuadrícula con 0s y 1s.</string>
+    <string name="takuzu_quickstart_bullet_1">Cada fila y columna tiene el mismo número de 0s y 1s.</string>
+    <string name="takuzu_quickstart_bullet_2">No más de dos dígitos iguales seguidos en una fila.</string>
+    <string name="takuzu_quickstart_bullet_3">No puede haber dos filas o columnas idénticas.</string>
+    <string name="takuzu_quickstart_hook">Resuélvelo limpio y rápido para la puntuación más alta.</string>
+
+    <string name="nonogram_quickstart_goal">Rellena celdas para revelar la imagen.</string>
+    <string name="nonogram_quickstart_bullet_1">Los números de fila/columna muestran grupos de celdas rellenas, en orden.</string>
+    <string name="nonogram_quickstart_bullet_2">Deja al menos un espacio entre grupos.</string>
+    <string name="nonogram_quickstart_bullet_3">Marca las celdas que sepas que están vacías para seguir tu progreso.</string>
+    <string name="nonogram_quickstart_hook">Cuanto más rápido lo resuelvas, mayor será tu puntuación.</string>
+
+    <string name="minesweeper_quickstart_goal">Despeja la cuadrícula sin tocar una mina.</string>
+    <string name="minesweeper_quickstart_bullet_1">Toca una casilla para revelarla.</string>
+    <string name="minesweeper_quickstart_bullet_2">Los números muestran cuántas minas tocan esa casilla.</string>
+    <string name="minesweeper_quickstart_bullet_3">Marca las casillas donde creas que hay una mina.</string>
+    <string name="minesweeper_quickstart_hook">Despéjalo rápido para mantener tu puntuación alta.</string>
+
+    <string name="sudoku_quickstart_goal">Rellena cada celda con un dígito del 1 al 9.</string>
+    <string name="sudoku_quickstart_bullet_1">Cada fila, columna y caja tiene cada dígito una sola vez.</string>
+    <string name="sudoku_quickstart_bullet_2">Sin repeticiones en una fila, columna o caja.</string>
+    <string name="sudoku_quickstart_hook">Mantente preciso y rápido para la puntuación más alta.</string>
+
+    <string name="wordsearch_quickstart_goal">Encuentra cada palabra escondida en la cuadrícula.</string>
+    <string name="wordsearch_quickstart_bullet_1">Arrastra sobre las letras para seleccionar una palabra.</string>
+    <string name="wordsearch_quickstart_bullet_2">Las palabras van en cualquier dirección, incluso al revés.</string>
+    <string name="wordsearch_quickstart_example_1_word">OTTER</string>
+    <string name="wordsearch_quickstart_example_1_hint">escondida en diagonal, de arriba a la izquierda a abajo a la derecha</string>
+    <string name="wordsearch_quickstart_hook">Encuentra todas las palabras rápido y luego acierta la palabra oculta para puntos extra.</string>
+
+    <string name="blockfill_quickstart_goal">Coloca piezas para despejar líneas.</string>
+    <string name="blockfill_quickstart_bullet_1">Arrastra piezas de la bandeja al tablero.</string>
+    <string name="blockfill_quickstart_bullet_2">Llena una fila o columna completa para despejarla y sumar puntos.</string>
+    <string name="blockfill_quickstart_bullet_3">El puzzle termina si ninguna de tus piezas cabe.</string>
+    <string name="blockfill_quickstart_hook">Encadena despejes seguidos para grandes puntos extra.</string>
+
+    <string name="animaldoku_quickstart_goal">Encuentra dónde se esconde un animal en cada fila, columna y región.</string>
+    <string name="animaldoku_quickstart_bullet_1">Dos animales no pueden compartir fila, columna ni región.</string>
+    <string name="animaldoku_quickstart_bullet_2">Dos animales no pueden tocarse, ni siquiera en diagonal.</string>
+    <string name="animaldoku_quickstart_bullet_3">Un error cuesta un corazón — pierde los 3 y el puzzle termina.</string>
+    <string name="animaldoku_quickstart_hook">Más corazones significan más puntos.</string>
+
     <string name="tutorial_host_unavailable_title">Tutorial no disponible</string>
     <string name="tutorial_host_unavailable_body">Este tipo de puzzle aún no incluye un tutorial.</string>
     <string name="puzzle_play_loading">Cargando puzzle…</string>

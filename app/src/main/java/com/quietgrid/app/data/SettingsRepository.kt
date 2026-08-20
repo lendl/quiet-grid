@@ -5,6 +5,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
+import com.quietgrid.app.core.GameId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -17,6 +19,7 @@ data class AppSettings(
     val showTimerInPlay: Boolean = true,
     val betaGamesEnabled: Boolean = false,
     val puzzleLanguage: String = "",
+    val quickStartSeenGameIds: Set<String> = emptySet(),
 )
 
 @Singleton
@@ -26,6 +29,7 @@ class SettingsRepository @Inject constructor(private val dataStore: DataStore<Pr
         val SHOW_TIMER_IN_PLAY = booleanPreferencesKey("show_timer_in_play")
         val BETA_GAMES_ENABLED = booleanPreferencesKey("beta_games_enabled")
         val PUZZLE_LANGUAGE = stringPreferencesKey("puzzle_language")
+        val QUICK_START_SEEN = stringSetPreferencesKey("quick_start_seen_game_ids")
     }
 
     val settings: Flow<AppSettings> = dataStore.data.map { prefs ->
@@ -35,6 +39,7 @@ class SettingsRepository @Inject constructor(private val dataStore: DataStore<Pr
             showTimerInPlay = prefs[Keys.SHOW_TIMER_IN_PLAY] ?: true,
             betaGamesEnabled = prefs[Keys.BETA_GAMES_ENABLED] ?: false,
             puzzleLanguage = prefs[Keys.PUZZLE_LANGUAGE] ?: "",
+            quickStartSeenGameIds = prefs[Keys.QUICK_START_SEEN] ?: emptySet(),
         )
     }
 
@@ -52,5 +57,9 @@ class SettingsRepository @Inject constructor(private val dataStore: DataStore<Pr
 
     suspend fun setPuzzleLanguage(languageTag: String) {
         dataStore.edit { it[Keys.PUZZLE_LANGUAGE] = languageTag }
+    }
+
+    suspend fun markQuickStartSeen(gameId: GameId) {
+        dataStore.edit { it[Keys.QUICK_START_SEEN] = (it[Keys.QUICK_START_SEEN] ?: emptySet()) + gameId.key }
     }
 }

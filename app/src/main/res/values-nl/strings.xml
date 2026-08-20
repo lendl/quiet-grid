@@ -87,6 +87,68 @@
     <string name="how_to_play_quick_play">Snel spelen</string>
     <string name="how_to_play_choose_difficulty">Kies moeilijkheid</string>
 
+    <!-- quick start bottom sheet (shown once per game, first picker visit) -->
+    <string name="quick_start_title">Hoe te spelen</string>
+    <string name="quick_start_examples_title">Voorbeelden</string>
+
+    <string name="chimp_quickstart_goal">Tik de cijfers in de juiste volgorde aan.</string>
+    <string name="chimp_quickstart_bullet_1">Eén fout en je bent uitgeschakeld.</string>
+    <string name="chimp_quickstart_bullet_2">Snelheid is essentieel.</string>
+    <string name="chimp_quickstart_hook">Hoe sneller je bent, hoe hoger je score.</string>
+
+    <string name="wordguess_quickstart_goal">Zes pogingen om het geheime woord te vinden.</string>
+    <string name="wordguess_quickstart_bullet_1">Elke poging moet een geldig woord zijn.</string>
+    <string name="wordguess_quickstart_bullet_2">De kleur van de tegels toont hoe dicht je erbij zat.</string>
+    <string name="wordguess_quickstart_example_1_word">COLOR</string>
+    <string name="wordguess_quickstart_example_1_hint">R is de juiste letter op de juiste plek</string>
+    <string name="wordguess_quickstart_example_2_word">LIGHT</string>
+    <string name="wordguess_quickstart_example_2_hint">I zit in het woord, maar op de verkeerde plek</string>
+    <string name="wordguess_quickstart_example_3_word">BROWN</string>
+    <string name="wordguess_quickstart_example_3_hint">W zit helemaal niet in het woord</string>
+    <string name="wordguess_quickstart_hook">Minder pogingen en een snellere oplossing geven een hogere score.</string>
+
+    <string name="takuzu_quickstart_goal">Vul het rooster met 0\'en en 1\'en.</string>
+    <string name="takuzu_quickstart_bullet_1">Elke rij en kolom bevat evenveel 0\'en als 1\'en.</string>
+    <string name="takuzu_quickstart_bullet_2">Niet meer dan twee gelijke cijfers naast elkaar in een rij.</string>
+    <string name="takuzu_quickstart_bullet_3">Geen twee rijen of kolommen mogen identiek zijn.</string>
+    <string name="takuzu_quickstart_hook">Los het schoon en snel op voor de hoogste score.</string>
+
+    <string name="nonogram_quickstart_goal">Vul cellen om de afbeelding te onthullen.</string>
+    <string name="nonogram_quickstart_bullet_1">Rij-/kolomgetallen tonen groepen gevulde cellen, in volgorde.</string>
+    <string name="nonogram_quickstart_bullet_2">Laat minstens één opening tussen groepen.</string>
+    <string name="nonogram_quickstart_bullet_3">Markeer cellen waarvan je weet dat ze leeg zijn om je voortgang bij te houden.</string>
+    <string name="nonogram_quickstart_hook">Hoe sneller je oplost, hoe hoger je score.</string>
+
+    <string name="minesweeper_quickstart_goal">Maak het veld leeg zonder een mijn te raken.</string>
+    <string name="minesweeper_quickstart_bullet_1">Tik op een vak om het te openen.</string>
+    <string name="minesweeper_quickstart_bullet_2">Cijfers tonen hoeveel mijnen dat vak raken.</string>
+    <string name="minesweeper_quickstart_bullet_3">Markeer vakken waarvan je denkt dat er een mijn zit.</string>
+    <string name="minesweeper_quickstart_hook">Maak snel leeg om je score hoog te houden.</string>
+
+    <string name="sudoku_quickstart_goal">Vul elke cel met een cijfer van 1 tot 9.</string>
+    <string name="sudoku_quickstart_bullet_1">Elke rij, kolom en box bevat elk cijfer precies één keer.</string>
+    <string name="sudoku_quickstart_bullet_2">Geen herhaling in een rij, kolom of box.</string>
+    <string name="sudoku_quickstart_hook">Blijf nauwkeurig en snel voor de hoogste score.</string>
+
+    <string name="wordsearch_quickstart_goal">Vind elk verborgen woord in het raster.</string>
+    <string name="wordsearch_quickstart_bullet_1">Sleep over letters om een woord te selecteren.</string>
+    <string name="wordsearch_quickstart_bullet_2">Woorden lopen in elke richting, ook achterstevoren.</string>
+    <string name="wordsearch_quickstart_example_1_word">OTTER</string>
+    <string name="wordsearch_quickstart_example_1_hint">diagonaal verstopt, van linksboven naar rechtsonder</string>
+    <string name="wordsearch_quickstart_hook">Vind alle woorden snel en los daarna het verborgen woord op voor bonuspunten.</string>
+
+    <string name="blockfill_quickstart_goal">Laat stukken zakken om lijnen leeg te maken.</string>
+    <string name="blockfill_quickstart_bullet_1">Sleep stukken uit het vak naar het bord.</string>
+    <string name="blockfill_quickstart_bullet_2">Vul een hele rij of kolom om die leeg te maken en punten te scoren.</string>
+    <string name="blockfill_quickstart_bullet_3">De puzzel eindigt als geen van je stukken meer past.</string>
+    <string name="blockfill_quickstart_hook">Maak lijnen achter elkaar leeg voor grote bonuspunten.</string>
+
+    <string name="animaldoku_quickstart_goal">Vind waar een dier zich verstopt in elke rij, kolom en regio.</string>
+    <string name="animaldoku_quickstart_bullet_1">Geen twee dieren delen een rij, kolom of regio.</string>
+    <string name="animaldoku_quickstart_bullet_2">Geen twee dieren mogen elkaar raken, ook niet diagonaal.</string>
+    <string name="animaldoku_quickstart_bullet_3">Een foute gok kost een hartje — verlies alle 3 en de puzzel eindigt.</string>
+    <string name="animaldoku_quickstart_hook">Meer overgebleven hartjes betekenen meer punten.</string>
+
     <string name="tutorial_host_unavailable_title">Tutorial niet beschikbaar</string>
     <string name="tutorial_host_unavailable_body">Dit puzzeltype heeft nog geen tutorial.</string>
     <string name="puzzle_play_loading">Puzzel laden…</string>

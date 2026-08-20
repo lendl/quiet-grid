@@ -17,10 +17,12 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,27 +35,51 @@ import com.quietgrid.app.core.GameId
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.core.difficultyColor
 import com.quietgrid.app.data.RepositoriesViewModel
+import com.quietgrid.app.games.animaldoku.AnimalDokuQuickStart
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyDescriptionRes
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyLabelRes
+import com.quietgrid.app.games.blockfill.BlockFillQuickStart
 import com.quietgrid.app.games.blockfill.blockFillDifficultyDescriptionRes
 import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
+import com.quietgrid.app.games.chimptest.ChimpTestQuickStart
 import com.quietgrid.app.games.chimptest.chimpDifficultyDescriptionRes
 import com.quietgrid.app.games.chimptest.chimpDifficultyLabelRes
+import com.quietgrid.app.games.minesweeper.MinesweeperQuickStart
 import com.quietgrid.app.games.minesweeper.minesweeperDifficultyDescriptionRes
 import com.quietgrid.app.games.minesweeper.minesweeperDifficultyLabelRes
+import com.quietgrid.app.games.nonogram.NonogramQuickStart
 import com.quietgrid.app.games.nonogram.nonogramDifficultyDescriptionRes
 import com.quietgrid.app.games.nonogram.nonogramDifficultyLabelRes
+import com.quietgrid.app.games.sudoku.SudokuQuickStart
 import com.quietgrid.app.games.sudoku.sudokuDifficultyDescriptionRes
 import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
+import com.quietgrid.app.games.takuzu.TakuzuQuickStart
 import com.quietgrid.app.games.takuzu.takuzuDifficultyDescriptionRes
 import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
+import com.quietgrid.app.games.wordguess.WordGuessQuickStart
 import com.quietgrid.app.games.wordguess.wordGuessDifficultyDescriptionRes
 import com.quietgrid.app.games.wordguess.wordGuessDifficultyLabelRes
+import com.quietgrid.app.games.wordsearch.WordSearchQuickStart
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyDescriptionRes
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
+import com.quietgrid.app.ui.components.QuickStartContent
+import com.quietgrid.app.ui.components.QuickStartSheet
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 private enum class GamePageTab { PLAY, RULES, STATS }
+
+private fun quickStartFor(gameId: GameId): QuickStartContent = when (gameId) {
+    GameId.CHIMPTEST -> ChimpTestQuickStart
+    GameId.TAKUZU -> TakuzuQuickStart
+    GameId.NONOGRAM -> NonogramQuickStart
+    GameId.MINESWEEPER -> MinesweeperQuickStart
+    GameId.SUDOKU -> SudokuQuickStart
+    GameId.WORDSEARCH -> WordSearchQuickStart
+    GameId.BLOCKFILL -> BlockFillQuickStart
+    GameId.WORDGUESS -> WordGuessQuickStart
+    GameId.ANIMALDOKU -> AnimalDokuQuickStart
+}
 
 @Composable
 fun PuzzlePickerScreen(
@@ -62,6 +88,61 @@ fun PuzzlePickerScreen(
     onResumeActiveGame: (GameId) -> Unit,
 ) {
     var selectedTab by remember { mutableStateOf(GamePageTab.PLAY) }
+
+    val repositories: RepositoriesViewModel = hiltViewModel()
+    val settings by repositories.settingsRepository.settings.collectAsState(initial = null)
+    val activeGameKey by repositories.sessionRepository.activeSession
+        .map { it?.gameId }
+        .collectAsState(initial = null)
+    val coroutineScope = rememberCoroutineScope()
+    var showQuickStart by remember(gameId) { mutableStateOf(false) }
+    var pendingDifficulty by remember(gameId) { mutableStateOf<Difficulty?>(null) }
+
+    val requestStartDifficulty: (Difficulty) -> Unit = { difficulty ->
+        if (activeGameKey != null) pendingDifficulty = difficulty else onPickDifficulty(difficulty)
+    }
+
+    LaunchedEffect(gameId, settings) {
+        val seen = settings?.quickStartSeenGameIds ?: return@LaunchedEffect
+        if (gameId.key !in seen) showQuickStart = true
+    }
+
+    if (showQuickStart) {
+        QuickStartSheet(
+            content = quickStartFor(gameId),
+            onDismiss = {
+                showQuickStart = false
+                coroutineScope.launch { repositories.settingsRepository.markQuickStartSeen(gameId) }
+            },
+            onQuickPlay = {
+                showQuickStart = false
+                coroutineScope.launch { repositories.settingsRepository.markQuickStartSeen(gameId) }
+                requestStartDifficulty(Difficulty.EASY)
+            },
+        )
+    }
+
+    val difficultyToStart = pendingDifficulty
+    if (difficultyToStart != null) {
+        AlertDialog(
+            onDismissRequest = { pendingDifficulty = null },
+            title = { Text(stringResource(R.string.replace_dialog_title)) },
+            text = { Text(stringResource(R.string.replace_dialog_message)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    pendingDifficulty = null
+                    onPickDifficulty(difficultyToStart)
+                }) { Text(stringResource(R.string.common_start_new_puzzle)) }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    pendingDifficulty = null
+                    val activeGameId = activeGameKey?.let { key -> GameId.entries.firstOrNull { it.key == key } }
+                    if (activeGameId != null) onResumeActiveGame(activeGameId)
+                }) { Text(stringResource(R.string.common_continue_puzzle)) }
+            },
+        )
+    }
 
     Column(Modifier.fillMaxWidth()) {
         TabRow(
@@ -86,7 +167,7 @@ fun PuzzlePickerScreen(
         }
 
         when (selectedTab) {
-            GamePageTab.PLAY -> GamePlayPickerTab(gameId, onPickDifficulty, onResumeActiveGame)
+            GamePageTab.PLAY -> GamePlayPickerTab(gameId, requestStartDifficulty)
             GamePageTab.RULES -> HowToPlayScreen(gameId)
             GamePageTab.STATS -> GameStatsTab(gameId)
         }
@@ -98,15 +179,8 @@ private fun pickableDifficultiesFor(gameId: GameId): List<Difficulty> = Difficul
 @Composable
 private fun GamePlayPickerTab(
     gameId: GameId,
-    onPickDifficulty: (Difficulty) -> Unit,
-    onResumeActiveGame: (GameId) -> Unit,
+    requestStartDifficulty: (Difficulty) -> Unit,
 ) {
-    val repositories: RepositoriesViewModel = hiltViewModel()
-    val activeGameKey by repositories.sessionRepository.activeSession
-        .map { it?.gameId }
-        .collectAsState(initial = null)
-    var pendingDifficulty by remember { mutableStateOf<Difficulty?>(null) }
-
     Column(Modifier.fillMaxWidth().padding(16.dp)) {
         Column {
             pickableDifficultiesFor(gameId).forEachIndexed { index, difficulty ->
@@ -136,9 +210,7 @@ private fun GamePlayPickerTab(
                 Row(
                     Modifier
                         .fillMaxWidth()
-                        .clickable {
-                            if (activeGameKey != null) pendingDifficulty = difficulty else onPickDifficulty(difficulty)
-                        }
+                        .clickable { requestStartDifficulty(difficulty) }
                         .padding(vertical = 18.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -160,28 +232,6 @@ private fun GamePlayPickerTab(
                 }
             }
         }
-    }
-
-    val difficultyToStart = pendingDifficulty
-    if (difficultyToStart != null) {
-        AlertDialog(
-            onDismissRequest = { pendingDifficulty = null },
-            title = { Text(stringResource(R.string.replace_dialog_title)) },
-            text = { Text(stringResource(R.string.replace_dialog_message)) },
-            confirmButton = {
-                TextButton(onClick = {
-                    pendingDifficulty = null
-                    onPickDifficulty(difficultyToStart)
-                }) { Text(stringResource(R.string.common_start_new_puzzle)) }
-            },
-            dismissButton = {
-                TextButton(onClick = {
-                    pendingDifficulty = null
-                    val activeGameId = activeGameKey?.let { key -> GameId.entries.firstOrNull { it.key == key } }
-                    if (activeGameId != null) onResumeActiveGame(activeGameId)
-                }) { Text(stringResource(R.string.common_continue_puzzle)) }
-            },
-        )
     }
 }
 

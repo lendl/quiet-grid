@@ -93,6 +93,68 @@
     <string name="how_to_play_quick_play">Quick Play</string>
     <string name="how_to_play_choose_difficulty">Choose Difficulty</string>
 
+    <!-- quick start bottom sheet (shown once per game, first picker visit) -->
+    <string name="quick_start_title">How to Play</string>
+    <string name="quick_start_examples_title">Examples</string>
+
+    <string name="chimp_quickstart_goal">Click the numbers in the correct sequence.</string>
+    <string name="chimp_quickstart_bullet_1">One mistake and you\'re out.</string>
+    <string name="chimp_quickstart_bullet_2">Speed is of the essence.</string>
+    <string name="chimp_quickstart_hook">The quicker you are, the higher your score.</string>
+
+    <string name="wordguess_quickstart_goal">Six tries to find the secret word.</string>
+    <string name="wordguess_quickstart_bullet_1">Every entry must be a real word.</string>
+    <string name="wordguess_quickstart_bullet_2">Tile color shows how close you got.</string>
+    <string name="wordguess_quickstart_example_1_word">COLOR</string>
+    <string name="wordguess_quickstart_example_1_hint">R is right letter, right spot</string>
+    <string name="wordguess_quickstart_example_2_word">LIGHT</string>
+    <string name="wordguess_quickstart_example_2_hint">I is in the word, wrong spot</string>
+    <string name="wordguess_quickstart_example_3_word">BROWN</string>
+    <string name="wordguess_quickstart_example_3_hint">W is not in the word at all</string>
+    <string name="wordguess_quickstart_hook">Fewer guesses and a faster solve mean a bigger score.</string>
+
+    <string name="takuzu_quickstart_goal">Fill the grid with 0s and 1s.</string>
+    <string name="takuzu_quickstart_bullet_1">Each row and column has equal 0s and 1s.</string>
+    <string name="takuzu_quickstart_bullet_2">No more than two of the same number in a row, adjacent.</string>
+    <string name="takuzu_quickstart_bullet_3">No two rows or columns can be identical.</string>
+    <string name="takuzu_quickstart_hook">Solve it clean and fast for the highest score.</string>
+
+    <string name="nonogram_quickstart_goal">Fill cells to reveal the picture.</string>
+    <string name="nonogram_quickstart_bullet_1">Row/column numbers show groups of filled cells, in order.</string>
+    <string name="nonogram_quickstart_bullet_2">Leave at least one gap between groups.</string>
+    <string name="nonogram_quickstart_bullet_3">Mark cells you know are empty to track progress.</string>
+    <string name="nonogram_quickstart_hook">The faster you solve it, the higher your score.</string>
+
+    <string name="minesweeper_quickstart_goal">Clear the grid without hitting a mine.</string>
+    <string name="minesweeper_quickstart_bullet_1">Tap a cell to reveal it.</string>
+    <string name="minesweeper_quickstart_bullet_2">Numbers show how many mines touch that cell.</string>
+    <string name="minesweeper_quickstart_bullet_3">Flag cells you think hide a mine.</string>
+    <string name="minesweeper_quickstart_hook">Clear it fast to keep your score high.</string>
+
+    <string name="sudoku_quickstart_goal">Fill every cell 1-9.</string>
+    <string name="sudoku_quickstart_bullet_1">Each row, column and box has every digit once.</string>
+    <string name="sudoku_quickstart_bullet_2">No repeats in a row, column, or box.</string>
+    <string name="sudoku_quickstart_hook">Stay accurate and fast for the highest score.</string>
+
+    <string name="wordsearch_quickstart_goal">Find every hidden word in the grid.</string>
+    <string name="wordsearch_quickstart_bullet_1">Drag across letters to select a word.</string>
+    <string name="wordsearch_quickstart_bullet_2">Words run in any direction, including backwards.</string>
+    <string name="wordsearch_quickstart_example_1_word">OTTER</string>
+    <string name="wordsearch_quickstart_example_1_hint">hidden diagonally, top-left to bottom-right</string>
+    <string name="wordsearch_quickstart_hook">Find every word fast, then nail the hidden word for bonus points.</string>
+
+    <string name="blockfill_quickstart_goal">Drop pieces to clear lines.</string>
+    <string name="blockfill_quickstart_bullet_1">Drag pieces from the tray onto the board.</string>
+    <string name="blockfill_quickstart_bullet_2">Fill a full row or column to clear it and score.</string>
+    <string name="blockfill_quickstart_bullet_3">Game ends when none of your pieces fit.</string>
+    <string name="blockfill_quickstart_hook">Chain clears back-to-back for big bonus points.</string>
+
+    <string name="animaldoku_quickstart_goal">Find where one animal hides in every row, column, and region.</string>
+    <string name="animaldoku_quickstart_bullet_1">No two animals share a row, column, or region.</string>
+    <string name="animaldoku_quickstart_bullet_2">No two animals can touch, even diagonally.</string>
+    <string name="animaldoku_quickstart_bullet_3">Wrong guess costs a heart — lose all 3 and the puzzle ends.</string>
+    <string name="animaldoku_quickstart_hook">More hearts left means more points.</string>
+
     <!-- tutorial host / puzzle play -->
     <string name="tutorial_host_unavailable_title">Tutorial not available</string>
     <string name="tutorial_host_unavailable_body">This puzzle type does not include a tutorial yet.</string>

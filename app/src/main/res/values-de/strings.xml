@@ -87,6 +87,68 @@
     <string name="how_to_play_quick_play">Schnell spielen</string>
     <string name="how_to_play_choose_difficulty">Schwierigkeitsgrad wählen</string>
 
+    <!-- quick start bottom sheet (shown once per game, first picker visit) -->
+    <string name="quick_start_title">Spielanleitung</string>
+    <string name="quick_start_examples_title">Beispiele</string>
+
+    <string name="chimp_quickstart_goal">Tippe die Zahlen in der richtigen Reihenfolge an.</string>
+    <string name="chimp_quickstart_bullet_1">Ein Fehler und du bist raus.</string>
+    <string name="chimp_quickstart_bullet_2">Schnelligkeit ist entscheidend.</string>
+    <string name="chimp_quickstart_hook">Je schneller du bist, desto höher deine Punktzahl.</string>
+
+    <string name="wordguess_quickstart_goal">Errate das geheime Wort in sechs Versuchen.</string>
+    <string name="wordguess_quickstart_bullet_1">Jede Eingabe muss ein gültiges Wort sein.</string>
+    <string name="wordguess_quickstart_bullet_2">Die Farbe der Kacheln zeigt, wie nah du dran warst.</string>
+    <string name="wordguess_quickstart_example_1_word">COLOR</string>
+    <string name="wordguess_quickstart_example_1_hint">R ist der richtige Buchstabe an der richtigen Stelle</string>
+    <string name="wordguess_quickstart_example_2_word">LIGHT</string>
+    <string name="wordguess_quickstart_example_2_hint">I kommt im Wort vor, aber an der falschen Stelle</string>
+    <string name="wordguess_quickstart_example_3_word">BROWN</string>
+    <string name="wordguess_quickstart_example_3_hint">W kommt im Wort überhaupt nicht vor</string>
+    <string name="wordguess_quickstart_hook">Weniger Versuche und eine schnellere Lösung bringen mehr Punkte.</string>
+
+    <string name="takuzu_quickstart_goal">Fülle das Gitter mit 0en und 1en.</string>
+    <string name="takuzu_quickstart_bullet_1">Jede Zeile und jede Spalte enthält gleich viele 0en und 1en.</string>
+    <string name="takuzu_quickstart_bullet_2">Nicht mehr als zwei gleiche Ziffern nebeneinander in einer Zeile.</string>
+    <string name="takuzu_quickstart_bullet_3">Keine zwei Zeilen oder Spalten dürfen identisch sein.</string>
+    <string name="takuzu_quickstart_hook">Löse sauber und schnell für die höchste Punktzahl.</string>
+
+    <string name="nonogram_quickstart_goal">Fülle Zellen, um das Bild sichtbar zu machen.</string>
+    <string name="nonogram_quickstart_bullet_1">Zeilen-/Spaltenzahlen zeigen Gruppen gefüllter Zellen, in Reihenfolge.</string>
+    <string name="nonogram_quickstart_bullet_2">Lasse mindestens eine Lücke zwischen den Gruppen.</string>
+    <string name="nonogram_quickstart_bullet_3">Markiere Zellen, die sicher leer sind, um den Überblick zu behalten.</string>
+    <string name="nonogram_quickstart_hook">Je schneller du löst, desto höher deine Punktzahl.</string>
+
+    <string name="minesweeper_quickstart_goal">Räume das Feld, ohne eine Mine zu öffnen.</string>
+    <string name="minesweeper_quickstart_bullet_1">Tippe auf ein Feld, um es aufzudecken.</string>
+    <string name="minesweeper_quickstart_bullet_2">Zahlen zeigen, wie viele Minen dieses Feld berühren.</string>
+    <string name="minesweeper_quickstart_bullet_3">Markiere Felder, in denen du eine Mine vermutest.</string>
+    <string name="minesweeper_quickstart_hook">Räume schnell, um deine Punktzahl hoch zu halten.</string>
+
+    <string name="sudoku_quickstart_goal">Fülle jede Zelle mit einer Ziffer von 1 bis 9.</string>
+    <string name="sudoku_quickstart_bullet_1">Jede Zeile, Spalte und Box enthält jede Ziffer genau einmal.</string>
+    <string name="sudoku_quickstart_bullet_2">Keine Wiederholung in einer Zeile, Spalte oder Box.</string>
+    <string name="sudoku_quickstart_hook">Bleib genau und schnell für die höchste Punktzahl.</string>
+
+    <string name="wordsearch_quickstart_goal">Finde jedes versteckte Wort im Raster.</string>
+    <string name="wordsearch_quickstart_bullet_1">Ziehe über Buchstaben, um ein Wort auszuwählen.</string>
+    <string name="wordsearch_quickstart_bullet_2">Wörter verlaufen in jede Richtung, auch rückwärts.</string>
+    <string name="wordsearch_quickstart_example_1_word">OTTER</string>
+    <string name="wordsearch_quickstart_example_1_hint">diagonal versteckt, von oben links nach unten rechts</string>
+    <string name="wordsearch_quickstart_hook">Finde alle Wörter schnell und knacke dann das versteckte Wort für Bonuspunkte.</string>
+
+    <string name="blockfill_quickstart_goal">Lege Teile ab, um Linien zu räumen.</string>
+    <string name="blockfill_quickstart_bullet_1">Ziehe Teile aus dem Vorrat auf das Feld.</string>
+    <string name="blockfill_quickstart_bullet_2">Fülle eine ganze Reihe oder Spalte, um sie zu räumen und Punkte zu erhalten.</string>
+    <string name="blockfill_quickstart_bullet_3">Das Rätsel endet, wenn keines deiner Teile mehr passt.</string>
+    <string name="blockfill_quickstart_hook">Räume mehrere Linien hintereinander für große Bonuspunkte.</string>
+
+    <string name="animaldoku_quickstart_goal">Finde, wo sich in jeder Zeile, Spalte und Region ein Tier versteckt.</string>
+    <string name="animaldoku_quickstart_bullet_1">Keine zwei Tiere teilen sich eine Zeile, Spalte oder Region.</string>
+    <string name="animaldoku_quickstart_bullet_2">Keine zwei Tiere dürfen sich berühren, auch nicht diagonal.</string>
+    <string name="animaldoku_quickstart_bullet_3">Eine falsche Vermutung kostet ein Herz — bei 0 Herzen endet das Rätsel.</string>
+    <string name="animaldoku_quickstart_hook">Mehr verbleibende Herzen bedeuten mehr Punkte.</string>
+
     <string name="tutorial_host_unavailable_title">Tutorial nicht verfügbar</string>
     <string name="tutorial_host_unavailable_body">Dieser Rätseltyp enthält noch kein Tutorial.</string>
     <string name="puzzle_play_loading">Rätsel wird geladen…</string>

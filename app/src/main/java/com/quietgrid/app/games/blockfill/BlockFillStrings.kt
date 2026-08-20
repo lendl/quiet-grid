@@ -2,6 +2,7 @@ package com.quietgrid.app.games.blockfill
 
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.ui.components.QuickStartContent
 
 fun blockFillDifficultyLabelRes(difficulty: Difficulty): Int = when (difficulty) {
     Difficulty.EASY -> R.string.blockfill_difficulty_easy
@@ -16,3 +17,13 @@ fun blockFillDifficultyDescriptionRes(difficulty: Difficulty): Int = when (diffi
     Difficulty.HARD -> R.string.blockfill_difficulty_desc_hard
     Difficulty.EXPERT -> R.string.blockfill_difficulty_desc_expert
 }
+
+val BlockFillQuickStart = QuickStartContent(
+    goalRes = R.string.blockfill_quickstart_goal,
+    bulletRes = listOf(
+        R.string.blockfill_quickstart_bullet_1,
+        R.string.blockfill_quickstart_bullet_2,
+        R.string.blockfill_quickstart_bullet_3,
+    ),
+    hookRes = R.string.blockfill_quickstart_hook,
+)
