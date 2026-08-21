@@ -3,6 +3,9 @@ package com.quietgrid.app.games.wordguess
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.data.AppSettings
+import com.quietgrid.app.data.SettingsRepository
+import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeSessionStore
 import com.quietgrid.app.testutil.FakeStatsStore
 import com.quietgrid.engine.wordguess.WordGuessPuzzleEntry
@@ -13,6 +16,7 @@ import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -36,7 +40,7 @@ class WordGuessPlayViewModelTest {
     @Before
     fun setUp() {
         mockkStatic(::currentWordGuessLocale)
-        every { currentWordGuessLocale() } returns "en"
+        every { currentWordGuessLocale(any()) } returns "en"
         mockkObject(WordGuessPuzzleBank)
         coEvery { WordGuessPuzzleBank.randomPuzzle(any(), any(), any()) } returns puzzleEntry
         coEvery { WordGuessPuzzleBank.loadDictionary(any(), any()) } returns setOf("cat")
@@ -47,8 +51,13 @@ class WordGuessPlayViewModelTest {
         unmockkAll()
     }
 
-    private fun newViewModel(sessionStore: FakeSessionStore = FakeSessionStore(), statsStore: FakeStatsStore = FakeStatsStore()) =
-        WordGuessPlayViewModel(mockk<Context>(relaxed = true), sessionStore, statsStore, Difficulty.EASY, resume = false)
+    private fun newViewModel(sessionStore: FakeSessionStore = FakeSessionStore(), statsStore: FakeStatsStore = FakeStatsStore()): WordGuessPlayViewModel {
+        val settingsRepository = mockk<SettingsRepository>(relaxed = true)
+        every { settingsRepository.settings } returns MutableStateFlow(AppSettings())
+        return WordGuessPlayViewModel(
+            mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), settingsRepository, Difficulty.EASY, resume = false,
+        )
+    }
 
     @Test
     fun `starting fresh loads the mocked puzzle as the target word`() {

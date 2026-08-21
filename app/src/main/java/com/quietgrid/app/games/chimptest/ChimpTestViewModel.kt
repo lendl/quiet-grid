@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
 import com.quietgrid.app.session.PuzzleAdapter
@@ -75,6 +76,7 @@ private class ChimpTestPuzzleAdapter : PuzzleAdapter<ChimpTestSession, ChimpTest
 class ChimpTestPlayViewModel @AssistedInject constructor(
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
+    historyRepository: PlayHistoryStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
 ) : ViewModel() {
@@ -88,6 +90,7 @@ class ChimpTestPlayViewModel @AssistedInject constructor(
         scope = viewModelScope,
         sessionStore = sessionRepository,
         statsStore = statsRepository,
+        historyStore = historyRepository,
         adapter = ChimpTestPuzzleAdapter(),
     )
 

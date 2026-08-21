@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
 import com.quietgrid.app.session.PuzzleAdapter
@@ -83,6 +84,8 @@ private class AnimalDokuPuzzleAdapter(private val appContext: android.content.Co
         ),
     )
 
+    override fun puzzleIdOf(session: AnimalDokuSession): String? = session.puzzle.id
+
     override fun scoreOnWin(session: AnimalDokuSession, difficulty: Difficulty, elapsedSeconds: Int): Int =
         animalDokuScore(session.lives, elapsedSeconds)
 
@@ -102,6 +105,7 @@ class AnimalDokuPlayViewModel @AssistedInject constructor(
     @dagger.hilt.android.qualifiers.ApplicationContext appContext: android.content.Context,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
+    historyRepository: PlayHistoryStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
 ) : ViewModel() {
@@ -115,6 +119,7 @@ class AnimalDokuPlayViewModel @AssistedInject constructor(
         scope = viewModelScope,
         sessionStore = sessionRepository,
         statsStore = statsRepository,
+        historyStore = historyRepository,
         adapter = AnimalDokuPuzzleAdapter(appContext),
     )
 

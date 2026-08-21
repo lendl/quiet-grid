@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.SettingsRepository
 import com.quietgrid.app.data.StatsStore
@@ -91,6 +92,8 @@ private class WordSearchPuzzleAdapter(
         ),
     )
 
+    override fun puzzleIdOf(session: WordSearchSession): String? = session.puzzle.id
+
     override fun scoreOnWin(session: WordSearchSession, difficulty: Difficulty, elapsedSeconds: Int): Int =
         wordSearchScore(elapsedSeconds, session)
 
@@ -114,6 +117,7 @@ class WordSearchPlayViewModel @AssistedInject constructor(
     @ApplicationContext appContext: Context,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
+    historyRepository: PlayHistoryStore,
     settingsRepository: SettingsRepository,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
@@ -128,6 +132,7 @@ class WordSearchPlayViewModel @AssistedInject constructor(
         scope = viewModelScope,
         sessionStore = sessionRepository,
         statsStore = statsRepository,
+        historyStore = historyRepository,
         adapter = WordSearchPuzzleAdapter(appContext, settingsRepository),
     )
 

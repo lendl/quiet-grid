@@ -3,6 +3,7 @@ package com.quietgrid.app.games.nonogram
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeSessionStore
 import com.quietgrid.app.testutil.FakeStatsStore
 import com.quietgrid.engine.nonogram.NonogramPuzzleEntry
@@ -45,7 +46,7 @@ class NonogramPlayViewModelTest {
     }
 
     private fun newViewModel(sessionStore: FakeSessionStore = FakeSessionStore(), statsStore: FakeStatsStore = FakeStatsStore()) =
-        NonogramPlayViewModel(mockk<Context>(relaxed = true), sessionStore, statsStore, Difficulty.EASY, resume = false)
+        NonogramPlayViewModel(mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), Difficulty.EASY, resume = false)
 
     @Test
     fun `starting fresh loads the mocked puzzle with an empty board`() {

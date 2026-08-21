@@ -2,6 +2,7 @@ package com.quietgrid.app.games.minesweeper
 
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeSessionStore
 import com.quietgrid.app.testutil.FakeStatsStore
 import kotlinx.coroutines.CoroutineScope
@@ -20,7 +21,7 @@ class MinesweeperPlayViewModelTest {
 
     @Test
     fun `starting fresh creates an ungenerated playable session with zero elapsed seconds`() {
-        val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), Difficulty.EASY, resume = false)
+        val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
 
         assertNotNull(viewModel.session)
         assertEquals(MinesweeperStatus.PLAYING, viewModel.session?.board?.status)
@@ -30,7 +31,7 @@ class MinesweeperPlayViewModelTest {
 
     @Test
     fun `flagging before the board is generated still flags the cell`() {
-        val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), Difficulty.EASY, resume = false)
+        val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
 
         viewModel.onToggleFlag(0, 0)
 
@@ -39,7 +40,7 @@ class MinesweeperPlayViewModelTest {
 
     @Test
     fun `revealing the first cell is always safe and generates the board`() {
-        val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), Difficulty.EASY, resume = false)
+        val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
 
         viewModel.onReveal(0, 0)
 
@@ -51,7 +52,7 @@ class MinesweeperPlayViewModelTest {
 
     @Test
     fun `revealing an out-of-bounds cell leaves the session unchanged`() {
-        val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), Difficulty.EASY, resume = false)
+        val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
         val before = viewModel.session
 
         viewModel.onReveal(-1, -1)
@@ -62,7 +63,7 @@ class MinesweeperPlayViewModelTest {
     @Test
     fun `endPuzzle finalizes the session as an abandoned loss`() {
         val sessionStore = FakeSessionStore()
-        val viewModel = MinesweeperPlayViewModel(sessionStore, FakeStatsStore(), Difficulty.EASY, resume = false)
+        val viewModel = MinesweeperPlayViewModel(sessionStore, FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
         val results = mutableListOf<MinesweeperResult>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 

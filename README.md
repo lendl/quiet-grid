@@ -25,7 +25,7 @@ No ads. No account. No internet required. Everything stays on your device.
 | Word Search | Available |
 | Block Fill | Beta |
 | Word Guess | Available |
-| Animal Doku | Beta |
+| Animal Doku | Available |
 
 Each puzzle type has Easy, Medium, Hard, and Expert difficulty levels.
 

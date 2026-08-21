@@ -5,6 +5,8 @@ import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.ActiveSessionEnvelope
 import com.quietgrid.app.data.DifficultyStats
 import com.quietgrid.app.data.GameStats
+import com.quietgrid.app.data.PlayHistoryStore
+import com.quietgrid.app.data.PlayRecord
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
 import kotlinx.coroutines.flow.Flow
@@ -14,6 +16,7 @@ import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -73,11 +76,33 @@ private class FakeStatsStore : StatsStore {
     }
 }
 
+private class FakeHistoryStore : PlayHistoryStore {
+    private val records = mutableListOf<PlayRecord>()
+    val appended: List<PlayRecord> get() = records
+
+    override fun allRecords(): Flow<List<PlayRecord>> = MutableStateFlow(records.toList())
+
+    override fun recordsFor(gameId: GameId): Flow<List<PlayRecord>> =
+        MutableStateFlow(records.filter { it.gameId == gameId.key })
+
+    override fun recordsForPuzzle(gameId: GameId, puzzleId: String, difficulty: Difficulty): Flow<List<PlayRecord>> =
+        MutableStateFlow(records.filter { it.gameId == gameId.key && it.puzzleId == puzzleId && it.difficulty == difficulty.key })
+
+    override suspend fun appendRecord(record: PlayRecord) {
+        records.add(record)
+    }
+
+    override suspend fun clear() {
+        records.clear()
+    }
+}
+
 private class FakePuzzleAdapter(
     private val freshValue: Int = 0,
     private val restoreValue: TestSession? = null,
+    private val puzzleId: String? = null,
+    override val gameId: GameId = GameId.TAKUZU,
 ) : PuzzleAdapter<TestSession, TestResult> {
-    override val gameId: GameId = GameId.TAKUZU
     var freshSessionCalls = 0
         private set
 
@@ -97,6 +122,8 @@ private class FakePuzzleAdapter(
     override fun scoreOnWin(session: TestSession, difficulty: Difficulty, elapsedSeconds: Int): Int =
         100 - elapsedSeconds
 
+    override fun puzzleIdOf(session: TestSession): String? = puzzleId
+
     override fun buildResult(session: TestSession?, outcome: PuzzleOutcome): TestResult = TestResult(
         solved = outcome.solved,
         score = outcome.score,
@@ -111,7 +138,7 @@ class PuzzleSessionControllerTest {
     @Test
     fun `fresh start ticks elapsed seconds and persists meaningful progress`() = runTest {
         val sessionStore = FakeSessionStore()
-        val controller = PuzzleSessionController(backgroundScope, sessionStore, FakeStatsStore(), FakePuzzleAdapter())
+        val controller = PuzzleSessionController(backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter())
 
         controller.start(Difficulty.EASY, resume = false)
         advanceTimeBy(1_001)
@@ -125,7 +152,7 @@ class PuzzleSessionControllerTest {
         val sessionStore = FakeSessionStore()
         sessionStore.preload(ActiveSessionEnvelope(gameId = GameId.TAKUZU.key, elapsedSeconds = 42.0, payload = "p"))
         val adapter = FakePuzzleAdapter(restoreValue = TestSession(7))
-        val controller = PuzzleSessionController(backgroundScope, sessionStore, FakeStatsStore(), adapter)
+        val controller = PuzzleSessionController(backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), adapter)
 
         controller.start(Difficulty.EASY, resume = true)
         runCurrent()
@@ -139,7 +166,7 @@ class PuzzleSessionControllerTest {
         val sessionStore = FakeSessionStore()
         sessionStore.preload(ActiveSessionEnvelope(gameId = GameId.TAKUZU.key, elapsedSeconds = 42.0, payload = "bad"))
         val adapter = FakePuzzleAdapter(freshValue = 3, restoreValue = null)
-        val controller = PuzzleSessionController(backgroundScope, sessionStore, FakeStatsStore(), adapter)
+        val controller = PuzzleSessionController(backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), adapter)
 
         controller.start(Difficulty.EASY, resume = true)
         runCurrent()
@@ -151,7 +178,7 @@ class PuzzleSessionControllerTest {
     @Test
     fun `updateSession persists only when adapter reports meaningful progress`() = runTest {
         val sessionStore = FakeSessionStore()
-        val controller = PuzzleSessionController(backgroundScope, sessionStore, FakeStatsStore(), FakePuzzleAdapter())
+        val controller = PuzzleSessionController(backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter())
         controller.start(Difficulty.EASY, resume = false)
         runCurrent()
 
@@ -167,7 +194,7 @@ class PuzzleSessionControllerTest {
     @Test
     fun `updateSession with persist false never saves`() = runTest {
         val sessionStore = FakeSessionStore()
-        val controller = PuzzleSessionController(backgroundScope, sessionStore, FakeStatsStore(), FakePuzzleAdapter())
+        val controller = PuzzleSessionController(backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter())
         controller.start(Difficulty.EASY, resume = false)
         runCurrent()
 
@@ -182,7 +209,7 @@ class PuzzleSessionControllerTest {
     fun `finishAsWin records stats, clears the session store, and emits isFirstSolve`() = runTest {
         val sessionStore = FakeSessionStore()
         val statsStore = FakeStatsStore()
-        val controller = PuzzleSessionController(backgroundScope, sessionStore, statsStore, FakePuzzleAdapter())
+        val controller = PuzzleSessionController(backgroundScope, sessionStore, statsStore, FakeHistoryStore(), FakePuzzleAdapter())
         controller.start(Difficulty.MEDIUM, resume = false)
         runCurrent()
 
@@ -202,7 +229,7 @@ class PuzzleSessionControllerTest {
     @Test
     fun `finishAsWin reports isNewHighScore against prior best`() = runTest {
         val statsStore = FakeStatsStore().apply { seed(GameId.TAKUZU, Difficulty.MEDIUM, solved = 3, bestScore = 50) }
-        val controller = PuzzleSessionController(backgroundScope, FakeSessionStore(), statsStore, FakePuzzleAdapter())
+        val controller = PuzzleSessionController(backgroundScope, FakeSessionStore(), statsStore, FakeHistoryStore(), FakePuzzleAdapter())
         controller.start(Difficulty.MEDIUM, resume = false)
         runCurrent()
 
@@ -220,7 +247,7 @@ class PuzzleSessionControllerTest {
 
     @Test
     fun `endPuzzle emits a loss result with the abandoned reason`() = runTest {
-        val controller = PuzzleSessionController(backgroundScope, FakeSessionStore(), FakeStatsStore(), FakePuzzleAdapter())
+        val controller = PuzzleSessionController(backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter())
         controller.start(Difficulty.HARD, resume = false)
         runCurrent()
 
@@ -238,7 +265,7 @@ class PuzzleSessionControllerTest {
 
     @Test
     fun `finalized guard prevents a second result emission`() = runTest {
-        val controller = PuzzleSessionController(backgroundScope, FakeSessionStore(), FakeStatsStore(), FakePuzzleAdapter())
+        val controller = PuzzleSessionController(backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter())
         controller.start(Difficulty.EASY, resume = false)
         runCurrent()
 
@@ -252,5 +279,78 @@ class PuzzleSessionControllerTest {
 
         assertEquals(1, emitCount)
         collectJob.cancel()
+    }
+
+    @Test
+    fun `finishAsWin appends a solved play record carrying the difficulty and puzzle id`() = runTest {
+        val historyStore = FakeHistoryStore()
+        val controller = PuzzleSessionController(
+            backgroundScope, FakeSessionStore(), FakeStatsStore(), historyStore, FakePuzzleAdapter(puzzleId = "t6-abc"),
+        )
+        controller.start(Difficulty.HARD, resume = false)
+        runCurrent()
+
+        controller.finishAsWin()
+        advanceTimeBy(500)
+        runCurrent()
+
+        val record = historyStore.appended.single()
+        assertEquals(GameId.TAKUZU.key, record.gameId)
+        assertEquals(Difficulty.HARD.key, record.difficulty)
+        assertEquals("t6-abc", record.puzzleId)
+        assertTrue(record.solved)
+        assertNull(record.lossReason)
+    }
+
+    @Test
+    fun `endPuzzle appends an unsolved play record with the abandoned reason`() = runTest {
+        val historyStore = FakeHistoryStore()
+        val controller = PuzzleSessionController(
+            backgroundScope, FakeSessionStore(), FakeStatsStore(), historyStore, FakePuzzleAdapter(),
+        )
+        controller.start(Difficulty.EASY, resume = false)
+        runCurrent()
+
+        controller.endPuzzle()
+        advanceTimeBy(500)
+        runCurrent()
+
+        val record = historyStore.appended.single()
+        assertEquals(false, record.solved)
+        assertEquals("abandoned", record.lossReason)
+        assertNull(record.puzzleId)
+    }
+
+    @Test
+    fun `finishAsWin does not append a play record for a beta game`() = runTest {
+        val historyStore = FakeHistoryStore()
+        val statsStore = FakeStatsStore()
+        val controller = PuzzleSessionController(
+            backgroundScope, FakeSessionStore(), statsStore, historyStore, FakePuzzleAdapter(gameId = GameId.NONOGRAM),
+        )
+        controller.start(Difficulty.EASY, resume = false)
+        runCurrent()
+
+        controller.finishAsWin()
+        advanceTimeBy(500)
+        runCurrent()
+
+        assertTrue(historyStore.appended.isEmpty())
+    }
+
+    @Test
+    fun `endPuzzle does not append a play record for a beta game`() = runTest {
+        val historyStore = FakeHistoryStore()
+        val controller = PuzzleSessionController(
+            backgroundScope, FakeSessionStore(), FakeStatsStore(), historyStore, FakePuzzleAdapter(gameId = GameId.NONOGRAM),
+        )
+        controller.start(Difficulty.EASY, resume = false)
+        runCurrent()
+
+        controller.endPuzzle()
+        advanceTimeBy(500)
+        runCurrent()
+
+        assertTrue(historyStore.appended.isEmpty())
     }
 }

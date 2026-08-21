@@ -4,7 +4,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.data.ActiveSessionEnvelope
+import com.quietgrid.app.data.PlayHistoryStore
+import com.quietgrid.app.data.PlayRecord
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
 import kotlinx.coroutines.CoroutineScope
@@ -21,6 +24,7 @@ class PuzzleSessionController<TSession, TResult>(
     private val scope: CoroutineScope,
     private val sessionStore: SessionStore,
     private val statsStore: StatsStore,
+    private val historyStore: PlayHistoryStore,
     private val adapter: PuzzleAdapter<TSession, TResult>,
 ) {
     var session by mutableStateOf<TSession?>(null)
@@ -64,6 +68,20 @@ class PuzzleSessionController<TSession, TResult>(
         scope.launch {
             val previous = statsStore.statsFor(adapter.gameId).first().forDifficulty(difficulty)
             statsStore.recordResult(adapter.gameId, difficulty, solved = true, score = score)
+            if (!GameCatalog.get(adapter.gameId).beta) {
+                historyStore.appendRecord(
+                    PlayRecord(
+                        gameId = adapter.gameId.key,
+                        difficulty = difficulty.key,
+                        puzzleId = adapter.puzzleIdOf(current),
+                        solved = true,
+                        score = score,
+                        elapsedSeconds = elapsedSeconds.toInt(),
+                        timestampMillis = System.currentTimeMillis(),
+                        lossReason = null,
+                    ),
+                )
+            }
             sessionStore.clear()
             delay(FINISH_TRANSITION_DELAY_MS)
             _result.emit(
@@ -88,6 +106,20 @@ class PuzzleSessionController<TSession, TResult>(
         finalized = true
         scope.launch {
             statsStore.recordResult(adapter.gameId, difficulty, solved = false, score = 0)
+            if (!GameCatalog.get(adapter.gameId).beta) {
+                historyStore.appendRecord(
+                    PlayRecord(
+                        gameId = adapter.gameId.key,
+                        difficulty = difficulty.key,
+                        puzzleId = session?.let { adapter.puzzleIdOf(it) },
+                        solved = false,
+                        score = 0,
+                        elapsedSeconds = elapsedSeconds.toInt(),
+                        timestampMillis = System.currentTimeMillis(),
+                        lossReason = reason,
+                    ),
+                )
+            }
             sessionStore.clear()
             delay(FINISH_TRANSITION_DELAY_MS)
             _result.emit(

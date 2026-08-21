@@ -100,6 +100,7 @@ fun StatsScreen() {
                     scope.launch {
                         repositories.statsRepository.clearAll()
                         repositories.sessionRepository.clear()
+                        repositories.playHistoryRepository.clear()
                     }
                     showClearDialog = false
                 }) { Text(stringResource(R.string.stats_clear_data)) }

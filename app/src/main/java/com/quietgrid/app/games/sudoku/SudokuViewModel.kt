@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
 import com.quietgrid.app.session.PuzzleAdapter
@@ -76,6 +77,8 @@ private class SudokuPuzzleAdapter(private val appContext: Context) : PuzzleAdapt
         ),
     )
 
+    override fun puzzleIdOf(session: SudokuSession): String? = session.puzzle.id
+
     override fun scoreOnWin(session: SudokuSession, difficulty: Difficulty, elapsedSeconds: Int): Int =
         sudokuScore(difficulty, elapsedSeconds, session.accuracyDrops)
 
@@ -96,6 +99,7 @@ class SudokuPlayViewModel @AssistedInject constructor(
     @ApplicationContext appContext: Context,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
+    historyRepository: PlayHistoryStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
 ) : ViewModel() {
@@ -109,6 +113,7 @@ class SudokuPlayViewModel @AssistedInject constructor(
         scope = viewModelScope,
         sessionStore = sessionRepository,
         statsStore = statsRepository,
+        historyStore = historyRepository,
         adapter = SudokuPuzzleAdapter(appContext),
     )
 

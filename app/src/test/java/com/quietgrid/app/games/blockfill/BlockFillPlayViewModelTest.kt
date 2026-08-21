@@ -2,6 +2,7 @@ package com.quietgrid.app.games.blockfill
 
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeSessionStore
 import com.quietgrid.app.testutil.FakeStatsStore
 import kotlinx.coroutines.CoroutineScope
@@ -19,7 +20,7 @@ class BlockFillPlayViewModelTest {
 
     @Test
     fun `starting fresh creates a playable session with zero elapsed seconds`() {
-        val viewModel = BlockFillPlayViewModel(FakeSessionStore(), FakeStatsStore(), Difficulty.EASY, resume = false)
+        val viewModel = BlockFillPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
 
         assertNotNull(viewModel.session)
         assertEquals(BlockFillStatus.PLAYING, viewModel.session?.status)
@@ -28,7 +29,7 @@ class BlockFillPlayViewModelTest {
 
     @Test
     fun `placing a piece at an out-of-range tray index leaves the session unchanged`() {
-        val viewModel = BlockFillPlayViewModel(FakeSessionStore(), FakeStatsStore(), Difficulty.EASY, resume = false)
+        val viewModel = BlockFillPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
         val before = viewModel.session
 
         viewModel.onPlacePiece(pieceIndex = 99, anchorRow = 0, anchorCol = 0)
@@ -39,7 +40,7 @@ class BlockFillPlayViewModelTest {
     @Test
     fun `endPuzzle clears the session store and emits an abandoned loss`() {
         val sessionStore = FakeSessionStore()
-        val viewModel = BlockFillPlayViewModel(sessionStore, FakeStatsStore(), Difficulty.EASY, resume = false)
+        val viewModel = BlockFillPlayViewModel(sessionStore, FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
         val results = mutableListOf<BlockFillResult>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 

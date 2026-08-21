@@ -3,6 +3,9 @@ package com.quietgrid.app.games.wordsearch
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.data.AppSettings
+import com.quietgrid.app.data.SettingsRepository
+import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeSessionStore
 import com.quietgrid.app.testutil.FakeStatsStore
 import com.quietgrid.engine.wordsearch.WSCellRef
@@ -10,10 +13,12 @@ import com.quietgrid.engine.wordsearch.WSHiddenWord
 import com.quietgrid.engine.wordsearch.WSWordEntry
 import com.quietgrid.engine.wordsearch.WordSearchPuzzleEntry
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -49,8 +54,13 @@ class WordSearchPlayViewModelTest {
         unmockkObject(WordSearchPuzzleBank)
     }
 
-    private fun newViewModel(sessionStore: FakeSessionStore = FakeSessionStore(), statsStore: FakeStatsStore = FakeStatsStore()) =
-        WordSearchPlayViewModel(mockk<Context>(relaxed = true), sessionStore, statsStore, Difficulty.EASY, resume = false)
+    private fun newViewModel(sessionStore: FakeSessionStore = FakeSessionStore(), statsStore: FakeStatsStore = FakeStatsStore()): WordSearchPlayViewModel {
+        val settingsRepository = mockk<SettingsRepository>(relaxed = true)
+        every { settingsRepository.settings } returns MutableStateFlow(AppSettings())
+        return WordSearchPlayViewModel(
+            mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), settingsRepository, Difficulty.EASY, resume = false,
+        )
+    }
 
     @Test
     fun `starting fresh loads the mocked puzzle with no words found yet`() {

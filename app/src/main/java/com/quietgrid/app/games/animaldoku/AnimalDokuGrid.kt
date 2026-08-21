@@ -32,6 +32,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -86,6 +87,7 @@ fun AnimalDokuGrid(
 
         var lastTapCell by remember { mutableStateOf<Pair<Int, Int>?>(null) }
         var lastTapTimeMs by remember { mutableStateOf(0L) }
+        val currentCells by rememberUpdatedState(cells)
         val borderColor = if (isPencilTheme) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
         val borderStrokeWidth = if (isPencilTheme) 3.dp else 1.dp
 
@@ -97,7 +99,7 @@ fun AnimalDokuGrid(
                         val down = awaitFirstDown()
                         val pointerId = down.id
                         val startCell = offsetToCell(down.position, cellSizePx, size)
-                        val startCellState = startCell?.let { (r, c) -> cells[r][c] }
+                        val startCellState = startCell?.let { (r, c) -> currentCells[r][c] }
                         val startCellDraggable = startCellState == AnimalDokuCellState.EMPTY || startCellState == AnimalDokuCellState.MARKED
                         val markAll = startCellState == AnimalDokuCellState.EMPTY
                         val visited = linkedSetOf<Pair<Int, Int>>()

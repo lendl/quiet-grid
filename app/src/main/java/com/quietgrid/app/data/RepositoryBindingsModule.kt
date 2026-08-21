@@ -13,4 +13,7 @@ abstract class RepositoryBindingsModule {
 
     @Binds
     abstract fun bindStatsStore(impl: StatsRepository): StatsStore
+
+    @Binds
+    abstract fun bindPlayHistoryStore(impl: PlayHistoryRepository): PlayHistoryStore
 }

@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
 import com.quietgrid.app.session.PuzzleAdapter
@@ -75,6 +76,8 @@ private class TakuzuPuzzleAdapter(private val appContext: Context) : PuzzleAdapt
         ),
     )
 
+    override fun puzzleIdOf(session: TakuzuSession): String? = session.puzzle.id
+
     override fun scoreOnWin(session: TakuzuSession, difficulty: Difficulty, elapsedSeconds: Int): Int =
         takuzuScore(difficulty, elapsedSeconds, session.accuracyDrops)
 
@@ -95,6 +98,7 @@ class TakuzuPlayViewModel @AssistedInject constructor(
     @ApplicationContext appContext: Context,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
+    historyRepository: PlayHistoryStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
 ) : ViewModel() {
@@ -108,6 +112,7 @@ class TakuzuPlayViewModel @AssistedInject constructor(
         scope = viewModelScope,
         sessionStore = sessionRepository,
         statsStore = statsRepository,
+        historyStore = historyRepository,
         adapter = TakuzuPuzzleAdapter(appContext),
     )
 

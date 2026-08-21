@@ -11,6 +11,7 @@
     <!-- common -->
     <string name="common_go_home">Go to Games</string>
     <string name="common_back">Back</string>
+    <string name="common_close">Close</string>
     <string name="common_play">Play</string>
     <string name="common_rules">Rules</string>
     <string name="common_play_again">Play Again</string>
@@ -181,6 +182,12 @@
     <string name="completion_play_again">Play Again</string>
     <string name="completion_streak_badge">%1$d puzzle streak</string>
     <string name="completion_flawless_badge">Flawless</string>
+    <string name="completion_milestone_game_badge">%1$d solved</string>
+    <string name="completion_milestone_difficulty_badge">%1$d %2$s solves</string>
+    <string name="completion_milestone_total_badge">%1$d puzzles overall</string>
+    <string name="completion_bounced_back_badge">Bounced back</string>
+    <string name="completion_variety_badge">%1$d games today</string>
+    <string name="completion_daily_total_badge">%1$d puzzles today</string>
 
     <!-- loss -->
     <string name="loss_difficulty">Difficulty</string>

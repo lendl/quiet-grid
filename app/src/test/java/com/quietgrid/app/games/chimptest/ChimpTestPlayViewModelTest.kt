@@ -2,6 +2,7 @@ package com.quietgrid.app.games.chimptest
 
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeSessionStore
 import com.quietgrid.app.testutil.FakeStatsStore
 import kotlinx.coroutines.CoroutineScope
@@ -19,7 +20,7 @@ class ChimpTestPlayViewModelTest {
 
     @Test
     fun `starting fresh creates a playable session with zero elapsed seconds`() {
-        val viewModel = ChimpTestPlayViewModel(FakeSessionStore(), FakeStatsStore(), Difficulty.EASY, resume = false)
+        val viewModel = ChimpTestPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
 
         assertNotNull(viewModel.session)
         assertEquals(ChimpTestStatus.PLAYING, viewModel.session?.status)
@@ -28,7 +29,7 @@ class ChimpTestPlayViewModelTest {
 
     @Test
     fun `tapping the cell numbered 1 advances to the next expected number`() {
-        val viewModel = ChimpTestPlayViewModel(FakeSessionStore(), FakeStatsStore(), Difficulty.EASY, resume = false)
+        val viewModel = ChimpTestPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
         val firstCell = viewModel.session!!.cells.first { it.number == 1 }
 
         viewModel.onCellTap(firstCell.row, firstCell.col)
@@ -39,7 +40,7 @@ class ChimpTestPlayViewModelTest {
     @Test
     fun `tapping a cell outside the grid finalizes the session as a rule-failure loss`() {
         val sessionStore = FakeSessionStore()
-        val viewModel = ChimpTestPlayViewModel(sessionStore, FakeStatsStore(), Difficulty.EASY, resume = false)
+        val viewModel = ChimpTestPlayViewModel(sessionStore, FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
         val results = mutableListOf<ChimpTestResult>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 
@@ -57,7 +58,7 @@ class ChimpTestPlayViewModelTest {
     @Test
     fun `endPuzzle finalizes the session as an abandoned loss`() {
         val sessionStore = FakeSessionStore()
-        val viewModel = ChimpTestPlayViewModel(sessionStore, FakeStatsStore(), Difficulty.EASY, resume = false)
+        val viewModel = ChimpTestPlayViewModel(sessionStore, FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
         val results = mutableListOf<ChimpTestResult>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 

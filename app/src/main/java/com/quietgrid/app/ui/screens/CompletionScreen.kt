@@ -59,6 +59,7 @@ import com.quietgrid.app.games.wordguess.wordGuessDifficultyLabelRes
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
 import com.quietgrid.app.ui.components.ConfettiBurst
 import kotlinx.coroutines.delay
+import java.time.LocalDate
 import kotlin.math.roundToInt
 
 private val CELEBRATION_ICONS = listOf("🎉", "🏆", "⭐", "✨", "🎈", "💜")
@@ -128,6 +129,21 @@ fun CompletionScreen(
     val stats by repositories.statsRepository.statsFor(gameId).collectAsState(initial = null)
     val streak = stats?.forDifficulty(difficulty)?.currentStreak ?: 0
 
+    val gameRecords by repositories.playHistoryRepository.recordsFor(gameId).collectAsState(initial = emptyList())
+    val allHistoryRecords by repositories.playHistoryRepository.allRecords().collectAsState(initial = emptyList())
+    val currentWinTimestamp = remember(gameRecords) { gameRecords.maxOfOrNull { it.timestampMillis } ?: 0L }
+    val gameMilestone = remember(gameRecords) { milestoneReached(gameRecords.count { it.solved }) }
+    val difficultyMilestone = remember(gameRecords, difficulty) {
+        milestoneReached(gameRecords.count { it.solved && it.difficulty == difficulty.key })
+    }
+    val totalMilestone = remember(allHistoryRecords) { milestoneReached(allHistoryRecords.count { it.solved }) }
+    val didBounceBack = remember(gameRecords, difficulty, currentWinTimestamp) {
+        bouncedBackFromSkid(gameRecords, difficulty, currentWinTimestamp)
+    }
+    val today = remember { LocalDate.now() }
+    val gamesToday = remember(allHistoryRecords, today) { distinctGamesToday(allHistoryRecords, today) }
+    val puzzlesToday = remember(allHistoryRecords, today) { recordsToday(allHistoryRecords, today) }
+
     val pageOpacity = remember { Animatable(0f) }
     val contentOffsetY = remember { Animatable(24f) }
     val pictureScale = remember { Animatable(0.6f) }
@@ -186,6 +202,60 @@ fun CompletionScreen(
                         textColor = MaterialTheme.colorScheme.tertiary,
                         emoji = "💯",
                         text = stringResource(R.string.completion_flawless_badge),
+                    )
+                }
+                if (gameMilestone != null) {
+                    BadgePill(
+                        modifier = Modifier.padding(start = 8.dp),
+                        borderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.35f),
+                        textColor = MaterialTheme.colorScheme.secondary,
+                        emoji = "🏅",
+                        text = stringResource(R.string.completion_milestone_game_badge, gameMilestone),
+                    )
+                }
+                if (difficultyMilestone != null) {
+                    BadgePill(
+                        modifier = Modifier.padding(start = 8.dp),
+                        borderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.35f),
+                        textColor = MaterialTheme.colorScheme.secondary,
+                        emoji = "🎯",
+                        text = stringResource(R.string.completion_milestone_difficulty_badge, difficultyMilestone, stringResource(difficultyLabelRes)),
+                    )
+                }
+                if (totalMilestone != null) {
+                    BadgePill(
+                        modifier = Modifier.padding(start = 8.dp),
+                        borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
+                        textColor = MaterialTheme.colorScheme.primary,
+                        emoji = "🌟",
+                        text = stringResource(R.string.completion_milestone_total_badge, totalMilestone),
+                    )
+                }
+                if (didBounceBack) {
+                    BadgePill(
+                        modifier = Modifier.padding(start = 8.dp),
+                        borderColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f),
+                        textColor = MaterialTheme.colorScheme.tertiary,
+                        emoji = "💪",
+                        text = stringResource(R.string.completion_bounced_back_badge),
+                    )
+                }
+                if (gamesToday >= 3) {
+                    BadgePill(
+                        modifier = Modifier.padding(start = 8.dp),
+                        borderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.35f),
+                        textColor = MaterialTheme.colorScheme.secondary,
+                        emoji = "🎲",
+                        text = stringResource(R.string.completion_variety_badge, gamesToday),
+                    )
+                }
+                if (puzzlesToday >= 5) {
+                    BadgePill(
+                        modifier = Modifier.padding(start = 8.dp),
+                        borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
+                        textColor = MaterialTheme.colorScheme.primary,
+                        emoji = "☀️",
+                        text = stringResource(R.string.completion_daily_total_badge, puzzlesToday),
                     )
                 }
             }

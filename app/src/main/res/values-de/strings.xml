@@ -9,6 +9,7 @@
 
     <string name="common_go_home">Zu Spielen</string>
     <string name="common_back">Zurück</string>
+    <string name="common_close">Schließen</string>
     <string name="common_play">Spielen</string>
     <string name="common_rules">Regeln</string>
     <string name="common_play_again">Nochmals spielen</string>
@@ -173,6 +174,12 @@
     <string name="completion_play_again">Nochmals spielen</string>
     <string name="completion_streak_badge">%1$d Rätsel in Folge</string>
     <string name="completion_flawless_badge">Fehlerfrei</string>
+    <string name="completion_milestone_game_badge">%1$d gelöst</string>
+    <string name="completion_milestone_difficulty_badge">%1$d Mal %2$s gelöst</string>
+    <string name="completion_milestone_total_badge">%1$d Rätsel insgesamt</string>
+    <string name="completion_bounced_back_badge">Comeback</string>
+    <string name="completion_variety_badge">%1$d Spiele heute</string>
+    <string name="completion_daily_total_badge">%1$d Rätsel heute</string>
 
     <string name="loss_difficulty">Schwierigkeitsgrad</string>
     <string name="loss_elapsed_time">Verstrichene Zeit</string>

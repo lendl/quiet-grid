@@ -78,7 +78,7 @@ fun generateWordSearchPuzzle(rows: Int, cols: Int, difficulty: Difficulty, prefe
     val diversitySignature = buildDiversitySignature(placements, reserved.positions)
 
     return WordSearchPuzzleEntry(
-        id = "$language-${theme.themeId}-$difficulty-$diversitySignature".hashCode().toString(),
+        id = "ws-${"$language-${theme.themeId}-$difficulty-$diversitySignature".hashCode()}",
         difficulty = difficulty.key,
         rows = rows,
         cols = cols,

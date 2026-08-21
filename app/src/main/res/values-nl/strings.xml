@@ -9,6 +9,7 @@
 
     <string name="common_go_home">Ga naar spellen</string>
     <string name="common_back">Terug</string>
+    <string name="common_close">Sluiten</string>
     <string name="common_play">Spelen</string>
     <string name="common_rules">Regels</string>
     <string name="common_play_again">Opnieuw spelen</string>
@@ -173,6 +174,12 @@
     <string name="completion_play_again">Opnieuw spelen</string>
     <string name="completion_streak_badge">%1$d puzzels op rij</string>
     <string name="completion_flawless_badge">Foutloos</string>
+    <string name="completion_milestone_game_badge">%1$d opgelost</string>
+    <string name="completion_milestone_difficulty_badge">%1$d keer %2$s opgelost</string>
+    <string name="completion_milestone_total_badge">%1$d puzzels in totaal</string>
+    <string name="completion_bounced_back_badge">Comeback</string>
+    <string name="completion_variety_badge">%1$d spellen vandaag</string>
+    <string name="completion_daily_total_badge">%1$d puzzels vandaag</string>
 
     <string name="loss_difficulty">Moeilijkheid</string>
     <string name="loss_elapsed_time">Verstreken tijd</string>

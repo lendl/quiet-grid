@@ -28,5 +28,7 @@ interface PuzzleAdapter<TSession, TResult> {
 
     fun scoreOnWin(session: TSession, difficulty: Difficulty, elapsedSeconds: Int): Int
 
+    fun puzzleIdOf(session: TSession): String? = null
+
     fun buildResult(session: TSession?, outcome: PuzzleOutcome): TResult
 }
