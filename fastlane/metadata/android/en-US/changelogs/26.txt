@@ -1,0 +1,7 @@
+Version 1.2.9
+
+- New game: Animal Doku, plus more puzzles added
+- Word Search and Word Guess: play in different languages
+- Per-puzzle play history log
+- Updated How to Play screens
+- Fixed deprecated cutout-mode API crash risk (AppCompat removed)
