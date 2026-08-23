@@ -65,6 +65,9 @@ fun SudokuGrid(
         val fontSize = (cellSize.value * 0.5f).sp
 
         val cellSizePx = with(LocalDensity.current) { cellSize.toPx() }
+        val selectedRow = selectedCell?.first
+        val selectedCol = selectedCell?.second
+        val selectedBox = if (selectedRow != null && selectedCol != null) sudokuBoxIndex(selectedRow, selectedCol) else null
         Box(
             Modifier
                 .size(cellSize * 9, cellSize * 9)
@@ -77,6 +80,8 @@ fun SudokuGrid(
                 val locked = given || finishedCells[row][col]
                 val box = sudokuBoxIndex(row, col)
                 val isSelected = selectedCell == row to col
+                val isPeerHighlight = !isSelected && selectedBox != null &&
+                    (row == selectedRow || col == selectedCol || box == selectedBox)
                 val isCorrect = row in feedbackCorrectRows || col in feedbackCorrectCols || box in feedbackCorrectBoxes
                 val isIncorrect = row in feedbackIncorrectRows || col in feedbackIncorrectCols || box in feedbackIncorrectBoxes
                 val cellKey = row to col
@@ -91,7 +96,8 @@ fun SudokuGrid(
                     isHintTarget -> MaterialTheme.colorScheme.tertiary.copy(alpha = 0.22f)
                     isHintEvidence -> MaterialTheme.colorScheme.tertiary.copy(alpha = 0.16f)
                     isHintHighlight -> MaterialTheme.colorScheme.tertiary.copy(alpha = 0.06f)
-                    locked -> MaterialTheme.colorScheme.surfaceVariant
+                    isPeerHighlight -> MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.45f)
+                    value != null -> MaterialTheme.colorScheme.surfaceVariant
                     else -> MaterialTheme.colorScheme.surface
                 }
                 val emphasisColor = when {

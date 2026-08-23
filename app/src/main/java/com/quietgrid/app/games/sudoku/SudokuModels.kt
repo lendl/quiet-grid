@@ -15,6 +15,7 @@ data class SudokuSession(
     val accuracyDrops: Int,
     val finishedCells: List<List<Boolean>>,
     val penalizedUnitKeys: List<String>,
+    val autoCandidateMode: Boolean = false,
 )
 
 @Serializable
@@ -26,4 +27,5 @@ data class SudokuPersistedSession(
     val accuracyDrops: Int,
     val finishedCells: List<Boolean>,
     val penalizedUnitKeys: List<String>,
+    val autoCandidateMode: Boolean = false,
 )

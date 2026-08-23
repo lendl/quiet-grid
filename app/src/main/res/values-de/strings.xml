@@ -458,7 +458,11 @@
     <string name="sudoku_difficulty_desc_hard">Spärliche Gitter für reichere Zuganalyse und Validierung.</string>
     <string name="sudoku_difficulty_desc_expert">Sehr spärliche Gitter für fortgeschrittene Ketten- und Coloring-Deduktionen.</string>
     <string name="sudoku_size_label">Größe</string>
-    <string name="sudoku_notes_mode_label">Notizen</string>
+    <string name="sudoku_normal_mode_label">Normal</string>
+    <string name="sudoku_candidate_mode_label">Notizen</string>
+    <string name="sudoku_undo">Rückgängig</string>
+    <string name="sudoku_clear_cell">Zelle leeren</string>
+    <string name="sudoku_auto_candidate_mode_label">Automatische Notizen</string>
     <string name="sudoku_hint_show">Show next move hint</string>
     <string name="sudoku_hint_hide">Hide next move hint</string>
     <string name="sudoku_hint_row">Zeile %1$d</string>

@@ -29,6 +29,7 @@ import kotlinx.serialization.json.Json
 
 private val json = Json { ignoreUnknownKeys = true }
 private const val VALIDATION_DELAY_MS = 800L
+private const val MAX_UNDO_HISTORY = 50
 
 data class SudokuResult(
     val difficulty: Difficulty,
@@ -63,6 +64,7 @@ private class SudokuPuzzleAdapter(
             accuracyDrops = persisted.accuracyDrops,
             finishedCells = List(9) { r -> List(9) { c -> persisted.finishedCells[r * 9 + c] } },
             penalizedUnitKeys = persisted.penalizedUnitKeys,
+            autoCandidateMode = persisted.autoCandidateMode,
         )
     }
 
@@ -79,6 +81,7 @@ private class SudokuPuzzleAdapter(
             accuracyDrops = session.accuracyDrops,
             finishedCells = session.finishedCells.flatten(),
             penalizedUnitKeys = session.penalizedUnitKeys,
+            autoCandidateMode = session.autoCandidateMode,
         ),
     )
 
@@ -144,10 +147,13 @@ class SudokuPlayViewModel @AssistedInject constructor(
         private set
     var nextMoveHintActive by mutableStateOf(false)
         private set
+    var canUndo by mutableStateOf(false)
+        private set
 
     private var pendingUnitKeys = mutableSetOf<SudokuUnitKey>()
     private var pendingBoard: SudokuGrid? = null
     private var validationJob: kotlinx.coroutines.Job? = null
+    private val undoHistory = mutableListOf<SudokuSession>()
 
     init {
         controller.start(requestedDifficulty, resume)
@@ -164,11 +170,21 @@ class SudokuPlayViewModel @AssistedInject constructor(
 
     fun onToggleNoteMode() {
         val current = session ?: return
-        if (selectedCell == null) return
+        if (selectedCell == null || current.autoCandidateMode) return
         controller.updateSession(
             current.copy(inputMode = if (current.inputMode == SudokuInputMode.DIGIT) SudokuInputMode.NOTES else SudokuInputMode.DIGIT),
             persist = false,
         )
+    }
+
+    fun onToggleAutoCandidateMode() {
+        val current = session ?: return
+        val enabling = !current.autoCandidateMode
+        var updated = current.copy(autoCandidateMode = enabling)
+        if (enabling) {
+            updated = updated.copy(notes = computeSudokuAutoNotes(updated.board), inputMode = SudokuInputMode.DIGIT)
+        }
+        controller.updateSession(updated)
     }
 
     fun onPressDigit(digit: Int) {
@@ -183,22 +199,59 @@ class SudokuPlayViewModel @AssistedInject constructor(
             applySudokuSetDigit(current, row, col, digit)
         }
         val updated: SudokuSession = nextSession ?: return
+        pushUndoSnapshot(current)
+        finishBoardMutation(current, updated, row, col)
+    }
 
+    fun onClearCell() {
+        val current = session ?: return
+        val (row, col) = selectedCell ?: return
+        val updated = applySudokuClearCell(current, row, col) ?: return
+        pushUndoSnapshot(current)
+        finishBoardMutation(current, updated, row, col)
+    }
+
+    fun onUndo() {
+        val previous = undoHistory.removeLastOrNull() ?: return
+        canUndo = undoHistory.isNotEmpty()
+
+        validationJob?.cancel()
+        pendingUnitKeys = mutableSetOf()
+        pendingBoard = null
         nextMoveHint = null
         nextMoveHintActive = false
-        controller.updateSession(updated)
+        feedbackCorrectRows = emptySet()
+        feedbackCorrectCols = emptySet()
+        feedbackCorrectBoxes = emptySet()
+        feedbackIncorrectRows = emptySet()
+        feedbackIncorrectCols = emptySet()
+        feedbackIncorrectBoxes = emptySet()
 
-        if (current.inputMode == SudokuInputMode.NOTES) return
+        controller.updateSession(previous)
+    }
+
+    private fun pushUndoSnapshot(snapshot: SudokuSession) {
+        undoHistory.add(snapshot)
+        if (undoHistory.size > MAX_UNDO_HISTORY) undoHistory.removeAt(0)
+        canUndo = true
+    }
+
+    private fun finishBoardMutation(previous: SudokuSession, updated: SudokuSession, row: Int, col: Int) {
+        nextMoveHint = null
+        nextMoveHintActive = false
+
+        val finalUpdated = if (updated.autoCandidateMode) updated.copy(notes = computeSudokuAutoNotes(updated.board)) else updated
+        controller.updateSession(finalUpdated)
 
         for (key in sudokuTouchedUnitKeys(row, col)) {
-            val before = getCompletedSudokuUnitState(current.board, current.puzzle.solution, key)
-            val after = getCompletedSudokuUnitState(updated.board, current.puzzle.solution, key)
+            val before = getCompletedSudokuUnitState(previous.board, previous.puzzle.solution, key)
+            val after = getCompletedSudokuUnitState(finalUpdated.board, previous.puzzle.solution, key)
             if (before != SudokuUnitState.INCOMPLETE || after != SudokuUnitState.INCOMPLETE) {
                 pendingUnitKeys.add(key)
             }
         }
         if (pendingUnitKeys.isEmpty()) return
-        pendingBoard = updated.board
+        pendingBoard = finalUpdated.board
 
         validationJob?.cancel()
         validationJob = viewModelScope.launch {

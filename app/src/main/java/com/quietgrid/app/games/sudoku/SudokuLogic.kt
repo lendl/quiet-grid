@@ -3,6 +3,8 @@ package com.quietgrid.app.games.sudoku
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.engine.sudoku.SudokuGrid
 import com.quietgrid.engine.sudoku.SudokuPuzzleEntry
+import com.quietgrid.engine.sudoku.createBitmaskStateFromBoard
+import com.quietgrid.engine.sudoku.getCellCandidates
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -56,6 +58,12 @@ fun applySudokuClearCell(session: SudokuSession, row: Int, col: Int): SudokuSess
     val board = session.board.mapIndexed { r, line -> if (r != row) line else line.mapIndexed { c, v -> if (c == col) null else v } }
     val notes = session.notes.mapIndexed { r, line -> if (r != row) line else line.mapIndexed { c, v -> if (c == col) emptySet() else v } }
     return session.copy(board = board, notes = notes)
+}
+
+fun computeSudokuAutoNotes(board: SudokuGrid): List<List<Set<Int>>> {
+    val state = runCatching { createBitmaskStateFromBoard(board) }.getOrNull()
+        ?: return List(9) { List(9) { emptySet() } }
+    return List(9) { row -> List(9) { col -> if (board[row][col] != null) emptySet() else getCellCandidates(state, row, col).toSet() } }
 }
 
 fun applySudokuToggleNote(session: SudokuSession, row: Int, col: Int, digit: Int): SudokuSession? {

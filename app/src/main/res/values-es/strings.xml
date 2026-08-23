@@ -458,7 +458,11 @@
     <string name="sudoku_difficulty_desc_hard">Cuadrículas escasas reservadas para análisis y validación más ricos.</string>
     <string name="sudoku_difficulty_desc_expert">Cuadrículas muy escasas reservadas para deducciones avanzadas con cadenas y coloreado.</string>
     <string name="sudoku_size_label">Tamaño</string>
-    <string name="sudoku_notes_mode_label">Notas</string>
+    <string name="sudoku_normal_mode_label">Normal</string>
+    <string name="sudoku_candidate_mode_label">Notas</string>
+    <string name="sudoku_undo">Deshacer</string>
+    <string name="sudoku_clear_cell">Borrar celda</string>
+    <string name="sudoku_auto_candidate_mode_label">Notas automáticas</string>
     <string name="sudoku_hint_show">Show next move hint</string>
     <string name="sudoku_hint_hide">Hide next move hint</string>
     <string name="sudoku_hint_row">fila %1$d</string>

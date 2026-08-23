@@ -458,7 +458,11 @@
     <string name="sudoku_difficulty_desc_hard">Grilles clairsemées réservées à une analyse de coups et à une validation plus riches.</string>
     <string name="sudoku_difficulty_desc_expert">Grilles très clairsemées réservées aux déductions avancées par chaînes et coloriage.</string>
     <string name="sudoku_size_label">Taille</string>
-    <string name="sudoku_notes_mode_label">Notes</string>
+    <string name="sudoku_normal_mode_label">Normal</string>
+    <string name="sudoku_candidate_mode_label">Notes</string>
+    <string name="sudoku_undo">Annuler</string>
+    <string name="sudoku_clear_cell">Effacer la cellule</string>
+    <string name="sudoku_auto_candidate_mode_label">Notes automatiques</string>
     <string name="sudoku_hint_show">Show next move hint</string>
     <string name="sudoku_hint_hide">Hide next move hint</string>
     <string name="sudoku_hint_row">ligne %1$d</string>

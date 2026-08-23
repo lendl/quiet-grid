@@ -470,7 +470,11 @@
     <string name="sudoku_difficulty_desc_hard">Sparse grids reserved for richer move analysis and validation work.</string>
     <string name="sudoku_difficulty_desc_expert">Very sparse grids reserved for advanced chain and coloring deductions.</string>
     <string name="sudoku_size_label">Size</string>
-    <string name="sudoku_notes_mode_label">Notes</string>
+    <string name="sudoku_normal_mode_label">Normal</string>
+    <string name="sudoku_candidate_mode_label">Candidate</string>
+    <string name="sudoku_undo">Undo</string>
+    <string name="sudoku_clear_cell">Clear cell</string>
+    <string name="sudoku_auto_candidate_mode_label">Auto Candidate Mode</string>
     <string name="sudoku_hint_show">Show next move hint</string>
     <string name="sudoku_hint_hide">Hide next move hint</string>
     <string name="sudoku_hint_row">row %1$d</string>

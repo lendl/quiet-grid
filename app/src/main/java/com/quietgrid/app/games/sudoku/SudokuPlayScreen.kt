@@ -11,10 +11,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Lightbulb
-import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -155,32 +155,72 @@ fun SudokuPlayScreen(
         if (session != null) {
             val noteMode = session.inputMode == SudokuInputMode.NOTES
             val hasSelection = viewModel.selectedCell != null
-            Row(Modifier.fillMaxWidth().padding(top = 12.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            val (selRow, selCol) = viewModel.selectedCell ?: (-1 to -1)
+            val selectedValue = if (hasSelection) session.board[selRow][selCol] else null
+
+            @Composable
+            fun digitButton(digit: Int) {
+                val active = if (noteMode) digit in session.notes.getOrElse(selRow) { emptyList() }.getOrElse(selCol) { emptySet() } else selectedValue == digit
+                val digitsDisabled = !hasSelection || (noteMode && selectedValue != null)
                 SudokuPadButton(
-                    active = noteMode,
-                    enabled = hasSelection,
-                    onClick = viewModel::onToggleNoteMode,
+                    active = active,
+                    enabled = !digitsDisabled,
+                    onClick = { viewModel.onPressDigit(digit) },
                     modifier = Modifier.weight(1f).height(52.dp),
                 ) {
-                    Icon(
-                        if (noteMode) Icons.Filled.Create else Icons.Outlined.Create,
-                        contentDescription = stringResource(R.string.sudoku_notes_mode_label),
-                    )
+                    Text(digit.toString(), style = MaterialTheme.typography.titleMedium)
                 }
-                for (digit in 1..9) {
-                    val (selRow, selCol) = viewModel.selectedCell ?: (-1 to -1)
-                    val selectedValue = if (hasSelection) session.board[selRow][selCol] else null
-                    val active = if (noteMode) digit in session.notes.getOrElse(selRow) { emptyList() }.getOrElse(selCol) { emptySet() } else selectedValue == digit
-                    val digitsDisabled = !hasSelection || (noteMode && selectedValue != null)
-                    SudokuPadButton(
-                        active = active,
-                        enabled = !digitsDisabled,
-                        onClick = { viewModel.onPressDigit(digit) },
-                        modifier = Modifier.weight(1f).height(52.dp),
-                    ) {
-                        Text(digit.toString(), style = MaterialTheme.typography.titleMedium)
-                    }
+            }
+
+            Row(Modifier.fillMaxWidth().padding(top = 12.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                SudokuPadButton(
+                    active = !noteMode,
+                    enabled = true,
+                    onClick = { if (noteMode) viewModel.onToggleNoteMode() },
+                    modifier = Modifier.weight(2f).height(44.dp),
+                ) {
+                    Text(stringResource(R.string.sudoku_normal_mode_label), style = MaterialTheme.typography.labelLarge)
                 }
+                SudokuPadButton(
+                    active = noteMode,
+                    enabled = hasSelection && !session.autoCandidateMode,
+                    onClick = { if (!noteMode) viewModel.onToggleNoteMode() },
+                    modifier = Modifier.weight(2f).height(44.dp),
+                ) {
+                    Text(stringResource(R.string.sudoku_candidate_mode_label), style = MaterialTheme.typography.labelLarge)
+                }
+                SudokuPadButton(
+                    active = false,
+                    enabled = viewModel.canUndo,
+                    onClick = viewModel::onUndo,
+                    modifier = Modifier.weight(1.5f).height(44.dp),
+                ) {
+                    Text(stringResource(R.string.sudoku_undo), style = MaterialTheme.typography.labelLarge)
+                }
+            }
+
+            Row(Modifier.fillMaxWidth().padding(top = 8.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                for (digit in 1..5) digitButton(digit)
+            }
+            Row(Modifier.fillMaxWidth().padding(top = 4.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                for (digit in 6..9) digitButton(digit)
+                SudokuPadButton(
+                    active = false,
+                    enabled = hasSelection,
+                    onClick = viewModel::onClearCell,
+                    modifier = Modifier.weight(1f).height(52.dp),
+                ) {
+                    Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.sudoku_clear_cell))
+                }
+            }
+
+            Row(
+                Modifier.fillMaxWidth().padding(top = 8.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Checkbox(checked = session.autoCandidateMode, onCheckedChange = { viewModel.onToggleAutoCandidateMode() })
+                Text(stringResource(R.string.sudoku_auto_candidate_mode_label), style = MaterialTheme.typography.bodyMedium)
             }
         }
     }

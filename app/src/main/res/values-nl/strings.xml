@@ -458,7 +458,11 @@
     <string name="sudoku_difficulty_desc_hard">Schaarse roosters bedoeld voor rijkere zetanalyse en validatie.</string>
     <string name="sudoku_difficulty_desc_expert">Zeer schaarse roosters bedoeld voor gevorderde ketting- en kleurdeducties.</string>
     <string name="sudoku_size_label">Grootte</string>
-    <string name="sudoku_notes_mode_label">Notities</string>
+    <string name="sudoku_normal_mode_label">Normaal</string>
+    <string name="sudoku_candidate_mode_label">Notities</string>
+    <string name="sudoku_undo">Ongedaan maken</string>
+    <string name="sudoku_clear_cell">Cel wissen</string>
+    <string name="sudoku_auto_candidate_mode_label">Automatische notities</string>
     <string name="sudoku_hint_show">Show next move hint</string>
     <string name="sudoku_hint_hide">Hide next move hint</string>
     <string name="sudoku_hint_row">rij %1$d</string>
