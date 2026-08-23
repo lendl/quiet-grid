@@ -35,4 +35,16 @@ class TakuzuDifficultyTest {
         val difficulty = classifyTakuzuDifficulty(6, metrics, score)
         assertNotNull(difficulty)
     }
+
+    @Test
+    fun `a puzzle using only the weakest technique cannot jump straight to expert on score alone`() {
+        val metrics = TakuzuDifficultyMetrics(givenCount = 20)
+        metrics.tipUsageCounts.findPairs = 5
+        metrics.highestTipLevel = 1
+        metrics.openingHighestTipLevel = 1
+        metrics.totalMoves = 5
+
+        val expertOnlyScore = 3000
+        assertEquals(Difficulty.MEDIUM, classifyTakuzuDifficulty(10, metrics, expertOnlyScore))
+    }
 }

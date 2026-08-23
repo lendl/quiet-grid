@@ -220,11 +220,18 @@ fun passesTakuzuDifficultyRails(size: Int, difficulty: Difficulty, metrics: Taku
     return passesSafetyRails(metrics, bucket)
 }
 
+private fun capScoreEscalation(techniqueDifficulty: Difficulty, scoreBucket: Difficulty): Difficulty =
+    if (scoreBucket.ordinal > techniqueDifficulty.ordinal + 1) {
+        Difficulty.entries[techniqueDifficulty.ordinal + 1]
+    } else {
+        maxOf(techniqueDifficulty, scoreBucket)
+    }
+
 fun classifyTakuzuDifficulty(size: Int, metrics: TakuzuDifficultyMetrics, score: Int): Difficulty? {
     val highestTechnique = highestTechniqueLevel(metrics)
     val techniqueDifficulty = difficultyFromTechniqueLevel(highestTechnique)
     val scoreBucket = difficultyFromScore(size, score) ?: return null
-    val combined = maxOf(techniqueDifficulty, scoreBucket)
+    val combined = capScoreEscalation(techniqueDifficulty, scoreBucket)
     val constrained = applyGridSizeConstraints(size, combined, highestTechnique)
     val matchingBucket = TAKUZU_SUPPORTED_BUCKETS.find { it.size == size && it.difficulty == constrained } ?: return null
     return if (passesSafetyRails(metrics, matchingBucket)) matchingBucket.difficulty else null
