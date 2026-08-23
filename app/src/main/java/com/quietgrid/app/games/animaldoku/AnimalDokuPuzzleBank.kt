@@ -12,7 +12,6 @@ private val json = Json { ignoreUnknownKeys = true }
 
 object AnimalDokuPuzzleBank {
     private var cache: Map<String, List<AnimalDokuPuzzleEntry>>? = null
-    private val lastPickedId = mutableMapOf<String, String>()
 
     private suspend fun load(context: Context): Map<String, List<AnimalDokuPuzzleEntry>> {
         cache?.let { return it }
@@ -25,14 +24,10 @@ object AnimalDokuPuzzleBank {
         }
     }
 
-    suspend fun randomPuzzle(context: Context, difficulty: Difficulty): AnimalDokuPuzzleEntry? {
+    suspend fun randomPuzzle(context: Context, difficulty: Difficulty, recentlyPlayedIds: Set<String> = emptySet()): AnimalDokuPuzzleEntry? {
         val pool = load(context)[difficulty.key] ?: return null
         if (pool.isEmpty()) return null
-        val lastId = lastPickedId[difficulty.key]
-        val candidates = if (pool.size > 1 && lastId != null) pool.filter { it.id != lastId } else pool
-        val choices = candidates.ifEmpty { pool }
-        val chosen = choices.random()
-        lastPickedId[difficulty.key] = chosen.id
-        return chosen
+        val candidates = pool.filter { it.id !in recentlyPlayedIds }
+        return candidates.ifEmpty { pool }.random()
     }
 }

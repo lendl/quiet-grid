@@ -11,6 +11,7 @@ import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
+import com.quietgrid.app.data.recentlyPlayedPuzzleIds
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
@@ -40,11 +41,15 @@ data class SudokuResult(
     val isNewHighScore: Boolean = false,
 )
 
-private class SudokuPuzzleAdapter(private val appContext: Context) : PuzzleAdapter<SudokuSession, SudokuResult> {
+private class SudokuPuzzleAdapter(
+    private val appContext: Context,
+    private val historyStore: PlayHistoryStore,
+) : PuzzleAdapter<SudokuSession, SudokuResult> {
     override val gameId: GameId = GameId.SUDOKU
 
     override suspend fun freshSession(difficulty: Difficulty): SudokuSession? {
-        val entry = SudokuPuzzleBank.randomPuzzle(appContext, difficulty) ?: return null
+        val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
+        val entry = SudokuPuzzleBank.randomPuzzle(appContext, difficulty, recentIds) ?: return null
         return createSudokuSession(entry)
     }
 
@@ -114,7 +119,7 @@ class SudokuPlayViewModel @AssistedInject constructor(
         sessionStore = sessionRepository,
         statsStore = statsRepository,
         historyStore = historyRepository,
-        adapter = SudokuPuzzleAdapter(appContext),
+        adapter = SudokuPuzzleAdapter(appContext, historyRepository),
     )
 
     val session get() = controller.session

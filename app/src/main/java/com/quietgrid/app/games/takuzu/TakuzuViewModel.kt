@@ -11,6 +11,7 @@ import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
+import com.quietgrid.app.data.recentlyPlayedPuzzleIds
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
@@ -40,11 +41,15 @@ data class TakuzuResult(
     val isNewHighScore: Boolean = false,
 )
 
-private class TakuzuPuzzleAdapter(private val appContext: Context) : PuzzleAdapter<TakuzuSession, TakuzuResult> {
+private class TakuzuPuzzleAdapter(
+    private val appContext: Context,
+    private val historyStore: PlayHistoryStore,
+) : PuzzleAdapter<TakuzuSession, TakuzuResult> {
     override val gameId: GameId = GameId.TAKUZU
 
     override suspend fun freshSession(difficulty: Difficulty): TakuzuSession? {
-        val puzzle = TakuzuPuzzleBank.randomPuzzle(appContext, difficulty) ?: return null
+        val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
+        val puzzle = TakuzuPuzzleBank.randomPuzzle(appContext, difficulty, recentIds) ?: return null
         return createTakuzuSession(puzzle)
     }
 
@@ -113,7 +118,7 @@ class TakuzuPlayViewModel @AssistedInject constructor(
         sessionStore = sessionRepository,
         statsStore = statsRepository,
         historyStore = historyRepository,
-        adapter = TakuzuPuzzleAdapter(appContext),
+        adapter = TakuzuPuzzleAdapter(appContext, historyRepository),
     )
 
     val session get() = controller.session

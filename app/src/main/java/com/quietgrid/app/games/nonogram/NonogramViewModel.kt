@@ -11,6 +11,7 @@ import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
+import com.quietgrid.app.data.recentlyPlayedPuzzleIds
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
@@ -37,11 +38,15 @@ data class NonogramResult(
     val solution: List<List<Boolean>> = emptyList(),
 )
 
-private class NonogramPuzzleAdapter(private val appContext: Context) : PuzzleAdapter<NonogramSession, NonogramResult> {
+private class NonogramPuzzleAdapter(
+    private val appContext: Context,
+    private val historyStore: PlayHistoryStore,
+) : PuzzleAdapter<NonogramSession, NonogramResult> {
     override val gameId: GameId = GameId.NONOGRAM
 
     override suspend fun freshSession(difficulty: Difficulty): NonogramSession? {
-        val entry = NonogramPuzzleBank.randomPuzzle(appContext, difficulty) ?: return null
+        val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
+        val entry = NonogramPuzzleBank.randomPuzzle(appContext, difficulty, recentIds) ?: return null
         return createNonogramSession(entry)
     }
 
@@ -108,7 +113,7 @@ class NonogramPlayViewModel @AssistedInject constructor(
         sessionStore = sessionRepository,
         statsStore = statsRepository,
         historyStore = historyRepository,
-        adapter = NonogramPuzzleAdapter(appContext),
+        adapter = NonogramPuzzleAdapter(appContext, historyRepository),
     )
 
     val session get() = controller.session

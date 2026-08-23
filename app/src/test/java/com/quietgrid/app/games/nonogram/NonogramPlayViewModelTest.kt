@@ -37,7 +37,7 @@ class NonogramPlayViewModelTest {
     @Before
     fun setUp() {
         mockkObject(NonogramPuzzleBank)
-        coEvery { NonogramPuzzleBank.randomPuzzle(any(), any()) } returns puzzleEntry
+        coEvery { NonogramPuzzleBank.randomPuzzle(any(), any(), any()) } returns puzzleEntry
     }
 
     @After

@@ -28,14 +28,14 @@ private const val WORDGUESS_KEYBOARD_ROW_2 = "asdfghjkl"
 private const val WORDGUESS_KEYBOARD_ROW_3 = "zxcvbnm"
 
 @Composable
-private fun WordGuessKey(label: String, state: LetterState?, widthDp: Int = 32, onClick: () -> Unit) {
+private fun WordGuessKey(label: String, state: LetterState?, widthDp: Int = 36, onClick: () -> Unit) {
     val (background, foreground) = wordGuessLetterColors(state)
     val icon = wordGuessLetterIcon(state)
     Surface(
         onClick = onClick,
         color = background,
         shape = RoundedCornerShape(4.dp),
-        modifier = Modifier.size(width = widthDp.dp, height = 42.dp),
+        modifier = Modifier.size(width = widthDp.dp, height = 48.dp),
     ) {
         Box(contentAlignment = Alignment.Center) {
             Text(label.uppercase(), color = foreground, fontWeight = FontWeight.Bold)
@@ -78,20 +78,20 @@ fun WordGuessKeyboard(
             }
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)) {
-            WordGuessKey("Enter", state = null, widthDp = 56) { onEnter() }
             for (ch in WORDGUESS_KEYBOARD_ROW_3) {
                 WordGuessKey(ch.toString(), keyboardState[ch]) { onLetter(ch) }
             }
             Surface(
                 onClick = onBackspace,
-                color = MaterialTheme.colorScheme.surfaceVariant,
+                color = MaterialTheme.colorScheme.error,
                 shape = RoundedCornerShape(4.dp),
-                modifier = Modifier.size(width = 56.dp, height = 42.dp),
+                modifier = Modifier.size(width = 60.dp, height = 48.dp),
             ) {
                 Box(contentAlignment = Alignment.Center) {
-                    Icon(Icons.AutoMirrored.Filled.Backspace, contentDescription = null)
+                    Icon(Icons.AutoMirrored.Filled.Backspace, contentDescription = null, tint = MaterialTheme.colorScheme.onError)
                 }
             }
+            WordGuessKey("Enter", state = null, widthDp = 60) { onEnter() }
         }
     }
 }

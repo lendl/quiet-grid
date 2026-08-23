@@ -14,7 +14,6 @@ private val json = Json { ignoreUnknownKeys = true }
 object WordGuessPuzzleBank {
     private var answerCache: Map<String, List<WordGuessPuzzleEntry>>? = null
     private var dictionaryCache: Map<String, Set<String>>? = null
-    private val lastPickedWord = mutableMapOf<String, String>()
 
     private suspend fun loadAnswers(context: Context): Map<String, List<WordGuessPuzzleEntry>> {
         answerCache?.let { return it }
@@ -36,15 +35,16 @@ object WordGuessPuzzleBank {
         return cache[locale] ?: emptySet()
     }
 
-    suspend fun randomPuzzle(context: Context, locale: String, difficulty: Difficulty): WordGuessPuzzleEntry? {
+    suspend fun randomPuzzle(
+        context: Context,
+        locale: String,
+        difficulty: Difficulty,
+        recentlyPlayedIds: Set<String> = emptySet(),
+    ): WordGuessPuzzleEntry? {
         val key = "$locale:${difficulty.key}"
         val pool = loadAnswers(context)[key] ?: return null
         if (pool.isEmpty()) return null
-        val lastWord = lastPickedWord[key]
-        val candidates = if (pool.size > 1 && lastWord != null) pool.filter { it.word != lastWord } else pool
-        val choices = candidates.ifEmpty { pool }
-        val chosen = choices.random()
-        lastPickedWord[key] = chosen.word
-        return chosen
+        val candidates = pool.filter { it.id !in recentlyPlayedIds }
+        return candidates.ifEmpty { pool }.random()
     }
 }

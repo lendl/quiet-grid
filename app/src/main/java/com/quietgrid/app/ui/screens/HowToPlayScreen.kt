@@ -1,6 +1,7 @@
 package com.quietgrid.app.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,9 +37,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.games.wordguess.wordGuessLetterColors
+import com.quietgrid.app.games.wordguess.wordGuessLetterIcon
+import com.quietgrid.engine.wordguess.LetterState
 
 @Composable
 fun HowToPlayScreen(gameId: GameId) {
@@ -388,6 +393,38 @@ private fun BlockFillHowToPlay() {
 }
 
 @Composable
+private fun WordGuessExampleTile(letter: Char, state: LetterState) {
+    val (background, foreground) = wordGuessLetterColors(state)
+    val icon = wordGuessLetterIcon(state)
+    Box(
+        modifier = Modifier
+            .size(40.dp)
+            .background(background, RoundedCornerShape(6.dp))
+            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(6.dp)),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(letter.toString(), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = foreground)
+        if (icon != null) {
+            Icon(
+                icon,
+                contentDescription = null,
+                tint = foreground,
+                modifier = Modifier.align(Alignment.TopEnd).padding(2.dp).size(10.dp),
+            )
+        }
+    }
+}
+
+@Composable
+private fun WordGuessColorExample() {
+    Row(Modifier.padding(top = 10.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+        WordGuessExampleTile('C', LetterState.CORRECT)
+        WordGuessExampleTile('R', LetterState.PRESENT)
+        WordGuessExampleTile('A', LetterState.ABSENT)
+    }
+}
+
+@Composable
 private fun WordGuessHowToPlay() {
     SectionHeader(Icons.Outlined.EmojiEvents, stringResource(R.string.how_to_play_goal_title))
     BodyText(stringResource(R.string.wordguess_how_to_play_goal))
@@ -399,6 +436,7 @@ private fun WordGuessHowToPlay() {
     HorizontalDivider(Modifier.padding(vertical = 20.dp))
     SectionHeader(Icons.Outlined.Description, stringResource(R.string.how_to_play_rules_title))
     RuleRow(1, R.string.wordguess_rule_1_title, R.string.wordguess_rule_1_body)
+    WordGuessColorExample()
     RuleRow(2, R.string.wordguess_rule_2_title, R.string.wordguess_rule_2_body)
     RuleRow(3, R.string.wordguess_rule_3_title, R.string.wordguess_rule_3_body)
 

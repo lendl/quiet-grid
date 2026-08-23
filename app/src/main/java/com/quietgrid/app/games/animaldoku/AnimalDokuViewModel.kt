@@ -11,6 +11,7 @@ import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
+import com.quietgrid.app.data.recentlyPlayedPuzzleIds
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
@@ -51,11 +52,15 @@ private fun decodeCells(flat: List<Int>, size: Int): List<List<AnimalDokuCellSta
     return List(size) { row -> List(size) { col -> states[flat[row * size + col]] } }
 }
 
-private class AnimalDokuPuzzleAdapter(private val appContext: android.content.Context) : PuzzleAdapter<AnimalDokuSession, AnimalDokuResult> {
+private class AnimalDokuPuzzleAdapter(
+    private val appContext: android.content.Context,
+    private val historyStore: PlayHistoryStore,
+) : PuzzleAdapter<AnimalDokuSession, AnimalDokuResult> {
     override val gameId: GameId = GameId.ANIMALDOKU
 
     override suspend fun freshSession(difficulty: Difficulty): AnimalDokuSession? {
-        val puzzle = AnimalDokuPuzzleBank.randomPuzzle(appContext, difficulty) ?: return null
+        val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
+        val puzzle = AnimalDokuPuzzleBank.randomPuzzle(appContext, difficulty, recentIds) ?: return null
         return createAnimalDokuSession(puzzle)
     }
 
@@ -120,7 +125,7 @@ class AnimalDokuPlayViewModel @AssistedInject constructor(
         sessionStore = sessionRepository,
         statsStore = statsRepository,
         historyStore = historyRepository,
-        adapter = AnimalDokuPuzzleAdapter(appContext),
+        adapter = AnimalDokuPuzzleAdapter(appContext, historyRepository),
     )
 
     val session get() = controller.session

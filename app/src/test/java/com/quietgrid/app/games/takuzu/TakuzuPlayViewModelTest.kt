@@ -51,7 +51,7 @@ class TakuzuPlayViewModelTest {
     @Before
     fun setUp() {
         mockkObject(TakuzuPuzzleBank)
-        coEvery { TakuzuPuzzleBank.randomPuzzle(any(), any()) } returns puzzleEntry
+        coEvery { TakuzuPuzzleBank.randomPuzzle(any(), any(), any()) } returns puzzleEntry
     }
 
     @After

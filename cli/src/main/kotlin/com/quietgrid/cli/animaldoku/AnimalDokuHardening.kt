@@ -2,7 +2,6 @@
 package com.quietgrid.cli.animaldoku
 
 import com.quietgrid.engine.animaldoku.AnimalDokuSolveResult
-import com.quietgrid.engine.animaldoku.AnimalDokuTechnique
 import com.quietgrid.engine.animaldoku.analyzeSolveResult
 import com.quietgrid.engine.animaldoku.classifyAnimalDokuDifficulty
 import com.quietgrid.engine.animaldoku.solveAnimalDoku
@@ -25,13 +24,15 @@ fun hardnessKeyOf(result: AnimalDokuSolveResult): HardnessKey {
     return HardnessKey(profile.hardestTechnique.ordinal, profile.hardestTechniqueRepeats, profile.maxChainDepth)
 }
 
-fun maxHardestTechniqueOrdinalFor(targetDifficulty: Difficulty): Int? = when (targetDifficulty) {
-    Difficulty.HARD -> AnimalDokuTechnique.PAIRING_3.ordinal
-    else -> null
-}
-
-fun isAcceptableHardeningCandidate(candidateKey: HardnessKey, bestKey: HardnessKey, maxHardestTechniqueOrdinal: Int?): Boolean {
-    if (maxHardestTechniqueOrdinal != null && candidateKey.hardestTechniqueOrdinal > maxHardestTechniqueOrdinal) return false
+fun isAcceptableHardeningCandidate(
+    size: Int,
+    candidateResult: AnimalDokuSolveResult,
+    candidateKey: HardnessKey,
+    bestKey: HardnessKey,
+    targetDifficulty: Difficulty,
+): Boolean {
+    val candidateDifficulty = classifyAnimalDokuDifficulty(size, candidateResult)
+    if (candidateDifficulty != null && candidateDifficulty.ordinal > targetDifficulty.ordinal) return false
     return candidateKey >= bestKey
 }
 
@@ -43,7 +44,6 @@ fun hardenTowardDifficulty(
     targetDifficulty: Difficulty,
     maxStallMutations: Int = 2000,
 ): AnimalDokuRepairedPuzzle {
-    val maxHardestTechniqueOrdinal = maxHardestTechniqueOrdinalFor(targetDifficulty)
     var bestRegions = initialRegions
     var bestResult = initialSolveResult
     var bestKey = hardnessKeyOf(initialSolveResult)
@@ -61,7 +61,7 @@ fun hardenTowardDifficulty(
             continue
         }
         val candidateKey = hardnessKeyOf(candidateResult)
-        if (!isAcceptableHardeningCandidate(candidateKey, bestKey, maxHardestTechniqueOrdinal)) {
+        if (!isAcceptableHardeningCandidate(size, candidateResult, candidateKey, bestKey, targetDifficulty)) {
             stall++
             continue
         }

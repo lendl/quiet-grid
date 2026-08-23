@@ -42,7 +42,7 @@ class WordGuessPlayViewModelTest {
         mockkStatic(::currentWordGuessLocale)
         every { currentWordGuessLocale(any()) } returns "en"
         mockkObject(WordGuessPuzzleBank)
-        coEvery { WordGuessPuzzleBank.randomPuzzle(any(), any(), any()) } returns puzzleEntry
+        coEvery { WordGuessPuzzleBank.randomPuzzle(any(), any(), any(), any()) } returns puzzleEntry
         coEvery { WordGuessPuzzleBank.loadDictionary(any(), any()) } returns setOf("cat")
     }
 

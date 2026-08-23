@@ -12,7 +12,6 @@ private val json = Json { ignoreUnknownKeys = true }
 
 object NonogramPuzzleBank {
     private var cache: Map<String, List<NonogramPuzzleEntry>>? = null
-    private val lastPickedId = mutableMapOf<String, String>()
 
     private suspend fun load(context: Context): Map<String, List<NonogramPuzzleEntry>> {
         cache?.let { return it }
@@ -25,14 +24,10 @@ object NonogramPuzzleBank {
         }
     }
 
-    suspend fun randomPuzzle(context: Context, difficulty: Difficulty): NonogramPuzzleEntry? {
+    suspend fun randomPuzzle(context: Context, difficulty: Difficulty, recentlyPlayedIds: Set<String> = emptySet()): NonogramPuzzleEntry? {
         val pool = load(context)[difficulty.key] ?: return null
         if (pool.isEmpty()) return null
-        val lastId = lastPickedId[difficulty.key]
-        val candidates = if (pool.size > 1 && lastId != null) pool.filter { it.id != lastId } else pool
-        val choices = candidates.ifEmpty { pool }
-        val chosen = choices.random()
-        lastPickedId[difficulty.key] = chosen.id
-        return chosen
+        val candidates = pool.filter { it.id !in recentlyPlayedIds }
+        return candidates.ifEmpty { pool }.random()
     }
 }

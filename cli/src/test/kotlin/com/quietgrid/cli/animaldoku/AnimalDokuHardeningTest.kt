@@ -4,10 +4,11 @@ package com.quietgrid.cli.animaldoku
 import com.quietgrid.engine.animaldoku.AnimalDokuSolveResult
 import com.quietgrid.engine.animaldoku.AnimalDokuSolveStep
 import com.quietgrid.engine.animaldoku.AnimalDokuTechnique
+import com.quietgrid.engine.animaldoku.classifyAnimalDokuDifficulty
 import com.quietgrid.engine.core.Difficulty
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNull
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -19,19 +20,6 @@ private fun repairedPuzzleForTest(size: Int, maxSeedAttempts: Int = 20): Pair<In
         return solution to repaired
     }
     throw AssertionError("Could not repair a size-$size layout to uniqueness in $maxSeedAttempts seed attempts")
-}
-
-private fun repairedPuzzleWithinCeilingForTest(
-    size: Int,
-    maxHardestTechniqueOrdinal: Int,
-    maxSeedAttempts: Int = 20,
-): Pair<IntArray, AnimalDokuRepairedPuzzle> {
-    repeat(maxSeedAttempts) {
-        val (solution, repaired) = repairedPuzzleForTest(size)
-        val profile = com.quietgrid.engine.animaldoku.analyzeSolveResult(repaired.solveResult)
-        if (profile.hardestTechnique.ordinal <= maxHardestTechniqueOrdinal) return solution to repaired
-    }
-    throw AssertionError("Could not find a size-$size baseline within the ordinal-$maxHardestTechniqueOrdinal ceiling in $maxSeedAttempts seed attempts")
 }
 
 class AnimalDokuHardeningTest {
@@ -73,44 +61,66 @@ class AnimalDokuHardeningTest {
     }
 
     @Test
-    fun `expert has no ceiling so a mutation reaching chain is always acceptable if not worse`() {
-        val maxOrdinal = maxHardestTechniqueOrdinalFor(Difficulty.EXPERT)
-        assertNull(maxOrdinal)
+    fun `expert has no ceiling so a candidate that already classifies as expert is still acceptable`() {
+        val size = 8
+        val candidateResult = AnimalDokuSolveResult(
+            solved = true,
+            steps = listOf(AnimalDokuSolveStep(AnimalDokuTechnique.CHAIN, 4)),
+        )
+        assertEquals(Difficulty.EXPERT, classifyAnimalDokuDifficulty(size, candidateResult))
         val best = HardnessKey(hardestTechniqueOrdinal = AnimalDokuTechnique.PAIRING_3.ordinal, hardestTechniqueRepeatCount = 1, maxChainDepth = 0)
-        val candidate = HardnessKey(hardestTechniqueOrdinal = AnimalDokuTechnique.CHAIN.ordinal, hardestTechniqueRepeatCount = 1, maxChainDepth = 3)
-        assertTrue(isAcceptableHardeningCandidate(candidate, best, maxOrdinal))
+        val candidate = hardnessKeyOf(candidateResult)
+        assertTrue(isAcceptableHardeningCandidate(size, candidateResult, candidate, best, Difficulty.EXPERT))
     }
 
     @Test
-    fun `hard rejects a mutation that would cross into chain territory even though it scores higher`() {
-        val maxOrdinal = maxHardestTechniqueOrdinalFor(Difficulty.HARD)
-        assertEquals(AnimalDokuTechnique.PAIRING_3.ordinal, maxOrdinal)
+    fun `hard rejects a candidate that would already classify as expert`() {
+        val size = 8
+        val candidateResult = AnimalDokuSolveResult(
+            solved = true,
+            steps = listOf(AnimalDokuSolveStep(AnimalDokuTechnique.CHAIN, 4)),
+        )
+        assertEquals(Difficulty.EXPERT, classifyAnimalDokuDifficulty(size, candidateResult))
         val best = HardnessKey(hardestTechniqueOrdinal = AnimalDokuTechnique.PAIRING_3.ordinal, hardestTechniqueRepeatCount = 1, maxChainDepth = 0)
-        val candidate = HardnessKey(hardestTechniqueOrdinal = AnimalDokuTechnique.CHAIN.ordinal, hardestTechniqueRepeatCount = 1, maxChainDepth = 3)
-        assertFalse(isAcceptableHardeningCandidate(candidate, best, maxOrdinal))
+        val candidate = hardnessKeyOf(candidateResult)
+        assertFalse(isAcceptableHardeningCandidate(size, candidateResult, candidate, best, Difficulty.HARD))
     }
 
     @Test
-    fun `hard accepts a mutation with more repeats as long as it stays within the pairing 3 ceiling`() {
-        val maxOrdinal = maxHardestTechniqueOrdinalFor(Difficulty.HARD)
+    fun `hard accepts a candidate with a shallow chain that still classifies as hard`() {
+        val size = 8
+        val steps = mutableListOf(AnimalDokuSolveStep(AnimalDokuTechnique.CONFINEMENT, 0))
+        repeat(2) { steps.add(AnimalDokuSolveStep(AnimalDokuTechnique.CHAIN, 3)) }
+        repeat(7) { steps.add(AnimalDokuSolveStep(AnimalDokuTechnique.SINGLETON, 0)) }
+        val candidateResult = AnimalDokuSolveResult(solved = true, steps = steps)
+        assertEquals(Difficulty.HARD, classifyAnimalDokuDifficulty(size, candidateResult))
         val best = HardnessKey(hardestTechniqueOrdinal = AnimalDokuTechnique.PAIRING_3.ordinal, hardestTechniqueRepeatCount = 1, maxChainDepth = 0)
-        val candidate = HardnessKey(hardestTechniqueOrdinal = AnimalDokuTechnique.PAIRING_3.ordinal, hardestTechniqueRepeatCount = 3, maxChainDepth = 0)
-        assertTrue(isAcceptableHardeningCandidate(candidate, best, maxOrdinal))
+        val candidate = hardnessKeyOf(candidateResult)
+        assertTrue(isAcceptableHardeningCandidate(size, candidateResult, candidate, best, Difficulty.HARD))
     }
 
     @Test
     fun `a candidate that would score lower than the current best is rejected regardless of tier`() {
+        val size = 8
+        val worseResult = AnimalDokuSolveResult(
+            solved = true,
+            steps = listOf(AnimalDokuSolveStep(AnimalDokuTechnique.PAIRING_2, 0)),
+        )
         val best = HardnessKey(hardestTechniqueOrdinal = AnimalDokuTechnique.PAIRING_3.ordinal, hardestTechniqueRepeatCount = 4, maxChainDepth = 0)
-        val worse = HardnessKey(hardestTechniqueOrdinal = AnimalDokuTechnique.PAIRING_2.ordinal, hardestTechniqueRepeatCount = 4, maxChainDepth = 0)
-        assertFalse(isAcceptableHardeningCandidate(worse, best, maxHardestTechniqueOrdinalFor(Difficulty.HARD)))
-        assertFalse(isAcceptableHardeningCandidate(worse, best, maxHardestTechniqueOrdinalFor(Difficulty.EXPERT)))
+        val worse = hardnessKeyOf(worseResult)
+        assertFalse(isAcceptableHardeningCandidate(size, worseResult, worse, best, Difficulty.HARD))
+        assertFalse(isAcceptableHardeningCandidate(size, worseResult, worse, best, Difficulty.EXPERT))
     }
 
     @Test
     fun `an equal candidate counts as acceptable a plateau not a regression`() {
-        val best = HardnessKey(hardestTechniqueOrdinal = AnimalDokuTechnique.PAIRING_3.ordinal, hardestTechniqueRepeatCount = 4, maxChainDepth = 0)
-        val same = best.copy()
-        assertTrue(isAcceptableHardeningCandidate(same, best, maxHardestTechniqueOrdinalFor(Difficulty.HARD)))
+        val size = 8
+        val sameResult = AnimalDokuSolveResult(
+            solved = true,
+            steps = List(4) { AnimalDokuSolveStep(AnimalDokuTechnique.PAIRING_3, 0) },
+        )
+        val best = hardnessKeyOf(sameResult)
+        assertTrue(isAcceptableHardeningCandidate(size, sameResult, best, best, Difficulty.HARD))
     }
 
     @Test
@@ -126,22 +136,18 @@ class AnimalDokuHardeningTest {
     }
 
     @Test
-    fun `hardenTowardDifficulty for hard never lets the hardest technique exceed pairing 3`() {
-        val (solution, repaired) = repairedPuzzleWithinCeilingForTest(7, AnimalDokuTechnique.PAIRING_3.ordinal)
+    fun `hardenTowardDifficulty for hard never lets the result classify as expert`() {
+        val (solution, repaired) = repairedPuzzleForTest(7)
 
         val hardened = hardenTowardDifficulty(7, solution, repaired.regions, repaired.solveResult, Difficulty.HARD, maxStallMutations = 800)
 
-        val profile = com.quietgrid.engine.animaldoku.analyzeSolveResult(hardened.solveResult)
-        assertTrue(
-            "hardest technique ${profile.hardestTechnique} exceeded PAIRING_3 during HARD hardening",
-            profile.hardestTechnique.ordinal <= AnimalDokuTechnique.PAIRING_3.ordinal,
-        )
+        assertNotEquals(Difficulty.EXPERT, classifyAnimalDokuDifficulty(7, hardened.solveResult))
     }
 
     @Test
     fun `hardenTowardDifficulty stops early once the target tier is actually reached`() {
         val (solution, repaired) = repairedPuzzleForTest(6)
-        val alreadyClassified = com.quietgrid.engine.animaldoku.classifyAnimalDokuDifficulty(6, repaired.solveResult)
+        val alreadyClassified = classifyAnimalDokuDifficulty(6, repaired.solveResult)
 
         if (alreadyClassified != null) {
             val hardened = hardenTowardDifficulty(6, solution, repaired.regions, repaired.solveResult, alreadyClassified, maxStallMutations = 500)

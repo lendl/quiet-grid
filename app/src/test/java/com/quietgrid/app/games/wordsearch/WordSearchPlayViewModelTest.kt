@@ -46,7 +46,7 @@ class WordSearchPlayViewModelTest {
     @Before
     fun setUp() {
         mockkObject(WordSearchPuzzleBank)
-        coEvery { WordSearchPuzzleBank.randomPuzzle(any(), any(), any()) } returns puzzleEntry
+        coEvery { WordSearchPuzzleBank.randomPuzzle(any(), any(), any(), any()) } returns puzzleEntry
     }
 
     @After

@@ -50,7 +50,7 @@ class SudokuPlayViewModelTest {
     @Before
     fun setUp() {
         mockkObject(SudokuPuzzleBank)
-        coEvery { SudokuPuzzleBank.randomPuzzle(any(), any()) } returns puzzleEntry
+        coEvery { SudokuPuzzleBank.randomPuzzle(any(), any(), any()) } returns puzzleEntry
     }
 
     @After

@@ -9,6 +9,7 @@ import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.SettingsRepository
 import com.quietgrid.app.data.StatsStore
+import com.quietgrid.app.data.recentlyPlayedPuzzleIds
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
@@ -39,12 +40,14 @@ data class WordGuessResult(
 private class WordGuessPuzzleAdapter(
     private val appContext: Context,
     private val settingsRepository: SettingsRepository,
+    private val historyStore: PlayHistoryStore,
 ) : PuzzleAdapter<WordGuessSession, WordGuessResult> {
     override val gameId: GameId = GameId.WORDGUESS
 
     override suspend fun freshSession(difficulty: Difficulty): WordGuessSession? {
         val locale = currentWordGuessLocale(settingsRepository.settings.first().puzzleLanguage)
-        val entry = WordGuessPuzzleBank.randomPuzzle(appContext, locale, difficulty) ?: return null
+        val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
+        val entry = WordGuessPuzzleBank.randomPuzzle(appContext, locale, difficulty, recentIds) ?: return null
         return WordGuessSession(
             puzzleId = entry.id,
             locale = locale,
@@ -124,7 +127,7 @@ class WordGuessPlayViewModel @AssistedInject constructor(
         sessionStore = sessionRepository,
         statsStore = statsRepository,
         historyStore = historyRepository,
-        adapter = WordGuessPuzzleAdapter(appContext, settingsRepository),
+        adapter = WordGuessPuzzleAdapter(appContext, settingsRepository, historyRepository),
     )
 
     val session get() = controller.session
