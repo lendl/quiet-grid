@@ -150,6 +150,12 @@
     <string name="animaldoku_quickstart_bullet_3">Een foute gok kost een hartje — verlies alle 3 en de puzzel eindigt.</string>
     <string name="animaldoku_quickstart_hook">Meer overgebleven hartjes betekenen meer punten.</string>
 
+    <string name="arrowescape_quickstart_goal">Verwijder elke pijl van het bord.</string>
+    <string name="arrowescape_quickstart_bullet_1">Tik op een pijl om hem in de richting te trekken waarin hij wijst.</string>
+    <string name="arrowescape_quickstart_bullet_2">Hij komt pas los zodra elke cel op zijn pad leeg is.</string>
+    <string name="arrowescape_quickstart_bullet_3">Een geblokkeerde tik kost een leven — verlies alle 3 en de ronde eindigt.</string>
+    <string name="arrowescape_quickstart_hook">Hoe sneller je het bord leegmaakt, hoe hoger je score.</string>
+
     <string name="tutorial_host_unavailable_title">Tutorial niet beschikbaar</string>
     <string name="tutorial_host_unavailable_body">Dit puzzeltype heeft nog geen tutorial.</string>
     <string name="puzzle_play_loading">Puzzel laden…</string>
@@ -653,4 +659,30 @@
     <string name="animaldoku_loss_rule_failure_eyebrow">Puzzel verloren</string>
     <string name="animaldoku_loss_rule_failure_title">Geen hartjes meer</string>
     <string name="animaldoku_loss_rule_failure_body">Drie foute openingen kostten je al je hartjes en beëindigden de puzzel.</string>
+
+    <string name="arrowescape_title">Pijlenvlucht</string>
+    <string name="arrowescape_tagline">Maak het bord leeg, één pijl per keer.</string>
+    <string name="arrowescape_difficulty_easy">Makkelijk</string>
+    <string name="arrowescape_difficulty_medium">Gemiddeld</string>
+    <string name="arrowescape_difficulty_hard">Moeilijk</string>
+    <string name="arrowescape_difficulty_expert">Expert</string>
+    <string name="arrowescape_difficulty_desc_easy">Een rustig bord met weinig geblokkeerde paden.</string>
+    <string name="arrowescape_difficulty_desc_medium">Een paar stukken blokkeren elkaar — denk een paar zetten vooruit.</string>
+    <string name="arrowescape_difficulty_desc_hard">Meerdere pijlen blokkeren tegelijk meerdere andere. Kijk goed voor je tikt.</string>
+    <string name="arrowescape_difficulty_desc_expert">Lange ketens van pijlen blokkeren elkaar helemaal over het hele bord.</string>
+    <string name="arrowescape_how_to_play_goal">Verwijder elke pijl van het bord.</string>
+    <string name="arrowescape_how_to_play_controls">Tik op een pijl om hem van het bord te trekken in de richting waarin hij wijst. Hij komt alleen los als niets anders in de weg staat.</string>
+    <string name="arrowescape_how_to_play_wrong_move">Als een pijl geblokkeerd is, kost het tikken erop een leven. Zijn pad blijft gemarkeerd, zodat je ziet wat hem tegenhoudt.</string>
+    <string name="arrowescape_rule_1_title">Eén richting</string>
+    <string name="arrowescape_rule_1_body">Elke pijl kan alleen naar buiten in de richting waarin zijn punt wijst.</string>
+    <string name="arrowescape_rule_2_title">Maak de weg vrij</string>
+    <string name="arrowescape_rule_2_body">Een pijl kan pas worden weggetrokken zodra elke cel tussen hem en de rand van het bord leeg is.</string>
+    <string name="arrowescape_rule_3_title">Beperkt aantal levens</string>
+    <string name="arrowescape_rule_3_body">Je begint met 3 levens. Verlies je ze allemaal, dan eindigt de ronde.</string>
+    <string name="arrowescape_loss_abandoned_eyebrow">Gepauzeerd</string>
+    <string name="arrowescape_loss_abandoned_title">Ronde afgebroken</string>
+    <string name="arrowescape_loss_abandoned_body">Je hebt dit bord verlaten voordat het klaar was.</string>
+    <string name="arrowescape_loss_rule_failure_eyebrow">Geen levens meer</string>
+    <string name="arrowescape_loss_rule_failure_title">Bord niet leeg</string>
+    <string name="arrowescape_loss_rule_failure_body">Je levens waren op voordat je alle pijlen had verwijderd.</string>
 </resources>

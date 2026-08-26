@@ -156,6 +156,12 @@
     <string name="animaldoku_quickstart_bullet_3">Wrong guess costs a heart — lose all 3 and the puzzle ends.</string>
     <string name="animaldoku_quickstart_hook">More hearts left means more points.</string>
 
+    <string name="arrowescape_quickstart_goal">Clear every arrow from the board.</string>
+    <string name="arrowescape_quickstart_bullet_1">Tap an arrow to pull it off in the direction it points.</string>
+    <string name="arrowescape_quickstart_bullet_2">It only comes free once every cell in its path is clear.</string>
+    <string name="arrowescape_quickstart_bullet_3">A blocked tap costs a life — lose all 3 and the run ends.</string>
+    <string name="arrowescape_quickstart_hook">Clearing the board faster earns a higher score.</string>
+
     <!-- tutorial host / puzzle play -->
     <string name="tutorial_host_unavailable_title">Tutorial not available</string>
     <string name="tutorial_host_unavailable_body">This puzzle type does not include a tutorial yet.</string>
@@ -665,4 +671,30 @@
     <string name="animaldoku_loss_rule_failure_eyebrow">Puzzle lost</string>
     <string name="animaldoku_loss_rule_failure_title">Out of hearts</string>
     <string name="animaldoku_loss_rule_failure_body">Three wrong opens cost you all your hearts and ended the puzzle.</string>
+
+    <string name="arrowescape_title">Arrow Escape</string>
+    <string name="arrowescape_tagline">Clear the board, one arrow at a time.</string>
+    <string name="arrowescape_difficulty_easy">Easy</string>
+    <string name="arrowescape_difficulty_medium">Medium</string>
+    <string name="arrowescape_difficulty_hard">Hard</string>
+    <string name="arrowescape_difficulty_expert">Expert</string>
+    <string name="arrowescape_difficulty_desc_easy">A gentle board with few blocked paths.</string>
+    <string name="arrowescape_difficulty_desc_medium">A few pieces block each other — plan a couple of moves ahead.</string>
+    <string name="arrowescape_difficulty_desc_hard">Several arrows block multiple others at once. Look before you tap.</string>
+    <string name="arrowescape_difficulty_desc_expert">Long chains of arrows block each other all the way across the board.</string>
+    <string name="arrowescape_how_to_play_goal">Clear every arrow from the board.</string>
+    <string name="arrowescape_how_to_play_controls">Tap an arrow to pull it off the board in the direction it points. It only comes free if nothing else is in its way.</string>
+    <string name="arrowescape_how_to_play_wrong_move">If an arrow is blocked, tapping it costs one life. Its path stays highlighted so you can see what is stopping it.</string>
+    <string name="arrowescape_rule_1_title">One direction</string>
+    <string name="arrowescape_rule_1_body">Every arrow can only exit in the direction its head points.</string>
+    <string name="arrowescape_rule_2_title">Clear the way</string>
+    <string name="arrowescape_rule_2_body">An arrow can only be pulled once every cell between it and the edge of the board is empty.</string>
+    <string name="arrowescape_rule_3_title">Limited lives</string>
+    <string name="arrowescape_rule_3_body">You start with 3 lives. Losing all of them ends the run.</string>
+    <string name="arrowescape_loss_abandoned_eyebrow">Paused</string>
+    <string name="arrowescape_loss_abandoned_title">Run abandoned</string>
+    <string name="arrowescape_loss_abandoned_body">You left before finishing this board.</string>
+    <string name="arrowescape_loss_rule_failure_eyebrow">Out of lives</string>
+    <string name="arrowescape_loss_rule_failure_title">Board not cleared</string>
+    <string name="arrowescape_loss_rule_failure_body">You ran out of lives before clearing every arrow.</string>
 </resources>

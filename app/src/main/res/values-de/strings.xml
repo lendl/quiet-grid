@@ -150,6 +150,12 @@
     <string name="animaldoku_quickstart_bullet_3">Eine falsche Vermutung kostet ein Herz — bei 0 Herzen endet das Rätsel.</string>
     <string name="animaldoku_quickstart_hook">Mehr verbleibende Herzen bedeuten mehr Punkte.</string>
 
+    <string name="arrowescape_quickstart_goal">Entferne jeden Pfeil vom Feld.</string>
+    <string name="arrowescape_quickstart_bullet_1">Tippe auf einen Pfeil, um ihn in die Richtung zu ziehen, in die er zeigt.</string>
+    <string name="arrowescape_quickstart_bullet_2">Er löst sich erst, wenn jede Zelle auf seinem Weg frei ist.</string>
+    <string name="arrowescape_quickstart_bullet_3">Ein blockiertes Antippen kostet ein Leben — bei 0 Leben endet der Durchgang.</string>
+    <string name="arrowescape_quickstart_hook">Je schneller du das Feld räumst, desto höher deine Punktzahl.</string>
+
     <string name="tutorial_host_unavailable_title">Tutorial nicht verfügbar</string>
     <string name="tutorial_host_unavailable_body">Dieser Rätseltyp enthält noch kein Tutorial.</string>
     <string name="puzzle_play_loading">Rätsel wird geladen…</string>
@@ -653,4 +659,30 @@
     <string name="animaldoku_loss_rule_failure_eyebrow">Rätsel verloren</string>
     <string name="animaldoku_loss_rule_failure_title">Keine Herzen mehr</string>
     <string name="animaldoku_loss_rule_failure_body">Drei falsche Öffnungen haben dich alle Herzen gekostet und das Rätsel beendet.</string>
+
+    <string name="arrowescape_title">Pfeilflucht</string>
+    <string name="arrowescape_tagline">Räume das Feld, einen Pfeil nach dem anderen.</string>
+    <string name="arrowescape_difficulty_easy">Leicht</string>
+    <string name="arrowescape_difficulty_medium">Mittel</string>
+    <string name="arrowescape_difficulty_hard">Schwer</string>
+    <string name="arrowescape_difficulty_expert">Experte</string>
+    <string name="arrowescape_difficulty_desc_easy">Ein sanftes Feld mit wenigen blockierten Wegen.</string>
+    <string name="arrowescape_difficulty_desc_medium">Ein paar Teile blockieren sich gegenseitig — plane ein paar Züge im Voraus.</string>
+    <string name="arrowescape_difficulty_desc_hard">Mehrere Pfeile blockieren gleichzeitig mehrere andere. Schau genau hin, bevor du tippst.</string>
+    <string name="arrowescape_difficulty_desc_expert">Lange Ketten von Pfeilen blockieren sich quer über das ganze Feld.</string>
+    <string name="arrowescape_how_to_play_goal">Entferne jeden Pfeil vom Feld.</string>
+    <string name="arrowescape_how_to_play_controls">Tippe auf einen Pfeil, um ihn in die Richtung, in die er zeigt, vom Feld zu ziehen. Er löst sich nur, wenn ihm nichts im Weg steht.</string>
+    <string name="arrowescape_how_to_play_wrong_move">Ist ein Pfeil blockiert, kostet das Antippen ein Leben. Sein Weg bleibt hervorgehoben, damit du siehst, was ihn aufhält.</string>
+    <string name="arrowescape_rule_1_title">Eine Richtung</string>
+    <string name="arrowescape_rule_1_body">Jeder Pfeil kann nur in die Richtung austreten, in die seine Spitze zeigt.</string>
+    <string name="arrowescape_rule_2_title">Weg freiräumen</string>
+    <string name="arrowescape_rule_2_body">Ein Pfeil lässt sich erst ziehen, wenn jede Zelle zwischen ihm und dem Rand des Feldes leer ist.</string>
+    <string name="arrowescape_rule_3_title">Begrenzte Leben</string>
+    <string name="arrowescape_rule_3_body">Du startest mit 3 Leben. Verlierst du alle, endet der Durchgang.</string>
+    <string name="arrowescape_loss_abandoned_eyebrow">Pausiert</string>
+    <string name="arrowescape_loss_abandoned_title">Durchgang abgebrochen</string>
+    <string name="arrowescape_loss_abandoned_body">Du hast dieses Feld verlassen, bevor es fertig war.</string>
+    <string name="arrowescape_loss_rule_failure_eyebrow">Keine Leben mehr</string>
+    <string name="arrowescape_loss_rule_failure_title">Feld nicht geräumt</string>
+    <string name="arrowescape_loss_rule_failure_body">Dir sind die Leben ausgegangen, bevor du jeden Pfeil entfernen konntest.</string>
 </resources>

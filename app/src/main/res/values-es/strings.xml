@@ -150,6 +150,12 @@
     <string name="animaldoku_quickstart_bullet_3">Un error cuesta un corazón — pierde los 3 y el puzzle termina.</string>
     <string name="animaldoku_quickstart_hook">Más corazones significan más puntos.</string>
 
+    <string name="arrowescape_quickstart_goal">Retira todas las flechas del tablero.</string>
+    <string name="arrowescape_quickstart_bullet_1">Toca una flecha para sacarla en la dirección que señala.</string>
+    <string name="arrowescape_quickstart_bullet_2">Solo se libera cuando cada celda de su camino está despejada.</string>
+    <string name="arrowescape_quickstart_bullet_3">Un toque bloqueado cuesta una vida — pierde las 3 y la partida termina.</string>
+    <string name="arrowescape_quickstart_hook">Cuanto más rápido despejes el tablero, mayor será tu puntuación.</string>
+
     <string name="tutorial_host_unavailable_title">Tutorial no disponible</string>
     <string name="tutorial_host_unavailable_body">Este tipo de puzzle aún no incluye un tutorial.</string>
     <string name="puzzle_play_loading">Cargando puzzle…</string>
@@ -653,4 +659,30 @@
     <string name="animaldoku_loss_rule_failure_eyebrow">Puzzle perdido</string>
     <string name="animaldoku_loss_rule_failure_title">Sin corazones</string>
     <string name="animaldoku_loss_rule_failure_body">Tres aperturas incorrectas te costaron todos los corazones y terminaron el puzzle.</string>
+
+    <string name="arrowescape_title">Escape de Flechas</string>
+    <string name="arrowescape_tagline">Despeja el tablero, una flecha a la vez.</string>
+    <string name="arrowescape_difficulty_easy">Fácil</string>
+    <string name="arrowescape_difficulty_medium">Medio</string>
+    <string name="arrowescape_difficulty_hard">Difícil</string>
+    <string name="arrowescape_difficulty_expert">Experto</string>
+    <string name="arrowescape_difficulty_desc_easy">Un tablero suave con pocos caminos bloqueados.</string>
+    <string name="arrowescape_difficulty_desc_medium">Algunas piezas se bloquean entre sí — planea un par de movimientos por adelantado.</string>
+    <string name="arrowescape_difficulty_desc_hard">Varias flechas bloquean a otras varias a la vez. Mira bien antes de tocar.</string>
+    <string name="arrowescape_difficulty_desc_expert">Largas cadenas de flechas se bloquean entre sí de un extremo a otro del tablero.</string>
+    <string name="arrowescape_how_to_play_goal">Retira todas las flechas del tablero.</string>
+    <string name="arrowescape_how_to_play_controls">Toca una flecha para sacarla del tablero en la dirección que señala. Solo se libera si nada más se interpone en su camino.</string>
+    <string name="arrowescape_how_to_play_wrong_move">Si una flecha está bloqueada, tocarla cuesta una vida. Su camino queda resaltado para que veas qué la detiene.</string>
+    <string name="arrowescape_rule_1_title">Una sola dirección</string>
+    <string name="arrowescape_rule_1_body">Cada flecha solo puede salir en la dirección que señala su punta.</string>
+    <string name="arrowescape_rule_2_title">Despeja el camino</string>
+    <string name="arrowescape_rule_2_body">Una flecha solo se puede sacar cuando cada celda entre ella y el borde del tablero está vacía.</string>
+    <string name="arrowescape_rule_3_title">Vidas limitadas</string>
+    <string name="arrowescape_rule_3_body">Empiezas con 3 vidas. Si las pierdes todas, la partida termina.</string>
+    <string name="arrowescape_loss_abandoned_eyebrow">Pausado</string>
+    <string name="arrowescape_loss_abandoned_title">Partida abandonada</string>
+    <string name="arrowescape_loss_abandoned_body">Saliste antes de terminar este tablero.</string>
+    <string name="arrowescape_loss_rule_failure_eyebrow">Sin vidas</string>
+    <string name="arrowescape_loss_rule_failure_title">Tablero sin despejar</string>
+    <string name="arrowescape_loss_rule_failure_body">Te quedaste sin vidas antes de retirar todas las flechas.</string>
 </resources>

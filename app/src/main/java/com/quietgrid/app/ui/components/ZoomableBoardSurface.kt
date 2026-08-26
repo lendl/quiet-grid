@@ -1,11 +1,15 @@
 package com.quietgrid.app.ui.components
 
+import androidx.compose.animation.core.VectorConverter
+import androidx.compose.animation.core.animate
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -14,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
@@ -34,6 +39,8 @@ fun ZoomableBoardSurface(
     modifier: Modifier = Modifier,
     onZoomChange: (Boolean) -> Unit = {},
     resetTrigger: Int = 0,
+    panTarget: Offset? = null,
+    onVisibleBoundsChange: (Rect) -> Unit = {},
     content: @Composable () -> Unit,
 ) {
     var scale by remember { mutableFloatStateOf(1f) }
@@ -55,6 +62,38 @@ fun ZoomableBoardSurface(
         val maxX = max(0f, (contentSize.width * currentScale - viewportSize.width) / 2f) + margin
         val maxY = max(0f, (contentSize.height * currentScale - viewportSize.height) / 2f) + margin
         return Offset(candidate.x.coerceIn(-maxX, maxX), candidate.y.coerceIn(-maxY, maxY))
+    }
+
+    SideEffect {
+        if (contentSize != IntSize.Zero && viewportSize != IntSize.Zero) {
+            val contentCenter = Offset(contentSize.width / 2f, contentSize.height / 2f)
+            val visibleCenter = contentCenter - offset / scale
+            val halfWidth = viewportSize.width / (2f * scale)
+            val halfHeight = viewportSize.height / (2f * scale)
+            onVisibleBoundsChange(
+                Rect(
+                    visibleCenter.x - halfWidth,
+                    visibleCenter.y - halfHeight,
+                    visibleCenter.x + halfWidth,
+                    visibleCenter.y + halfHeight,
+                ),
+            )
+        }
+    }
+
+    LaunchedEffect(panTarget) {
+        val target = panTarget
+        if (target != null && scale > MIN_SCALE) {
+            val contentCenter = Offset(contentSize.width / 2f, contentSize.height / 2f)
+            val desired = (contentCenter - target) * scale
+            val clamped = clampOffset(desired, scale)
+            animate(
+                typeConverter = Offset.VectorConverter,
+                initialValue = offset,
+                targetValue = clamped,
+                animationSpec = tween(500),
+            ) { value, _ -> offset = value }
+        }
     }
 
     Box(

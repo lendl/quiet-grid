@@ -11,6 +11,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -49,6 +51,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.core.formatElapsed
 import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyLabelRes
+import com.quietgrid.app.games.arrowescape.arrowEscapeDifficultyLabelRes
 import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
 import com.quietgrid.app.games.chimptest.chimpDifficultyLabelRes
 import com.quietgrid.app.games.minesweeper.minesweeperDifficultyLabelRes
@@ -69,6 +72,7 @@ private fun pickCelebrationIcon(score: Int, accuracyPct: Int, variantSeed: Int):
     return CELEBRATION_ICONS[seed % CELEBRATION_ICONS.size]
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CompletionScreen(
     gameId: GameId,
@@ -115,6 +119,7 @@ fun CompletionScreen(
         GameId.BLOCKFILL -> blockFillDifficultyLabelRes(difficulty)
         GameId.WORDGUESS -> wordGuessDifficultyLabelRes(difficulty)
         GameId.ANIMALDOKU -> animalDokuDifficultyLabelRes(difficulty)
+        GameId.ARROWESCAPE -> arrowEscapeDifficultyLabelRes(difficulty)
         else -> chimpDifficultyLabelRes(difficulty)
     }
     val accentColor = difficultyColor(difficulty)
@@ -169,11 +174,12 @@ fun CompletionScreen(
 
     Box(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxSize().padding(16.dp)) {
-            Row(
+            FlowRow(
                 Modifier
                     .fillMaxWidth()
                     .graphicsLayer { alpha = pageOpacity.value },
-                horizontalArrangement = Arrangement.End,
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Row(
                     Modifier
@@ -188,7 +194,6 @@ fun CompletionScreen(
                 }
                 if (streak >= 2) {
                     BadgePill(
-                        modifier = Modifier.padding(start = 8.dp),
                         borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
                         textColor = MaterialTheme.colorScheme.primary,
                         emoji = "🔥",
@@ -197,7 +202,6 @@ fun CompletionScreen(
                 }
                 if (isFlawless) {
                     BadgePill(
-                        modifier = Modifier.padding(start = 8.dp),
                         borderColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f),
                         textColor = MaterialTheme.colorScheme.tertiary,
                         emoji = "💯",
@@ -206,7 +210,6 @@ fun CompletionScreen(
                 }
                 if (gameMilestone != null) {
                     BadgePill(
-                        modifier = Modifier.padding(start = 8.dp),
                         borderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.35f),
                         textColor = MaterialTheme.colorScheme.secondary,
                         emoji = "🏅",
@@ -215,7 +218,6 @@ fun CompletionScreen(
                 }
                 if (difficultyMilestone != null) {
                     BadgePill(
-                        modifier = Modifier.padding(start = 8.dp),
                         borderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.35f),
                         textColor = MaterialTheme.colorScheme.secondary,
                         emoji = "🎯",
@@ -224,7 +226,6 @@ fun CompletionScreen(
                 }
                 if (totalMilestone != null) {
                     BadgePill(
-                        modifier = Modifier.padding(start = 8.dp),
                         borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
                         textColor = MaterialTheme.colorScheme.primary,
                         emoji = "🌟",
@@ -233,7 +234,6 @@ fun CompletionScreen(
                 }
                 if (didBounceBack) {
                     BadgePill(
-                        modifier = Modifier.padding(start = 8.dp),
                         borderColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f),
                         textColor = MaterialTheme.colorScheme.tertiary,
                         emoji = "💪",
@@ -242,7 +242,6 @@ fun CompletionScreen(
                 }
                 if (gamesToday >= 3) {
                     BadgePill(
-                        modifier = Modifier.padding(start = 8.dp),
                         borderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.35f),
                         textColor = MaterialTheme.colorScheme.secondary,
                         emoji = "🎲",
@@ -251,7 +250,6 @@ fun CompletionScreen(
                 }
                 if (puzzlesToday >= 5) {
                     BadgePill(
-                        modifier = Modifier.padding(start = 8.dp),
                         borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
                         textColor = MaterialTheme.colorScheme.primary,
                         emoji = "☀️",
@@ -373,8 +371,8 @@ private fun BadgePill(emoji: String, text: String, borderColor: Color, textColor
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
-        Text(emoji, style = MaterialTheme.typography.labelMedium)
-        Text(text, style = MaterialTheme.typography.labelMedium, color = textColor)
+        Text(emoji, style = MaterialTheme.typography.labelMedium, maxLines = 1)
+        Text(text, style = MaterialTheme.typography.labelMedium, color = textColor, maxLines = 1)
     }
 }
 

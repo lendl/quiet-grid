@@ -2,10 +2,14 @@ package com.quietgrid.cli
 
 import com.quietgrid.cli.animaldoku.generateAnimalDokuPuzzleForSolution
 import com.quietgrid.cli.animaldoku.generateSolutionPermutation
+import com.quietgrid.cli.arrowescape.generateArrowEscapePuzzle
+import com.quietgrid.cli.arrowescape.toEntry
 import com.quietgrid.cli.sudoku.generateSudokuPuzzle
 import com.quietgrid.cli.takuzu.generateTakuzuPuzzle
+import com.quietgrid.cli.arrowescape.arrowEscapeSizesForDifficulty
 import com.quietgrid.engine.animaldoku.ANIMALDOKU_SIZES_BY_DIFFICULTY
 import com.quietgrid.engine.animaldoku.AnimalDokuPuzzleEntry
+import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
 import com.quietgrid.engine.core.Difficulty
 import com.quietgrid.engine.sudoku.SudokuPuzzleEntry
 import com.quietgrid.engine.takuzu.TakuzuPuzzleEntry
@@ -154,6 +158,24 @@ fun main(args: Array<String>) {
             state.save()
             appendPuzzleEntries("${command.outDir}/animaldoku_puzzles.json", entries, AnimalDokuPuzzleEntry.serializer()) { it.id }
             println("Generated ${entries.size}/${command.count} animaldoku puzzles at $difficulty into ${command.outDir}/animaldoku_puzzles.json")
+        }
+        "arrowescape" -> {
+            val sizes = arrowEscapeSizesForDifficulty(difficulty)
+            val state = GenerationState("${command.outDir}/.generation-state/arrowescape.json")
+            val maxTotalAttempts = command.count * 30
+            val entries = mutableListOf<ArrowEscapePuzzleEntry>()
+            var attempts = 0
+            while (entries.size < command.count && attempts < maxTotalAttempts) {
+                attempts++
+                val size = sizes.random()
+                val generated = generateArrowEscapePuzzle(size, size, difficulty) ?: continue
+                if (state.hasTried(generated.dedupeKey)) continue
+                state.recordTried(generated.dedupeKey, "valid")
+                entries += toEntry("ae$size-${entries.size}-${System.nanoTime()}", generated)
+            }
+            state.save()
+            appendPuzzleEntries("${command.outDir}/arrowescape_puzzles.json", entries, ArrowEscapePuzzleEntry.serializer()) { it.id }
+            println("Generated ${entries.size}/${command.count} arrowescape puzzles at $difficulty into ${command.outDir}/arrowescape_puzzles.json")
         }
         else -> error("Unknown or not-yet-wired game '${command.game}'.")
     }

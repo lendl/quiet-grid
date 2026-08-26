@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 
 @Composable
 private fun PuzzleBoardContainerBox(
@@ -17,6 +19,8 @@ private fun PuzzleBoardContainerBox(
     zoomable: Boolean,
     onZoomChange: (Boolean) -> Unit,
     resetTrigger: Int,
+    panTarget: Offset?,
+    onVisibleBoundsChange: (Rect) -> Unit,
     modifier: Modifier,
     content: @Composable () -> Unit,
 ) {
@@ -24,7 +28,13 @@ private fun PuzzleBoardContainerBox(
         if (visible) {
             BoardEntrance(playFresh = playFresh, modifier = Modifier.fillMaxSize()) {
                 if (zoomable) {
-                    ZoomableBoardSurface(Modifier.fillMaxSize(), onZoomChange = onZoomChange, resetTrigger = resetTrigger) {
+                    ZoomableBoardSurface(
+                        Modifier.fillMaxSize(),
+                        onZoomChange = onZoomChange,
+                        resetTrigger = resetTrigger,
+                        panTarget = panTarget,
+                        onVisibleBoundsChange = onVisibleBoundsChange,
+                    ) {
                         content()
                     }
                 } else {
@@ -42,6 +52,8 @@ fun ColumnScope.PuzzleBoardContainer(
     zoomable: Boolean = true,
     onZoomChange: (Boolean) -> Unit = {},
     resetTrigger: Int = 0,
+    panTarget: Offset? = null,
+    onVisibleBoundsChange: (Rect) -> Unit = {},
     content: @Composable () -> Unit,
 ) {
     PuzzleBoardContainerBox(
@@ -50,6 +62,8 @@ fun ColumnScope.PuzzleBoardContainer(
         zoomable = zoomable,
         onZoomChange = onZoomChange,
         resetTrigger = resetTrigger,
+        panTarget = panTarget,
+        onVisibleBoundsChange = onVisibleBoundsChange,
         modifier = Modifier.weight(1f).fillMaxWidth(),
         content = content,
     )
@@ -62,6 +76,8 @@ fun RowScope.PuzzleBoardContainer(
     zoomable: Boolean = true,
     onZoomChange: (Boolean) -> Unit = {},
     resetTrigger: Int = 0,
+    panTarget: Offset? = null,
+    onVisibleBoundsChange: (Rect) -> Unit = {},
     content: @Composable () -> Unit,
 ) {
     PuzzleBoardContainerBox(
@@ -70,6 +86,8 @@ fun RowScope.PuzzleBoardContainer(
         zoomable = zoomable,
         onZoomChange = onZoomChange,
         resetTrigger = resetTrigger,
+        panTarget = panTarget,
+        onVisibleBoundsChange = onVisibleBoundsChange,
         modifier = Modifier.weight(1f).fillMaxHeight(),
         content = content,
     )

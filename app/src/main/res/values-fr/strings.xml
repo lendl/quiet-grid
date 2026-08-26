@@ -150,6 +150,12 @@
     <string name="animaldoku_quickstart_bullet_3">Une erreur coûte un cœur — perds tes 3 cœurs et le puzzle se termine.</string>
     <string name="animaldoku_quickstart_hook">Plus il reste de cœurs, plus tu marques de points.</string>
 
+    <string name="arrowescape_quickstart_goal">Fais sortir toutes les flèches du plateau.</string>
+    <string name="arrowescape_quickstart_bullet_1">Appuie sur une flèche pour la faire sortir dans la direction qu\'elle indique.</string>
+    <string name="arrowescape_quickstart_bullet_2">Elle ne se libère que lorsque chaque case sur son chemin est vide.</string>
+    <string name="arrowescape_quickstart_bullet_3">Un appui bloqué coûte une vie — perds tes 3 vies et la partie se termine.</string>
+    <string name="arrowescape_quickstart_hook">Plus tu vides le plateau vite, plus ton score est élevé.</string>
+
     <string name="tutorial_host_unavailable_title">Tutoriel non disponible</string>
     <string name="tutorial_host_unavailable_body">Ce type de puzzle ne comprend pas encore de tutoriel.</string>
     <string name="puzzle_play_loading">Chargement du puzzle…</string>
@@ -653,4 +659,30 @@
     <string name="animaldoku_loss_rule_failure_eyebrow">Puzzle perdu</string>
     <string name="animaldoku_loss_rule_failure_title">Plus de cœurs</string>
     <string name="animaldoku_loss_rule_failure_body">Trois ouvertures incorrectes t\'ont coûté tous tes cœurs et ont mis fin au puzzle.</string>
+
+    <string name="arrowescape_title">Évasion des Flèches</string>
+    <string name="arrowescape_tagline">Vide le plateau, une flèche à la fois.</string>
+    <string name="arrowescape_difficulty_easy">Facile</string>
+    <string name="arrowescape_difficulty_medium">Moyen</string>
+    <string name="arrowescape_difficulty_hard">Difficile</string>
+    <string name="arrowescape_difficulty_expert">Expert</string>
+    <string name="arrowescape_difficulty_desc_easy">Un plateau tranquille avec peu de chemins bloqués.</string>
+    <string name="arrowescape_difficulty_desc_medium">Quelques pièces se bloquent entre elles — prévois quelques coups à l\'avance.</string>
+    <string name="arrowescape_difficulty_desc_hard">Plusieurs flèches en bloquent plusieurs autres à la fois. Regarde bien avant d\'appuyer.</string>
+    <string name="arrowescape_difficulty_desc_expert">De longues chaînes de flèches se bloquent les unes les autres sur tout le plateau.</string>
+    <string name="arrowescape_how_to_play_goal">Fais sortir toutes les flèches du plateau.</string>
+    <string name="arrowescape_how_to_play_controls">Appuie sur une flèche pour la faire sortir du plateau dans la direction qu\'elle indique. Elle ne se libère que si rien d\'autre ne bloque son chemin.</string>
+    <string name="arrowescape_how_to_play_wrong_move">Si une flèche est bloquée, appuyer dessus coûte une vie. Son chemin reste surligné pour que tu voies ce qui la bloque.</string>
+    <string name="arrowescape_rule_1_title">Une seule direction</string>
+    <string name="arrowescape_rule_1_body">Chaque flèche ne peut sortir que dans la direction indiquée par sa pointe.</string>
+    <string name="arrowescape_rule_2_title">Dégage le chemin</string>
+    <string name="arrowescape_rule_2_body">Une flèche ne peut être retirée que lorsque chaque case entre elle et le bord du plateau est vide.</string>
+    <string name="arrowescape_rule_3_title">Vies limitées</string>
+    <string name="arrowescape_rule_3_body">Tu commences avec 3 vies. Si tu les perds toutes, la partie se termine.</string>
+    <string name="arrowescape_loss_abandoned_eyebrow">En pause</string>
+    <string name="arrowescape_loss_abandoned_title">Partie abandonnée</string>
+    <string name="arrowescape_loss_abandoned_body">Tu as quitté avant de terminer ce plateau.</string>
+    <string name="arrowescape_loss_rule_failure_eyebrow">Plus de vies</string>
+    <string name="arrowescape_loss_rule_failure_title">Plateau non dégagé</string>
+    <string name="arrowescape_loss_rule_failure_body">Tu as épuisé tes vies avant d\'avoir fait sortir toutes les flèches.</string>
 </resources>
