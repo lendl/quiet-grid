@@ -201,6 +201,7 @@
     <string name="loss_try_again">Try Again</string>
     <string name="loss_other_difficulty">Other Difficulty</string>
     <string name="loss_try_another_game">Try Another Game</string>
+    <string name="walk_through_solve">Walk through the solve</string>
 
     <!-- stats -->
     <string name="common_all">All</string>
@@ -356,6 +357,11 @@
     <string name="takuzu_loss_abandoned_eyebrow">Puzzle ended</string>
     <string name="takuzu_loss_abandoned_title">Puzzle unfinished</string>
     <string name="takuzu_loss_abandoned_body">You ended this puzzle before it was solved.</string>
+    <string name="takuzu_analyzer_title">Walk through the solve</string>
+    <string name="takuzu_analyzer_load_failed">Couldn\'t load the solve for this puzzle.</string>
+    <string name="takuzu_analyzer_already_solved">This puzzle was already fully solved.</string>
+    <string name="takuzu_analyzer_solved_title">Solved!</string>
+    <string name="takuzu_analyzer_solved_body">This is the completed grid.</string>
 
     <!-- Nonogram (English-only in the source app; other locales fall back here) -->
     <string name="nonogram_tagline">Fill cells to match the row and column clues.</string>
@@ -702,4 +708,11 @@
     <string name="arrowescape_loss_rule_failure_eyebrow">Out of lives</string>
     <string name="arrowescape_loss_rule_failure_title">Board not cleared</string>
     <string name="arrowescape_loss_rule_failure_body">You ran out of lives before clearing every arrow.</string>
+
+    <!-- Analyzer -->
+    <string name="analyzer_step_of">Step %1$d of %2$d</string>
+    <string name="analyzer_back">Previous step</string>
+    <string name="analyzer_next">Next step</string>
+    <string name="analyzer_play">Play</string>
+    <string name="analyzer_pause">Pause</string>
 </resources>

@@ -10,6 +10,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -33,6 +34,7 @@ import com.quietgrid.app.games.chimptest.ChimpTestPlayScreen
 import com.quietgrid.app.games.minesweeper.MinesweeperPlayScreen
 import com.quietgrid.app.games.nonogram.NonogramPlayScreen
 import com.quietgrid.app.games.sudoku.SudokuPlayScreen
+import com.quietgrid.app.games.takuzu.TakuzuAnalyzerScreen
 import com.quietgrid.app.games.takuzu.TakuzuPlayScreen
 import com.quietgrid.app.games.wordguess.WordGuessPlayScreen
 import com.quietgrid.app.games.wordsearch.WordSearchPlayScreen
@@ -41,6 +43,7 @@ import com.quietgrid.app.ui.components.AppTab
 import com.quietgrid.app.ui.components.AppTopBar
 import com.quietgrid.app.ui.components.BottomNavBar
 import com.quietgrid.app.ui.components.GlobalMenu
+import com.quietgrid.app.ui.screens.AnalyzerHandoff
 import com.quietgrid.app.ui.screens.CompletionExtras
 import com.quietgrid.app.ui.screens.CompletionHighlight
 import com.quietgrid.app.ui.screens.CompletionScreen
@@ -185,6 +188,7 @@ fun AppNavHost() {
                         resume = resume,
                         onBack = { navController.popBackStack() },
                         onFinished = { result ->
+                            AnalyzerHandoff.set(result.analyzerSnapshot)
                             if (result.solved) {
                                 goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
                             } else {
@@ -346,6 +350,9 @@ fun AppNavHost() {
                         selectedTab = AppTab.GAMES
                         navController.popBackStack(Routes.TABS, inclusive = false)
                     },
+                    onWalkThroughSolve = {
+                        navController.navigate(Routes.analyzer(completionGameId))
+                    },
                 )
             }
 
@@ -381,7 +388,27 @@ fun AppNavHost() {
                         selectedTab = AppTab.GAMES
                         navController.popBackStack(Routes.TABS, inclusive = false)
                     },
+                    onWalkThroughSolve = {
+                        navController.navigate(Routes.analyzer(lossGameId))
+                    },
                 )
+            }
+
+            composable(
+                Routes.ANALYZER,
+                arguments = listOf(navArgument("gameId") { type = NavType.StringType }),
+                enterTransition = { fadeIn(animationSpec = tween(180)) },
+                exitTransition = { fadeOut(animationSpec = tween(150)) },
+            ) { entry ->
+                val analyzerGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
+                val analyzerSnapshot = rememberSaveable { mutableStateOf(AnalyzerHandoff.consume()) }.value
+                when (analyzerGameId) {
+                    GameId.TAKUZU -> TakuzuAnalyzerScreen(
+                        snapshot = analyzerSnapshot,
+                        onBack = { navController.popBackStack() },
+                    )
+                    else -> Unit
+                }
             }
 
             composable(

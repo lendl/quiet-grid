@@ -133,13 +133,13 @@ fun TakuzuPlayScreen(
 }
 
 @Composable
-private fun lineLabel(kind: TakuzuLineKind, index: Int): String = stringResource(
+internal fun lineLabel(kind: TakuzuLineKind, index: Int): String = stringResource(
     if (kind == TakuzuLineKind.ROW) R.string.takuzu_hint_line_row else R.string.takuzu_hint_line_column,
     index + 1,
 )
 
 @Composable
-private fun lineKindWord(kind: TakuzuLineKind, plural: Boolean): String = stringResource(
+internal fun lineKindWord(kind: TakuzuLineKind, plural: Boolean): String = stringResource(
     when {
         kind == TakuzuLineKind.ROW && !plural -> R.string.takuzu_hint_kind_row
         kind == TakuzuLineKind.ROW && plural -> R.string.takuzu_hint_kind_rows
@@ -149,7 +149,7 @@ private fun lineKindWord(kind: TakuzuLineKind, plural: Boolean): String = string
 )
 
 @Composable
-private fun resolveTakuzuHintText(hint: TakuzuNextMoveHint): Pair<String, String> = when (hint) {
+internal fun resolveTakuzuHintText(hint: TakuzuNextMoveHint): Pair<String, String> = when (hint) {
     is TakuzuNextMoveHint.Paused -> stringResource(R.string.takuzu_hint_paused_title) to stringResource(R.string.takuzu_hint_paused_body)
 
     is TakuzuNextMoveHint.FindPairs -> {

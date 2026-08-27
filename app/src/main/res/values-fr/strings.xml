@@ -192,6 +192,7 @@
     <string name="loss_try_again">Réessayer</string>
     <string name="loss_other_difficulty">Autre difficulté</string>
     <string name="loss_try_another_game">Essayer un autre jeu</string>
+    <string name="walk_through_solve">Revoir la résolution</string>
 
     <string name="common_all">Tous</string>
     <string name="stats_header_subtitle">Statistiques pour ce type de puzzle</string>
@@ -344,6 +345,11 @@
     <string name="takuzu_loss_abandoned_eyebrow">Puzzle terminé</string>
     <string name="takuzu_loss_abandoned_title">Puzzle inachevé</string>
     <string name="takuzu_loss_abandoned_body">Tu as terminé ce puzzle avant de le résoudre.</string>
+    <string name="takuzu_analyzer_title">Revoir la résolution</string>
+    <string name="takuzu_analyzer_load_failed">Impossible de charger la résolution de ce puzzle.</string>
+    <string name="takuzu_analyzer_already_solved">Ce puzzle était déjà entièrement résolu.</string>
+    <string name="takuzu_analyzer_solved_title">Résolu !</string>
+    <string name="takuzu_analyzer_solved_body">Voici la grille complète.</string>
 
     <!-- Nonogram -->
     <string name="nonogram_tagline">Remplis les cases pour respecter les indices de ligne et de colonne.</string>
@@ -690,4 +696,11 @@
     <string name="arrowescape_loss_rule_failure_eyebrow">Plus de vies</string>
     <string name="arrowescape_loss_rule_failure_title">Plateau non dégagé</string>
     <string name="arrowescape_loss_rule_failure_body">Tu as épuisé tes vies avant d\'avoir fait sortir toutes les flèches.</string>
+
+    <!-- Analyzer -->
+    <string name="analyzer_step_of">Étape %1$d sur %2$d</string>
+    <string name="analyzer_back">Étape précédente</string>
+    <string name="analyzer_next">Étape suivante</string>
+    <string name="analyzer_play">Lecture</string>
+    <string name="analyzer_pause">Pause</string>
 </resources>

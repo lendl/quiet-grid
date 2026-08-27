@@ -192,6 +192,7 @@
     <string name="loss_try_again">Intentar de nuevo</string>
     <string name="loss_other_difficulty">Otra dificultad</string>
     <string name="loss_try_another_game">Probar otro juego</string>
+    <string name="walk_through_solve">Ver la solución paso a paso</string>
 
     <string name="common_all">Todo</string>
     <string name="stats_header_subtitle">Estadísticas para este tipo de puzzle</string>
@@ -344,6 +345,11 @@
     <string name="takuzu_loss_abandoned_eyebrow">Puzzle terminado</string>
     <string name="takuzu_loss_abandoned_title">Puzzle sin terminar</string>
     <string name="takuzu_loss_abandoned_body">Terminaste este puzzle antes de resolverlo.</string>
+    <string name="takuzu_analyzer_title">Ver la solución paso a paso</string>
+    <string name="takuzu_analyzer_load_failed">No se pudo cargar la solución de este puzzle.</string>
+    <string name="takuzu_analyzer_already_solved">Este puzzle ya estaba completamente resuelto.</string>
+    <string name="takuzu_analyzer_solved_title">¡Resuelto!</string>
+    <string name="takuzu_analyzer_solved_body">Esta es la cuadrícula completa.</string>
 
     <!-- Nonogram -->
     <string name="nonogram_tagline">Rellena celdas para cumplir las pistas de fila y columna.</string>
@@ -690,4 +696,11 @@
     <string name="arrowescape_loss_rule_failure_eyebrow">Sin vidas</string>
     <string name="arrowescape_loss_rule_failure_title">Tablero sin despejar</string>
     <string name="arrowescape_loss_rule_failure_body">Te quedaste sin vidas antes de retirar todas las flechas.</string>
+
+    <!-- Analyzer -->
+    <string name="analyzer_step_of">Paso %1$d de %2$d</string>
+    <string name="analyzer_back">Paso anterior</string>
+    <string name="analyzer_next">Paso siguiente</string>
+    <string name="analyzer_play">Reproducir</string>
+    <string name="analyzer_pause">Pausa</string>
 </resources>

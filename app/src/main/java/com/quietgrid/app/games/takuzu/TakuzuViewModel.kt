@@ -43,6 +43,7 @@ data class TakuzuResult(
     val lossReason: String?,
     val isFirstSolve: Boolean = false,
     val isNewHighScore: Boolean = false,
+    val analyzerSnapshot: String? = null,
 )
 
 private class TakuzuPuzzleAdapter(
@@ -90,6 +91,11 @@ private class TakuzuPuzzleAdapter(
     override fun scoreOnWin(session: TakuzuSession, difficulty: Difficulty, elapsedSeconds: Int): Int =
         takuzuScore(difficulty, elapsedSeconds, session.accuracyDrops)
 
+    private fun analyzerSnapshotFor(session: TakuzuSession, solved: Boolean): String {
+        val board = if (solved) decodePuzzleBoard(session.puzzle.solution, session.puzzle.mask, session.puzzle.size) else session.board
+        return encode(session.copy(board = board))
+    }
+
     override fun buildResult(session: TakuzuSession?, outcome: PuzzleOutcome): TakuzuResult = TakuzuResult(
         difficulty = outcome.difficulty,
         solved = outcome.solved,
@@ -99,6 +105,7 @@ private class TakuzuPuzzleAdapter(
         lossReason = outcome.lossReason,
         isFirstSolve = outcome.isFirstSolve,
         isNewHighScore = outcome.isNewHighScore,
+        analyzerSnapshot = session?.let { analyzerSnapshotFor(it, outcome.solved) },
     )
 }
 

@@ -192,6 +192,7 @@
     <string name="loss_try_again">Opnieuw proberen</string>
     <string name="loss_other_difficulty">Andere moeilijkheid</string>
     <string name="loss_try_another_game">Ander spel proberen</string>
+    <string name="walk_through_solve">Bekijk de oplossing stap voor stap</string>
 
     <string name="common_all">Alles</string>
     <string name="stats_header_subtitle">Statistieken voor dit puzzeltype</string>
@@ -344,6 +345,11 @@
     <string name="takuzu_loss_abandoned_eyebrow">Puzzel beëindigd</string>
     <string name="takuzu_loss_abandoned_title">Puzzel niet af</string>
     <string name="takuzu_loss_abandoned_body">Je hebt deze puzzel beëindigd voordat hij was opgelost.</string>
+    <string name="takuzu_analyzer_title">Bekijk de oplossing stap voor stap</string>
+    <string name="takuzu_analyzer_load_failed">Kon de oplossing voor deze puzzel niet laden.</string>
+    <string name="takuzu_analyzer_already_solved">Deze puzzel was al volledig opgelost.</string>
+    <string name="takuzu_analyzer_solved_title">Opgelost!</string>
+    <string name="takuzu_analyzer_solved_body">Dit is het voltooide raster.</string>
 
     <!-- Nonogram -->
     <string name="nonogram_tagline">Vul cellen om aan de rij- en kolomhints te voldoen.</string>
@@ -690,4 +696,11 @@
     <string name="arrowescape_loss_rule_failure_eyebrow">Geen levens meer</string>
     <string name="arrowescape_loss_rule_failure_title">Bord niet leeg</string>
     <string name="arrowescape_loss_rule_failure_body">Je levens waren op voordat je alle pijlen had verwijderd.</string>
+
+    <!-- Analyzer -->
+    <string name="analyzer_step_of">Stap %1$d van %2$d</string>
+    <string name="analyzer_back">Vorige stap</string>
+    <string name="analyzer_next">Volgende stap</string>
+    <string name="analyzer_play">Afspelen</string>
+    <string name="analyzer_pause">Pauze</string>
 </resources>

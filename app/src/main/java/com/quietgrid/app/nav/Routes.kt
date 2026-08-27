@@ -9,6 +9,7 @@ object Routes {
     const val PLAY = "play/{gameId}/{difficulty}/{resume}"
     const val COMPLETION = "completion/{gameId}/{difficulty}/{score}/{accuracyPct}/{elapsedSeconds}/{isFirstSolve}/{isNewHighScore}"
     const val LOSS = "loss/{gameId}/{difficulty}/{elapsedSeconds}/{reason}"
+    const val ANALYZER = "analyzer/{gameId}"
     const val SUPPORT_INFO = "supportInfo/{key}"
 
     fun picker(gameId: GameId) = "picker/${gameId.key}"
@@ -27,6 +28,8 @@ object Routes {
 
     fun loss(gameId: GameId, difficulty: Difficulty, elapsedSeconds: Int, reason: String) =
         "loss/${gameId.key}/${difficulty.key}/$elapsedSeconds/$reason"
+
+    fun analyzer(gameId: GameId) = "analyzer/${gameId.key}"
 
     fun supportInfo(key: String) = "supportInfo/$key"
 }

@@ -192,6 +192,7 @@
     <string name="loss_try_again">Nochmals versuchen</string>
     <string name="loss_other_difficulty">Andere Schwierigkeit</string>
     <string name="loss_try_another_game">Anderes Spiel versuchen</string>
+    <string name="walk_through_solve">Lösung Schritt für Schritt ansehen</string>
 
     <string name="common_all">Alle</string>
     <string name="stats_header_subtitle">Statistiken für diesen Rätseltyp</string>
@@ -344,6 +345,11 @@
     <string name="takuzu_loss_abandoned_eyebrow">Rätsel beendet</string>
     <string name="takuzu_loss_abandoned_title">Rätsel unfertig</string>
     <string name="takuzu_loss_abandoned_body">Du hast dieses Rätsel beendet, bevor es gelöst war.</string>
+    <string name="takuzu_analyzer_title">Lösung Schritt für Schritt</string>
+    <string name="takuzu_analyzer_load_failed">Die Lösung für dieses Rätsel konnte nicht geladen werden.</string>
+    <string name="takuzu_analyzer_already_solved">Dieses Rätsel war bereits vollständig gelöst.</string>
+    <string name="takuzu_analyzer_solved_title">Gelöst!</string>
+    <string name="takuzu_analyzer_solved_body">Dies ist das vollständige Raster.</string>
 
     <!-- Nonogram -->
     <string name="nonogram_tagline">Fülle Zellen, um die Zeilen- und Spaltenhinweise zu erfüllen.</string>
@@ -690,4 +696,11 @@
     <string name="arrowescape_loss_rule_failure_eyebrow">Keine Leben mehr</string>
     <string name="arrowescape_loss_rule_failure_title">Feld nicht geräumt</string>
     <string name="arrowescape_loss_rule_failure_body">Dir sind die Leben ausgegangen, bevor du jeden Pfeil entfernen konntest.</string>
+
+    <!-- Analyzer -->
+    <string name="analyzer_step_of">Schritt %1$d von %2$d</string>
+    <string name="analyzer_back">Vorheriger Schritt</string>
+    <string name="analyzer_next">Nächster Schritt</string>
+    <string name="analyzer_play">Abspielen</string>
+    <string name="analyzer_pause">Pause</string>
 </resources>

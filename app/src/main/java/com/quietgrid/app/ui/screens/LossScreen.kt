@@ -22,7 +22,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -55,6 +57,7 @@ fun LossScreen(
     onRetry: () -> Unit,
     onOtherDifficulty: () -> Unit,
     onTryAnotherGame: () -> Unit,
+    onWalkThroughSolve: () -> Unit,
 ) {
     val eyebrowRes: Int
     val titleRes: Int
@@ -158,6 +161,7 @@ fun LossScreen(
 
     val highlight = remember { CompletionExtras.consume() }
     val revealWord = (highlight as? CompletionHighlight.RevealWord)?.word?.takeIf { it.isNotEmpty() }
+    val analyzerSnapshot = rememberSaveable { mutableStateOf(AnalyzerHandoff.consume()) }.value
 
     val pageOpacity = remember { Animatable(0f) }
     val contentOffsetY = remember { Animatable(24f) }
@@ -244,6 +248,18 @@ fun LossScreen(
 
                 Button(onClick = onRetry, modifier = Modifier.fillMaxWidth().padding(top = 24.dp)) {
                     Text(stringResource(R.string.loss_try_again))
+                }
+
+                if (analyzerSnapshot != null) {
+                    TextButton(
+                        onClick = {
+                            AnalyzerHandoff.set(analyzerSnapshot)
+                            onWalkThroughSolve()
+                        },
+                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                    ) {
+                        Text(stringResource(R.string.walk_through_solve))
+                    }
                 }
 
                 Row(

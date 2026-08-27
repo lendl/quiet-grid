@@ -17,6 +17,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -104,6 +106,43 @@ class TakuzuPlayViewModelTest {
 
         assertTrue(sessionStore.cleared)
         assertEquals("abandoned", results.single().lossReason)
+        collectJob.cancel()
+    }
+
+    @Test
+    fun `winning the puzzle produces an analyzer snapshot that replays from the original givens`() {
+        val sessionStore = FakeSessionStore()
+        val viewModel = newViewModel(sessionStore)
+        val results = mutableListOf<TakuzuResult>()
+        val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
+
+        viewModel.onCellPress(0, 0)
+        mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(1300)
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+
+        val snapshot = results.single().analyzerSnapshot
+        assertNotNull(snapshot)
+        val decoded = Json { ignoreUnknownKeys = true }.decodeFromString<TakuzuPersistedSession>(snapshot!!)
+        assertEquals("test-takuzu", decoded.puzzle.id)
+        assertEquals(listOf(null, 1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1), decoded.board)
+        collectJob.cancel()
+    }
+
+    @Test
+    fun `abandoning the puzzle produces an analyzer snapshot of the actual left-off board`() {
+        val sessionStore = FakeSessionStore()
+        val viewModel = newViewModel(sessionStore)
+        val results = mutableListOf<TakuzuResult>()
+        val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
+
+        viewModel.endPuzzle()
+        mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(500)
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+
+        val snapshot = results.single().analyzerSnapshot
+        assertNotNull(snapshot)
+        val decoded = Json { ignoreUnknownKeys = true }.decodeFromString<TakuzuPersistedSession>(snapshot!!)
+        assertEquals(listOf(null, 1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1), decoded.board)
         collectJob.cancel()
     }
 
