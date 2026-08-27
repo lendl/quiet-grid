@@ -176,93 +176,94 @@ fun CompletionScreen(
     }
 
     Box(Modifier.fillMaxSize()) {
-        Column(Modifier.fillMaxSize().padding(16.dp)) {
-            FlowRow(
+        FlowRow(
+            Modifier
+                .align(Alignment.TopCenter)
+                .fillMaxWidth()
+                .padding(16.dp)
+                .graphicsLayer { alpha = pageOpacity.value },
+            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Row(
                 Modifier
-                    .fillMaxWidth()
-                    .graphicsLayer { alpha = pageOpacity.value },
-                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+                    .border(1.dp, accentColor, CircleShape)
+                    .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.7f), CircleShape)
+                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Row(
-                    Modifier
-                        .border(1.dp, accentColor, CircleShape)
-                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.7f), CircleShape)
-                        .padding(horizontal = 12.dp, vertical = 6.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    Box(Modifier.size(10.dp).background(accentColor, CircleShape))
-                    Text(stringResource(eyebrowRes), style = MaterialTheme.typography.labelMedium, color = accentColor)
-                }
-                if (streak >= 2) {
-                    BadgePill(
-                        borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
-                        textColor = MaterialTheme.colorScheme.primary,
-                        emoji = "🔥",
-                        text = stringResource(R.string.completion_streak_badge, streak),
-                    )
-                }
-                if (isFlawless) {
-                    BadgePill(
-                        borderColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f),
-                        textColor = MaterialTheme.colorScheme.tertiary,
-                        emoji = "💯",
-                        text = stringResource(R.string.completion_flawless_badge),
-                    )
-                }
-                if (gameMilestone != null) {
-                    BadgePill(
-                        borderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.35f),
-                        textColor = MaterialTheme.colorScheme.secondary,
-                        emoji = "🏅",
-                        text = stringResource(R.string.completion_milestone_game_badge, gameMilestone),
-                    )
-                }
-                if (difficultyMilestone != null) {
-                    BadgePill(
-                        borderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.35f),
-                        textColor = MaterialTheme.colorScheme.secondary,
-                        emoji = "🎯",
-                        text = stringResource(R.string.completion_milestone_difficulty_badge, difficultyMilestone, stringResource(difficultyLabelRes)),
-                    )
-                }
-                if (totalMilestone != null) {
-                    BadgePill(
-                        borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
-                        textColor = MaterialTheme.colorScheme.primary,
-                        emoji = "🌟",
-                        text = stringResource(R.string.completion_milestone_total_badge, totalMilestone),
-                    )
-                }
-                if (didBounceBack) {
-                    BadgePill(
-                        borderColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f),
-                        textColor = MaterialTheme.colorScheme.tertiary,
-                        emoji = "💪",
-                        text = stringResource(R.string.completion_bounced_back_badge),
-                    )
-                }
-                if (gamesToday >= 3) {
-                    BadgePill(
-                        borderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.35f),
-                        textColor = MaterialTheme.colorScheme.secondary,
-                        emoji = "🎲",
-                        text = stringResource(R.string.completion_variety_badge, gamesToday),
-                    )
-                }
-                if (puzzlesToday >= 5) {
-                    BadgePill(
-                        borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
-                        textColor = MaterialTheme.colorScheme.primary,
-                        emoji = "☀️",
-                        text = stringResource(R.string.completion_daily_total_badge, puzzlesToday),
-                    )
-                }
+                Box(Modifier.size(10.dp).background(accentColor, CircleShape))
+                Text(stringResource(eyebrowRes), style = MaterialTheme.typography.labelMedium, color = accentColor)
             }
+            if (streak >= 2) {
+                BadgePill(
+                    borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
+                    textColor = MaterialTheme.colorScheme.primary,
+                    emoji = "🔥",
+                    text = stringResource(R.string.completion_streak_badge, streak),
+                )
+            }
+            if (isFlawless) {
+                BadgePill(
+                    borderColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f),
+                    textColor = MaterialTheme.colorScheme.tertiary,
+                    emoji = "💯",
+                    text = stringResource(R.string.completion_flawless_badge),
+                )
+            }
+            if (gameMilestone != null) {
+                BadgePill(
+                    borderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.35f),
+                    textColor = MaterialTheme.colorScheme.secondary,
+                    emoji = "🏅",
+                    text = stringResource(R.string.completion_milestone_game_badge, gameMilestone),
+                )
+            }
+            if (difficultyMilestone != null) {
+                BadgePill(
+                    borderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.35f),
+                    textColor = MaterialTheme.colorScheme.secondary,
+                    emoji = "🎯",
+                    text = stringResource(R.string.completion_milestone_difficulty_badge, difficultyMilestone, stringResource(difficultyLabelRes)),
+                )
+            }
+            if (totalMilestone != null) {
+                BadgePill(
+                    borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
+                    textColor = MaterialTheme.colorScheme.primary,
+                    emoji = "🌟",
+                    text = stringResource(R.string.completion_milestone_total_badge, totalMilestone),
+                )
+            }
+            if (didBounceBack) {
+                BadgePill(
+                    borderColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f),
+                    textColor = MaterialTheme.colorScheme.tertiary,
+                    emoji = "💪",
+                    text = stringResource(R.string.completion_bounced_back_badge),
+                )
+            }
+            if (gamesToday >= 3) {
+                BadgePill(
+                    borderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.35f),
+                    textColor = MaterialTheme.colorScheme.secondary,
+                    emoji = "🎲",
+                    text = stringResource(R.string.completion_variety_badge, gamesToday),
+                )
+            }
+            if (puzzlesToday >= 5) {
+                BadgePill(
+                    borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
+                    textColor = MaterialTheme.colorScheme.primary,
+                    emoji = "☀️",
+                    text = stringResource(R.string.completion_daily_total_badge, puzzlesToday),
+                )
+            }
+        }
 
-            Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                Column(
+        Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
+            Column(
                     Modifier.graphicsLayer {
                         alpha = pageOpacity.value
                         translationY = contentOffsetY.value
@@ -365,13 +366,12 @@ fun CompletionScreen(
                     }
                 }
             }
-        }
-
         if (showConfetti) {
             ConfettiBurst(Modifier.fillMaxSize())
         }
     }
 }
+
 
 private val FLAWLESS_ELIGIBLE_GAMES = setOf(GameId.TAKUZU, GameId.SUDOKU)
 private val ACCURACY_TRACKED_GAMES = setOf(GameId.TAKUZU, GameId.SUDOKU, GameId.WORDSEARCH)
