@@ -329,6 +329,8 @@
     <string name="takuzu_hint_avoid_trios_body">Coloca %1$d en la celda resaltada. Por qué: %2$s ya muestra %3$d _ %3$d, así que la celda abierta entre ellos debe ser %1$d para evitar tres seguidos.</string>
     <string name="takuzu_hint_complete_lines_body">Coloca %1$d en la celda resaltada. Por qué: %2$s ya tiene %3$d %4$d%5$s, así que la celda abierta restante debe ser %1$d para mantener la línea equilibrada.</string>
     <string name="takuzu_hint_eliminate_filled_lines_body">Coloca %1$d en la celda resaltada. Por qué: si %2$s coincidiera con %3$s, la %4$s completa dejaría de ser única.</string>
+    <string name="takuzu_hint_reveal_title">Siguiente movimiento</string>
+    <string name="takuzu_hint_reveal_body">Coloca %1$d en la celda resaltada.</string>
     <string name="takuzu_hint_repair_avoid_trios_title">Siguiente movimiento para reparar %1$s</string>
     <string name="takuzu_hint_repair_avoid_trios_body">Cambia una celda resaltada en %1$s. Por qué: tres %2$ds seguidos infringen la regla de sin trillizos.</string>
     <string name="takuzu_hint_repair_complete_lines_title">Siguiente movimiento para reequilibrar %1$s</string>

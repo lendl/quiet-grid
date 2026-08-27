@@ -329,6 +329,8 @@
     <string name="takuzu_hint_avoid_trios_body">Platziere %1$d in der markierten Zelle. Warum: %2$s zeigt bereits %3$d _ %3$d, also muss die offene Zelle dazwischen %1$d sein, um einen Drilling zu vermeiden.</string>
     <string name="takuzu_hint_complete_lines_body">Platziere %1$d in der markierten Zelle. Warum: %2$s hat bereits %3$d %4$d%5$s, also muss die verbleibende offene Zelle %1$d sein, um die Linie ausgeglichen zu halten.</string>
     <string name="takuzu_hint_eliminate_filled_lines_body">Platziere %1$d in der markierten Zelle. Warum: Wenn %2$s mit %3$s übereinstimmte, wäre die abgeschlossene %4$s nicht mehr einzigartig.</string>
+    <string name="takuzu_hint_reveal_title">Nächster Zug</string>
+    <string name="takuzu_hint_reveal_body">Platziere %1$d in der markierten Zelle.</string>
     <string name="takuzu_hint_repair_avoid_trios_title">Nächster Zug zur Reparatur von %1$s</string>
     <string name="takuzu_hint_repair_avoid_trios_body">Ändere eine markierte Zelle in %1$s. Warum: Drei %2$den in einer Reihe verstoßen gegen die Keine-Drillinge-Regel.</string>
     <string name="takuzu_hint_repair_complete_lines_title">Nächster Zug zur Neuausrichtung von %1$s</string>

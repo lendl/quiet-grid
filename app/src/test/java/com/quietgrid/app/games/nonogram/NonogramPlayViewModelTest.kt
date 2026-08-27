@@ -12,9 +12,12 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -87,5 +90,43 @@ class NonogramPlayViewModelTest {
         assertTrue(sessionStore.cleared)
         assertEquals("abandoned", results.single().lossReason)
         collectJob.cancel()
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `toggling the hint computes asynchronously and ignores re-entrant taps while pending`() {
+        val viewModel = newViewModel()
+        viewModel.hintDispatcher = StandardTestDispatcher(mainDispatcherRule.dispatcher.scheduler)
+
+        viewModel.toggleNextMoveHint()
+        assertTrue(viewModel.isComputingHint)
+        assertTrue(viewModel.nextMoveHintActive)
+        assertNull(viewModel.nextMoveHint)
+
+        viewModel.toggleNextMoveHint()
+        assertTrue(viewModel.isComputingHint)
+
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+
+        assertFalse(viewModel.isComputingHint)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `tapping a cell while the hint is computing cancels it instead of applying a stale result`() {
+        val viewModel = newViewModel()
+        viewModel.hintDispatcher = StandardTestDispatcher(mainDispatcherRule.dispatcher.scheduler)
+
+        viewModel.toggleNextMoveHint()
+        assertTrue(viewModel.isComputingHint)
+
+        viewModel.onCellTap(0, 0)
+        assertFalse(viewModel.isComputingHint)
+        assertFalse(viewModel.nextMoveHintActive)
+
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+
+        assertFalse(viewModel.isComputingHint)
+        assertNull(viewModel.nextMoveHint)
     }
 }

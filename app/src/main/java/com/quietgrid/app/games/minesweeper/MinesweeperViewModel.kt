@@ -17,6 +17,11 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -97,16 +102,28 @@ class MinesweeperPlayViewModel @AssistedInject constructor(
 
     var nextMoveHint by mutableStateOf<MinesweeperNextMoveHint?>(null)
         private set
+    var isComputingHint by mutableStateOf(false)
+        private set
+
+    internal var hintDispatcher: CoroutineDispatcher = Dispatchers.Default
+    private var hintJob: Job? = null
 
     init {
         controller.start(requestedDifficulty, resume)
+    }
+
+    private fun clearHint() {
+        hintJob?.cancel()
+        hintJob = null
+        isComputingHint = false
+        nextMoveHint = null
     }
 
     fun onReveal(row: Int, col: Int) {
         val current = session ?: return
         val nextBoard = revealMinesweeperCell(current.board, current.puzzle, row, col)
         if (nextBoard == current.board) return
-        nextMoveHint = null
+        clearHint()
         applyBoard(current, nextBoard)
     }
 
@@ -114,18 +131,23 @@ class MinesweeperPlayViewModel @AssistedInject constructor(
         val current = session ?: return
         val nextBoard = toggleMinesweeperFlag(current.board, row, col)
         if (nextBoard == current.board) return
-        nextMoveHint = null
+        clearHint()
         applyBoard(current, nextBoard)
     }
 
     fun toggleNextMoveHint() {
-        if (controller.isFinalized) return
+        if (controller.isFinalized || isComputingHint) return
         if (nextMoveHint != null) {
-            nextMoveHint = null
+            clearHint()
             return
         }
         val current = session ?: return
-        nextMoveHint = getMinesweeperNextMoveHint(current.board)
+        isComputingHint = true
+        hintJob = viewModelScope.launch {
+            val hint = withContext(hintDispatcher) { getMinesweeperNextMoveHint(current.board) }
+            isComputingHint = false
+            if (!controller.isFinalized && session == current) nextMoveHint = hint
+        }
     }
 
     private fun applyBoard(current: MinesweeperSession, nextBoard: MinesweeperBoard) {

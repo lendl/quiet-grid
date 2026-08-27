@@ -22,9 +22,13 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -145,13 +149,25 @@ class WordSearchPlayViewModel @AssistedInject constructor(
 
     var nextMoveHint by mutableStateOf<WSNextMoveHint?>(null)
         private set
+    var isComputingHint by mutableStateOf(false)
+        private set
     var wrongHiddenWordTap by mutableStateOf(false)
         private set
     var wrongSelectionCells by mutableStateOf<List<WSCellRef>>(emptyList())
         private set
 
+    internal var hintDispatcher: CoroutineDispatcher = Dispatchers.Default
+    private var hintJob: Job? = null
+
     init {
         controller.start(requestedDifficulty, resume)
+    }
+
+    private fun clearHint() {
+        hintJob?.cancel()
+        hintJob = null
+        isComputingHint = false
+        nextMoveHint = null
     }
 
     private fun onCommitSelection() {
@@ -172,7 +188,7 @@ class WordSearchPlayViewModel @AssistedInject constructor(
             onHiddenWordCellTap(row, col)
             return
         }
-        nextMoveHint = null
+        clearHint()
         val cell = WSCellRef(row, col)
         val existingSelection = current.tempSelection
         if (existingSelection != null && cell in existingSelection.path) {
@@ -198,7 +214,7 @@ class WordSearchPlayViewModel @AssistedInject constructor(
     fun onCellDragStart(row: Int, col: Int) {
         val current = session ?: return
         if (current.hiddenWordMode) return
-        nextMoveHint = null
+        clearHint()
         val started = wsBeginSelection(current, WSCellRef(row, col)) ?: return
         controller.updateSession(started, persist = false)
     }
@@ -216,7 +232,7 @@ class WordSearchPlayViewModel @AssistedInject constructor(
 
     fun onHiddenWordCellTap(row: Int, col: Int) {
         val current = session ?: return
-        nextMoveHint = null
+        clearHint()
         val updated = wsInputHiddenWordCell(current, WSCellRef(row, col))
         if (updated == null || updated.hiddenWordProgress.size < current.hiddenWordProgress.size) {
             wrongHiddenWordTap = true
@@ -230,18 +246,23 @@ class WordSearchPlayViewModel @AssistedInject constructor(
     fun onToggleHiddenWordMode() {
         val current = session ?: return
         if (current.hiddenWordSolved) return
-        nextMoveHint = null
+        clearHint()
         controller.updateSession(wsToggleHiddenWordMode(current) ?: current, persist = false)
     }
 
     fun toggleNextMoveHint() {
-        if (controller.isFinalized) return
+        if (controller.isFinalized || isComputingHint) return
         if (nextMoveHint != null) {
-            nextMoveHint = null
+            clearHint()
             return
         }
         val current = session ?: return
-        nextMoveHint = wsNextMoveHint(current)
+        isComputingHint = true
+        hintJob = viewModelScope.launch {
+            val hint = withContext(hintDispatcher) { wsNextMoveHint(current) }
+            isComputingHint = false
+            if (!controller.isFinalized && session == current) nextMoveHint = hint
+        }
     }
 
     fun endPuzzle() = controller.endPuzzle()

@@ -21,8 +21,12 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -147,8 +151,13 @@ class SudokuPlayViewModel @AssistedInject constructor(
         private set
     var nextMoveHintActive by mutableStateOf(false)
         private set
+    var isComputingHint by mutableStateOf(false)
+        private set
     var canUndo by mutableStateOf(false)
         private set
+
+    internal var hintDispatcher: CoroutineDispatcher = Dispatchers.Default
+    private var hintJob: Job? = null
 
     private var pendingUnitKeys = mutableSetOf<SudokuUnitKey>()
     private var pendingBoard: SudokuGrid? = null
@@ -157,6 +166,14 @@ class SudokuPlayViewModel @AssistedInject constructor(
 
     init {
         controller.start(requestedDifficulty, resume)
+    }
+
+    private fun clearHint() {
+        hintJob?.cancel()
+        hintJob = null
+        isComputingHint = false
+        nextMoveHintActive = false
+        nextMoveHint = null
     }
 
     fun onCellPress(row: Int, col: Int) {
@@ -218,8 +235,7 @@ class SudokuPlayViewModel @AssistedInject constructor(
         validationJob?.cancel()
         pendingUnitKeys = mutableSetOf()
         pendingBoard = null
-        nextMoveHint = null
-        nextMoveHintActive = false
+        clearHint()
         feedbackCorrectRows = emptySet()
         feedbackCorrectCols = emptySet()
         feedbackCorrectBoxes = emptySet()
@@ -237,8 +253,7 @@ class SudokuPlayViewModel @AssistedInject constructor(
     }
 
     private fun finishBoardMutation(previous: SudokuSession, updated: SudokuSession, row: Int, col: Int) {
-        nextMoveHint = null
-        nextMoveHintActive = false
+        clearHint()
 
         val finalUpdated = if (updated.autoCandidateMode) updated.copy(notes = computeSudokuAutoNotes(updated.board)) else updated
         controller.updateSession(finalUpdated)
@@ -298,14 +313,18 @@ class SudokuPlayViewModel @AssistedInject constructor(
     fun endPuzzle() = controller.endPuzzle()
 
     fun toggleNextMoveHint() {
-        if (controller.isFinalized) return
+        if (controller.isFinalized || isComputingHint) return
         if (nextMoveHintActive) {
-            nextMoveHintActive = false
-            nextMoveHint = null
+            clearHint()
             return
         }
         val current = session ?: return
         nextMoveHintActive = true
-        nextMoveHint = getSudokuNextMoveHint(current.board)
+        isComputingHint = true
+        hintJob = viewModelScope.launch {
+            val hint = withContext(hintDispatcher) { getSudokuNextMoveHint(current.board) }
+            isComputingHint = false
+            if (!controller.isFinalized && session == current && nextMoveHintActive) nextMoveHint = hint
+        }
     }
 }

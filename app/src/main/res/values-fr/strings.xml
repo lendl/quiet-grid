@@ -329,6 +329,8 @@
     <string name="takuzu_hint_avoid_trios_body">Place %1$d dans la case mise en évidence. Pourquoi : %2$s montre déjà %3$d _ %3$d, donc la case ouverte entre eux doit être %1$d pour éviter trois à la suite.</string>
     <string name="takuzu_hint_complete_lines_body">Place %1$d dans la case mise en évidence. Pourquoi : %2$s a déjà %3$d %4$d, donc la case ouverte restante doit être %1$d pour garder la ligne équilibrée.</string>
     <string name="takuzu_hint_eliminate_filled_lines_body">Place %1$d dans la case mise en évidence. Pourquoi : si %2$s correspondait à %3$s, les %4$s complètes ne seraient plus uniques.</string>
+    <string name="takuzu_hint_reveal_title">Prochain coup</string>
+    <string name="takuzu_hint_reveal_body">Place %1$d dans la case mise en évidence.</string>
     <string name="takuzu_hint_repair_avoid_trios_title">Prochain coup pour réparer %1$s</string>
     <string name="takuzu_hint_repair_avoid_trios_body">Change une case mise en évidence dans %1$s. Pourquoi : trois %2$d à la suite enfreignent la règle sans triplets.</string>
     <string name="takuzu_hint_repair_complete_lines_title">Prochain coup pour rééquilibrer %1$s</string>

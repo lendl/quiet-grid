@@ -329,6 +329,8 @@
     <string name="takuzu_hint_avoid_trios_body">Plaats %1$d in de gemarkeerde cel. Waarom: %2$s toont al %3$d _ %3$d, dus de open cel ertussen moet %1$d zijn om drie op rij te vermijden.</string>
     <string name="takuzu_hint_complete_lines_body">Plaats %1$d in de gemarkeerde cel. Waarom: %2$s heeft al %3$d %4$d%5$s, dus de resterende open cel moet %1$d zijn om de lijn in balans te houden.</string>
     <string name="takuzu_hint_eliminate_filled_lines_body">Plaats %1$d in de gemarkeerde cel. Waarom: als %2$s gelijk werd aan %3$s, zou de complete %4$s niet uniek meer zijn.</string>
+    <string name="takuzu_hint_reveal_title">Volgende zet</string>
+    <string name="takuzu_hint_reveal_body">Plaats %1$d in de gemarkeerde cel.</string>
     <string name="takuzu_hint_repair_avoid_trios_title">Volgende zet om %1$s te herstellen</string>
     <string name="takuzu_hint_repair_avoid_trios_body">Pas een gemarkeerde cel in %1$s aan. Waarom: drie %2$d\'en op rij breken de regel zonder trio\'s.</string>
     <string name="takuzu_hint_repair_complete_lines_title">Volgende zet om %1$s opnieuw in balans te brengen</string>

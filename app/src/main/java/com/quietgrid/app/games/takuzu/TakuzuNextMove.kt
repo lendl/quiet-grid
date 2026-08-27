@@ -105,6 +105,17 @@ sealed interface TakuzuNextMoveHint {
         override val highlightRows: List<Int>,
         override val highlightCols: List<Int>,
     ) : TakuzuNextMoveHint
+
+    data class RevealFromSolution(
+        val row: Int,
+        val col: Int,
+        val value: Int,
+        override val targetCells: List<Triple<Int, Int, Int>>,
+        override val highlightRows: List<Int>,
+        override val highlightCols: List<Int>,
+    ) : TakuzuNextMoveHint {
+        override val evidenceCells = emptyList<Pair<Int, Int>>()
+    }
 }
 
 private fun getLine(board: TakuzuGrid, kind: TakuzuLineKind, index: Int): List<TakuzuCellValue> =
@@ -352,5 +363,13 @@ private fun buildEliminateFilledLinesHint(
 private fun getTakuzuProgressHint(board: TakuzuGrid): TakuzuNextMoveHint? =
     findPairs(board) ?: avoidTrios(board) ?: completeLines(board) ?: eliminateFilledLines(board)
 
-fun getTakuzuNextMoveHint(board: TakuzuGrid): TakuzuNextMoveHint =
-    getTakuzuRecoveryHint(board) ?: getTakuzuProgressHint(board) ?: TakuzuNextMoveHint.Paused
+private fun revealFromSolution(board: TakuzuGrid, solution: TakuzuGrid): TakuzuNextMoveHint.RevealFromSolution? {
+    val emptyCells = board.indices.flatMap { row -> board[row].indices.filter { col -> board[row][col] == null }.map { col -> row to col } }
+    if (emptyCells.isEmpty()) return null
+    val (row, col) = emptyCells.random()
+    val value = solution[row][col]!!
+    return TakuzuNextMoveHint.RevealFromSolution(row, col, value, listOf(Triple(row, col, value)), listOf(row), listOf(col))
+}
+
+fun getTakuzuNextMoveHint(board: TakuzuGrid, solution: TakuzuGrid): TakuzuNextMoveHint =
+    getTakuzuRecoveryHint(board) ?: getTakuzuProgressHint(board) ?: revealFromSolution(board, solution) ?: TakuzuNextMoveHint.Paused

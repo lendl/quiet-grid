@@ -18,10 +18,14 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -109,5 +113,41 @@ class WordSearchPlayViewModelTest {
         assertTrue(sessionStore.cleared)
         assertEquals("abandoned", results.single().lossReason)
         collectJob.cancel()
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `toggling the hint computes asynchronously and ignores re-entrant taps while pending`() {
+        val viewModel = newViewModel()
+        viewModel.hintDispatcher = StandardTestDispatcher(mainDispatcherRule.dispatcher.scheduler)
+
+        viewModel.toggleNextMoveHint()
+        assertTrue(viewModel.isComputingHint)
+        assertNull(viewModel.nextMoveHint)
+
+        viewModel.toggleNextMoveHint()
+        assertTrue(viewModel.isComputingHint)
+
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+
+        assertFalse(viewModel.isComputingHint)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `toggling hidden word mode while the hint is computing cancels it instead of applying a stale result`() {
+        val viewModel = newViewModel()
+        viewModel.hintDispatcher = StandardTestDispatcher(mainDispatcherRule.dispatcher.scheduler)
+
+        viewModel.toggleNextMoveHint()
+        assertTrue(viewModel.isComputingHint)
+
+        viewModel.onToggleHiddenWordMode()
+        assertFalse(viewModel.isComputingHint)
+
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+
+        assertFalse(viewModel.isComputingHint)
+        assertNull(viewModel.nextMoveHint)
     }
 }

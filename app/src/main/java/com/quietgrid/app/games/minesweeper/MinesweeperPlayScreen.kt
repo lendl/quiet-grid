@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -64,14 +66,18 @@ fun MinesweeperPlayScreen(
                         Text(minesLeft.toString(), style = MaterialTheme.typography.titleMedium)
                     }
                 }
-                IconButton(onClick = { viewModel.toggleNextMoveHint() }) {
-                    Icon(
-                        imageVector = Icons.Filled.Lightbulb,
-                        contentDescription = stringResource(
-                            if (viewModel.nextMoveHint != null) R.string.minesweeper_hint_hide else R.string.minesweeper_hint_show,
-                        ),
-                        tint = if (viewModel.nextMoveHint != null) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                IconButton(onClick = { viewModel.toggleNextMoveHint() }, enabled = !viewModel.isComputingHint) {
+                    if (viewModel.isComputingHint) {
+                        CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+                    } else {
+                        Icon(
+                            imageVector = Icons.Filled.Lightbulb,
+                            contentDescription = stringResource(
+                                if (viewModel.nextMoveHint != null) R.string.minesweeper_hint_hide else R.string.minesweeper_hint_show,
+                            ),
+                            tint = if (viewModel.nextMoveHint != null) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
                 }
                 EndPuzzleIconButton(onClick = { showEndDialog = true })
             }

@@ -21,6 +21,11 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -125,16 +130,28 @@ class NonogramPlayViewModel @AssistedInject constructor(
         private set
     var nextMoveHintActive by mutableStateOf(false)
         private set
+    var isComputingHint by mutableStateOf(false)
+        private set
+
+    internal var hintDispatcher: CoroutineDispatcher = Dispatchers.Default
+    private var hintJob: Job? = null
 
     init {
         controller.start(requestedDifficulty, resume)
     }
 
+    private fun clearHint() {
+        hintJob?.cancel()
+        hintJob = null
+        isComputingHint = false
+        nextMoveHintActive = false
+        nextMoveHint = null
+    }
+
     fun onCellTap(row: Int, col: Int) {
         val current = session ?: return
         val updated = applyNonogramTap(current, row, col, inputMode) ?: return
-        nextMoveHint = null
-        nextMoveHintActive = false
+        clearHint()
         controller.updateSession(updated)
         checkSolved(updated)
     }
@@ -144,22 +161,25 @@ class NonogramPlayViewModel @AssistedInject constructor(
         if (cells.isEmpty()) return
         val value = if (inputMode == NonogramInputMode.FILL) 1 else 0
         val updated = applyNonogramPaint(current, cells, value) ?: return
-        nextMoveHint = null
-        nextMoveHintActive = false
+        clearHint()
         controller.updateSession(updated)
         checkSolved(updated)
     }
 
     fun toggleNextMoveHint() {
-        if (controller.isFinalized) return
+        if (controller.isFinalized || isComputingHint) return
         if (nextMoveHintActive) {
-            nextMoveHintActive = false
-            nextMoveHint = null
+            clearHint()
             return
         }
         val current = session ?: return
         nextMoveHintActive = true
-        nextMoveHint = getNonogramNextMoveHint(current.puzzle, current.board)
+        isComputingHint = true
+        hintJob = viewModelScope.launch {
+            val hint = withContext(hintDispatcher) { getNonogramNextMoveHint(current.puzzle, current.board) }
+            isComputingHint = false
+            if (!controller.isFinalized && session == current && nextMoveHintActive) nextMoveHint = hint
+        }
     }
 
     private fun checkSolved(current: NonogramSession) {

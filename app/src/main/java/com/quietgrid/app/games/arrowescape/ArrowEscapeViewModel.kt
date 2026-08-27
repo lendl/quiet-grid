@@ -19,6 +19,11 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -123,6 +128,11 @@ class ArrowEscapePlayViewModel @AssistedInject constructor(
 
     var lastBlockedIndex by mutableStateOf<Int?>(null)
         private set
+    var isComputingHint by mutableStateOf(false)
+        private set
+
+    internal var hintDispatcher: CoroutineDispatcher = Dispatchers.Default
+    private var hintJob: Job? = null
 
     init {
         controller.start(requestedDifficulty, resume)
@@ -132,6 +142,9 @@ class ArrowEscapePlayViewModel @AssistedInject constructor(
         if (controller.isFinalized) return
         val current = session ?: return
         val attempt = applyArrowEscapeAttempt(current, pieceIndex) ?: return
+        hintJob?.cancel()
+        hintJob = null
+        isComputingHint = false
         lastBlockedIndex = if (attempt.removed) null else pieceIndex
         val stillPlaying = attempt.session.status == ArrowEscapeStatus.PLAYING
         controller.updateSession(attempt.session, persist = stillPlaying)
@@ -143,10 +156,14 @@ class ArrowEscapePlayViewModel @AssistedInject constructor(
     }
 
     fun onHint() {
-        if (controller.isFinalized) return
+        if (controller.isFinalized || isComputingHint) return
         val current = session ?: return
-        val next = applyArrowEscapeHint(current) ?: return
-        controller.updateSession(next, persist = false)
+        isComputingHint = true
+        hintJob = viewModelScope.launch {
+            val next = withContext(hintDispatcher) { applyArrowEscapeHint(current) }
+            isComputingHint = false
+            if (next != null && !controller.isFinalized && session == current) controller.updateSession(next, persist = false)
+        }
     }
 
     fun endPuzzle() = controller.endPuzzle()

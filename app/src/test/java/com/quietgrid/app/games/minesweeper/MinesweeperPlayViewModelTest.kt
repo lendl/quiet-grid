@@ -6,10 +6,13 @@ import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeSessionStore
 import com.quietgrid.app.testutil.FakeStatsStore
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -74,5 +77,41 @@ class MinesweeperPlayViewModelTest {
         assertTrue(sessionStore.cleared)
         assertEquals("abandoned", results.single().lossReason)
         collectJob.cancel()
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `toggling the hint computes asynchronously and ignores re-entrant taps while pending`() {
+        val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
+        viewModel.hintDispatcher = StandardTestDispatcher(mainDispatcherRule.dispatcher.scheduler)
+
+        viewModel.toggleNextMoveHint()
+        assertTrue(viewModel.isComputingHint)
+        assertNull(viewModel.nextMoveHint)
+
+        viewModel.toggleNextMoveHint()
+        assertTrue(viewModel.isComputingHint)
+
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+
+        assertFalse(viewModel.isComputingHint)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `revealing a cell while the hint is computing cancels it instead of applying a stale result`() {
+        val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
+        viewModel.hintDispatcher = StandardTestDispatcher(mainDispatcherRule.dispatcher.scheduler)
+
+        viewModel.toggleNextMoveHint()
+        assertTrue(viewModel.isComputingHint)
+
+        viewModel.onToggleFlag(0, 0)
+        assertFalse(viewModel.isComputingHint)
+
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+
+        assertFalse(viewModel.isComputingHint)
+        assertNull(viewModel.nextMoveHint)
     }
 }
