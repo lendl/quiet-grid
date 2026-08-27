@@ -399,6 +399,9 @@
     <string name="nonogram_hint_complete_line_title">Complete line</string>
     <string name="nonogram_hint_complete_line_body_one">Finish %1$s by marking the 1 remaining cell empty.</string>
     <string name="nonogram_hint_complete_line_body_other">Finish %1$s by marking the %2$d remaining cells empty.</string>
+    <string name="nonogram_hint_reveal_title">Next move</string>
+    <string name="nonogram_hint_reveal_fill_body">Fill the highlighted cell.</string>
+    <string name="nonogram_hint_reveal_empty_body">Mark the highlighted cell empty.</string>
     <string name="nonogram_how_to_play_scoring">Score starts at 10,000 and drops as the timer runs. Solving faster earns a higher score.</string>
     <string name="nonogram_loss_abandoned_eyebrow">Puzzle ended</string>
     <string name="nonogram_loss_abandoned_title">Puzzle unfinished</string>

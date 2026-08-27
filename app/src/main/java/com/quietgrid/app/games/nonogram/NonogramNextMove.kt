@@ -42,6 +42,17 @@ data class NonogramProgressHint(
     override val lineIndex: Int,
 ) : NonogramNextMoveHint
 
+data class NonogramRevealFromSolution(
+    val row: Int,
+    val col: Int,
+    val value: Int,
+    override val targetCells: List<NonogramNextMoveTarget>,
+    override val lineOrientation: String,
+    override val lineIndex: Int,
+) : NonogramNextMoveHint {
+    override val evidenceCells = emptyList<Pair<Int, Int>>()
+}
+
 private fun getLineCells(board: NonogramGrid, orientation: String, index: Int): List<NonogramCellValue> =
     if (orientation == "row") board[index] else board.map { it[index] }
 
@@ -79,7 +90,15 @@ private fun buildHintFromLine(line: LineCheck): NonogramNextMoveHint? {
     return null
 }
 
-fun getNonogramNextMoveHint(puzzle: NonogramPuzzle, board: NonogramGrid): NonogramNextMoveHint? {
+private fun revealFromSolution(board: NonogramGrid, solution: List<List<Boolean>>): NonogramRevealFromSolution? {
+    val openCells = board.indices.flatMap { row -> board[row].indices.filter { col -> board[row][col] == null }.map { col -> row to col } }
+    if (openCells.isEmpty()) return null
+    val (row, col) = openCells.random()
+    val value = if (solution[row][col]) 1 else 0
+    return NonogramRevealFromSolution(row, col, value, listOf(NonogramNextMoveTarget(row, col, value)), "row", row)
+}
+
+fun getNonogramNextMoveHint(puzzle: NonogramPuzzle, board: NonogramGrid, solution: List<List<Boolean>>): NonogramNextMoveHint? {
     val rows = puzzle.rowClues.mapIndexed { rowIndex, clues -> buildLineCheck(board, clues, "row", rowIndex) }
     val cols = puzzle.colClues.mapIndexed { colIndex, clues -> buildLineCheck(board, clues, "col", colIndex) }
     val invalidLine = (rows + cols).firstOrNull { it.analysis == null }
@@ -92,5 +111,5 @@ fun getNonogramNextMoveHint(puzzle: NonogramPuzzle, board: NonogramGrid): Nonogr
         val hint = buildHintFromLine(line)
         if (hint != null) return hint
     }
-    return null
+    return revealFromSolution(board, solution)
 }

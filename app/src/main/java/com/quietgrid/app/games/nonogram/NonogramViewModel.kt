@@ -176,7 +176,7 @@ class NonogramPlayViewModel @AssistedInject constructor(
         nextMoveHintActive = true
         isComputingHint = true
         hintJob = viewModelScope.launch {
-            val hint = withContext(hintDispatcher) { getNonogramNextMoveHint(current.puzzle, current.board) }
+            val hint = withContext(hintDispatcher) { getNonogramNextMoveHint(current.puzzle, current.board, current.solution) }
             isComputingHint = false
             if (!controller.isFinalized && session == current && nextMoveHintActive) nextMoveHint = hint
         }

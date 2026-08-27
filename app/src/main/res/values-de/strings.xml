@@ -387,6 +387,9 @@
     <string name="nonogram_hint_complete_line_title">Vollständige Linie</string>
     <string name="nonogram_hint_complete_line_body_one">Beende %1$s, indem du die 1 verbleibende Zelle als leer markierst.</string>
     <string name="nonogram_hint_complete_line_body_other">Beende %1$s, indem du die %2$d verbleibenden Zellen als leer markierst.</string>
+    <string name="nonogram_hint_reveal_title">Nächster Zug</string>
+    <string name="nonogram_hint_reveal_fill_body">Fülle die markierte Zelle.</string>
+    <string name="nonogram_hint_reveal_empty_body">Markiere die markierte Zelle als leer.</string>
     <string name="nonogram_how_to_play_scoring">Die Punktzahl startet bei 10.000 und sinkt, während die Zeit läuft. Schnelleres Lösen bringt eine höhere Punktzahl.</string>
     <string name="nonogram_loss_abandoned_eyebrow">Rätsel beendet</string>
     <string name="nonogram_loss_abandoned_title">Rätsel unfertig</string>

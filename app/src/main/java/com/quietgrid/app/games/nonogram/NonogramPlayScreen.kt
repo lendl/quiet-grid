@@ -165,5 +165,8 @@ private fun resolveNonogramHintText(hint: NonogramNextMoveHint): Pair<String, St
                     stringResource(R.string.nonogram_hint_complete_line_body_other, label, hint.targetCount)
                 }
         }
+
+        is NonogramRevealFromSolution -> stringResource(R.string.nonogram_hint_reveal_title) to
+            stringResource(if (hint.value == 1) R.string.nonogram_hint_reveal_fill_body else R.string.nonogram_hint_reveal_empty_body)
     }
 }

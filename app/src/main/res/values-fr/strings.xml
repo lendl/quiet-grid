@@ -387,6 +387,9 @@
     <string name="nonogram_hint_complete_line_title">Ligne complète</string>
     <string name="nonogram_hint_complete_line_body_one">Termine %1$s en marquant la 1 case restante comme vide.</string>
     <string name="nonogram_hint_complete_line_body_other">Termine %1$s en marquant les %2$d cases restantes comme vides.</string>
+    <string name="nonogram_hint_reveal_title">Prochain coup</string>
+    <string name="nonogram_hint_reveal_fill_body">Remplis la case mise en évidence.</string>
+    <string name="nonogram_hint_reveal_empty_body">Marque la case mise en évidence comme vide.</string>
     <string name="nonogram_how_to_play_scoring">Le score commence à 10 000 et diminue pendant que le temps s\'écoule. Résoudre plus vite rapporte un score plus élevé.</string>
     <string name="nonogram_loss_abandoned_eyebrow">Puzzle terminé</string>
     <string name="nonogram_loss_abandoned_title">Puzzle inachevé</string>

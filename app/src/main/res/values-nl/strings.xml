@@ -387,6 +387,9 @@
     <string name="nonogram_hint_complete_line_title">Complete lijn</string>
     <string name="nonogram_hint_complete_line_body_one">Maak %1$s af door de 1 resterende cel leeg te markeren.</string>
     <string name="nonogram_hint_complete_line_body_other">Maak %1$s af door de %2$d resterende cellen leeg te markeren.</string>
+    <string name="nonogram_hint_reveal_title">Volgende zet</string>
+    <string name="nonogram_hint_reveal_fill_body">Vul de gemarkeerde cel.</string>
+    <string name="nonogram_hint_reveal_empty_body">Markeer de gemarkeerde cel als leeg.</string>
     <string name="nonogram_how_to_play_scoring">De score begint op 10.000 en daalt terwijl de tijd loopt. Sneller oplossen levert een hogere score op.</string>
     <string name="nonogram_loss_abandoned_eyebrow">Puzzel beëindigd</string>
     <string name="nonogram_loss_abandoned_title">Puzzel niet af</string>

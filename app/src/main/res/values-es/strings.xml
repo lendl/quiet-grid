@@ -387,6 +387,9 @@
     <string name="nonogram_hint_complete_line_title">Línea completa</string>
     <string name="nonogram_hint_complete_line_body_one">Termina %1$s marcando la 1 celda restante como vacía.</string>
     <string name="nonogram_hint_complete_line_body_other">Termina %1$s marcando las %2$d celdas restantes como vacías.</string>
+    <string name="nonogram_hint_reveal_title">Siguiente movimiento</string>
+    <string name="nonogram_hint_reveal_fill_body">Rellena la celda resaltada.</string>
+    <string name="nonogram_hint_reveal_empty_body">Marca la celda resaltada como vacía.</string>
     <string name="nonogram_how_to_play_scoring">La puntuación empieza en 10.000 y baja mientras corre el tiempo. Resolver más rápido gana una puntuación más alta.</string>
     <string name="nonogram_loss_abandoned_eyebrow">Puzzle terminado</string>
     <string name="nonogram_loss_abandoned_title">Puzzle sin terminar</string>
