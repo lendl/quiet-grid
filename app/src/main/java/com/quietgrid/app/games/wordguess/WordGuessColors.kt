@@ -23,7 +23,7 @@ fun wordGuessLetterColors(state: LetterState?): Pair<Color, Color> {
         LetterState.PRESENT -> if (pencil) {
             Color(0xFF9E9E9E) to Color.Black
         } else {
-            Color(0xFF8A6D00) to Color.White
+            Color(0xFFC9B458) to Color.Black
         }
         LetterState.CORRECT -> if (pencil) {
             Color(0xFF212121) to Color.White

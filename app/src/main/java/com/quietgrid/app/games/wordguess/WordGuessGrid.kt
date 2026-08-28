@@ -31,7 +31,7 @@ import kotlinx.coroutines.delay
 private const val WORD_GUESS_TILE_STAGGER_MS = 60L
 
 @Composable
-private fun WordGuessTile(letter: Char?, state: LetterState?, isActiveRow: Boolean, animateOnReveal: Boolean, revealDelayMs: Long) {
+fun WordGuessTile(letter: Char?, state: LetterState?, isActiveRow: Boolean, animateOnReveal: Boolean, revealDelayMs: Long) {
     var revealed by remember { mutableStateOf(false) }
     val scale = remember { Animatable(1f) }
     LaunchedEffect(state) {

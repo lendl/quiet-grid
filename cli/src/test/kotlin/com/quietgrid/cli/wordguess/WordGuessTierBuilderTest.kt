@@ -51,4 +51,32 @@ class WordGuessTierBuilderTest {
         val tiers = buildWordGuessTiers(fiveLetterWords, wordLength = 5, commonSize = 1, fullSize = 1)
         assertEquals(setOf("aaaaa", "bbbbb", "ccccc"), tiers.dictionary)
     }
+
+    @Test
+    fun `sortWordGuessByRarity puts words with fewer rare letters first`() {
+        val words = listOf("puzzle", "cotton", "kayak")
+        val sorted = sortWordGuessByRarity(words, locale = "en")
+        assertEquals(listOf("cotton", "kayak", "puzzle"), sorted)
+    }
+
+    @Test
+    fun `sortWordGuessByRarity breaks ties alphabetically`() {
+        val words = listOf("zebra", "apple", "grape")
+        val sorted = sortWordGuessByRarity(words, locale = "en")
+        assertEquals(listOf("apple", "grape", "zebra"), sorted)
+    }
+
+    @Test
+    fun `sortWordGuessByRarity counts occurrences of accented rare letters after folding`() {
+        val words = listOf("kayak", "café")
+        val sorted = sortWordGuessByRarity(words, locale = "fr")
+        assertEquals(listOf("café", "kayak"), sorted)
+    }
+
+    @Test
+    fun `sortWordGuessByRarity is a no-op for a locale with no rare-letter set`() {
+        val words = listOf("zebra", "apple")
+        val sorted = sortWordGuessByRarity(words, locale = "de")
+        assertEquals(listOf("apple", "zebra"), sorted)
+    }
 }

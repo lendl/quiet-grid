@@ -115,7 +115,14 @@ fun main(args: Array<String>) {
         }
         "wordguess" -> {
             val locale = command.locale
-            val raw = com.quietgrid.cli.wordguess.loadWordGuessFrequencyWords(locale)
+            val raw = if (locale == "de") {
+                com.quietgrid.cli.wordguess.loadWordGuessFrequencyWords(locale)
+            } else {
+                com.quietgrid.cli.wordguess.sortWordGuessByRarity(
+                    com.quietgrid.cli.wordguess.loadWordGuessHunspellWords(locale),
+                    locale,
+                )
+            }
             val tiers5 = com.quietgrid.cli.wordguess.buildWordGuessTiers(raw, wordLength = 5)
             val tiers6 = com.quietgrid.cli.wordguess.buildWordGuessTiers(raw, wordLength = 6)
             val state = GenerationState("${command.outDir}/.generation-state/wordguess-$locale.json")

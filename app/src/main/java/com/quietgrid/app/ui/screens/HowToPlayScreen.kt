@@ -1,7 +1,6 @@
 package com.quietgrid.app.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,12 +36,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
 import com.quietgrid.app.core.GameId
-import com.quietgrid.app.games.wordguess.wordGuessLetterColors
-import com.quietgrid.app.games.wordguess.wordGuessLetterIcon
+import com.quietgrid.app.games.wordguess.WordGuessTile
 import com.quietgrid.engine.wordguess.LetterState
 
 @Composable
@@ -394,34 +391,11 @@ private fun BlockFillHowToPlay() {
 }
 
 @Composable
-private fun WordGuessExampleTile(letter: Char, state: LetterState) {
-    val (background, foreground) = wordGuessLetterColors(state)
-    val icon = wordGuessLetterIcon(state)
-    Box(
-        modifier = Modifier
-            .size(40.dp)
-            .background(background, RoundedCornerShape(6.dp))
-            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(6.dp)),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(letter.toString(), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = foreground)
-        if (icon != null) {
-            Icon(
-                icon,
-                contentDescription = null,
-                tint = foreground,
-                modifier = Modifier.align(Alignment.TopEnd).padding(2.dp).size(10.dp),
-            )
-        }
-    }
-}
-
-@Composable
 private fun WordGuessColorExample() {
-    Row(Modifier.padding(top = 10.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-        WordGuessExampleTile('C', LetterState.CORRECT)
-        WordGuessExampleTile('R', LetterState.PRESENT)
-        WordGuessExampleTile('A', LetterState.ABSENT)
+    Row(Modifier.padding(top = 10.dp), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+        WordGuessTile(letter = 'C', state = LetterState.CORRECT, isActiveRow = false, animateOnReveal = false, revealDelayMs = 0L)
+        WordGuessTile(letter = 'R', state = LetterState.PRESENT, isActiveRow = false, animateOnReveal = false, revealDelayMs = 0L)
+        WordGuessTile(letter = 'A', state = LetterState.ABSENT, isActiveRow = false, animateOnReveal = false, revealDelayMs = 0L)
     }
 }
 

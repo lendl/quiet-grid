@@ -13,6 +13,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,7 +21,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.material.icons.Icons
@@ -45,19 +45,21 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
-import androidx.compose.ui.unit.sp
 import com.quietgrid.app.ui.theme.LocalIsPencilTheme
 import kotlinx.coroutines.delay
 import kotlin.math.floor
 
 private const val DOUBLE_TAP_WINDOW_MS = 300L
 
-private val REGION_PALETTE = listOf(
+private val REGION_PALETTE_LIGHT = listOf(
+    Color(0xFFE69F00), Color(0xFF56B4E9), Color(0xFF009E73), Color(0xFF9C7A00),
+    Color(0xFF0072B2), Color(0xFFD55E00), Color(0xFFCC79A7), Color(0xFF999999), Color(0xFF882255),
+)
+
+private val REGION_PALETTE_DARK = listOf(
     Color(0xFFE69F00), Color(0xFF56B4E9), Color(0xFF009E73), Color(0xFFF0E442),
     Color(0xFF0072B2), Color(0xFFD55E00), Color(0xFFCC79A7), Color(0xFF999999), Color(0xFF882255),
 )
@@ -79,17 +81,19 @@ fun AnimalDokuGrid(
     onCellDoubleTap: (Int, Int) -> Unit,
 ) {
     val isPencilTheme = LocalIsPencilTheme.current
+    val isDarkTheme = isSystemInDarkTheme()
+    val regionPalette = if (isDarkTheme) REGION_PALETTE_DARK else REGION_PALETTE_LIGHT
+    val regionAlpha = if (isDarkTheme) 0.55f else 0.4f
 
     BoxWithConstraints(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         val cellSize = min(maxWidth / size, maxHeight / size)
-        val fontSize = (cellSize.value * 0.32f).sp
         val cellSizePx = with(LocalDensity.current) { cellSize.toPx() }
 
         var lastTapCell by remember { mutableStateOf<Pair<Int, Int>?>(null) }
         var lastTapTimeMs by remember { mutableStateOf(0L) }
         val currentCells by rememberUpdatedState(cells)
         val borderColor = if (isPencilTheme) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
-        val borderStrokeWidth = if (isPencilTheme) 3.dp else 1.dp
+        val borderStrokeWidth = if (isPencilTheme) 5.dp else 1.dp
 
         Box(
             Modifier
@@ -158,23 +162,16 @@ fun AnimalDokuGrid(
                 for (col in 0 until size) {
                     val region = regions[row][col]
                     val cellState = cells[row][col]
-                    val backgroundColor = if (isPencilTheme) MaterialTheme.colorScheme.surface else REGION_PALETTE[region % REGION_PALETTE.size].copy(alpha = 0.55f)
+                    val backgroundColor = if (isPencilTheme) MaterialTheme.colorScheme.surface else regionPalette[region % regionPalette.size].copy(alpha = regionAlpha)
 
                     AnimalDokuAnimatedCell(
                         cellState = cellState,
                         region = region,
                         cellSize = cellSize,
                         backgroundColor = backgroundColor,
+                        isPencilTheme = isPencilTheme,
                         modifier = Modifier.offset(x = cellSize * col, y = cellSize * row),
-                    ) {
-                        if (isPencilTheme) {
-                            BasicText(
-                                text = (region + 1).toString(),
-                                style = TextStyle(fontSize = fontSize * 0.6f, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center),
-                                modifier = Modifier.align(Alignment.TopStart).offset(x = 2.dp, y = 2.dp),
-                            )
-                        }
-                    }
+                    )
                 }
             }
         }
@@ -187,8 +184,8 @@ private fun AnimalDokuAnimatedCell(
     region: Int,
     cellSize: Dp,
     backgroundColor: Color,
+    isPencilTheme: Boolean,
     modifier: Modifier = Modifier,
-    pencilOverlay: @Composable () -> Unit,
 ) {
     val squish = remember { Animatable(1f) }
     var previousState by remember { mutableStateOf<AnimalDokuCellState?>(null) }
@@ -218,7 +215,6 @@ private fun AnimalDokuAnimatedCell(
             .background(backgroundColor),
         contentAlignment = Alignment.Center,
     ) {
-        pencilOverlay()
         AnimatedContent(
             targetState = cellState,
             transitionSpec = {
@@ -243,8 +239,8 @@ private fun AnimalDokuAnimatedCell(
         ) { state ->
             when (state) {
                 AnimalDokuCellState.EMPTY -> Unit
-                AnimalDokuCellState.MARKED -> AnimalDokuXMark(cellSize, locked = false)
-                AnimalDokuCellState.LOCKED_WRONG -> AnimalDokuXMark(cellSize, locked = true)
+                AnimalDokuCellState.MARKED -> AnimalDokuXMark(cellSize, locked = false, isPencilTheme = isPencilTheme)
+                AnimalDokuCellState.LOCKED_WRONG -> AnimalDokuXMark(cellSize, locked = true, isPencilTheme = isPencilTheme)
                 AnimalDokuCellState.LOCKED_CORRECT -> AnimalDokuCorrectReveal(region, cellSize)
             }
         }
@@ -268,8 +264,12 @@ private fun AnimalDokuCorrectReveal(region: Int, cellSize: Dp) {
 }
 
 @Composable
-private fun AnimalDokuXMark(cellSize: androidx.compose.ui.unit.Dp, locked: Boolean) {
-    val color = if (locked) Color(0xFFD9534F) else Color.White
+private fun AnimalDokuXMark(cellSize: androidx.compose.ui.unit.Dp, locked: Boolean, isPencilTheme: Boolean) {
+    val color = when {
+        isPencilTheme -> Color.Black
+        locked -> Color(0xFFD9534F)
+        else -> Color.White
+    }
     Icon(
         imageVector = Icons.Filled.Close,
         contentDescription = null,

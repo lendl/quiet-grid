@@ -260,7 +260,7 @@
     <string name="support_info_licenses_heading_2">Third-party packages</string>
     <string name="support_info_licenses_body_2">Quiet Grid also uses open-source packages that keep their own licenses. You can review the full source code and package list in the project repository.</string>
     <string name="support_info_licenses_heading_3">Word Guess word lists</string>
-    <string name="support_info_licenses_body_3">Word Guess\'s word lists are built from word-frequency data from the FrequencyWords project (hermitdave/FrequencyWords on GitHub), licensed CC BY-SA 3.0.</string>
+    <string name="support_info_licenses_body_3">Word Guess\'s German word list is built from word-frequency data from the FrequencyWords project (hermitdave/FrequencyWords on GitHub), licensed CC BY-SA 3.0. English, Spanish, French, and Dutch word lists are built from Hunspell spelling dictionaries: LibreOffice\'s en_US dictionary (LGPL/BSD), RLA-ES\'s es_ES dictionary (LGPL), Dicollecte\'s French dictionary (MPL 2.0), and OpenTaal\'s Dutch dictionary (BSD/CC BY 3.0).</string>
 
     <!-- Chimp Test -->
     <string name="chimp_title">Chimp Test</string>

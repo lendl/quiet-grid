@@ -249,7 +249,7 @@
     <string name="support_info_licenses_heading_2">Paquetes de terceros</string>
     <string name="support_info_licenses_body_2">Quiet Grid también utiliza paquetes de código abierto que mantienen sus propias licencias. Puedes revisar el código fuente completo y la lista de paquetes en el repositorio del proyecto.</string>
     <string name="support_info_licenses_heading_3">Listas de palabras de Adivina la Palabra</string>
-    <string name="support_info_licenses_body_3">Las listas de palabras de Adivina la Palabra se basan en datos de frecuencia de palabras del proyecto FrequencyWords (hermitdave/FrequencyWords en GitHub), con licencia CC BY-SA 3.0.</string>
+    <string name="support_info_licenses_body_3">La lista de palabras en alemán de Adivina la Palabra se basa en datos de frecuencia de palabras del proyecto FrequencyWords (hermitdave/FrequencyWords en GitHub), con licencia CC BY-SA 3.0. Las listas de palabras en inglés, español, francés y neerlandés se basan en diccionarios ortográficos Hunspell: el diccionario en_US de LibreOffice (LGPL/BSD), el diccionario es_ES de RLA-ES (LGPL), el diccionario francés de Dicollecte (MPL 2.0) y el diccionario neerlandés de OpenTaal (BSD/CC BY 3.0).</string>
 
     <string name="chimp_title">Chimp Test</string>
     <string name="chimp_short_title">Chimp</string>

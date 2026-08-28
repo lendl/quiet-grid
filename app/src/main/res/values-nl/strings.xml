@@ -249,7 +249,7 @@
     <string name="support_info_licenses_heading_2">Pakketten van derden</string>
     <string name="support_info_licenses_body_2">Quiet Grid gebruikt ook opensourcepakketten die hun eigen licenties behouden. Je kunt de volledige broncode en pakketlijst bekijken in de projectrepository.</string>
     <string name="support_info_licenses_heading_3">Woordlijsten van Woord Raden</string>
-    <string name="support_info_licenses_body_3">De woordlijsten van Woord Raden zijn gebaseerd op woordfrequentiegegevens van het FrequencyWords-project (hermitdave/FrequencyWords op GitHub), onder CC BY-SA 3.0-licentie.</string>
+    <string name="support_info_licenses_body_3">De Duitse woordlijst van Woord Raden is gebaseerd op woordfrequentiegegevens van het FrequencyWords-project (hermitdave/FrequencyWords op GitHub), onder CC BY-SA 3.0-licentie. De Engelse, Spaanse, Franse en Nederlandse woordlijsten zijn gebaseerd op Hunspell-spellingwoordenboeken: het en_US-woordenboek van LibreOffice (LGPL/BSD), het es_ES-woordenboek van RLA-ES (LGPL), het Franse woordenboek van Dicollecte (MPL 2.0) en het Nederlandse woordenboek van OpenTaal (BSD/CC BY 3.0).</string>
 
     <string name="chimp_title">Chimp Test</string>
     <string name="chimp_short_title">Chimp</string>

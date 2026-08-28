@@ -20,6 +20,21 @@ fun asciiFoldWord(word: String): String {
     return combiningMarks.replace(decomposed, "")
 }
 
+val WORDGUESS_RARE_LETTERS: Map<String, Set<Char>> = mapOf(
+    "en" to setOf('b', 'g', 'j', 'k', 'p', 'q', 'v', 'x', 'y', 'z'),
+    "es" to setOf('j', 'k', 'w', 'x', 'z'),
+    "fr" to setOf('j', 'k', 'w', 'x', 'y', 'z'),
+    "nl" to setOf('c', 'q', 'x', 'y'),
+)
+
+fun sortWordGuessByRarity(words: List<String>, locale: String): List<String> {
+    val rareLetters = WORDGUESS_RARE_LETTERS[locale].orEmpty()
+    return words.sortedWith(
+        compareBy<String> { word -> asciiFoldWord(word).lowercase().count { it in rareLetters } }
+            .thenBy { it }
+    )
+}
+
 fun buildWordGuessTiers(
     rawWords: List<String>,
     wordLength: Int,

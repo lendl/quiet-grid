@@ -23,7 +23,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
 
-data class QuickStartExample(@param:StringRes val wordRes: Int, @param:StringRes val hintRes: Int)
+data class QuickStartExample(
+    @param:StringRes val wordRes: Int,
+    @param:StringRes val hintRes: Int,
+    val visual: (@Composable () -> Unit)? = null,
+)
 
 data class QuickStartContent(
     @param:StringRes val goalRes: Int,
@@ -70,11 +74,16 @@ fun QuickStartSheet(content: QuickStartContent, onDismiss: () -> Unit, onQuickPl
                 Text(stringResource(R.string.quick_start_examples_title), style = MaterialTheme.typography.titleSmall)
                 content.examples.forEach { example ->
                     Column(Modifier.padding(top = 10.dp)) {
-                        Text(stringResource(example.wordRes), style = MaterialTheme.typography.titleSmall)
+                        if (example.visual != null) {
+                            example.visual.invoke()
+                        } else {
+                            Text(stringResource(example.wordRes), style = MaterialTheme.typography.titleSmall)
+                        }
                         Text(
                             stringResource(example.hintRes),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = if (example.visual != null) 6.dp else 0.dp),
                         )
                     }
                 }
