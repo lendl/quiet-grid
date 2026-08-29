@@ -55,6 +55,7 @@ private class FakeSessionStore : SessionStore {
 
 private class FakeStatsStore : StatsStore {
     private val stats = mutableMapOf<GameId, GameStats>()
+    private val challengerStats = mutableMapOf<GameId, DifficultyStats>()
 
     fun seed(gameId: GameId, difficulty: Difficulty, solved: Int, bestScore: Int) {
         stats[gameId] = GameStats(
@@ -73,6 +74,18 @@ private class FakeStatsStore : StatsStore {
             bestScore = if (solved) maxOf(existing.bestScore, score) else existing.bestScore,
         )
         stats[gameId] = GameStats(byDifficulty = current.byDifficulty + (difficulty.key to updated))
+    }
+
+    override fun challengerStatsFor(gameId: GameId): Flow<DifficultyStats> =
+        MutableStateFlow(challengerStats[gameId] ?: DifficultyStats())
+
+    override suspend fun recordChallengerResult(gameId: GameId, puzzlesSolved: Int, score: Int) {
+        val existing = challengerStats[gameId] ?: DifficultyStats()
+        challengerStats[gameId] = existing.copy(
+            played = existing.played + 1,
+            solved = maxOf(existing.solved, puzzlesSolved),
+            bestScore = maxOf(existing.bestScore, score),
+        )
     }
 }
 

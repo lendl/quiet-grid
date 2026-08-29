@@ -36,11 +36,16 @@ class FakeSessionStore : SessionStore {
 
 class FakeStatsStore : StatsStore {
     private val stats = mutableMapOf<GameId, GameStats>()
+    private val challengerStats = mutableMapOf<GameId, com.quietgrid.app.data.DifficultyStats>()
 
     fun seed(gameId: GameId, difficulty: Difficulty, solved: Int, bestScore: Int) {
         stats[gameId] = GameStats(
             byDifficulty = mapOf(difficulty.key to com.quietgrid.app.data.DifficultyStats(played = solved, solved = solved, bestScore = bestScore)),
         )
+    }
+
+    fun seedChallenger(gameId: GameId, solved: Int, bestScore: Int) {
+        challengerStats[gameId] = com.quietgrid.app.data.DifficultyStats(played = 1, solved = solved, bestScore = bestScore)
     }
 
     override fun statsFor(gameId: GameId): Flow<GameStats> = MutableStateFlow(stats[gameId] ?: GameStats())
@@ -54,6 +59,18 @@ class FakeStatsStore : StatsStore {
             bestScore = if (solved) maxOf(existing.bestScore, score) else existing.bestScore,
         )
         stats[gameId] = GameStats(byDifficulty = current.byDifficulty + (difficulty.key to updated))
+    }
+
+    override fun challengerStatsFor(gameId: GameId): Flow<com.quietgrid.app.data.DifficultyStats> =
+        MutableStateFlow(challengerStats[gameId] ?: com.quietgrid.app.data.DifficultyStats())
+
+    override suspend fun recordChallengerResult(gameId: GameId, puzzlesSolved: Int, score: Int) {
+        val existing = challengerStats[gameId] ?: com.quietgrid.app.data.DifficultyStats()
+        challengerStats[gameId] = existing.copy(
+            played = existing.played + 1,
+            solved = maxOf(existing.solved, puzzlesSolved),
+            bestScore = maxOf(existing.bestScore, score),
+        )
     }
 }
 

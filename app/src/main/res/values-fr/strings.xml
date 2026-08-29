@@ -670,6 +670,25 @@
     <string name="animaldoku_loss_rule_failure_eyebrow">Puzzle perdu</string>
     <string name="animaldoku_loss_rule_failure_title">Plus de cœurs</string>
     <string name="animaldoku_loss_rule_failure_body">Trois ouvertures incorrectes t\'ont coûté tous tes cœurs et ont mis fin au puzzle.</string>
+    <string name="animaldoku_challenger_label">Challenger</string>
+    <string name="animaldoku_challenger_description">Résous autant de puzzles que possible avant que le temps ne s\'écoule.</string>
+    <string name="animaldoku_challenger_solved_label">Résolus</string>
+    <string name="animaldoku_challenger_tier_label">Niveau</string>
+    <string name="animaldoku_challenger_result_time_up_title">Temps écoulé !</string>
+    <string name="animaldoku_challenger_result_time_up_body">Le temps est écoulé. Voici comment s\'est passée ta partie.</string>
+    <string name="animaldoku_challenger_result_lives_exhausted_title">Plus de cœurs !</string>
+    <string name="animaldoku_challenger_result_lives_exhausted_body">Trois ouvertures incorrectes ont mis fin à ta partie.</string>
+    <string name="animaldoku_challenger_result_abandoned_title">Partie terminée</string>
+    <string name="animaldoku_challenger_result_abandoned_body">Tu as arrêté la partie avant la fin.</string>
+    <string name="animaldoku_challenger_result_new_high_score">Nouveau meilleur score !</string>
+    <string name="animaldoku_challenger_result_puzzles_solved">Puzzles résolus</string>
+    <string name="animaldoku_challenger_result_tier_reached">Niveau atteint</string>
+    <string name="animaldoku_challenger_result_score">Score</string>
+    <string name="animaldoku_challenger_play_again">Rejouer</string>
+    <string name="animaldoku_challenger_back_to_puzzles">Retour aux puzzles</string>
+    <string name="animaldoku_challenger_try_another_game">Essayer un autre jeu</string>
+    <string name="animaldoku_challenger_stats_title">Challenger</string>
+    <string name="animaldoku_challenger_stats_best_run">Meilleure partie</string>
 
     <string name="arrowescape_title">Évasion des Flèches</string>
     <string name="arrowescape_tagline">Vide le plateau, une flèche à la fois.</string>

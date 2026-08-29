@@ -670,6 +670,25 @@
     <string name="animaldoku_loss_rule_failure_eyebrow">Puzzel verloren</string>
     <string name="animaldoku_loss_rule_failure_title">Geen hartjes meer</string>
     <string name="animaldoku_loss_rule_failure_body">Drie foute openingen kostten je al je hartjes en beëindigden de puzzel.</string>
+    <string name="animaldoku_challenger_label">Challenger</string>
+    <string name="animaldoku_challenger_description">Los zoveel mogelijk puzzels op voordat de tijd om is.</string>
+    <string name="animaldoku_challenger_solved_label">Opgelost</string>
+    <string name="animaldoku_challenger_tier_label">Niveau</string>
+    <string name="animaldoku_challenger_result_time_up_title">Tijd om!</string>
+    <string name="animaldoku_challenger_result_time_up_body">De tijd is om. Zo verliep je ronde.</string>
+    <string name="animaldoku_challenger_result_lives_exhausted_title">Geen hartjes meer!</string>
+    <string name="animaldoku_challenger_result_lives_exhausted_body">Drie foute openingen beëindigden je ronde.</string>
+    <string name="animaldoku_challenger_result_abandoned_title">Ronde beëindigd</string>
+    <string name="animaldoku_challenger_result_abandoned_body">Je hebt de ronde vroegtijdig gestopt.</string>
+    <string name="animaldoku_challenger_result_new_high_score">Nieuwe topscore!</string>
+    <string name="animaldoku_challenger_result_puzzles_solved">Puzzels opgelost</string>
+    <string name="animaldoku_challenger_result_tier_reached">Bereikt niveau</string>
+    <string name="animaldoku_challenger_result_score">Score</string>
+    <string name="animaldoku_challenger_play_again">Opnieuw spelen</string>
+    <string name="animaldoku_challenger_back_to_puzzles">Terug naar puzzels</string>
+    <string name="animaldoku_challenger_try_another_game">Ander spel proberen</string>
+    <string name="animaldoku_challenger_stats_title">Challenger</string>
+    <string name="animaldoku_challenger_stats_best_run">Beste ronde</string>
 
     <string name="arrowescape_title">Pijlenvlucht</string>
     <string name="arrowescape_tagline">Maak het bord leeg, één pijl per keer.</string>

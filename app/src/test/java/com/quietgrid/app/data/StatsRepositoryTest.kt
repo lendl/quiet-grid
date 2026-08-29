@@ -109,6 +109,47 @@ class StatsRepositoryTest {
         assertEquals(20, combined[GameId.TAKUZU]?.forDifficulty(Difficulty.EASY)?.bestScore)
     }
 
+    @Test
+    fun `challengerStatsFor returns empty DifficultyStats when nothing was recorded`() = runTest {
+        val repository = StatsRepository(newDataStore(backgroundScope))
+
+        assertEquals(DifficultyStats(), repository.challengerStatsFor(GameId.ANIMALDOKU).first())
+    }
+
+    @Test
+    fun `recordChallengerResult tracks best puzzles-solved and best score across runs`() = runTest {
+        val repository = StatsRepository(newDataStore(backgroundScope))
+
+        repository.recordChallengerResult(GameId.ANIMALDOKU, puzzlesSolved = 4, score = 900)
+        repository.recordChallengerResult(GameId.ANIMALDOKU, puzzlesSolved = 7, score = 600)
+
+        val stats = repository.challengerStatsFor(GameId.ANIMALDOKU).first()
+        assertEquals(2, stats.played)
+        assertEquals(7, stats.solved)
+        assertEquals(900, stats.bestScore)
+    }
+
+    @Test
+    fun `challenger stats are independent from normal per-difficulty stats`() = runTest {
+        val repository = StatsRepository(newDataStore(backgroundScope))
+        repository.recordResult(GameId.ANIMALDOKU, Difficulty.EASY, solved = true, score = 500)
+
+        repository.recordChallengerResult(GameId.ANIMALDOKU, puzzlesSolved = 3, score = 300)
+
+        assertEquals(500, repository.statsFor(GameId.ANIMALDOKU).first().forDifficulty(Difficulty.EASY).bestScore)
+        assertEquals(300, repository.challengerStatsFor(GameId.ANIMALDOKU).first().bestScore)
+    }
+
+    @Test
+    fun `clear removes challenger stats for that game too`() = runTest {
+        val repository = StatsRepository(newDataStore(backgroundScope))
+        repository.recordChallengerResult(GameId.ANIMALDOKU, puzzlesSolved = 3, score = 300)
+
+        repository.clear(GameId.ANIMALDOKU)
+
+        assertEquals(DifficultyStats(), repository.challengerStatsFor(GameId.ANIMALDOKU).first())
+    }
+
     private fun newDataStore(scope: CoroutineScope) = PreferenceDataStoreFactory.create(
         scope = scope,
         produceFile = { tempFolder.newFile("stats.preferences_pb") },

@@ -35,6 +35,8 @@ data class GameStats(
 interface StatsStore {
     fun statsFor(gameId: GameId): Flow<GameStats>
     suspend fun recordResult(gameId: GameId, difficulty: Difficulty, solved: Boolean, score: Int)
+    fun challengerStatsFor(gameId: GameId): Flow<DifficultyStats>
+    suspend fun recordChallengerResult(gameId: GameId, puzzlesSolved: Int, score: Int)
 }
 
 private val json = Json { ignoreUnknownKeys = true }
@@ -42,6 +44,7 @@ private val json = Json { ignoreUnknownKeys = true }
 @Singleton
 class StatsRepository @Inject constructor(private val dataStore: DataStore<Preferences>) : StatsStore {
     private fun keyFor(gameId: GameId) = stringPreferencesKey("stats_${gameId.key}")
+    private fun challengerKeyFor(gameId: GameId) = stringPreferencesKey("stats_challenger_${gameId.key}")
 
     fun statsForGames(gameIds: List<GameId>): Flow<Map<GameId, GameStats>> =
         combine(gameIds.map { id -> statsFor(id).map { id to it } }) { pairs -> pairs.toMap() }
@@ -69,13 +72,39 @@ class StatsRepository @Inject constructor(private val dataStore: DataStore<Prefe
         }
     }
 
+    override fun challengerStatsFor(gameId: GameId): Flow<DifficultyStats> = dataStore.data.map { prefs ->
+        prefs[challengerKeyFor(gameId)]?.let { raw ->
+            runCatching { json.decodeFromString<DifficultyStats>(raw) }.getOrNull()
+        } ?: DifficultyStats()
+    }
+
+    override suspend fun recordChallengerResult(gameId: GameId, puzzlesSolved: Int, score: Int) {
+        dataStore.edit { prefs ->
+            val key = challengerKeyFor(gameId)
+            val existing = prefs[key]?.let { runCatching { json.decodeFromString<DifficultyStats>(it) }.getOrNull() }
+                ?: DifficultyStats()
+            val updated = existing.copy(
+                played = existing.played + 1,
+                solved = maxOf(existing.solved, puzzlesSolved),
+                bestScore = maxOf(existing.bestScore, score),
+            )
+            prefs[key] = json.encodeToString(updated)
+        }
+    }
+
     suspend fun clear(gameId: GameId) {
-        dataStore.edit { prefs -> prefs.remove(keyFor(gameId)) }
+        dataStore.edit { prefs ->
+            prefs.remove(keyFor(gameId))
+            prefs.remove(challengerKeyFor(gameId))
+        }
     }
 
     suspend fun clearAll() {
         dataStore.edit { prefs ->
-            GameId.entries.forEach { prefs.remove(keyFor(it)) }
+            GameId.entries.forEach {
+                prefs.remove(keyFor(it))
+                prefs.remove(challengerKeyFor(it))
+            }
         }
     }
 }

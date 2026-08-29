@@ -90,6 +90,7 @@ fun PuzzlePickerScreen(
     gameId: GameId,
     onPickDifficulty: (Difficulty) -> Unit,
     onResumeActiveGame: (GameId) -> Unit,
+    onStartChallenger: () -> Unit,
 ) {
     var selectedTab by remember { mutableStateOf(GamePageTab.PLAY) }
 
@@ -101,9 +102,13 @@ fun PuzzlePickerScreen(
     val coroutineScope = rememberCoroutineScope()
     var showQuickStart by remember(gameId) { mutableStateOf(false) }
     var pendingDifficulty by remember(gameId) { mutableStateOf<Difficulty?>(null) }
+    var pendingChallenger by remember(gameId) { mutableStateOf(false) }
 
     val requestStartDifficulty: (Difficulty) -> Unit = { difficulty ->
         if (activeGameKey != null) pendingDifficulty = difficulty else onPickDifficulty(difficulty)
+    }
+    val requestStartChallenger: () -> Unit = {
+        if (activeGameKey != null) pendingChallenger = true else onStartChallenger()
     }
 
     LaunchedEffect(gameId, settings) {
@@ -147,6 +152,26 @@ fun PuzzlePickerScreen(
             },
         )
     }
+    if (pendingChallenger) {
+        AlertDialog(
+            onDismissRequest = { pendingChallenger = false },
+            title = { Text(stringResource(R.string.replace_dialog_title)) },
+            text = { Text(stringResource(R.string.replace_dialog_message)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    pendingChallenger = false
+                    onStartChallenger()
+                }) { Text(stringResource(R.string.common_start_new_puzzle)) }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    pendingChallenger = false
+                    val activeGameId = activeGameKey?.let { key -> GameId.entries.firstOrNull { it.key == key } }
+                    if (activeGameId != null) onResumeActiveGame(activeGameId)
+                }) { Text(stringResource(R.string.common_continue_puzzle)) }
+            },
+        )
+    }
 
     Column(Modifier.fillMaxWidth()) {
         TabRow(
@@ -171,7 +196,7 @@ fun PuzzlePickerScreen(
         }
 
         when (selectedTab) {
-            GamePageTab.PLAY -> GamePlayPickerTab(gameId, requestStartDifficulty)
+            GamePageTab.PLAY -> GamePlayPickerTab(gameId, requestStartDifficulty, requestStartChallenger)
             GamePageTab.RULES -> HowToPlayScreen(gameId)
             GamePageTab.STATS -> GameStatsTab(gameId)
         }
@@ -184,6 +209,7 @@ private fun pickableDifficultiesFor(gameId: GameId): List<Difficulty> = Difficul
 private fun GamePlayPickerTab(
     gameId: GameId,
     requestStartDifficulty: (Difficulty) -> Unit,
+    requestStartChallenger: () -> Unit,
 ) {
     Column(Modifier.fillMaxWidth().padding(16.dp)) {
         Column {
@@ -237,6 +263,32 @@ private fun GamePlayPickerTab(
                     }
                 }
             }
+            if (gameId == GameId.ANIMALDOKU) {
+                HorizontalDivider()
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .clickable { requestStartChallenger() }
+                        .padding(vertical = 18.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Box(
+                        Modifier
+                            .size(10.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primary),
+                    )
+                    Column(Modifier.padding(start = 14.dp)) {
+                        Text(stringResource(R.string.animaldoku_challenger_label), style = MaterialTheme.typography.titleLarge)
+                        Text(
+                            stringResource(R.string.animaldoku_challenger_description),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = 2.dp),
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -248,5 +300,33 @@ private fun GameStatsTab(gameId: GameId) {
     val currentStats = stats ?: return
     val overview = remember(currentStats) { buildStatsOverview(gameId, mapOf(gameId to currentStats)) }
 
-    StatsOverviewContent(overview, modifier = Modifier.padding(16.dp))
+    Column(Modifier.padding(16.dp)) {
+        StatsOverviewContent(overview)
+
+        if (gameId == GameId.ANIMALDOKU) {
+            val challengerStats by repositories.statsRepository.challengerStatsFor(gameId).collectAsState(initial = null)
+            challengerStats?.let { current ->
+                HorizontalDivider(Modifier.padding(top = 20.dp))
+                Text(
+                    stringResource(R.string.animaldoku_challenger_stats_title),
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.padding(top = 20.dp, bottom = 4.dp),
+                )
+                Row(Modifier.fillMaxWidth().padding(vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Column(Modifier.weight(1f)) {
+                        Text(stringResource(R.string.animaldoku_challenger_stats_best_run), style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            "${stringResource(R.string.animaldoku_challenger_result_puzzles_solved)}: ${current.solved}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    Text(
+                        "${stringResource(R.string.animaldoku_challenger_result_score)}: ${current.bestScore}",
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+            }
+        }
+    }
 }

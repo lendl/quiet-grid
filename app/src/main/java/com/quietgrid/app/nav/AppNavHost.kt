@@ -27,6 +27,8 @@ import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.RepositoriesViewModel
+import com.quietgrid.app.games.animaldoku.AnimalDokuChallengerPlayScreen
+import com.quietgrid.app.games.animaldoku.AnimalDokuChallengerResultScreen
 import com.quietgrid.app.games.animaldoku.AnimalDokuPlayScreen
 import com.quietgrid.app.games.arrowescape.ArrowEscapePlayScreen
 import com.quietgrid.app.games.blockfill.BlockFillPlayScreen
@@ -102,6 +104,7 @@ fun AppNavHost() {
                 }
                 currentRoute == Routes.PLAY -> Unit
                 currentRoute == Routes.COMPLETION || currentRoute == Routes.LOSS -> Unit
+                currentRoute == Routes.CHALLENGER || currentRoute == Routes.CHALLENGER_RESULT -> Unit
                 currentRoute == Routes.SUPPORT_INFO -> {
                     val infoKey = backStackEntry?.arguments?.getString("key")
                     val infoTitleRes = infoKey?.let { supportInfoTitleRes(it) }
@@ -155,6 +158,7 @@ fun AppNavHost() {
                     gameId = gameId,
                     onPickDifficulty = { difficulty -> navController.navigate(Routes.play(gameId, difficulty, resume = false)) },
                     onResumeActiveGame = { activeGameId -> navController.navigate(Routes.play(activeGameId, Difficulty.EASY, resume = true)) },
+                    onStartChallenger = { navController.navigate(Routes.challenger(gameId)) },
                 )
             }
 
@@ -392,6 +396,65 @@ fun AppNavHost() {
                         navController.navigate(Routes.analyzer(lossGameId))
                     },
                 )
+            }
+
+            composable(
+                Routes.CHALLENGER,
+                arguments = listOf(navArgument("gameId") { type = NavType.StringType }),
+                enterTransition = { fadeIn(animationSpec = tween(180)) },
+                exitTransition = { fadeOut(animationSpec = tween(150)) },
+            ) { entry ->
+                val challengerGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
+                when (challengerGameId) {
+                    GameId.ANIMALDOKU -> AnimalDokuChallengerPlayScreen(
+                        onFinished = { result ->
+                            navController.navigate(
+                                Routes.challengerResult(challengerGameId, result.puzzlesSolved, result.tierReached, result.score, result.isNewHighScore, result.reason),
+                            ) { popUpTo(Routes.TABS) { inclusive = false } }
+                        },
+                    )
+                    else -> Unit
+                }
+            }
+
+            composable(
+                Routes.CHALLENGER_RESULT,
+                arguments = listOf(
+                    navArgument("gameId") { type = NavType.StringType },
+                    navArgument("puzzlesSolved") { type = NavType.IntType },
+                    navArgument("tier") { type = NavType.StringType },
+                    navArgument("score") { type = NavType.IntType },
+                    navArgument("isNewHighScore") { type = NavType.BoolType },
+                    navArgument("reason") { type = NavType.StringType },
+                ),
+                enterTransition = { fadeIn(animationSpec = tween(180)) },
+                exitTransition = { fadeOut(animationSpec = tween(150)) },
+            ) { entry ->
+                val resultGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
+                when (resultGameId) {
+                    GameId.ANIMALDOKU -> AnimalDokuChallengerResultScreen(
+                        puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
+                        tierReached = Difficulty.fromKey(entry.arguments?.getString("tier") ?: "easy"),
+                        score = entry.arguments?.getInt("score") ?: 0,
+                        isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
+                        reason = entry.arguments?.getString("reason") ?: "time_up",
+                        onPlayAgain = {
+                            navController.navigate(Routes.challenger(resultGameId)) {
+                                popUpTo(Routes.TABS) { inclusive = false }
+                            }
+                        },
+                        onBackToPuzzles = {
+                            navController.navigate(Routes.picker(resultGameId)) {
+                                popUpTo(Routes.TABS) { inclusive = false }
+                            }
+                        },
+                        onTryAnotherGame = {
+                            selectedTab = AppTab.GAMES
+                            navController.popBackStack(Routes.TABS, inclusive = false)
+                        },
+                    )
+                    else -> Unit
+                }
             }
 
             composable(

@@ -40,7 +40,7 @@ data class AnimalDokuResult(
 
 data class AnimalDokuOpenEvent(val row: Int, val col: Int, val wasCorrect: Boolean)
 
-private fun animalDokuScore(livesLeft: Int, elapsedSeconds: Int): Int = maxOf(
+internal fun animalDokuScore(livesLeft: Int, elapsedSeconds: Int): Int = maxOf(
     0,
     ANIMALDOKU_BASE_SCORE - (ANIMALDOKU_STARTING_LIVES - livesLeft) * ANIMALDOKU_LIFE_PENALTY - elapsedSeconds * ANIMALDOKU_TIME_PENALTY_PER_SECOND,
 )
