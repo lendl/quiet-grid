@@ -19,7 +19,7 @@ fun solveAnimalDoku(size: Int, regionOf: List<List<Int>>, maxPairingK: Int = 4):
         val confinement = findConfinement(state)
         if (confinement != null) {
             confinement.cells.forEach { (r, c) -> state.eliminated[r][c] = true }
-            steps.add(AnimalDokuSolveStep(AnimalDokuTechnique.CONFINEMENT, 0))
+            steps.add(AnimalDokuSolveStep(confinement.technique, 0))
             continue
         }
 

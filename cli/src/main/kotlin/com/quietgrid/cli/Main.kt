@@ -65,16 +65,19 @@ fun main(args: Array<String>) {
             println("Generated ${entries.size}/${command.count} takuzu puzzles at $difficulty into ${command.outDir}/takuzu_puzzles.json")
         }
         "nonogram" -> {
-            val seeds = com.quietgrid.cli.nonogram.loadNonogramSeeds(command.outDir)
-            require(seeds.isNotEmpty()) { "No nonogram seed puzzles found in ${command.outDir}/nonogram_puzzles.json" }
+            val sizes = com.quietgrid.cli.nonogram.nonogramSizesForDifficulty(difficulty)
             val state = GenerationState("${command.outDir}/.generation-state/nonogram.json")
-            val entries = (1..command.count).mapNotNull { attempt ->
-                val seed = seeds.random()
-                val candidate = com.quietgrid.cli.nonogram.generateNonogramVariant(seed.solution, difficulty, variantSeed = System.nanoTime() + attempt, idPrefix = "n${seed.rows}") ?: return@mapNotNull null
+            val maxTotalAttempts = command.count * 50
+            val entries = mutableListOf<com.quietgrid.engine.nonogram.NonogramPuzzleEntry>()
+            var attempts = 0
+            while (entries.size < command.count && attempts < maxTotalAttempts) {
+                attempts++
+                val (rows, cols) = sizes.random()
+                val candidate = com.quietgrid.cli.nonogram.generateRandomNonogramPuzzle(rows, cols, difficulty, idPrefix = "n${rows}x$cols") ?: continue
                 val dedupeKey = candidate.solution.toString()
-                if (state.hasTried(dedupeKey)) return@mapNotNull null
+                if (state.hasTried(dedupeKey)) continue
                 state.recordTried(dedupeKey, "valid")
-                candidate
+                entries += candidate
             }
             state.save()
             appendPuzzleEntries("${command.outDir}/nonogram_puzzles.json", entries, com.quietgrid.engine.nonogram.NonogramPuzzleEntry.serializer()) { it.solution.toString() }

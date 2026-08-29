@@ -12,12 +12,14 @@ val ANIMALDOKU_SIZES_BY_DIFFICULTY: Map<Difficulty, List<Int>> = mapOf(
 
 const val ANIMALDOKU_EXPERT_CHAIN_DEPTH_FLOOR = 4
 const val ANIMALDOKU_EXPERT_CHAIN_REPEATS_FLOOR = 4
+const val ANIMALDOKU_HARD_CONFINEMENT_REPEAT_FLOOR = 5
 
 data class AnimalDokuSolveProfile(
     val hardestTechnique: AnimalDokuTechnique,
     val hardestTechniqueRepeats: Int,
     val maxChainDepth: Int,
     val chainRepeats: Int,
+    val confinementRepeats: Int,
 )
 
 fun analyzeSolveResult(result: AnimalDokuSolveResult): AnimalDokuSolveProfile {
@@ -25,7 +27,8 @@ fun analyzeSolveResult(result: AnimalDokuSolveResult): AnimalDokuSolveProfile {
     val chainSteps = result.steps.filter { it.technique == AnimalDokuTechnique.CHAIN }
     val maxChainDepth = chainSteps.maxOfOrNull { it.chainDepth } ?: 0
     val hardestTechniqueRepeats = result.steps.count { it.technique == hardestTechnique }
-    return AnimalDokuSolveProfile(hardestTechnique, hardestTechniqueRepeats, maxChainDepth, chainSteps.size)
+    val confinementRepeats = result.steps.count { it.technique == AnimalDokuTechnique.CONFINEMENT }
+    return AnimalDokuSolveProfile(hardestTechnique, hardestTechniqueRepeats, maxChainDepth, chainSteps.size, confinementRepeats)
 }
 
 fun isExpertGradeChain(profile: AnimalDokuSolveProfile): Boolean =
@@ -40,9 +43,11 @@ fun classifyAnimalDokuDifficulty(size: Int, result: AnimalDokuSolveResult): Diff
     if (isExpertGradeChain(profile)) return if (size in 7..9) Difficulty.EXPERT else null
 
     return when {
-        size in 4..5 && profile.hardestTechnique == AnimalDokuTechnique.SINGLETON && totalSteps in 4..6 -> Difficulty.EASY
+        size in 4..5 && profile.hardestTechnique.ordinal <= AnimalDokuTechnique.STRUCTURAL_CONFINEMENT.ordinal && totalSteps in 4..6 -> Difficulty.EASY
         size in 4..6 && profile.hardestTechnique.ordinal <= AnimalDokuTechnique.CONFINEMENT.ordinal && totalSteps in 6..9 -> Difficulty.MEDIUM
-        size in 7..9 && totalSteps in 9..14 -> Difficulty.HARD
+        size in 7..9 && totalSteps in 9..14 &&
+            (profile.hardestTechnique.ordinal > AnimalDokuTechnique.CONFINEMENT.ordinal ||
+                profile.confinementRepeats >= ANIMALDOKU_HARD_CONFINEMENT_REPEAT_FLOOR) -> Difficulty.HARD
         else -> null
     }
 }

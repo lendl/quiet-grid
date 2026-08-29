@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
@@ -19,8 +20,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -39,8 +42,9 @@ fun NonogramBoard(
     hintEvidenceCells: Set<Pair<Int, Int>> = emptySet(),
     hintTargetCells: Map<Pair<Int, Int>, Int> = emptyMap(),
 ) {
-    val rowClueDepth = puzzle.rowClues.maxOf { it.size }
     val colClueDepth = puzzle.colClues.maxOf { it.size }
+    val rowClueStrings = remember(puzzle) { puzzle.rowClues.map { it.joinToString(" ") } }
+    val colClueStrings = remember(puzzle) { puzzle.colClues.map { it.joinToString("\n") } }
     val completedRows = remember(board, puzzle) {
         (0 until puzzle.rows).filter { r -> isNonogramLineComplete(board[r], puzzle.rowClues[r]) }.toSet()
     }
@@ -50,13 +54,29 @@ fun NonogramBoard(
         }.toSet()
     }
 
+    val clueFontSize = 13.sp
+    val clueColor = MaterialTheme.colorScheme.onSurfaceVariant
+    val rowClueStyle = TextStyle(fontSize = clueFontSize, fontWeight = FontWeight.Bold, color = clueColor, textAlign = TextAlign.End)
+    val colClueStyle = TextStyle(fontSize = clueFontSize, fontWeight = FontWeight.Bold, color = clueColor, textAlign = TextAlign.Center)
+    val textMeasurer = rememberTextMeasurer()
+    val density = LocalDensity.current
+
     BoxWithConstraints(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        val rowClueAreaWidth = remember(rowClueStrings, rowClueStyle, maxWidth) {
+            val widestPx = rowClueStrings.maxOf { textMeasurer.measure(it, rowClueStyle).size.width }
+            (with(density) { widestPx.toDp() } + 12.dp).coerceAtMost(maxWidth * 0.35f)
+        }
+        val colClueAreaHeight = remember(colClueDepth, colClueStyle, maxHeight) {
+            val sample = (1..colClueDepth).joinToString("\n") { "0" }
+            val heightPx = textMeasurer.measure(sample, colClueStyle).size.height
+            (with(density) { heightPx.toDp() } + 8.dp).coerceAtMost(maxHeight * 0.35f)
+        }
         val cellSize = min(
-            maxWidth / (puzzle.cols + rowClueDepth),
-            maxHeight / (puzzle.rows + colClueDepth),
+            (maxWidth - rowClueAreaWidth) / puzzle.cols,
+            (maxHeight - colClueAreaHeight) / puzzle.rows,
         )
-        val gridX = cellSize * rowClueDepth
-        val gridY = cellSize * colClueDepth
+        val gridX = rowClueAreaWidth
+        val gridY = colClueAreaHeight
         val fontSize = (cellSize.value * 0.4f).sp
 
         fun cellAt(xDp: Dp, yDp: Dp): Pair<Int, Int>? {
@@ -68,7 +88,7 @@ fun NonogramBoard(
 
         Box(
             Modifier
-                .size(cellSize * (puzzle.cols + rowClueDepth), cellSize * (puzzle.rows + colClueDepth))
+                .size(gridX + cellSize * puzzle.cols, gridY + cellSize * puzzle.rows)
                 .pointerInput(puzzle, cellSize) {
                     val touchSlop = viewConfiguration.touchSlop
                     val density = this.density
@@ -115,38 +135,30 @@ fun NonogramBoard(
                     }
                 },
         ) {
-            puzzle.rowClues.forEachIndexed { rowIndex, clues ->
-                val startSlot = rowClueDepth - clues.size
-                clues.forEachIndexed { i, clue ->
-                    Box(
-                        Modifier
-                            .offset(x = cellSize * (startSlot + i), y = cellSize * (colClueDepth + rowIndex))
-                            .size(cellSize)
-                            .alpha(if (rowIndex in completedRows) 0.3f else 1f),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        BasicText(
-                            text = clue.toString(),
-                            style = TextStyle(fontSize = fontSize, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center),
-                        )
-                    }
+            rowClueStrings.forEachIndexed { rowIndex, text ->
+                Box(
+                    Modifier
+                        .offset(x = 0.dp, y = gridY + cellSize * rowIndex)
+                        .size(gridX, cellSize)
+                        .alpha(if (rowIndex in completedRows) 0.3f else 1f),
+                    contentAlignment = Alignment.CenterEnd,
+                ) {
+                    BasicText(
+                        text = text,
+                        style = rowClueStyle,
+                        modifier = Modifier.padding(end = 6.dp),
+                    )
                 }
             }
-            puzzle.colClues.forEachIndexed { colIndex, clues ->
-                val startSlot = colClueDepth - clues.size
-                clues.forEachIndexed { i, clue ->
-                    Box(
-                        Modifier
-                            .offset(x = cellSize * (rowClueDepth + colIndex), y = cellSize * (startSlot + i))
-                            .size(cellSize)
-                            .alpha(if (colIndex in completedCols) 0.3f else 1f),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        BasicText(
-                            text = clue.toString(),
-                            style = TextStyle(fontSize = fontSize, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center),
-                        )
-                    }
+            colClueStrings.forEachIndexed { colIndex, text ->
+                Box(
+                    Modifier
+                        .offset(x = gridX + cellSize * colIndex, y = 0.dp)
+                        .size(cellSize, gridY)
+                        .alpha(if (colIndex in completedCols) 0.3f else 1f),
+                    contentAlignment = Alignment.BottomCenter,
+                ) {
+                    BasicText(text = text, style = colClueStyle)
                 }
             }
             for (row in 0 until puzzle.rows) {
@@ -168,7 +180,7 @@ fun NonogramBoard(
                     }
                     Box(
                         Modifier
-                            .offset(x = cellSize * (rowClueDepth + col), y = cellSize * (colClueDepth + row))
+                            .offset(x = gridX + cellSize * col, y = gridY + cellSize * row)
                             .size(cellSize)
                             .background(backgroundColor, RoundedCornerShape(2.dp))
                             .border(if (hintTargetValue != null) 2.dp else 1.dp, borderColor, RoundedCornerShape(2.dp)),

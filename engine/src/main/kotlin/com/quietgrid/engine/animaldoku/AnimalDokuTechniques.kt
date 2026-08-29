@@ -1,6 +1,6 @@
 package com.quietgrid.engine.animaldoku
 
-enum class AnimalDokuTechnique { SINGLETON, CONFINEMENT, PAIRING_2, PAIRING_3, PAIRING_4_PLUS, CHAIN }
+enum class AnimalDokuTechnique { SINGLETON, STRUCTURAL_CONFINEMENT, CONFINEMENT, PAIRING_2, PAIRING_3, PAIRING_4_PLUS, CHAIN }
 
 sealed class AnimalDokuStep {
     abstract val technique: AnimalDokuTechnique
@@ -33,6 +33,15 @@ fun findSingleton(state: AnimalDokuSolverState): AnimalDokuStep.Placement? {
     return null
 }
 
+private fun regionCellsRaw(regionOf: List<List<Int>>, size: Int, region: Int): List<Pair<Int, Int>> =
+    (0 until size).flatMap { r -> (0 until size).mapNotNull { c -> if (regionOf[r][c] == region) r to c else null } }
+
+private fun rowIsMonochrome(regionOf: List<List<Int>>, size: Int, row: Int): Boolean =
+    (1 until size).all { c -> regionOf[row][c] == regionOf[row][0] }
+
+private fun colIsMonochrome(regionOf: List<List<Int>>, size: Int, col: Int): Boolean =
+    (1 until size).all { r -> regionOf[r][col] == regionOf[0][col] }
+
 fun findConfinement(state: AnimalDokuSolverState): AnimalDokuStep.Elimination? {
     val size = state.size
 
@@ -44,13 +53,21 @@ fun findConfinement(state: AnimalDokuSolverState): AnimalDokuStep.Elimination? {
         val rows = cells.map { it.first }.toSet()
         if (rows.size == 1) {
             val toEliminate = state.candidatesInRow(rows.first()).filter { state.regionOf[it.first][it.second] != region }
-            if (toEliminate.isNotEmpty()) return AnimalDokuStep.Elimination(toEliminate, AnimalDokuTechnique.CONFINEMENT)
+            if (toEliminate.isNotEmpty()) {
+                val structural = regionCellsRaw(state.regionOf, size, region).all { it.first == rows.first() }
+                val technique = if (structural) AnimalDokuTechnique.STRUCTURAL_CONFINEMENT else AnimalDokuTechnique.CONFINEMENT
+                return AnimalDokuStep.Elimination(toEliminate, technique)
+            }
         }
 
         val cols = cells.map { it.second }.toSet()
         if (cols.size == 1) {
             val toEliminate = state.candidatesInCol(cols.first()).filter { state.regionOf[it.first][it.second] != region }
-            if (toEliminate.isNotEmpty()) return AnimalDokuStep.Elimination(toEliminate, AnimalDokuTechnique.CONFINEMENT)
+            if (toEliminate.isNotEmpty()) {
+                val structural = regionCellsRaw(state.regionOf, size, region).all { it.second == cols.first() }
+                val technique = if (structural) AnimalDokuTechnique.STRUCTURAL_CONFINEMENT else AnimalDokuTechnique.CONFINEMENT
+                return AnimalDokuStep.Elimination(toEliminate, technique)
+            }
         }
     }
 
@@ -61,7 +78,11 @@ fun findConfinement(state: AnimalDokuSolverState): AnimalDokuStep.Elimination? {
         val regions = cells.map { state.regionOf[it.first][it.second] }.toSet()
         if (regions.size == 1) {
             val toEliminate = state.candidatesInRegion(regions.first()).filter { it.first != row }
-            if (toEliminate.isNotEmpty()) return AnimalDokuStep.Elimination(toEliminate, AnimalDokuTechnique.CONFINEMENT)
+            if (toEliminate.isNotEmpty()) {
+                val structural = rowIsMonochrome(state.regionOf, size, row)
+                val technique = if (structural) AnimalDokuTechnique.STRUCTURAL_CONFINEMENT else AnimalDokuTechnique.CONFINEMENT
+                return AnimalDokuStep.Elimination(toEliminate, technique)
+            }
         }
     }
 
@@ -72,7 +93,11 @@ fun findConfinement(state: AnimalDokuSolverState): AnimalDokuStep.Elimination? {
         val regions = cells.map { state.regionOf[it.first][it.second] }.toSet()
         if (regions.size == 1) {
             val toEliminate = state.candidatesInRegion(regions.first()).filter { it.second != col }
-            if (toEliminate.isNotEmpty()) return AnimalDokuStep.Elimination(toEliminate, AnimalDokuTechnique.CONFINEMENT)
+            if (toEliminate.isNotEmpty()) {
+                val structural = colIsMonochrome(state.regionOf, size, col)
+                val technique = if (structural) AnimalDokuTechnique.STRUCTURAL_CONFINEMENT else AnimalDokuTechnique.CONFINEMENT
+                return AnimalDokuStep.Elimination(toEliminate, technique)
+            }
         }
     }
 

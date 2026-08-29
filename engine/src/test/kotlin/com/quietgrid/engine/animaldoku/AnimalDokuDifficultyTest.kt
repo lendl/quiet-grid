@@ -52,6 +52,24 @@ class AnimalDokuDifficultyTest {
     }
 
     @Test
+    fun `a structural confinement step is as trivial as singleton and still counts as easy`() {
+        val result = AnimalDokuSolveResult(
+            solved = true,
+            steps = stepsOf(AnimalDokuTechnique.STRUCTURAL_CONFINEMENT) + padded(5),
+        )
+        assertEquals(Difficulty.EASY, classifyAnimalDokuDifficulty(5, result))
+    }
+
+    @Test
+    fun `a genuine dynamic confinement step is medium, not easy, even at an easy size`() {
+        val result = AnimalDokuSolveResult(
+            solved = true,
+            steps = stepsOf(AnimalDokuTechnique.CONFINEMENT) + padded(5),
+        )
+        assertEquals(Difficulty.MEDIUM, classifyAnimalDokuDifficulty(5, result))
+    }
+
+    @Test
     fun `confinement-hardest puzzle padded into mediums step window classifies as medium`() {
         val result = AnimalDokuSolveResult(
             solved = true,
@@ -138,6 +156,24 @@ class AnimalDokuDifficultyTest {
     fun `single confinement step at a hard size falls short of the step floor`() {
         val result = AnimalDokuSolveResult(solved = true, steps = stepsOf(AnimalDokuTechnique.CONFINEMENT))
         assertNull(classifyAnimalDokuDifficulty(9, result))
+    }
+
+    @Test
+    fun `confinement-only puzzle in hards step window below the confinement repeat floor is no longer hard`() {
+        val result = AnimalDokuSolveResult(
+            solved = true,
+            steps = padded(2, AnimalDokuTechnique.CONFINEMENT) + padded(7),
+        )
+        assertNull(classifyAnimalDokuDifficulty(7, result))
+    }
+
+    @Test
+    fun `confinement-only puzzle at or above the confinement repeat floor still classifies as hard`() {
+        val result = AnimalDokuSolveResult(
+            solved = true,
+            steps = padded(5, AnimalDokuTechnique.CONFINEMENT) + padded(6),
+        )
+        assertEquals(Difficulty.HARD, classifyAnimalDokuDifficulty(7, result))
     }
 
     @Test

@@ -48,6 +48,7 @@ data class NonogramDifficultyMetrics(
     val hardestLineTier: NonogramLineTier,
     val hardestTierRepeats: Int,
     val openingLineTier: NonogramLineTier,
+    val freebieFillRatio: Double,
 )
 
 private data class CanonicalStep(
@@ -161,6 +162,7 @@ fun analyzeNonogramDifficulty(rowClues: List<List<Int>>, colClues: List<List<Int
     var maxPlacementsAtDeduction = 0
     var singleCellStepCount = 0
     var crossAxisUnlocks = 0
+    var freebieFilledCells = 0
     val safetyLimit = max(8, rows * cols * 2)
 
     val rowTiers = rowClues.map { classifyNonogramLineTier(cols, it) }
@@ -188,7 +190,11 @@ fun analyzeNonogramDifficulty(rowClues: List<List<Int>>, colClues: List<List<Int
         if (isOverlapFillSingleCell) singleCellStepCount += 1
 
         val (firstRow, firstCol, _) = step.targetCells[0]
-        tierPerStep.add(if (isProbingStep) NonogramLineTier.PROBING else if (step.isRow) rowTiers[firstRow] else colTiers[firstCol])
+        val stepTier = if (isProbingStep) NonogramLineTier.PROBING else if (step.isRow) rowTiers[firstRow] else colTiers[firstCol]
+        tierPerStep.add(stepTier)
+        if (stepTier == NonogramLineTier.FREEBIE) {
+            freebieFilledCells += step.targetCells.count { (_, _, v) -> v == 1 }
+        }
 
         step.targetCells.forEach { (r, c, v) -> board[r][c] = v }
         steps += 1
@@ -206,10 +212,11 @@ fun analyzeNonogramDifficulty(rowClues: List<List<Int>>, colClues: List<List<Int
     val hardestLineTier = tierPerStep.maxByOrNull { it.ordinal } ?: NonogramLineTier.FREEBIE
     val hardestTierRepeats = tierPerStep.count { it == hardestLineTier }
     val openingLineTier = tierPerStep.firstOrNull() ?: NonogramLineTier.FREEBIE
+    val filledCells = solution.sumOf { row -> row.count { it } }
 
     return NonogramDifficultyMetrics(
         steps = steps,
-        filledCells = solution.sumOf { row -> row.count { it } },
+        filledCells = filledCells,
         clueSegments = countClueSegments(rowClues) + countClueSegments(colClues),
         avgPlacementsAtDeduction = if (steps > 0) totalPlacements.toDouble() / steps else 0.0,
         maxPlacementsAtDeduction = maxPlacementsAtDeduction,
@@ -218,6 +225,7 @@ fun analyzeNonogramDifficulty(rowClues: List<List<Int>>, colClues: List<List<Int
         hardestLineTier = hardestLineTier,
         hardestTierRepeats = hardestTierRepeats,
         openingLineTier = openingLineTier,
+        freebieFillRatio = if (filledCells > 0) freebieFilledCells.toDouble() / filledCells else 0.0,
     )
 }
 
@@ -230,14 +238,23 @@ fun computeNonogramScore(metrics: NonogramDifficultyMetrics): Int {
 
 private const val SELF_CONTAINED_HARD_REPEAT_FLOOR = 8
 private const val DEPENDENT_HARD_REPEAT_FLOOR = 3
+private const val DEPENDENT_HARD_CROSS_AXIS_FLOOR = 4
 private const val DEPENDENT_EXPERT_REPEAT_FLOOR = 17
 private const val FREEBIE_EASY_CELL_CEILING = 50
+private const val FREEBIE_FILL_RATIO_CEILING_HARD = 0.55
+private const val FREEBIE_FILL_RATIO_CEILING_EXPERT = 0.45
 
 private fun openingTierCeilingFor(difficulty: Difficulty): NonogramLineTier? = when (difficulty) {
     Difficulty.EASY -> NonogramLineTier.FREEBIE
     Difficulty.MEDIUM -> NonogramLineTier.SELF_CONTAINED
     Difficulty.HARD -> NonogramLineTier.DEPENDENT
     Difficulty.EXPERT -> null
+}
+
+private fun freebieFillRatioCeilingFor(difficulty: Difficulty): Double? = when (difficulty) {
+    Difficulty.EASY, Difficulty.MEDIUM -> null
+    Difficulty.HARD -> FREEBIE_FILL_RATIO_CEILING_HARD
+    Difficulty.EXPERT -> FREEBIE_FILL_RATIO_CEILING_EXPERT
 }
 
 fun classifyNonogramDifficulty(rows: Int, cols: Int, metrics: NonogramDifficultyMetrics): Difficulty {
@@ -249,7 +266,7 @@ fun classifyNonogramDifficulty(rows: Int, cols: Int, metrics: NonogramDifficulty
             if (metrics.hardestTierRepeats >= SELF_CONTAINED_HARD_REPEAT_FLOOR) Difficulty.HARD else Difficulty.MEDIUM
         NonogramLineTier.DEPENDENT -> when {
             metrics.hardestTierRepeats >= DEPENDENT_EXPERT_REPEAT_FLOOR && shortSide >= 10 -> Difficulty.EXPERT
-            metrics.hardestTierRepeats >= DEPENDENT_HARD_REPEAT_FLOOR -> Difficulty.HARD
+            metrics.hardestTierRepeats >= DEPENDENT_HARD_REPEAT_FLOOR && metrics.crossAxisUnlocks >= DEPENDENT_HARD_CROSS_AXIS_FLOOR -> Difficulty.HARD
             else -> Difficulty.MEDIUM
         }
         NonogramLineTier.PROBING -> Difficulty.EXPERT
@@ -259,6 +276,12 @@ fun classifyNonogramDifficulty(rows: Int, cols: Int, metrics: NonogramDifficulty
         val ceiling = openingTierCeilingFor(difficulty) ?: break
         if (metrics.openingLineTier.ordinal <= ceiling.ordinal) break
         difficulty = Difficulty.entries[difficulty.ordinal + 1]
+    }
+
+    while (difficulty.ordinal > 0) {
+        val ceiling = freebieFillRatioCeilingFor(difficulty) ?: break
+        if (metrics.freebieFillRatio <= ceiling) break
+        difficulty = Difficulty.entries[difficulty.ordinal - 1]
     }
 
     return difficulty

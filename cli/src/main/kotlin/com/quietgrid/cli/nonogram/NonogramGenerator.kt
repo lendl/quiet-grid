@@ -6,75 +6,66 @@ import com.quietgrid.engine.nonogram.NonogramPuzzleEntry
 import com.quietgrid.engine.nonogram.analyzeNonogramDifficulty
 import com.quietgrid.engine.nonogram.buildNonogramClues
 import com.quietgrid.engine.nonogram.classifyNonogramDifficulty
+import kotlin.random.Random
 
-private fun transpose(solution: List<List<Boolean>>): List<List<Boolean>> {
-    val rows = solution.size
-    val cols = solution.firstOrNull()?.size ?: 0
-    return (0 until cols).map { c -> (0 until rows).map { r -> solution[r][c] } }
+fun nonogramSizesForDifficulty(difficulty: Difficulty): List<Pair<Int, Int>> = when (difficulty) {
+    Difficulty.EASY -> listOf(5 to 5, 10 to 5)
+    Difficulty.MEDIUM -> listOf(5 to 5, 10 to 5)
+    Difficulty.HARD -> listOf(5 to 5, 10 to 5)
+    Difficulty.EXPERT -> listOf(10 to 5, 10 to 10)
 }
 
-private fun mirrorHorizontally(solution: List<List<Boolean>>): List<List<Boolean>> = solution.map { it.reversed() }
-private fun mirrorVertically(solution: List<List<Boolean>>): List<List<Boolean>> = solution.reversed()
-private fun rotate180(solution: List<List<Boolean>>): List<List<Boolean>> = mirrorVertically(mirrorHorizontally(solution))
+private fun stripeSolution(rows: Int, cols: Int, random: Random): List<List<Boolean>> {
+    var rowStates: BooleanArray
+    do {
+        rowStates = BooleanArray(rows) { random.nextBoolean() }
+    } while (rowStates.all { it } || rowStates.none { it })
+    return (0 until rows).map { r -> List(cols) { rowStates[r] } }
+}
 
-private fun applySymmetryVariant(solution: List<List<Boolean>>, variantIndex: Int): List<List<Boolean>> =
-    when (((variantIndex % 4) + 4) % 4) {
-        0 -> solution
-        1 -> mirrorHorizontally(solution)
-        2 -> mirrorVertically(solution)
-        else -> rotate180(solution)
+private fun blockStampSolution(rows: Int, cols: Int, random: Random): List<List<Boolean>> {
+    val grid = Array(rows) { BooleanArray(cols) }
+    val blockCount = 1 + random.nextInt(12)
+    repeat(blockCount) {
+        val maxDim = maxOf(2, minOf(rows, cols) / 2)
+        val blockRows = 1 + random.nextInt(minOf(rows, maxDim))
+        val blockCols = 1 + random.nextInt(minOf(cols, maxDim))
+        val startRow = random.nextInt(rows - blockRows + 1)
+        val startCol = random.nextInt(cols - blockCols + 1)
+        for (r in startRow until startRow + blockRows) {
+            for (c in startCol until startCol + blockCols) {
+                grid[r][c] = true
+            }
+        }
     }
-
-private class SeededRng(seed: Long) {
-    private var state = (seed xor 0x9e3779b9L) and 0xFFFFFFFFL
-    fun next(): Double {
-        state = (state * 1664525L + 1013904223L) and 0xFFFFFFFFL
-        return state.toDouble() / 0x100000000L
-    }
+    return grid.map { it.toList() }
 }
 
-private fun shuffleIndexes(length: Int, seed: Long): List<Int> {
-    val values = (0 until length).toMutableList()
-    val rng = SeededRng(seed)
-    for (index in values.indices.reversed()) {
-        if (index == 0) break
-        val swapIndex = (rng.next() * (index + 1)).toInt()
-        val tmp = values[index]
-        values[index] = values[swapIndex]
-        values[swapIndex] = tmp
-    }
-    return values
-}
-
-private fun applySeededPermutation(solution: List<List<Boolean>>, seed: Long): List<List<Boolean>> {
-    val rowOrder = shuffleIndexes(solution.size, seed * 31 + 7)
-    val colOrder = shuffleIndexes(solution.firstOrNull()?.size ?: 0, seed * 17 + 13)
-    return rowOrder.map { r -> colOrder.map { c -> solution[r][c] } }
-}
-
-fun generateNonogramVariant(
-    seedSolution: List<List<Boolean>>,
+fun generateRandomNonogramPuzzle(
+    rows: Int,
+    cols: Int,
     targetDifficulty: Difficulty,
-    variantSeed: Long,
     idPrefix: String,
-    maxAttempts: Int = 16,
+    maxAttempts: Int = 300,
 ): NonogramPuzzleEntry? {
-    repeat(maxAttempts) { attempt ->
-        val symmetrized = applySymmetryVariant(seedSolution, (variantSeed + attempt).toInt())
-        val permutationSeed = (variantSeed + attempt) + symmetrized.size * 31L + (symmetrized.firstOrNull()?.size ?: 0) * 17L
-        val solution = applySeededPermutation(symmetrized, permutationSeed)
+    val random = Random(System.nanoTime() xor (rows * 31L + cols))
+    repeat(maxAttempts) {
+        val solution = if (targetDifficulty == Difficulty.EASY) {
+            stripeSolution(rows, cols, random)
+        } else {
+            blockStampSolution(rows, cols, random)
+        }
         val rowClues = solution.map { buildNonogramClues(it) }
-        val cols = solution.firstOrNull()?.size ?: 0
         val colClues = (0 until cols).map { c -> buildNonogramClues(solution.map { it[c] }) }
 
         val metrics = analyzeNonogramDifficulty(rowClues, colClues, solution) ?: return@repeat
-        val difficulty = classifyNonogramDifficulty(solution.size, cols, metrics)
+        val difficulty = classifyNonogramDifficulty(rows, cols, metrics)
         if (difficulty != targetDifficulty) return@repeat
 
         return NonogramPuzzleEntry(
-            id = "$idPrefix-${variantSeed + attempt}",
+            id = "$idPrefix-${System.nanoTime()}",
             difficulty = difficulty.key,
-            rows = solution.size,
+            rows = rows,
             cols = cols,
             solution = solution,
         )

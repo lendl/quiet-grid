@@ -60,17 +60,23 @@ class NonogramDifficultyTest {
         assertEquals(NonogramLineTier.DEPENDENT, classifyNonogramLineTier(5, listOf(2)))
     }
 
-    private fun metricsWith(tier: NonogramLineTier, repeats: Int, opening: NonogramLineTier = tier) = NonogramDifficultyMetrics(
+    private fun metricsWith(
+        tier: NonogramLineTier,
+        repeats: Int,
+        opening: NonogramLineTier = tier,
+        crossAxisUnlocks: Int = 10,
+    ) = NonogramDifficultyMetrics(
         steps = repeats,
         filledCells = 0,
         clueSegments = 0,
         avgPlacementsAtDeduction = 0.0,
         maxPlacementsAtDeduction = 0,
         singleCellStepCount = 0,
-        crossAxisUnlocks = 0,
+        crossAxisUnlocks = crossAxisUnlocks,
         hardestLineTier = tier,
         hardestTierRepeats = repeats,
         openingLineTier = opening,
+        freebieFillRatio = 0.0,
     )
 
     @Test
@@ -96,6 +102,18 @@ class NonogramDifficultyTest {
     @Test
     fun `dependent peak at expert-grade repeats stays capped at hard on a narrow board`() {
         assertEquals(Difficulty.HARD, classifyNonogramDifficulty(10, 5, metricsWith(NonogramLineTier.DEPENDENT, 30)))
+    }
+
+    @Test
+    fun `dependent peak with enough repeats still stays medium if the lines never actually cross-reference`() {
+        val metrics = metricsWith(NonogramLineTier.DEPENDENT, repeats = 4, opening = NonogramLineTier.SELF_CONTAINED, crossAxisUnlocks = 2)
+        assertEquals(Difficulty.MEDIUM, classifyNonogramDifficulty(10, 10, metrics))
+    }
+
+    @Test
+    fun `dependent peak promotes to hard once both the repeat and cross-axis floors are met`() {
+        val metrics = metricsWith(NonogramLineTier.DEPENDENT, repeats = 4, opening = NonogramLineTier.SELF_CONTAINED, crossAxisUnlocks = 4)
+        assertEquals(Difficulty.HARD, classifyNonogramDifficulty(10, 10, metrics))
     }
 
     @Test
