@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material3.Card
@@ -189,7 +190,7 @@ fun SudokuPlayScreen(
                 }
                 SudokuPadButton(
                     active = noteMode,
-                    enabled = hasSelection && !session.autoCandidateMode,
+                    enabled = !session.autoCandidateMode,
                     onClick = { if (!noteMode) viewModel.onToggleNoteMode() },
                     modifier = Modifier.weight(2f).height(44.dp),
                 ) {
@@ -201,7 +202,7 @@ fun SudokuPlayScreen(
                     onClick = viewModel::onUndo,
                     modifier = Modifier.weight(1.5f).height(44.dp),
                 ) {
-                    Text(stringResource(R.string.sudoku_undo), style = MaterialTheme.typography.labelLarge)
+                    Icon(Icons.AutoMirrored.Filled.Undo, contentDescription = stringResource(R.string.sudoku_undo))
                 }
             }
 

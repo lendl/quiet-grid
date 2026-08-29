@@ -187,7 +187,7 @@ class SudokuPlayViewModel @AssistedInject constructor(
 
     fun onToggleNoteMode() {
         val current = session ?: return
-        if (selectedCell == null || current.autoCandidateMode) return
+        if (current.autoCandidateMode) return
         controller.updateSession(
             current.copy(inputMode = if (current.inputMode == SudokuInputMode.DIGIT) SudokuInputMode.NOTES else SudokuInputMode.DIGIT),
             persist = false,
@@ -198,8 +198,10 @@ class SudokuPlayViewModel @AssistedInject constructor(
         val current = session ?: return
         val enabling = !current.autoCandidateMode
         var updated = current.copy(autoCandidateMode = enabling)
-        if (enabling) {
-            updated = updated.copy(notes = computeSudokuAutoNotes(updated.board), inputMode = SudokuInputMode.DIGIT)
+        updated = if (enabling) {
+            updated.copy(notes = computeSudokuAutoNotes(updated.board), inputMode = SudokuInputMode.DIGIT)
+        } else {
+            updated.copy(notes = current.notes.map { row -> row.map { emptySet<Int>() } })
         }
         controller.updateSession(updated)
     }
