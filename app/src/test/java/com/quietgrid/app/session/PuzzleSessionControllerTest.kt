@@ -339,7 +339,7 @@ class PuzzleSessionControllerTest {
         val historyStore = FakeHistoryStore()
         val statsStore = FakeStatsStore()
         val controller = PuzzleSessionController(
-            backgroundScope, FakeSessionStore(), statsStore, historyStore, FakePuzzleAdapter(gameId = GameId.NONOGRAM),
+            backgroundScope, FakeSessionStore(), statsStore, historyStore, FakePuzzleAdapter(gameId = GameId.BLOCKFILL),
         )
         controller.start(Difficulty.EASY, resume = false)
         runCurrent()
@@ -355,7 +355,7 @@ class PuzzleSessionControllerTest {
     fun `endPuzzle does not append a play record for a beta game`() = runTest {
         val historyStore = FakeHistoryStore()
         val controller = PuzzleSessionController(
-            backgroundScope, FakeSessionStore(), FakeStatsStore(), historyStore, FakePuzzleAdapter(gameId = GameId.NONOGRAM),
+            backgroundScope, FakeSessionStore(), FakeStatsStore(), historyStore, FakePuzzleAdapter(gameId = GameId.BLOCKFILL),
         )
         controller.start(Difficulty.EASY, resume = false)
         runCurrent()

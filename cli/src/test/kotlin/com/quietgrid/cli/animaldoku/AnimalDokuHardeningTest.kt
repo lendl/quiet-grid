@@ -22,6 +22,18 @@ private fun repairedPuzzleForTest(size: Int, maxSeedAttempts: Int = 20): Pair<In
     throw AssertionError("Could not repair a size-$size layout to uniqueness in $maxSeedAttempts seed attempts")
 }
 
+private fun repairedPuzzleBelowDifficultyForTest(
+    size: Int,
+    exclusiveCeiling: Difficulty,
+    maxSeedAttempts: Int = 20,
+): Pair<IntArray, AnimalDokuRepairedPuzzle> {
+    repeat(maxSeedAttempts) {
+        val (solution, repaired) = repairedPuzzleForTest(size)
+        if (classifyAnimalDokuDifficulty(size, repaired.solveResult) != exclusiveCeiling) return solution to repaired
+    }
+    throw AssertionError("Every size-$size repair attempt already classified as $exclusiveCeiling in $maxSeedAttempts seed attempts")
+}
+
 class AnimalDokuHardeningTest {
     @Test
     fun `hardnessKeyOf reflects hardest technique its repeat count and max chain depth`() {
@@ -137,7 +149,7 @@ class AnimalDokuHardeningTest {
 
     @Test
     fun `hardenTowardDifficulty for hard never lets the result classify as expert`() {
-        val (solution, repaired) = repairedPuzzleForTest(7)
+        val (solution, repaired) = repairedPuzzleBelowDifficultyForTest(7, Difficulty.EXPERT)
 
         val hardened = hardenTowardDifficulty(7, solution, repaired.regions, repaired.solveResult, Difficulty.HARD, maxStallMutations = 800)
 
