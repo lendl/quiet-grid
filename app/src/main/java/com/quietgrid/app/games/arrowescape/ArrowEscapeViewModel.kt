@@ -43,6 +43,8 @@ data class ArrowEscapeResult(
     val isNewHighScore: Boolean = false,
 )
 
+data class ArrowEscapeTapEvent(val id: Int, val pieceIndex: Int, val removed: Boolean)
+
 private fun arrowEscapeScore(elapsedSeconds: Int): Int =
     maxOf(ARROW_ESCAPE_MIN_SCORE, ARROW_ESCAPE_BASE_SCORE - elapsedSeconds * ARROW_ESCAPE_TIME_PENALTY_PER_SECOND)
 
@@ -128,11 +130,14 @@ class ArrowEscapePlayViewModel @AssistedInject constructor(
 
     var lastBlockedIndex by mutableStateOf<Int?>(null)
         private set
+    var lastTapEvent by mutableStateOf<ArrowEscapeTapEvent?>(null)
+        private set
     var isComputingHint by mutableStateOf(false)
         private set
 
     internal var hintDispatcher: CoroutineDispatcher = Dispatchers.Default
     private var hintJob: Job? = null
+    private var tapEventSeq = 0
 
     init {
         controller.start(requestedDifficulty, resume)
@@ -146,6 +151,7 @@ class ArrowEscapePlayViewModel @AssistedInject constructor(
         hintJob = null
         isComputingHint = false
         lastBlockedIndex = if (attempt.removed) null else pieceIndex
+        lastTapEvent = ArrowEscapeTapEvent(++tapEventSeq, pieceIndex, attempt.removed)
         val stillPlaying = attempt.session.status == ArrowEscapeStatus.PLAYING
         controller.updateSession(attempt.session, persist = stillPlaying)
         when (attempt.session.status) {

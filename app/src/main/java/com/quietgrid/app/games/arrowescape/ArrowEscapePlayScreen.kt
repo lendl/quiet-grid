@@ -17,6 +17,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +36,7 @@ import com.quietgrid.app.ui.components.EndPuzzleDialog
 import com.quietgrid.app.ui.components.EndPuzzleIconButton
 import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
+import com.quietgrid.app.ui.components.rememberHapticController
 
 @Composable
 fun ArrowEscapePlayScreen(
@@ -53,6 +55,14 @@ fun ArrowEscapePlayScreen(
     var visibleBounds by remember { mutableStateOf<Rect?>(null) }
     var panTarget by remember { mutableStateOf<Offset?>(null) }
     val session = viewModel.session
+
+    val haptics = rememberHapticController()
+    LaunchedEffect(viewModel.lastTapEvent) {
+        val event = viewModel.lastTapEvent
+        if (event != null) {
+            if (event.removed) haptics.correctFeedback() else haptics.incorrectFeedback()
+        }
+    }
 
     Column(Modifier.fillMaxSize().padding(16.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {

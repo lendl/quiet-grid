@@ -34,6 +34,8 @@ import kotlinx.serialization.json.Json
 private val json = Json { ignoreUnknownKeys = true }
 private const val VALIDATION_DELAY_MS = 800L
 
+data class TakuzuFeedbackEvent(val id: Int, val correct: Boolean, val incorrect: Boolean)
+
 data class TakuzuResult(
     val difficulty: Difficulty,
     val solved: Boolean,
@@ -144,6 +146,8 @@ class TakuzuPlayViewModel @AssistedInject constructor(
         private set
     var feedbackIncorrectCols by mutableStateOf<Set<Int>>(emptySet())
         private set
+    var feedbackEvent by mutableStateOf<TakuzuFeedbackEvent?>(null)
+        private set
     var nextMoveHint by mutableStateOf<TakuzuNextMoveHint?>(null)
         private set
     var isComputingHint by mutableStateOf(false)
@@ -154,6 +158,7 @@ class TakuzuPlayViewModel @AssistedInject constructor(
     private var pendingLineKeys = mutableSetOf<LineKey>()
     private var pendingBoard: TakuzuGrid? = null
     private var validationJob: kotlinx.coroutines.Job? = null
+    private var feedbackEventSeq = 0
     private var hintJob: Job? = null
 
     init {
@@ -198,6 +203,12 @@ class TakuzuPlayViewModel @AssistedInject constructor(
         feedbackCorrectCols = result.effect.correctColIndexes.toSet()
         feedbackIncorrectRows = result.effect.incorrectRowIndexes.toSet()
         feedbackIncorrectCols = result.effect.incorrectColIndexes.toSet()
+        val correct = feedbackCorrectRows.isNotEmpty() || feedbackCorrectCols.isNotEmpty()
+        val incorrect = feedbackIncorrectRows.isNotEmpty() || feedbackIncorrectCols.isNotEmpty()
+        if (correct || incorrect) {
+            feedbackEventSeq++
+            feedbackEvent = TakuzuFeedbackEvent(feedbackEventSeq, correct, incorrect)
+        }
         if (feedbackCorrectRows.isNotEmpty() || feedbackCorrectCols.isNotEmpty() ||
             feedbackIncorrectRows.isNotEmpty() || feedbackIncorrectCols.isNotEmpty()
         ) {

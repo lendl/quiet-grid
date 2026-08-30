@@ -22,6 +22,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,6 +41,7 @@ import com.quietgrid.app.ui.components.EndPuzzleIconButton
 import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
 import com.quietgrid.app.ui.components.PuzzleLanguageFlag
+import com.quietgrid.app.ui.components.rememberHapticController
 
 @Composable
 fun WordSearchPlayScreen(
@@ -58,6 +60,16 @@ fun WordSearchPlayScreen(
     var isBoardZoomed by remember { mutableStateOf(false) }
     var resetZoomTrigger by remember { mutableStateOf(0) }
     val session = viewModel.session
+    val haptics = rememberHapticController()
+    LaunchedEffect(viewModel.selectionEvent) {
+        val event = viewModel.selectionEvent
+        if (event != null) {
+            if (event.wasCorrect) haptics.correctFeedback() else haptics.incorrectFeedback()
+        }
+    }
+    LaunchedEffect(viewModel.wrongHiddenWordTapTrigger) {
+        if (viewModel.wrongHiddenWordTapTrigger > 0) haptics.incorrectFeedback()
+    }
 
     Column(Modifier.fillMaxSize().padding(16.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {

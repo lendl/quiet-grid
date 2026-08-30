@@ -28,6 +28,12 @@ class ChimpTestChallengerViewModel @Inject constructor(
     var session by mutableStateOf<ChimpTestChallengerSession?>(null)
         private set
 
+    var correctTapTrigger by mutableStateOf(0)
+        private set
+
+    var wrongTapTrigger by mutableStateOf(0)
+        private set
+
     private var finalized = false
 
     private val _result = MutableSharedFlow<ChimpTestChallengerResult>(extraBufferCapacity = 1)
@@ -49,6 +55,7 @@ class ChimpTestChallengerViewModel @Inject constructor(
         if (outcome.effects.any { it is ChimpTestEffect.WrongTap }) {
             val withTap = current.copy(puzzleSession = outcome.session)
             session = withTap
+            wrongTapTrigger++
             val remainingLives = withTap.livesRemaining - 1
             viewModelScope.launch {
                 delay(CHALLENGER_WRONG_TAP_REVEAL_MS)
@@ -64,6 +71,7 @@ class ChimpTestChallengerViewModel @Inject constructor(
         if (outcome.session.status == ChimpTestStatus.WON) {
             val withWin = current.copy(puzzleSession = outcome.session)
             session = withWin
+            correctTapTrigger++
             val (nextTier, nextSolvesInTier) = chimpTestChallengerTierAfterSolve(withWin.tier, withWin.solvesInTier)
             viewModelScope.launch {
                 delay(CHALLENGER_SOLVE_ADVANCE_DELAY_MS)
@@ -72,6 +80,7 @@ class ChimpTestChallengerViewModel @Inject constructor(
             return
         }
 
+        correctTapTrigger++
         session = current.copy(puzzleSession = outcome.session)
     }
 

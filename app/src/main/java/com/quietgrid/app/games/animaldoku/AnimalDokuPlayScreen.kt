@@ -33,6 +33,7 @@ import com.quietgrid.app.ui.components.EndPuzzleDialog
 import com.quietgrid.app.ui.components.EndPuzzleIconButton
 import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
+import com.quietgrid.app.ui.components.rememberHapticController
 
 @Composable
 fun AnimalDokuPlayScreen(
@@ -49,6 +50,13 @@ fun AnimalDokuPlayScreen(
 
     var showEndDialog by remember { mutableStateOf(false) }
     val session = viewModel.session
+    val haptics = rememberHapticController()
+    LaunchedEffect(viewModel.lastOpenEvent) {
+        val event = viewModel.lastOpenEvent
+        if (event != null) {
+            if (event.wasCorrect) haptics.correctFeedback() else haptics.incorrectFeedback()
+        }
+    }
 
     Column(Modifier.fillMaxSize().padding(16.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {

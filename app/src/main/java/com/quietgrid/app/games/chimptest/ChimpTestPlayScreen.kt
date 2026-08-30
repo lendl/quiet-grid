@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,6 +24,7 @@ import com.quietgrid.app.ui.components.EndPuzzleDialog
 import com.quietgrid.app.ui.components.EndPuzzleIconButton
 import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
+import com.quietgrid.app.ui.components.rememberHapticController
 
 @Composable
 fun ChimpTestPlayScreen(
@@ -40,6 +42,10 @@ fun ChimpTestPlayScreen(
     var showEndDialog by remember { mutableStateOf(false) }
 
     val session = viewModel.session
+    val haptics = rememberHapticController()
+    LaunchedEffect(viewModel.correctTapTrigger) {
+        if (viewModel.correctTapTrigger > 0) haptics.correctFeedback()
+    }
     Column(Modifier.fillMaxSize().padding(16.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             GameBackButton(onBack)

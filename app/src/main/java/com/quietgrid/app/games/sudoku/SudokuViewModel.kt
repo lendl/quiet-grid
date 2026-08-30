@@ -35,6 +35,8 @@ private val json = Json { ignoreUnknownKeys = true }
 private const val VALIDATION_DELAY_MS = 800L
 private const val MAX_UNDO_HISTORY = 50
 
+data class SudokuFeedbackEvent(val id: Int, val correct: Boolean, val incorrect: Boolean)
+
 data class SudokuResult(
     val difficulty: Difficulty,
     val solved: Boolean,
@@ -147,6 +149,8 @@ class SudokuPlayViewModel @AssistedInject constructor(
         private set
     var feedbackIncorrectBoxes by mutableStateOf<Set<Int>>(emptySet())
         private set
+    var feedbackEvent by mutableStateOf<SudokuFeedbackEvent?>(null)
+        private set
     var nextMoveHint by mutableStateOf<SudokuNextMoveHint?>(null)
         private set
     var nextMoveHintActive by mutableStateOf(false)
@@ -162,6 +166,7 @@ class SudokuPlayViewModel @AssistedInject constructor(
     private var pendingUnitKeys = mutableSetOf<SudokuUnitKey>()
     private var pendingBoard: SudokuGrid? = null
     private var validationJob: kotlinx.coroutines.Job? = null
+    private var feedbackEventSeq = 0
     private val undoHistory = mutableListOf<SudokuSession>()
 
     init {
@@ -293,6 +298,12 @@ class SudokuPlayViewModel @AssistedInject constructor(
         feedbackIncorrectRows = result.effect.incorrectRowIndexes.toSet()
         feedbackIncorrectCols = result.effect.incorrectColIndexes.toSet()
         feedbackIncorrectBoxes = result.effect.incorrectBoxIndexes.toSet()
+        val correct = feedbackCorrectRows.isNotEmpty() || feedbackCorrectCols.isNotEmpty() || feedbackCorrectBoxes.isNotEmpty()
+        val incorrect = feedbackIncorrectRows.isNotEmpty() || feedbackIncorrectCols.isNotEmpty() || feedbackIncorrectBoxes.isNotEmpty()
+        if (correct || incorrect) {
+            feedbackEventSeq++
+            feedbackEvent = SudokuFeedbackEvent(feedbackEventSeq, correct, incorrect)
+        }
         if (feedbackCorrectRows.isNotEmpty() || feedbackCorrectCols.isNotEmpty() || feedbackCorrectBoxes.isNotEmpty() ||
             feedbackIncorrectRows.isNotEmpty() || feedbackIncorrectCols.isNotEmpty() || feedbackIncorrectBoxes.isNotEmpty()
         ) {

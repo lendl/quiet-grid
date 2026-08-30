@@ -36,6 +36,7 @@ import com.quietgrid.app.ui.components.EndPuzzleIconButton
 import com.quietgrid.app.ui.components.FeedbackText
 import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
+import com.quietgrid.app.ui.components.rememberHapticController
 import com.quietgrid.engine.wordguess.foldWordGuessKeyboardState
 import kotlinx.coroutines.delay
 
@@ -53,6 +54,17 @@ fun WordGuessChallengerPlayScreen(
     var currentInput by remember { mutableStateOf("") }
     var invalidFlash by remember { mutableStateOf(false) }
     val session = viewModel.session
+
+    val haptics = rememberHapticController()
+    LaunchedEffect(viewModel.wrongGuessTrigger) {
+        if (viewModel.wrongGuessTrigger > 0) haptics.incorrectFeedback()
+    }
+    LaunchedEffect(viewModel.puzzleWonTrigger) {
+        if (viewModel.puzzleWonTrigger > 0) haptics.correctFeedback()
+    }
+    LaunchedEffect(viewModel.puzzleLostTrigger) {
+        if (viewModel.puzzleLostTrigger > 0) haptics.incorrectFeedback()
+    }
 
     LaunchedEffect(invalidFlash) {
         if (invalidFlash) {
@@ -163,7 +175,7 @@ fun WordGuessChallengerPlayScreen(
                 onBackspace = { currentInput = currentInput.dropLast(1) },
                 onEnter = {
                     if (currentInput.length == session.puzzleSession.wordLength) {
-                        viewModel.onSubmitGuess(currentInput) { invalidFlash = true }
+                        viewModel.onSubmitGuess(currentInput) { invalidFlash = true; haptics.incorrectFeedback() }
                     }
                 },
             )

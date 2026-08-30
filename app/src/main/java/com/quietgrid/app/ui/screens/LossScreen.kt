@@ -47,6 +47,7 @@ import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
 import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
 import com.quietgrid.app.games.wordguess.wordGuessDifficultyLabelRes
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
+import com.quietgrid.app.ui.components.rememberHapticController
 
 @Composable
 fun LossScreen(
@@ -59,6 +60,8 @@ fun LossScreen(
     onTryAnotherGame: () -> Unit,
     onWalkThroughSolve: () -> Unit,
 ) {
+    val haptics = rememberHapticController()
+    LaunchedEffect(Unit) { if (reason != "abandoned") haptics.incorrectFeedback() }
     val eyebrowRes: Int
     val titleRes: Int
     val bodyRes: Int

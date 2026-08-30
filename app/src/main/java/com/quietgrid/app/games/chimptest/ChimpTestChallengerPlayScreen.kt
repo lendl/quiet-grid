@@ -35,6 +35,7 @@ import com.quietgrid.app.ui.components.EndPuzzleDialog
 import com.quietgrid.app.ui.components.EndPuzzleIconButton
 import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
+import com.quietgrid.app.ui.components.rememberHapticController
 
 @Composable
 fun ChimpTestChallengerPlayScreen(
@@ -48,6 +49,13 @@ fun ChimpTestChallengerPlayScreen(
 
     var showEndDialog by remember { mutableStateOf(false) }
     val session = viewModel.session
+    val haptics = rememberHapticController()
+    LaunchedEffect(viewModel.correctTapTrigger) {
+        if (viewModel.correctTapTrigger > 0) haptics.correctFeedback()
+    }
+    LaunchedEffect(viewModel.wrongTapTrigger) {
+        if (viewModel.wrongTapTrigger > 0) haptics.incorrectFeedback()
+    }
 
     Column(Modifier.fillMaxSize().padding(16.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {

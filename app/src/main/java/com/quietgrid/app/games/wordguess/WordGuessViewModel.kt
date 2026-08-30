@@ -1,6 +1,9 @@
 package com.quietgrid.app.games.wordguess
 
 import android.content.Context
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
@@ -134,6 +137,9 @@ class WordGuessPlayViewModel @AssistedInject constructor(
     val elapsedSeconds get() = controller.elapsedSeconds
     val result = controller.result
 
+    var wrongGuessTrigger by mutableStateOf(0)
+        private set
+
     private val appCtx = appContext
     private var dictionary: Set<String> = emptySet()
 
@@ -159,7 +165,10 @@ class WordGuessPlayViewModel @AssistedInject constructor(
                             controller.updateSession(outcome.session, persist = false)
                             controller.finishAsLoss("rule-failure")
                         }
-                        WordGuessStatus.PLAYING -> controller.updateSession(outcome.session)
+                        WordGuessStatus.PLAYING -> {
+                            wrongGuessTrigger++
+                            controller.updateSession(outcome.session)
+                        }
                     }
                 }
             }

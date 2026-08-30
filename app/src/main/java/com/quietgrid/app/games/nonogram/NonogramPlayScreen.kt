@@ -35,6 +35,7 @@ import com.quietgrid.app.ui.components.EndPuzzleDialog
 import com.quietgrid.app.ui.components.EndPuzzleIconButton
 import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
+import com.quietgrid.app.ui.components.rememberHapticController
 
 @Composable
 fun NonogramPlayScreen(
@@ -51,6 +52,7 @@ fun NonogramPlayScreen(
 
     var showEndDialog by remember { mutableStateOf(false) }
     val session = viewModel.session
+    val haptics = rememberHapticController()
 
     Column(Modifier.fillMaxSize().padding(16.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -99,8 +101,8 @@ fun NonogramPlayScreen(
                     NonogramBoard(
                         puzzle = session.puzzle,
                         board = session.board,
-                        onTap = viewModel::onCellTap,
-                        onDragPaint = viewModel::onDragPaint,
+                        onTap = { row, col -> haptics.tapFeedback(); viewModel.onCellTap(row, col) },
+                        onDragPaint = { cells -> haptics.tapFeedback(); viewModel.onDragPaint(cells) },
                         hintEvidenceCells = hint?.evidenceCells?.toSet() ?: emptySet(),
                         hintTargetCells = hint?.targetCells?.associate { (r, c, v) -> (r to c) to v } ?: emptyMap(),
                     )

@@ -1,5 +1,8 @@
 package com.quietgrid.app.games.chimptest
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
@@ -98,6 +101,9 @@ class ChimpTestPlayViewModel @AssistedInject constructor(
     val elapsedSeconds get() = controller.elapsedSeconds
     val result = controller.result
 
+    var correctTapTrigger by mutableStateOf(0)
+        private set
+
     init {
         controller.start(requestedDifficulty, resume)
     }
@@ -124,6 +130,7 @@ class ChimpTestPlayViewModel @AssistedInject constructor(
             return
         }
 
+        correctTapTrigger++
         controller.updateSession(outcome.session)
     }
 

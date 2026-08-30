@@ -49,6 +49,8 @@ data class WordSearchResult(
     val themeId: String = "",
 )
 
+data class WSSelectionEvent(val id: Int, val wasCorrect: Boolean)
+
 private class WordSearchPuzzleAdapter(
     private val appContext: Context,
     private val settingsRepository: SettingsRepository,
@@ -153,11 +155,16 @@ class WordSearchPlayViewModel @AssistedInject constructor(
         private set
     var wrongHiddenWordTap by mutableStateOf(false)
         private set
+    var wrongHiddenWordTapTrigger by mutableStateOf(0)
+        private set
     var wrongSelectionCells by mutableStateOf<List<WSCellRef>>(emptyList())
+        private set
+    var selectionEvent by mutableStateOf<WSSelectionEvent?>(null)
         private set
 
     internal var hintDispatcher: CoroutineDispatcher = Dispatchers.Default
     private var hintJob: Job? = null
+    private var selectionEventSeq = 0
 
     init {
         controller.start(requestedDifficulty, resume)
@@ -175,10 +182,13 @@ class WordSearchPlayViewModel @AssistedInject constructor(
         if (current.hiddenWordMode) return
         val path = current.tempSelection?.path.orEmpty()
         val updated = wsCommitSelection(current) ?: return
-        if (updated.foundWordIds.size == current.foundWordIds.size) {
+        val wasCorrect = updated.foundWordIds.size > current.foundWordIds.size
+        if (!wasCorrect) {
             wrongSelectionCells = path
             viewModelScope.launch { delay(300); wrongSelectionCells = emptyList() }
         }
+        selectionEventSeq++
+        selectionEvent = WSSelectionEvent(selectionEventSeq, wasCorrect)
         controller.updateSession(updated)
     }
 
@@ -204,6 +214,8 @@ class WordSearchPlayViewModel @AssistedInject constructor(
         if (updated != null) {
             controller.updateSession(updated, persist = false)
             val matched = wsMatchSelection(updated) ?: return
+            selectionEventSeq++
+            selectionEvent = WSSelectionEvent(selectionEventSeq, wasCorrect = true)
             controller.updateSession(matched)
         } else {
             val started = wsBeginSelection(current, cell) ?: return
@@ -236,6 +248,7 @@ class WordSearchPlayViewModel @AssistedInject constructor(
         val updated = wsInputHiddenWordCell(current, WSCellRef(row, col))
         if (updated == null || updated.hiddenWordProgress.size < current.hiddenWordProgress.size) {
             wrongHiddenWordTap = true
+            wrongHiddenWordTapTrigger++
             viewModelScope.launch { delay(500); wrongHiddenWordTap = false }
         }
         if (updated == null) return

@@ -34,6 +34,7 @@ import com.quietgrid.app.ui.components.EndPuzzleDialog
 import com.quietgrid.app.ui.components.EndPuzzleIconButton
 import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
+import com.quietgrid.app.ui.components.rememberHapticController
 
 @Composable
 fun MinesweeperPlayScreen(
@@ -50,6 +51,7 @@ fun MinesweeperPlayScreen(
 
     var showEndDialog by remember { mutableStateOf(false) }
     val session = viewModel.session
+    val haptics = rememberHapticController()
 
     Column(Modifier.fillMaxSize().padding(16.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -104,8 +106,8 @@ fun MinesweeperPlayScreen(
                 Box(Modifier.fillMaxSize().padding(8.dp)) {
                     MinesweeperGrid(
                         board = session.board,
-                        onReveal = viewModel::onReveal,
-                        onToggleFlag = viewModel::onToggleFlag,
+                        onReveal = { row, col -> haptics.tapFeedback(); viewModel.onReveal(row, col) },
+                        onToggleFlag = { row, col -> haptics.tapFeedback(); viewModel.onToggleFlag(row, col) },
                         hintEvidenceCells = hint?.evidenceCells?.toSet() ?: emptySet(),
                         hintTargetCells = hint?.targetCells?.toSet() ?: emptySet(),
                     )

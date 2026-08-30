@@ -40,6 +40,7 @@ import com.quietgrid.app.ui.components.EndPuzzleDialog
 import com.quietgrid.app.ui.components.EndPuzzleIconButton
 import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
+import com.quietgrid.app.ui.components.rememberHapticController
 import kotlin.math.roundToInt
 
 private val FLOATING_PIECE_LIFT = 72.dp
@@ -59,6 +60,7 @@ fun BlockFillPlayScreen(
 
     var showEndDialog by remember { mutableStateOf(false) }
     val session = viewModel.session
+    val haptics = rememberHapticController()
 
     var boardCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
     var pieceCoordinates by remember { mutableStateOf(mapOf<Int, LayoutCoordinates>()) }
@@ -180,7 +182,8 @@ fun BlockFillPlayScreen(
                         val anchor = currentDragPreview.value?.anchor
                         when {
                             pieceIndex != null && anchor != null -> {
-                                viewModel.onPlacePiece(pieceIndex, anchor.row, anchor.col)
+                                val placed = viewModel.onPlacePiece(pieceIndex, anchor.row, anchor.col)
+                                if (placed) haptics.correctFeedback() else haptics.incorrectFeedback()
                                 draggingPieceIndex = null
                             }
                             pieceIndex != null -> rejectedDropTrigger++

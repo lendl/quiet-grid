@@ -117,9 +117,9 @@ class BlockFillPlayViewModel @AssistedInject constructor(
         controller.start(requestedDifficulty, resume)
     }
 
-    fun onPlacePiece(pieceIndex: Int, anchorRow: Int, anchorCol: Int) {
-        val current = session ?: return
-        val next = applyBlockFillPlacement(current, pieceIndex, anchorRow, anchorCol) ?: return
+    fun onPlacePiece(pieceIndex: Int, anchorRow: Int, anchorCol: Int): Boolean {
+        val current = session ?: return false
+        val next = applyBlockFillPlacement(current, pieceIndex, anchorRow, anchorCol) ?: return false
         when (next.status) {
             BlockFillStatus.WON -> {
                 controller.updateSession(next, persist = false)
@@ -131,6 +131,7 @@ class BlockFillPlayViewModel @AssistedInject constructor(
             }
             BlockFillStatus.PLAYING -> controller.updateSession(next)
         }
+        return true
     }
 
     fun endPuzzle() = controller.endPuzzle()

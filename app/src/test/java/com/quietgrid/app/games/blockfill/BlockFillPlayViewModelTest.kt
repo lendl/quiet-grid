@@ -38,6 +38,28 @@ class BlockFillPlayViewModelTest {
     }
 
     @Test
+    fun `placing a piece at an out-of-range tray index returns false`() {
+        val viewModel = BlockFillPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
+
+        val accepted = viewModel.onPlacePiece(pieceIndex = 99, anchorRow = 0, anchorCol = 0)
+
+        assertEquals(false, accepted)
+    }
+
+    @Test
+    fun `placing a piece at a valid placement returns true`() {
+        val viewModel = BlockFillPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
+        val session = viewModel.session!!
+        val (pieceIndex, anchor) = session.tray.withIndex().firstNotNullOf { (index, piece) ->
+            piece?.let { p -> findValidPlacements(session.board, p.cells).firstOrNull()?.let { index to it } }
+        }
+
+        val accepted = viewModel.onPlacePiece(pieceIndex, anchor.first, anchor.second)
+
+        assertEquals(true, accepted)
+    }
+
+    @Test
     fun `endPuzzle clears the session store and emits an abandoned loss`() {
         val sessionStore = FakeSessionStore()
         val viewModel = BlockFillPlayViewModel(sessionStore, FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)

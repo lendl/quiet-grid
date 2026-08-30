@@ -61,6 +61,7 @@ import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
 import com.quietgrid.app.games.wordguess.wordGuessDifficultyLabelRes
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
 import com.quietgrid.app.ui.components.ConfettiBurst
+import com.quietgrid.app.ui.components.rememberHapticController
 import kotlinx.coroutines.delay
 import java.time.LocalDate
 import kotlin.math.roundToInt
@@ -86,6 +87,8 @@ fun CompletionScreen(
     onOtherDifficulty: () -> Unit,
     onTryAnotherGame: () -> Unit,
 ) {
+    val haptics = rememberHapticController()
+    LaunchedEffect(Unit) { haptics.correctFeedback() }
     val eyebrowRes: Int
     val titleRes: Int
     val bodyRes: Int

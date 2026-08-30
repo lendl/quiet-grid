@@ -34,6 +34,14 @@ class WordGuessChallengerViewModel @Inject constructor(
     var session by mutableStateOf<WordGuessChallengerSession?>(null)
         private set
 
+    var wrongGuessTrigger by mutableStateOf(0)
+        private set
+
+    var puzzleWonTrigger by mutableStateOf(0)
+        private set
+    var puzzleLostTrigger by mutableStateOf(0)
+        private set
+
     private var dictionary: Set<String> = emptySet()
     private var finalized = false
     private var locale: String = "en"
@@ -61,12 +69,16 @@ class WordGuessChallengerViewModel @Inject constructor(
             is WordGuessSubmitResult.Updated -> when (outcome.session.status) {
                 WordGuessStatus.WON -> onWon(current.copy(puzzleSession = outcome.session))
                 WordGuessStatus.LOST -> onLost(current.copy(puzzleSession = outcome.session))
-                WordGuessStatus.PLAYING -> session = current.copy(puzzleSession = outcome.session)
+                WordGuessStatus.PLAYING -> {
+                    wrongGuessTrigger++
+                    session = current.copy(puzzleSession = outcome.session)
+                }
             }
         }
     }
 
     private fun onWon(withGuess: WordGuessChallengerSession) {
+        puzzleWonTrigger++
         session = withGuess
         val (nextTier, nextSolvesInTier) = wordGuessChallengerTierAfterSolve(withGuess.tier, withGuess.solvesInTier)
         viewModelScope.launch {
@@ -83,6 +95,7 @@ class WordGuessChallengerViewModel @Inject constructor(
     }
 
     private fun onLost(withGuess: WordGuessChallengerSession) {
+        puzzleLostTrigger++
         session = withGuess
         val remainingLives = withGuess.livesRemaining - 1
         val afterLoss = withGuess.copy(livesRemaining = remainingLives)
