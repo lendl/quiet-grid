@@ -17,15 +17,16 @@ No ads. No account. No internet required. Everything stays on your device.
 
 | Game | Status |
 | --- | --- |
-| Chimp Test | Available |
-| Takuzu | Available |
-| Nonogram | Available |
-| Minesweeper | Available |
-| Sudoku | Available |
-| Word Search | Available |
-| Block Fill | Beta |
-| Word Guess | Available |
 | Animal Doku | Available |
+| Chimp Test | Available |
+| Minesweeper | Available |
+| Nonogram | Available |
+| Sudoku | Available |
+| Takuzu | Available |
+| Word Search | Available |
+| Word Guess | Available |
+| Arrow Escape | Beta |
+| Block Fill | Beta |
 
 Each puzzle type has Easy, Medium, Hard, and Expert difficulty levels.
 
