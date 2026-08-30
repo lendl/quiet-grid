@@ -30,6 +30,8 @@ import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.games.animaldoku.AnimalDokuChallengerPlayScreen
 import com.quietgrid.app.games.animaldoku.AnimalDokuChallengerResultScreen
 import com.quietgrid.app.games.animaldoku.AnimalDokuPlayScreen
+import com.quietgrid.app.games.chimptest.ChimpTestChallengerPlayScreen
+import com.quietgrid.app.games.chimptest.ChimpTestChallengerResultScreen
 import com.quietgrid.app.games.arrowescape.ArrowEscapePlayScreen
 import com.quietgrid.app.games.blockfill.BlockFillPlayScreen
 import com.quietgrid.app.games.chimptest.ChimpTestPlayScreen
@@ -422,6 +424,13 @@ fun AppNavHost() {
                             ) { popUpTo(Routes.TABS) { inclusive = false } }
                         },
                     )
+                    GameId.CHIMPTEST -> ChimpTestChallengerPlayScreen(
+                        onFinished = { result ->
+                            navController.navigate(
+                                Routes.challengerResult(challengerGameId, result.puzzlesSolved, result.tierReached, result.score, result.isNewHighScore, result.reason),
+                            ) { popUpTo(Routes.TABS) { inclusive = false } }
+                        },
+                    )
                     else -> Unit
                 }
             }
@@ -463,6 +472,27 @@ fun AppNavHost() {
                         },
                     )
                     GameId.WORDGUESS -> WordGuessChallengerResultScreen(
+                        puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
+                        tierReached = Difficulty.fromKey(entry.arguments?.getString("tier") ?: "easy"),
+                        score = entry.arguments?.getInt("score") ?: 0,
+                        isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
+                        reason = entry.arguments?.getString("reason") ?: "time_up",
+                        onPlayAgain = {
+                            navController.navigate(Routes.challenger(resultGameId)) {
+                                popUpTo(Routes.TABS) { inclusive = false }
+                            }
+                        },
+                        onBackToPuzzles = {
+                            navController.navigate(Routes.picker(resultGameId)) {
+                                popUpTo(Routes.TABS) { inclusive = false }
+                            }
+                        },
+                        onTryAnotherGame = {
+                            selectedTab = AppTab.GAMES
+                            navController.popBackStack(Routes.TABS, inclusive = false)
+                        },
+                    )
+                    GameId.CHIMPTEST -> ChimpTestChallengerResultScreen(
                         puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
                         tierReached = Difficulty.fromKey(entry.arguments?.getString("tier") ?: "easy"),
                         score = entry.arguments?.getInt("score") ?: 0,

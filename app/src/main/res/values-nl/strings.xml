@@ -708,6 +708,25 @@
     <string name="wordguess_challenger_try_another_game">Ander spel proberen</string>
     <string name="wordguess_challenger_stats_title">Challenger</string>
     <string name="wordguess_challenger_stats_best_run">Beste ronde</string>
+    <string name="chimp_challenger_label">Challenger</string>
+    <string name="chimp_challenger_description">Onthoud en tik zoveel mogelijk reeksen voordat de tijd om is.</string>
+    <string name="chimp_challenger_solved_label">Opgelost</string>
+    <string name="chimp_challenger_tier_label">Niveau</string>
+    <string name="chimp_challenger_result_time_up_title">Tijd om!</string>
+    <string name="chimp_challenger_result_time_up_body">De tijd is om. Zo verliep je ronde.</string>
+    <string name="chimp_challenger_result_lives_exhausted_title">Geen hartjes meer!</string>
+    <string name="chimp_challenger_result_lives_exhausted_body">Drie foute tikken beëindigden je ronde.</string>
+    <string name="chimp_challenger_result_abandoned_title">Ronde beëindigd</string>
+    <string name="chimp_challenger_result_abandoned_body">Je hebt de ronde vroegtijdig gestopt.</string>
+    <string name="chimp_challenger_result_new_high_score">Nieuwe topscore!</string>
+    <string name="chimp_challenger_result_puzzles_solved">Puzzels opgelost</string>
+    <string name="chimp_challenger_result_tier_reached">Bereikt niveau</string>
+    <string name="chimp_challenger_result_score">Score</string>
+    <string name="chimp_challenger_play_again">Opnieuw spelen</string>
+    <string name="chimp_challenger_back_to_puzzles">Terug naar puzzels</string>
+    <string name="chimp_challenger_try_another_game">Ander spel proberen</string>
+    <string name="chimp_challenger_stats_title">Challenger</string>
+    <string name="chimp_challenger_stats_best_run">Beste ronde</string>
 
     <string name="arrowescape_title">Pijlenvlucht</string>
     <string name="arrowescape_tagline">Maak het bord leeg, één pijl per keer.</string>

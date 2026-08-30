@@ -266,11 +266,13 @@ private fun GamePlayPickerTab(
             val challengerLabelRes = when (gameId) {
                 GameId.ANIMALDOKU -> R.string.animaldoku_challenger_label
                 GameId.WORDGUESS -> R.string.wordguess_challenger_label
+                GameId.CHIMPTEST -> R.string.chimp_challenger_label
                 else -> null
             }
             val challengerDescriptionRes = when (gameId) {
                 GameId.ANIMALDOKU -> R.string.animaldoku_challenger_description
                 GameId.WORDGUESS -> R.string.wordguess_challenger_description
+                GameId.CHIMPTEST -> R.string.chimp_challenger_description
                 else -> null
             }
             if (challengerLabelRes != null && challengerDescriptionRes != null) {
@@ -316,21 +318,25 @@ private fun GameStatsTab(gameId: GameId) {
         val challengerStatsTitleRes = when (gameId) {
             GameId.ANIMALDOKU -> R.string.animaldoku_challenger_stats_title
             GameId.WORDGUESS -> R.string.wordguess_challenger_stats_title
+            GameId.CHIMPTEST -> R.string.chimp_challenger_stats_title
             else -> null
         }
         val challengerStatsBestRunRes = when (gameId) {
             GameId.ANIMALDOKU -> R.string.animaldoku_challenger_stats_best_run
             GameId.WORDGUESS -> R.string.wordguess_challenger_stats_best_run
+            GameId.CHIMPTEST -> R.string.chimp_challenger_stats_best_run
             else -> null
         }
         val challengerSolvedLabelRes = when (gameId) {
             GameId.ANIMALDOKU -> R.string.animaldoku_challenger_result_puzzles_solved
             GameId.WORDGUESS -> R.string.wordguess_challenger_result_puzzles_solved
+            GameId.CHIMPTEST -> R.string.chimp_challenger_result_puzzles_solved
             else -> null
         }
         val challengerScoreLabelRes = when (gameId) {
             GameId.ANIMALDOKU -> R.string.animaldoku_challenger_result_score
             GameId.WORDGUESS -> R.string.wordguess_challenger_result_score
+            GameId.CHIMPTEST -> R.string.chimp_challenger_result_score
             else -> null
         }
         if (challengerStatsTitleRes != null && challengerStatsBestRunRes != null && challengerSolvedLabelRes != null && challengerScoreLabelRes != null) {
