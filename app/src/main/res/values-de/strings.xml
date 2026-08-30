@@ -643,7 +643,7 @@
     <string name="wordguess_loss_rule_failure_body">Du hast alle sechs Versuche verbraucht, ohne das Wort zu finden.</string>
 
     <!-- AnimalDoku -->
-    <string name="animaldoku_title">AnimalDoku</string>
+    <string name="animaldoku_title">Animal Doku</string>
     <string name="animaldoku_tagline">Platziere ein Tier pro Zeile, Spalte und farbiger Region.</string>
     <string name="animaldoku_difficulty_easy">Leicht</string>
     <string name="animaldoku_difficulty_medium">Mittel</string>

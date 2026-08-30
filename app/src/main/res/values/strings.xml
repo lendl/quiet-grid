@@ -655,7 +655,7 @@
     <string name="wordguess_loss_rule_failure_body">You used all six guesses without finding the word.</string>
 
     <!-- AnimalDoku -->
-    <string name="animaldoku_title">AnimalDoku</string>
+    <string name="animaldoku_title">Animal Doku</string>
     <string name="animaldoku_tagline">Place one animal per row, column, and colored region.</string>
     <string name="animaldoku_difficulty_easy">Easy</string>
     <string name="animaldoku_difficulty_medium">Medium</string>

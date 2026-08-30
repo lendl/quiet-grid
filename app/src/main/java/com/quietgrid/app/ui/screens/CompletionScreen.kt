@@ -31,7 +31,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -86,7 +85,6 @@ fun CompletionScreen(
     onPlayAgain: () -> Unit,
     onOtherDifficulty: () -> Unit,
     onTryAnotherGame: () -> Unit,
-    onWalkThroughSolve: () -> Unit,
 ) {
     val eyebrowRes: Int
     val titleRes: Int
@@ -131,7 +129,6 @@ fun CompletionScreen(
     val highlight = remember { CompletionExtras.consume() }
     val picture = (highlight as? CompletionHighlight.Picture)?.solution?.takeIf { it.isNotEmpty() }
     val themeIcon = (highlight as? CompletionHighlight.ThemeIcon)?.icon
-    val analyzerSnapshot = rememberSaveable { mutableStateOf(AnalyzerHandoff.consume()) }.value
 
     val repositories: RepositoriesViewModel = hiltViewModel()
     val stats by repositories.statsRepository.statsFor(gameId).collectAsState(initial = null)
@@ -337,18 +334,6 @@ fun CompletionScreen(
 
                     Button(onClick = onPlayAgain, modifier = Modifier.fillMaxWidth().padding(top = 24.dp)) {
                         Text(stringResource(R.string.completion_play_again))
-                    }
-
-                    if (analyzerSnapshot != null) {
-                        TextButton(
-                            onClick = {
-                                AnalyzerHandoff.set(analyzerSnapshot)
-                                onWalkThroughSolve()
-                            },
-                            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                        ) {
-                            Text(stringResource(R.string.walk_through_solve))
-                        }
                     }
 
                     Row(

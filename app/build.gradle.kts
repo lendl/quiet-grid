@@ -18,8 +18,8 @@ android {
         applicationId = "com.quietgrid.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 26
-        versionName = "1.2.9"
+        versionCode = 27
+        versionName = "1.2.10"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

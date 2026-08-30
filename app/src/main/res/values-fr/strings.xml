@@ -643,7 +643,7 @@
     <string name="wordguess_loss_rule_failure_body">Tu as utilisé tes six essais sans trouver le mot.</string>
 
     <!-- AnimalDoku -->
-    <string name="animaldoku_title">AnimalDoku</string>
+    <string name="animaldoku_title">Animal Doku</string>
     <string name="animaldoku_tagline">Place un animal par ligne, colonne et région colorée.</string>
     <string name="animaldoku_difficulty_easy">Facile</string>
     <string name="animaldoku_difficulty_medium">Moyen</string>

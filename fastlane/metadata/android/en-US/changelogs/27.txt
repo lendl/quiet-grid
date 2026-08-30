@@ -1,0 +1,4 @@
+Version 1.2.10
+
+- Nonogram is out of beta: puzzle generation and quality checks improved
+- Bug fixes and stability improvements

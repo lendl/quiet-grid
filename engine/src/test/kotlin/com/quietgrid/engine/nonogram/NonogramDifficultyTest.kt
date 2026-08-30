@@ -65,6 +65,7 @@ class NonogramDifficultyTest {
         repeats: Int,
         opening: NonogramLineTier = tier,
         crossAxisUnlocks: Int = 10,
+        freebieLineRatio: Double = 0.0,
     ) = NonogramDifficultyMetrics(
         steps = repeats,
         filledCells = 0,
@@ -77,6 +78,7 @@ class NonogramDifficultyTest {
         hardestTierRepeats = repeats,
         openingLineTier = opening,
         freebieFillRatio = 0.0,
+        freebieLineRatio = freebieLineRatio,
     )
 
     @Test

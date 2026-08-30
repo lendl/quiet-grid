@@ -643,7 +643,7 @@
     <string name="wordguess_loss_rule_failure_body">Je hebt al je zes pogingen gebruikt zonder het woord te vinden.</string>
 
     <!-- AnimalDoku -->
-    <string name="animaldoku_title">AnimalDoku</string>
+    <string name="animaldoku_title">Animal Doku</string>
     <string name="animaldoku_tagline">Plaats één dier per rij, kolom en gekleurde regio.</string>
     <string name="animaldoku_difficulty_easy">Makkelijk</string>
     <string name="animaldoku_difficulty_medium">Gemiddeld</string>

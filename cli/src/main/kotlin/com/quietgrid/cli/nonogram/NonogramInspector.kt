@@ -11,6 +11,30 @@ import java.io.File
 private fun renderSolution(entry: NonogramPuzzleEntry): String =
     entry.solution.joinToString("\n") { row -> row.joinToString("") { if (it) "#" else "." } }
 
+fun analyzeFreebieLineRatioDistribution(path: String) {
+    val file = File(path)
+    require(file.exists()) { "No such file: $path" }
+    val json = Json { ignoreUnknownKeys = true }
+    val entries: List<NonogramPuzzleEntry> =
+        json.decodeFromString(ListSerializer(NonogramPuzzleEntry.serializer()), file.readText())
+
+    val byDifficulty = entries.groupBy { it.difficulty }
+    for (difficulty in listOf("easy", "medium", "hard", "expert")) {
+        val bucket = byDifficulty[difficulty] ?: continue
+        val ratios = bucket.mapNotNull { entry ->
+            val rowClues = entry.solution.map { buildNonogramClues(it) }
+            val colClues = (0 until entry.cols).map { c -> buildNonogramClues(entry.solution.map { it[c] }) }
+            analyzeNonogramDifficulty(rowClues, colClues, entry.solution)?.freebieLineRatio
+        }.sorted()
+
+        if (ratios.isEmpty()) continue
+        val p50 = ratios[ratios.size / 2]
+        val p90 = ratios[(ratios.size * 9) / 10]
+        val worst = ratios.takeLast(5)
+        println("$difficulty (${ratios.size}): min=${"%.2f".format(ratios.first())} p50=${"%.2f".format(p50)} p90=${"%.2f".format(p90)} max=${"%.2f".format(ratios.last())} worst5=${worst.map { "%.2f".format(it) }}")
+    }
+}
+
 fun inspectNonogramExtremes(path: String) {
     val file = File(path)
     require(file.exists()) { "No such file: $path" }

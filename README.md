@@ -19,7 +19,7 @@ No ads. No account. No internet required. Everything stays on your device.
 | --- | --- |
 | Chimp Test | Available |
 | Takuzu | Available |
-| Nonogram | Beta |
+| Nonogram | Available |
 | Minesweeper | Available |
 | Sudoku | Available |
 | Word Search | Available |

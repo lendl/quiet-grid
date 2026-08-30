@@ -68,6 +68,16 @@ fun main(args: Array<String>) {
         return
     }
 
+    if (args.getOrNull(0) == "freebie-lines") {
+        val game = requireFlag(args, "--game")
+        val path = optionalFlag(args, "--path", "app/src/main/assets/${game}_puzzles.json")
+        when (game) {
+            "nonogram" -> com.quietgrid.cli.nonogram.analyzeFreebieLineRatioDistribution(path)
+            else -> error("Not implemented for game '$game'")
+        }
+        return
+    }
+
     if (args.getOrNull(0) == "purge") {
         val game = requireFlag(args, "--game")
         val path = optionalFlag(args, "--path", "app/src/main/assets/${game}_puzzles.json")

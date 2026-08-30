@@ -358,9 +358,6 @@ fun AppNavHost() {
                         selectedTab = AppTab.GAMES
                         navController.popBackStack(Routes.TABS, inclusive = false)
                     },
-                    onWalkThroughSolve = {
-                        navController.navigate(Routes.analyzer(completionGameId))
-                    },
                 )
             }
 

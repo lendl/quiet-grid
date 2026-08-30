@@ -4,7 +4,7 @@
 <ul>
 <li><b>Chimp Test</b> — Tap the numbers in order before they disappear.</li>
 <li><b>Takuzu</b> — Fill a grid with 0s and 1s: each row and column must have equal counts, no three in a row, and no two rows or columns may be identical.</li>
-<li><b>Nonogram</b> (Beta) — Deduce which cells to fill based on number clues along rows and columns.</li>
+<li><b>Nonogram</b> — Deduce which cells to fill based on number clues along rows and columns.</li>
 <li><b>Minesweeper</b> — Classic grid puzzle. Uncover all safe cells without triggering a mine.</li>
 <li><b>Sudoku</b> — Place digits 1–9 so every row, column, and 3×3 box contains each digit exactly once.</li>
 <li><b>Word Search</b> — Find hidden words in a grid of letters.</li>

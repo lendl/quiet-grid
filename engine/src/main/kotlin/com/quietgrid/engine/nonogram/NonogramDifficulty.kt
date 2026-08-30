@@ -49,6 +49,7 @@ data class NonogramDifficultyMetrics(
     val hardestTierRepeats: Int,
     val openingLineTier: NonogramLineTier,
     val freebieFillRatio: Double,
+    val freebieLineRatio: Double,
 )
 
 private data class CanonicalStep(
@@ -213,6 +214,8 @@ fun analyzeNonogramDifficulty(rowClues: List<List<Int>>, colClues: List<List<Int
     val hardestTierRepeats = tierPerStep.count { it == hardestLineTier }
     val openingLineTier = tierPerStep.firstOrNull() ?: NonogramLineTier.FREEBIE
     val filledCells = solution.sumOf { row -> row.count { it } }
+    val totalLines = rowTiers.size + colTiers.size
+    val freebieLineCount = rowTiers.count { it == NonogramLineTier.FREEBIE } + colTiers.count { it == NonogramLineTier.FREEBIE }
 
     return NonogramDifficultyMetrics(
         steps = steps,
@@ -226,6 +229,7 @@ fun analyzeNonogramDifficulty(rowClues: List<List<Int>>, colClues: List<List<Int
         hardestTierRepeats = hardestTierRepeats,
         openingLineTier = openingLineTier,
         freebieFillRatio = if (filledCells > 0) freebieFilledCells.toDouble() / filledCells else 0.0,
+        freebieLineRatio = if (totalLines > 0) freebieLineCount.toDouble() / totalLines else 0.0,
     )
 }
 
@@ -244,6 +248,9 @@ private const val FREEBIE_EASY_CELL_CEILING = 50
 private const val FREEBIE_FILL_RATIO_CEILING_MEDIUM = 0.80
 private const val FREEBIE_FILL_RATIO_CEILING_HARD = 0.55
 private const val FREEBIE_FILL_RATIO_CEILING_EXPERT = 0.45
+private const val FREEBIE_LINE_RATIO_CEILING_MEDIUM = 0.60
+private const val FREEBIE_LINE_RATIO_CEILING_HARD = 0.45
+private const val FREEBIE_LINE_RATIO_CEILING_EXPERT = 0.35
 
 private fun openingTierCeilingFor(difficulty: Difficulty): NonogramLineTier? = when (difficulty) {
     Difficulty.EASY -> NonogramLineTier.FREEBIE
@@ -257,6 +264,13 @@ private fun freebieFillRatioCeilingFor(difficulty: Difficulty): Double? = when (
     Difficulty.MEDIUM -> FREEBIE_FILL_RATIO_CEILING_MEDIUM
     Difficulty.HARD -> FREEBIE_FILL_RATIO_CEILING_HARD
     Difficulty.EXPERT -> FREEBIE_FILL_RATIO_CEILING_EXPERT
+}
+
+private fun freebieLineRatioCeilingFor(difficulty: Difficulty): Double? = when (difficulty) {
+    Difficulty.EASY -> null
+    Difficulty.MEDIUM -> FREEBIE_LINE_RATIO_CEILING_MEDIUM
+    Difficulty.HARD -> FREEBIE_LINE_RATIO_CEILING_HARD
+    Difficulty.EXPERT -> FREEBIE_LINE_RATIO_CEILING_EXPERT
 }
 
 fun classifyNonogramDifficulty(rows: Int, cols: Int, metrics: NonogramDifficultyMetrics): Difficulty {
@@ -281,8 +295,11 @@ fun classifyNonogramDifficulty(rows: Int, cols: Int, metrics: NonogramDifficulty
     }
 
     while (difficulty.ordinal > 0) {
-        val ceiling = freebieFillRatioCeilingFor(difficulty) ?: break
-        if (metrics.freebieFillRatio <= ceiling) break
+        val fillCeiling = freebieFillRatioCeilingFor(difficulty)
+        val lineCeiling = freebieLineRatioCeilingFor(difficulty)
+        val fillOk = fillCeiling == null || metrics.freebieFillRatio <= fillCeiling
+        val lineOk = lineCeiling == null || metrics.freebieLineRatio <= lineCeiling
+        if (fillOk && lineOk) break
         difficulty = Difficulty.entries[difficulty.ordinal - 1]
     }
 
