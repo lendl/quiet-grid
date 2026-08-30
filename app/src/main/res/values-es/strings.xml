@@ -689,6 +689,25 @@
     <string name="animaldoku_challenger_try_another_game">Probar otro juego</string>
     <string name="animaldoku_challenger_stats_title">Challenger</string>
     <string name="animaldoku_challenger_stats_best_run">Mejor partida</string>
+    <string name="wordguess_challenger_label">Challenger</string>
+    <string name="wordguess_challenger_description">Adivina tantas palabras como puedas antes de que se acabe el tiempo.</string>
+    <string name="wordguess_challenger_solved_label">Resueltos</string>
+    <string name="wordguess_challenger_tier_label">Nivel</string>
+    <string name="wordguess_challenger_result_time_up_title">¡Se acabó el tiempo!</string>
+    <string name="wordguess_challenger_result_time_up_body">Se acabó el tiempo. Así fue tu partida.</string>
+    <string name="wordguess_challenger_result_lives_exhausted_title">¡Sin corazones!</string>
+    <string name="wordguess_challenger_result_lives_exhausted_body">Tres palabras falladas terminaron tu partida.</string>
+    <string name="wordguess_challenger_result_abandoned_title">Partida terminada</string>
+    <string name="wordguess_challenger_result_abandoned_body">Detuviste la partida antes de tiempo.</string>
+    <string name="wordguess_challenger_result_new_high_score">¡Nueva puntuación máxima!</string>
+    <string name="wordguess_challenger_result_puzzles_solved">Palabras resueltas</string>
+    <string name="wordguess_challenger_result_tier_reached">Nivel alcanzado</string>
+    <string name="wordguess_challenger_result_score">Puntuación</string>
+    <string name="wordguess_challenger_play_again">Jugar de nuevo</string>
+    <string name="wordguess_challenger_back_to_puzzles">Volver a los puzzles</string>
+    <string name="wordguess_challenger_try_another_game">Probar otro juego</string>
+    <string name="wordguess_challenger_stats_title">Challenger</string>
+    <string name="wordguess_challenger_stats_best_run">Mejor partida</string>
 
     <string name="arrowescape_title">Escape de Flechas</string>
     <string name="arrowescape_tagline">Despeja el tablero, una flecha a la vez.</string>

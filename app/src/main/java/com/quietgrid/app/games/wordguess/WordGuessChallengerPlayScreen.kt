@@ -1,9 +1,10 @@
-// app/src/main/java/com/quietgrid/app/games/animaldoku/AnimalDokuChallengerPlayScreen.kt
-package com.quietgrid.app.games.animaldoku
+package com.quietgrid.app.games.wordguess
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.keyframes
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,39 +35,39 @@ import com.quietgrid.app.ui.components.EndPuzzleDialog
 import com.quietgrid.app.ui.components.EndPuzzleIconButton
 import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
+import com.quietgrid.engine.wordguess.foldWordGuessKeyboardState
 
 @Composable
-fun AnimalDokuChallengerPlayScreen(
-    onFinished: (AnimalDokuChallengerResult) -> Unit,
+fun WordGuessChallengerPlayScreen(
+    onFinished: (WordGuessChallengerResult) -> Unit,
 ) {
-    val viewModel = hiltViewModel<AnimalDokuChallengerViewModel>()
+    val viewModel = hiltViewModel<WordGuessChallengerViewModel>()
 
     CollectPuzzleResult(viewModel.result, onFinished)
 
     BackHandler { viewModel.endRun() }
 
     var showEndDialog by remember { mutableStateOf(false) }
+    var currentInput by remember { mutableStateOf("") }
     val session = viewModel.session
+
+    LaunchedEffect(session?.puzzleSession?.puzzleId) {
+        currentInput = ""
+    }
 
     Column(Modifier.fillMaxSize().padding(16.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             GameBackButton(onBack = viewModel::endRun)
             Text(
-                stringResource(R.string.animaldoku_challenger_label),
+                stringResource(R.string.wordguess_challenger_label),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(start = 12.dp).weight(1f),
             )
             if (session != null) {
-                var wrongOpenTrigger by remember { mutableStateOf(0) }
-                LaunchedEffect(viewModel.lastOpenEvent) {
-                    val event = viewModel.lastOpenEvent
-                    if (event != null && !event.wasCorrect) wrongOpenTrigger++
-                }
                 Row(Modifier.padding(end = 8.dp)) {
-                    repeat(ANIMALDOKU_STARTING_LIVES) { index ->
+                    repeat(WORDGUESS_CHALLENGER_STARTING_LIVES) { index ->
                         ChallengerHeartIcon(
-                            filled = index < session.puzzleSession.lives,
-                            shakeTrigger = if (index == session.puzzleSession.lives) wrongOpenTrigger else 0,
+                            filled = index < session.livesRemaining,
                             modifier = Modifier.padding(end = 4.dp),
                         )
                     }
@@ -76,13 +77,13 @@ fun AnimalDokuChallengerPlayScreen(
         }
 
         if (session != null) {
-            Row(Modifier.fillMaxWidth().padding(top = 4.dp, bottom = 12.dp), horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween) {
+            Row(Modifier.fillMaxWidth().padding(top = 4.dp, bottom = 12.dp), horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(
-                    "${stringResource(R.string.animaldoku_challenger_tier_label)}: ${stringResource(animalDokuDifficultyLabelRes(session.tier))}",
+                    "${stringResource(R.string.wordguess_challenger_tier_label)}: ${stringResource(wordGuessDifficultyLabelRes(session.tier))}",
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Text(
-                    "${stringResource(R.string.animaldoku_challenger_solved_label)}: ${session.puzzlesSolved}",
+                    "${stringResource(R.string.wordguess_challenger_solved_label)}: ${session.puzzlesSolved}",
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 val secondsInt = maxOf(0, session.secondsRemaining.toInt())
@@ -113,15 +114,37 @@ fun AnimalDokuChallengerPlayScreen(
 
         PuzzleBoardContainer(visible = session != null, playFresh = true, zoomable = false) {
             session?.let { current ->
-                AnimalDokuGrid(
-                    size = current.puzzleSession.puzzle.size,
-                    regions = current.puzzleSession.puzzle.regions,
-                    cells = current.puzzleSession.cells,
-                    onCellTap = viewModel::onCellTap,
-                    onCellDrag = viewModel::onCellDrag,
-                    onCellDoubleTap = viewModel::onCellDoubleTap,
-                )
+                Box(Modifier.fillMaxSize()) {
+                    WordGuessGrid(
+                        wordLength = current.puzzleSession.wordLength,
+                        maxGuesses = WORD_GUESS_MAX_GUESSES,
+                        guesses = current.puzzleSession.guesses,
+                        currentInput = currentInput,
+                        modifier = Modifier.align(Alignment.Center),
+                    )
+                    if (current.puzzleSession.status == WordGuessStatus.LOST) {
+                        Text(
+                            "${stringResource(R.string.wordguess_reveal_word_label)}: ${current.puzzleSession.targetWord.uppercase()}",
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 8.dp),
+                        )
+                    }
+                }
             }
+        }
+
+        if (session != null && session.puzzleSession.status == WordGuessStatus.PLAYING) {
+            val keyboardState = foldWordGuessKeyboardState(session.puzzleSession.guesses.map { it.guess to it.feedback })
+            WordGuessKeyboard(
+                keyboardState = keyboardState,
+                onLetter = { ch -> if (currentInput.length < session.puzzleSession.wordLength) currentInput += ch },
+                onBackspace = { currentInput = currentInput.dropLast(1) },
+                onEnter = {
+                    if (currentInput.length == session.puzzleSession.wordLength) {
+                        viewModel.onSubmitGuess(currentInput) { }
+                    }
+                },
+            )
         }
     }
 
@@ -136,29 +159,11 @@ fun AnimalDokuChallengerPlayScreen(
 }
 
 @Composable
-private fun ChallengerHeartIcon(filled: Boolean, shakeTrigger: Int, modifier: Modifier = Modifier) {
-    val shakeX = remember { Animatable(0f) }
-    LaunchedEffect(shakeTrigger) {
-        if (shakeTrigger > 0) {
-            shakeX.snapTo(0f)
-            shakeX.animateTo(
-                targetValue = 0f,
-                animationSpec = keyframes {
-                    durationMillis = 350
-                    0f at 0
-                    -6f at 60
-                    6f at 120
-                    -4f at 190
-                    4f at 260
-                    0f at 350
-                },
-            )
-        }
-    }
+private fun ChallengerHeartIcon(filled: Boolean, modifier: Modifier = Modifier) {
     Icon(
         if (filled) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
         contentDescription = null,
         tint = MaterialTheme.colorScheme.error,
-        modifier = modifier.graphicsLayer(translationX = shakeX.value),
+        modifier = modifier,
     )
 }

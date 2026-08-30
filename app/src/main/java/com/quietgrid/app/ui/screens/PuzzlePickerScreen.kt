@@ -263,7 +263,17 @@ private fun GamePlayPickerTab(
                     }
                 }
             }
-            if (gameId == GameId.ANIMALDOKU) {
+            val challengerLabelRes = when (gameId) {
+                GameId.ANIMALDOKU -> R.string.animaldoku_challenger_label
+                GameId.WORDGUESS -> R.string.wordguess_challenger_label
+                else -> null
+            }
+            val challengerDescriptionRes = when (gameId) {
+                GameId.ANIMALDOKU -> R.string.animaldoku_challenger_description
+                GameId.WORDGUESS -> R.string.wordguess_challenger_description
+                else -> null
+            }
+            if (challengerLabelRes != null && challengerDescriptionRes != null) {
                 HorizontalDivider()
                 Row(
                     Modifier
@@ -279,9 +289,9 @@ private fun GamePlayPickerTab(
                             .background(MaterialTheme.colorScheme.primary),
                     )
                     Column(Modifier.padding(start = 14.dp)) {
-                        Text(stringResource(R.string.animaldoku_challenger_label), style = MaterialTheme.typography.titleLarge)
+                        Text(stringResource(challengerLabelRes), style = MaterialTheme.typography.titleLarge)
                         Text(
-                            stringResource(R.string.animaldoku_challenger_description),
+                            stringResource(challengerDescriptionRes),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(top = 2.dp),
@@ -303,26 +313,46 @@ private fun GameStatsTab(gameId: GameId) {
     Column(Modifier.padding(16.dp)) {
         StatsOverviewContent(overview)
 
-        if (gameId == GameId.ANIMALDOKU) {
+        val challengerStatsTitleRes = when (gameId) {
+            GameId.ANIMALDOKU -> R.string.animaldoku_challenger_stats_title
+            GameId.WORDGUESS -> R.string.wordguess_challenger_stats_title
+            else -> null
+        }
+        val challengerStatsBestRunRes = when (gameId) {
+            GameId.ANIMALDOKU -> R.string.animaldoku_challenger_stats_best_run
+            GameId.WORDGUESS -> R.string.wordguess_challenger_stats_best_run
+            else -> null
+        }
+        val challengerSolvedLabelRes = when (gameId) {
+            GameId.ANIMALDOKU -> R.string.animaldoku_challenger_result_puzzles_solved
+            GameId.WORDGUESS -> R.string.wordguess_challenger_result_puzzles_solved
+            else -> null
+        }
+        val challengerScoreLabelRes = when (gameId) {
+            GameId.ANIMALDOKU -> R.string.animaldoku_challenger_result_score
+            GameId.WORDGUESS -> R.string.wordguess_challenger_result_score
+            else -> null
+        }
+        if (challengerStatsTitleRes != null && challengerStatsBestRunRes != null && challengerSolvedLabelRes != null && challengerScoreLabelRes != null) {
             val challengerStats by repositories.statsRepository.challengerStatsFor(gameId).collectAsState(initial = null)
             challengerStats?.let { current ->
                 HorizontalDivider(Modifier.padding(top = 20.dp))
                 Text(
-                    stringResource(R.string.animaldoku_challenger_stats_title),
+                    stringResource(challengerStatsTitleRes),
                     style = MaterialTheme.typography.titleSmall,
                     modifier = Modifier.padding(top = 20.dp, bottom = 4.dp),
                 )
                 Row(Modifier.fillMaxWidth().padding(vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
                     Column(Modifier.weight(1f)) {
-                        Text(stringResource(R.string.animaldoku_challenger_stats_best_run), style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(challengerStatsBestRunRes), style = MaterialTheme.typography.bodyMedium)
                         Text(
-                            "${stringResource(R.string.animaldoku_challenger_result_puzzles_solved)}: ${current.solved}",
+                            "${stringResource(challengerSolvedLabelRes)}: ${current.solved}",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                     Text(
-                        "${stringResource(R.string.animaldoku_challenger_result_score)}: ${current.bestScore}",
+                        "${stringResource(challengerScoreLabelRes)}: ${current.bestScore}",
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }

@@ -689,6 +689,25 @@
     <string name="animaldoku_challenger_try_another_game">Essayer un autre jeu</string>
     <string name="animaldoku_challenger_stats_title">Challenger</string>
     <string name="animaldoku_challenger_stats_best_run">Meilleure partie</string>
+    <string name="wordguess_challenger_label">Challenger</string>
+    <string name="wordguess_challenger_description">Devine autant de mots que possible avant que le temps ne s\'écoule.</string>
+    <string name="wordguess_challenger_solved_label">Résolus</string>
+    <string name="wordguess_challenger_tier_label">Niveau</string>
+    <string name="wordguess_challenger_result_time_up_title">Temps écoulé !</string>
+    <string name="wordguess_challenger_result_time_up_body">Le temps est écoulé. Voici comment s\'est passée ta partie.</string>
+    <string name="wordguess_challenger_result_lives_exhausted_title">Plus de cœurs !</string>
+    <string name="wordguess_challenger_result_lives_exhausted_body">Trois mots manqués ont mis fin à ta partie.</string>
+    <string name="wordguess_challenger_result_abandoned_title">Partie terminée</string>
+    <string name="wordguess_challenger_result_abandoned_body">Tu as arrêté la partie avant la fin.</string>
+    <string name="wordguess_challenger_result_new_high_score">Nouveau meilleur score !</string>
+    <string name="wordguess_challenger_result_puzzles_solved">Mots résolus</string>
+    <string name="wordguess_challenger_result_tier_reached">Niveau atteint</string>
+    <string name="wordguess_challenger_result_score">Score</string>
+    <string name="wordguess_challenger_play_again">Rejouer</string>
+    <string name="wordguess_challenger_back_to_puzzles">Retour aux puzzles</string>
+    <string name="wordguess_challenger_try_another_game">Essayer un autre jeu</string>
+    <string name="wordguess_challenger_stats_title">Challenger</string>
+    <string name="wordguess_challenger_stats_best_run">Meilleure partie</string>
 
     <string name="arrowescape_title">Évasion des Flèches</string>
     <string name="arrowescape_tagline">Vide le plateau, une flèche à la fois.</string>

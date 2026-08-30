@@ -701,6 +701,25 @@
     <string name="animaldoku_challenger_try_another_game">Try Another Game</string>
     <string name="animaldoku_challenger_stats_title">Challenger</string>
     <string name="animaldoku_challenger_stats_best_run">Best run</string>
+    <string name="wordguess_challenger_label">Challenger</string>
+    <string name="wordguess_challenger_description">Guess as many words as you can before the clock runs out.</string>
+    <string name="wordguess_challenger_solved_label">Solved</string>
+    <string name="wordguess_challenger_tier_label">Tier</string>
+    <string name="wordguess_challenger_result_time_up_title">Time\'s up!</string>
+    <string name="wordguess_challenger_result_time_up_body">The clock ran out. Here\'s how your run went.</string>
+    <string name="wordguess_challenger_result_lives_exhausted_title">Out of lives!</string>
+    <string name="wordguess_challenger_result_lives_exhausted_body">Three missed words ended your run.</string>
+    <string name="wordguess_challenger_result_abandoned_title">Run ended</string>
+    <string name="wordguess_challenger_result_abandoned_body">You stopped the run early.</string>
+    <string name="wordguess_challenger_result_new_high_score">New high score!</string>
+    <string name="wordguess_challenger_result_puzzles_solved">Words solved</string>
+    <string name="wordguess_challenger_result_tier_reached">Tier reached</string>
+    <string name="wordguess_challenger_result_score">Score</string>
+    <string name="wordguess_challenger_play_again">Play Again</string>
+    <string name="wordguess_challenger_back_to_puzzles">Back to Puzzles</string>
+    <string name="wordguess_challenger_try_another_game">Try Another Game</string>
+    <string name="wordguess_challenger_stats_title">Challenger</string>
+    <string name="wordguess_challenger_stats_best_run">Best run</string>
 
     <string name="arrowescape_title">Arrow Escape</string>
     <string name="arrowescape_tagline">Clear the board, one arrow at a time.</string>

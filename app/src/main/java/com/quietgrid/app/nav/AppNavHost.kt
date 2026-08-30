@@ -38,6 +38,8 @@ import com.quietgrid.app.games.nonogram.NonogramPlayScreen
 import com.quietgrid.app.games.sudoku.SudokuPlayScreen
 import com.quietgrid.app.games.takuzu.TakuzuAnalyzerScreen
 import com.quietgrid.app.games.takuzu.TakuzuPlayScreen
+import com.quietgrid.app.games.wordguess.WordGuessChallengerPlayScreen
+import com.quietgrid.app.games.wordguess.WordGuessChallengerResultScreen
 import com.quietgrid.app.games.wordguess.WordGuessPlayScreen
 import com.quietgrid.app.games.wordsearch.WordSearchPlayScreen
 import com.quietgrid.app.games.wordsearch.wordSearchThemeIcon
@@ -413,6 +415,13 @@ fun AppNavHost() {
                             ) { popUpTo(Routes.TABS) { inclusive = false } }
                         },
                     )
+                    GameId.WORDGUESS -> WordGuessChallengerPlayScreen(
+                        onFinished = { result ->
+                            navController.navigate(
+                                Routes.challengerResult(challengerGameId, result.puzzlesSolved, result.tierReached, result.score, result.isNewHighScore, result.reason),
+                            ) { popUpTo(Routes.TABS) { inclusive = false } }
+                        },
+                    )
                     else -> Unit
                 }
             }
@@ -433,6 +442,27 @@ fun AppNavHost() {
                 val resultGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
                 when (resultGameId) {
                     GameId.ANIMALDOKU -> AnimalDokuChallengerResultScreen(
+                        puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
+                        tierReached = Difficulty.fromKey(entry.arguments?.getString("tier") ?: "easy"),
+                        score = entry.arguments?.getInt("score") ?: 0,
+                        isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
+                        reason = entry.arguments?.getString("reason") ?: "time_up",
+                        onPlayAgain = {
+                            navController.navigate(Routes.challenger(resultGameId)) {
+                                popUpTo(Routes.TABS) { inclusive = false }
+                            }
+                        },
+                        onBackToPuzzles = {
+                            navController.navigate(Routes.picker(resultGameId)) {
+                                popUpTo(Routes.TABS) { inclusive = false }
+                            }
+                        },
+                        onTryAnotherGame = {
+                            selectedTab = AppTab.GAMES
+                            navController.popBackStack(Routes.TABS, inclusive = false)
+                        },
+                    )
+                    GameId.WORDGUESS -> WordGuessChallengerResultScreen(
                         puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
                         tierReached = Difficulty.fromKey(entry.arguments?.getString("tier") ?: "easy"),
                         score = entry.arguments?.getInt("score") ?: 0,
