@@ -33,9 +33,11 @@ import com.quietgrid.app.core.formatElapsed
 import com.quietgrid.app.ui.components.CollectPuzzleResult
 import com.quietgrid.app.ui.components.EndPuzzleDialog
 import com.quietgrid.app.ui.components.EndPuzzleIconButton
+import com.quietgrid.app.ui.components.FeedbackText
 import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
 import com.quietgrid.engine.wordguess.foldWordGuessKeyboardState
+import kotlinx.coroutines.delay
 
 @Composable
 fun WordGuessChallengerPlayScreen(
@@ -49,9 +51,17 @@ fun WordGuessChallengerPlayScreen(
 
     var showEndDialog by remember { mutableStateOf(false) }
     var currentInput by remember { mutableStateOf("") }
+    var invalidFlash by remember { mutableStateOf(false) }
     val session = viewModel.session
 
-    LaunchedEffect(session?.puzzleSession?.puzzleId) {
+    LaunchedEffect(invalidFlash) {
+        if (invalidFlash) {
+            delay(500)
+            invalidFlash = false
+        }
+    }
+
+    LaunchedEffect(session?.puzzleSession?.puzzleId, session?.puzzleSession?.guesses?.size) {
         currentInput = ""
     }
 
@@ -122,12 +132,24 @@ fun WordGuessChallengerPlayScreen(
                         currentInput = currentInput,
                         modifier = Modifier.align(Alignment.Center),
                     )
-                    if (current.puzzleSession.status == WordGuessStatus.LOST) {
-                        Text(
-                            "${stringResource(R.string.wordguess_reveal_word_label)}: ${current.puzzleSession.targetWord.uppercase()}",
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 8.dp),
-                        )
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 8.dp),
+                    ) {
+                        if (current.puzzleSession.status == WordGuessStatus.LOST) {
+                            Text(
+                                "${stringResource(R.string.wordguess_reveal_word_label)}: ${current.puzzleSession.targetWord.uppercase()}",
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+                        }
+                        if (invalidFlash) {
+                            FeedbackText(
+                                text = stringResource(R.string.wordguess_invalid_word_message),
+                                style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.error),
+                                isCorrect = false,
+                                isIncorrect = invalidFlash,
+                            )
+                        }
                     }
                 }
             }
@@ -141,7 +163,7 @@ fun WordGuessChallengerPlayScreen(
                 onBackspace = { currentInput = currentInput.dropLast(1) },
                 onEnter = {
                     if (currentInput.length == session.puzzleSession.wordLength) {
-                        viewModel.onSubmitGuess(currentInput) { }
+                        viewModel.onSubmitGuess(currentInput) { invalidFlash = true }
                     }
                 },
             )

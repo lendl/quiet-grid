@@ -6,28 +6,57 @@ import org.apache.lucene.store.ByteBuffersDirectory
 
 private val cache = mutableMapOf<String, List<String>>()
 
+private val unescapedSlash = Regex("(?<!\\\\)/")
+
+private fun compoundPositionFlags(affText: String): Set<String> {
+    val flagWidth = if (Regex("(?m)^FLAG\\s+long").containsMatchIn(affText)) 2 else 1
+    return Regex("(?m)^COMPOUND(BEGIN|MIDDLE|END)\\s+(\\S+)")
+        .findAll(affText)
+        .map { it.groupValues[2] }
+        .flatMap { it.chunked(flagWidth) }
+        .toSet()
+}
+
 fun loadWordGuessHunspellWords(locale: String): List<String> {
     cache[locale]?.let { return it }
     val classLoader = object {}.javaClass.classLoader
 
-    val dictionary = classLoader.getResourceAsStream("wordguess_hunspell_$locale.aff").use { affStream ->
-        classLoader.getResourceAsStream("wordguess_hunspell_$locale.dic").use { dicStream ->
-            requireNotNull(affStream) { "wordguess_hunspell_$locale.aff not found on classpath" }
-            requireNotNull(dicStream) { "wordguess_hunspell_$locale.dic not found on classpath" }
-            Dictionary(ByteBuffersDirectory(), "wordguess-$locale", affStream, dicStream)
-        }
-    }
+    val affBytes = classLoader.getResourceAsStream("wordguess_hunspell_$locale.aff")
+        .use { requireNotNull(it) { "wordguess_hunspell_$locale.aff not found on classpath" }.readBytes() }
+    val dicBytes = classLoader.getResourceAsStream("wordguess_hunspell_$locale.dic")
+        .use { requireNotNull(it) { "wordguess_hunspell_$locale.dic not found on classpath" }.readBytes() }
+
+    val dictionary = Dictionary(ByteBuffersDirectory(), "wordguess-$locale", affBytes.inputStream(), dicBytes.inputStream())
+    val generator = WordFormGenerator(dictionary)
+    val checkCanceled = Runnable {}
+
+    val affText = affBytes.toString(Charsets.UTF_8)
+    val flagWidth = if (Regex("(?m)^FLAG\\s+long").containsMatchIn(affText)) 2 else 1
+    val compoundFlags = compoundPositionFlags(affText)
 
     val words = mutableListOf<String>()
-    WordFormGenerator(dictionary).generateAllSimpleWords(
-        { affixedWord ->
-            val word = affixedWord.word
-            if (word.none { it.isUpperCase() }) {
-                words.add(word)
+    dicBytes.inputStream().bufferedReader(Charsets.UTF_8).useLines { lines ->
+        lines.drop(1).forEach { rawLine ->
+            val line = rawLine.substringBefore('\t')
+            if (line.isBlank()) return@forEach
+
+            val slash = unescapedSlash.find(line)
+            val stem = if (slash == null) line else line.substring(0, slash.range.first)
+            val flags = if (slash == null) "" else line.substring(slash.range.last + 1)
+            val strippedFlags = if (compoundFlags.isEmpty() || flags.isEmpty()) {
+                flags
+            } else {
+                flags.chunked(flagWidth).filterNot { it in compoundFlags }.joinToString("")
             }
-        },
-        Runnable {},
-    )
+
+            for (affixedWord in generator.getAllWordForms(stem, strippedFlags, checkCanceled)) {
+                val word = affixedWord.word
+                if (word.none { it.isUpperCase() }) {
+                    words.add(word)
+                }
+            }
+        }
+    }
 
     val result = words.distinct()
     cache[locale] = result
