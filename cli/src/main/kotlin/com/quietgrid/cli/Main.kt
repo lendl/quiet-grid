@@ -48,6 +48,39 @@ private fun parseDifficulty(value: String): Difficulty =
     Difficulty.entries.find { it.key == value } ?: error("Unknown difficulty '$value'. Expected one of: ${Difficulty.entries.joinToString { it.key }}")
 
 fun main(args: Array<String>) {
+    if (args.getOrNull(0) == "validate") {
+        val game = requireFlag(args, "--game")
+        val path = optionalFlag(args, "--path", "app/src/main/assets/${game}_puzzles.json")
+        when (game) {
+            "nonogram" -> com.quietgrid.cli.nonogram.validateNonogramBank(path)
+            else -> error("Validation not implemented for game '$game'")
+        }
+        return
+    }
+
+    if (args.getOrNull(0) == "inspect") {
+        val game = requireFlag(args, "--game")
+        val path = optionalFlag(args, "--path", "app/src/main/assets/${game}_puzzles.json")
+        when (game) {
+            "nonogram" -> com.quietgrid.cli.nonogram.inspectNonogramExtremes(path)
+            else -> error("Inspect not implemented for game '$game'")
+        }
+        return
+    }
+
+    if (args.getOrNull(0) == "purge") {
+        val game = requireFlag(args, "--game")
+        val path = optionalFlag(args, "--path", "app/src/main/assets/${game}_puzzles.json")
+        when (game) {
+            "nonogram" -> {
+                val removed = com.quietgrid.cli.nonogram.purgeDegenerateNonogramEntries(path)
+                println("Purged degenerate nonogram entries from $path: $removed")
+            }
+            else -> error("Purge not implemented for game '$game'")
+        }
+        return
+    }
+
     val command = parseArgs(args)
     val difficulty = parseDifficulty(command.difficulty)
 

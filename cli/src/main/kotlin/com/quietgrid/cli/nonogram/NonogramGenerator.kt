@@ -41,6 +41,9 @@ private fun blockStampSolution(rows: Int, cols: Int, random: Random): List<List<
     return grid.map { it.toList() }
 }
 
+private const val MIN_FILL_RATIO = 0.20
+private const val MAX_FILL_RATIO = 0.75
+
 fun generateRandomNonogramPuzzle(
     rows: Int,
     cols: Int,
@@ -49,18 +52,38 @@ fun generateRandomNonogramPuzzle(
     maxAttempts: Int = 300,
 ): NonogramPuzzleEntry? {
     val random = Random(System.nanoTime() xor (rows * 31L + cols))
+    var fillRatioRejects = 0
+    var unsolvableRejects = 0
+    var wrongDifficultyRejects = 0
+
     repeat(maxAttempts) {
         val solution = if (targetDifficulty == Difficulty.EASY) {
             stripeSolution(rows, cols, random)
         } else {
             blockStampSolution(rows, cols, random)
         }
+
+        if (targetDifficulty != Difficulty.EASY) {
+            val fillRatio = solution.sumOf { row -> row.count { it } }.toDouble() / (rows * cols)
+            if (fillRatio < MIN_FILL_RATIO || fillRatio > MAX_FILL_RATIO) {
+                fillRatioRejects += 1
+                return@repeat
+            }
+        }
+
         val rowClues = solution.map { buildNonogramClues(it) }
         val colClues = (0 until cols).map { c -> buildNonogramClues(solution.map { it[c] }) }
 
-        val metrics = analyzeNonogramDifficulty(rowClues, colClues, solution) ?: return@repeat
+        val metrics = analyzeNonogramDifficulty(rowClues, colClues, solution)
+        if (metrics == null) {
+            unsolvableRejects += 1
+            return@repeat
+        }
         val difficulty = classifyNonogramDifficulty(rows, cols, metrics)
-        if (difficulty != targetDifficulty) return@repeat
+        if (difficulty != targetDifficulty) {
+            wrongDifficultyRejects += 1
+            return@repeat
+        }
 
         return NonogramPuzzleEntry(
             id = "$idPrefix-${System.nanoTime()}",
@@ -70,5 +93,10 @@ fun generateRandomNonogramPuzzle(
             solution = solution,
         )
     }
+
+    System.err.println(
+        "nonogram generation exhausted ${maxAttempts} attempts for ${rows}x${cols} $targetDifficulty: " +
+            "fillRatioRejects=$fillRatioRejects unsolvableRejects=$unsolvableRejects wrongDifficultyRejects=$wrongDifficultyRejects",
+    )
     return null
 }

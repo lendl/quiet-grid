@@ -241,6 +241,7 @@ private const val DEPENDENT_HARD_REPEAT_FLOOR = 3
 private const val DEPENDENT_HARD_CROSS_AXIS_FLOOR = 4
 private const val DEPENDENT_EXPERT_REPEAT_FLOOR = 17
 private const val FREEBIE_EASY_CELL_CEILING = 50
+private const val FREEBIE_FILL_RATIO_CEILING_MEDIUM = 0.80
 private const val FREEBIE_FILL_RATIO_CEILING_HARD = 0.55
 private const val FREEBIE_FILL_RATIO_CEILING_EXPERT = 0.45
 
@@ -252,7 +253,8 @@ private fun openingTierCeilingFor(difficulty: Difficulty): NonogramLineTier? = w
 }
 
 private fun freebieFillRatioCeilingFor(difficulty: Difficulty): Double? = when (difficulty) {
-    Difficulty.EASY, Difficulty.MEDIUM -> null
+    Difficulty.EASY -> null
+    Difficulty.MEDIUM -> FREEBIE_FILL_RATIO_CEILING_MEDIUM
     Difficulty.HARD -> FREEBIE_FILL_RATIO_CEILING_HARD
     Difficulty.EXPERT -> FREEBIE_FILL_RATIO_CEILING_EXPERT
 }
