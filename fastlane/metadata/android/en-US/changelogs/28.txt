@@ -1,0 +1,9 @@
+Version 1.2.11
+
+- New game: Arrow Escape
+- Challenger mode added to Chimp Test, Word Guess, and Animal Doku
+- Nonogram is out of beta
+- New Sudoku input modes (Normal/Candidate) with undo
+- Takuzu: step-by-step puzzle analyzer
+- Word Guess: improved word lists across English, Spanish, French, and Dutch
+- Bug fixes and stability improvements
