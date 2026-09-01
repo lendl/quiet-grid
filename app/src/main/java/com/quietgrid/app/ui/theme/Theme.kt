@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.quietgrid.app.R
 
 val LocalIsPencilTheme = compositionLocalOf { false }
+val LocalIsDarkTheme = compositionLocalOf { false }
 
 val PlusJakartaSansBold = FontFamily(Font(R.font.plus_jakarta_sans_bold, FontWeight.Bold))
 val PlusJakartaSansExtraBold = FontFamily(Font(R.font.plus_jakarta_sans_extrabold, FontWeight.ExtraBold))
@@ -114,7 +115,10 @@ fun QuietGridTheme(
         ResolvedTheme.LIGHT -> LightColors
         ResolvedTheme.PENCIL -> PencilColors
     }
-    CompositionLocalProvider(LocalIsPencilTheme provides (resolvedTheme == ResolvedTheme.PENCIL)) {
+    CompositionLocalProvider(
+        LocalIsPencilTheme provides (resolvedTheme == ResolvedTheme.PENCIL),
+        LocalIsDarkTheme provides (resolvedTheme == ResolvedTheme.DARK),
+    ) {
         MaterialTheme(
             colorScheme = colorScheme,
             typography = QuietGridTypography,

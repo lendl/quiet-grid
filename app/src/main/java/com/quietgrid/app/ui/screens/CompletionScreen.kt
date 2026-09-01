@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -36,8 +37,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -50,6 +53,7 @@ import com.quietgrid.app.core.difficultyColor
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.core.formatElapsed
 import com.quietgrid.app.data.RepositoriesViewModel
+import com.quietgrid.app.ui.theme.LocalIsDarkTheme
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyLabelRes
 import com.quietgrid.app.games.arrowescape.arrowEscapeDifficultyLabelRes
 import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
@@ -67,6 +71,9 @@ import java.time.LocalDate
 import kotlin.math.roundToInt
 
 private val CELEBRATION_ICONS = listOf("🎉", "🏆", "⭐", "✨", "🎈", "💜")
+
+private fun systemAnimationsDisabled(context: android.content.Context): Boolean =
+    android.provider.Settings.Global.getFloat(context.contentResolver, android.provider.Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f
 
 private fun pickCelebrationIcon(score: Int, accuracyPct: Int, variantSeed: Int): String {
     val seed = maxOf(0, score) + accuracyPct + variantSeed
@@ -152,27 +159,43 @@ fun CompletionScreen(
     val gamesToday = remember(allHistoryRecords, today) { distinctGamesToday(allHistoryRecords, today) }
     val puzzlesToday = remember(allHistoryRecords, today) { recordsToday(allHistoryRecords, today) }
 
-    val pageOpacity = remember { Animatable(0f) }
-    val contentOffsetY = remember { Animatable(24f) }
-    val pictureScale = remember { Animatable(0.6f) }
-    val scoreProgress = remember { Animatable(0f) }
+    val context = LocalContext.current
+    val reduceMotion = remember { systemAnimationsDisabled(context) }
+    val isDarkTheme = LocalIsDarkTheme.current
+
+    val pageOpacity = remember { Animatable(if (reduceMotion) 1f else 0f) }
+    val contentOffsetY = remember { Animatable(if (reduceMotion) 0f else 24f) }
+    val pictureScale = remember { Animatable(if (reduceMotion) 1f else 0.6f) }
+    val scoreProgress = remember { Animatable(if (reduceMotion) 1f else 0f) }
     var showConfetti by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
-        pageOpacity.animateTo(1f, animationSpec = tween(220))
-        showConfetti = true
+        if (reduceMotion) {
+            showConfetti = false
+        } else {
+            pageOpacity.animateTo(1f, animationSpec = tween(220))
+            showConfetti = true
+        }
     }
     LaunchedEffect(Unit) {
-        contentOffsetY.animateTo(0f, animationSpec = tween(320, easing = FastOutSlowInEasing))
+        if (!reduceMotion) {
+            contentOffsetY.animateTo(0f, animationSpec = tween(320, easing = FastOutSlowInEasing))
+        }
     }
     LaunchedEffect(Unit) {
-        pictureScale.animateTo(
-            1f,
-            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
-        )
+        if (!reduceMotion) {
+            pictureScale.animateTo(
+                1f,
+                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
+            )
+        }
     }
     LaunchedEffect(score) {
-        delay(200)
-        scoreProgress.animateTo(1f, animationSpec = tween(650, easing = FastOutSlowInEasing))
+        if (reduceMotion) {
+            scoreProgress.snapTo(1f)
+        } else {
+            delay(200)
+            scoreProgress.animateTo(1f, animationSpec = tween(650, easing = FastOutSlowInEasing))
+        }
     }
 
     Box(Modifier.fillMaxSize()) {
@@ -271,6 +294,19 @@ fun CompletionScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Box(Modifier.fillMaxWidth().height(150.dp), contentAlignment = Alignment.Center) {
+                        if (isDarkTheme) {
+                            Box(
+                                Modifier
+                                    .size(180.dp)
+                                    .graphicsLayer { scaleX = pictureScale.value; scaleY = pictureScale.value }
+                                    .background(
+                                        Brush.radialGradient(
+                                            colors = listOf(MaterialTheme.colorScheme.primary.copy(alpha = 0.35f), Color.Transparent),
+                                        ),
+                                        CircleShape,
+                                    ),
+                            )
+                        }
                         if (picture != null) {
                             NonogramMiniPicture(
                                 solution = picture,
@@ -366,16 +402,23 @@ private val ACCURACY_TRACKED_GAMES = setOf(GameId.TAKUZU, GameId.SUDOKU, GameId.
 
 @Composable
 private fun BadgePill(emoji: String, text: String, borderColor: Color, textColor: Color, modifier: Modifier = Modifier) {
-    Row(
-        modifier
-            .border(1.dp, borderColor, CircleShape)
-            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.7f), CircleShape)
-            .padding(horizontal = 12.dp, vertical = 6.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
+    val isDarkTheme = LocalIsDarkTheme.current
+    Surface(
+        modifier = modifier,
+        shape = CircleShape,
+        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
+        border = androidx.compose.foundation.BorderStroke(1.dp, borderColor),
+        tonalElevation = if (isDarkTheme) 6.dp else 0.dp,
+        shadowElevation = if (isDarkTheme) 3.dp else 0.dp,
     ) {
-        Text(emoji, style = MaterialTheme.typography.labelMedium, maxLines = 1)
-        Text(text, style = MaterialTheme.typography.labelMedium, color = textColor, maxLines = 1)
+        Row(
+            Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            Text(emoji, style = MaterialTheme.typography.labelMedium, maxLines = 1)
+            Text(text, style = MaterialTheme.typography.labelMedium, color = textColor, maxLines = 1)
+        }
     }
 }
 
