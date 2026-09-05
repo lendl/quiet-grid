@@ -53,7 +53,6 @@ fun WordSearchPlayScreen(
     val viewModel = hiltViewModel<WordSearchPlayViewModel, WordSearchPlayViewModel.Factory>(
         creationCallback = { factory -> factory.create(difficulty, resume) },
     )
-
     CollectPuzzleResult(viewModel.result, onFinished)
 
     var showEndDialog by remember { mutableStateOf(false) }
@@ -61,14 +60,23 @@ fun WordSearchPlayScreen(
     var resetZoomTrigger by remember { mutableStateOf(0) }
     val session = viewModel.session
     val haptics = rememberHapticController()
+    var flashTrigger by remember { mutableStateOf(0) }
     LaunchedEffect(viewModel.selectionEvent) {
         val event = viewModel.selectionEvent
         if (event != null) {
-            if (event.wasCorrect) haptics.correctFeedback() else haptics.incorrectFeedback()
+            if (event.wasCorrect) {
+                haptics.correctFeedback()
+            } else {
+                haptics.incorrectFeedback()
+                flashTrigger++
+            }
         }
     }
     LaunchedEffect(viewModel.wrongHiddenWordTapTrigger) {
-        if (viewModel.wrongHiddenWordTapTrigger > 0) haptics.incorrectFeedback()
+        if (viewModel.wrongHiddenWordTapTrigger > 0) {
+            haptics.incorrectFeedback()
+            flashTrigger++
+        }
     }
 
     Column(Modifier.fillMaxSize().padding(16.dp)) {
@@ -145,11 +153,12 @@ fun WordSearchPlayScreen(
                     PuzzleBoardContainer(
                         visible = session != null,
                         playFresh = !resume,
+                        flashTrigger = flashTrigger,
                         onZoomChange = { isBoardZoomed = it },
                         resetTrigger = resetZoomTrigger,
                     ) {
                         if (session != null) {
-                            Box(Modifier.fillMaxSize().padding(8.dp)) {
+                            Box(Modifier.padding(8.dp)) {
                                 WordSearchGrid(
                                     puzzle = session.puzzle,
                                     foundWordIds = session.foundWordIds,
@@ -194,11 +203,12 @@ fun WordSearchPlayScreen(
                     PuzzleBoardContainer(
                         visible = session != null,
                         playFresh = !resume,
+                        flashTrigger = flashTrigger,
                         onZoomChange = { isBoardZoomed = it },
                         resetTrigger = resetZoomTrigger,
                     ) {
                         if (session != null) {
-                            Box(Modifier.fillMaxSize().padding(8.dp)) {
+                            Box(Modifier.padding(8.dp)) {
                                 WordSearchGrid(
                                     puzzle = session.puzzle,
                                     foundWordIds = session.foundWordIds,

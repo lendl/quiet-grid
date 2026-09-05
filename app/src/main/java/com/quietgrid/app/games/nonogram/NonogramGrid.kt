@@ -7,7 +7,6 @@ import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -61,7 +60,7 @@ fun NonogramBoard(
     val textMeasurer = rememberTextMeasurer()
     val density = LocalDensity.current
 
-    BoxWithConstraints(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    BoxWithConstraints(contentAlignment = Alignment.Center) {
         val rowClueAreaWidth = remember(rowClueStrings, rowClueStyle, maxWidth) {
             val widestPx = rowClueStrings.maxOf { textMeasurer.measure(it, rowClueStyle).size.width }
             (with(density) { widestPx.toDp() } + 12.dp).coerceAtMost(maxWidth * 0.35f)

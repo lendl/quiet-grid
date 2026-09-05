@@ -55,12 +55,12 @@ fun BlockFillPlayScreen(
     val viewModel = hiltViewModel<BlockFillPlayViewModel, BlockFillPlayViewModel.Factory>(
         creationCallback = { factory -> factory.create(difficulty, resume) },
     )
-
     CollectPuzzleResult(viewModel.result, onFinished)
 
     var showEndDialog by remember { mutableStateOf(false) }
     val session = viewModel.session
     val haptics = rememberHapticController()
+    var flashTrigger by remember { mutableStateOf(0) }
 
     var boardCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
     var pieceCoordinates by remember { mutableStateOf(mapOf<Int, LayoutCoordinates>()) }
@@ -152,9 +152,14 @@ fun BlockFillPlayScreen(
                 modifier = Modifier.padding(top = 4.dp, bottom = 12.dp),
             )
 
-            PuzzleBoardContainer(visible = currentSession != null, playFresh = !resume, zoomable = false) {
+            PuzzleBoardContainer(
+                visible = currentSession != null,
+                playFresh = !resume,
+                zoomable = false,
+                flashTrigger = flashTrigger,
+            ) {
                 if (currentSession != null) {
-                    Box(Modifier.fillMaxSize().padding(24.dp)) {
+                    Box(Modifier.padding(24.dp)) {
                         BlockFillGrid(
                             board = currentSession.board,
                             dragPreview = dragPreview,
@@ -183,7 +188,12 @@ fun BlockFillPlayScreen(
                         when {
                             pieceIndex != null && anchor != null -> {
                                 val placed = viewModel.onPlacePiece(pieceIndex, anchor.row, anchor.col)
-                                if (placed) haptics.correctFeedback() else haptics.incorrectFeedback()
+                                if (placed) {
+                                    haptics.correctFeedback()
+                                } else {
+                                    haptics.incorrectFeedback()
+                                    flashTrigger++
+                                }
                                 draggingPieceIndex = null
                             }
                             pieceIndex != null -> rejectedDropTrigger++

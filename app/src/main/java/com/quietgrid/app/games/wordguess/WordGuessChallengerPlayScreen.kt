@@ -4,7 +4,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.keyframes
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -56,14 +55,21 @@ fun WordGuessChallengerPlayScreen(
     val session = viewModel.session
 
     val haptics = rememberHapticController()
+    var flashTrigger by remember { mutableStateOf(0) }
     LaunchedEffect(viewModel.wrongGuessTrigger) {
-        if (viewModel.wrongGuessTrigger > 0) haptics.incorrectFeedback()
+        if (viewModel.wrongGuessTrigger > 0) {
+            haptics.incorrectFeedback()
+            flashTrigger++
+        }
     }
     LaunchedEffect(viewModel.puzzleWonTrigger) {
         if (viewModel.puzzleWonTrigger > 0) haptics.correctFeedback()
     }
     LaunchedEffect(viewModel.puzzleLostTrigger) {
-        if (viewModel.puzzleLostTrigger > 0) haptics.incorrectFeedback()
+        if (viewModel.puzzleLostTrigger > 0) {
+            haptics.incorrectFeedback()
+            flashTrigger++
+        }
     }
 
     LaunchedEffect(invalidFlash) {
@@ -134,35 +140,41 @@ fun WordGuessChallengerPlayScreen(
             }
         }
 
-        PuzzleBoardContainer(visible = session != null, playFresh = true, zoomable = false) {
+        PuzzleBoardContainer(
+            visible = session != null,
+            playFresh = true,
+            zoomable = false,
+            showFrame = false,
+            flashTrigger = flashTrigger,
+        ) {
             session?.let { current ->
-                Box(Modifier.fillMaxSize()) {
-                    WordGuessGrid(
-                        wordLength = current.puzzleSession.wordLength,
-                        maxGuesses = WORD_GUESS_MAX_GUESSES,
-                        guesses = current.puzzleSession.guesses,
-                        currentInput = currentInput,
-                        modifier = Modifier.align(Alignment.Center),
+                WordGuessGrid(
+                    wordLength = current.puzzleSession.wordLength,
+                    maxGuesses = WORD_GUESS_MAX_GUESSES,
+                    guesses = current.puzzleSession.guesses,
+                    currentInput = currentInput,
+                )
+            }
+        }
+
+        if (session != null) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+            ) {
+                if (session.puzzleSession.status == WordGuessStatus.LOST) {
+                    Text(
+                        "${stringResource(R.string.wordguess_reveal_word_label)}: ${session.puzzleSession.targetWord.uppercase()}",
+                        style = MaterialTheme.typography.titleMedium,
                     )
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 8.dp),
-                    ) {
-                        if (current.puzzleSession.status == WordGuessStatus.LOST) {
-                            Text(
-                                "${stringResource(R.string.wordguess_reveal_word_label)}: ${current.puzzleSession.targetWord.uppercase()}",
-                                style = MaterialTheme.typography.titleMedium,
-                            )
-                        }
-                        if (invalidFlash) {
-                            FeedbackText(
-                                text = stringResource(R.string.wordguess_invalid_word_message),
-                                style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.error),
-                                isCorrect = false,
-                                isIncorrect = invalidFlash,
-                            )
-                        }
-                    }
+                }
+                if (invalidFlash) {
+                    FeedbackText(
+                        text = stringResource(R.string.wordguess_invalid_word_message),
+                        style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.error),
+                        isCorrect = false,
+                        isIncorrect = invalidFlash,
+                    )
                 }
             }
         }

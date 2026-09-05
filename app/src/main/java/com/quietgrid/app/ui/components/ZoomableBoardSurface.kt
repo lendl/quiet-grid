@@ -15,6 +15,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
@@ -41,6 +42,7 @@ fun ZoomableBoardSurface(
     resetTrigger: Int = 0,
     panTarget: Offset? = null,
     onVisibleBoundsChange: (Rect) -> Unit = {},
+    onContentSizeChange: (IntSize) -> Unit = {},
     content: @Composable () -> Unit,
 ) {
     var scale by remember { mutableFloatStateOf(1f) }
@@ -140,8 +142,14 @@ fun ZoomableBoardSurface(
                 translationX = offset.x,
                 translationY = offset.y,
             ),
+        contentAlignment = Alignment.Center,
     ) {
-        Box(Modifier.onSizeChanged { contentSize = it }) {
+        Box(
+            Modifier.onSizeChanged {
+                contentSize = it
+                onContentSizeChange(it)
+            },
+        ) {
             content()
         }
     }

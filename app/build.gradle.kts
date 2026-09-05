@@ -11,8 +11,8 @@ plugins {
 
 android {
     namespace = "com.quietgrid.app"
-    compileSdk = 36
-    buildToolsVersion = "36.0.0"
+    compileSdk = 37
+    buildToolsVersion = "37.0.0"
 
     defaultConfig {
         applicationId = "com.quietgrid.app"
@@ -94,7 +94,7 @@ android {
 
 dependencies {
     implementation(project(":engine"))
-    implementation(platform("androidx.compose:compose-bom:2024.06.00"))
+    implementation(platform("androidx.compose:compose-bom:2026.08.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -119,11 +119,11 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
     testImplementation("io.mockk:mockk:1.13.13")
     testImplementation("org.robolectric:robolectric:4.14")
-    testImplementation(platform("androidx.compose:compose-bom:2024.06.00"))
+    testImplementation(platform("androidx.compose:compose-bom:2026.08.00"))
     testImplementation("androidx.compose.ui:ui-test-junit4")
     testImplementation("androidx.test.ext:junit:1.1.5")
 
-    androidTestImplementation(platform("androidx.compose:compose-bom:2024.06.00"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2026.08.00"))
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 

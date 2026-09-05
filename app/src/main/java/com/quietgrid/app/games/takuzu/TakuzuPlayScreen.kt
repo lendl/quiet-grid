@@ -47,17 +47,22 @@ fun TakuzuPlayScreen(
     val viewModel = hiltViewModel<TakuzuPlayViewModel, TakuzuPlayViewModel.Factory>(
         creationCallback = { factory -> factory.create(difficulty, resume) },
     )
-
     CollectPuzzleResult(viewModel.result, onFinished)
 
     var showEndDialog by remember { mutableStateOf(false) }
     val session = viewModel.session
 
     val haptics = rememberHapticController()
+    var flashTrigger by remember { mutableStateOf(0) }
     LaunchedEffect(viewModel.feedbackEvent) {
         val event = viewModel.feedbackEvent
         if (event != null) {
-            if (event.incorrect) haptics.incorrectFeedback() else if (event.correct) haptics.correctFeedback()
+            if (event.incorrect) {
+                haptics.incorrectFeedback()
+                flashTrigger++
+            } else if (event.correct) {
+                haptics.correctFeedback()
+            }
         }
     }
 
@@ -109,9 +114,13 @@ fun TakuzuPlayScreen(
             }
         }
 
-        PuzzleBoardContainer(visible = session != null, playFresh = !resume) {
+        PuzzleBoardContainer(
+            visible = session != null,
+            playFresh = !resume,
+            flashTrigger = flashTrigger,
+        ) {
             if (session != null) {
-                Box(Modifier.fillMaxSize().padding(12.dp)) {
+                Box(Modifier.padding(12.dp)) {
                     TakuzuBoard(
                         board = session.board,
                         isGiven = session.isGiven,

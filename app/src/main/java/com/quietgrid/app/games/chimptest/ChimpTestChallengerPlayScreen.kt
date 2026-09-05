@@ -114,9 +114,14 @@ fun ChimpTestChallengerPlayScreen(
             }
         }
 
-        PuzzleBoardContainer(visible = session != null, playFresh = true, zoomable = false) {
+        PuzzleBoardContainer(
+            visible = session != null,
+            playFresh = true,
+            zoomable = false,
+            flashTrigger = viewModel.wrongTapTrigger,
+        ) {
             session?.let { current ->
-                Box(Modifier.fillMaxSize().padding(24.dp)) {
+                Box(Modifier.padding(24.dp)) {
                     ChimpTestGrid(
                         cells = current.puzzleSession.cells,
                         revealAll = current.puzzleSession.revealAll,

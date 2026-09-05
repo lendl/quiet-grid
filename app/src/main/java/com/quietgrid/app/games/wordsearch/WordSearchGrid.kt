@@ -6,7 +6,6 @@ import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -57,7 +56,7 @@ fun WordSearchGrid(
     val evidenceCellSet = remember(nextMoveEvidenceCells) { nextMoveEvidenceCells.toSet() }
     val targetCellSet = remember(nextMoveTargetCells) { nextMoveTargetCells.toSet() }
 
-    BoxWithConstraints(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    BoxWithConstraints(contentAlignment = Alignment.Center) {
         val cellSize = min(maxWidth / puzzle.cols, maxHeight / puzzle.rows)
         val fontSize = (cellSize.value * 0.42f).sp
 

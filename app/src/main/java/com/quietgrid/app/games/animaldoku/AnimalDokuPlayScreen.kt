@@ -5,6 +5,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.keyframes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,7 +14,6 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,27 +45,28 @@ fun AnimalDokuPlayScreen(
     val viewModel = hiltViewModel<AnimalDokuPlayViewModel, AnimalDokuPlayViewModel.Factory>(
         creationCallback = { factory -> factory.create(difficulty, resume) },
     )
-
     CollectPuzzleResult(viewModel.result, onFinished)
 
     var showEndDialog by remember { mutableStateOf(false) }
     val session = viewModel.session
     val haptics = rememberHapticController()
+    var boardFlashTrigger by remember { mutableStateOf(0) }
     LaunchedEffect(viewModel.lastOpenEvent) {
         val event = viewModel.lastOpenEvent
         if (event != null) {
-            if (event.wasCorrect) haptics.correctFeedback() else haptics.incorrectFeedback()
+            if (event.wasCorrect) {
+                haptics.correctFeedback()
+            } else {
+                haptics.incorrectFeedback()
+                boardFlashTrigger++
+            }
         }
     }
 
     Column(Modifier.fillMaxSize().padding(16.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             GameBackButton(onBack)
-            Text(
-                stringResource(animalDokuDifficultyLabelRes(session?.let { Difficulty.fromKey(it.puzzle.difficulty) } ?: difficulty)),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(start = 12.dp).weight(1f),
-            )
+            Spacer(Modifier.weight(1f))
             if (session != null) {
                 var wrongOpenTrigger by remember { mutableStateOf(0) }
                 LaunchedEffect(viewModel.lastOpenEvent) {
@@ -90,7 +91,12 @@ fun AnimalDokuPlayScreen(
             modifier = Modifier.padding(top = 4.dp, bottom = 12.dp),
         )
 
-        PuzzleBoardContainer(visible = session != null, playFresh = !resume, zoomable = false) {
+        PuzzleBoardContainer(
+            visible = session != null,
+            playFresh = !resume,
+            zoomable = false,
+            flashTrigger = boardFlashTrigger,
+        ) {
             session?.let { current ->
                 AnimalDokuGrid(
                     size = current.puzzle.size,

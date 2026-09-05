@@ -6,13 +6,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
+import androidx.core.os.ConfigurationCompat
 import com.quietgrid.app.core.localeFlagEmoji
-import java.util.Locale
 
 @Composable
 fun PuzzleLanguageFlag(puzzleLocale: String, modifier: Modifier = Modifier) {
-    val appLanguage = AppCompatDelegate.getApplicationLocales().get(0)?.language ?: Locale.getDefault().language
+    val configuration = LocalConfiguration.current
+    val appLanguage = AppCompatDelegate.getApplicationLocales().get(0)?.language
+        ?: ConfigurationCompat.getLocales(configuration).get(0)?.language
     if (puzzleLocale.isNotEmpty() && puzzleLocale != appLanguage) {
         Text(
             localeFlagEmoji(puzzleLocale),

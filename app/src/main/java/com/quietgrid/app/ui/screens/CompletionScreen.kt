@@ -1,5 +1,6 @@
 package com.quietgrid.app.ui.screens
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
@@ -64,7 +65,10 @@ import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
 import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
 import com.quietgrid.app.games.wordguess.wordGuessDifficultyLabelRes
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
+import com.quietgrid.app.nav.LocalAnimatedVisibilityScope
+import com.quietgrid.app.nav.LocalSharedTransitionScope
 import com.quietgrid.app.ui.components.ConfettiBurst
+import com.quietgrid.app.ui.components.SharedElementKeys
 import com.quietgrid.app.ui.components.rememberHapticController
 import kotlinx.coroutines.delay
 import java.time.LocalDate
@@ -80,7 +84,7 @@ private fun pickCelebrationIcon(score: Int, accuracyPct: Int, variantSeed: Int):
     return CELEBRATION_ICONS[seed % CELEBRATION_ICONS.size]
 }
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun CompletionScreen(
     gameId: GameId,
@@ -167,6 +171,7 @@ fun CompletionScreen(
     val contentOffsetY = remember { Animatable(if (reduceMotion) 0f else 24f) }
     val pictureScale = remember { Animatable(if (reduceMotion) 1f else 0.6f) }
     val scoreProgress = remember { Animatable(if (reduceMotion) 1f else 0f) }
+    val badgesOpacity = remember { Animatable(if (reduceMotion) 1f else 0f) }
     var showConfetti by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         if (reduceMotion) {
@@ -197,6 +202,14 @@ fun CompletionScreen(
             scoreProgress.animateTo(1f, animationSpec = tween(650, easing = FastOutSlowInEasing))
         }
     }
+    LaunchedEffect(Unit) {
+        if (reduceMotion) {
+            badgesOpacity.snapTo(1f)
+        } else {
+            delay(400)
+            badgesOpacity.animateTo(1f, animationSpec = tween(250))
+        }
+    }
 
     Box(Modifier.fillMaxSize()) {
         FlowRow(
@@ -204,7 +217,7 @@ fun CompletionScreen(
                 .align(Alignment.TopCenter)
                 .fillMaxWidth()
                 .padding(16.dp)
-                .graphicsLayer { alpha = pageOpacity.value },
+                .graphicsLayer { alpha = badgesOpacity.value },
             horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
@@ -316,8 +329,20 @@ fun CompletionScreen(
                                     .graphicsLayer { scaleX = pictureScale.value; scaleY = pictureScale.value },
                             )
                         } else {
-                            Box(
+                            val sharedTransitionScope = LocalSharedTransitionScope.current
+                            val animatedVisibilityScope = LocalAnimatedVisibilityScope.current
+                            val sharedModifier = if (sharedTransitionScope != null && animatedVisibilityScope != null) {
+                                with(sharedTransitionScope) {
+                                    Modifier.sharedBounds(
+                                        sharedContentState = rememberSharedContentState(key = SharedElementKeys.gameIdentity(gameId)),
+                                        animatedVisibilityScope = animatedVisibilityScope,
+                                    )
+                                }
+                            } else {
                                 Modifier
+                            }
+                            Box(
+                                sharedModifier
                                     .size(96.dp)
                                     .graphicsLayer { scaleX = pictureScale.value; scaleY = pictureScale.value }
                                     .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f), CircleShape)

@@ -85,8 +85,8 @@ fun MinesweeperGrid(
     hintEvidenceCells: Set<Pair<Int, Int>> = emptySet(),
     hintTargetCells: Set<Pair<Int, Int>> = emptySet(),
 ) {
-    Box(Modifier.fillMaxSize()) {
-        BoxWithConstraints(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box {
+        BoxWithConstraints(contentAlignment = Alignment.Center) {
             val cellSize = min(maxWidth / board.cols, maxHeight / board.rows)
             val stride = cellSize
             val fontSize = (cellSize.value * 0.42f).sp

@@ -6,7 +6,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
@@ -165,7 +164,7 @@ fun ArrowEscapeGrid(
         bumps.remove(index)
     }
 
-    BoxWithConstraints(Modifier.fillMaxSize().padding(20.dp), contentAlignment = Alignment.Center) {
+    BoxWithConstraints(Modifier.padding(20.dp), contentAlignment = Alignment.Center) {
         val cellSize = min(maxWidth / puzzle.cols, maxHeight / puzzle.rows)
         val cellSizePx = with(LocalDensity.current) { cellSize.toPx() }
 

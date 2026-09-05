@@ -7,7 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -118,9 +117,9 @@ fun BlockFillGrid(
     onBoardMeasured: (coordinates: LayoutCoordinates) -> Unit = {},
 ) {
     val amberHighlight = Color(0xFFFFC107).copy(alpha = 0.55f)
-    val gridLineColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)
+    val gridLineColor = MaterialTheme.colorScheme.outlineVariant
     val frameColor = MaterialTheme.colorScheme.surfaceVariant
-    val frameBorderColor = MaterialTheme.colorScheme.outline
+    val frameBorderColor = MaterialTheme.colorScheme.outlineVariant
 
     var previousBoard by remember { mutableStateOf(board) }
     var nextBatchId by remember { mutableStateOf(0L) }
@@ -143,8 +142,8 @@ fun BlockFillGrid(
         }
     }
 
-    Box(modifier.fillMaxSize()) {
-        BoxWithConstraints(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(modifier) {
+        BoxWithConstraints(contentAlignment = Alignment.Center) {
             val cellSize = (min(maxWidth, maxHeight) - BOARD_FRAME_PADDING * 2) / BLOCKFILL_BOARD_SIZE
             val cellSizePx = with(LocalDensity.current) { cellSize.toPx() }
             val ghostAnchor = dragPreview?.anchor

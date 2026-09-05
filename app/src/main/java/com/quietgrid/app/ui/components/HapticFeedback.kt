@@ -16,14 +16,14 @@ private const val INCORRECT_DURATION_MS = 45L
 
 class HapticController internal constructor(
     private val vibrator: Vibrator,
-    private val systemEnabled: () -> Boolean,
+    private val systemEnabled: Boolean,
 ) {
     fun tapFeedback() = fire(tickEffect())
     fun correctFeedback() = fire(clickEffect())
     fun incorrectFeedback() = fire(doubleClickEffect())
 
     private fun fire(effect: VibrationEffect) {
-        if (!systemEnabled()) return
+        if (!systemEnabled) return
         vibrator.vibrate(effect)
     }
 
@@ -57,7 +57,7 @@ fun rememberHapticController(): HapticController {
     return remember(context) {
         HapticController(
             vibrator = defaultVibrator(context),
-            systemEnabled = { systemHapticsEnabled(context) },
+            systemEnabled = systemHapticsEnabled(context),
         )
     }
 }

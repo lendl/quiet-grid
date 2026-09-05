@@ -47,7 +47,6 @@ fun NonogramPlayScreen(
     val viewModel = hiltViewModel<NonogramPlayViewModel, NonogramPlayViewModel.Factory>(
         creationCallback = { factory -> factory.create(difficulty, resume) },
     )
-
     CollectPuzzleResult(viewModel.result, onFinished)
 
     var showEndDialog by remember { mutableStateOf(false) }
@@ -97,7 +96,7 @@ fun NonogramPlayScreen(
 
         PuzzleBoardContainer(visible = session != null, playFresh = !resume, zoomable = false) {
             if (session != null) {
-                Box(Modifier.fillMaxSize().padding(12.dp)) {
+                Box(Modifier.padding(12.dp)) {
                     NonogramBoard(
                         puzzle = session.puzzle,
                         board = session.board,

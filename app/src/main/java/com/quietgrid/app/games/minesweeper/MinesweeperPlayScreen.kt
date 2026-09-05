@@ -46,7 +46,6 @@ fun MinesweeperPlayScreen(
     val viewModel = hiltViewModel<MinesweeperPlayViewModel, MinesweeperPlayViewModel.Factory>(
         creationCallback = { factory -> factory.create(difficulty, resume) },
     )
-
     CollectPuzzleResult(viewModel.result, onFinished)
 
     var showEndDialog by remember { mutableStateOf(false) }
@@ -103,7 +102,7 @@ fun MinesweeperPlayScreen(
 
         PuzzleBoardContainer(visible = session != null, playFresh = !resume) {
             if (session != null) {
-                Box(Modifier.fillMaxSize().padding(8.dp)) {
+                Box(Modifier.padding(8.dp)) {
                     MinesweeperGrid(
                         board = session.board,
                         onReveal = { row, col -> haptics.tapFeedback(); viewModel.onReveal(row, col) },

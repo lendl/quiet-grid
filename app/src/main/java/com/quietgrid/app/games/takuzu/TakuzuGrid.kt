@@ -5,7 +5,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -41,7 +40,7 @@ fun TakuzuBoard(
     hintHighlightRows: Set<Int> = emptySet(),
     hintHighlightCols: Set<Int> = emptySet(),
 ) {
-    BoxWithConstraints(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    BoxWithConstraints(contentAlignment = Alignment.Center) {
         val cellSize = min(
             (maxWidth - GAP * (size - 1)) / size,
             (maxHeight - GAP * (size - 1)) / size,

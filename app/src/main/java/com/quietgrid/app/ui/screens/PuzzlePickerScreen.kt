@@ -67,7 +67,6 @@ import com.quietgrid.app.games.wordsearch.wordSearchDifficultyDescriptionRes
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
 import com.quietgrid.app.ui.components.QuickStartContent
 import com.quietgrid.app.ui.components.QuickStartSheet
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 private enum class GamePageTab { PLAY, RULES, STATS }
@@ -96,9 +95,8 @@ fun PuzzlePickerScreen(
 
     val repositories: RepositoriesViewModel = hiltViewModel()
     val settings by repositories.settingsRepository.settings.collectAsState(initial = null)
-    val activeGameKey by repositories.sessionRepository.activeSession
-        .map { it?.gameId }
-        .collectAsState(initial = null)
+    val activeSession by repositories.sessionRepository.activeSession.collectAsState(initial = null)
+    val activeGameKey = activeSession?.gameId
     val coroutineScope = rememberCoroutineScope()
     var showQuickStart by remember(gameId) { mutableStateOf(false) }
     var pendingDifficulty by remember(gameId) { mutableStateOf<Difficulty?>(null) }

@@ -3,6 +3,7 @@ package com.quietgrid.app.games.arrowescape
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,7 +16,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -48,7 +48,6 @@ fun ArrowEscapePlayScreen(
     val viewModel = hiltViewModel<ArrowEscapePlayViewModel, ArrowEscapePlayViewModel.Factory>(
         creationCallback = { factory -> factory.create(difficulty, resume) },
     )
-
     CollectPuzzleResult(viewModel.result, onFinished)
 
     var showEndDialog by remember { mutableStateOf(false) }
@@ -57,21 +56,23 @@ fun ArrowEscapePlayScreen(
     val session = viewModel.session
 
     val haptics = rememberHapticController()
+    var flashTrigger by remember { mutableStateOf(0) }
     LaunchedEffect(viewModel.lastTapEvent) {
         val event = viewModel.lastTapEvent
         if (event != null) {
-            if (event.removed) haptics.correctFeedback() else haptics.incorrectFeedback()
+            if (event.removed) {
+                haptics.correctFeedback()
+            } else {
+                haptics.incorrectFeedback()
+                flashTrigger++
+            }
         }
     }
 
     Column(Modifier.fillMaxSize().padding(16.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             GameBackButton(onBack)
-            Text(
-                stringResource(arrowEscapeDifficultyLabelRes(session?.let { Difficulty.fromKey(it.puzzle.difficulty) } ?: difficulty)),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(start = 12.dp).weight(1f),
-            )
+            Spacer(Modifier.weight(1f))
             if (session != null) {
                 Row(Modifier.padding(end = 8.dp)) {
                     repeat(ARROW_ESCAPE_STARTING_LIVES) { index ->
@@ -103,6 +104,7 @@ fun ArrowEscapePlayScreen(
             visible = session != null,
             playFresh = !resume,
             zoomable = true,
+            flashTrigger = flashTrigger,
             panTarget = panTarget,
             onVisibleBoundsChange = { visibleBounds = it },
         ) {

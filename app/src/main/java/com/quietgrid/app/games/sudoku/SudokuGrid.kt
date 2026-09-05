@@ -5,7 +5,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicText
@@ -59,7 +58,7 @@ fun SudokuGrid(
     hintHighlightCols: Set<Int> = emptySet(),
     hintHighlightBoxes: Set<Int> = emptySet(),
 ) {
-    BoxWithConstraints(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    BoxWithConstraints(contentAlignment = Alignment.Center) {
         val cellSize = min(maxWidth / 9, maxHeight / 9)
         val noteFontSize = (cellSize.value * 0.22f).sp
         val fontSize = (cellSize.value * 0.5f).sp
@@ -71,7 +70,7 @@ fun SudokuGrid(
         Box(
             Modifier
                 .size(cellSize * 9, cellSize * 9)
-                .sudokuBoxLines(cellSizePx, MaterialTheme.colorScheme.outline),
+                .sudokuBoxLines(cellSizePx, MaterialTheme.colorScheme.outlineVariant),
         ) {
         for (row in 0 until 9) {
             for (col in 0 until 9) {

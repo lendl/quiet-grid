@@ -1,7 +1,6 @@
 package com.quietgrid.app.games.wordguess
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,7 +43,6 @@ fun WordGuessPlayScreen(
     val viewModel = hiltViewModel<WordGuessPlayViewModel, WordGuessPlayViewModel.Factory>(
         creationCallback = { factory -> factory.create(difficulty, resume) },
     )
-
     CollectPuzzleResult(viewModel.result, onFinished)
 
     var showEndDialog by remember { mutableStateOf(false) }
@@ -89,35 +87,41 @@ fun WordGuessPlayScreen(
             modifier = Modifier.padding(top = 4.dp, bottom = 12.dp),
         )
 
-        PuzzleBoardContainer(visible = session != null, playFresh = !resume, zoomable = false) {
+        PuzzleBoardContainer(
+            visible = session != null,
+            playFresh = !resume,
+            zoomable = false,
+            showFrame = false,
+            flashTrigger = viewModel.wrongGuessTrigger,
+        ) {
             if (session != null) {
-                Box(Modifier.fillMaxSize()) {
-                    WordGuessGrid(
-                        wordLength = session.wordLength,
-                        maxGuesses = WORD_GUESS_MAX_GUESSES,
-                        guesses = session.guesses,
-                        currentInput = currentInput,
-                        modifier = Modifier.align(Alignment.Center),
+                WordGuessGrid(
+                    wordLength = session.wordLength,
+                    maxGuesses = WORD_GUESS_MAX_GUESSES,
+                    guesses = session.guesses,
+                    currentInput = currentInput,
+                )
+            }
+        }
+
+        if (session != null) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+            ) {
+                if (session.status == WordGuessStatus.LOST) {
+                    Text(
+                        "${stringResource(R.string.wordguess_reveal_word_label)}: ${session.targetWord.uppercase()}",
+                        style = MaterialTheme.typography.titleMedium,
                     )
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 8.dp),
-                    ) {
-                        if (session.status == WordGuessStatus.LOST) {
-                            Text(
-                                "${stringResource(R.string.wordguess_reveal_word_label)}: ${session.targetWord.uppercase()}",
-                                style = MaterialTheme.typography.titleMedium,
-                            )
-                        }
-                        if (invalidFlash) {
-                            FeedbackText(
-                                text = stringResource(R.string.wordguess_invalid_word_message),
-                                style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.error),
-                                isCorrect = false,
-                                isIncorrect = invalidFlash,
-                            )
-                        }
-                    }
+                }
+                if (invalidFlash) {
+                    FeedbackText(
+                        text = stringResource(R.string.wordguess_invalid_word_message),
+                        style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.error),
+                        isCorrect = false,
+                        isIncorrect = invalidFlash,
+                    )
                 }
             }
         }

@@ -49,10 +49,16 @@ fun AnimalDokuChallengerPlayScreen(
     var showEndDialog by remember { mutableStateOf(false) }
     val session = viewModel.session
     val haptics = rememberHapticController()
+    var boardFlashTrigger by remember { mutableStateOf(0) }
     LaunchedEffect(viewModel.lastOpenEvent) {
         val event = viewModel.lastOpenEvent
         if (event != null) {
-            if (event.wasCorrect) haptics.correctFeedback() else haptics.incorrectFeedback()
+            if (event.wasCorrect) {
+                haptics.correctFeedback()
+            } else {
+                haptics.incorrectFeedback()
+                boardFlashTrigger++
+            }
         }
     }
 
@@ -119,7 +125,12 @@ fun AnimalDokuChallengerPlayScreen(
             }
         }
 
-        PuzzleBoardContainer(visible = session != null, playFresh = true, zoomable = false) {
+        PuzzleBoardContainer(
+            visible = session != null,
+            playFresh = true,
+            zoomable = false,
+            flashTrigger = boardFlashTrigger,
+        ) {
             session?.let { current ->
                 AnimalDokuGrid(
                     size = current.puzzleSession.puzzle.size,

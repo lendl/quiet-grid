@@ -13,10 +13,8 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -48,6 +46,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
+import com.quietgrid.app.ui.theme.LocalIsDarkTheme
 import com.quietgrid.app.ui.theme.LocalIsPencilTheme
 import kotlinx.coroutines.delay
 import kotlin.math.floor
@@ -55,8 +54,8 @@ import kotlin.math.floor
 private const val DOUBLE_TAP_WINDOW_MS = 300L
 
 private val REGION_PALETTE_LIGHT = listOf(
-    Color(0xFFE69F00), Color(0xFF56B4E9), Color(0xFF009E73), Color(0xFF9C7A00),
-    Color(0xFF0072B2), Color(0xFFD55E00), Color(0xFFCC79A7), Color(0xFF999999), Color(0xFF882255),
+    Color(0xFF56B4E9), Color(0xFF0072B2), Color(0xFF009E73), Color(0xFFCC79A7),
+    Color(0xFFE69F00), Color(0xFF882255), Color(0xFF9C7A00), Color(0xFF999999), Color(0xFFD55E00),
 )
 
 private val REGION_PALETTE_DARK = listOf(
@@ -81,19 +80,19 @@ fun AnimalDokuGrid(
     onCellDoubleTap: (Int, Int) -> Unit,
 ) {
     val isPencilTheme = LocalIsPencilTheme.current
-    val isDarkTheme = isSystemInDarkTheme()
+    val isDarkTheme = LocalIsDarkTheme.current
     val regionPalette = if (isDarkTheme) REGION_PALETTE_DARK else REGION_PALETTE_LIGHT
-    val regionAlpha = if (isDarkTheme) 0.55f else 0.4f
+    val regionAlpha = if (isDarkTheme) 0.55f else 0.85f
 
-    BoxWithConstraints(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    BoxWithConstraints(contentAlignment = Alignment.Center) {
         val cellSize = min(maxWidth / size, maxHeight / size)
         val cellSizePx = with(LocalDensity.current) { cellSize.toPx() }
 
         var lastTapCell by remember { mutableStateOf<Pair<Int, Int>?>(null) }
         var lastTapTimeMs by remember { mutableStateOf(0L) }
         val currentCells by rememberUpdatedState(cells)
-        val borderColor = if (isPencilTheme) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
-        val borderStrokeWidth = if (isPencilTheme) 5.dp else 1.dp
+        val borderColor = MaterialTheme.colorScheme.outline
+        val borderStrokeWidth = 5.dp
 
         Box(
             Modifier
@@ -140,22 +139,24 @@ fun AnimalDokuGrid(
                 }
                 .drawWithContent {
                     drawContent()
-                    for (row in 0 until size) {
-                        for (col in 0 until size) {
-                            val region = regions[row][col]
-                            val rightNeighborDifferent = col == size - 1 || regions[row][col + 1] != region
-                            val bottomNeighborDifferent = row == size - 1 || regions[row + 1][col] != region
-                            val x = cellSizePx * col
-                            val y = cellSizePx * row
-                            if (rightNeighborDifferent) {
-                                drawLine(borderColor, Offset(x + cellSizePx, y), Offset(x + cellSizePx, y + cellSizePx), strokeWidth = borderStrokeWidth.toPx())
-                            }
-                            if (bottomNeighborDifferent) {
-                                drawLine(borderColor, Offset(x, y + cellSizePx), Offset(x + cellSizePx, y + cellSizePx), strokeWidth = borderStrokeWidth.toPx())
+                    if (isPencilTheme) {
+                        for (row in 0 until size) {
+                            for (col in 0 until size) {
+                                val region = regions[row][col]
+                                val rightNeighborDifferent = col == size - 1 || regions[row][col + 1] != region
+                                val bottomNeighborDifferent = row == size - 1 || regions[row + 1][col] != region
+                                val x = cellSizePx * col
+                                val y = cellSizePx * row
+                                if (rightNeighborDifferent) {
+                                    drawLine(borderColor, Offset(x + cellSizePx, y), Offset(x + cellSizePx, y + cellSizePx), strokeWidth = borderStrokeWidth.toPx())
+                                }
+                                if (bottomNeighborDifferent) {
+                                    drawLine(borderColor, Offset(x, y + cellSizePx), Offset(x + cellSizePx, y + cellSizePx), strokeWidth = borderStrokeWidth.toPx())
+                                }
                             }
                         }
+                        drawRect(borderColor, style = Stroke(width = borderStrokeWidth.toPx()))
                     }
-                    drawRect(borderColor, style = Stroke(width = borderStrokeWidth.toPx()))
                 },
         ) {
             for (row in 0 until size) {

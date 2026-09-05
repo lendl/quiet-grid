@@ -1,12 +1,20 @@
 package com.quietgrid.app.nav
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,7 +61,6 @@ import com.quietgrid.app.ui.screens.AnalyzerHandoff
 import com.quietgrid.app.ui.screens.CompletionExtras
 import com.quietgrid.app.ui.screens.CompletionHighlight
 import com.quietgrid.app.ui.screens.CompletionScreen
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import com.quietgrid.app.ui.screens.GamesScreen
 import com.quietgrid.app.ui.screens.LossScreen
@@ -64,6 +71,10 @@ import com.quietgrid.app.ui.screens.SupportInfoScreen
 import com.quietgrid.app.ui.screens.supportInfoTitleRes
 import com.quietgrid.app.ui.screens.SupportScreen
 
+val LocalSharedTransitionScope = compositionLocalOf<SharedTransitionScope?> { null }
+val LocalAnimatedVisibilityScope = compositionLocalOf<AnimatedVisibilityScope?> { null }
+
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun AppNavHost() {
     val navController = rememberNavController()
@@ -74,9 +85,8 @@ fun AppNavHost() {
     val scope = rememberCoroutineScope()
     val repositories: RepositoriesViewModel = hiltViewModel()
     val settings by repositories.settingsRepository.settings.collectAsState(initial = AppSettings())
-    val activeGameKey by repositories.sessionRepository.activeSession
-        .map { it?.gameId }
-        .collectAsState(initial = null)
+    val activeSession by repositories.sessionRepository.activeSession.collectAsState(initial = null)
+    val activeGameKey = activeSession?.gameId
 
     Scaffold(
         topBar = {
@@ -140,30 +150,53 @@ fun AppNavHost() {
             }
         },
     ) { padding ->
-        NavHost(navController = navController, startDestination = Routes.TABS, modifier = Modifier.padding(padding)) {
-            composable(Routes.TABS) {
-                when (selectedTab) {
-                    AppTab.GAMES -> GamesScreen(
-                        onOpenGame = { gameId -> navController.navigate(Routes.picker(gameId)) },
-                        onResumeGame = { gameId -> navController.navigate(Routes.play(gameId, Difficulty.EASY, resume = true)) },
-                    )
-                    AppTab.STATS -> StatsScreen()
-                    AppTab.SETTINGS -> SettingsScreen()
-                    AppTab.SUPPORT -> SupportScreen(onOpenInfo = { key -> navController.navigate(Routes.supportInfo(key)) })
+        SharedTransitionLayout {
+            NavHost(navController = navController, startDestination = Routes.TABS, modifier = Modifier.padding(padding)) {
+            composable(
+                Routes.TABS,
+                enterTransition = { fadeIn(animationSpec = tween(250)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) },
+            ) {
+                CompositionLocalProvider(
+                    LocalSharedTransitionScope provides this@SharedTransitionLayout,
+                    LocalAnimatedVisibilityScope provides this,
+                ) {
+                    AnimatedContent(
+                        targetState = selectedTab,
+                        label = "bottomNavTabCrossfade",
+                        transitionSpec = { fadeIn(animationSpec = tween(180)) togetherWith fadeOut(animationSpec = tween(150)) },
+                    ) { tab ->
+                        when (tab) {
+                            AppTab.GAMES -> GamesScreen(
+                                onOpenGame = { gameId -> navController.navigate(Routes.picker(gameId)) },
+                                onResumeGame = { gameId -> navController.navigate(Routes.play(gameId, Difficulty.EASY, resume = true)) },
+                            )
+                            AppTab.STATS -> StatsScreen()
+                            AppTab.SETTINGS -> SettingsScreen()
+                            AppTab.SUPPORT -> SupportScreen(onOpenInfo = { key -> navController.navigate(Routes.supportInfo(key)) })
+                        }
+                    }
                 }
             }
 
             composable(
                 Routes.PICKER,
                 arguments = listOf(navArgument("gameId") { type = NavType.StringType }),
+                enterTransition = { fadeIn(animationSpec = tween(250)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) },
             ) { entry ->
-                val gameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
-                PuzzlePickerScreen(
-                    gameId = gameId,
-                    onPickDifficulty = { difficulty -> navController.navigate(Routes.play(gameId, difficulty, resume = false)) },
-                    onResumeActiveGame = { activeGameId -> navController.navigate(Routes.play(activeGameId, Difficulty.EASY, resume = true)) },
-                    onStartChallenger = { navController.navigate(Routes.challenger(gameId)) },
-                )
+                CompositionLocalProvider(
+                    LocalSharedTransitionScope provides this@SharedTransitionLayout,
+                    LocalAnimatedVisibilityScope provides this,
+                ) {
+                    val gameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
+                    PuzzlePickerScreen(
+                        gameId = gameId,
+                        onPickDifficulty = { difficulty -> navController.navigate(Routes.play(gameId, difficulty, resume = false)) },
+                        onResumeActiveGame = { activeGameId -> navController.navigate(Routes.play(activeGameId, Difficulty.EASY, resume = true)) },
+                        onStartChallenger = { navController.navigate(Routes.challenger(gameId)) },
+                    )
+                }
             }
 
             composable(
@@ -173,150 +206,157 @@ fun AppNavHost() {
                     navArgument("difficulty") { type = NavType.StringType },
                     navArgument("resume") { type = NavType.BoolType },
                 ),
+                enterTransition = { fadeIn(animationSpec = tween(250)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) },
             ) { entry ->
-                val difficulty = Difficulty.fromKey(entry.arguments?.getString("difficulty") ?: "easy")
-                val resume = entry.arguments?.getBoolean("resume") ?: false
-                val gameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
+                CompositionLocalProvider(
+                    LocalSharedTransitionScope provides this@SharedTransitionLayout,
+                    LocalAnimatedVisibilityScope provides this,
+                ) {
+                    val difficulty = Difficulty.fromKey(entry.arguments?.getString("difficulty") ?: "easy")
+                    val resume = entry.arguments?.getBoolean("resume") ?: false
+                    val gameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
 
-                fun goToCompletion(resultDifficulty: Difficulty, score: Int, accuracyPct: Int, elapsedSeconds: Int, isFirstSolve: Boolean, isNewHighScore: Boolean) {
-                    navController.navigate(
-                        Routes.completion(gameId, resultDifficulty, score, accuracyPct, elapsedSeconds, isFirstSolve, isNewHighScore),
-                    ) { popUpTo(Routes.TABS) { inclusive = false } }
-                }
+                    fun goToCompletion(resultDifficulty: Difficulty, score: Int, accuracyPct: Int, elapsedSeconds: Int, isFirstSolve: Boolean, isNewHighScore: Boolean) {
+                        navController.navigate(
+                            Routes.completion(gameId, resultDifficulty, score, accuracyPct, elapsedSeconds, isFirstSolve, isNewHighScore),
+                        ) { popUpTo(Routes.TABS) { inclusive = false } }
+                    }
 
-                fun goToLoss(resultDifficulty: Difficulty, elapsedSeconds: Int, reason: String) {
-                    navController.navigate(
-                        Routes.loss(gameId, resultDifficulty, elapsedSeconds, reason),
-                    ) { popUpTo(Routes.TABS) { inclusive = false } }
-                }
+                    fun goToLoss(resultDifficulty: Difficulty, elapsedSeconds: Int, reason: String) {
+                        navController.navigate(
+                            Routes.loss(gameId, resultDifficulty, elapsedSeconds, reason),
+                        ) { popUpTo(Routes.TABS) { inclusive = false } }
+                    }
 
-                when (gameId) {
-                    GameId.TAKUZU -> TakuzuPlayScreen(
-                        difficulty = difficulty,
-                        resume = resume,
-                        onBack = { navController.popBackStack() },
-                        onFinished = { result ->
-                            AnalyzerHandoff.set(result.analyzerSnapshot)
-                            if (result.solved) {
-                                goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
-                            } else {
-                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
-                            }
-                        },
-                    )
-                    GameId.NONOGRAM -> NonogramPlayScreen(
-                        difficulty = difficulty,
-                        resume = resume,
-                        onBack = { navController.popBackStack() },
-                        onFinished = { result ->
-                            if (result.solved) {
-                                CompletionExtras.set(CompletionHighlight.Picture(result.solution))
-                                goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
-                            } else {
-                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
-                            }
-                        },
-                    )
-                    GameId.MINESWEEPER -> MinesweeperPlayScreen(
-                        difficulty = difficulty,
-                        resume = resume,
-                        onBack = { navController.popBackStack() },
-                        onFinished = { result ->
-                            if (result.solved) {
-                                goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
-                            } else {
-                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
-                            }
-                        },
-                    )
-                    GameId.SUDOKU -> SudokuPlayScreen(
-                        difficulty = difficulty,
-                        resume = resume,
-                        onBack = { navController.popBackStack() },
-                        onFinished = { result ->
-                            if (result.solved) {
-                                goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
-                            } else {
-                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
-                            }
-                        },
-                    )
-                    GameId.WORDSEARCH -> WordSearchPlayScreen(
-                        difficulty = difficulty,
-                        resume = resume,
-                        onBack = { navController.popBackStack() },
-                        onFinished = { result ->
-                            if (result.solved) {
-                                wordSearchThemeIcon(result.themeId)?.let { CompletionExtras.set(CompletionHighlight.ThemeIcon(it)) }
-                                goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
-                            } else {
-                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
-                            }
-                        },
-                    )
-                    GameId.BLOCKFILL -> BlockFillPlayScreen(
-                        difficulty = difficulty,
-                        resume = resume,
-                        onBack = { navController.popBackStack() },
-                        onFinished = { result ->
-                            if (result.solved) {
-                                goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
-                            } else {
-                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
-                            }
-                        },
-                    )
-                    GameId.WORDGUESS -> WordGuessPlayScreen(
-                        difficulty = difficulty,
-                        resume = resume,
-                        onBack = { navController.popBackStack() },
-                        onFinished = { result ->
-                            if (result.solved) {
-                                goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
-                            } else {
-                                if (result.targetWord.isNotEmpty()) {
-                                    CompletionExtras.set(CompletionHighlight.RevealWord(result.targetWord))
+                    when (gameId) {
+                        GameId.TAKUZU -> TakuzuPlayScreen(
+                            difficulty = difficulty,
+                            resume = resume,
+                            onBack = { navController.popBackStack() },
+                            onFinished = { result ->
+                                AnalyzerHandoff.set(result.analyzerSnapshot)
+                                if (result.solved) {
+                                    goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
+                                } else {
+                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
                                 }
-                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
-                            }
-                        },
-                    )
-                    GameId.ANIMALDOKU -> AnimalDokuPlayScreen(
-                        difficulty = difficulty,
-                        resume = resume,
-                        onBack = { navController.popBackStack() },
-                        onFinished = { result ->
-                            if (result.solved) {
-                                goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
-                            } else {
-                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
-                            }
-                        },
-                    )
-                    GameId.ARROWESCAPE -> ArrowEscapePlayScreen(
-                        difficulty = difficulty,
-                        resume = resume,
-                        onBack = { navController.popBackStack() },
-                        onFinished = { result ->
-                            if (result.solved) {
-                                goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
-                            } else {
-                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
-                            }
-                        },
-                    )
-                    else -> ChimpTestPlayScreen(
-                        difficulty = difficulty,
-                        resume = resume,
-                        onBack = { navController.popBackStack() },
-                        onFinished = { result ->
-                            if (result.solved) {
-                                goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
-                            } else {
-                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
-                            }
-                        },
-                    )
+                            },
+                        )
+                        GameId.NONOGRAM -> NonogramPlayScreen(
+                            difficulty = difficulty,
+                            resume = resume,
+                            onBack = { navController.popBackStack() },
+                            onFinished = { result ->
+                                if (result.solved) {
+                                    CompletionExtras.set(CompletionHighlight.Picture(result.solution))
+                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
+                                } else {
+                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
+                                }
+                            },
+                        )
+                        GameId.MINESWEEPER -> MinesweeperPlayScreen(
+                            difficulty = difficulty,
+                            resume = resume,
+                            onBack = { navController.popBackStack() },
+                            onFinished = { result ->
+                                if (result.solved) {
+                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
+                                } else {
+                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
+                                }
+                            },
+                        )
+                        GameId.SUDOKU -> SudokuPlayScreen(
+                            difficulty = difficulty,
+                            resume = resume,
+                            onBack = { navController.popBackStack() },
+                            onFinished = { result ->
+                                if (result.solved) {
+                                    goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
+                                } else {
+                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
+                                }
+                            },
+                        )
+                        GameId.WORDSEARCH -> WordSearchPlayScreen(
+                            difficulty = difficulty,
+                            resume = resume,
+                            onBack = { navController.popBackStack() },
+                            onFinished = { result ->
+                                if (result.solved) {
+                                    wordSearchThemeIcon(result.themeId)?.let { CompletionExtras.set(CompletionHighlight.ThemeIcon(it)) }
+                                    goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
+                                } else {
+                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
+                                }
+                            },
+                        )
+                        GameId.BLOCKFILL -> BlockFillPlayScreen(
+                            difficulty = difficulty,
+                            resume = resume,
+                            onBack = { navController.popBackStack() },
+                            onFinished = { result ->
+                                if (result.solved) {
+                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
+                                } else {
+                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
+                                }
+                            },
+                        )
+                        GameId.WORDGUESS -> WordGuessPlayScreen(
+                            difficulty = difficulty,
+                            resume = resume,
+                            onBack = { navController.popBackStack() },
+                            onFinished = { result ->
+                                if (result.solved) {
+                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
+                                } else {
+                                    if (result.targetWord.isNotEmpty()) {
+                                        CompletionExtras.set(CompletionHighlight.RevealWord(result.targetWord))
+                                    }
+                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
+                                }
+                            },
+                        )
+                        GameId.ANIMALDOKU -> AnimalDokuPlayScreen(
+                            difficulty = difficulty,
+                            resume = resume,
+                            onBack = { navController.popBackStack() },
+                            onFinished = { result ->
+                                if (result.solved) {
+                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
+                                } else {
+                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
+                                }
+                            },
+                        )
+                        GameId.ARROWESCAPE -> ArrowEscapePlayScreen(
+                            difficulty = difficulty,
+                            resume = resume,
+                            onBack = { navController.popBackStack() },
+                            onFinished = { result ->
+                                if (result.solved) {
+                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
+                                } else {
+                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
+                                }
+                            },
+                        )
+                        else -> ChimpTestPlayScreen(
+                            difficulty = difficulty,
+                            resume = resume,
+                            onBack = { navController.popBackStack() },
+                            onFinished = { result ->
+                                if (result.solved) {
+                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
+                                } else {
+                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
+                                }
+                            },
+                        )
+                    }
                 }
             }
 
@@ -331,34 +371,39 @@ fun AppNavHost() {
                     navArgument("isFirstSolve") { type = NavType.BoolType },
                     navArgument("isNewHighScore") { type = NavType.BoolType },
                 ),
-                enterTransition = { fadeIn(animationSpec = tween(180)) },
-                exitTransition = { fadeOut(animationSpec = tween(150)) },
+                enterTransition = { fadeIn(animationSpec = tween(250)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) },
             ) { entry ->
-                val completionGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
-                val completionDifficulty = Difficulty.fromKey(entry.arguments?.getString("difficulty") ?: "easy")
-                CompletionScreen(
-                    gameId = completionGameId,
-                    difficulty = completionDifficulty,
-                    score = entry.arguments?.getInt("score") ?: 0,
-                    accuracyPct = entry.arguments?.getInt("accuracyPct") ?: 100,
-                    elapsedSeconds = entry.arguments?.getInt("elapsedSeconds") ?: 0,
-                    isFirstSolve = entry.arguments?.getBoolean("isFirstSolve") ?: false,
-                    isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
-                    onPlayAgain = {
-                        navController.navigate(Routes.play(completionGameId, completionDifficulty, resume = false)) {
-                            popUpTo(Routes.TABS) { inclusive = false }
-                        }
-                    },
-                    onOtherDifficulty = {
-                        navController.navigate(Routes.picker(completionGameId)) {
-                            popUpTo(Routes.TABS) { inclusive = false }
-                        }
-                    },
-                    onTryAnotherGame = {
-                        selectedTab = AppTab.GAMES
-                        navController.popBackStack(Routes.TABS, inclusive = false)
-                    },
-                )
+                CompositionLocalProvider(
+                    LocalSharedTransitionScope provides this@SharedTransitionLayout,
+                    LocalAnimatedVisibilityScope provides this,
+                ) {
+                    val completionGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
+                    val completionDifficulty = Difficulty.fromKey(entry.arguments?.getString("difficulty") ?: "easy")
+                    CompletionScreen(
+                        gameId = completionGameId,
+                        difficulty = completionDifficulty,
+                        score = entry.arguments?.getInt("score") ?: 0,
+                        accuracyPct = entry.arguments?.getInt("accuracyPct") ?: 100,
+                        elapsedSeconds = entry.arguments?.getInt("elapsedSeconds") ?: 0,
+                        isFirstSolve = entry.arguments?.getBoolean("isFirstSolve") ?: false,
+                        isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
+                        onPlayAgain = {
+                            navController.navigate(Routes.play(completionGameId, completionDifficulty, resume = false)) {
+                                popUpTo(Routes.TABS) { inclusive = false }
+                            }
+                        },
+                        onOtherDifficulty = {
+                            navController.navigate(Routes.picker(completionGameId)) {
+                                popUpTo(Routes.TABS) { inclusive = false }
+                            }
+                        },
+                        onTryAnotherGame = {
+                            selectedTab = AppTab.GAMES
+                            navController.popBackStack(Routes.TABS, inclusive = false)
+                        },
+                    )
+                }
             }
 
             composable(
@@ -369,41 +414,46 @@ fun AppNavHost() {
                     navArgument("elapsedSeconds") { type = NavType.IntType },
                     navArgument("reason") { type = NavType.StringType },
                 ),
-                enterTransition = { fadeIn(animationSpec = tween(180)) },
-                exitTransition = { fadeOut(animationSpec = tween(150)) },
+                enterTransition = { fadeIn(animationSpec = tween(250)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) },
             ) { entry ->
-                val lossGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
-                val lossDifficulty = Difficulty.fromKey(entry.arguments?.getString("difficulty") ?: "easy")
-                LossScreen(
-                    gameId = lossGameId,
-                    difficulty = lossDifficulty,
-                    elapsedSeconds = entry.arguments?.getInt("elapsedSeconds") ?: 0,
-                    reason = entry.arguments?.getString("reason") ?: "abandoned",
-                    onRetry = {
-                        navController.navigate(Routes.play(lossGameId, lossDifficulty, resume = false)) {
-                            popUpTo(Routes.TABS) { inclusive = false }
-                        }
-                    },
-                    onOtherDifficulty = {
-                        navController.navigate(Routes.picker(lossGameId)) {
-                            popUpTo(Routes.TABS) { inclusive = false }
-                        }
-                    },
-                    onTryAnotherGame = {
-                        selectedTab = AppTab.GAMES
-                        navController.popBackStack(Routes.TABS, inclusive = false)
-                    },
-                    onWalkThroughSolve = {
-                        navController.navigate(Routes.analyzer(lossGameId))
-                    },
-                )
+                CompositionLocalProvider(
+                    LocalSharedTransitionScope provides this@SharedTransitionLayout,
+                    LocalAnimatedVisibilityScope provides this,
+                ) {
+                    val lossGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
+                    val lossDifficulty = Difficulty.fromKey(entry.arguments?.getString("difficulty") ?: "easy")
+                    LossScreen(
+                        gameId = lossGameId,
+                        difficulty = lossDifficulty,
+                        elapsedSeconds = entry.arguments?.getInt("elapsedSeconds") ?: 0,
+                        reason = entry.arguments?.getString("reason") ?: "abandoned",
+                        onRetry = {
+                            navController.navigate(Routes.play(lossGameId, lossDifficulty, resume = false)) {
+                                popUpTo(Routes.TABS) { inclusive = false }
+                            }
+                        },
+                        onOtherDifficulty = {
+                            navController.navigate(Routes.picker(lossGameId)) {
+                                popUpTo(Routes.TABS) { inclusive = false }
+                            }
+                        },
+                        onTryAnotherGame = {
+                            selectedTab = AppTab.GAMES
+                            navController.popBackStack(Routes.TABS, inclusive = false)
+                        },
+                        onWalkThroughSolve = {
+                            navController.navigate(Routes.analyzer(lossGameId))
+                        },
+                    )
+                }
             }
 
             composable(
                 Routes.CHALLENGER,
                 arguments = listOf(navArgument("gameId") { type = NavType.StringType }),
-                enterTransition = { fadeIn(animationSpec = tween(180)) },
-                exitTransition = { fadeOut(animationSpec = tween(150)) },
+                enterTransition = { fadeIn(animationSpec = tween(250)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) },
             ) { entry ->
                 val challengerGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
                 when (challengerGameId) {
@@ -442,83 +492,88 @@ fun AppNavHost() {
                     navArgument("isNewHighScore") { type = NavType.BoolType },
                     navArgument("reason") { type = NavType.StringType },
                 ),
-                enterTransition = { fadeIn(animationSpec = tween(180)) },
-                exitTransition = { fadeOut(animationSpec = tween(150)) },
+                enterTransition = { fadeIn(animationSpec = tween(250)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) },
             ) { entry ->
-                val resultGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
-                when (resultGameId) {
-                    GameId.ANIMALDOKU -> AnimalDokuChallengerResultScreen(
-                        puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
-                        tierReached = Difficulty.fromKey(entry.arguments?.getString("tier") ?: "easy"),
-                        score = entry.arguments?.getInt("score") ?: 0,
-                        isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
-                        reason = entry.arguments?.getString("reason") ?: "time_up",
-                        onPlayAgain = {
-                            navController.navigate(Routes.challenger(resultGameId)) {
-                                popUpTo(Routes.TABS) { inclusive = false }
-                            }
-                        },
-                        onBackToPuzzles = {
-                            navController.navigate(Routes.picker(resultGameId)) {
-                                popUpTo(Routes.TABS) { inclusive = false }
-                            }
-                        },
-                        onTryAnotherGame = {
-                            selectedTab = AppTab.GAMES
-                            navController.popBackStack(Routes.TABS, inclusive = false)
-                        },
-                    )
-                    GameId.WORDGUESS -> WordGuessChallengerResultScreen(
-                        puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
-                        tierReached = Difficulty.fromKey(entry.arguments?.getString("tier") ?: "easy"),
-                        score = entry.arguments?.getInt("score") ?: 0,
-                        isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
-                        reason = entry.arguments?.getString("reason") ?: "time_up",
-                        onPlayAgain = {
-                            navController.navigate(Routes.challenger(resultGameId)) {
-                                popUpTo(Routes.TABS) { inclusive = false }
-                            }
-                        },
-                        onBackToPuzzles = {
-                            navController.navigate(Routes.picker(resultGameId)) {
-                                popUpTo(Routes.TABS) { inclusive = false }
-                            }
-                        },
-                        onTryAnotherGame = {
-                            selectedTab = AppTab.GAMES
-                            navController.popBackStack(Routes.TABS, inclusive = false)
-                        },
-                    )
-                    GameId.CHIMPTEST -> ChimpTestChallengerResultScreen(
-                        puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
-                        tierReached = Difficulty.fromKey(entry.arguments?.getString("tier") ?: "easy"),
-                        score = entry.arguments?.getInt("score") ?: 0,
-                        isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
-                        reason = entry.arguments?.getString("reason") ?: "time_up",
-                        onPlayAgain = {
-                            navController.navigate(Routes.challenger(resultGameId)) {
-                                popUpTo(Routes.TABS) { inclusive = false }
-                            }
-                        },
-                        onBackToPuzzles = {
-                            navController.navigate(Routes.picker(resultGameId)) {
-                                popUpTo(Routes.TABS) { inclusive = false }
-                            }
-                        },
-                        onTryAnotherGame = {
-                            selectedTab = AppTab.GAMES
-                            navController.popBackStack(Routes.TABS, inclusive = false)
-                        },
-                    )
-                    else -> Unit
+                CompositionLocalProvider(
+                    LocalSharedTransitionScope provides this@SharedTransitionLayout,
+                    LocalAnimatedVisibilityScope provides this,
+                ) {
+                    val resultGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
+                    when (resultGameId) {
+                        GameId.ANIMALDOKU -> AnimalDokuChallengerResultScreen(
+                            puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
+                            tierReached = Difficulty.fromKey(entry.arguments?.getString("tier") ?: "easy"),
+                            score = entry.arguments?.getInt("score") ?: 0,
+                            isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
+                            reason = entry.arguments?.getString("reason") ?: "time_up",
+                            onPlayAgain = {
+                                navController.navigate(Routes.challenger(resultGameId)) {
+                                    popUpTo(Routes.TABS) { inclusive = false }
+                                }
+                            },
+                            onBackToPuzzles = {
+                                navController.navigate(Routes.picker(resultGameId)) {
+                                    popUpTo(Routes.TABS) { inclusive = false }
+                                }
+                            },
+                            onTryAnotherGame = {
+                                selectedTab = AppTab.GAMES
+                                navController.popBackStack(Routes.TABS, inclusive = false)
+                            },
+                        )
+                        GameId.WORDGUESS -> WordGuessChallengerResultScreen(
+                            puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
+                            tierReached = Difficulty.fromKey(entry.arguments?.getString("tier") ?: "easy"),
+                            score = entry.arguments?.getInt("score") ?: 0,
+                            isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
+                            reason = entry.arguments?.getString("reason") ?: "time_up",
+                            onPlayAgain = {
+                                navController.navigate(Routes.challenger(resultGameId)) {
+                                    popUpTo(Routes.TABS) { inclusive = false }
+                                }
+                            },
+                            onBackToPuzzles = {
+                                navController.navigate(Routes.picker(resultGameId)) {
+                                    popUpTo(Routes.TABS) { inclusive = false }
+                                }
+                            },
+                            onTryAnotherGame = {
+                                selectedTab = AppTab.GAMES
+                                navController.popBackStack(Routes.TABS, inclusive = false)
+                            },
+                        )
+                        GameId.CHIMPTEST -> ChimpTestChallengerResultScreen(
+                            puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
+                            tierReached = Difficulty.fromKey(entry.arguments?.getString("tier") ?: "easy"),
+                            score = entry.arguments?.getInt("score") ?: 0,
+                            isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
+                            reason = entry.arguments?.getString("reason") ?: "time_up",
+                            onPlayAgain = {
+                                navController.navigate(Routes.challenger(resultGameId)) {
+                                    popUpTo(Routes.TABS) { inclusive = false }
+                                }
+                            },
+                            onBackToPuzzles = {
+                                navController.navigate(Routes.picker(resultGameId)) {
+                                    popUpTo(Routes.TABS) { inclusive = false }
+                                }
+                            },
+                            onTryAnotherGame = {
+                                selectedTab = AppTab.GAMES
+                                navController.popBackStack(Routes.TABS, inclusive = false)
+                            },
+                        )
+                        else -> Unit
+                    }
                 }
             }
 
             composable(
                 Routes.ANALYZER,
                 arguments = listOf(navArgument("gameId") { type = NavType.StringType }),
-                enterTransition = { fadeIn(animationSpec = tween(180)) },
-                exitTransition = { fadeOut(animationSpec = tween(150)) },
+                enterTransition = { fadeIn(animationSpec = tween(250)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) },
             ) { entry ->
                 val analyzerGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
                 val analyzerSnapshot = rememberSaveable { mutableStateOf(AnalyzerHandoff.consume()) }.value
@@ -534,8 +589,11 @@ fun AppNavHost() {
             composable(
                 Routes.SUPPORT_INFO,
                 arguments = listOf(navArgument("key") { type = NavType.StringType }),
+                enterTransition = { fadeIn(animationSpec = tween(250)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) },
             ) { entry ->
                 SupportInfoScreen(entry.arguments?.getString("key") ?: "about")
+            }
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.quietgrid.app.ui.screens
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -47,8 +48,12 @@ import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
 import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
 import com.quietgrid.app.games.wordguess.wordGuessDifficultyLabelRes
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
+import com.quietgrid.app.nav.LocalAnimatedVisibilityScope
+import com.quietgrid.app.nav.LocalSharedTransitionScope
+import com.quietgrid.app.ui.components.SharedElementKeys
 import com.quietgrid.app.ui.components.rememberHapticController
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun LossScreen(
     gameId: GameId,
@@ -203,8 +208,20 @@ fun LossScreen(
                 },
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Box(
+                val sharedTransitionScope = LocalSharedTransitionScope.current
+                val animatedVisibilityScope = LocalAnimatedVisibilityScope.current
+                val sharedModifier = if (sharedTransitionScope != null && animatedVisibilityScope != null) {
+                    with(sharedTransitionScope) {
+                        Modifier.sharedBounds(
+                            sharedContentState = rememberSharedContentState(key = SharedElementKeys.gameIdentity(gameId)),
+                            animatedVisibilityScope = animatedVisibilityScope,
+                        )
+                    }
+                } else {
                     Modifier
+                }
+                Box(
+                    sharedModifier
                         .size(96.dp)
                         .background(errorColor.copy(alpha = 0.12f), CircleShape)
                         .border(1.dp, errorColor.copy(alpha = 0.3f), CircleShape),
