@@ -20,6 +20,9 @@ captures/
 # VS Code
 .vscode/
 
+# Local-only docs
+/docs/RELEASE.md
+
 # Signing / secrets
 *.jks
 !debug.keystore
