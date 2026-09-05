@@ -57,6 +57,7 @@
     <string name="settings_language_german_detail">Toon de app in het Duits.</string>
     <string name="settings_language_french_detail">Toon de app in het Frans.</string>
     <string name="settings_language_spanish_detail">Toon de app in het Spaans.</string>
+    <string name="settings_language_polish_detail">Toon de app in het Pools.</string>
     <string name="settings_puzzle_language">Puzzeltaal</string>
     <string name="settings_puzzle_language_dropdown_detail">Taal voor Woord Raden- en Woordzoeker-puzzels.</string>
     <string name="settings_puzzle_language_system_detail">Volg de apptaal.</string>
@@ -65,6 +66,7 @@
     <string name="settings_puzzle_language_german_detail">Duits</string>
     <string name="settings_puzzle_language_french_detail">Frans</string>
     <string name="settings_puzzle_language_spanish_detail">Spaans</string>
+    <string name="settings_puzzle_language_polish_detail">Pools</string>
     <string name="settings_show_timer_in_play_label">Timer tonen tijdens spelen</string>
     <string name="settings_show_timer_in_play_detail">Toont de verstreken tijd terwijl een puzzel bezig is.</string>
     <string name="settings_beta_games_label">Bètaspellen inschakelen</string>

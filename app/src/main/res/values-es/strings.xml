@@ -57,6 +57,7 @@
     <string name="settings_language_german_detail">Mostrar la aplicación en alemán.</string>
     <string name="settings_language_french_detail">Mostrar la aplicación en francés.</string>
     <string name="settings_language_spanish_detail">Mostrar la aplicación en español.</string>
+    <string name="settings_language_polish_detail">Mostrar la aplicación en polaco.</string>
     <string name="settings_puzzle_language">Idioma de los puzzles</string>
     <string name="settings_puzzle_language_dropdown_detail">Idioma usado para los puzzles de Adivina la Palabra y Sopa de letras.</string>
     <string name="settings_puzzle_language_system_detail">Seguir el idioma de la aplicación.</string>
@@ -65,6 +66,7 @@
     <string name="settings_puzzle_language_german_detail">Alemán</string>
     <string name="settings_puzzle_language_french_detail">Francés</string>
     <string name="settings_puzzle_language_spanish_detail">Español</string>
+    <string name="settings_puzzle_language_polish_detail">Polaco</string>
     <string name="settings_show_timer_in_play_label">Mostrar temporizador durante el juego</string>
     <string name="settings_show_timer_in_play_detail">Muestra el temporizador transcurrido mientras un puzzle está en progreso.</string>
     <string name="settings_beta_games_label">Activar juegos beta</string>

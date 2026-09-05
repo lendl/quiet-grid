@@ -57,6 +57,7 @@
     <string name="settings_language_german_detail">Afficher l\'application en allemand.</string>
     <string name="settings_language_french_detail">Afficher l\'application en français.</string>
     <string name="settings_language_spanish_detail">Afficher l\'application en espagnol.</string>
+    <string name="settings_language_polish_detail">Afficher l\'application en polonais.</string>
     <string name="settings_puzzle_language">Langue des puzzles</string>
     <string name="settings_puzzle_language_dropdown_detail">Langue utilisée pour les puzzles Devine le Mot et Mots mêlés.</string>
     <string name="settings_puzzle_language_system_detail">Suivre la langue de l\'application.</string>
@@ -65,6 +66,7 @@
     <string name="settings_puzzle_language_german_detail">Allemand</string>
     <string name="settings_puzzle_language_french_detail">Français</string>
     <string name="settings_puzzle_language_spanish_detail">Espagnol</string>
+    <string name="settings_puzzle_language_polish_detail">Polonais</string>
     <string name="settings_show_timer_in_play_label">Afficher la minuterie pendant le jeu</string>
     <string name="settings_show_timer_in_play_detail">Affiche la minuterie écoulée pendant un puzzle en cours.</string>
     <string name="settings_beta_games_label">Activer les jeux bêta</string>

@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -132,14 +133,16 @@ fun AnimalDokuChallengerPlayScreen(
             flashTrigger = boardFlashTrigger,
         ) {
             session?.let { current ->
-                AnimalDokuGrid(
-                    size = current.puzzleSession.puzzle.size,
-                    regions = current.puzzleSession.puzzle.regions,
-                    cells = current.puzzleSession.cells,
-                    onCellTap = viewModel::onCellTap,
-                    onCellDrag = viewModel::onCellDrag,
-                    onCellDoubleTap = viewModel::onCellDoubleTap,
-                )
+                key(current.puzzleSession.puzzle.id) {
+                    AnimalDokuGrid(
+                        size = current.puzzleSession.puzzle.size,
+                        regions = current.puzzleSession.puzzle.regions,
+                        cells = current.puzzleSession.cells,
+                        onCellTap = viewModel::onCellTap,
+                        onCellDrag = viewModel::onCellDrag,
+                        onCellDoubleTap = viewModel::onCellDoubleTap,
+                    )
+                }
             }
         }
     }
