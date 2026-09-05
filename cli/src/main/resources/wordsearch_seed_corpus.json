@@ -7745,5 +7745,201 @@
         "Mezclador"
       ]
     }
+  ],
+  "pl": [
+    {
+      "themeId": "zwierzeta",
+      "words": [
+        "Pies", "Kot", "Kon", "Krowa", "Owca", "Koza", "Swinia", "Osiol", "Wielblad", "Lama",
+        "Tygrys", "Lew", "Pantera", "Jaguar", "Lampart", "Gepard", "Wilk", "Lis", "Niedzwiedz", "Panda",
+        "Szop", "Bobr", "Wydra", "Jelen", "Sarna", "Bizon", "Bawol", "Zebra", "Slon", "Nosorozec",
+        "Hipopotam", "Malpa", "Goryl", "Szympans", "Lemur", "Waz", "Jaszczurka", "Zaba", "Ropucha", "Zolw",
+        "Orzel", "Jastrzab", "Sowa", "Golab", "Wrona", "Sroka", "Labedz", "Mewa", "Czapla", "Kuna",
+        "Borsuk", "Jez", "Kret", "Nietoperz", "Mors", "Foka", "Delfin", "Rekin", "Wieloryb", "Dorsz",
+        "Pstrag", "Losos", "Osmiornica", "Krab", "Krewetka", "Mrowka", "Osa", "Pszczola", "Wazka", "Sep",
+        "Indyk", "Bazant", "Kuropatwa", "Kura", "Kaczka", "Ges", "Strus", "Pingwin", "Flaming", "Papuga",
+        "Kanarek", "Wrobel", "Kos", "Dzieciol", "Kukulka", "Bocian", "Renifer", "Kangur", "Koala"
+      ]
+    },
+    {
+      "themeId": "jedzenie",
+      "words": [
+        "Chleb", "Maslo", "Ser", "Mleko", "Jajko", "Mieso", "Kurczak", "Wolowina", "Wieprzowina", "Ryba",
+        "Ryz", "Makaron", "Ziemniak", "Marchew", "Cebula", "Czosnek", "Pomidor", "Ogorek", "Papryka", "Kapusta",
+        "Salata", "Szpinak", "Groszek", "Fasola", "Kukurydza", "Grzyb", "Jablko", "Gruszka", "Banan", "Pomarancza",
+        "Cytryna", "Truskawka", "Malina", "Jagoda", "Wisnia", "Sliwka", "Winogrono", "Arbuz", "Melon", "Ananas",
+        "Brzoskwinia", "Cukier", "Sol", "Pieprz", "Miod", "Dzem", "Ciasto", "Bulka", "Herbata", "Kawa",
+        "Sok", "Woda", "Wino", "Piwo", "Zupa", "Salatka", "Kanapka", "Pizza", "Nalesnik", "Pierogi",
+        "Bigos", "Kotlet", "Frytki", "Lody", "Czekolada", "Cukierek", "Ciastko", "Orzech", "Migdal", "Oliwka",
+        "Rodzynek", "Przyprawa", "Musztarda", "Keczup", "Majonez", "Ocet", "Oliwa", "Maka", "Drozdze", "Kalafior",
+        "Brokul", "Rzodkiewka", "Burak", "Por", "Seler", "Dynia", "Cukinia"
+      ]
+    },
+    {
+      "themeId": "przyroda",
+      "words": [
+        "Las", "Drzewo", "Kwiat", "Trawa", "Lisc", "Korzen", "Gora", "Dolina", "Rzeka", "Jezioro",
+        "Morze", "Ocean", "Plaza", "Pustynia", "Wyspa", "Wodospad", "Chmura", "Deszcz", "Snieg", "Lod",
+        "Wiatr", "Slonce", "Ksiezyc", "Gwiazda", "Niebo", "Tecza", "Kamien", "Skala", "Piasek", "Bloto",
+        "Pole", "Laka", "Wzgorze", "Jaskinia", "Bagno", "Sosna", "Dab", "Brzoza", "Klon", "Wierzba",
+        "Paproc", "Mech", "Galaz", "Pien", "Roslina", "Nasiono", "Owoc", "Krzew", "Zywoplot", "Polana",
+        "Zatoka", "Ciesnina", "Lawina", "Wulkan", "Huragan", "Burza", "Piorun", "Grzmot", "Mgla", "Rosa",
+        "Szron", "Susza", "Powodz"
+      ]
+    },
+    {
+      "themeId": "sport",
+      "words": [
+        "Pilka", "Bramka", "Boisko", "Mecz", "Zawodnik", "Druzyna", "Trener", "Sedzia", "Bieg", "Skok",
+        "Rzut", "Plywanie", "Kolarstwo", "Rower", "Narty", "Lyzwy", "Tenis", "Golf", "Koszykowka", "Siatkowka",
+        "Pilkarz", "Bramkarz", "Trybuna", "Stadion", "Medal", "Puchar", "Zwyciestwo", "Porazka", "Trening", "Rozgrzewka",
+        "Kondycja", "Wytrzymalosc", "Sila", "Szybkosc", "Boks", "Judo", "Karate", "Szermierka", "Lucznictwo", "Zapasy",
+        "Hokej", "Rugby", "Kajak", "Zaglowanie", "Wspinaczka", "Maraton", "Sprint", "Sztafeta", "Rekord", "Liga",
+        "Turniej", "Kibic", "Gwizdek"
+      ]
+    },
+    {
+      "themeId": "ubrania",
+      "words": [
+        "Koszula", "Spodnie", "Sukienka", "Spodnica", "Sweter", "Kurtka", "Plaszcz", "Buty", "Skarpety", "Rekawiczki",
+        "Czapka", "Szalik", "Krawat", "Pasek", "Kapelusz", "Botki", "Sandaly", "Bluzka", "Bluza", "Marynarka",
+        "Kamizelka", "Pizama", "Szlafrok", "Rajstopy", "Legginsy", "Dzinsy", "Podkoszulek", "Koszulka", "Klapki", "Kalosze",
+        "Rekawice", "Chusta", "Fartuch", "Mundur", "Stroj", "Guzik", "Zamek", "Kieszen", "Wstazka", "Sznurowadlo",
+        "Biustonosz", "Slipy", "Halka", "Peleryna", "Beret", "Cylinder", "Bandana", "Opaska"
+      ]
+    },
+    {
+      "themeId": "transport",
+      "words": [
+        "Samochod", "Autobus", "Pociag", "Samolot", "Statek", "Lodz", "Rower", "Motocykl", "Skuter", "Ciezarowka",
+        "Taksowka", "Tramwaj", "Metro", "Prom", "Helikopter", "Rakieta", "Sanki", "Wozek", "Karetka", "Wagon",
+        "Kolej", "Lotnisko", "Dworzec", "Port", "Droga", "Autostrada", "Most", "Tunel", "Skrzyzowanie", "Chodnik",
+        "Kierowca", "Pasazer", "Bilet", "Walizka", "Bagaz", "Kask", "Kierownica", "Silnik", "Kolo", "Hamulec",
+        "Paliwo", "Benzyna"
+      ]
+    },
+    {
+      "themeId": "dom",
+      "words": [
+        "Dom", "Mieszkanie", "Pokoj", "Kuchnia", "Lazienka", "Sypialnia", "Salon", "Jadalnia", "Piwnica", "Strych",
+        "Garaz", "Ogrod", "Balkon", "Taras", "Okno", "Drzwi", "Sciana", "Podloga", "Sufit", "Dach",
+        "Schody", "Krzeslo", "Stol", "Lozko", "Szafa", "Kanapa", "Fotel", "Polka", "Lampa", "Dywan",
+        "Zaslona", "Lustro", "Poduszka", "Koldra", "Koc", "Prysznic", "Wanna", "Umywalka", "Toaleta", "Lodowka",
+        "Kuchenka", "Piekarnik", "Zlew", "Pralka", "Odkurzacz", "Zelazko", "Mikser", "Czajnik", "Garnek", "Patelnia",
+        "Talerz", "Kubek", "Szklanka", "Widelec", "Noz", "Lyzka", "Obrus", "Serwetka", "Klucz", "Skrzynka",
+        "Pudelko", "Swiatlo", "Wlacznik", "Gniazdko", "Kominek", "Plot", "Brama", "Furtka", "Trawnik", "Grill",
+        "Hustawka", "Piaskownica", "Dzwonek", "Klamka", "Zasuwka", "Rura", "Kaloryfer", "Termostat"
+      ]
+    },
+    {
+      "themeId": "zawody",
+      "words": [
+        "Nauczyciel", "Lekarz", "Pielegniarka", "Policjant", "Strazak", "Kucharz", "Piekarz", "Fryzjer", "Mechanik", "Inzynier",
+        "Architekt", "Prawnik", "Sedzia", "Aktor", "Aktorka", "Piosenkarz", "Malarz", "Rzezbiarz", "Pisarz", "Dziennikarz",
+        "Fotograf", "Programista", "Naukowiec", "Astronauta", "Pilot", "Marynarz", "Rolnik", "Ogrodnik", "Elektryk", "Hydraulik",
+        "Stolarz", "Murarz", "Sprzedawca", "Kasjer", "Kelner", "Kelnerka", "Weterynarz", "Dentysta", "Ksiegowy", "Urzednik",
+        "Zolnierz", "Sekretarka", "Tlumacz", "Projektant", "Krawiec"
+      ]
+    },
+    {
+      "themeId": "rodzina",
+      "words": [
+        "Matka", "Ojciec", "Corka", "Syn", "Brat", "Siostra", "Babcia", "Dziadek", "Wnuk", "Wnuczka",
+        "Ciotka", "Wujek", "Kuzyn", "Kuzynka", "Mama", "Tata", "Rodzice", "Dziecko", "Niemowle", "Maz",
+        "Zona", "Narzeczony", "Narzeczona", "Tesciowa", "Tesc", "Bratanek", "Siostrzenica", "Rodzenstwo", "Krewny"
+      ]
+    },
+    {
+      "themeId": "emocje",
+      "words": [
+        "Radosc", "Smutek", "Zlosc", "Strach", "Zaskoczenie", "Milosc", "Nienawisc", "Zazdrosc", "Duma", "Wstyd",
+        "Wina", "Nadzieja", "Rozpacz", "Spokoj", "Nuda", "Zdziwienie", "Ulga", "Podziw", "Tesknota", "Zachwyt",
+        "Niepokoj", "Wesolosc", "Rozczarowanie", "Wdziecznosc", "Zmieszanie", "Panika", "Euforia", "Frustracja", "Ciekawosc"
+      ]
+    },
+    {
+      "themeId": "cechy",
+      "words": [
+        "Silny", "Slaby", "Madry", "Glupi", "Odwazny", "Tchorzliwy", "Uczciwy", "Zdolny", "Leniwy", "Pracowity",
+        "Cierpliwy", "Uparty", "Szczery", "Skromny", "Dumny", "Hojny", "Skapy", "Wesoly", "Smutny", "Spokojny",
+        "Nerwowy", "Zabawny", "Powazny", "Sprytny", "Naiwny", "Grzeczny", "Zly", "Dobry", "Ladny", "Brzydki"
+      ]
+    },
+    {
+      "themeId": "kosmos",
+      "words": [
+        "Kosmos", "Gwiazda", "Planeta", "Ksiezyc", "Slonce", "Galaktyka", "Kometa", "Meteor", "Asteroida", "Rakieta",
+        "Astronauta", "Teleskop", "Orbita", "Wszechswiat", "Ziemia", "Mars", "Wenus", "Jowisz", "Saturn", "Neptun",
+        "Uran", "Merkury", "Pluton", "Grawitacja", "Satelita", "Sonda", "Skafander", "Stacja", "Meteoryt", "Konstelacja",
+        "Mglawica", "Supernowa", "Pierscien"
+      ]
+    },
+    {
+      "themeId": "kolory",
+      "words": [
+        "Czerwony", "Niebieski", "Zielony", "Zolty", "Pomaranczowy", "Fioletowy", "Rozowy", "Brazowy", "Czarny", "Bialy",
+        "Szary", "Zloty", "Srebrny", "Turkusowy", "Bezowy", "Granatowy", "Bordowy", "Kremowy", "Oliwkowy", "Liliowy",
+        "Rubinowy", "Szmaragdowy", "Bursztynowy", "Koralowy", "Lawendowy", "Mietowy", "Kobaltowy", "Indygo", "Miedziany", "Perlowy",
+        "Antracytowy", "Karmazynowy", "Szafirowy", "Pastelowy", "Neonowy", "Metaliczny", "Teczowy"
+      ]
+    },
+    {
+      "themeId": "cialo",
+      "words": [
+        "Glowa", "Twarz", "Oko", "Ucho", "Nos", "Usta", "Zab", "Jezyk", "Szyja", "Ramie",
+        "Reka", "Palec", "Noga", "Stopa", "Kolano", "Lokiec", "Nadgarstek", "Kostka", "Plecy", "Brzuch",
+        "Serce", "Pluco", "Watroba", "Zoladek", "Mozg", "Kosc", "Miesien", "Skora", "Wlosy", "Brew",
+        "Rzesa", "Podbrodek", "Policzek", "Czolo"
+      ]
+    },
+    {
+      "themeId": "szkola",
+      "words": [
+        "Szkola", "Nauczyciel", "Uczen", "Klasa", "Lekcja", "Zeszyt", "Podrecznik", "Dlugopis", "Olowek", "Gumka",
+        "Linijka", "Tornister", "Plecak", "Tablica", "Kreda", "Biurko", "Krzeslo", "Dzwonek", "Przerwa", "Egzamin",
+        "Test", "Ocena", "Dyplom", "Swiadectwo", "Biblioteka", "Ksiazka", "Zadanie", "Matematyka", "Historia", "Geografia",
+        "Biologia", "Chemia", "Fizyka", "Plastyka", "Muzyka", "Informatyka", "Angielski", "Gimnastyka", "Dyrektor", "Wozny",
+        "Kolega", "Kolezanka"
+      ]
+    },
+    {
+      "themeId": "muzyka",
+      "words": [
+        "Muzyka", "Piosenka", "Melodia", "Rytm", "Nuta", "Gitara", "Pianino", "Skrzypce", "Perkusja", "Flet",
+        "Trabka", "Saksofon", "Klarnet", "Wiolonczela", "Harfa", "Akordeon", "Beben", "Mikrofon", "Glosnik", "Sluchawki",
+        "Plyta", "Koncert", "Orkiestra", "Chor", "Spiewak", "Spiewaczka", "Kompozytor", "Dyrygent", "Nagranie", "Album",
+        "Utwor", "Refren", "Zwrotka", "Takt", "Ton", "Harmonia", "Improwizacja", "Jazz", "Rock", "Pop",
+        "Blues", "Reggae", "Metal", "Punk", "Disco", "Techno", "Klasyczna", "Ludowa", "Opera", "Musical",
+        "Balet", "Festiwal", "Scena", "Bilet", "Wystep", "Publicznosc", "Aplauz", "Bis", "Proba", "Kompozycja",
+        "Instrument", "Struna", "Klawisz", "Smyczek", "Etiuda", "Symfonia", "Sonata"
+      ]
+    },
+    {
+      "themeId": "hobby",
+      "words": [
+        "Czytanie", "Pisanie", "Malowanie", "Rysowanie", "Fotografia", "Gotowanie", "Pieczenie", "Ogrodnictwo", "Wedkarstwo", "Turystyka",
+        "Kolekcjonowanie", "Szycie", "Szydelkowanie", "Modelarstwo", "Origami", "Ceramika", "Rzezba", "Taniec", "Spiewanie", "Szachy",
+        "Warcaby", "Puzzle", "Krzyzowka", "Kalambury", "Karty", "Domino", "Kajakarstwo", "Jezdziectwo", "Majsterkowanie", "Haft",
+        "Filatelistyka", "Numizmatyka", "Astronomia"
+      ]
+    },
+    {
+      "themeId": "narzedzia",
+      "words": [
+        "Mlotek", "Srubokret", "Klucz", "Pila", "Wiertarka", "Szczypce", "Nozyczki", "Miarka", "Poziomica", "Imadlo",
+        "Dluto", "Pilnik", "Gwozdz", "Sruba", "Nakretka", "Podkladka", "Kombinerki", "Latarka", "Drabina", "Taczka",
+        "Lopata", "Grabie", "Sekator", "Konewka", "Wiadro", "Pedzel", "Klej", "Tasma", "Skrzynka", "Kask",
+        "Rekawice", "Spawarka", "Pilarka", "Szlifierka"
+      ]
+    },
+    {
+      "themeId": "elektronika",
+      "words": [
+        "Komputer", "Laptop", "Telefon", "Tablet", "Klawiatura", "Mysz", "Monitor", "Drukarka", "Skaner", "Router",
+        "Kabel", "Ladowarka", "Bateria", "Ekran", "Aplikacja", "Program", "Internet", "Siec", "Haslo", "Plik",
+        "Folder", "Dysk", "Procesor", "Pamiec", "Kamera", "Aparat", "Konsola", "Gra", "Pilot", "Glosnik",
+        "Sluchawki", "Mikrofon", "Telewizor", "Radio", "Zegarek", "Czujnik", "Modem", "Serwer", "Antena"
+      ]
+    }
   ]
 }

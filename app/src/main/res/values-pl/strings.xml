@@ -129,7 +129,7 @@
     <string name="nonogram_quickstart_hook">Im szybciej rozwiążesz łamigłówkę, tym wyższy będzie Twój wynik.</string>
 
     <string name="minesweeper_quickstart_goal">Oczyszczaj planszę, unikając wejścia na minę.</string>
-    <string name="minesweeper_quickstart_bullet_1">Stuk``nij pole, aby je odsłonić.</string>
+    <string name="minesweeper_quickstart_bullet_1">Stuknij pole, aby je odsłonić.</string>
     <string name="minesweeper_quickstart_bullet_2">Cyfry informują, ile min sąsiaduje z danym polem.</string>
     <string name="minesweeper_quickstart_bullet_3">Oznaczaj flagami pola, w których podejrzewasz miny.</string>
     <string name="minesweeper_quickstart_hook">Oczyszczaj planszę szybko, aby utrzymać wysoki wynik.</string>
@@ -352,7 +352,7 @@
     <string name="takuzu_hint_repair_complete_lines_body">Zmień jedno podświetlone pole w sekcji: %1$s. Powód: %1$s zawiera już %2$d cyfry %3$d%4$s, podczas gdy limit wynosi %5$d.</string>
     <string name="takuzu_hint_repair_eliminate_filled_lines_title">Kolejny ruch, aby rozdzielić pasujące: %1$s</string>
     <string name="takuzu_hint_repair_eliminate_filled_lines_body">Zmień jedno podświetlone pole. Powód: %2$s i %3$s są identyczne, a ukończone linie %1$s muszą pozostać unikalne.</string>
-    <string name="takuzu_hint_digit_plural_suffix"> </string>
+    <string name="takuzu_hint_digit_plural_suffix"></string>
     <string name="takuzu_how_to_play_scoring">Zaczynasz z liczbą 10 000 punktów, która spada wraz z upływem czasu. Każda nieprawidłowo ukończona linia kosztuje 500 punktów. Na wyższych poziomach trudności punkty spadają wolniej.</string>
     <string name="takuzu_tip_watch_flashes_title">Zwracaj uwagę na mignięcia</string>
     <string name="takuzu_tip_watch_flashes_body">Gdy prawidłowo ukończysz wiersz lub kolumnę, wszystkie należące do nich pola na chwilę migną w ramach potwierdzenia.</string>
@@ -567,7 +567,7 @@
     <string name="wordsearch_reset_zoom">Resetuj przybliżenie</string>
     <string name="wordsearch_next_move_show">Pokaż podpowiedź do kolejnego słowa</string>
     <string name="wordsearch_next_move_hide">Ukryj podpowiedź do kolejnego słowa</string>
-    <string name="wordsearch_next_move_title">Znajdź „%1$s”</string>
+    <string name="wordsearch_next_move_title">Znajdź \"%1$s\"</string>
     <string name="wordsearch_next_move_body">Zacznij od podświetlonej litery i zakreśl całe słowo w jednej linii prostej.</string>
     <string name="wordsearch_hidden_word_next_letter_title">Ukryte słowo: %1$s</string>
     <string name="wordsearch_hidden_word_next_letter_body">Podświetlone pole zawiera kolejną literę ukrytego słowa.</string>

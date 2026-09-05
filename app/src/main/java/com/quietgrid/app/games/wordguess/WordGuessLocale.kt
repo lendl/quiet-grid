@@ -3,7 +3,7 @@ package com.quietgrid.app.games.wordguess
 import androidx.appcompat.app.AppCompatDelegate
 import java.util.Locale
 
-val WORDGUESS_SUPPORTED_LOCALES = setOf("en", "de", "es", "fr", "nl")
+val WORDGUESS_SUPPORTED_LOCALES = setOf("en", "de", "es", "fr", "nl", "pl")
 
 fun currentWordGuessLocale(puzzleLanguageOverride: String): String {
     val candidate = puzzleLanguageOverride.ifEmpty {

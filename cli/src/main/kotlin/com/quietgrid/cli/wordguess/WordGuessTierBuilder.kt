@@ -15,8 +15,8 @@ private val combiningMarks = Regex("\\p{Mn}+")
 private val asciiLettersOnly = Regex("[a-z]+")
 
 fun asciiFoldWord(word: String): String {
-    val deSharpened = word.replace("ß", "ss")
-    val decomposed = Normalizer.normalize(deSharpened, Normalizer.Form.NFD)
+    val substituted = word.replace("ß", "ss").replace("ł", "l").replace("Ł", "L")
+    val decomposed = Normalizer.normalize(substituted, Normalizer.Form.NFD)
     return combiningMarks.replace(decomposed, "")
 }
 
@@ -25,6 +25,7 @@ val WORDGUESS_RARE_LETTERS: Map<String, Set<Char>> = mapOf(
     "es" to setOf('j', 'k', 'w', 'x', 'z'),
     "fr" to setOf('j', 'k', 'w', 'x', 'y', 'z'),
     "nl" to setOf('c', 'q', 'x', 'y'),
+    "pl" to setOf('f', 'h', 'q', 'v', 'x'),
 )
 
 fun sortWordGuessByRarity(words: List<String>, locale: String): List<String> {
