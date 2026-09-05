@@ -223,6 +223,7 @@
     <string name="support_opens_github">Opent GitHub</string>
     <string name="support_licenses">Open-sourcelicenties</string>
     <string name="support_about_quiet_grid">Over Quiet Grid</string>
+    <string name="support_contributors">Bijdragers</string>
     <string name="support_show_your_support">Laat je steun zien</string>
     <string name="support_show_your_support_subtitle">Het helpt meer dan je denkt.</string>
     <string name="support_rate_on_play_store">Beoordeel op Play Store</string>
@@ -252,6 +253,10 @@
     <string name="support_info_licenses_body_2">Quiet Grid gebruikt ook opensourcepakketten die hun eigen licenties behouden. Je kunt de volledige broncode en pakketlijst bekijken in de projectrepository.</string>
     <string name="support_info_licenses_heading_3">Woordlijsten van Woord Raden</string>
     <string name="support_info_licenses_body_3">De Duitse woordlijst van Woord Raden is gebaseerd op woordfrequentiegegevens van het FrequencyWords-project (hermitdave/FrequencyWords op GitHub), onder CC BY-SA 3.0-licentie. De Engelse, Spaanse, Franse en Nederlandse woordlijsten zijn gebaseerd op Hunspell-spellingwoordenboeken: het en_US-woordenboek van LibreOffice (LGPL/BSD), het es_ES-woordenboek van RLA-ES (LGPL), het Franse woordenboek van Dicollecte (MPL 2.0) en het Nederlandse woordenboek van OpenTaal (BSD/CC BY 3.0).</string>
+    <string name="contributors_title">Bijdragers</string>
+    <string name="contributors_intro">Quiet Grid is beter dankzij de mensen die eraan bijdragen. Bedankt.</string>
+    <string name="contributors_cta_title">Wil je hier ook staan?</string>
+    <string name="contributors_cta_body">Quiet Grid is opensourcesoftware. Bugfixes, vertalingen en nieuwe puzzelideeën zijn welkom — open een pull request op GitHub.</string>
 
     <string name="chimp_title">Chimp Test</string>
     <string name="chimp_short_title">Chimp</string>

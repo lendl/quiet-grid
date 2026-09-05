@@ -223,6 +223,7 @@
     <string name="support_opens_github">Öffnet GitHub</string>
     <string name="support_licenses">Open-Source-Lizenzen</string>
     <string name="support_about_quiet_grid">Über Quiet Grid</string>
+    <string name="support_contributors">Mitwirkende</string>
     <string name="support_show_your_support">Zeig deine Unterstützung</string>
     <string name="support_show_your_support_subtitle">Es hilft mehr, als du denkst.</string>
     <string name="support_rate_on_play_store">Im Play Store bewerten</string>
@@ -252,6 +253,10 @@
     <string name="support_info_licenses_body_2">Quiet Grid verwendet außerdem Open-Source-Pakete, die ihre eigenen Lizenzen behalten. Den vollständigen Quellcode und die Paketliste findest du im Projekt-Repository.</string>
     <string name="support_info_licenses_heading_3">Wortlisten von Wort erraten</string>
     <string name="support_info_licenses_body_3">Die deutsche Wortliste von Wort erraten basiert auf Wort-Häufigkeitsdaten des FrequencyWords-Projekts (hermitdave/FrequencyWords auf GitHub), lizenziert unter CC BY-SA 3.0. Die englische, spanische, französische und niederländische Wortliste basieren auf Hunspell-Rechtschreibwörterbüchern: LibreOffices en_US-Wörterbuch (LGPL/BSD), RLA-ES\' es_ES-Wörterbuch (LGPL), Dicollectes französisches Wörterbuch (MPL 2.0) und OpenTaals niederländisches Wörterbuch (BSD/CC BY 3.0).</string>
+    <string name="contributors_title">Mitwirkende</string>
+    <string name="contributors_intro">Quiet Grid ist dank der Menschen, die daran mitwirken, besser geworden. Vielen Dank.</string>
+    <string name="contributors_cta_title">Möchtest du hier auch stehen?</string>
+    <string name="contributors_cta_body">Quiet Grid ist Open-Source-Software. Fehlerbehebungen, Übersetzungen und neue Rätselideen sind willkommen – erstelle einen Pull Request auf GitHub.</string>
 
     <string name="chimp_title">Chimp Test</string>
     <string name="chimp_short_title">Chimp</string>

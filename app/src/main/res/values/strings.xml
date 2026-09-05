@@ -234,6 +234,7 @@
     <string name="support_opens_github">Opens GitHub</string>
     <string name="support_licenses">Open-source licenses</string>
     <string name="support_about_quiet_grid">About Quiet Grid</string>
+    <string name="support_contributors">Contributors</string>
     <string name="support_show_your_support">Show your support</string>
     <string name="support_show_your_support_subtitle">It helps more than you\'d think.</string>
     <string name="support_rate_on_play_store">Rate on Play Store</string>
@@ -263,6 +264,10 @@
     <string name="support_info_licenses_body_2">Quiet Grid also uses open-source packages that keep their own licenses. You can review the full source code and package list in the project repository.</string>
     <string name="support_info_licenses_heading_3">Word Guess word lists</string>
     <string name="support_info_licenses_body_3">Word Guess\'s German word list is built from word-frequency data from the FrequencyWords project (hermitdave/FrequencyWords on GitHub), licensed CC BY-SA 3.0. English, Spanish, French, and Dutch word lists are built from Hunspell spelling dictionaries: LibreOffice\'s en_US dictionary (LGPL/BSD), RLA-ES\'s es_ES dictionary (LGPL), Dicollecte\'s French dictionary (MPL 2.0), and OpenTaal\'s Dutch dictionary (BSD/CC BY 3.0).</string>
+    <string name="contributors_title">Contributors</string>
+    <string name="contributors_intro">Quiet Grid is better because of the people who contribute to it. Thank you.</string>
+    <string name="contributors_cta_title">Want to see your name here?</string>
+    <string name="contributors_cta_body">Quiet Grid is open-source. Bug fixes, translations, and new puzzle ideas are all welcome — open a pull request on GitHub.</string>
 
     <!-- Chimp Test -->
     <string name="chimp_title">Chimp Test</string>

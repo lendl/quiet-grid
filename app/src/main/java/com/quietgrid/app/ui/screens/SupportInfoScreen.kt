@@ -16,7 +16,11 @@ import com.quietgrid.app.R
 private data class InfoSection(val heading: Int, val body: Int)
 private data class InfoContent(val title: Int, val intro: Int, val sections: List<InfoSection>)
 
-fun supportInfoTitleRes(key: String): Int? = INFO_CONTENT[key]?.title
+private val EXTRA_TITLES = mapOf(
+    "contributors" to R.string.contributors_title,
+)
+
+fun supportInfoTitleRes(key: String): Int? = INFO_CONTENT[key]?.title ?: EXTRA_TITLES[key]
 
 private val INFO_CONTENT = mapOf(
     "privacy" to InfoContent(
@@ -49,6 +53,10 @@ private val INFO_CONTENT = mapOf(
 
 @Composable
 fun SupportInfoScreen(key: String) {
+    if (key == "contributors") {
+        ContributorsScreen()
+        return
+    }
     val content = INFO_CONTENT[key] ?: return
     Column(
         Modifier

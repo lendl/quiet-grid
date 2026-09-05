@@ -234,6 +234,7 @@
     <string name="support_opens_github">Otwiera platformę GitHub</string>
     <string name="support_licenses">Licencje open-source</string>
     <string name="support_about_quiet_grid">O Quiet Grid</string>
+    <string name="support_contributors">Współtwórcy</string>
     <string name="support_show_your_support">Okaż swoje wsparcie</string>
     <string name="support_show_your_support_subtitle">To pomaga bardziej, niż myślisz.</string>
     <string name="support_rate_on_play_store">Oceń w sklepie Play Store</string>
@@ -263,6 +264,10 @@
     <string name="support_info_licenses_body_2">Quiet Grid korzysta również z pakietów open-source, które posiadają własne licencje. Pełny kod źródłowy oraz listę pakietów możesz sprawdzić w repozytorium projektu.</string>
     <string name="support_info_licenses_heading_3">Listy słów Word Guess</string>
     <string name="support_info_licenses_body_3">Niemiecka lista słów w Word Guess została utworzona na podstawie danych o częstotliwości występowania słów z projektu FrequencyWords (hermitdave/FrequencyWords na GitHubie) na licencji CC BY-SA 3.0. Listy słów w języku angielskim, hiszpańskim, francuskim i holenderskim powstały na bazie słowników ortograficznych Hunspell: słownika en_US pakietu LibreOffice (LGPL/BSD), słownika es_ES projektu RLA-ES (LGPL), słownika francuskiego Dicollecte (MPL 2.0) oraz słownika holenderskiego OpenTaal (BSD/CC BY 3.0).</string>
+    <string name="contributors_title">Współtwórcy</string>
+    <string name="contributors_intro">Quiet Grid jest lepsze dzięki osobom, które wnoszą w nie swój wkład. Dziękujemy.</string>
+    <string name="contributors_cta_title">Chcesz zobaczyć tu swoje imię?</string>
+    <string name="contributors_cta_body">Quiet Grid to oprogramowanie o otwartym kodzie źródłowym. Poprawki błędów, tłumaczenia i nowe pomysły na łamigłówki są mile widziane — otwórz pull request na GitHub.</string>
 
     <!-- Chimp Test -->
     <string name="chimp_title">Test szympansa</string>

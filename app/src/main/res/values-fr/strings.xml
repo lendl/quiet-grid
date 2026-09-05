@@ -223,6 +223,7 @@
     <string name="support_opens_github">Ouvre GitHub</string>
     <string name="support_licenses">Licences open source</string>
     <string name="support_about_quiet_grid">À propos de Quiet Grid</string>
+    <string name="support_contributors">Contributeurs</string>
     <string name="support_show_your_support">Montrez votre soutien</string>
     <string name="support_show_your_support_subtitle">Ça aide plus que vous ne le pensez.</string>
     <string name="support_rate_on_play_store">Évaluer sur le Play Store</string>
@@ -252,6 +253,10 @@
     <string name="support_info_licenses_body_2">Quiet Grid utilise également des paquets open source qui conservent leurs propres licences. Vous pouvez consulter le code source complet et la liste des paquets dans le dépôt du projet.</string>
     <string name="support_info_licenses_heading_3">Listes de mots de Devine le Mot</string>
     <string name="support_info_licenses_body_3">La liste de mots allemande de Devine le Mot provient des données de fréquence de mots du projet FrequencyWords (hermitdave/FrequencyWords sur GitHub), sous licence CC BY-SA 3.0. Les listes de mots anglaise, espagnole, française et néerlandaise proviennent de dictionnaires orthographiques Hunspell : le dictionnaire en_US de LibreOffice (LGPL/BSD), le dictionnaire es_ES de RLA-ES (LGPL), le dictionnaire français de Dicollecte (MPL 2.0) et le dictionnaire néerlandais d\'OpenTaal (BSD/CC BY 3.0).</string>
+    <string name="contributors_title">Contributeurs</string>
+    <string name="contributors_intro">Quiet Grid est meilleur grâce aux personnes qui y contribuent. Merci.</string>
+    <string name="contributors_cta_title">Envie de voir votre nom ici ?</string>
+    <string name="contributors_cta_body">Quiet Grid est un logiciel open source. Corrections de bugs, traductions et nouvelles idées de puzzles sont les bienvenues – ouvrez une pull request sur GitHub.</string>
 
     <string name="chimp_title">Chimp Test</string>
     <string name="chimp_short_title">Chimp</string>

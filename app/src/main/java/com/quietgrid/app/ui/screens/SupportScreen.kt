@@ -62,6 +62,7 @@ fun SupportScreen(onOpenInfo: (String) -> Unit) {
 
         SupportSection(title = stringResource(R.string.support_about_section)) {
             SupportRow(stringResource(R.string.support_about_quiet_grid), "") { onOpenInfo("about") }
+            SupportRow(stringResource(R.string.support_contributors), "") { onOpenInfo("contributors") }
         }
 
         ShowYourSupportSection(onRate = { openRateApp() }, onStar = { openUrl(REPO_URL) })
@@ -131,7 +132,7 @@ private fun SupportSection(title: String, content: @Composable ColumnScope.() ->
 }
 
 @Composable
-private fun SupportRow(label: String, detail: String, external: Boolean = false, onClick: () -> Unit) {
+internal fun SupportRow(label: String, detail: String, external: Boolean = false, onClick: () -> Unit) {
     Row(
         Modifier
             .fillMaxWidth()
