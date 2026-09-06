@@ -2,6 +2,7 @@ package com.quietgrid.app.games.animaldoku
 
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
+import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.testutil.FakeStatsStore
@@ -77,6 +78,7 @@ class AnimalDokuChallengerViewModelTest {
         assertEquals(AnimalDokuStatus.PLAYING, session.puzzleSession.status)
         assertEquals(AnimalDokuCellState.EMPTY, session.puzzleSession.cells[0][0])
         assertEquals(AnimalDokuCellState.EMPTY, session.puzzleSession.cells[4][4])
+        assertEquals(1, session.puzzleHistory.size)
     }
 
     @Test
@@ -141,6 +143,27 @@ class AnimalDokuChallengerViewModelTest {
 
         assertEquals(1, results.size)
         assertEquals("time_up", results.single().reason)
+
+        collectJob.cancel()
+    }
+
+    @Test
+    fun `finalizeRun on abandoned includes the previous best score and no fastest solve`() {
+        val statsStore = FakeStatsStore()
+        statsStore.seedChallenger(GameId.ANIMALDOKU, solved = 2, bestScore = 500)
+        val viewModel = newViewModel(statsStore)
+        val results = mutableListOf<AnimalDokuChallengerResult>()
+        val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
+
+        viewModel.endRun()
+
+        mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(500)
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+
+        val result = results.single()
+        assertEquals(500, result.previousBest)
+        assertEquals(null, result.fastestSolveSeconds)
+        assertEquals(emptyList<ChallengerPuzzleSolve>(), result.puzzleHistory)
 
         collectJob.cancel()
     }

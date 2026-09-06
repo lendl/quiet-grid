@@ -701,8 +701,9 @@
     <string name="animaldoku_challenger_result_abandoned_body">You stopped the run early.</string>
     <string name="animaldoku_challenger_result_new_high_score">New high score!</string>
     <string name="animaldoku_challenger_result_puzzles_solved">Puzzles solved</string>
-    <string name="animaldoku_challenger_result_tier_reached">Tier reached</string>
     <string name="animaldoku_challenger_result_score">Score</string>
+    <string name="animaldoku_challenger_result_fastest_solve">Fastest solve</string>
+    <string name="animaldoku_challenger_result_off_best">%1$d points off your best</string>
     <string name="animaldoku_challenger_play_again">Play Again</string>
     <string name="animaldoku_challenger_back_to_puzzles">Back to Puzzles</string>
     <string name="animaldoku_challenger_try_another_game">Try Another Game</string>
@@ -720,8 +721,9 @@
     <string name="wordguess_challenger_result_abandoned_body">You stopped the run early.</string>
     <string name="wordguess_challenger_result_new_high_score">New high score!</string>
     <string name="wordguess_challenger_result_puzzles_solved">Words solved</string>
-    <string name="wordguess_challenger_result_tier_reached">Tier reached</string>
     <string name="wordguess_challenger_result_score">Score</string>
+    <string name="wordguess_challenger_result_fastest_solve">Fastest solve</string>
+    <string name="wordguess_challenger_result_off_best">%1$d points off your best</string>
     <string name="wordguess_challenger_play_again">Play Again</string>
     <string name="wordguess_challenger_back_to_puzzles">Back to Puzzles</string>
     <string name="wordguess_challenger_try_another_game">Try Another Game</string>
@@ -731,6 +733,7 @@
     <string name="chimp_challenger_description">Memorize and tap as many sequences as you can before the clock runs out.</string>
     <string name="chimp_challenger_solved_label">Solved</string>
     <string name="chimp_challenger_tier_label">Tier</string>
+    <string name="challenger_result_puzzle_breakdown_heading">Puzzle breakdown</string>
     <string name="chimp_challenger_result_time_up_title">Time\'s up!</string>
     <string name="chimp_challenger_result_time_up_body">The clock ran out. Here\'s how your run went.</string>
     <string name="chimp_challenger_result_lives_exhausted_title">Out of lives!</string>
@@ -739,8 +742,9 @@
     <string name="chimp_challenger_result_abandoned_body">You stopped the run early.</string>
     <string name="chimp_challenger_result_new_high_score">New high score!</string>
     <string name="chimp_challenger_result_puzzles_solved">Puzzles solved</string>
-    <string name="chimp_challenger_result_tier_reached">Tier reached</string>
     <string name="chimp_challenger_result_score">Score</string>
+    <string name="chimp_challenger_result_fastest_solve">Fastest solve</string>
+    <string name="chimp_challenger_result_off_best">%1$d points off your best</string>
     <string name="chimp_challenger_play_again">Play Again</string>
     <string name="chimp_challenger_back_to_puzzles">Back to Puzzles</string>
     <string name="chimp_challenger_try_another_game">Try Another Game</string>

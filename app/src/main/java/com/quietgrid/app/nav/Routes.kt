@@ -8,7 +8,7 @@ object Routes {
     const val PICKER = "picker/{gameId}"
     const val PLAY = "play/{gameId}/{difficulty}/{resume}"
     const val CHALLENGER = "challenger/{gameId}"
-    const val CHALLENGER_RESULT = "challengerResult/{gameId}/{puzzlesSolved}/{tier}/{score}/{isNewHighScore}/{reason}"
+    const val CHALLENGER_RESULT = "challengerResult/{gameId}/{puzzlesSolved}/{tier}/{score}/{isNewHighScore}/{reason}/{previousBest}/{fastestSolveSeconds}"
     const val COMPLETION = "completion/{gameId}/{difficulty}/{score}/{accuracyPct}/{elapsedSeconds}/{isFirstSolve}/{isNewHighScore}"
     const val LOSS = "loss/{gameId}/{difficulty}/{elapsedSeconds}/{reason}"
     const val ANALYZER = "analyzer/{gameId}"
@@ -27,7 +27,9 @@ object Routes {
         score: Int,
         isNewHighScore: Boolean,
         reason: String,
-    ) = "challengerResult/${gameId.key}/$puzzlesSolved/${tier.key}/$score/$isNewHighScore/$reason"
+        previousBest: Int,
+        fastestSolveSeconds: Double?,
+    ) = "challengerResult/${gameId.key}/$puzzlesSolved/${tier.key}/$score/$isNewHighScore/$reason/$previousBest/${fastestSolveSeconds?.toFloat() ?: -1f}"
 
     fun completion(
         gameId: GameId,

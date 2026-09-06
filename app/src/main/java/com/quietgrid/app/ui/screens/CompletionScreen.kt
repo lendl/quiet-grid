@@ -67,17 +67,16 @@ import com.quietgrid.app.games.wordguess.wordGuessDifficultyLabelRes
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
 import com.quietgrid.app.nav.LocalAnimatedVisibilityScope
 import com.quietgrid.app.nav.LocalSharedTransitionScope
+import com.quietgrid.app.ui.components.BadgePill
 import com.quietgrid.app.ui.components.ConfettiBurst
 import com.quietgrid.app.ui.components.SharedElementKeys
 import com.quietgrid.app.ui.components.rememberHapticController
+import com.quietgrid.app.ui.components.systemAnimationsDisabled
 import kotlinx.coroutines.delay
 import java.time.LocalDate
 import kotlin.math.roundToInt
 
 private val CELEBRATION_ICONS = listOf("🎉", "🏆", "⭐", "✨", "🎈", "💜")
-
-private fun systemAnimationsDisabled(context: android.content.Context): Boolean =
-    android.provider.Settings.Global.getFloat(context.contentResolver, android.provider.Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f
 
 private fun pickCelebrationIcon(score: Int, accuracyPct: Int, variantSeed: Int): String {
     val seed = maxOf(0, score) + accuracyPct + variantSeed
@@ -424,28 +423,6 @@ fun CompletionScreen(
 
 private val FLAWLESS_ELIGIBLE_GAMES = setOf(GameId.TAKUZU, GameId.SUDOKU)
 private val ACCURACY_TRACKED_GAMES = setOf(GameId.TAKUZU, GameId.SUDOKU, GameId.WORDSEARCH)
-
-@Composable
-private fun BadgePill(emoji: String, text: String, borderColor: Color, textColor: Color, modifier: Modifier = Modifier) {
-    val isDarkTheme = LocalIsDarkTheme.current
-    Surface(
-        modifier = modifier,
-        shape = CircleShape,
-        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
-        border = androidx.compose.foundation.BorderStroke(1.dp, borderColor),
-        tonalElevation = if (isDarkTheme) 6.dp else 0.dp,
-        shadowElevation = if (isDarkTheme) 3.dp else 0.dp,
-    ) {
-        Row(
-            Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
-        ) {
-            Text(emoji, style = MaterialTheme.typography.labelMedium, maxLines = 1)
-            Text(text, style = MaterialTheme.typography.labelMedium, color = textColor, maxLines = 1)
-        }
-    }
-}
 
 @Composable
 private fun NonogramMiniPicture(solution: List<List<Boolean>>, fillColor: Color, modifier: Modifier = Modifier) {

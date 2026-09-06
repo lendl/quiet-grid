@@ -689,8 +689,9 @@
     <string name="animaldoku_challenger_result_abandoned_body">Tu as arrêté la partie avant la fin.</string>
     <string name="animaldoku_challenger_result_new_high_score">Nouveau meilleur score !</string>
     <string name="animaldoku_challenger_result_puzzles_solved">Puzzles résolus</string>
-    <string name="animaldoku_challenger_result_tier_reached">Niveau atteint</string>
     <string name="animaldoku_challenger_result_score">Score</string>
+    <string name="animaldoku_challenger_result_fastest_solve">Résolution la plus rapide</string>
+    <string name="animaldoku_challenger_result_off_best">%1$d points de moins que ton record</string>
     <string name="animaldoku_challenger_play_again">Rejouer</string>
     <string name="animaldoku_challenger_back_to_puzzles">Retour aux puzzles</string>
     <string name="animaldoku_challenger_try_another_game">Essayer un autre jeu</string>
@@ -708,8 +709,9 @@
     <string name="wordguess_challenger_result_abandoned_body">Tu as arrêté la partie avant la fin.</string>
     <string name="wordguess_challenger_result_new_high_score">Nouveau meilleur score !</string>
     <string name="wordguess_challenger_result_puzzles_solved">Mots résolus</string>
-    <string name="wordguess_challenger_result_tier_reached">Niveau atteint</string>
     <string name="wordguess_challenger_result_score">Score</string>
+    <string name="wordguess_challenger_result_fastest_solve">Résolution la plus rapide</string>
+    <string name="wordguess_challenger_result_off_best">%1$d points de moins que ton record</string>
     <string name="wordguess_challenger_play_again">Rejouer</string>
     <string name="wordguess_challenger_back_to_puzzles">Retour aux puzzles</string>
     <string name="wordguess_challenger_try_another_game">Essayer un autre jeu</string>
@@ -719,6 +721,7 @@
     <string name="chimp_challenger_description">Mémorise et touche autant de séquences que possible avant que le temps ne s\'écoule.</string>
     <string name="chimp_challenger_solved_label">Résolus</string>
     <string name="chimp_challenger_tier_label">Niveau</string>
+    <string name="challenger_result_puzzle_breakdown_heading">Détail des puzzles</string>
     <string name="chimp_challenger_result_time_up_title">Temps écoulé !</string>
     <string name="chimp_challenger_result_time_up_body">Le temps est écoulé. Voici comment s\'est passée ta partie.</string>
     <string name="chimp_challenger_result_lives_exhausted_title">Plus de cœurs !</string>
@@ -727,8 +730,9 @@
     <string name="chimp_challenger_result_abandoned_body">Tu as arrêté la partie avant la fin.</string>
     <string name="chimp_challenger_result_new_high_score">Nouveau meilleur score !</string>
     <string name="chimp_challenger_result_puzzles_solved">Puzzles résolus</string>
-    <string name="chimp_challenger_result_tier_reached">Niveau atteint</string>
     <string name="chimp_challenger_result_score">Score</string>
+    <string name="chimp_challenger_result_fastest_solve">Résolution la plus rapide</string>
+    <string name="chimp_challenger_result_off_best">%1$d points de moins que ton record</string>
     <string name="chimp_challenger_play_again">Rejouer</string>
     <string name="chimp_challenger_back_to_puzzles">Retour aux puzzles</string>
     <string name="chimp_challenger_try_another_game">Essayer un autre jeu</string>

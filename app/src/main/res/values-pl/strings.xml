@@ -705,8 +705,9 @@
     <string name="animaldoku_challenger_result_abandoned_body">Podejście zostało przerwane przed czasem.</string>
     <string name="animaldoku_challenger_result_new_high_score">Nowy rekord!</string>
     <string name="animaldoku_challenger_result_puzzles_solved">Rozwiązane łamigłówki</string>
-    <string name="animaldoku_challenger_result_tier_reached">Osiągnięty poziom</string>
     <string name="animaldoku_challenger_result_score">Wynik</string>
+    <string name="animaldoku_challenger_result_fastest_solve">Najszybsze rozwiązanie</string>
+    <string name="animaldoku_challenger_result_off_best">%1$d punktów mniej niż twój rekord</string>
     <string name="animaldoku_challenger_play_again">Zagraj ponownie</string>
     <string name="animaldoku_challenger_back_to_puzzles">Powrót do łamigłówek</string>
     <string name="animaldoku_challenger_try_another_game">Spróbuj innej gry</string>
@@ -726,8 +727,9 @@
     <string name="wordguess_challenger_result_abandoned_body">Podejście zostało przerwane przed czasem.</string>
     <string name="wordguess_challenger_result_new_high_score">Nowy rekord!</string>
     <string name="wordguess_challenger_result_puzzles_solved">Odgadnięte słowa</string>
-    <string name="wordguess_challenger_result_tier_reached">Osiągnięty poziom</string>
     <string name="wordguess_challenger_result_score">Wynik</string>
+    <string name="wordguess_challenger_result_fastest_solve">Najszybsze rozwiązanie</string>
+    <string name="wordguess_challenger_result_off_best">%1$d punktów mniej niż twój rekord</string>
     <string name="wordguess_challenger_play_again">Zagraj ponownie</string>
     <string name="wordguess_challenger_back_to_puzzles">Powrót do łamigłówek</string>
     <string name="wordguess_challenger_try_another_game">Spróbuj innej gry</string>
@@ -739,6 +741,7 @@
     <string name="chimp_challenger_description">Zapamiętaj i stukaj jak najwięcej sekwencji, zanim skończy się czas.</string>
     <string name="chimp_challenger_solved_label">Rozwiązane</string>
     <string name="chimp_challenger_tier_label">Poziom</string>
+    <string name="challenger_result_puzzle_breakdown_heading">Podsumowanie łamigłówek</string>
     <string name="chimp_challenger_result_time_up_title">Koniec czasu!</string>
     <string name="chimp_challenger_result_time_up_body">Czas minął. Oto podsumowanie Twojego podejścia.</string>
     <string name="chimp_challenger_result_lives_exhausted_title">Koniec żyć!</string>
@@ -747,8 +750,9 @@
     <string name="chimp_challenger_result_abandoned_body">Podejście zostało przerwane przed czasem.</string>
     <string name="chimp_challenger_result_new_high_score">Nowy rekord!</string>
     <string name="chimp_challenger_result_puzzles_solved">Rozwiązane łamigłówki</string>
-    <string name="chimp_challenger_result_tier_reached">Osiągnięty poziom</string>
     <string name="chimp_challenger_result_score">Wynik</string>
+    <string name="chimp_challenger_result_fastest_solve">Najszybsze rozwiązanie</string>
+    <string name="chimp_challenger_result_off_best">%1$d punktów mniej niż twój rekord</string>
     <string name="chimp_challenger_play_again">Zagraj ponownie</string>
     <string name="chimp_challenger_back_to_puzzles">Powrót do łamigłówek</string>
     <string name="chimp_challenger_try_another_game">Spróbuj innej gry</string>

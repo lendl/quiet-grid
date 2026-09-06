@@ -58,6 +58,8 @@ import com.quietgrid.app.ui.components.AppTopBar
 import com.quietgrid.app.ui.components.BottomNavBar
 import com.quietgrid.app.ui.components.GlobalMenu
 import com.quietgrid.app.ui.screens.AnalyzerHandoff
+import com.quietgrid.app.ui.screens.ChallengerExtras
+import com.quietgrid.app.ui.screens.ChallengerRunDetails
 import com.quietgrid.app.ui.screens.CompletionExtras
 import com.quietgrid.app.ui.screens.CompletionHighlight
 import com.quietgrid.app.ui.screens.CompletionScreen
@@ -459,22 +461,25 @@ fun AppNavHost() {
                 when (challengerGameId) {
                     GameId.ANIMALDOKU -> AnimalDokuChallengerPlayScreen(
                         onFinished = { result ->
+                            ChallengerExtras.set(ChallengerRunDetails(result.puzzleHistory, result.solvesInTier))
                             navController.navigate(
-                                Routes.challengerResult(challengerGameId, result.puzzlesSolved, result.tierReached, result.score, result.isNewHighScore, result.reason),
+                                Routes.challengerResult(challengerGameId, result.puzzlesSolved, result.tierReached, result.score, result.isNewHighScore, result.reason, result.previousBest, result.fastestSolveSeconds),
                             ) { popUpTo(Routes.TABS) { inclusive = false } }
                         },
                     )
                     GameId.WORDGUESS -> WordGuessChallengerPlayScreen(
                         onFinished = { result ->
+                            ChallengerExtras.set(ChallengerRunDetails(result.puzzleHistory, result.solvesInTier))
                             navController.navigate(
-                                Routes.challengerResult(challengerGameId, result.puzzlesSolved, result.tierReached, result.score, result.isNewHighScore, result.reason),
+                                Routes.challengerResult(challengerGameId, result.puzzlesSolved, result.tierReached, result.score, result.isNewHighScore, result.reason, result.previousBest, result.fastestSolveSeconds),
                             ) { popUpTo(Routes.TABS) { inclusive = false } }
                         },
                     )
                     GameId.CHIMPTEST -> ChimpTestChallengerPlayScreen(
                         onFinished = { result ->
+                            ChallengerExtras.set(ChallengerRunDetails(result.puzzleHistory, result.solvesInTier))
                             navController.navigate(
-                                Routes.challengerResult(challengerGameId, result.puzzlesSolved, result.tierReached, result.score, result.isNewHighScore, result.reason),
+                                Routes.challengerResult(challengerGameId, result.puzzlesSolved, result.tierReached, result.score, result.isNewHighScore, result.reason, result.previousBest, result.fastestSolveSeconds),
                             ) { popUpTo(Routes.TABS) { inclusive = false } }
                         },
                     )
@@ -491,6 +496,8 @@ fun AppNavHost() {
                     navArgument("score") { type = NavType.IntType },
                     navArgument("isNewHighScore") { type = NavType.BoolType },
                     navArgument("reason") { type = NavType.StringType },
+                    navArgument("previousBest") { type = NavType.IntType },
+                    navArgument("fastestSolveSeconds") { type = NavType.FloatType },
                 ),
                 enterTransition = { fadeIn(animationSpec = tween(250)) },
                 exitTransition = { fadeOut(animationSpec = tween(200)) },
@@ -500,6 +507,8 @@ fun AppNavHost() {
                     LocalAnimatedVisibilityScope provides this,
                 ) {
                     val resultGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
+                    val previousBest = entry.arguments?.getInt("previousBest") ?: 0
+                    val fastestSolveSeconds = entry.arguments?.getFloat("fastestSolveSeconds")?.takeIf { it >= 0f }?.toDouble()
                     when (resultGameId) {
                         GameId.ANIMALDOKU -> AnimalDokuChallengerResultScreen(
                             puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
@@ -507,6 +516,8 @@ fun AppNavHost() {
                             score = entry.arguments?.getInt("score") ?: 0,
                             isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
                             reason = entry.arguments?.getString("reason") ?: "time_up",
+                            previousBest = previousBest,
+                            fastestSolveSeconds = fastestSolveSeconds,
                             onPlayAgain = {
                                 navController.navigate(Routes.challenger(resultGameId)) {
                                     popUpTo(Routes.TABS) { inclusive = false }
@@ -528,6 +539,8 @@ fun AppNavHost() {
                             score = entry.arguments?.getInt("score") ?: 0,
                             isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
                             reason = entry.arguments?.getString("reason") ?: "time_up",
+                            previousBest = previousBest,
+                            fastestSolveSeconds = fastestSolveSeconds,
                             onPlayAgain = {
                                 navController.navigate(Routes.challenger(resultGameId)) {
                                     popUpTo(Routes.TABS) { inclusive = false }
@@ -549,6 +562,8 @@ fun AppNavHost() {
                             score = entry.arguments?.getInt("score") ?: 0,
                             isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
                             reason = entry.arguments?.getString("reason") ?: "time_up",
+                            previousBest = previousBest,
+                            fastestSolveSeconds = fastestSolveSeconds,
                             onPlayAgain = {
                                 navController.navigate(Routes.challenger(resultGameId)) {
                                     popUpTo(Routes.TABS) { inclusive = false }

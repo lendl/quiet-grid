@@ -1,6 +1,7 @@
 // app/src/main/java/com/quietgrid/app/games/animaldoku/AnimalDokuChallengerLogic.kt
 package com.quietgrid.app.games.animaldoku
 
+import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.engine.animaldoku.AnimalDokuPuzzleEntry
 
@@ -36,6 +37,7 @@ fun advanceChallengerAfterSolve(
 ): AnimalDokuChallengerSession {
     val livesCarried = session.puzzleSession.lives
     val gainedScore = animalDokuScore(livesCarried, session.secondsOnCurrentPuzzle.toInt())
+    val fastestSolveSeconds = animalDokuChallengerFastestSolve(session)
     return session.copy(
         puzzleSession = createAnimalDokuSession(nextPuzzle).copy(lives = livesCarried),
         tier = nextTier,
@@ -45,8 +47,13 @@ fun advanceChallengerAfterSolve(
         secondsRemaining = session.secondsRemaining + ANIMALDOKU_CHALLENGER_BONUS_SECONDS,
         secondsOnCurrentPuzzle = 0.0,
         servedPuzzleIds = session.servedPuzzleIds + nextPuzzle.id,
+        fastestSolveSeconds = fastestSolveSeconds,
+        puzzleHistory = session.puzzleHistory + ChallengerPuzzleSolve(session.tier, session.secondsOnCurrentPuzzle),
     )
 }
+
+fun animalDokuChallengerFastestSolve(session: AnimalDokuChallengerSession): Double =
+    session.fastestSolveSeconds?.let { minOf(it, session.secondsOnCurrentPuzzle) } ?: session.secondsOnCurrentPuzzle
 
 fun tickChallenger(session: AnimalDokuChallengerSession): AnimalDokuChallengerSession = session.copy(
     secondsRemaining = session.secondsRemaining - 1.0,

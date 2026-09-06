@@ -1,5 +1,6 @@
 package com.quietgrid.app.games.chimptest
 
+import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.Difficulty
 
 private val CHIMPTEST_CHALLENGER_TIER_ORDER = listOf(Difficulty.EASY, Difficulty.MEDIUM, Difficulty.HARD, Difficulty.EXPERT)
@@ -26,12 +27,16 @@ fun chimpTestChallengerTierAfterSolve(currentTier: Difficulty, solvesInTier: Int
     }
 }
 
+fun chimpTestChallengerFastestSolve(session: ChimpTestChallengerSession): Double =
+    session.fastestSolveSeconds?.let { minOf(it, session.secondsOnCurrentPuzzle) } ?: session.secondsOnCurrentPuzzle
+
 fun advanceChimpTestChallengerAfterSolve(
     session: ChimpTestChallengerSession,
     nextTier: Difficulty,
     nextSolvesInTier: Int,
 ): ChimpTestChallengerSession {
     val gainedScore = chimpTestScore(session.puzzleSession)
+    val fastestSolveSeconds = chimpTestChallengerFastestSolve(session)
     return session.copy(
         puzzleSession = createChimpTestSession(nextTier),
         tier = nextTier,
@@ -40,6 +45,8 @@ fun advanceChimpTestChallengerAfterSolve(
         score = session.score + gainedScore,
         secondsRemaining = session.secondsRemaining + CHIMPTEST_CHALLENGER_BONUS_SECONDS,
         secondsOnCurrentPuzzle = 0.0,
+        fastestSolveSeconds = fastestSolveSeconds,
+        puzzleHistory = session.puzzleHistory + ChallengerPuzzleSolve(session.tier, session.secondsOnCurrentPuzzle),
     )
 }
 

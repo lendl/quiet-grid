@@ -1,6 +1,7 @@
 // app/src/test/java/com/quietgrid/app/games/animaldoku/AnimalDokuChallengerLogicTest.kt
 package com.quietgrid.app.games.animaldoku
 
+import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.engine.animaldoku.AnimalDokuPuzzleEntry
 import org.junit.Assert.assertEquals
@@ -83,5 +84,58 @@ class AnimalDokuChallengerLogicTest {
 
         assertEquals(ANIMALDOKU_CHALLENGER_STARTING_SECONDS - 1.0, ticked.secondsRemaining, 0.0)
         assertEquals(1.0, ticked.secondsOnCurrentPuzzle, 0.0)
+    }
+
+    @Test
+    fun `createInitialChallengerSession starts with no fastest solve recorded`() {
+        val session = createInitialChallengerSession(testPuzzle("p1", "easy"))
+
+        assertEquals(null, session.fastestSolveSeconds)
+    }
+
+    @Test
+    fun `advanceChallengerAfterSolve records the first solve time as fastest`() {
+        val initial = createInitialChallengerSession(testPuzzle("p1", "easy")).copy(secondsOnCurrentPuzzle = 12.0)
+
+        val advanced = advanceChallengerAfterSolve(initial, nextTier = Difficulty.EASY, nextSolvesInTier = 1, nextPuzzle = testPuzzle("p2", "easy"))
+
+        assertEquals(12.0, advanced.fastestSolveSeconds!!, 0.0)
+    }
+
+    @Test
+    fun `advanceChallengerAfterSolve keeps the faster of two recorded solves`() {
+        val firstSolve = createInitialChallengerSession(testPuzzle("p1", "easy")).copy(secondsOnCurrentPuzzle = 12.0)
+        val afterFirst = advanceChallengerAfterSolve(firstSolve, nextTier = Difficulty.EASY, nextSolvesInTier = 1, nextPuzzle = testPuzzle("p2", "easy"))
+
+        val secondSolve = afterFirst.copy(secondsOnCurrentPuzzle = 20.0)
+        val afterSecond = advanceChallengerAfterSolve(secondSolve, nextTier = Difficulty.EASY, nextSolvesInTier = 2, nextPuzzle = testPuzzle("p3", "easy"))
+
+        assertEquals(12.0, afterSecond.fastestSolveSeconds!!, 0.0)
+
+        val thirdSolve = afterSecond.copy(secondsOnCurrentPuzzle = 5.0)
+        val afterThird = advanceChallengerAfterSolve(thirdSolve, nextTier = Difficulty.MEDIUM, nextSolvesInTier = 0, nextPuzzle = testPuzzle("p4", "easy"))
+
+        assertEquals(5.0, afterThird.fastestSolveSeconds!!, 0.0)
+    }
+
+    @Test
+    fun `advanceChallengerAfterSolve appends the solved puzzle to the history in order`() {
+        val firstSolve = createInitialChallengerSession(testPuzzle("p1", "easy")).copy(secondsOnCurrentPuzzle = 12.0)
+        val afterFirst = advanceChallengerAfterSolve(firstSolve, nextTier = Difficulty.EASY, nextSolvesInTier = 1, nextPuzzle = testPuzzle("p2", "easy"))
+
+        assertEquals(listOf(ChallengerPuzzleSolve(Difficulty.EASY, 12.0)), afterFirst.puzzleHistory)
+
+        val secondSolve = afterFirst.copy(secondsOnCurrentPuzzle = 20.0)
+        val afterSecond = advanceChallengerAfterSolve(secondSolve, nextTier = Difficulty.EASY, nextSolvesInTier = 2, nextPuzzle = testPuzzle("p3", "easy"))
+
+        assertEquals(
+            listOf(ChallengerPuzzleSolve(Difficulty.EASY, 12.0), ChallengerPuzzleSolve(Difficulty.EASY, 20.0)),
+            afterSecond.puzzleHistory,
+        )
+
+        val thirdSolve = afterSecond.copy(secondsOnCurrentPuzzle = 5.0)
+        val afterThird = advanceChallengerAfterSolve(thirdSolve, nextTier = Difficulty.MEDIUM, nextSolvesInTier = 0, nextPuzzle = testPuzzle("p4", "easy"))
+
+        assertEquals(ChallengerPuzzleSolve(Difficulty.EASY, 5.0), afterThird.puzzleHistory.last())
     }
 }

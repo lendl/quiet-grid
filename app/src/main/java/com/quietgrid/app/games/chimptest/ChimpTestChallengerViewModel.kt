@@ -115,6 +115,10 @@ class ChimpTestChallengerViewModel @Inject constructor(
                     score = current.score,
                     isNewHighScore = isNewHighScore,
                     reason = reason,
+                    previousBest = previousBest.bestScore,
+                    fastestSolveSeconds = current.fastestSolveSeconds,
+                    puzzleHistory = current.puzzleHistory,
+                    solvesInTier = current.solvesInTier,
                 ),
             )
         }

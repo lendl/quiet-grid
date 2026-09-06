@@ -1,5 +1,6 @@
 package com.quietgrid.app.games.wordguess
 
+import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.Difficulty
 
 const val WORDGUESS_CHALLENGER_STARTING_LIVES = 3
@@ -17,6 +18,8 @@ data class WordGuessChallengerSession(
     val secondsRemaining: Double,
     val secondsOnCurrentPuzzle: Double,
     val servedPuzzleIds: Set<String>,
+    val fastestSolveSeconds: Double? = null,
+    val puzzleHistory: List<ChallengerPuzzleSolve> = emptyList(),
 )
 
 data class WordGuessChallengerResult(
@@ -25,4 +28,8 @@ data class WordGuessChallengerResult(
     val score: Int,
     val isNewHighScore: Boolean,
     val reason: String,
+    val previousBest: Int,
+    val fastestSolveSeconds: Double?,
+    val puzzleHistory: List<ChallengerPuzzleSolve>,
+    val solvesInTier: Int,
 )

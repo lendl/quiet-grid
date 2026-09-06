@@ -1,5 +1,6 @@
 package com.quietgrid.app.games.wordguess
 
+import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.engine.wordguess.WordGuessPuzzleEntry
 
@@ -38,6 +39,9 @@ fun wordGuessChallengerTierAfterSolve(currentTier: Difficulty, solvesInTier: Int
     }
 }
 
+fun wordGuessChallengerFastestSolve(session: WordGuessChallengerSession): Double =
+    session.fastestSolveSeconds?.let { minOf(it, session.secondsOnCurrentPuzzle) } ?: session.secondsOnCurrentPuzzle
+
 fun advanceWordGuessChallengerAfterSolve(
     session: WordGuessChallengerSession,
     nextTier: Difficulty,
@@ -45,6 +49,7 @@ fun advanceWordGuessChallengerAfterSolve(
     nextPuzzle: WordGuessPuzzleEntry,
 ): WordGuessChallengerSession {
     val gainedScore = computeWordGuessScore(session.puzzleSession.difficulty, session.puzzleSession.guesses.size, session.secondsOnCurrentPuzzle.toInt())
+    val fastestSolveSeconds = wordGuessChallengerFastestSolve(session)
     return session.copy(
         puzzleSession = sessionFromEntry(nextPuzzle),
         tier = nextTier,
@@ -54,6 +59,8 @@ fun advanceWordGuessChallengerAfterSolve(
         secondsRemaining = session.secondsRemaining + WORDGUESS_CHALLENGER_BONUS_SECONDS,
         secondsOnCurrentPuzzle = 0.0,
         servedPuzzleIds = session.servedPuzzleIds + nextPuzzle.id,
+        fastestSolveSeconds = fastestSolveSeconds,
+        puzzleHistory = session.puzzleHistory + ChallengerPuzzleSolve(session.tier, session.secondsOnCurrentPuzzle),
     )
 }
 

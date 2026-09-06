@@ -1,5 +1,6 @@
 package com.quietgrid.app.games.chimptest
 
+import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.Difficulty
 
 const val CHIMPTEST_CHALLENGER_STARTING_LIVES = 3
@@ -16,6 +17,8 @@ data class ChimpTestChallengerSession(
     val score: Int,
     val secondsRemaining: Double,
     val secondsOnCurrentPuzzle: Double,
+    val fastestSolveSeconds: Double? = null,
+    val puzzleHistory: List<ChallengerPuzzleSolve> = emptyList(),
 )
 
 data class ChimpTestChallengerResult(
@@ -24,4 +27,8 @@ data class ChimpTestChallengerResult(
     val score: Int,
     val isNewHighScore: Boolean,
     val reason: String,
+    val previousBest: Int,
+    val fastestSolveSeconds: Double?,
+    val puzzleHistory: List<ChallengerPuzzleSolve>,
+    val solvesInTier: Int,
 )

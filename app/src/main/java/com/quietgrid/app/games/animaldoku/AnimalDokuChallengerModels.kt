@@ -1,6 +1,7 @@
 // app/src/main/java/com/quietgrid/app/games/animaldoku/AnimalDokuChallengerModels.kt
 package com.quietgrid.app.games.animaldoku
 
+import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.Difficulty
 
 const val ANIMALDOKU_CHALLENGER_STARTING_SECONDS = 90.0
@@ -16,6 +17,8 @@ data class AnimalDokuChallengerSession(
     val secondsRemaining: Double,
     val secondsOnCurrentPuzzle: Double,
     val servedPuzzleIds: Set<String>,
+    val fastestSolveSeconds: Double? = null,
+    val puzzleHistory: List<ChallengerPuzzleSolve> = emptyList(),
 )
 
 data class AnimalDokuChallengerResult(
@@ -24,4 +27,8 @@ data class AnimalDokuChallengerResult(
     val score: Int,
     val isNewHighScore: Boolean,
     val reason: String,
+    val previousBest: Int,
+    val fastestSolveSeconds: Double?,
+    val puzzleHistory: List<ChallengerPuzzleSolve>,
+    val solvesInTier: Int,
 )

@@ -9,10 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.R
 import com.quietgrid.app.core.formatElapsed
+import com.quietgrid.app.ui.components.ChallengerHeartIcon
 import com.quietgrid.app.ui.components.CollectPuzzleResult
 import com.quietgrid.app.ui.components.EndPuzzleDialog
 import com.quietgrid.app.ui.components.EndPuzzleIconButton
@@ -157,30 +154,3 @@ fun AnimalDokuChallengerPlayScreen(
     )
 }
 
-@Composable
-private fun ChallengerHeartIcon(filled: Boolean, shakeTrigger: Int, modifier: Modifier = Modifier) {
-    val shakeX = remember { Animatable(0f) }
-    LaunchedEffect(shakeTrigger) {
-        if (shakeTrigger > 0) {
-            shakeX.snapTo(0f)
-            shakeX.animateTo(
-                targetValue = 0f,
-                animationSpec = keyframes {
-                    durationMillis = 350
-                    0f at 0
-                    -6f at 60
-                    6f at 120
-                    -4f at 190
-                    4f at 260
-                    0f at 350
-                },
-            )
-        }
-    }
-    Icon(
-        if (filled) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-        contentDescription = null,
-        tint = MaterialTheme.colorScheme.error,
-        modifier = modifier.graphicsLayer(translationX = shakeX.value),
-    )
-}

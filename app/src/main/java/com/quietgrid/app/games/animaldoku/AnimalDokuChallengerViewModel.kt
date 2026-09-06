@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.StatsStore
@@ -78,7 +79,12 @@ class AnimalDokuChallengerViewModel @Inject constructor(
                     val nextPuzzle = AnimalDokuPuzzleBank.randomPuzzle(appContext, nextTier, withOpen.servedPuzzleIds)
                     if (nextPuzzle == null) {
                         val creditedScore = withOpen.score + animalDokuScore(withOpen.puzzleSession.lives, withOpen.secondsOnCurrentPuzzle.toInt())
-                        val credited = withOpen.copy(puzzlesSolved = withOpen.puzzlesSolved + 1, score = creditedScore)
+                        val credited = withOpen.copy(
+                            puzzlesSolved = withOpen.puzzlesSolved + 1,
+                            score = creditedScore,
+                            fastestSolveSeconds = animalDokuChallengerFastestSolve(withOpen),
+                            puzzleHistory = withOpen.puzzleHistory + ChallengerPuzzleSolve(withOpen.tier, withOpen.secondsOnCurrentPuzzle),
+                        )
                         finalizeRun(credited, "bank_exhausted")
                     } else {
                         session = advanceChallengerAfterSolve(withOpen, nextTier, nextSolvesInTier, nextPuzzle)
@@ -127,6 +133,10 @@ class AnimalDokuChallengerViewModel @Inject constructor(
                     score = current.score,
                     isNewHighScore = isNewHighScore,
                     reason = reason,
+                    previousBest = previousBest.bestScore,
+                    fastestSolveSeconds = current.fastestSolveSeconds,
+                    puzzleHistory = current.puzzleHistory,
+                    solvesInTier = current.solvesInTier,
                 ),
             )
         }

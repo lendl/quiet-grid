@@ -689,8 +689,9 @@
     <string name="animaldoku_challenger_result_abandoned_body">Du hast den Durchlauf vorzeitig beendet.</string>
     <string name="animaldoku_challenger_result_new_high_score">Neuer Highscore!</string>
     <string name="animaldoku_challenger_result_puzzles_solved">Gelöste Rätsel</string>
-    <string name="animaldoku_challenger_result_tier_reached">Erreichte Stufe</string>
     <string name="animaldoku_challenger_result_score">Punkte</string>
+    <string name="animaldoku_challenger_result_fastest_solve">Schnellste Lösung</string>
+    <string name="animaldoku_challenger_result_off_best">%1$d Punkte unter deinem Highscore</string>
     <string name="animaldoku_challenger_play_again">Nochmals spielen</string>
     <string name="animaldoku_challenger_back_to_puzzles">Zurück zu den Rätseln</string>
     <string name="animaldoku_challenger_try_another_game">Anderes Spiel versuchen</string>
@@ -708,8 +709,9 @@
     <string name="wordguess_challenger_result_abandoned_body">Du hast den Durchlauf vorzeitig beendet.</string>
     <string name="wordguess_challenger_result_new_high_score">Neuer Highscore!</string>
     <string name="wordguess_challenger_result_puzzles_solved">Gelöste Wörter</string>
-    <string name="wordguess_challenger_result_tier_reached">Erreichte Stufe</string>
     <string name="wordguess_challenger_result_score">Punkte</string>
+    <string name="wordguess_challenger_result_fastest_solve">Schnellste Lösung</string>
+    <string name="wordguess_challenger_result_off_best">%1$d Punkte unter deinem Highscore</string>
     <string name="wordguess_challenger_play_again">Nochmals spielen</string>
     <string name="wordguess_challenger_back_to_puzzles">Zurück zu den Rätseln</string>
     <string name="wordguess_challenger_try_another_game">Anderes Spiel versuchen</string>
@@ -719,6 +721,7 @@
     <string name="chimp_challenger_description">Merke dir und tippe so viele Sequenzen wie möglich, bevor die Zeit abläuft.</string>
     <string name="chimp_challenger_solved_label">Gelöst</string>
     <string name="chimp_challenger_tier_label">Stufe</string>
+    <string name="challenger_result_puzzle_breakdown_heading">Rätsel-Übersicht</string>
     <string name="chimp_challenger_result_time_up_title">Zeit abgelaufen!</string>
     <string name="chimp_challenger_result_time_up_body">Die Zeit ist abgelaufen. So lief dein Durchlauf.</string>
     <string name="chimp_challenger_result_lives_exhausted_title">Keine Herzen mehr!</string>
@@ -727,8 +730,9 @@
     <string name="chimp_challenger_result_abandoned_body">Du hast den Durchlauf vorzeitig beendet.</string>
     <string name="chimp_challenger_result_new_high_score">Neuer Highscore!</string>
     <string name="chimp_challenger_result_puzzles_solved">Gelöste Rätsel</string>
-    <string name="chimp_challenger_result_tier_reached">Erreichte Stufe</string>
     <string name="chimp_challenger_result_score">Punkte</string>
+    <string name="chimp_challenger_result_fastest_solve">Schnellste Lösung</string>
+    <string name="chimp_challenger_result_off_best">%1$d Punkte unter deinem Highscore</string>
     <string name="chimp_challenger_play_again">Nochmals spielen</string>
     <string name="chimp_challenger_back_to_puzzles">Zurück zu den Rätseln</string>
     <string name="chimp_challenger_try_another_game">Anderes Spiel versuchen</string>

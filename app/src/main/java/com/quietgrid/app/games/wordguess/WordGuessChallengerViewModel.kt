@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.SettingsRepository
@@ -86,7 +87,12 @@ class WordGuessChallengerViewModel @Inject constructor(
             val nextPuzzle = WordGuessPuzzleBank.randomPuzzle(appContext, locale, nextTier, withGuess.servedPuzzleIds)
             if (nextPuzzle == null) {
                 val creditedScore = withGuess.score + computeWordGuessScore(withGuess.puzzleSession.difficulty, withGuess.puzzleSession.guesses.size, withGuess.secondsOnCurrentPuzzle.toInt())
-                val credited = withGuess.copy(puzzlesSolved = withGuess.puzzlesSolved + 1, score = creditedScore)
+                val credited = withGuess.copy(
+                    puzzlesSolved = withGuess.puzzlesSolved + 1,
+                    score = creditedScore,
+                    fastestSolveSeconds = wordGuessChallengerFastestSolve(withGuess),
+                    puzzleHistory = withGuess.puzzleHistory + ChallengerPuzzleSolve(withGuess.tier, withGuess.secondsOnCurrentPuzzle),
+                )
                 finalizeRun(credited, "bank_exhausted")
             } else {
                 session = advanceWordGuessChallengerAfterSolve(withGuess, nextTier, nextSolvesInTier, nextPuzzle)
@@ -145,6 +151,10 @@ class WordGuessChallengerViewModel @Inject constructor(
                     score = current.score,
                     isNewHighScore = isNewHighScore,
                     reason = reason,
+                    previousBest = previousBest.bestScore,
+                    fastestSolveSeconds = current.fastestSolveSeconds,
+                    puzzleHistory = current.puzzleHistory,
+                    solvesInTier = current.solvesInTier,
                 ),
             )
         }
