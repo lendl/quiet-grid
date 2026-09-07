@@ -1,0 +1,6 @@
+Wersja 1.2.12
+
+- Wykreślanka: nowe łamigłówki oraz obsługa języka polskiego, hiszpańskiego i francuskiego
+- Pretendent: szczegółowa tabela wyników dla każdej łamigłówki na ekranie wyników
+- Plansza: błysk błędu i stopniowe odsłonięcie zwycięstwa
+- Poprawki błędów i usprawnienia stabilności

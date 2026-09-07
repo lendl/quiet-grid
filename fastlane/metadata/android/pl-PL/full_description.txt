@@ -1,0 +1,23 @@
+Quiet Grid to aplikacja z łamigłówkami logicznymi. Bez konta. Bez internetu. Open source. Twoje dane pozostają na urządzeniu.
+
+ŁAMIGŁÓWKI
+
+Sudoku — wypełnij siatkę 9x9 tak, aby każdy wiersz, kolumna i blok zawierały cyfry od 1 do 9. Cztery poziomy trudności, od łatwego do eksperckiego.
+Takuzu — wypełnij siatkę zerami i jedynkami zgodnie z kilkoma prostymi zasadami. Łatwo się nauczyć, trudno opanować.
+Saper — klasyka, z czytelną grafiką i czterema poziomami trudności.
+Wykreślanka — odnajduj wskazane słowa w liniach prostych i odkryj ukryte słowo-bonus z pozostałych liter.
+Test szympansa — krótkie wyzwanie na refleks i pamięć: stukaj liczby w kolejności, zanim znikną.
+
+Kolejne rodzaje łamigłówek są w trakcie tworzenia.
+
+DLACZEGO QUIET GRID
+
+Bez konta i rejestracji.
+Działa w pełni offline, bez potrzeby połączenia z internetem.
+Bez reklam.
+Open source — kod jest publiczny i każdy może go sprawdzić.
+Nic nie opuszcza Twojego urządzenia: brak analityki, brak śledzenia, brak zbierania danych.
+Motyw ciemny, jasny oraz odcienie szarości „Pencil” przyjazny dla osób z daltonizmem.
+Statystyki i poziomy trudności dla każdej gry, dzięki czemu możesz śledzić swoje postępy we własnym tempie.
+
+Quiet Grid powstało z myślą o spokojnym, skupionym czasie z łamigłówkami — bez serii do podtrzymania, bez powiadomień ściągających Cię z powrotem, bez presji czasu. Tylko łamigłówki.
