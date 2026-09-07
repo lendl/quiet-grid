@@ -1,6 +1,5 @@
 package com.quietgrid.app.ui.components
 
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -14,8 +13,7 @@ import com.quietgrid.app.core.localeFlagEmoji
 @Composable
 fun PuzzleLanguageFlag(puzzleLocale: String, modifier: Modifier = Modifier) {
     val configuration = LocalConfiguration.current
-    val appLanguage = AppCompatDelegate.getApplicationLocales().get(0)?.language
-        ?: ConfigurationCompat.getLocales(configuration).get(0)?.language
+    val appLanguage = ConfigurationCompat.getLocales(configuration).get(0)?.language
     if (puzzleLocale.isNotEmpty() && puzzleLocale != appLanguage) {
         Text(
             localeFlagEmoji(puzzleLocale),

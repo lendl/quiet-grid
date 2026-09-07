@@ -1,6 +1,8 @@
 package com.quietgrid.app.ui.screens
 
-import androidx.appcompat.app.AppCompatDelegate
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,9 +39,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.os.LocaleListCompat
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.R
+import com.quietgrid.app.core.AppLocale
 import com.quietgrid.app.core.localeFlagEmoji
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.RepositoriesViewModel
@@ -49,6 +52,12 @@ import kotlinx.coroutines.launch
 private val DARK_ICON_COLOR = Color(0xFFA78BFA)
 private val LIGHT_ICON_COLOR = Color(0xFFF2B705)
 private val PENCIL_ICON_COLOR = Color(0xFF1A1A1A)
+
+private tailrec fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
+}
 
 private data class ThemeOption(val mode: ThemeMode, val labelRes: Int, val icon: ImageVector, val iconColor: Color?)
 
@@ -83,12 +92,12 @@ private val PUZZLE_LANGUAGE_OPTIONS = listOf(
 fun SettingsScreen() {
     val repositories: RepositoriesViewModel = hiltViewModel()
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     val settings by repositories.settingsRepository.settings.collectAsState(initial = AppSettings())
     var themeMenuOpen by remember { mutableStateOf(false) }
     var languageMenuOpen by remember { mutableStateOf(false) }
     var puzzleLanguageMenuOpen by remember { mutableStateOf(false) }
-    val currentLocales = AppCompatDelegate.getApplicationLocales()
-    val currentLanguageTag = if (currentLocales.isEmpty) "" else currentLocales[0]?.language ?: ""
+    val currentLanguageTag = AppLocale.currentTag(context)
 
     Column(Modifier.fillMaxWidth().padding(16.dp)) {
         SettingsSectionTitle(stringResource(R.string.settings_appearance))
@@ -146,8 +155,8 @@ fun SettingsScreen() {
                         text = { Text(stringResource(option.labelRes)) },
                         onClick = {
                             languageMenuOpen = false
-                            val locales = if (option.tag.isEmpty()) LocaleListCompat.getEmptyLocaleList() else LocaleListCompat.forLanguageTags(option.tag)
-                            AppCompatDelegate.setApplicationLocales(locales)
+                            AppLocale.setLanguage(context, option.tag)
+                            context.findActivity()?.recreate()
                         },
                     )
                 }
