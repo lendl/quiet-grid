@@ -1,0 +1,6 @@
+Version 1.2.12
+
+- Word Search: new puzzles and added Polish, Spanish, French language support
+- Challenger: per-puzzle breakdown table on result screen
+- Board polish: mistake-flash and staged win reveal
+- Bug fixes and stability improvements
