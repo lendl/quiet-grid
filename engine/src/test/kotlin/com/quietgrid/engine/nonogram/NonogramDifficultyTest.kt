@@ -4,6 +4,7 @@ import com.quietgrid.engine.core.Difficulty
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class NonogramDifficultyTest {
@@ -62,60 +63,66 @@ class NonogramDifficultyTest {
 
     private fun metricsWith(
         tier: NonogramLineTier,
-        repeats: Int,
-        opening: NonogramLineTier = tier,
-        crossAxisUnlocks: Int = 10,
-        freebieLineRatio: Double = 0.0,
+        chainDepth: Int,
+        signatures: Int = 1,
+        duplicateTrickRatio: Double = 0.0,
+        hardestTierRepeats: Int = 1,
+        realStepCount: Int = 4,
+        multiSegmentLineCount: Int = 3,
     ) = NonogramDifficultyMetrics(
-        steps = repeats,
+        steps = hardestTierRepeats,
         filledCells = 0,
         clueSegments = 0,
         avgPlacementsAtDeduction = 0.0,
         maxPlacementsAtDeduction = 0,
         singleCellStepCount = 0,
-        crossAxisUnlocks = crossAxisUnlocks,
+        crossAxisUnlocks = 0,
         hardestLineTier = tier,
-        hardestTierRepeats = repeats,
-        openingLineTier = opening,
+        hardestTierRepeats = hardestTierRepeats,
+        openingLineTier = tier,
         freebieFillRatio = 0.0,
-        freebieLineRatio = freebieLineRatio,
+        freebieLineRatio = 0.0,
+        maxChainDepth = chainDepth,
+        distinctTechniqueSignatures = signatures,
+        duplicateTrickRatio = duplicateTrickRatio,
+        realStepCount = realStepCount,
+        multiSegmentLineCount = multiSegmentLineCount,
     )
 
     @Test
-    fun `a freebie peak is easy on a small board but demotes to medium once the board gets too big to stay quick`() {
-        assertEquals(Difficulty.EASY, classifyNonogramDifficulty(10, 5, metricsWith(NonogramLineTier.FREEBIE, 20)))
-        assertEquals(Difficulty.MEDIUM, classifyNonogramDifficulty(10, 10, metricsWith(NonogramLineTier.FREEBIE, 20)))
+    fun `a freebie-only peak is easy regardless of board size (real puzzles like this are rejected as degenerate before reaching classify)`() {
+        assertEquals(Difficulty.EASY, classifyNonogramDifficulty(10, 5, metricsWith(NonogramLineTier.FREEBIE, chainDepth = 0, signatures = 0)))
+        assertEquals(Difficulty.EASY, classifyNonogramDifficulty(10, 10, metricsWith(NonogramLineTier.FREEBIE, chainDepth = 0, signatures = 0)))
+    }
+
+    // Chain depth/signature thresholds now scale with board size (chainDepthUnit/signatureUnit
+    // in NonogramDifficulty.kt) instead of being flat constants. 5x5 gives the simplest whole
+    // numbers to test boundaries with: depthUnit=max(1,25/10)=2, sigUnit=max(2,10/5)=2.
+
+    @Test
+    fun `shallow chain depth (within one board-scaled unit) is easy with few technique signatures, medium with more variety`() {
+        assertEquals(Difficulty.EASY, classifyNonogramDifficulty(5, 5, metricsWith(NonogramLineTier.DEPENDENT, chainDepth = 2, signatures = 1)))
+        assertEquals(Difficulty.EASY, classifyNonogramDifficulty(5, 5, metricsWith(NonogramLineTier.DEPENDENT, chainDepth = 2, signatures = 2)))
+        assertEquals(Difficulty.MEDIUM, classifyNonogramDifficulty(5, 5, metricsWith(NonogramLineTier.DEPENDENT, chainDepth = 2, signatures = 3)))
     }
 
     @Test
-    fun `self-contained peak is medium below the repeat floor and hard at or above it`() {
-        assertEquals(Difficulty.MEDIUM, classifyNonogramDifficulty(10, 5, metricsWith(NonogramLineTier.SELF_CONTAINED, 7)))
-        assertEquals(Difficulty.HARD, classifyNonogramDifficulty(10, 5, metricsWith(NonogramLineTier.SELF_CONTAINED, 8)))
+    fun `chain depth within two board-scaled units is medium with modest variety, hard with more`() {
+        assertEquals(Difficulty.MEDIUM, classifyNonogramDifficulty(5, 5, metricsWith(NonogramLineTier.DEPENDENT, chainDepth = 3, signatures = 4)))
+        assertEquals(Difficulty.HARD, classifyNonogramDifficulty(5, 5, metricsWith(NonogramLineTier.DEPENDENT, chainDepth = 3, signatures = 5)))
     }
 
     @Test
-    fun `dependent peak escalates medium then hard then expert as repeats climb, on a large enough board`() {
-        val opening = NonogramLineTier.SELF_CONTAINED
-        assertEquals(Difficulty.MEDIUM, classifyNonogramDifficulty(10, 10, metricsWith(NonogramLineTier.DEPENDENT, 2, opening)))
-        assertEquals(Difficulty.HARD, classifyNonogramDifficulty(10, 10, metricsWith(NonogramLineTier.DEPENDENT, 3, opening)))
-        assertEquals(Difficulty.EXPERT, classifyNonogramDifficulty(10, 10, metricsWith(NonogramLineTier.DEPENDENT, 17, opening)))
+    fun `very deep chain (beyond two board-scaled units) is hard on a narrow board and expert on a wide enough one`() {
+        // 10x5: depthUnit=5, hardDepthCeiling=10, shortSide=5 (<10) so it can never reach expert via depth alone.
+        assertEquals(Difficulty.HARD, classifyNonogramDifficulty(10, 5, metricsWith(NonogramLineTier.DEPENDENT, chainDepth = 25, signatures = 10)))
+        // 10x10: depthUnit=10, hardDepthCeiling=20, shortSide=10 (>=10) so a sufficiently deep chain reaches expert.
+        assertEquals(Difficulty.EXPERT, classifyNonogramDifficulty(10, 10, metricsWith(NonogramLineTier.DEPENDENT, chainDepth = 25, signatures = 10)))
     }
 
     @Test
-    fun `dependent peak at expert-grade repeats stays capped at hard on a narrow board`() {
-        assertEquals(Difficulty.HARD, classifyNonogramDifficulty(10, 5, metricsWith(NonogramLineTier.DEPENDENT, 30)))
-    }
-
-    @Test
-    fun `dependent peak with enough repeats still stays medium if the lines never actually cross-reference`() {
-        val metrics = metricsWith(NonogramLineTier.DEPENDENT, repeats = 4, opening = NonogramLineTier.SELF_CONTAINED, crossAxisUnlocks = 2)
-        assertEquals(Difficulty.MEDIUM, classifyNonogramDifficulty(10, 10, metrics))
-    }
-
-    @Test
-    fun `dependent peak promotes to hard once both the repeat and cross-axis floors are met`() {
-        val metrics = metricsWith(NonogramLineTier.DEPENDENT, repeats = 4, opening = NonogramLineTier.SELF_CONTAINED, crossAxisUnlocks = 4)
-        assertEquals(Difficulty.HARD, classifyNonogramDifficulty(10, 10, metrics))
+    fun `probing always classifies expert regardless of chain depth`() {
+        assertEquals(Difficulty.EXPERT, classifyNonogramDifficulty(10, 5, metricsWith(NonogramLineTier.PROBING, chainDepth = 1, signatures = 1)))
     }
 
     @Test
@@ -142,36 +149,101 @@ class NonogramDifficultyTest {
     }
 
     @Test
-    fun `a puzzle that opens harder than mediums ceiling escalates to hard`() {
-        val metrics = metricsWith(NonogramLineTier.SELF_CONTAINED, repeats = 2, opening = NonogramLineTier.DEPENDENT)
-        assertEquals(Difficulty.HARD, classifyNonogramDifficulty(10, 10, metrics))
-    }
-
-    @Test
-    fun `a puzzle that opens harder than both mediums and hards ceiling escalates all the way to expert`() {
-        val metrics = metricsWith(NonogramLineTier.SELF_CONTAINED, repeats = 2, opening = NonogramLineTier.PROBING)
-        assertEquals(Difficulty.EXPERT, classifyNonogramDifficulty(10, 10, metrics))
-    }
-
-    @Test
-    fun `a hard-bound puzzle opening within its ceiling does not escalate`() {
-        val metrics = metricsWith(NonogramLineTier.SELF_CONTAINED, repeats = 8, opening = NonogramLineTier.DEPENDENT)
-        assertEquals(Difficulty.HARD, classifyNonogramDifficulty(10, 10, metrics))
-    }
-
-    @Test
     fun `isExtremeNonogramPuzzle is false below the probing repeat floor`() {
-        assertEquals(false, isExtremeNonogramPuzzle(metricsWith(NonogramLineTier.PROBING, 3)))
+        assertEquals(false, isExtremeNonogramPuzzle(metricsWith(NonogramLineTier.PROBING, chainDepth = 1, hardestTierRepeats = 3)))
     }
 
     @Test
     fun `isExtremeNonogramPuzzle is true at or above the probing repeat floor`() {
-        assertEquals(true, isExtremeNonogramPuzzle(metricsWith(NonogramLineTier.PROBING, 4)))
+        assertEquals(true, isExtremeNonogramPuzzle(metricsWith(NonogramLineTier.PROBING, chainDepth = 1, hardestTierRepeats = 4)))
     }
 
     @Test
     fun `isExtremeNonogramPuzzle is false for a dependent peak no matter how many repeats`() {
-        assertEquals(false, isExtremeNonogramPuzzle(metricsWith(NonogramLineTier.DEPENDENT, 30)))
+        assertEquals(false, isExtremeNonogramPuzzle(metricsWith(NonogramLineTier.DEPENDENT, chainDepth = 1, hardestTierRepeats = 30)))
+    }
+
+    @Test
+    fun `isDegenerateNonogramPuzzle is true for a freebie-only peak no matter how many steps it took`() {
+        assertEquals(true, isDegenerateNonogramPuzzle(5, 5, Difficulty.EASY, metricsWith(NonogramLineTier.FREEBIE, chainDepth = 0, hardestTierRepeats = 1)))
+        assertEquals(true, isDegenerateNonogramPuzzle(5, 5, Difficulty.EASY, metricsWith(NonogramLineTier.FREEBIE, chainDepth = 0, hardestTierRepeats = 20)))
+    }
+
+    @Test
+    fun `isDegenerateNonogramPuzzle is true when the same trick is just repeated across symmetric lines`() {
+        val metrics = metricsWith(NonogramLineTier.DEPENDENT, chainDepth = 1, signatures = 4, duplicateTrickRatio = 0.78)
+        assertEquals(true, isDegenerateNonogramPuzzle(5, 5, Difficulty.MEDIUM, metrics))
+    }
+
+    @Test
+    fun `isDegenerateNonogramPuzzle is true when most of the picture is just freebie lines, even with some real steps`() {
+        val metrics = metricsWith(NonogramLineTier.DEPENDENT, chainDepth = 1, signatures = 2, duplicateTrickRatio = 0.0)
+            .copy(freebieFillRatio = 0.75)
+        assertEquals(true, isDegenerateNonogramPuzzle(5, 5, Difficulty.MEDIUM, metrics))
+    }
+
+    @Test
+    fun `isDegenerateNonogramPuzzle is true for hard or expert with too few distinct real techniques, even at a low duplicate ratio`() {
+        val metrics = metricsWith(NonogramLineTier.DEPENDENT, chainDepth = 3, signatures = 5, duplicateTrickRatio = 0.44)
+        assertEquals(true, isDegenerateNonogramPuzzle(5, 5, Difficulty.HARD, metrics))
+        assertEquals(true, isDegenerateNonogramPuzzle(5, 5, Difficulty.EXPERT, metrics))
+    }
+
+    @Test
+    fun `isDegenerateNonogramPuzzle is true for a solid-blob shape where every line has only one clue segment`() {
+        val metrics = metricsWith(NonogramLineTier.SELF_CONTAINED, chainDepth = 1, signatures = 2, multiSegmentLineCount = 0)
+        assertEquals(true, isDegenerateNonogramPuzzle(5, 5, Difficulty.EASY, metrics))
+    }
+
+    @Test
+    fun `isDegenerateNonogramPuzzle is false once enough lines actually have multiple clue segments`() {
+        val metrics = metricsWith(NonogramLineTier.SELF_CONTAINED, chainDepth = 1, signatures = 2, multiSegmentLineCount = 3)
+        assertEquals(false, isDegenerateNonogramPuzzle(5, 5, Difficulty.EASY, metrics))
+    }
+
+    @Test
+    fun `the same low signature count is fine for easy or medium, where a small technique set is expected`() {
+        val metrics = metricsWith(NonogramLineTier.DEPENDENT, chainDepth = 1, signatures = 2, duplicateTrickRatio = 0.0)
+        assertEquals(false, isDegenerateNonogramPuzzle(5, 5, Difficulty.EASY, metrics))
+        assertEquals(false, isDegenerateNonogramPuzzle(5, 5, Difficulty.MEDIUM, metrics))
+    }
+
+    @Test
+    fun `probing is exempt from the hard-expert distinct-signature floor - the contradiction step is evidence enough`() {
+        val metrics = metricsWith(NonogramLineTier.PROBING, chainDepth = 3, signatures = 1, duplicateTrickRatio = 0.0)
+        assertEquals(false, isDegenerateNonogramPuzzle(5, 5, Difficulty.EXPERT, metrics))
+    }
+
+    @Test
+    fun `isDegenerateNonogramPuzzle is false once real technique is varied enough, not just repeated`() {
+        assertEquals(false, isDegenerateNonogramPuzzle(5, 5, Difficulty.MEDIUM, metricsWith(NonogramLineTier.SELF_CONTAINED, chainDepth = 1, duplicateTrickRatio = 0.0)))
+        assertEquals(false, isDegenerateNonogramPuzzle(5, 5, Difficulty.MEDIUM, metricsWith(NonogramLineTier.DEPENDENT, chainDepth = 2, duplicateTrickRatio = 0.4)))
+        assertEquals(false, isDegenerateNonogramPuzzle(5, 5, Difficulty.EXPERT, metricsWith(NonogramLineTier.PROBING, chainDepth = 3, duplicateTrickRatio = 0.0)))
+    }
+
+    @Test
+    fun `two solid rectangles are junk by duplicate-trick-ratio even though the trace does chain a little`() {
+        // The exact 10x10 shape traced by hand during the difficulty redesign investigation:
+        // two solid rectangles, each edge solved via the identical "flanking zero-clue lines
+        // already eliminated the rest" deduction, repeated 18 times under the old repeat-count
+        // metric. The corrected trace does find a real (if narrow) cross-axis chain - one column
+        // needs several rows resolved first, and those rows in turn get finished off using that
+        // column - reaching depth 4. But distinctTechniqueSignatures stays tiny (a handful of
+        // distinct clues) against a much larger real-step count, so duplicateTrickRatio still
+        // correctly flags this as junk: whatever the exact chain depth, it's the same few tricks
+        // copy-pasted across a symmetric shape, not genuine variety.
+        val blockA = listOf(false, true, true, true, false, false, false, false, false, false)
+        val blockB = listOf(false, false, false, false, false, true, true, true, true, false)
+        val blank = List(10) { false }
+        val solution = listOf(blockA, blockA, blockA, blank, blockB, blockB, blockB, blockB, blockB, blank)
+        val rowClues = solution.map { buildNonogramClues(it) }
+        val colClues = (0 until 10).map { c -> buildNonogramClues(solution.map { it[c] }) }
+        val metrics = analyzeNonogramDifficulty(rowClues, colClues, solution)
+        assertNotNull(metrics)
+        assertTrue("expected a shallow chain, got depth ${metrics!!.maxChainDepth}", metrics.maxChainDepth <= 4)
+        assertTrue("expected high duplication, got ${metrics.duplicateTrickRatio}", metrics.duplicateTrickRatio > 0.5)
+        val difficulty = classifyNonogramDifficulty(10, 10, metrics)
+        assertEquals(true, isDegenerateNonogramPuzzle(10, 10, difficulty, metrics))
     }
 
     @Test

@@ -18,6 +18,7 @@ data class DifficultyAuditEntry(
 private data class GenerationStateFile(
     val triedKeys: MutableMap<String, String> = mutableMapOf(),
     val difficultyAudit: MutableList<DifficultyAuditEntry> = mutableListOf(),
+    var nextPuzzleSequence: Int = 1,
 )
 
 class GenerationState(private val statePath: String) {
@@ -37,6 +38,12 @@ class GenerationState(private val statePath: String) {
 
     fun recordDifficultyAudit(entry: DifficultyAuditEntry) {
         state.difficultyAudit.add(entry)
+    }
+
+    fun nextPuzzleId(prefix: String): String {
+        val id = "$prefix-${state.nextPuzzleSequence}"
+        state.nextPuzzleSequence += 1
+        return id
     }
 
     fun save() {

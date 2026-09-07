@@ -58,12 +58,22 @@ fun inspectNonogramExtremes(path: String) {
         println("=== $difficulty (${bucket.size} puzzles) ===")
         if (easiest != null) {
             val (entry, metrics, score) = easiest
-            println("-- lowest score: ${entry.id} (${entry.rows}x${entry.cols}) score=$score steps=${metrics.steps} freebieFillRatio=${"%.2f".format(metrics.freebieFillRatio)} hardestTier=${metrics.hardestLineTier}")
+            println(
+                "-- lowest score: ${entry.id} (${entry.rows}x${entry.cols}) score=$score steps=${metrics.steps} " +
+                    "realSteps=${metrics.realStepCount} distinctSignatures=${metrics.distinctTechniqueSignatures} " +
+                    "duplicateTrickRatio=${"%.2f".format(metrics.duplicateTrickRatio)} maxChainDepth=${metrics.maxChainDepth} " +
+                    "freebieFillRatio=${"%.2f".format(metrics.freebieFillRatio)} hardestTier=${metrics.hardestLineTier}",
+            )
             println(renderSolution(entry))
         }
         if (mostFreebie != null) {
             val (entry, metrics, score) = mostFreebie
-            println("-- highest freebieFillRatio: ${entry.id} (${entry.rows}x${entry.cols}) score=$score steps=${metrics.steps} freebieFillRatio=${"%.2f".format(metrics.freebieFillRatio)} hardestTier=${metrics.hardestLineTier}")
+            println(
+                "-- highest freebieFillRatio: ${entry.id} (${entry.rows}x${entry.cols}) score=$score steps=${metrics.steps} " +
+                    "realSteps=${metrics.realStepCount} distinctSignatures=${metrics.distinctTechniqueSignatures} " +
+                    "duplicateTrickRatio=${"%.2f".format(metrics.duplicateTrickRatio)} maxChainDepth=${metrics.maxChainDepth} " +
+                    "freebieFillRatio=${"%.2f".format(metrics.freebieFillRatio)} hardestTier=${metrics.hardestLineTier}",
+            )
             println(renderSolution(entry))
         }
         println()

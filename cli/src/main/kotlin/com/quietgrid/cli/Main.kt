@@ -116,7 +116,7 @@ fun main(args: Array<String>) {
             while (entries.size < command.count && attempts < maxTotalAttempts) {
                 attempts++
                 val (rows, cols) = sizes.random()
-                val candidate = com.quietgrid.cli.nonogram.generateRandomNonogramPuzzle(rows, cols, difficulty, idPrefix = "n${rows}x$cols") ?: continue
+                val candidate = com.quietgrid.cli.nonogram.generateRandomNonogramPuzzle(rows, cols, difficulty, idPrefix = "n${rows}x$cols", state = state) ?: continue
                 val dedupeKey = candidate.solution.toString()
                 if (state.hasTried(dedupeKey)) continue
                 state.recordTried(dedupeKey, "valid")
