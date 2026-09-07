@@ -3479,6 +3479,56 @@
         "Podcast",
         "Mixer"
       ]
+    },
+    {
+      "themeId": "weer",
+      "words": [
+        "Regen", "Sneeuw", "Storm", "Onweer", "Bliksem", "Mist", "Wolk", "Wind", "Vorst", "Hagel",
+        "Ijs", "Regenboog", "Sneeuwstorm", "Tornado", "Orkaan", "Motregen", "Nevel", "Bries", "Ijzel", "Zonneschijn",
+        "Sneeuwvlok", "Cycloon", "Tyfoon", "Monsun", "Windvlaag", "Vochtigheid", "Klimaat", "Weerbericht", "Lawine", "Bewolkt",
+        "Droogte", "Overstroming", "Hittegolf", "Vorstig", "Verschroeiend", "Vochtig", "Droog", "Tropisch", "Arctisch", "Polair",
+        "Schemering", "Dageraad", "Stortbui", "Windstoot", "Regenval", "Zonnestraal", "Regendruppel", "Paraplu", "Thermometer", "Temperatuur"
+      ]
+    },
+    {
+      "themeId": "kunst",
+      "words": [
+        "Verf", "Penseel", "Doek", "Ezel", "Palet", "Krijt", "Pastel", "Stift", "Schets", "Gum",
+        "Sjabloon", "Spons", "Roller", "Vernis", "Klei", "Glitter", "Mozaiek", "Collage", "Lijst", "Galerie",
+        "Museum", "Atelier", "Expositie", "Portret", "Landschap", "Abstract", "Realisme", "Tekening", "Schilderij", "Ets",
+        "Gravure", "Kalligrafie", "Origami", "Aardewerk", "Keramiek", "Illustratie", "Cartoon", "Graffiti", "Muurschildering", "Fresco",
+        "Aquarel", "Acryl", "Silhouet", "Compositie", "Perspectief", "Symmetrie", "Textuur", "Patroon", "Kunstenaar", "Schilder"
+      ]
+    },
+    {
+      "themeId": "technologie",
+      "words": [
+        "Computer", "Laptop", "Toetsenbord", "Muis", "Beeldscherm", "Aanraakscherm", "Printer", "Scanner", "Luidspreker", "Koptelefoon",
+        "Microfoon", "Camera", "Webcam", "Router", "Modem", "Server", "Processor", "Batterij", "Oplader", "Kabel",
+        "Geheugen", "Opslag", "Moederbord", "Joystick", "Controller", "Spelconsole", "Tablet", "Smartphone", "Smartwatch", "Projector",
+        "Stopcontact", "Stekker", "Sensor", "Antenne", "Satelliet", "Versterker", "Software", "Hardware", "Programma", "Website",
+        "Browser", "Internet", "Netwerk", "Database", "Wachtwoord", "Firewall", "Virus", "Cloud", "Robot", "Pixel"
+      ]
+    },
+    {
+      "themeId": "aardrijkskunde",
+      "words": [
+        "Continent", "Land", "Natie", "Hoofdstad", "Grens", "Gebied", "Regio", "Provincie", "Eiland", "Schiereiland",
+        "Archipel", "Zeestraat", "Kanaal", "Baai", "Golf", "Lagune", "Delta", "Fjord", "Kustlijn", "Klif",
+        "Vulkaan", "Gletsjer", "Ijsberg", "Canyon", "Vallei", "Plateau", "Vlakte", "Steppe", "Woestijn", "Oase",
+        "Duin", "Regenwoud", "Jungle", "Savanne", "Toendra", "Moeras", "Meer", "Rivier", "Waterval", "Berg",
+        "Top", "Hoogland", "Krater", "Grot", "Evenaar", "Kompas", "Atlas", "Landkaart", "Klimaat", "Wildernis"
+      ]
+    },
+    {
+      "themeId": "fantasie",
+      "words": [
+        "Draak", "Feniks", "Tovenaar", "Heks", "Ridder", "Kasteel", "Koninkrijk", "Troon", "Kroon", "Zwaard",
+        "Schild", "Wapenrusting", "Legende", "Mythe", "Reus", "Trol", "Elf", "Dwerg", "Zeemeermin", "Eenhoorn",
+        "Centaur", "Griffioen", "Sfinx", "Orakel", "Profetie", "Betovering", "Spreuk", "Toverdrank", "Toverstok", "Ketel",
+        "Vloek", "Amulet", "Portaal", "Rijk", "Vesting", "Kerker", "Schat", "Magie", "Magier", "Alchemie",
+        "Fee", "Gnoom", "Weerwolf", "Vampier", "Zombie", "Geest", "Spook", "Schaduw", "Held", "Kroniek"
+      ]
     }
   ],
   "de": [
@@ -4872,6 +4922,56 @@
         "Karaoke",
         "Podcast",
         "Mixer"
+      ]
+    },
+    {
+      "themeId": "wetter",
+      "words": [
+        "Regen", "Schnee", "Sturm", "Gewitter", "Blitz", "Nebel", "Wolke", "Wind", "Frost", "Hagel",
+        "Eis", "Regenbogen", "Schneesturm", "Tornado", "Orkan", "Nieselregen", "Dunst", "Brise", "Graupel", "Sonnenschein",
+        "Schneeflocke", "Zyklon", "Taifun", "Monsun", "Feuchtigkeit", "Klima", "Lawine", "Duerre", "Ueberschwemmung", "Hitzewelle",
+        "Frostig", "Sengend", "Feucht", "Trocken", "Tropisch", "Arktisch", "Polar", "Zwielicht", "Regenschauer", "Windhose",
+        "Schneefall", "Regenfall", "Sonnenstrahl", "Regentropfen", "Pfuetze", "Regenschirm", "Schneemann", "Eiszapfen", "Thermometer", "Temperatur"
+      ]
+    },
+    {
+      "themeId": "kunst",
+      "words": [
+        "Farbe", "Pinsel", "Leinwand", "Staffelei", "Palette", "Kreide", "Pastell", "Stift", "Skizze", "Radiergummi",
+        "Schablone", "Schwamm", "Walze", "Lack", "Ton", "Glitzer", "Mosaik", "Collage", "Rahmen", "Galerie",
+        "Museum", "Atelier", "Ausstellung", "Portrait", "Landschaft", "Abstrakt", "Realismus", "Zeichnung", "Gemaelde", "Radierung",
+        "Gravur", "Kalligrafie", "Origami", "Toepferei", "Keramik", "Illustration", "Cartoon", "Graffiti", "Wandmalerei", "Fresko",
+        "Aquarell", "Acryl", "Silhouette", "Komposition", "Perspektive", "Symmetrie", "Textur", "Muster", "Kuenstler", "Maler"
+      ]
+    },
+    {
+      "themeId": "technik",
+      "words": [
+        "Computer", "Laptop", "Tastatur", "Maus", "Bildschirm", "Touchscreen", "Drucker", "Scanner", "Lautsprecher", "Kopfhoerer",
+        "Mikrofon", "Kamera", "Webcam", "Router", "Modem", "Server", "Prozessor", "Batterie", "Ladegeraet", "Kabel",
+        "Speicher", "Festplatte", "Mainboard", "Joystick", "Controller", "Konsole", "Tablet", "Smartphone", "Smartwatch", "Projektor",
+        "Steckdose", "Stecker", "Sensor", "Antenne", "Satellit", "Verstaerker", "Software", "Hardware", "Programm", "Webseite",
+        "Browser", "Internet", "Netzwerk", "Datenbank", "Passwort", "Firewall", "Virus", "Cloud", "Roboter", "Pixel"
+      ]
+    },
+    {
+      "themeId": "geografie",
+      "words": [
+        "Kontinent", "Land", "Nation", "Hauptstadt", "Grenze", "Gebiet", "Region", "Provinz", "Insel", "Halbinsel",
+        "Archipel", "Meerenge", "Kanal", "Bucht", "Golf", "Lagune", "Delta", "Fjord", "Kuestenlinie", "Klippe",
+        "Vulkan", "Gletscher", "Eisberg", "Schlucht", "Tal", "Plateau", "Ebene", "Steppe", "Wueste", "Oase",
+        "Duene", "Regenwald", "Dschungel", "Savanne", "Tundra", "Sumpf", "See", "Fluss", "Wasserfall", "Berg",
+        "Gipfel", "Hochland", "Krater", "Hoehle", "Aequator", "Kompass", "Atlas", "Landkarte", "Klima", "Wildnis"
+      ]
+    },
+    {
+      "themeId": "fantasie",
+      "words": [
+        "Drache", "Phoenix", "Zauberer", "Hexe", "Ritter", "Schloss", "Koenigreich", "Thron", "Krone", "Schwert",
+        "Schild", "Ruestung", "Legende", "Mythos", "Riese", "Troll", "Elf", "Zwerg", "Meerjungfrau", "Einhorn",
+        "Zentaur", "Greif", "Sphinx", "Orakel", "Prophezeiung", "Verzauberung", "Zauberspruch", "Zaubertrank", "Zauberstab", "Kessel",
+        "Fluch", "Amulett", "Portal", "Reich", "Festung", "Kerker", "Schatz", "Magie", "Magier", "Alchemie",
+        "Fee", "Gnom", "Werwolf", "Vampir", "Zombie", "Geist", "Gespenst", "Schatten", "Held", "Krieger"
       ]
     }
   ],
@@ -6305,6 +6405,56 @@
         "Karaoke",
         "Podcast",
         "Mixeur"
+      ]
+    },
+    {
+      "themeId": "meteo",
+      "words": [
+        "Pluie", "Neige", "Tempete", "Orage", "Eclair", "Foudre", "Brouillard", "Nuage", "Vent", "Gel",
+        "Grele", "Glace", "Verglas", "Blizzard", "Tornade", "Ouragan", "Bruine", "Brume", "Brise", "Averse",
+        "Bourrasque", "Rafale", "Cyclone", "Typhon", "Mousson", "Humidite", "Climat", "Meteo", "Avalanche", "Secheresse",
+        "Inondation", "Canicule", "Froid", "Glacial", "Torride", "Humide", "Aride", "Tropical", "Arctique", "Polaire",
+        "Crepuscule", "Aube", "Flocon", "Thermometre", "Temperature", "Ensoleille", "Nuageux", "Venteux", "Pluvieux", "Givre"
+      ]
+    },
+    {
+      "themeId": "art",
+      "words": [
+        "Peinture", "Pinceau", "Toile", "Chevalet", "Palette", "Craie", "Pastel", "Feutre", "Croquis", "Gomme",
+        "Pochoir", "Eponge", "Rouleau", "Vernis", "Argile", "Paillettes", "Sculpture", "Mosaique", "Collage", "Cadre",
+        "Galerie", "Musee", "Atelier", "Exposition", "Portrait", "Paysage", "Abstrait", "Realisme", "Dessin", "Tableau",
+        "Gravure", "Calligraphie", "Origami", "Poterie", "Ceramique", "Illustration", "Caricature", "Graffiti", "Fresque", "Aquarelle",
+        "Acrylique", "Silhouette", "Composition", "Perspective", "Symetrie", "Texture", "Motif", "Artiste", "Peintre", "Sculpteur"
+      ]
+    },
+    {
+      "themeId": "technologie",
+      "words": [
+        "Ordinateur", "Portable", "Clavier", "Souris", "Ecran", "Tactile", "Imprimante", "Scanner", "Hautparleur", "Casque",
+        "Microphone", "Camera", "Webcam", "Routeur", "Modem", "Serveur", "Processeur", "Batterie", "Chargeur", "Cable",
+        "Memoire", "Stockage", "Ventilateur", "Manette", "Console", "Tablette", "Smartphone", "Projecteur", "Prise", "Interrupteur",
+        "Capteur", "Antenne", "Satellite", "Amplificateur", "Logiciel", "Materiel", "Programme", "Navigateur", "Internet", "Reseau",
+        "Algorithme", "Code", "Parefeu", "Motdepasse", "Siteweb", "Virus", "Cloud", "Robot", "Pixel", "Ingenieur"
+      ]
+    },
+    {
+      "themeId": "geographie",
+      "words": [
+        "Continent", "Pays", "Nation", "Capitale", "Frontiere", "Territoire", "Region", "Province", "Ile", "Peninsule",
+        "Archipel", "Detroit", "Canal", "Baie", "Golfe", "Lagune", "Delta", "Fjord", "Littoral", "Falaise",
+        "Volcan", "Glacier", "Iceberg", "Canyon", "Vallee", "Plateau", "Plaine", "Steppe", "Desert", "Oasis",
+        "Dune", "Foret", "Jungle", "Savane", "Toundra", "Marais", "Lac", "Fleuve", "Cascade", "Montagne",
+        "Sommet", "Cratere", "Grotte", "Equateur", "Boussole", "Atlas", "Carte", "Climat", "Colonie", "Voyage"
+      ]
+    },
+    {
+      "themeId": "fantaisie",
+      "words": [
+        "Dragon", "Phenix", "Sorcier", "Sorciere", "Chevalier", "Chateau", "Royaume", "Trone", "Couronne", "Epee",
+        "Bouclier", "Armure", "Legende", "Mythe", "Geant", "Troll", "Gobelin", "Elfe", "Nain", "Sirene",
+        "Licorne", "Centaure", "Griffon", "Sphinx", "Oracle", "Prophetie", "Enchantement", "Sortilege", "Potion", "Baguette",
+        "Chaudron", "Malediction", "Amulette", "Portail", "Forteresse", "Cachot", "Tresor", "Magie", "Magicien", "Alchimie",
+        "Fee", "Gnome", "Loupgarou", "Vampire", "Zombie", "Fantome", "Spectre", "Ombre", "Heros", "Guerrier"
       ]
     }
   ],
@@ -7744,6 +7894,56 @@
         "Podcast",
         "Mezclador"
       ]
+    },
+    {
+      "themeId": "clima",
+      "words": [
+        "Lluvia", "Nieve", "Tormenta", "Trueno", "Rayo", "Relampago", "Niebla", "Nube", "Viento", "Escarcha",
+        "Granizo", "Hielo", "Arcoiris", "Ventisca", "Tornado", "Huracan", "Llovizna", "Bruma", "Brisa", "Ciclon",
+        "Tifon", "Monzon", "Rafaga", "Humedad", "Clima", "Pronostico", "Avalancha", "Nublado", "Sequia", "Inundacion",
+        "Bochorno", "Helado", "Abrasador", "Humedo", "Arido", "Tropical", "Artico", "Polar", "Crepusculo", "Amanecer",
+        "Atardecer", "Chubasco", "Termometro", "Temperatura", "Soleado", "Nuboso", "Ventoso", "Lluvioso", "Nevado", "Rocio"
+      ]
+    },
+    {
+      "themeId": "arte",
+      "words": [
+        "Pintura", "Pincel", "Lienzo", "Caballete", "Paleta", "Tiza", "Pastel", "Marcador", "Boceto", "Goma",
+        "Plantilla", "Esponja", "Rodillo", "Barniz", "Arcilla", "Purpurina", "Escultura", "Mosaico", "Collage", "Marco",
+        "Galeria", "Museo", "Taller", "Exposicion", "Retrato", "Paisaje", "Abstracto", "Realismo", "Dibujo", "Cuadro",
+        "Grabado", "Caligrafia", "Origami", "Alfareria", "Ceramica", "Ilustracion", "Caricatura", "Graffiti", "Mural", "Fresco",
+        "Acuarela", "Acrilico", "Silueta", "Composicion", "Perspectiva", "Simetria", "Textura", "Artista", "Pintor", "Escultor"
+      ]
+    },
+    {
+      "themeId": "tecnologia",
+      "words": [
+        "Ordenador", "Portatil", "Teclado", "Raton", "Pantalla", "Tactil", "Impresora", "Escaner", "Altavoz", "Auriculares",
+        "Microfono", "Camara", "Webcam", "Router", "Modem", "Servidor", "Procesador", "Bateria", "Cargador", "Cable",
+        "Memoria", "Almacenamiento", "Ventilador", "Mando", "Consola", "Tableta", "Smartphone", "Proyector", "Enchufe", "Interruptor",
+        "Sensor", "Antena", "Satelite", "Amplificador", "Software", "Hardware", "Programa", "Navegador", "Internet", "Red",
+        "Algoritmo", "Codigo", "Cortafuegos", "Contrasena", "Virus", "Antivirus", "Nube", "Robot", "Pixel", "Ingeniero"
+      ]
+    },
+    {
+      "themeId": "geografia",
+      "words": [
+        "Continente", "Pais", "Nacion", "Capital", "Frontera", "Territorio", "Region", "Provincia", "Isla", "Peninsula",
+        "Archipielago", "Estrecho", "Canal", "Bahia", "Golfo", "Laguna", "Delta", "Fiordo", "Litoral", "Acantilado",
+        "Volcan", "Glaciar", "Iceberg", "Canon", "Valle", "Meseta", "Llanura", "Estepa", "Desierto", "Oasis",
+        "Duna", "Selva", "Jungla", "Sabana", "Tundra", "Pantano", "Lago", "Rio", "Cascada", "Montana",
+        "Cumbre", "Crater", "Cueva", "Ecuador", "Brujula", "Atlas", "Mapa", "Clima", "Colonia", "Viaje"
+      ]
+    },
+    {
+      "themeId": "fantasia",
+      "words": [
+        "Dragon", "Fenix", "Hechicero", "Bruja", "Caballero", "Castillo", "Reino", "Trono", "Corona", "Espada",
+        "Escudo", "Armadura", "Leyenda", "Mito", "Gigante", "Trol", "Duende", "Elfo", "Enano", "Sirena",
+        "Unicornio", "Centauro", "Grifo", "Esfinge", "Oraculo", "Profecia", "Encantamiento", "Hechizo", "Pocion", "Varita",
+        "Caldero", "Maldicion", "Amuleto", "Portal", "Fortaleza", "Mazmorra", "Tesoro", "Magia", "Mago", "Alquimia",
+        "Hada", "Gnomo", "Hombrelobo", "Vampiro", "Zombi", "Fantasma", "Espectro", "Sombra", "Heroe", "Guerrero"
+      ]
     }
   ],
   "pl": [
@@ -7939,6 +8139,56 @@
         "Kabel", "Ladowarka", "Bateria", "Ekran", "Aplikacja", "Program", "Internet", "Siec", "Haslo", "Plik",
         "Folder", "Dysk", "Procesor", "Pamiec", "Kamera", "Aparat", "Konsola", "Gra", "Pilot", "Glosnik",
         "Sluchawki", "Mikrofon", "Telewizor", "Radio", "Zegarek", "Czujnik", "Modem", "Serwer", "Antena"
+      ]
+    },
+    {
+      "themeId": "pogoda",
+      "words": [
+        "Deszcz", "Snieg", "Burza", "Grzmot", "Piorun", "Mgla", "Chmura", "Wiatr", "Szron", "Grad",
+        "Lod", "Tecza", "Zawieja", "Tornado", "Huragan", "Mzawka", "Zamiec", "Wichura", "Podmuch", "Cyklon",
+        "Tajfun", "Monsun", "Wilgotnosc", "Klimat", "Prognoza", "Lawina", "Susza", "Powodz", "Upal", "Zimno",
+        "Mrozny", "Skwarny", "Wilgotny", "Suchy", "Tropikalny", "Arktyczny", "Polarny", "Zmierzch", "Swit", "Ulewa",
+        "Termometr", "Temperatura", "Sloneczny", "Pochmurny", "Burzowy", "Mglisty", "Wietrzny", "Deszczowy", "Sniezny", "Rosa"
+      ]
+    },
+    {
+      "themeId": "sztuka",
+      "words": [
+        "Farba", "Pedzel", "Plotno", "Sztaluga", "Paleta", "Kredka", "Pastel", "Flamaster", "Szkic", "Gumka",
+        "Szablon", "Gabka", "Walek", "Lakier", "Glina", "Brokat", "Rzezba", "Mozaika", "Kolaz", "Rama",
+        "Galeria", "Muzeum", "Pracownia", "Wystawa", "Portret", "Krajobraz", "Abstrakcja", "Realizm", "Rysunek", "Obraz",
+        "Grafika", "Kaligrafia", "Origami", "Garncarstwo", "Ceramika", "Ilustracja", "Karykatura", "Graffiti", "Mural", "Fresk",
+        "Akwarela", "Akryl", "Sylwetka", "Kompozycja", "Perspektywa", "Symetria", "Tekstura", "Artysta", "Malarz", "Rzezbiarz"
+      ]
+    },
+    {
+      "themeId": "technologia",
+      "words": [
+        "Komputer", "Laptop", "Klawiatura", "Mysz", "Ekran", "Dotykowy", "Drukarka", "Skaner", "Glosnik", "Sluchawki",
+        "Mikrofon", "Kamera", "Router", "Modem", "Serwer", "Procesor", "Bateria", "Ladowarka", "Kabel", "Pamiec",
+        "Dysk", "Plyta", "Wentylator", "Pilot", "Konsola", "Tablet", "Smartfon", "Projektor", "Gniazdo", "Wtyczka",
+        "Czujnik", "Antena", "Satelita", "Wzmacniacz", "Oprogramowanie", "Sprzet", "Program", "Przegladarka", "Internet", "Siec",
+        "Baza", "Algorytm", "Kod", "Haslo", "Zapora", "Wirus", "Antywirus", "Chmura", "Robot", "Inzynier"
+      ]
+    },
+    {
+      "themeId": "geografia",
+      "words": [
+        "Kontynent", "Kraj", "Narod", "Stolica", "Granica", "Terytorium", "Region", "Prowincja", "Wyspa", "Polwysep",
+        "Archipelag", "Ciesnina", "Kanal", "Zatoka", "Laguna", "Delta", "Fiord", "Wybrzeze", "Klif", "Wulkan",
+        "Lodowiec", "Kanion", "Dolina", "Plaskowyz", "Rownina", "Step", "Pustynia", "Oaza", "Wydma", "Dzungla",
+        "Sawanna", "Tundra", "Bagno", "Jezioro", "Rzeka", "Wodospad", "Gora", "Szczyt", "Wyzyna", "Krater",
+        "Jaskinia", "Rownik", "Kompas", "Atlas", "Mapa", "Klimat", "Kolonia", "Podroz", "Pojezierze", "Rownolegnik"
+      ]
+    },
+    {
+      "themeId": "fantastyka",
+      "words": [
+        "Smok", "Feniks", "Czarodziej", "Wiedzma", "Rycerz", "Zamek", "Krolestwo", "Tron", "Korona", "Miecz",
+        "Tarcza", "Zbroja", "Legenda", "Mit", "Olbrzym", "Troll", "Goblin", "Elf", "Krasnolud", "Syrena",
+        "Jednorozec", "Centaur", "Gryf", "Sfinks", "Wyrocznia", "Przepowiednia", "Zaklecie", "Czar", "Eliksir", "Rozdzka",
+        "Kociol", "Klatwa", "Amulet", "Portal", "Twierdza", "Loch", "Skarb", "Magia", "Mag", "Alchemia",
+        "Wrozka", "Gnom", "Wilkolak", "Wampir", "Zombie", "Duch", "Widmo", "Cien", "Bohater", "Wojownik"
       ]
     }
   ]
