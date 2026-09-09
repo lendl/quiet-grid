@@ -58,11 +58,15 @@ fun BlockFillTray(
                                 awaitEachGesture {
                                     val down = awaitFirstDown()
                                     onDragStart(index, down.position)
-                                    drag(down.id) { change ->
-                                        change.consume()
-                                        onDrag(change.positionChange())
+                                    try {
+                                        drag(down.id) { change ->
+                                            val delta = change.positionChange()
+                                            change.consume()
+                                            onDrag(delta)
+                                        }
+                                    } finally {
+                                        onDragEnd()
                                     }
-                                    onDragEnd()
                                 }
                             },
                     )
