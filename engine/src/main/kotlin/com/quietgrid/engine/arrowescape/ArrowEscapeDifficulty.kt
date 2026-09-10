@@ -17,16 +17,6 @@ fun measureArrowEscapePuzzle(pieces: List<ArrowEscapePiece>, graph: DependencyGr
     return ArrowEscapeDifficultyMetrics(maxFanOut, chokepointCount)
 }
 
-fun classifyArrowEscapeDifficulty(metrics: ArrowEscapeDifficultyMetrics): Difficulty = when {
-    metrics.chokepointCount == 0 -> Difficulty.EASY
-    metrics.chokepointCount <= 2 -> Difficulty.MEDIUM
-    metrics.chokepointCount <= 5 -> Difficulty.HARD
-    else -> Difficulty.EXPERT
-}
-
-fun computeArrowEscapeScore(metrics: ArrowEscapeDifficultyMetrics): Int =
-    metrics.maxFanOut * 100 + metrics.chokepointCount * 50
-
 private val CHAIN_LENGTH_BY_DIFFICULTY: Map<Difficulty, Int> = mapOf(
     Difficulty.EASY to 2,
     Difficulty.MEDIUM to 3,

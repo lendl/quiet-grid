@@ -1,8 +1,8 @@
 package com.quietgrid.app.games.arrowescape
 
 import com.quietgrid.engine.arrowescape.buildCellOwnerMap
-import com.quietgrid.engine.arrowescape.findNextRemovablePiece
 import com.quietgrid.engine.arrowescape.isPieceRemovable
+import com.quietgrid.engine.arrowescape.solveArrowEscape
 import com.quietgrid.engine.arrowescape.toPiece
 
 data class ArrowEscapeAttemptResult(val session: ArrowEscapeSession, val removed: Boolean)
@@ -29,6 +29,7 @@ fun applyArrowEscapeAttempt(session: ArrowEscapeSession, pieceIndex: Int): Arrow
 fun applyArrowEscapeHint(session: ArrowEscapeSession): ArrowEscapeSession? {
     if (session.status != ArrowEscapeStatus.PLAYING) return null
     val pieces = session.puzzle.pieces.map { it.toPiece() }
-    val hintIndex = findNextRemovablePiece(pieces, session.removedIndices, session.puzzle.rows, session.puzzle.cols) ?: return null
+    val result = solveArrowEscape(pieces, session.puzzle.rows, session.puzzle.cols, alreadyRemoved = session.removedIndices)
+    val hintIndex = result.moves.firstOrNull()?.pieceIndex ?: return null
     return session.copy(selectedIndex = hintIndex)
 }

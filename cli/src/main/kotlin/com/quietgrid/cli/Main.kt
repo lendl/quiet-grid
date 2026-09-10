@@ -10,6 +10,7 @@ import com.quietgrid.cli.arrowescape.arrowEscapeSizesForDifficulty
 import com.quietgrid.engine.animaldoku.ANIMALDOKU_SIZES_BY_DIFFICULTY
 import com.quietgrid.engine.animaldoku.AnimalDokuPuzzleEntry
 import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
+import com.quietgrid.engine.arrowescape.solveArrowEscape
 import com.quietgrid.engine.core.Difficulty
 import com.quietgrid.engine.sudoku.SudokuPuzzleEntry
 import com.quietgrid.engine.takuzu.TakuzuPuzzleEntry
@@ -224,6 +225,8 @@ fun main(args: Array<String>) {
                 val generated = generateArrowEscapePuzzle(size, size, difficulty) ?: continue
                 if (state.hasTried(generated.dedupeKey)) continue
                 state.recordTried(generated.dedupeKey, "valid")
+                val audit = solveArrowEscape(generated.pieces, generated.rows, generated.cols)
+                println("arrowescape audit: difficulty=$difficulty tier=${audit.highestTier} longestChain=${audit.longestChainLength} bottlenecks=${audit.bottleneckCount} avgBranching=${"%.2f".format(audit.avgBranchingFactor)}")
                 entries += toEntry("ae$size-${entries.size}-${System.nanoTime()}", generated)
             }
             state.save()

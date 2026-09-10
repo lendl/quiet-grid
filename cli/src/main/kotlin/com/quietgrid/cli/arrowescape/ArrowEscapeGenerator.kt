@@ -4,11 +4,10 @@ package com.quietgrid.cli.arrowescape
 import com.quietgrid.engine.arrowescape.ArrowEscapePiece
 import com.quietgrid.engine.arrowescape.ArrowEscapePieceData
 import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
-import com.quietgrid.engine.arrowescape.buildDependencyGraph
 import com.quietgrid.engine.arrowescape.chainLengthForDifficulty
-import com.quietgrid.engine.arrowescape.classifyArrowEscapeDifficulty
 import com.quietgrid.engine.arrowescape.key
-import com.quietgrid.engine.arrowescape.measureArrowEscapePuzzle
+import com.quietgrid.engine.arrowescape.matchesDifficulty
+import com.quietgrid.engine.arrowescape.solveArrowEscape
 import com.quietgrid.engine.core.Difficulty
 import kotlin.random.Random
 
@@ -56,12 +55,10 @@ fun generateArrowEscapePuzzle(
         val fillResult = fillCoverage(rows, cols, occupied, ARROW_ESCAPE_EMPTY_CELL_TOLERANCE, random) ?: return@repeat
 
         val allPieces = chain + fillResult.pieces
-        val graph = buildDependencyGraph(allPieces, rows, cols)
-        val metrics = measureArrowEscapePuzzle(allPieces, graph)
-        val difficulty = classifyArrowEscapeDifficulty(metrics)
-        if (difficulty != targetDifficulty) return@repeat
+        val result = solveArrowEscape(allPieces, rows, cols)
+        if (!result.matchesDifficulty(targetDifficulty)) return@repeat
 
-        return ArrowEscapeGeneratedPuzzle(rows, cols, difficulty, allPieces, buildPuzzleFingerprint(allPieces))
+        return ArrowEscapeGeneratedPuzzle(rows, cols, targetDifficulty, allPieces, buildPuzzleFingerprint(allPieces))
     }
     return null
 }

@@ -1,6 +1,8 @@
 // cli/src/test/kotlin/com/quietgrid/cli/arrowescape/ArrowEscapeGeneratorTest.kt
 package com.quietgrid.cli.arrowescape
 
+import com.quietgrid.engine.arrowescape.ArrowEscapeSolveTier
+import com.quietgrid.engine.arrowescape.solveArrowEscape
 import com.quietgrid.engine.core.Difficulty
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
@@ -54,5 +56,16 @@ class ArrowEscapeGeneratorTest {
         val first = firstSuccessfulGeneration(13, 13, Difficulty.MEDIUM, 1)
         val second = firstSuccessfulGeneration(13, 13, Difficulty.MEDIUM, 2)
         assertNotEquals(first.dedupeKey, second.dedupeKey)
+    }
+
+    @Test
+    fun `generated puzzles across all difficulties never require tier 5 or 6 reasoning`() {
+        Difficulty.entries.forEach { difficulty ->
+            val size = arrowEscapeSizesForDifficulty(difficulty).first()
+            val generated = firstSuccessfulGeneration(size, size, difficulty, startSeed = difficulty.ordinal * 500 + 1)
+            val result = solveArrowEscape(generated.pieces, generated.rows, generated.cols)
+            assertTrue(result.solvable)
+            assertTrue(result.highestTier!!.ordinal <= ArrowEscapeSolveTier.BOTTLENECK.ordinal)
+        }
     }
 }

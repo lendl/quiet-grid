@@ -18,6 +18,18 @@ private fun twoPiecePuzzle() = ArrowEscapePuzzleEntry(
     ),
 )
 
+private fun bottleneckOverFillerPuzzle() = ArrowEscapePuzzleEntry(
+    id = "test-bottleneck",
+    difficulty = "medium",
+    rows = 1,
+    cols = 6,
+    pieces = listOf(
+        ArrowEscapePieceData(cells = listOf(listOf(0, 5)), headDirection = "right"),
+        ArrowEscapePieceData(cells = listOf(listOf(0, 2)), headDirection = "left"),
+        ArrowEscapePieceData(cells = listOf(listOf(0, 4)), headDirection = "left"),
+    ),
+)
+
 class ArrowEscapeLogicTest {
     @Test
     fun `a blocked attempt decrements one life, does not remove the piece, and records the selection`() {
@@ -62,5 +74,12 @@ class ArrowEscapeLogicTest {
     fun `applyArrowEscapeHint returns null when nothing is removable`() {
         val session = createArrowEscapeSession(twoPiecePuzzle()).copy(removedIndices = emptySet(), lives = 0, status = ArrowEscapeStatus.LOST)
         assertNull(applyArrowEscapeHint(session))
+    }
+
+    @Test
+    fun `applyArrowEscapeHint prefers a piece that unblocks another over an inert filler`() {
+        val session = createArrowEscapeSession(bottleneckOverFillerPuzzle())
+        val hinted = applyArrowEscapeHint(session)!!
+        assertEquals(1, hinted.selectedIndex)
     }
 }
