@@ -93,6 +93,7 @@ fun CompletionScreen(
     elapsedSeconds: Int,
     isFirstSolve: Boolean,
     isNewHighScore: Boolean,
+    isMixActive: Boolean,
     onPlayAgain: () -> Unit,
     onOtherDifficulty: () -> Unit,
     onTryAnotherGame: () -> Unit,
@@ -396,7 +397,7 @@ fun CompletionScreen(
                     }
 
                     Button(onClick = onPlayAgain, modifier = Modifier.fillMaxWidth().padding(top = 24.dp)) {
-                        Text(stringResource(R.string.completion_play_again))
+                        Text(stringResource(mixAwarePrimaryLabel(isMixActive, R.string.completion_play_again)))
                     }
 
                     Row(
@@ -404,10 +405,12 @@ fun CompletionScreen(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        TextButton(onClick = onOtherDifficulty) {
-                            Text(stringResource(R.string.completion_other_difficulty), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        if (!isMixActive) {
+                            TextButton(onClick = onOtherDifficulty) {
+                                Text(stringResource(R.string.completion_other_difficulty), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                            Box(Modifier.width(1.dp).height(16.dp).background(MaterialTheme.colorScheme.outlineVariant))
                         }
-                        Box(Modifier.width(1.dp).height(16.dp).background(MaterialTheme.colorScheme.outlineVariant))
                         TextButton(onClick = onTryAnotherGame) {
                             Text(stringResource(R.string.completion_try_another_game), color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }

@@ -10,4 +10,5 @@ class RepositoriesViewModel @Inject constructor(
     val statsRepository: StatsRepository,
     val sessionRepository: SessionRepository,
     val playHistoryRepository: PlayHistoryRepository,
+    val mixRepository: MixRepository,
 ) : ViewModel()

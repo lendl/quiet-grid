@@ -31,6 +31,13 @@
     <string name="games_coming_soon">Binnenkort beschikbaar</string>
     <string name="games_beta_disclaimer">Deze spellen zijn nog in ontwikkeling en kunnen problemen bevatten.</string>
     <string name="games_active_puzzle_waiting">Je puzzel wacht op je</string>
+    <string name="games_your_mixes_heading">Jouw Mixen</string>
+    <string name="games_new_mix_button">Nieuwe Mix</string>
+    <string name="mix_card_entry_count">%1$d spellen</string>
+    <string name="mix_play_button">Spelen</string>
+    <string name="mix_edit_content_description">Mix bewerken</string>
+    <string name="mix_empty_state">Nog geen mixen. Maak er een met je favoriete spellen en niveaus.</string>
+    <string name="games_all_games_heading">Alle Spellen</string>
     <string name="game_takuzu_name">Takuzu</string>
     <string name="game_nonogram_name">Nonogram</string>
     <string name="game_minesweeper_name">Mijnenveger</string>
@@ -180,6 +187,7 @@
     <string name="completion_try_another_game">Ander spel proberen</string>
     <string name="completion_other_difficulty">Andere moeilijkheid</string>
     <string name="completion_play_again">Opnieuw spelen</string>
+    <string name="mix_next_puzzle">Volgende Puzzel</string>
     <string name="completion_streak_badge">%1$d puzzels op rij</string>
     <string name="completion_flawless_badge">Foutloos</string>
     <string name="completion_milestone_game_badge">%1$d opgelost</string>
@@ -771,4 +779,21 @@
     <string name="analyzer_next">Volgende stap</string>
     <string name="analyzer_play">Afspelen</string>
     <string name="analyzer_pause">Pauze</string>
+
+    <!-- Puzzle Mix editor -->
+    <string name="mix_editor_title_new">Nieuwe Mix</string>
+    <string name="mix_editor_title_edit">Mix Bewerken</string>
+    <string name="mix_name_label">Naam van de mix</string>
+    <string name="mix_entries_heading">Spellen in deze mix</string>
+    <string name="mix_add_game_button">Spel Toevoegen</string>
+    <string name="mix_add_game_dialog_title">Kies een spel</string>
+    <string name="mix_entry_share_format">%1$d%% van de mix</string>
+    <string name="mix_entry_weight_label">Gewicht</string>
+    <string name="mix_entry_remove_content_description">Verwijderen</string>
+    <string name="mix_entry_challenger_chip">Challenger</string>
+    <string name="mix_save_button">Mix Opslaan</string>
+    <string name="mix_delete_button">Mix Verwijderen</string>
+    <string name="mix_delete_confirm_title">Deze mix verwijderen?</string>
+    <string name="mix_delete_confirm_body">Dit kan niet ongedaan worden gemaakt.</string>
+    <string name="mix_delete_confirm_button">Verwijderen</string>
 </resources>

@@ -10,7 +10,10 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
@@ -30,9 +33,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.mix.Mix
+import com.quietgrid.app.core.mix.MixMode
+import com.quietgrid.app.core.mix.drawWeighted
+import com.quietgrid.app.core.mix.resolvedCandidates
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.games.animaldoku.AnimalDokuChallengerPlayScreen
@@ -66,6 +74,7 @@ import com.quietgrid.app.ui.screens.CompletionScreen
 import kotlinx.coroutines.launch
 import com.quietgrid.app.ui.screens.GamesScreen
 import com.quietgrid.app.ui.screens.LossScreen
+import com.quietgrid.app.ui.screens.MixEditorScreen
 import com.quietgrid.app.ui.screens.PuzzlePickerScreen
 import com.quietgrid.app.ui.screens.SettingsScreen
 import com.quietgrid.app.ui.screens.StatsScreen
@@ -89,6 +98,46 @@ fun AppNavHost() {
     val settings by repositories.settingsRepository.settings.collectAsState(initial = AppSettings())
     val activeSession by repositories.sessionRepository.activeSession.collectAsState(initial = null)
     val activeGameKey = activeSession?.gameId
+
+    val mixes by repositories.mixRepository.mixes.collectAsState(initial = emptyList())
+    val activeMixId by repositories.mixRepository.activeMixId.collectAsState(initial = null)
+    val activeMix = mixes.firstOrNull { it.id == activeMixId }
+
+    fun endMixAndGoToGames() {
+        scope.launch { repositories.mixRepository.clearActiveMix() }
+        selectedTab = AppTab.GAMES
+        navController.popBackStack(Routes.TABS, inclusive = false)
+    }
+
+    var pendingMixToStart by remember { mutableStateOf<Mix?>(null) }
+
+    fun goToMixDraw(mix: Mix) {
+        scope.launch {
+            val enabledGameIds = GameCatalog.games.filter { !it.beta || settings.betaGamesEnabled }.map { it.id }.toSet()
+            val candidate = drawWeighted(mix.resolvedCandidates().filter { it.gameId in enabledGameIds })
+            if (candidate == null) {
+                repositories.mixRepository.clearActiveMix()
+                selectedTab = AppTab.GAMES
+                navController.popBackStack(Routes.TABS, inclusive = false)
+                return@launch
+            }
+            val route = when (val mode = candidate.mode) {
+                is MixMode.Puzzle -> Routes.play(candidate.gameId, mode.difficulty, resume = false)
+                MixMode.Challenger -> Routes.challenger(candidate.gameId)
+            }
+            navController.navigate(route) { popUpTo(Routes.TABS) { inclusive = false } }
+        }
+    }
+
+    fun startMix(mix: Mix) {
+        scope.launch { repositories.mixRepository.setActiveMix(mix.id) }
+        goToMixDraw(mix)
+    }
+
+    fun playAgainOrDrawMix(fallback: () -> Unit) {
+        val mix = activeMix
+        if (mix != null) goToMixDraw(mix) else fallback()
+    }
 
     Scaffold(
         topBar = {
@@ -135,6 +184,14 @@ fun AppNavHost() {
                         subtitle = infoTitleRes?.let { stringResource(it) },
                     )
                 }
+                currentRoute == Routes.MIX_EDITOR -> {
+                    val rawMixId = backStackEntry?.arguments?.getString("mixId")
+                    val isNewMix = rawMixId == null || rawMixId == Routes.NEW_MIX_ID
+                    AppTopBar(
+                        title = stringResource(if (isNewMix) R.string.mix_editor_title_new else R.string.mix_editor_title_edit),
+                        onBack = { navController.popBackStack() },
+                    )
+                }
                 else -> AppTopBar(onBack = { navController.popBackStack() })
             }
         },
@@ -172,6 +229,9 @@ fun AppNavHost() {
                             AppTab.GAMES -> GamesScreen(
                                 onOpenGame = { gameId -> navController.navigate(Routes.picker(gameId)) },
                                 onResumeGame = { gameId -> navController.navigate(Routes.play(gameId, Difficulty.EASY, resume = true)) },
+                                onPlayMix = { mix -> if (activeGameKey != null) pendingMixToStart = mix else startMix(mix) },
+                                onEditMix = { mixId -> navController.navigate(Routes.mixEditor(mixId)) },
+                                onNewMix = { navController.navigate(Routes.mixEditor(null)) },
                             )
                             AppTab.STATS -> StatsScreen()
                             AppTab.SETTINGS -> SettingsScreen()
@@ -194,11 +254,30 @@ fun AppNavHost() {
                     val gameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
                     PuzzlePickerScreen(
                         gameId = gameId,
-                        onPickDifficulty = { difficulty -> navController.navigate(Routes.play(gameId, difficulty, resume = false)) },
+                        onPickDifficulty = { difficulty ->
+                            scope.launch { repositories.mixRepository.clearActiveMix() }
+                            navController.navigate(Routes.play(gameId, difficulty, resume = false))
+                        },
                         onResumeActiveGame = { activeGameId -> navController.navigate(Routes.play(activeGameId, Difficulty.EASY, resume = true)) },
-                        onStartChallenger = { navController.navigate(Routes.challenger(gameId)) },
+                        onStartChallenger = {
+                            scope.launch { repositories.mixRepository.clearActiveMix() }
+                            navController.navigate(Routes.challenger(gameId))
+                        },
                     )
                 }
+            }
+
+            composable(
+                Routes.MIX_EDITOR,
+                arguments = listOf(navArgument("mixId") { type = NavType.StringType }),
+                enterTransition = { fadeIn(animationSpec = tween(250)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) },
+            ) { entry ->
+                val rawMixId = entry.arguments?.getString("mixId") ?: Routes.NEW_MIX_ID
+                MixEditorScreen(
+                    mixId = rawMixId.takeIf { it != Routes.NEW_MIX_ID },
+                    onDone = { navController.popBackStack() },
+                )
             }
 
             composable(
@@ -390,9 +469,12 @@ fun AppNavHost() {
                         elapsedSeconds = entry.arguments?.getInt("elapsedSeconds") ?: 0,
                         isFirstSolve = entry.arguments?.getBoolean("isFirstSolve") ?: false,
                         isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
+                        isMixActive = activeMix != null,
                         onPlayAgain = {
-                            navController.navigate(Routes.play(completionGameId, completionDifficulty, resume = false)) {
-                                popUpTo(Routes.TABS) { inclusive = false }
+                            playAgainOrDrawMix {
+                                navController.navigate(Routes.play(completionGameId, completionDifficulty, resume = false)) {
+                                    popUpTo(Routes.TABS) { inclusive = false }
+                                }
                             }
                         },
                         onOtherDifficulty = {
@@ -400,10 +482,7 @@ fun AppNavHost() {
                                 popUpTo(Routes.TABS) { inclusive = false }
                             }
                         },
-                        onTryAnotherGame = {
-                            selectedTab = AppTab.GAMES
-                            navController.popBackStack(Routes.TABS, inclusive = false)
-                        },
+                        onTryAnotherGame = { endMixAndGoToGames() },
                     )
                 }
             }
@@ -430,9 +509,12 @@ fun AppNavHost() {
                         difficulty = lossDifficulty,
                         elapsedSeconds = entry.arguments?.getInt("elapsedSeconds") ?: 0,
                         reason = entry.arguments?.getString("reason") ?: "abandoned",
+                        isMixActive = activeMix != null,
                         onRetry = {
-                            navController.navigate(Routes.play(lossGameId, lossDifficulty, resume = false)) {
-                                popUpTo(Routes.TABS) { inclusive = false }
+                            playAgainOrDrawMix {
+                                navController.navigate(Routes.play(lossGameId, lossDifficulty, resume = false)) {
+                                    popUpTo(Routes.TABS) { inclusive = false }
+                                }
                             }
                         },
                         onOtherDifficulty = {
@@ -440,10 +522,7 @@ fun AppNavHost() {
                                 popUpTo(Routes.TABS) { inclusive = false }
                             }
                         },
-                        onTryAnotherGame = {
-                            selectedTab = AppTab.GAMES
-                            navController.popBackStack(Routes.TABS, inclusive = false)
-                        },
+                        onTryAnotherGame = { endMixAndGoToGames() },
                         onWalkThroughSolve = {
                             navController.navigate(Routes.analyzer(lossGameId))
                         },
@@ -518,9 +597,12 @@ fun AppNavHost() {
                             reason = entry.arguments?.getString("reason") ?: "time_up",
                             previousBest = previousBest,
                             fastestSolveSeconds = fastestSolveSeconds,
+                            isMixActive = activeMix != null,
                             onPlayAgain = {
-                                navController.navigate(Routes.challenger(resultGameId)) {
-                                    popUpTo(Routes.TABS) { inclusive = false }
+                                playAgainOrDrawMix {
+                                    navController.navigate(Routes.challenger(resultGameId)) {
+                                        popUpTo(Routes.TABS) { inclusive = false }
+                                    }
                                 }
                             },
                             onBackToPuzzles = {
@@ -528,10 +610,7 @@ fun AppNavHost() {
                                     popUpTo(Routes.TABS) { inclusive = false }
                                 }
                             },
-                            onTryAnotherGame = {
-                                selectedTab = AppTab.GAMES
-                                navController.popBackStack(Routes.TABS, inclusive = false)
-                            },
+                            onTryAnotherGame = { endMixAndGoToGames() },
                         )
                         GameId.WORDGUESS -> WordGuessChallengerResultScreen(
                             puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
@@ -541,9 +620,12 @@ fun AppNavHost() {
                             reason = entry.arguments?.getString("reason") ?: "time_up",
                             previousBest = previousBest,
                             fastestSolveSeconds = fastestSolveSeconds,
+                            isMixActive = activeMix != null,
                             onPlayAgain = {
-                                navController.navigate(Routes.challenger(resultGameId)) {
-                                    popUpTo(Routes.TABS) { inclusive = false }
+                                playAgainOrDrawMix {
+                                    navController.navigate(Routes.challenger(resultGameId)) {
+                                        popUpTo(Routes.TABS) { inclusive = false }
+                                    }
                                 }
                             },
                             onBackToPuzzles = {
@@ -551,10 +633,7 @@ fun AppNavHost() {
                                     popUpTo(Routes.TABS) { inclusive = false }
                                 }
                             },
-                            onTryAnotherGame = {
-                                selectedTab = AppTab.GAMES
-                                navController.popBackStack(Routes.TABS, inclusive = false)
-                            },
+                            onTryAnotherGame = { endMixAndGoToGames() },
                         )
                         GameId.CHIMPTEST -> ChimpTestChallengerResultScreen(
                             puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
@@ -564,9 +643,12 @@ fun AppNavHost() {
                             reason = entry.arguments?.getString("reason") ?: "time_up",
                             previousBest = previousBest,
                             fastestSolveSeconds = fastestSolveSeconds,
+                            isMixActive = activeMix != null,
                             onPlayAgain = {
-                                navController.navigate(Routes.challenger(resultGameId)) {
-                                    popUpTo(Routes.TABS) { inclusive = false }
+                                playAgainOrDrawMix {
+                                    navController.navigate(Routes.challenger(resultGameId)) {
+                                        popUpTo(Routes.TABS) { inclusive = false }
+                                    }
                                 }
                             },
                             onBackToPuzzles = {
@@ -574,10 +656,7 @@ fun AppNavHost() {
                                     popUpTo(Routes.TABS) { inclusive = false }
                                 }
                             },
-                            onTryAnotherGame = {
-                                selectedTab = AppTab.GAMES
-                                navController.popBackStack(Routes.TABS, inclusive = false)
-                            },
+                            onTryAnotherGame = { endMixAndGoToGames() },
                         )
                         else -> Unit
                     }
@@ -611,5 +690,29 @@ fun AppNavHost() {
             }
             }
         }
+    }
+
+    val mixToStart = pendingMixToStart
+    if (mixToStart != null) {
+        AlertDialog(
+            onDismissRequest = { pendingMixToStart = null },
+            title = { Text(stringResource(R.string.replace_dialog_title)) },
+            text = { Text(stringResource(R.string.replace_dialog_message)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    pendingMixToStart = null
+                    startMix(mixToStart)
+                }) { Text(stringResource(R.string.common_start_new_puzzle)) }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    pendingMixToStart = null
+                    val activeGameId = activeGameKey?.let { key -> GameId.entries.firstOrNull { it.key == key } }
+                    if (activeGameId != null) {
+                        navController.navigate(Routes.play(activeGameId, Difficulty.EASY, resume = true))
+                    }
+                }) { Text(stringResource(R.string.common_continue_puzzle)) }
+            },
+        )
     }
 }

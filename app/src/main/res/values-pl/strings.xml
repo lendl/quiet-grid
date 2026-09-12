@@ -34,6 +34,13 @@
     <string name="games_coming_soon">Wkrótce</string>
     <string name="games_beta_disclaimer">Te gry są wciąż w fazie testów i mogą zawierać błędy.</string>
     <string name="games_active_puzzle_waiting">Twoja łamigłówka czeka</string>
+    <string name="games_your_mixes_heading">Twoje Miksy</string>
+    <string name="games_new_mix_button">Nowy Miks</string>
+    <string name="mix_card_entry_count">%1$d gier</string>
+    <string name="mix_play_button">Graj</string>
+    <string name="mix_edit_content_description">Edytuj miks</string>
+    <string name="mix_empty_state">Nie masz jeszcze żadnych miksów. Stwórz jeden z ulubionych gier i poziomów trudności.</string>
+    <string name="games_all_games_heading">Wszystkie Gry</string>
     <string name="game_takuzu_name">Takuzu</string>
     <string name="game_nonogram_name">Nonogram</string>
     <string name="game_minesweeper_name">Saper</string>
@@ -188,6 +195,7 @@
     <string name="completion_try_another_game">Wypróbuj inną grę</string>
     <string name="completion_other_difficulty">Inny poziom trudności</string>
     <string name="completion_play_again">Zagraj ponownie</string>
+    <string name="mix_next_puzzle">Następna Łamigłówka</string>
     <string name="completion_streak_badge">Seria łamigłówek: %1$d</string>
     <string name="completion_flawless_badge">Bez błędu</string>
     <string name="completion_milestone_game_badge">Rozwiązane: %1$d</string>
@@ -791,4 +799,21 @@
     <string name="analyzer_next">Kolejny krok</string>
     <string name="analyzer_play">Odtwórz</string>
     <string name="analyzer_pause">Wstrzymaj</string>
+
+    <!-- Puzzle Mix editor -->
+    <string name="mix_editor_title_new">Nowy Miks</string>
+    <string name="mix_editor_title_edit">Edytuj Miks</string>
+    <string name="mix_name_label">Nazwa miksu</string>
+    <string name="mix_entries_heading">Gry w tym miksie</string>
+    <string name="mix_add_game_button">Dodaj Grę</string>
+    <string name="mix_add_game_dialog_title">Wybierz grę</string>
+    <string name="mix_entry_share_format">%1$d%% miksu</string>
+    <string name="mix_entry_weight_label">Waga</string>
+    <string name="mix_entry_remove_content_description">Usuń</string>
+    <string name="mix_entry_challenger_chip">Pretendent</string>
+    <string name="mix_save_button">Zapisz Miks</string>
+    <string name="mix_delete_button">Usuń Miks</string>
+    <string name="mix_delete_confirm_title">Usunąć ten miks?</string>
+    <string name="mix_delete_confirm_body">Tej operacji nie można cofnąć.</string>
+    <string name="mix_delete_confirm_button">Usuń</string>
 </resources>

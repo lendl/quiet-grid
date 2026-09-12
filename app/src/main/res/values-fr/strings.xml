@@ -31,6 +31,13 @@
     <string name="games_coming_soon">Bientôt disponible</string>
     <string name="games_beta_disclaimer">Ces jeux sont encore en cours de test et peuvent avoir des imperfections.</string>
     <string name="games_active_puzzle_waiting">Votre puzzle vous attend</string>
+    <string name="games_your_mixes_heading">Vos Mix</string>
+    <string name="games_new_mix_button">Nouveau Mix</string>
+    <string name="mix_card_entry_count">%1$d jeux</string>
+    <string name="mix_play_button">Jouer</string>
+    <string name="mix_edit_content_description">Modifier le mix</string>
+    <string name="mix_empty_state">Pas encore de mix. Créez-en un avec vos jeux et difficultés préférés.</string>
+    <string name="games_all_games_heading">Tous les Jeux</string>
     <string name="game_takuzu_name">Takuzu</string>
     <string name="game_nonogram_name">Nonogramme</string>
     <string name="game_minesweeper_name">Démineur</string>
@@ -180,6 +187,7 @@
     <string name="completion_try_another_game">Essayer un autre jeu</string>
     <string name="completion_other_difficulty">Autre difficulté</string>
     <string name="completion_play_again">Rejouer</string>
+    <string name="mix_next_puzzle">Puzzle Suivant</string>
     <string name="completion_streak_badge">Série de %1$d puzzles</string>
     <string name="completion_flawless_badge">Sans faute</string>
     <string name="completion_milestone_game_badge">%1$d résolus</string>
@@ -771,4 +779,21 @@
     <string name="analyzer_next">Étape suivante</string>
     <string name="analyzer_play">Lecture</string>
     <string name="analyzer_pause">Pause</string>
+
+    <!-- Puzzle Mix editor -->
+    <string name="mix_editor_title_new">Nouveau Mix</string>
+    <string name="mix_editor_title_edit">Modifier le Mix</string>
+    <string name="mix_name_label">Nom du mix</string>
+    <string name="mix_entries_heading">Jeux dans ce mix</string>
+    <string name="mix_add_game_button">Ajouter un Jeu</string>
+    <string name="mix_add_game_dialog_title">Choisissez un jeu</string>
+    <string name="mix_entry_share_format">%1$d%% du mix</string>
+    <string name="mix_entry_weight_label">Poids</string>
+    <string name="mix_entry_remove_content_description">Retirer</string>
+    <string name="mix_entry_challenger_chip">Challenger</string>
+    <string name="mix_save_button">Enregistrer le Mix</string>
+    <string name="mix_delete_button">Supprimer le Mix</string>
+    <string name="mix_delete_confirm_title">Supprimer ce mix ?</string>
+    <string name="mix_delete_confirm_body">Cette action est irréversible.</string>
+    <string name="mix_delete_confirm_button">Supprimer</string>
 </resources>

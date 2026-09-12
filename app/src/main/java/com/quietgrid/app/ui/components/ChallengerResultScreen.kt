@@ -39,6 +39,7 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.difficultyColor
 import com.quietgrid.app.core.formatElapsed
 import com.quietgrid.app.ui.screens.ChallengerExtras
+import com.quietgrid.app.ui.screens.mixAwarePrimaryLabel
 import kotlin.math.roundToInt
 
 data class ChallengerResultStrings(
@@ -67,6 +68,7 @@ fun ChallengerResultScreen(
     reason: String,
     startingLives: Int,
     solvesPerTier: Int,
+    isMixActive: Boolean,
     onPlayAgain: () -> Unit,
     onBackToPuzzles: () -> Unit,
     onTryAnotherGame: () -> Unit,
@@ -211,7 +213,7 @@ fun ChallengerResultScreen(
                 }
 
                 Button(onClick = onPlayAgain, modifier = Modifier.fillMaxWidth().padding(top = 24.dp)) {
-                    Text(stringResource(strings.playAgainRes))
+                    Text(stringResource(mixAwarePrimaryLabel(isMixActive, strings.playAgainRes)))
                 }
 
                 Row(

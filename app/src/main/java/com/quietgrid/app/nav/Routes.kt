@@ -13,6 +13,9 @@ object Routes {
     const val LOSS = "loss/{gameId}/{difficulty}/{elapsedSeconds}/{reason}"
     const val ANALYZER = "analyzer/{gameId}"
     const val SUPPORT_INFO = "supportInfo/{key}"
+    const val MIX_EDITOR = "mixEditor/{mixId}"
+
+    const val NEW_MIX_ID = "new"
 
     fun picker(gameId: GameId) = "picker/${gameId.key}"
     fun play(gameId: GameId, difficulty: Difficulty, resume: Boolean) =
@@ -47,4 +50,6 @@ object Routes {
     fun analyzer(gameId: GameId) = "analyzer/${gameId.key}"
 
     fun supportInfo(key: String) = "supportInfo/$key"
+
+    fun mixEditor(mixId: String?) = "mixEditor/${mixId ?: NEW_MIX_ID}"
 }

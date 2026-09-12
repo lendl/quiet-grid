@@ -60,6 +60,7 @@ fun LossScreen(
     difficulty: Difficulty,
     elapsedSeconds: Int,
     reason: String,
+    isMixActive: Boolean,
     onRetry: () -> Unit,
     onOtherDifficulty: () -> Unit,
     onTryAnotherGame: () -> Unit,
@@ -267,7 +268,7 @@ fun LossScreen(
                 }
 
                 Button(onClick = onRetry, modifier = Modifier.fillMaxWidth().padding(top = 24.dp)) {
-                    Text(stringResource(R.string.loss_try_again))
+                    Text(stringResource(mixAwarePrimaryLabel(isMixActive, R.string.loss_try_again)))
                 }
 
                 if (analyzerSnapshot != null) {
@@ -287,10 +288,12 @@ fun LossScreen(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    TextButton(onClick = onOtherDifficulty) {
-                        Text(stringResource(R.string.loss_other_difficulty), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    if (!isMixActive) {
+                        TextButton(onClick = onOtherDifficulty) {
+                            Text(stringResource(R.string.loss_other_difficulty), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                        Box(Modifier.width(1.dp).height(16.dp).background(MaterialTheme.colorScheme.outlineVariant))
                     }
-                    Box(Modifier.width(1.dp).height(16.dp).background(MaterialTheme.colorScheme.outlineVariant))
                     TextButton(onClick = onTryAnotherGame) {
                         Text(stringResource(R.string.loss_try_another_game), color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
