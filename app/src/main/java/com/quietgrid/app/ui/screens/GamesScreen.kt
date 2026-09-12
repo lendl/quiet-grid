@@ -26,6 +26,7 @@ import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.core.GameMeta
+import com.quietgrid.app.core.MIX_FEATURE_ENABLED
 import com.quietgrid.app.core.mix.Mix
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.RepositoriesViewModel
@@ -53,37 +54,39 @@ fun GamesScreen(
 
     Column(Modifier.fillMaxWidth().padding(16.dp)) {
         LazyColumn(contentPadding = PaddingValues(top = 16.dp, bottom = 16.dp)) {
-            item {
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                    Text(stringResource(R.string.games_your_mixes_heading), style = MaterialTheme.typography.labelLarge)
-                    Text(
-                        stringResource(R.string.games_new_mix_button),
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.clickable(onClick = onNewMix),
-                    )
+            if (MIX_FEATURE_ENABLED) {
+                item {
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                        Text(stringResource(R.string.games_your_mixes_heading), style = MaterialTheme.typography.labelLarge)
+                        Text(
+                            stringResource(R.string.games_new_mix_button),
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.clickable(onClick = onNewMix),
+                        )
+                    }
                 }
-            }
-            if (mixes.isEmpty()) {
+                if (mixes.isEmpty()) {
+                    item {
+                        Text(
+                            stringResource(R.string.mix_empty_state),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
+                        )
+                    }
+                } else {
+                    items(mixes) { mix ->
+                        MixCard(mix = mix, onPlay = { onPlayMix(mix) }, onEdit = { onEditMix(mix.id) })
+                    }
+                }
+
                 item {
                     Text(
-                        stringResource(R.string.mix_empty_state),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
+                        stringResource(R.string.games_all_games_heading),
+                        style = MaterialTheme.typography.labelLarge,
+                        modifier = Modifier.padding(top = 20.dp, bottom = 8.dp),
                     )
                 }
-            } else {
-                items(mixes) { mix ->
-                    MixCard(mix = mix, onPlay = { onPlayMix(mix) }, onEdit = { onEditMix(mix.id) })
-                }
-            }
-
-            item {
-                Text(
-                    stringResource(R.string.games_all_games_heading),
-                    style = MaterialTheme.typography.labelLarge,
-                    modifier = Modifier.padding(top = 20.dp, bottom = 8.dp),
-                )
             }
 
             itemsIndexed(readyGames) { index, meta ->
