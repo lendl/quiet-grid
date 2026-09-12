@@ -2,6 +2,8 @@
 package com.quietgrid.cli.arrowescape
 
 import com.quietgrid.engine.arrowescape.ArrowEscapeSolveTier
+import com.quietgrid.engine.arrowescape.matchesDifficulty
+import com.quietgrid.engine.arrowescape.scoreArrowEscapePuzzle
 import com.quietgrid.engine.arrowescape.solveArrowEscape
 import com.quietgrid.engine.core.Difficulty
 import org.junit.Assert.assertEquals
@@ -56,6 +58,13 @@ class ArrowEscapeGeneratorTest {
         val first = firstSuccessfulGeneration(13, 13, Difficulty.MEDIUM, 1)
         val second = firstSuccessfulGeneration(13, 13, Difficulty.MEDIUM, 2)
         assertNotEquals(first.dedupeKey, second.dedupeKey)
+    }
+
+    @Test
+    fun `generateArrowEscapePuzzle produces a puzzle whose score matches the target difficulty under the v2 model`() {
+        val result = firstSuccessfulGeneration(16, 16, Difficulty.HARD, 1)
+        val score = scoreArrowEscapePuzzle(result.pieces, result.rows, result.cols)
+        assertTrue(score.matchesDifficulty(Difficulty.HARD))
     }
 
     @Test

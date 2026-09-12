@@ -1,7 +1,5 @@
 package com.quietgrid.engine.arrowescape
 
-import com.quietgrid.engine.core.Difficulty
-
 enum class ArrowEscapeSolveTier {
     DIRECT, SINGLE_BLOCKER, CHAIN_LOOKAHEAD, BOTTLENECK, FORCED_SEQUENCE, GLOBAL_REEVALUATION
 }
@@ -60,18 +58,6 @@ fun solveArrowEscape(
         bottleneckCount = moves.count { it.tier == ArrowEscapeSolveTier.BOTTLENECK },
         avgBranchingFactor = if (branchingSteps == 0) 0.0 else branchingSum.toDouble() / branchingSteps,
     )
-}
-
-val ARROW_ESCAPE_ACCEPTED_TIER_RANGE: Map<Difficulty, IntRange> = mapOf(
-    Difficulty.EASY to 0..1,
-    Difficulty.MEDIUM to 1..2,
-    Difficulty.HARD to 2..3,
-    Difficulty.EXPERT to 3..3,
-)
-
-fun ArrowEscapeSolveResult.matchesDifficulty(target: Difficulty): Boolean {
-    val tier = highestTier ?: return false
-    return solvable && tier.ordinal in ARROW_ESCAPE_ACCEPTED_TIER_RANGE.getValue(target)
 }
 
 private data class TierPick(val pieceIndex: Int, val tier: ArrowEscapeSolveTier, val chainLength: Int)

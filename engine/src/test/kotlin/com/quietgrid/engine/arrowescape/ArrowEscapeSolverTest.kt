@@ -86,35 +86,6 @@ class ArrowEscapeSolverTest {
     }
 
     @Test
-    fun `matchesDifficulty checks the highest tier against each difficulty's accepted range`() {
-        fun result(tier: ArrowEscapeSolveTier) = ArrowEscapeSolveResult(
-            solvable = true,
-            highestTier = tier,
-            moves = emptyList(),
-            longestChainLength = 0,
-            bottleneckCount = 0,
-            avgBranchingFactor = 0.0,
-        )
-        assertTrue(result(ArrowEscapeSolveTier.DIRECT).matchesDifficulty(com.quietgrid.engine.core.Difficulty.EASY))
-        assertFalse(result(ArrowEscapeSolveTier.CHAIN_LOOKAHEAD).matchesDifficulty(com.quietgrid.engine.core.Difficulty.EASY))
-        assertTrue(result(ArrowEscapeSolveTier.BOTTLENECK).matchesDifficulty(com.quietgrid.engine.core.Difficulty.EXPERT))
-        assertFalse(result(ArrowEscapeSolveTier.CHAIN_LOOKAHEAD).matchesDifficulty(com.quietgrid.engine.core.Difficulty.EXPERT))
-    }
-
-    @Test
-    fun `matchesDifficulty is false for an unsolvable result regardless of tier`() {
-        val unsolved = ArrowEscapeSolveResult(
-            solvable = false,
-            highestTier = ArrowEscapeSolveTier.DIRECT,
-            moves = emptyList(),
-            longestChainLength = 0,
-            bottleneckCount = 0,
-            avgBranchingFactor = 0.0,
-        )
-        assertFalse(unsolved.matchesDifficulty(com.quietgrid.engine.core.Difficulty.EASY))
-    }
-
-    @Test
     fun `a piece unblocking two others is preferred over one unblocking only one, without reaching bottleneck or chain thresholds`() {
         val pieces = listOf(
             ArrowEscapePiece(cells = listOf(CellCoord(2, 1), CellCoord(2, 2)), headDirection = ArrowDirection.RIGHT),
