@@ -785,9 +785,10 @@
     <string name="mix_editor_title_edit">Mix Bearbeiten</string>
     <string name="mix_name_label">Name des Mix</string>
     <string name="mix_entries_heading">Spiele in diesem Mix</string>
-    <string name="mix_add_game_button">Spiel Hinzufügen</string>
-    <string name="mix_add_game_dialog_title">Spiel auswählen</string>
-    <string name="mix_entry_share_format">%1$d%% des Mix</string>
+    <string name="mix_add_mode_chip_format">+ %1$s</string>
+    <string name="mix_available_games_heading">Spiel Hinzufügen</string>
+    <string name="mix_available_games_empty">Alle Spiele sind bereits in diesem Mix.</string>
+    <string name="mix_editor_no_entries_hint">Füge unten ein Spiel hinzu, um deinen Mix zu erstellen.</string>
     <string name="mix_entry_weight_label">Gewichtung</string>
     <string name="mix_entry_remove_content_description">Entfernen</string>
     <string name="mix_entry_challenger_chip">Challenger</string>

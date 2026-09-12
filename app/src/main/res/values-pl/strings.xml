@@ -805,9 +805,10 @@
     <string name="mix_editor_title_edit">Edytuj Miks</string>
     <string name="mix_name_label">Nazwa miksu</string>
     <string name="mix_entries_heading">Gry w tym miksie</string>
-    <string name="mix_add_game_button">Dodaj Grę</string>
-    <string name="mix_add_game_dialog_title">Wybierz grę</string>
-    <string name="mix_entry_share_format">%1$d%% miksu</string>
+    <string name="mix_add_mode_chip_format">+ %1$s</string>
+    <string name="mix_available_games_heading">Dodaj Grę</string>
+    <string name="mix_available_games_empty">Wszystkie gry są już w tym miksie.</string>
+    <string name="mix_editor_no_entries_hint">Dodaj grę poniżej, aby zacząć tworzyć swój miks.</string>
     <string name="mix_entry_weight_label">Waga</string>
     <string name="mix_entry_remove_content_description">Usuń</string>
     <string name="mix_entry_challenger_chip">Pretendent</string>

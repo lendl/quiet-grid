@@ -785,9 +785,10 @@
     <string name="mix_editor_title_edit">Mix Bewerken</string>
     <string name="mix_name_label">Naam van de mix</string>
     <string name="mix_entries_heading">Spellen in deze mix</string>
-    <string name="mix_add_game_button">Spel Toevoegen</string>
-    <string name="mix_add_game_dialog_title">Kies een spel</string>
-    <string name="mix_entry_share_format">%1$d%% van de mix</string>
+    <string name="mix_add_mode_chip_format">+ %1$s</string>
+    <string name="mix_available_games_heading">Spel Toevoegen</string>
+    <string name="mix_available_games_empty">Alle spellen zitten al in deze mix.</string>
+    <string name="mix_editor_no_entries_hint">Voeg hieronder een spel toe om je mix te maken.</string>
     <string name="mix_entry_weight_label">Gewicht</string>
     <string name="mix_entry_remove_content_description">Verwijderen</string>
     <string name="mix_entry_challenger_chip">Challenger</string>
