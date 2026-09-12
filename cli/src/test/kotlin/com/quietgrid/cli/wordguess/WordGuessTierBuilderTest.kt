@@ -60,10 +60,19 @@ class WordGuessTierBuilderTest {
     }
 
     @Test
-    fun `sortWordGuessByRarity breaks ties alphabetically`() {
-        val words = listOf("zebra", "apple", "grape")
+    fun `sortWordGuessByRarity does not preserve input order for tied words`() {
+        val words = (1..50).map { "w${it}zzzz" }
         val sorted = sortWordGuessByRarity(words, locale = "en")
-        assertEquals(listOf("apple", "grape", "zebra"), sorted)
+        assertEquals(words.toSet(), sorted.toSet())
+        assertTrue("tie-break should shuffle rather than keep alphabetical/input order", sorted != words)
+    }
+
+    @Test
+    fun `sortWordGuessByRarity is deterministic across runs`() {
+        val words = listOf("zebra", "apple", "grape", "mango", "table", "chair")
+        val first = sortWordGuessByRarity(words, locale = "en")
+        val second = sortWordGuessByRarity(words, locale = "en")
+        assertEquals(first, second)
     }
 
     @Test
@@ -74,9 +83,9 @@ class WordGuessTierBuilderTest {
     }
 
     @Test
-    fun `sortWordGuessByRarity is a no-op for a locale with no rare-letter set`() {
+    fun `sortWordGuessByRarity does not filter for a locale with no rare-letter set`() {
         val words = listOf("zebra", "apple")
         val sorted = sortWordGuessByRarity(words, locale = "de")
-        assertEquals(listOf("apple", "zebra"), sorted)
+        assertEquals(words.toSet(), sorted.toSet())
     }
 }

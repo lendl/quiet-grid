@@ -28,12 +28,12 @@ val WORDGUESS_RARE_LETTERS: Map<String, Set<Char>> = mapOf(
     "pl" to setOf('f', 'h', 'q', 'v', 'x'),
 )
 
+private const val WORDGUESS_SHUFFLE_SEED = 20260912L
+
 fun sortWordGuessByRarity(words: List<String>, locale: String): List<String> {
     val rareLetters = WORDGUESS_RARE_LETTERS[locale].orEmpty()
-    return words.sortedWith(
-        compareBy<String> { word -> asciiFoldWord(word).lowercase().count { it in rareLetters } }
-            .thenBy { it }
-    )
+    val shuffled = words.shuffled(java.util.Random(WORDGUESS_SHUFFLE_SEED))
+    return shuffled.sortedBy { word -> asciiFoldWord(word).lowercase().count { it in rareLetters } }
 }
 
 fun buildWordGuessTiers(
