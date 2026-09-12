@@ -30,6 +30,15 @@ No ads. No account. No internet required. Everything stays on your device.
 
 Each puzzle type has Easy, Medium, Hard, and Expert difficulty levels.
 
+## Screenshots
+
+<p>
+  <img src="assets/phone/01-play-sudoku-offline.png" alt="Sudoku screenshot" width="200">
+  <img src="assets/phone/02-no-account-no-internet.png" alt="No account, no internet screenshot" width="200">
+  <img src="assets/phone/03-four-difficulty-levels.png" alt="Difficulty levels screenshot" width="200">
+  <img src="assets/phone/04-multiple-puzzle-types.png" alt="Multiple puzzle types screenshot" width="200">
+</p>
+
 ## Languages
 
 English, Dutch, German, French, Spanish.
@@ -61,7 +70,7 @@ Puzzle banks are generated offline by the `:cli` module (backed by shared rules 
 
 | Flag | Required | Default | Notes |
 | --- | --- | --- | --- |
-| `--game` | yes | — | `sudoku`, `takuzu`, `nonogram`, `wordsearch`, `wordguess` |
+| `--game` | yes | — | `sudoku`, `takuzu`, `nonogram`, `wordsearch`, `wordguess`, `animaldoku`, `arrowescape` |
 | `--difficulty` | yes | — | `easy`, `medium`, `hard`, `expert` |
 | `--count` | no | `1` | number of puzzles to attempt |
 | `--out` | no | `app/src/main/assets` | output dir; merges into that game's `*_puzzles.json` |
