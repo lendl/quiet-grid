@@ -137,6 +137,7 @@ fun WordGuessPlayScreen(
                         viewModel.onSubmitGuess(currentInput) { invalidFlash = true; haptics.incorrectFeedback() }
                     }
                 },
+                locale = session.locale,
             )
         }
     }

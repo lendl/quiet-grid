@@ -22,14 +22,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.quietgrid.engine.wordguess.LetterState
 
-private const val WORDGUESS_KEYBOARD_ROW_1 = "qwertyuiop"
-private const val WORDGUESS_KEYBOARD_ROW_2 = "asdfghjkl"
-private const val WORDGUESS_KEYBOARD_ROW_3 = "zxcvbnm"
+private val WORDGUESS_KEYBOARD_ROWS_QWERTY = listOf("qwertyuiop", "asdfghjkl", "zxcvbnm")
+private val WORDGUESS_KEYBOARD_ROWS_AZERTY = listOf("azertyuiop", "qsdfghjklm", "wxcvbn")
+private val WORDGUESS_KEYBOARD_ROWS_QWERTZ = listOf("qwertzuiop", "asdfghjkl", "yxcvbnm")
+
+private fun wordGuessKeyboardRows(locale: String): List<String> = when (locale) {
+    "fr" -> WORDGUESS_KEYBOARD_ROWS_AZERTY
+    "de" -> WORDGUESS_KEYBOARD_ROWS_QWERTZ
+    else -> WORDGUESS_KEYBOARD_ROWS_QWERTY
+}
 
 @Composable
 private fun RowScope.WordGuessKey(label: String, state: LetterState?, weight: Float = 1f, onClick: () -> Unit) {
@@ -48,7 +53,7 @@ private fun RowScope.WordGuessKey(label: String, state: LetterState?, weight: Fl
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 softWrap = false,
-                fontSize = if (label.length > 1) 12.sp else TextUnit.Unspecified,
+                fontSize = if (label.length > 1) 12.sp else 14.sp,
             )
             if (icon != null) {
                 Icon(
@@ -72,37 +77,33 @@ fun WordGuessKeyboard(
     onBackspace: () -> Unit,
     onEnter: () -> Unit,
     modifier: Modifier = Modifier,
+    locale: String = "en",
 ) {
+    val rows = wordGuessKeyboardRows(locale)
     Column(
         modifier.fillMaxWidth().background(Color.Transparent).padding(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)) {
-            for (ch in WORDGUESS_KEYBOARD_ROW_1) {
-                WordGuessKey(ch.toString(), keyboardState[ch]) { onLetter(ch) }
-            }
-        }
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)) {
-            for (ch in WORDGUESS_KEYBOARD_ROW_2) {
-                WordGuessKey(ch.toString(), keyboardState[ch]) { onLetter(ch) }
-            }
-        }
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)) {
-            for (ch in WORDGUESS_KEYBOARD_ROW_3) {
-                WordGuessKey(ch.toString(), keyboardState[ch]) { onLetter(ch) }
-            }
-            Surface(
-                onClick = onBackspace,
-                color = MaterialTheme.colorScheme.error,
-                shape = RoundedCornerShape(4.dp),
-                modifier = Modifier.weight(1.5f).height(48.dp),
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(Icons.AutoMirrored.Filled.Backspace, contentDescription = null, tint = MaterialTheme.colorScheme.onError)
+        rows.forEachIndexed { index, row ->
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(3.dp, Alignment.CenterHorizontally)) {
+                for (ch in row) {
+                    WordGuessKey(ch.toString(), keyboardState[ch]) { onLetter(ch) }
+                }
+                if (index == rows.lastIndex) {
+                    Surface(
+                        onClick = onBackspace,
+                        color = MaterialTheme.colorScheme.error,
+                        shape = RoundedCornerShape(4.dp),
+                        modifier = Modifier.weight(1.2f).height(48.dp),
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(Icons.AutoMirrored.Filled.Backspace, contentDescription = null, tint = MaterialTheme.colorScheme.onError)
+                        }
+                    }
+                    WordGuessKey("Enter", state = null, weight = 2f) { onEnter() }
                 }
             }
-            WordGuessKey("Enter", state = null, weight = 1.5f) { onEnter() }
         }
     }
 }
