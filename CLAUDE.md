@@ -35,6 +35,10 @@ The user tests builds on their own device — don't run `adb install`/screenshot
 - Use straight ASCII quotes (`'` and `"`) — never curly/smart quotes. This applies especially to locale string resources containing non-English text.
 - **No code documentation.** Don't write KDoc or explanatory comments in Kotlin source — not even for non-obvious WHY-level rationale. A durable finding worth keeping (e.g. a diagnostic result, a design tradeoff, a root-cause) belongs in project memory instead, not inline in code. Code should read as plain, self-explanatory logic with well-named identifiers carrying the intent.
 
+## Localization during development
+
+New games and new features stay English-only while unstable: add strings only to default `values/strings.xml`, skip every other locale's `values-*/strings.xml` entirely until the feature is ready to ship. Android falls back to the default string for any key missing in a locale, so this never crashes or shows a blank string. Once the feature is ready to ship, do one batch translation pass covering all its new keys across all locales — don't translate per-session while the feature is still in flux.
+
 ## Terminology
 
 When writing player-facing copy, string resources, loss screens, or how-to-play text, keep the established terms (puzzle, unfinished, lost, grid, etc.) and game title localization consistent with existing `values-*/strings.xml` entries.
