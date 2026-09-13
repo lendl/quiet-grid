@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -20,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,17 +44,28 @@ import com.quietgrid.app.core.buildFeatureRequestUrl
 @Composable
 fun SupportScreen(onOpenInfo: (String) -> Unit) {
     val context = LocalContext.current
+    val appVersion = remember {
+        runCatching { context.packageManager.getPackageInfo(context.packageName, 0).versionName }
+            .getOrNull() ?: "unknown"
+    }
     fun openUrl(url: String): Boolean =
         runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }.isSuccess
     fun openRateApp() {
         if (!openUrl(PLAY_STORE_APP_URL)) openUrl(PLAY_STORE_WEB_URL)
     }
 
-    Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
         SupportSection(title = stringResource(R.string.support_support_section)) {
-            SupportRow(stringResource(R.string.support_report_bug), stringResource(R.string.support_opens_github_issues), external = true) { openUrl(buildBugReportUrl()) }
+            SupportRow(stringResource(R.string.support_report_bug), stringResource(R.string.support_opens_github_issues), external = true) { openUrl(buildBugReportUrl(appVersion)) }
             SupportRow(stringResource(R.string.support_request_feature), stringResource(R.string.support_opens_github_issues), external = true) { openUrl(buildFeatureRequestUrl()) }
             SupportRow(stringResource(R.string.support_contact), SUPPORT_EMAIL, external = true) { openUrl("mailto:$SUPPORT_EMAIL") }
+            StaticSupportRow(stringResource(R.string.support_version), appVersion)
         }
 
         SupportSection(title = stringResource(R.string.support_trust_section)) {
@@ -128,6 +142,21 @@ private fun SupportSection(title: String, content: @Composable ColumnScope.() ->
         Text(title, style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(bottom = 4.dp))
         HorizontalDivider()
         Column(content = content)
+    }
+}
+
+@Composable
+private fun StaticSupportRow(label: String, detail: String) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding(bottom = 2.dp))
+            Text(detail, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
     }
 }
 

@@ -14,7 +14,7 @@ private fun buildIssueUrl(title: String, body: String): String {
     return "$ISSUES_URL/new?title=$encodedTitle&body=$encodedBody"
 }
 
-fun buildBugReportUrl(): String = buildIssueUrl(
+fun buildBugReportUrl(appVersion: String): String = buildIssueUrl(
     "[Bug] ",
     listOf(
         "## What happened",
@@ -30,6 +30,10 @@ fun buildBugReportUrl(): String = buildIssueUrl(
         "## Expected behavior",
         "",
         "Describe what you expected instead.",
+        "",
+        "## App version",
+        "",
+        appVersion,
     ).joinToString("\n"),
 )
 

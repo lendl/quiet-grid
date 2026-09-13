@@ -236,6 +236,7 @@
     <string name="support_report_bug">Report bug</string>
     <string name="support_request_feature">Request feature</string>
     <string name="support_contact">Contact</string>
+    <string name="support_version">Version</string>
     <string name="support_opens_github_issues">Opens GitHub issues</string>
     <string name="support_privacy">Privacy</string>
     <string name="support_source_code">GitHub / source code</string>
