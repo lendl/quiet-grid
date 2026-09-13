@@ -59,6 +59,7 @@ import com.quietgrid.app.games.animaldoku.animalDokuDifficultyLabelRes
 import com.quietgrid.app.games.arrowescape.arrowEscapeDifficultyLabelRes
 import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
 import com.quietgrid.app.games.chimptest.chimpDifficultyLabelRes
+import com.quietgrid.app.games.game2048.game2048DifficultyLabelRes
 import com.quietgrid.app.games.minesweeper.minesweeperDifficultyLabelRes
 import com.quietgrid.app.games.nonogram.nonogramDifficultyLabelRes
 import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
@@ -91,6 +92,7 @@ fun CompletionScreen(
     score: Int,
     accuracyPct: Int,
     elapsedSeconds: Int,
+    bestTile: Int,
     isFirstSolve: Boolean,
     isNewHighScore: Boolean,
     isMixActive: Boolean,
@@ -134,6 +136,7 @@ fun CompletionScreen(
         GameId.WORDGUESS -> wordGuessDifficultyLabelRes(difficulty)
         GameId.ANIMALDOKU -> animalDokuDifficultyLabelRes(difficulty)
         GameId.ARROWESCAPE -> arrowEscapeDifficultyLabelRes(difficulty)
+        GameId.GAME_2048 -> game2048DifficultyLabelRes(difficulty)
         else -> chimpDifficultyLabelRes(difficulty)
     }
     val accentColor = difficultyColor(difficulty)
@@ -393,6 +396,10 @@ fun CompletionScreen(
                                 Box(Modifier.width(1.dp).height(28.dp).background(MaterialTheme.colorScheme.outlineVariant))
                                 MetaItem(stringResource(R.string.completion_accuracy), "$accuracyPct%")
                             }
+                            if (gameId in BEST_TILE_TRACKED_GAMES) {
+                                Box(Modifier.width(1.dp).height(28.dp).background(MaterialTheme.colorScheme.outlineVariant))
+                                MetaItem(stringResource(R.string.completion_best_tile), bestTile.toString())
+                            }
                         }
                     }
 
@@ -426,6 +433,7 @@ fun CompletionScreen(
 
 private val FLAWLESS_ELIGIBLE_GAMES = setOf(GameId.TAKUZU, GameId.SUDOKU)
 private val ACCURACY_TRACKED_GAMES = setOf(GameId.TAKUZU, GameId.SUDOKU, GameId.WORDSEARCH)
+private val BEST_TILE_TRACKED_GAMES = setOf(GameId.GAME_2048)
 
 @Composable
 private fun NonogramMiniPicture(solution: List<List<Boolean>>, fillColor: Color, modifier: Modifier = Modifier) {

@@ -105,7 +105,8 @@ class PuzzleSessionController<TSession, TResult>(
         if (finalized) return
         finalized = true
         scope.launch {
-            statsStore.recordResult(adapter.gameId, difficulty, solved = false, score = 0)
+            val score = session?.let { adapter.scoreOnLoss(it, difficulty, elapsedSeconds.toInt()) } ?: 0
+            statsStore.recordResult(adapter.gameId, difficulty, solved = false, score = score)
             if (!GameCatalog.get(adapter.gameId).beta) {
                 historyStore.appendRecord(
                     PlayRecord(
@@ -113,7 +114,7 @@ class PuzzleSessionController<TSession, TResult>(
                         difficulty = difficulty.key,
                         puzzleId = session?.let { adapter.puzzleIdOf(it) },
                         solved = false,
-                        score = 0,
+                        score = score,
                         elapsedSeconds = elapsedSeconds.toInt(),
                         timestampMillis = System.currentTimeMillis(),
                         lossReason = reason,
@@ -128,7 +129,7 @@ class PuzzleSessionController<TSession, TResult>(
                     PuzzleOutcome(
                         difficulty = difficulty,
                         solved = false,
-                        score = 0,
+                        score = score,
                         elapsedSeconds = elapsedSeconds.toInt(),
                         lossReason = reason,
                         isFirstSolve = false,

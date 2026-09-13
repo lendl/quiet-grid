@@ -141,6 +141,12 @@
     <string name="minesweeper_quickstart_bullet_3">Flag cells you think hide a mine.</string>
     <string name="minesweeper_quickstart_hook">Clear it fast to keep your score high.</string>
 
+    <string name="game2048_quickstart_goal">Swipe to merge matching tiles until you reach 2048.</string>
+    <string name="game2048_quickstart_bullet_1">Swipe up, down, left, or right to slide every tile.</string>
+    <string name="game2048_quickstart_bullet_2">Two tiles with the same number merge into one when they collide.</string>
+    <string name="game2048_quickstart_bullet_3">A new tile appears after every swipe that moves the board.</string>
+    <string name="game2048_quickstart_hook">Run out of moves and it is over, so plan ahead.</string>
+
     <string name="sudoku_quickstart_goal">Fill every cell 1-9.</string>
     <string name="sudoku_quickstart_bullet_1">Each row, column and box has every digit once.</string>
     <string name="sudoku_quickstart_bullet_2">No repeats in a row, column, or box.</string>
@@ -192,6 +198,7 @@
     <string name="completion_score">Score</string>
     <string name="completion_elapsed_time">Elapsed time</string>
     <string name="completion_accuracy">Accuracy</string>
+    <string name="completion_best_tile">Best tile</string>
     <string name="completion_try_another_game">Try Another Game</string>
     <string name="completion_other_difficulty">Other Difficulty</string>
     <string name="completion_play_again">Play Again</string>
@@ -490,6 +497,42 @@
     <string name="minesweeper_loss_rule_failure_eyebrow">Puzzle lost</string>
     <string name="minesweeper_loss_rule_failure_title">Puzzle lost</string>
     <string name="minesweeper_loss_rule_failure_body">This puzzle ended when a mine was opened. A fresh puzzle is ready when you want one.</string>
+
+    <!-- 2048 -->
+    <string name="game2048_title">2048</string>
+    <string name="game2048_tagline">Merge tiles to reach 2048.</string>
+    <string name="game2048_difficulty_easy">Easy</string>
+    <string name="game2048_difficulty_medium">Medium</string>
+    <string name="game2048_difficulty_hard">Hard</string>
+    <string name="game2048_difficulty_expert">Expert</string>
+    <string name="game2048_difficulty_desc_easy">Bigger 5x5 board gives you more room to maneuver.</string>
+    <string name="game2048_difficulty_desc_medium">Classic 4x4 board, the original 2048 layout.</string>
+    <string name="game2048_difficulty_desc_hard">Same 4x4 board but with more unhelpful 4-tiles.</string>
+    <string name="game2048_difficulty_desc_expert">Tiny 3x3 board -- the goal here is 1024, the highest tile this size can hold.</string>
+    <string name="game2048_score_label">Score</string>
+    <string name="game2048_how_to_play_goal">Merge matching tiles until one of them reaches 2048.</string>
+    <string name="game2048_how_to_play_controls">Swipe up, down, left, or right to slide every tile in that direction.</string>
+    <string name="game2048_rule_1_title">Slide every tile</string>
+    <string name="game2048_rule_1_body">Swiping moves every tile as far as it can go in that direction.</string>
+    <string name="game2048_rule_2_title">Merge on contact</string>
+    <string name="game2048_rule_2_body">Two tiles with the same number combine into one tile with double the value.</string>
+    <string name="game2048_rule_3_title">One merge per swipe</string>
+    <string name="game2048_rule_3_body">A tile that just merged cannot merge again until your next swipe.</string>
+    <string name="game2048_rule_4_title">New tile every move</string>
+    <string name="game2048_rule_4_body">A new 2 or 4 tile appears after any swipe that actually moves the board.</string>
+    <string name="game2048_how_to_play_scoring">Each merge adds the value of the new tile to your score.</string>
+    <string name="game2048_tip_1_title">Keep your biggest tile in a corner</string>
+    <string name="game2048_tip_1_body">Building around one corner keeps your highest tiles from getting boxed in.</string>
+    <string name="game2048_tip_2_title">Pick one swipe direction and stick with it</string>
+    <string name="game2048_tip_2_body">Favoring one or two directions keeps the board organized longer.</string>
+    <string name="game2048_tip_3_title">Do not chase every merge</string>
+    <string name="game2048_tip_3_body">Sometimes the safer move is the one that does not merge anything yet.</string>
+    <string name="game2048_loss_abandoned_eyebrow">Puzzle ended</string>
+    <string name="game2048_loss_abandoned_title">Puzzle unfinished</string>
+    <string name="game2048_loss_abandoned_body">You ended this puzzle before it was solved.</string>
+    <string name="game2048_loss_rule_failure_eyebrow">Puzzle lost</string>
+    <string name="game2048_loss_rule_failure_title">No moves left</string>
+    <string name="game2048_loss_rule_failure_body">No empty cells remained and no matching tiles were left to merge.</string>
 
     <!-- Sudoku -->
     <string name="sudoku_title">Sudoku</string>

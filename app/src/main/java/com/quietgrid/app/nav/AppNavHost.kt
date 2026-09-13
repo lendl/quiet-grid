@@ -51,6 +51,7 @@ import com.quietgrid.app.games.chimptest.ChimpTestChallengerResultScreen
 import com.quietgrid.app.games.arrowescape.ArrowEscapePlayScreen
 import com.quietgrid.app.games.blockfill.BlockFillPlayScreen
 import com.quietgrid.app.games.chimptest.ChimpTestPlayScreen
+import com.quietgrid.app.games.game2048.Game2048PlayScreen
 import com.quietgrid.app.games.minesweeper.MinesweeperPlayScreen
 import com.quietgrid.app.games.nonogram.NonogramPlayScreen
 import com.quietgrid.app.games.sudoku.SudokuPlayScreen
@@ -298,15 +299,15 @@ fun AppNavHost() {
                     val resume = entry.arguments?.getBoolean("resume") ?: false
                     val gameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
 
-                    fun goToCompletion(resultDifficulty: Difficulty, score: Int, accuracyPct: Int, elapsedSeconds: Int, isFirstSolve: Boolean, isNewHighScore: Boolean) {
+                    fun goToCompletion(resultDifficulty: Difficulty, score: Int, accuracyPct: Int, elapsedSeconds: Int, isFirstSolve: Boolean, isNewHighScore: Boolean, bestTile: Int) {
                         navController.navigate(
-                            Routes.completion(gameId, resultDifficulty, score, accuracyPct, elapsedSeconds, isFirstSolve, isNewHighScore),
+                            Routes.completion(gameId, resultDifficulty, score, accuracyPct, elapsedSeconds, isFirstSolve, isNewHighScore, bestTile),
                         ) { popUpTo(Routes.TABS) { inclusive = false } }
                     }
 
-                    fun goToLoss(resultDifficulty: Difficulty, elapsedSeconds: Int, reason: String) {
+                    fun goToLoss(resultDifficulty: Difficulty, elapsedSeconds: Int, reason: String, score: Int, bestTile: Int) {
                         navController.navigate(
-                            Routes.loss(gameId, resultDifficulty, elapsedSeconds, reason),
+                            Routes.loss(gameId, resultDifficulty, elapsedSeconds, reason, score, bestTile),
                         ) { popUpTo(Routes.TABS) { inclusive = false } }
                     }
 
@@ -318,9 +319,9 @@ fun AppNavHost() {
                             onFinished = { result ->
                                 AnalyzerHandoff.set(result.analyzerSnapshot)
                                 if (result.solved) {
-                                    goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
+                                    goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
                                 } else {
-                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
+                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
                                 }
                             },
                         )
@@ -331,9 +332,9 @@ fun AppNavHost() {
                             onFinished = { result ->
                                 if (result.solved) {
                                     CompletionExtras.set(CompletionHighlight.Picture(result.solution))
-                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
+                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
                                 } else {
-                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
+                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
                                 }
                             },
                         )
@@ -343,9 +344,9 @@ fun AppNavHost() {
                             onBack = { navController.popBackStack() },
                             onFinished = { result ->
                                 if (result.solved) {
-                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
+                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
                                 } else {
-                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
+                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
                                 }
                             },
                         )
@@ -355,9 +356,9 @@ fun AppNavHost() {
                             onBack = { navController.popBackStack() },
                             onFinished = { result ->
                                 if (result.solved) {
-                                    goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
+                                    goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
                                 } else {
-                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
+                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
                                 }
                             },
                         )
@@ -368,9 +369,9 @@ fun AppNavHost() {
                             onFinished = { result ->
                                 if (result.solved) {
                                     wordSearchThemeIcon(result.themeId)?.let { CompletionExtras.set(CompletionHighlight.ThemeIcon(it)) }
-                                    goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
+                                    goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
                                 } else {
-                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
+                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
                                 }
                             },
                         )
@@ -380,9 +381,9 @@ fun AppNavHost() {
                             onBack = { navController.popBackStack() },
                             onFinished = { result ->
                                 if (result.solved) {
-                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
+                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
                                 } else {
-                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
+                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
                                 }
                             },
                         )
@@ -392,12 +393,12 @@ fun AppNavHost() {
                             onBack = { navController.popBackStack() },
                             onFinished = { result ->
                                 if (result.solved) {
-                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
+                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
                                 } else {
                                     if (result.targetWord.isNotEmpty()) {
                                         CompletionExtras.set(CompletionHighlight.RevealWord(result.targetWord))
                                     }
-                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
+                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
                                 }
                             },
                         )
@@ -407,9 +408,9 @@ fun AppNavHost() {
                             onBack = { navController.popBackStack() },
                             onFinished = { result ->
                                 if (result.solved) {
-                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
+                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
                                 } else {
-                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
+                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
                                 }
                             },
                         )
@@ -419,9 +420,21 @@ fun AppNavHost() {
                             onBack = { navController.popBackStack() },
                             onFinished = { result ->
                                 if (result.solved) {
-                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
+                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
                                 } else {
-                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
+                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
+                                }
+                            },
+                        )
+                        GameId.GAME_2048 -> Game2048PlayScreen(
+                            difficulty = difficulty,
+                            resume = resume,
+                            onBack = { navController.popBackStack() },
+                            onFinished = { result ->
+                                if (result.solved) {
+                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, result.bestTile)
+                                } else {
+                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, result.bestTile)
                                 }
                             },
                         )
@@ -431,9 +444,9 @@ fun AppNavHost() {
                             onBack = { navController.popBackStack() },
                             onFinished = { result ->
                                 if (result.solved) {
-                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore)
+                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
                                 } else {
-                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned")
+                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
                                 }
                             },
                         )
@@ -451,6 +464,7 @@ fun AppNavHost() {
                     navArgument("elapsedSeconds") { type = NavType.IntType },
                     navArgument("isFirstSolve") { type = NavType.BoolType },
                     navArgument("isNewHighScore") { type = NavType.BoolType },
+                    navArgument("bestTile") { type = NavType.IntType },
                 ),
                 enterTransition = { fadeIn(animationSpec = tween(250)) },
                 exitTransition = { fadeOut(animationSpec = tween(200)) },
@@ -467,6 +481,7 @@ fun AppNavHost() {
                         score = entry.arguments?.getInt("score") ?: 0,
                         accuracyPct = entry.arguments?.getInt("accuracyPct") ?: 100,
                         elapsedSeconds = entry.arguments?.getInt("elapsedSeconds") ?: 0,
+                        bestTile = entry.arguments?.getInt("bestTile") ?: 0,
                         isFirstSolve = entry.arguments?.getBoolean("isFirstSolve") ?: false,
                         isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
                         isMixActive = activeMix != null,
@@ -494,6 +509,8 @@ fun AppNavHost() {
                     navArgument("difficulty") { type = NavType.StringType },
                     navArgument("elapsedSeconds") { type = NavType.IntType },
                     navArgument("reason") { type = NavType.StringType },
+                    navArgument("score") { type = NavType.IntType },
+                    navArgument("bestTile") { type = NavType.IntType },
                 ),
                 enterTransition = { fadeIn(animationSpec = tween(250)) },
                 exitTransition = { fadeOut(animationSpec = tween(200)) },
@@ -509,6 +526,8 @@ fun AppNavHost() {
                         difficulty = lossDifficulty,
                         elapsedSeconds = entry.arguments?.getInt("elapsedSeconds") ?: 0,
                         reason = entry.arguments?.getString("reason") ?: "abandoned",
+                        score = entry.arguments?.getInt("score") ?: 0,
+                        bestTile = entry.arguments?.getInt("bestTile") ?: 0,
                         isMixActive = activeMix != null,
                         onRetry = {
                             playAgainOrDrawMix {

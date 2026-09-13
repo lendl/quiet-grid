@@ -9,8 +9,8 @@ object Routes {
     const val PLAY = "play/{gameId}/{difficulty}/{resume}"
     const val CHALLENGER = "challenger/{gameId}"
     const val CHALLENGER_RESULT = "challengerResult/{gameId}/{puzzlesSolved}/{tier}/{score}/{isNewHighScore}/{reason}/{previousBest}/{fastestSolveSeconds}"
-    const val COMPLETION = "completion/{gameId}/{difficulty}/{score}/{accuracyPct}/{elapsedSeconds}/{isFirstSolve}/{isNewHighScore}"
-    const val LOSS = "loss/{gameId}/{difficulty}/{elapsedSeconds}/{reason}"
+    const val COMPLETION = "completion/{gameId}/{difficulty}/{score}/{accuracyPct}/{elapsedSeconds}/{isFirstSolve}/{isNewHighScore}/{bestTile}"
+    const val LOSS = "loss/{gameId}/{difficulty}/{elapsedSeconds}/{reason}/{score}/{bestTile}"
     const val ANALYZER = "analyzer/{gameId}"
     const val SUPPORT_INFO = "supportInfo/{key}"
     const val MIX_EDITOR = "mixEditor/{mixId}"
@@ -42,10 +42,11 @@ object Routes {
         elapsedSeconds: Int,
         isFirstSolve: Boolean,
         isNewHighScore: Boolean,
-    ) = "completion/${gameId.key}/${difficulty.key}/$score/$accuracyPct/$elapsedSeconds/$isFirstSolve/$isNewHighScore"
+        bestTile: Int,
+    ) = "completion/${gameId.key}/${difficulty.key}/$score/$accuracyPct/$elapsedSeconds/$isFirstSolve/$isNewHighScore/$bestTile"
 
-    fun loss(gameId: GameId, difficulty: Difficulty, elapsedSeconds: Int, reason: String) =
-        "loss/${gameId.key}/${difficulty.key}/$elapsedSeconds/$reason"
+    fun loss(gameId: GameId, difficulty: Difficulty, elapsedSeconds: Int, reason: String, score: Int, bestTile: Int) =
+        "loss/${gameId.key}/${difficulty.key}/$elapsedSeconds/$reason/$score/$bestTile"
 
     fun analyzer(gameId: GameId) = "analyzer/${gameId.key}"
 

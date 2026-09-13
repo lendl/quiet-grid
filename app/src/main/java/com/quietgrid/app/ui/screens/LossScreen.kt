@@ -42,6 +42,7 @@ import com.quietgrid.app.games.animaldoku.animalDokuDifficultyLabelRes
 import com.quietgrid.app.games.arrowescape.arrowEscapeDifficultyLabelRes
 import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
 import com.quietgrid.app.games.chimptest.chimpDifficultyLabelRes
+import com.quietgrid.app.games.game2048.game2048DifficultyLabelRes
 import com.quietgrid.app.games.minesweeper.minesweeperDifficultyLabelRes
 import com.quietgrid.app.games.nonogram.nonogramDifficultyLabelRes
 import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
@@ -60,6 +61,8 @@ fun LossScreen(
     difficulty: Difficulty,
     elapsedSeconds: Int,
     reason: String,
+    score: Int,
+    bestTile: Int,
     isMixActive: Boolean,
     onRetry: () -> Unit,
     onOtherDifficulty: () -> Unit,
@@ -142,6 +145,16 @@ fun LossScreen(
             titleRes = R.string.arrowescape_loss_rule_failure_title
             bodyRes = R.string.arrowescape_loss_rule_failure_body
         }
+        gameId == GameId.GAME_2048 && reason == "abandoned" -> {
+            eyebrowRes = R.string.game2048_loss_abandoned_eyebrow
+            titleRes = R.string.game2048_loss_abandoned_title
+            bodyRes = R.string.game2048_loss_abandoned_body
+        }
+        gameId == GameId.GAME_2048 -> {
+            eyebrowRes = R.string.game2048_loss_rule_failure_eyebrow
+            titleRes = R.string.game2048_loss_rule_failure_title
+            bodyRes = R.string.game2048_loss_rule_failure_body
+        }
         reason == "abandoned" -> {
             eyebrowRes = R.string.chimp_loss_abandoned_eyebrow
             titleRes = R.string.chimp_loss_abandoned_title
@@ -163,6 +176,7 @@ fun LossScreen(
         GameId.WORDGUESS -> wordGuessDifficultyLabelRes(difficulty)
         GameId.ANIMALDOKU -> animalDokuDifficultyLabelRes(difficulty)
         GameId.ARROWESCAPE -> arrowEscapeDifficultyLabelRes(difficulty)
+        GameId.GAME_2048 -> game2048DifficultyLabelRes(difficulty)
         else -> chimpDifficultyLabelRes(difficulty)
     }
     val icon = if (reason == "abandoned") "⏸" else "💥"
@@ -265,6 +279,12 @@ fun LossScreen(
                     MetaItem(stringResource(R.string.loss_difficulty), stringResource(difficultyLabelRes))
                     Box(Modifier.width(1.dp).height(28.dp).background(MaterialTheme.colorScheme.outlineVariant))
                     MetaItem(stringResource(R.string.loss_elapsed_time), formatElapsed(elapsedSeconds))
+                    if (gameId in SCORE_ON_LOSS_TRACKED_GAMES) {
+                        Box(Modifier.width(1.dp).height(28.dp).background(MaterialTheme.colorScheme.outlineVariant))
+                        MetaItem(stringResource(R.string.completion_score), score.toString())
+                        Box(Modifier.width(1.dp).height(28.dp).background(MaterialTheme.colorScheme.outlineVariant))
+                        MetaItem(stringResource(R.string.completion_best_tile), bestTile.toString())
+                    }
                 }
 
                 Button(onClick = onRetry, modifier = Modifier.fillMaxWidth().padding(top = 24.dp)) {
@@ -302,6 +322,8 @@ fun LossScreen(
         }
     }
 }
+
+private val SCORE_ON_LOSS_TRACKED_GAMES = setOf(GameId.GAME_2048)
 
 @Composable
 private fun MetaItem(label: String, value: String) {

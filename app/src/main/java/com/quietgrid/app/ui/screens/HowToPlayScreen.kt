@@ -61,6 +61,7 @@ fun HowToPlayScreen(gameId: GameId) {
             GameId.WORDGUESS -> WordGuessHowToPlay()
             GameId.ANIMALDOKU -> AnimalDokuHowToPlay()
             GameId.ARROWESCAPE -> ArrowEscapeHowToPlay()
+            GameId.GAME_2048 -> Game2048HowToPlay()
         }
 
         HorizontalDivider(Modifier.padding(vertical = 20.dp))
@@ -286,6 +287,35 @@ private fun MinesweeperHowToPlay() {
     HorizontalDivider(Modifier.padding(vertical = 20.dp))
     Accordion(stringResource(R.string.how_to_play_scoring_title)) {
         BodyText(stringResource(R.string.minesweeper_how_to_play_scoring))
+    }
+}
+
+@Composable
+private fun Game2048HowToPlay() {
+    SectionHeader(Icons.Outlined.EmojiEvents, stringResource(R.string.how_to_play_goal_title))
+    BodyText(stringResource(R.string.game2048_how_to_play_goal))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.PanTool, stringResource(R.string.how_to_play_controls_title))
+    BodyText(stringResource(R.string.game2048_how_to_play_controls))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.Description, stringResource(R.string.how_to_play_rules_title))
+    RuleRow(1, R.string.game2048_rule_1_title, R.string.game2048_rule_1_body)
+    RuleRow(2, R.string.game2048_rule_2_title, R.string.game2048_rule_2_body)
+    RuleRow(3, R.string.game2048_rule_3_title, R.string.game2048_rule_3_body)
+    RuleRow(4, R.string.game2048_rule_4_title, R.string.game2048_rule_4_body)
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    Accordion(stringResource(R.string.how_to_play_tips_title)) {
+        TechniqueItem(R.string.game2048_tip_1_title, R.string.game2048_tip_1_body)
+        TechniqueItem(R.string.game2048_tip_2_title, R.string.game2048_tip_2_body)
+        TechniqueItem(R.string.game2048_tip_3_title, R.string.game2048_tip_3_body)
+    }
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    Accordion(stringResource(R.string.how_to_play_scoring_title)) {
+        BodyText(stringResource(R.string.game2048_how_to_play_scoring))
     }
 }
 

@@ -47,6 +47,9 @@ import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
 import com.quietgrid.app.games.chimptest.ChimpTestQuickStart
 import com.quietgrid.app.games.chimptest.chimpDifficultyDescriptionRes
 import com.quietgrid.app.games.chimptest.chimpDifficultyLabelRes
+import com.quietgrid.app.games.game2048.Game2048QuickStart
+import com.quietgrid.app.games.game2048.game2048DifficultyDescriptionRes
+import com.quietgrid.app.games.game2048.game2048DifficultyLabelRes
 import com.quietgrid.app.games.minesweeper.MinesweeperQuickStart
 import com.quietgrid.app.games.minesweeper.minesweeperDifficultyDescriptionRes
 import com.quietgrid.app.games.minesweeper.minesweeperDifficultyLabelRes
@@ -82,6 +85,7 @@ private fun quickStartFor(gameId: GameId): QuickStartContent = when (gameId) {
     GameId.WORDGUESS -> WordGuessQuickStart
     GameId.ANIMALDOKU -> AnimalDokuQuickStart
     GameId.ARROWESCAPE -> ArrowEscapeQuickStart
+    GameId.GAME_2048 -> Game2048QuickStart
 }
 
 @Composable
@@ -222,6 +226,7 @@ private fun GamePlayPickerTab(
                     GameId.WORDGUESS -> wordGuessDifficultyLabelRes(difficulty)
                     GameId.ANIMALDOKU -> animalDokuDifficultyLabelRes(difficulty)
                     GameId.ARROWESCAPE -> arrowEscapeDifficultyLabelRes(difficulty)
+                    GameId.GAME_2048 -> game2048DifficultyLabelRes(difficulty)
                     else -> chimpDifficultyLabelRes(difficulty)
                 }
                 val descriptionRes = when (gameId) {
@@ -235,6 +240,7 @@ private fun GamePlayPickerTab(
                     GameId.WORDGUESS -> wordGuessDifficultyDescriptionRes(difficulty)
                     GameId.ANIMALDOKU -> animalDokuDifficultyDescriptionRes(difficulty)
                     GameId.ARROWESCAPE -> arrowEscapeDifficultyDescriptionRes(difficulty)
+                    GameId.GAME_2048 -> game2048DifficultyDescriptionRes(difficulty)
                 }
                 if (index > 0) HorizontalDivider()
                 Row(
