@@ -1,0 +1,5 @@
+Version 1.2.13
+
+- Devine le Mot : ajout des dispositions de clavier AZERTY et QWERTZ, et correction de la taille trop serrée des touches
+- Devine le Mot : correction d'un biais alphabétique dans la sélection des mots du puzzle
+- Corrections de bugs et améliorations de stabilité

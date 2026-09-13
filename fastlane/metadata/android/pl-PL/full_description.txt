@@ -4,11 +4,14 @@ Quiet Grid to aplikacja z łamigłówkami logicznymi. Bez konta. Bez internetu. 
 
 Sudoku — wypełnij siatkę 9x9 tak, aby każdy wiersz, kolumna i blok zawierały cyfry od 1 do 9. Cztery poziomy trudności, od łatwego do eksperckiego.
 Takuzu — wypełnij siatkę zerami i jedynkami zgodnie z kilkoma prostymi zasadami. Łatwo się nauczyć, trudno opanować.
+Nonogram — wypełniaj pola zgodnie ze wskazówkami liczbowymi w wierszach i kolumnach.
 Saper — klasyka, z czytelną grafiką i czterema poziomami trudności.
-Wykreślanka — odnajduj wskazane słowa w liniach prostych i odkryj ukryte słowo-bonus z pozostałych liter.
+Wykreślanka — odnajduj wskazane słowa w liniach prostych i odgadnij ukryte hasło bonusowe z pozostałych liter.
+Układanka z klocków (Beta) — przeciągaj klocki na siatkę i oczyszczaj pełne linie.
+Zgadnij słowo — odgadnij ukryte słowo w sześciu próbach.
+Animal Doku — umieść jedno zwierzę w każdym wierszu, kolumnie i kolorowym obszarze, tak aby żadne dwa zwierzęta się nie stykały, nawet po przekątnej.
+Ucieczka strzałek (Beta) — oczyść planszę, usuwając po jednej strzałce naraz.
 Test szympansa — krótkie wyzwanie na refleks i pamięć: stukaj liczby w kolejności, zanim znikną.
-
-Kolejne rodzaje łamigłówek są w trakcie tworzenia.
 
 DLACZEGO QUIET GRID
 

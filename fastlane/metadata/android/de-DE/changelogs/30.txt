@@ -1,0 +1,5 @@
+Version 1.2.13
+
+- Wort erraten: AZERTY- und QWERTZ-Tastaturlayouts hinzugefügt und beengte Tastengröße behoben
+- Wort erraten: alphabetische Verzerrung bei der Wortauswahl für Rätsel behoben
+- Fehlerbehebungen und Stabilitätsverbesserungen

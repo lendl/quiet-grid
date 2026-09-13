@@ -1,0 +1,5 @@
+Versión 1.2.13
+
+- Adivina la Palabra: se añadieron los diseños de teclado AZERTY y QWERTZ, y se corrigió el tamaño apretado de las teclas
+- Adivina la Palabra: se corrigió un sesgo alfabético en la selección de palabras del rompecabezas
+- Corrección de errores y mejoras de estabilidad

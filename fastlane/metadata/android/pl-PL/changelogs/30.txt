@@ -1,0 +1,5 @@
+Wersja 1.2.13
+
+- Zgadnij słowo: dodano układy klawiatury AZERTY i QWERTZ oraz poprawiono ciasny rozmiar klawiszy
+- Zgadnij słowo: naprawiono alfabetyczne obciążenie w losowaniu słów do łamigłówki
+- Poprawki błędów i usprawnienia stabilności

@@ -1,0 +1,5 @@
+Version 1.2.13
+
+- Word Guess: added AZERTY and QWERTZ keyboard layouts, and fixed cramped key sizing
+- Word Guess: fixed an alphabetical bias in puzzle word selection
+- Bug fixes and stability improvements

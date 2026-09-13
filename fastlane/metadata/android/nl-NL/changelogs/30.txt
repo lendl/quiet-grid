@@ -1,0 +1,5 @@
+Versie 1.2.13
+
+- Woord Raden: AZERTY- en QWERTZ-toetsenbordindelingen toegevoegd en te krappe toetsgrootte verholpen
+- Woord Raden: alfabetische vertekening bij woordselectie voor puzzels opgelost
+- Bugfixes en stabiliteitsverbeteringen

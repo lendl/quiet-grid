@@ -10,6 +10,8 @@
 <li><b>Word Search</b> — Find hidden words in a grid of letters.</li>
 <li><b>Block Fill</b> (Beta) — Drag pieces onto the grid and clear full lines.</li>
 <li><b>Word Guess</b> — Guess the hidden word in six tries.</li>
+<li><b>Animal Doku</b> — Place one animal in every row, column, and colored region, with no two animals touching, even diagonally.</li>
+<li><b>Arrow Escape</b> (Beta) — Clear the board, one arrow at a time.</li>
 </ul>
 
 <p>Each puzzle type offers Easy, Medium, Hard, and Expert difficulty levels.</p>
@@ -17,4 +19,4 @@
 <p><b>Privacy by design:</b></p>
 <p>Quiet Grid does not use the internet, request dangerous permissions, or collect any data. All progress and settings are stored locally on your device.</p>
 
-<p>Available in English, Dutch, German, French, and Spanish.</p>
+<p>Available in English, Dutch, German, French, Spanish, and Polish.</p>
