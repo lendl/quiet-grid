@@ -6,6 +6,7 @@ import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
 import com.quietgrid.app.games.chimptest.chimpDifficultyLabelRes
 import com.quietgrid.app.games.minesweeper.minesweeperDifficultyLabelRes
 import com.quietgrid.app.games.nonogram.nonogramDifficultyLabelRes
+import com.quietgrid.app.games.starbattle.starBattleDifficultyLabelRes
 import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
 import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
 import com.quietgrid.app.games.wordguess.wordGuessDifficultyLabelRes
@@ -21,5 +22,6 @@ fun gameDifficultyLabelRes(gameId: GameId, difficulty: Difficulty): Int = when (
     GameId.WORDGUESS -> wordGuessDifficultyLabelRes(difficulty)
     GameId.ANIMALDOKU -> animalDokuDifficultyLabelRes(difficulty)
     GameId.ARROWESCAPE -> arrowEscapeDifficultyLabelRes(difficulty)
+    GameId.STARBATTLE -> starBattleDifficultyLabelRes(difficulty)
     else -> chimpDifficultyLabelRes(difficulty)
 }

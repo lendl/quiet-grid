@@ -62,6 +62,7 @@ fun HowToPlayScreen(gameId: GameId) {
             GameId.ANIMALDOKU -> AnimalDokuHowToPlay()
             GameId.ARROWESCAPE -> ArrowEscapeHowToPlay()
             GameId.GAME_2048 -> Game2048HowToPlay()
+            GameId.STARBATTLE -> StarBattleHowToPlay()
         }
 
         HorizontalDivider(Modifier.padding(vertical = 20.dp))
@@ -496,4 +497,25 @@ private fun ArrowEscapeHowToPlay() {
     RuleRow(1, R.string.arrowescape_rule_1_title, R.string.arrowescape_rule_1_body)
     RuleRow(2, R.string.arrowescape_rule_2_title, R.string.arrowescape_rule_2_body)
     RuleRow(3, R.string.arrowescape_rule_3_title, R.string.arrowescape_rule_3_body)
+}
+
+@Composable
+private fun StarBattleHowToPlay() {
+    SectionHeader(Icons.Outlined.EmojiEvents, stringResource(R.string.how_to_play_goal_title))
+    BodyText(stringResource(R.string.starbattle_how_to_play_goal))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.PanTool, stringResource(R.string.how_to_play_controls_title))
+    BodyText(stringResource(R.string.starbattle_how_to_play_controls))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.WarningAmber, stringResource(R.string.how_to_play_wrong_move_title))
+    BodyText(stringResource(R.string.starbattle_how_to_play_wrong_move))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.Description, stringResource(R.string.how_to_play_rules_title))
+    RuleRow(1, R.string.starbattle_rule_1_title, R.string.starbattle_rule_1_body)
+    RuleRow(2, R.string.starbattle_rule_2_title, R.string.starbattle_rule_2_body)
+    RuleRow(3, R.string.starbattle_rule_3_title, R.string.starbattle_rule_3_body)
+    RuleRow(4, R.string.starbattle_rule_4_title, R.string.starbattle_rule_4_body)
 }

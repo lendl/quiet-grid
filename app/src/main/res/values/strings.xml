@@ -177,6 +177,12 @@
     <string name="arrowescape_quickstart_bullet_3">A blocked tap costs a life — lose all 3 and the run ends.</string>
     <string name="arrowescape_quickstart_hook">Clearing the board faster earns a higher score.</string>
 
+    <string name="starbattle_quickstart_goal">Place exactly the right number of stars in every row, column, and region.</string>
+    <string name="starbattle_quickstart_bullet_1">Tap a cell to mark it, tap again to clear the mark.</string>
+    <string name="starbattle_quickstart_bullet_2">Drag across cells to mark or clear several at once.</string>
+    <string name="starbattle_quickstart_bullet_3">Double-tap to place a star — wrong guesses cost a life.</string>
+    <string name="starbattle_quickstart_hook">No two stars may touch, not even diagonally.</string>
+
     <!-- tutorial host / puzzle play -->
     <string name="tutorial_host_unavailable_title">Tutorial not available</string>
     <string name="tutorial_host_unavailable_body">This puzzle type does not include a tutorial yet.</string>
@@ -828,6 +834,34 @@
     <string name="arrowescape_loss_rule_failure_eyebrow">Out of lives</string>
     <string name="arrowescape_loss_rule_failure_title">Board not cleared</string>
     <string name="arrowescape_loss_rule_failure_body">You ran out of lives before clearing every arrow.</string>
+
+    <string name="starbattle_title">Star Battle</string>
+    <string name="starbattle_tagline">Place your stars, keep them apart</string>
+    <string name="starbattle_difficulty_easy">Easy</string>
+    <string name="starbattle_difficulty_medium">Medium</string>
+    <string name="starbattle_difficulty_hard">Hard</string>
+    <string name="starbattle_difficulty_expert">Expert</string>
+    <string name="starbattle_difficulty_desc_easy">One star per row, column, and region</string>
+    <string name="starbattle_difficulty_desc_medium">Some puzzles need two stars per line</string>
+    <string name="starbattle_difficulty_desc_hard">Deeper deductions, sometimes with two stars per line</string>
+    <string name="starbattle_difficulty_desc_expert">The deepest two-star deductions in the game</string>
+    <string name="starbattle_how_to_play_goal">Place exactly the right number of stars in every row, column, and region.</string>
+    <string name="starbattle_how_to_play_controls">Tap a cell to mark it, tap again to clear the mark. Drag across cells to mark or clear several at once. Double-tap to place a star — wrong guesses cost a life.</string>
+    <string name="starbattle_how_to_play_wrong_move">A wrong double-tap locks the cell as a misplaced star and costs one life. Lose all 3 lives and the puzzle ends.</string>
+    <string name="starbattle_rule_1_title">Stars per row</string>
+    <string name="starbattle_rule_1_body">Every row holds exactly the right number of stars for the puzzle.</string>
+    <string name="starbattle_rule_2_title">Stars per column</string>
+    <string name="starbattle_rule_2_body">Every column holds exactly the right number of stars for the puzzle.</string>
+    <string name="starbattle_rule_3_title">Stars per region</string>
+    <string name="starbattle_rule_3_body">Every colored region holds exactly the right number of stars for the puzzle.</string>
+    <string name="starbattle_rule_4_title">No touching</string>
+    <string name="starbattle_rule_4_body">Stars can\'t be placed next to each other, including diagonally.</string>
+    <string name="starbattle_loss_abandoned_eyebrow">Puzzle ended</string>
+    <string name="starbattle_loss_abandoned_title">Puzzle abandoned</string>
+    <string name="starbattle_loss_abandoned_body">You ended this puzzle before it was finished.</string>
+    <string name="starbattle_loss_rule_failure_eyebrow">Puzzle lost</string>
+    <string name="starbattle_loss_rule_failure_title">Out of lives</string>
+    <string name="starbattle_loss_rule_failure_body">Too many stars landed in the wrong place.</string>
 
     <!-- Analyzer -->
     <string name="analyzer_step_of">Step %1$d of %2$d</string>

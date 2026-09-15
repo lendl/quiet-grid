@@ -45,6 +45,7 @@ import com.quietgrid.app.games.chimptest.chimpDifficultyLabelRes
 import com.quietgrid.app.games.game2048.game2048DifficultyLabelRes
 import com.quietgrid.app.games.minesweeper.minesweeperDifficultyLabelRes
 import com.quietgrid.app.games.nonogram.nonogramDifficultyLabelRes
+import com.quietgrid.app.games.starbattle.starBattleDifficultyLabelRes
 import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
 import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
 import com.quietgrid.app.games.wordguess.wordGuessDifficultyLabelRes
@@ -135,6 +136,16 @@ fun LossScreen(
             titleRes = R.string.animaldoku_loss_rule_failure_title
             bodyRes = R.string.animaldoku_loss_rule_failure_body
         }
+        gameId == GameId.STARBATTLE && reason == "abandoned" -> {
+            eyebrowRes = R.string.starbattle_loss_abandoned_eyebrow
+            titleRes = R.string.starbattle_loss_abandoned_title
+            bodyRes = R.string.starbattle_loss_abandoned_body
+        }
+        gameId == GameId.STARBATTLE -> {
+            eyebrowRes = R.string.starbattle_loss_rule_failure_eyebrow
+            titleRes = R.string.starbattle_loss_rule_failure_title
+            bodyRes = R.string.starbattle_loss_rule_failure_body
+        }
         gameId == GameId.ARROWESCAPE && reason == "abandoned" -> {
             eyebrowRes = R.string.arrowescape_loss_abandoned_eyebrow
             titleRes = R.string.arrowescape_loss_abandoned_title
@@ -177,6 +188,7 @@ fun LossScreen(
         GameId.ANIMALDOKU -> animalDokuDifficultyLabelRes(difficulty)
         GameId.ARROWESCAPE -> arrowEscapeDifficultyLabelRes(difficulty)
         GameId.GAME_2048 -> game2048DifficultyLabelRes(difficulty)
+        GameId.STARBATTLE -> starBattleDifficultyLabelRes(difficulty)
         else -> chimpDifficultyLabelRes(difficulty)
     }
     val icon = if (reason == "abandoned") "⏸" else "💥"

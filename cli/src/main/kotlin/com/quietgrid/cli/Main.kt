@@ -7,11 +7,18 @@ import com.quietgrid.cli.arrowescape.toEntry
 import com.quietgrid.cli.sudoku.generateSudokuPuzzle
 import com.quietgrid.cli.takuzu.generateTakuzuPuzzle
 import com.quietgrid.cli.arrowescape.arrowEscapeSizesForDifficulty
+import com.quietgrid.cli.starbattle.generateStarBattleK1PuzzleForTier
+import com.quietgrid.cli.starbattle.generateStarBattleSolution
+import com.quietgrid.cli.starbattle.growStarBattleRegions
+import com.quietgrid.cli.starbattle.repairStarBattleRegionsTowardUniqueSolution
+import com.quietgrid.cli.starbattle.softenStarBattleTowardGrade
 import com.quietgrid.engine.animaldoku.ANIMALDOKU_SIZES_BY_DIFFICULTY
 import com.quietgrid.engine.animaldoku.AnimalDokuPuzzleEntry
 import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
 import com.quietgrid.engine.arrowescape.scoreArrowEscapePuzzle
 import com.quietgrid.engine.core.Difficulty
+import com.quietgrid.engine.starbattle.StarBattlePuzzleEntry
+import com.quietgrid.engine.starbattle.classifyStarBattleK2Grade
 import com.quietgrid.engine.sudoku.SudokuPuzzleEntry
 import com.quietgrid.engine.takuzu.TakuzuPuzzleEntry
 
@@ -232,6 +239,59 @@ fun main(args: Array<String>) {
             state.save()
             appendPuzzleEntries("${command.outDir}/arrowescape_puzzles.json", entries, ArrowEscapePuzzleEntry.serializer()) { it.id }
             println("Generated ${entries.size}/${command.count} arrowescape puzzles at $difficulty into ${command.outDir}/arrowescape_puzzles.json")
+        }
+        "starbattle" -> {
+            val entries = mutableListOf<StarBattlePuzzleEntry>()
+            val k1Source = when (difficulty) {
+                Difficulty.EASY -> Difficulty.MEDIUM
+                Difficulty.MEDIUM -> Difficulty.HARD
+                Difficulty.HARD -> Difficulty.EXPERT
+                Difficulty.EXPERT -> null
+            }
+            val k2TargetCount = when (difficulty) {
+                Difficulty.MEDIUM, Difficulty.HARD -> kotlin.math.ceil(command.count * 0.3).toInt()
+                Difficulty.EXPERT -> command.count
+                Difficulty.EASY -> 0
+            }
+            if (k2TargetCount > 0) {
+                var k2Attempts = 0
+                val maxK2Attempts = command.count * 30
+                while (entries.size < k2TargetCount && k2Attempts < maxK2Attempts) {
+                    k2Attempts++
+                    val size = (8..9).random()
+                    val solution = generateStarBattleSolution(size, 2) ?: continue
+                    val initialRegions = growStarBattleRegions(size, solution) ?: continue
+                    val repaired = repairStarBattleRegionsTowardUniqueSolution(size, 2, solution, initialRegions) ?: continue
+                    var grade = classifyStarBattleK2Grade(repaired.solveResult)
+                    var finalRegions = repaired.regions
+                    if (grade != difficulty.key && (difficulty == Difficulty.MEDIUM || difficulty == Difficulty.HARD)) {
+                        val softened = softenStarBattleTowardGrade(size, 2, solution, repaired.regions, repaired.solveResult, difficulty.key)
+                        grade = classifyStarBattleK2Grade(softened.solveResult)
+                        finalRegions = softened.regions
+                    }
+                    if (grade != difficulty.key) continue
+                    entries += StarBattlePuzzleEntry(
+                        id = "sbk2$size-${solution.joinToString("_") { it.joinToString(",") }}-${finalRegions.joinToString("") { it.joinToString("") }}",
+                        size = size,
+                        difficulty = difficulty.key,
+                        k = 2,
+                        regions = finalRegions,
+                        solution = solution,
+                    )
+                }
+            }
+            if (k1Source != null && entries.size < command.count) {
+                var k1Attempts = 0
+                val maxK1Attempts = command.count * 30
+                while (entries.size < command.count && k1Attempts < maxK1Attempts) {
+                    k1Attempts++
+                    val size = ANIMALDOKU_SIZES_BY_DIFFICULTY.getValue(k1Source).random()
+                    val entry = generateStarBattleK1PuzzleForTier(size, k1Source, difficulty.key, idPrefix = "sbk1$size") ?: continue
+                    entries += entry
+                }
+            }
+            appendPuzzleEntries("${command.outDir}/starbattle_puzzles.json", entries, StarBattlePuzzleEntry.serializer()) { it.id }
+            println("Generated ${entries.size}/${command.count} starbattle puzzles at $difficulty into ${command.outDir}/starbattle_puzzles.json")
         }
         else -> error("Unknown or not-yet-wired game '${command.game}'.")
     }
