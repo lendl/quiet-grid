@@ -4,8 +4,6 @@
 
     <string name="tab_games">Jeux</string>
     <string name="tab_stats">Statistiques</string>
-    <string name="tab_settings">Paramètres</string>
-    <string name="tab_support">Aide</string>
 
     <string name="common_go_home">Aller aux jeux</string>
     <string name="common_back">Retour</string>
@@ -21,8 +19,6 @@
     <string name="common_system_default">Par défaut du système</string>
     <string name="common_end_puzzle">Terminer le puzzle</string>
     <string name="common_continue_puzzle">Continuer le puzzle</string>
-    <string name="home_open_repo">Ouvrir le dépôt GitHub de Quiet Grid</string>
-    <string name="home_change_theme">Changer le thème</string>
     <string name="common_start_new_puzzle">Commencer un nouveau puzzle</string>
     <string name="replace_dialog_title">Remplacer le puzzle actif ?</string>
     <string name="replace_dialog_message">Vous avez déjà un puzzle actif. Vous pouvez le continuer maintenant ou le remplacer par un nouveau puzzle.</string>
@@ -31,8 +27,6 @@
     <string name="games_coming_soon">Bientôt disponible</string>
     <string name="games_beta_disclaimer">Ces jeux sont encore en cours de test et peuvent avoir des imperfections.</string>
     <string name="games_active_puzzle_waiting">Votre puzzle vous attend</string>
-    <string name="games_your_mixes_heading">Vos Mix</string>
-    <string name="games_new_mix_button">Nouveau Mix</string>
     <string name="mix_card_entry_count">%1$d jeux</string>
     <string name="mix_play_button">Jouer</string>
     <string name="mix_edit_content_description">Modifier le mix</string>
@@ -46,10 +40,8 @@
 
     <string name="settings_title">Paramètres</string>
     <string name="settings_subtitle">Choisissez votre thème, langue et affichage de la minuterie.</string>
-    <string name="settings_appearance">Apparence</string>
     <string name="settings_theme">Thème</string>
     <string name="settings_language">Langue</string>
-    <string name="settings_tutorials">Comment jouer</string>
     <string name="settings_language_dropdown_detail">Choisissez la langue de l\'application.</string>
     <string name="settings_language_ai_disclaimer">Les textes de langue ont été générés par IA et peuvent contenir de petites erreurs.</string>
     <string name="settings_dark">Sombre</string>
@@ -782,18 +774,15 @@
     <string name="analyzer_pause">Pause</string>
 
     <!-- Puzzle Mix editor -->
-    <string name="mix_editor_title_new">Nouveau Mix</string>
     <string name="mix_editor_title_edit">Modifier le Mix</string>
     <string name="mix_name_label">Nom du mix</string>
     <string name="mix_entries_heading">Jeux dans ce mix</string>
     <string name="mix_add_mode_chip_format">+ %1$s</string>
     <string name="mix_available_games_heading">Ajouter un Jeu</string>
     <string name="mix_available_games_empty">Tous les jeux sont déjà dans ce mix.</string>
-    <string name="mix_editor_no_entries_hint">Ajoutez un jeu ci-dessous pour créer votre mix.</string>
     <string name="mix_entry_weight_label">Poids</string>
     <string name="mix_entry_remove_content_description">Retirer</string>
     <string name="mix_entry_challenger_chip">Challenger</string>
-    <string name="mix_save_button">Enregistrer le Mix</string>
     <string name="mix_delete_button">Supprimer le Mix</string>
     <string name="mix_delete_confirm_title">Supprimer ce mix ?</string>
     <string name="mix_delete_confirm_body">Cette action est irréversible.</string>

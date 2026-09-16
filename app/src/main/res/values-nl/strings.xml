@@ -4,8 +4,6 @@
 
     <string name="tab_games">Spellen</string>
     <string name="tab_stats">Statistieken</string>
-    <string name="tab_settings">Instellingen</string>
-    <string name="tab_support">Ondersteuning</string>
 
     <string name="common_go_home">Ga naar spellen</string>
     <string name="common_back">Terug</string>
@@ -21,8 +19,6 @@
     <string name="common_system_default">Systeemstandaard</string>
     <string name="common_end_puzzle">Puzzel beëindigen</string>
     <string name="common_continue_puzzle">Puzzel hervatten</string>
-    <string name="home_open_repo">Open de Quiet Grid GitHub-repository</string>
-    <string name="home_change_theme">Thema wijzigen</string>
     <string name="common_start_new_puzzle">Nieuwe puzzel starten</string>
     <string name="replace_dialog_title">Actieve puzzel vervangen?</string>
     <string name="replace_dialog_message">Je hebt al een actieve puzzel. Je kunt die nu hervatten of vervangen door een nieuwe puzzel.</string>
@@ -31,8 +27,6 @@
     <string name="games_coming_soon">Binnenkort beschikbaar</string>
     <string name="games_beta_disclaimer">Deze spellen zijn nog in ontwikkeling en kunnen problemen bevatten.</string>
     <string name="games_active_puzzle_waiting">Je puzzel wacht op je</string>
-    <string name="games_your_mixes_heading">Jouw Mixen</string>
-    <string name="games_new_mix_button">Nieuwe Mix</string>
     <string name="mix_card_entry_count">%1$d spellen</string>
     <string name="mix_play_button">Spelen</string>
     <string name="mix_edit_content_description">Mix bewerken</string>
@@ -46,10 +40,8 @@
 
     <string name="settings_title">Instellingen</string>
     <string name="settings_subtitle">Kies je thema, taal en timerweergave.</string>
-    <string name="settings_appearance">Weergave</string>
     <string name="settings_theme">Thema</string>
     <string name="settings_language">Taal</string>
-    <string name="settings_tutorials">Speluitleg</string>
     <string name="settings_language_dropdown_detail">Kies de taal van de app.</string>
     <string name="settings_language_ai_disclaimer">De taalteksten zijn met AI gegenereerd en kunnen kleine fouten bevatten.</string>
     <string name="settings_dark">Donker</string>
@@ -782,18 +774,15 @@
     <string name="analyzer_pause">Pauze</string>
 
     <!-- Puzzle Mix editor -->
-    <string name="mix_editor_title_new">Nieuwe Mix</string>
     <string name="mix_editor_title_edit">Mix Bewerken</string>
     <string name="mix_name_label">Naam van de mix</string>
     <string name="mix_entries_heading">Spellen in deze mix</string>
     <string name="mix_add_mode_chip_format">+ %1$s</string>
     <string name="mix_available_games_heading">Spel Toevoegen</string>
     <string name="mix_available_games_empty">Alle spellen zitten al in deze mix.</string>
-    <string name="mix_editor_no_entries_hint">Voeg hieronder een spel toe om je mix te maken.</string>
     <string name="mix_entry_weight_label">Gewicht</string>
     <string name="mix_entry_remove_content_description">Verwijderen</string>
     <string name="mix_entry_challenger_chip">Challenger</string>
-    <string name="mix_save_button">Mix Opslaan</string>
     <string name="mix_delete_button">Mix Verwijderen</string>
     <string name="mix_delete_confirm_title">Deze mix verwijderen?</string>
     <string name="mix_delete_confirm_body">Dit kan niet ongedaan worden gemaakt.</string>

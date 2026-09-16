@@ -15,8 +15,6 @@ object Routes {
     const val SUPPORT_INFO = "supportInfo/{key}"
     const val MIX_EDITOR = "mixEditor/{mixId}"
 
-    const val NEW_MIX_ID = "new"
-
     fun picker(gameId: GameId) = "picker/${gameId.key}"
     fun play(gameId: GameId, difficulty: Difficulty, resume: Boolean) =
         "play/${gameId.key}/${difficulty.key}/$resume"
@@ -52,5 +50,5 @@ object Routes {
 
     fun supportInfo(key: String) = "supportInfo/$key"
 
-    fun mixEditor(mixId: String?) = "mixEditor/${mixId ?: NEW_MIX_ID}"
+    fun mixEditor(mixId: String) = "mixEditor/$mixId"
 }

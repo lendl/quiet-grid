@@ -43,7 +43,7 @@ fun ContributorsScreen() {
         Column {
             HorizontalDivider()
             CONTRIBUTORS.forEach { contributor ->
-                SupportRow("@${contributor.githubHandle}", "", external = true) {
+                SupportRow(label = "@${contributor.githubHandle}", detail = "", external = true) {
                     openUrl("https://github.com/${contributor.githubHandle}")
                 }
             }

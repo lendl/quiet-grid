@@ -9,8 +9,11 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -40,6 +43,7 @@ import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.mix.Mix
 import com.quietgrid.app.core.mix.MixMode
 import com.quietgrid.app.core.mix.drawWeighted
+import com.quietgrid.app.core.mix.nextMixName
 import com.quietgrid.app.core.mix.resolvedCandidates
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.RepositoriesViewModel
@@ -66,7 +70,8 @@ import com.quietgrid.app.games.wordsearch.wordSearchThemeIcon
 import com.quietgrid.app.ui.components.AppTab
 import com.quietgrid.app.ui.components.AppTopBar
 import com.quietgrid.app.ui.components.BottomNavBar
-import com.quietgrid.app.ui.components.GlobalMenu
+import com.quietgrid.app.ui.components.ContinueSessionMiniBar
+import com.quietgrid.app.ui.screens.AccountDrawerContent
 import com.quietgrid.app.ui.screens.AnalyzerHandoff
 import com.quietgrid.app.ui.screens.ChallengerExtras
 import com.quietgrid.app.ui.screens.ChallengerRunDetails
@@ -77,17 +82,17 @@ import kotlinx.coroutines.launch
 import com.quietgrid.app.ui.screens.GamesScreen
 import com.quietgrid.app.ui.screens.LossScreen
 import com.quietgrid.app.ui.screens.MixEditorScreen
+import com.quietgrid.app.ui.screens.MixesScreen
 import com.quietgrid.app.ui.screens.PuzzlePickerScreen
-import com.quietgrid.app.ui.screens.SettingsScreen
 import com.quietgrid.app.ui.screens.StatsScreen
 import com.quietgrid.app.ui.screens.SupportInfoScreen
 import com.quietgrid.app.ui.screens.supportInfoTitleRes
-import com.quietgrid.app.ui.screens.SupportScreen
+import java.util.UUID
 
 val LocalSharedTransitionScope = compositionLocalOf<SharedTransitionScope?> { null }
 val LocalAnimatedVisibilityScope = compositionLocalOf<AnimatedVisibilityScope?> { null }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavHost() {
     val navController = rememberNavController()
@@ -112,6 +117,7 @@ fun AppNavHost() {
     }
 
     var pendingMixToStart by remember { mutableStateOf<Mix?>(null) }
+    var showAccountDrawer by remember { mutableStateOf(false) }
 
     fun goToMixDraw(mix: Mix) {
         scope.launch {
@@ -144,29 +150,14 @@ fun AppNavHost() {
     Scaffold(
         topBar = {
             when {
-                isTabsRoute -> GlobalMenu(
-                    themeMode = settings.themeMode,
-                    onThemeModeChange = { mode -> scope.launch { repositories.settingsRepository.setThemeMode(mode) } },
-                    hasActiveSession = activeGameKey != null,
-                    onContinueSession = {
-                        val gameId = GameId.entries.firstOrNull { it.key == activeGameKey } ?: return@GlobalMenu
-                        navController.navigate(Routes.play(gameId, Difficulty.EASY, resume = true))
-                    },
-                )
+                isTabsRoute -> Unit
                 currentRoute == Routes.PICKER -> {
                     val pickerGameId = GameId.entries.firstOrNull {
                         it.key == backStackEntry?.arguments?.getString("gameId")
                     }
-                    GlobalMenu(
-                        themeMode = settings.themeMode,
-                        onThemeModeChange = { mode -> scope.launch { repositories.settingsRepository.setThemeMode(mode) } },
-                        hasActiveSession = activeGameKey != null,
-                        onContinueSession = {
-                            val gameId = GameId.entries.firstOrNull { it.key == activeGameKey } ?: return@GlobalMenu
-                            navController.navigate(Routes.play(gameId, Difficulty.EASY, resume = true))
-                        },
-                        subtitle = pickerGameId?.let { stringResource(GameCatalog.games.first { meta -> meta.id == it }.titleRes) },
-                        showBottomDivider = false,
+                    AppTopBar(
+                        title = pickerGameId?.let { stringResource(GameCatalog.games.first { meta -> meta.id == it }.titleRes) },
+                        onBack = { navController.popBackStack() },
                     )
                 }
                 currentRoute == Routes.PLAY -> Unit
@@ -175,22 +166,14 @@ fun AppNavHost() {
                 currentRoute == Routes.SUPPORT_INFO -> {
                     val infoKey = backStackEntry?.arguments?.getString("key")
                     val infoTitleRes = infoKey?.let { supportInfoTitleRes(it) }
-                    GlobalMenu(
-                        themeMode = settings.themeMode,
-                        onThemeModeChange = { mode -> scope.launch { repositories.settingsRepository.setThemeMode(mode) } },
-                        hasActiveSession = activeGameKey != null,
-                        onContinueSession = {
-                            val gameId = GameId.entries.firstOrNull { it.key == activeGameKey } ?: return@GlobalMenu
-                            navController.navigate(Routes.play(gameId, Difficulty.EASY, resume = true))
-                        },
-                        subtitle = infoTitleRes?.let { stringResource(it) },
+                    AppTopBar(
+                        title = infoTitleRes?.let { stringResource(it) },
+                        onBack = { navController.popBackStack() },
                     )
                 }
                 currentRoute == Routes.MIX_EDITOR -> {
-                    val rawMixId = backStackEntry?.arguments?.getString("mixId")
-                    val isNewMix = rawMixId == null || rawMixId == Routes.NEW_MIX_ID
                     AppTopBar(
-                        title = stringResource(if (isNewMix) R.string.mix_editor_title_new else R.string.mix_editor_title_edit),
+                        title = stringResource(R.string.mix_editor_title_edit),
                         onBack = { navController.popBackStack() },
                     )
                 }
@@ -199,15 +182,30 @@ fun AppNavHost() {
         },
         bottomBar = {
             if (isTabsRoute || currentRoute == Routes.PICKER || currentRoute == Routes.SUPPORT_INFO) {
-                BottomNavBar(
-                    selectedTab = selectedTab,
-                    onSelectTab = { tab ->
-                        selectedTab = tab
-                        if (currentRoute != Routes.TABS) {
-                            navController.popBackStack(Routes.TABS, inclusive = false)
+                Column {
+                    if (isTabsRoute && activeGameKey != null) {
+                        val activeGameId = GameId.entries.firstOrNull { it.key == activeGameKey }
+                        val activeGameTitle = activeGameId
+                            ?.let { stringResource(GameCatalog.games.first { meta -> meta.id == it }.titleRes) }
+                        if (activeGameId != null && activeGameTitle != null) {
+                            ContinueSessionMiniBar(
+                                gameTitle = activeGameTitle,
+                                onClick = {
+                                    navController.navigate(Routes.play(activeGameId, Difficulty.EASY, resume = true))
+                                },
+                            )
                         }
-                    },
-                )
+                    }
+                    BottomNavBar(
+                        selectedTab = selectedTab,
+                        onSelectTab = { tab ->
+                            selectedTab = tab
+                            if (currentRoute != Routes.TABS) {
+                                navController.popBackStack(Routes.TABS, inclusive = false)
+                            }
+                        },
+                    )
+                }
             }
         },
     ) { padding ->
@@ -230,14 +228,26 @@ fun AppNavHost() {
                         when (tab) {
                             AppTab.GAMES -> GamesScreen(
                                 onOpenGame = { gameId -> navController.navigate(Routes.picker(gameId)) },
-                                onResumeGame = { gameId -> navController.navigate(Routes.play(gameId, Difficulty.EASY, resume = true)) },
-                                onPlayMix = { mix -> if (activeGameKey != null) pendingMixToStart = mix else startMix(mix) },
-                                onEditMix = { mixId -> navController.navigate(Routes.mixEditor(mixId)) },
-                                onNewMix = { navController.navigate(Routes.mixEditor(null)) },
+                                onOpenAccount = { showAccountDrawer = true },
                             )
-                            AppTab.STATS -> StatsScreen()
-                            AppTab.SETTINGS -> SettingsScreen()
-                            AppTab.SUPPORT -> SupportScreen(onOpenInfo = { key -> navController.navigate(Routes.supportInfo(key)) })
+                            AppTab.MIXES -> MixesScreen(
+                                mixes = mixes,
+                                onPlay = { mix -> if (activeGameKey != null) pendingMixToStart = mix else startMix(mix) },
+                                onEdit = { mixId -> navController.navigate(Routes.mixEditor(mixId)) },
+                                onNewMix = {
+                                    scope.launch {
+                                        val newMix = Mix(
+                                            id = UUID.randomUUID().toString(),
+                                            name = nextMixName(mixes.size),
+                                            entries = emptyList(),
+                                        )
+                                        repositories.mixRepository.saveMix(newMix)
+                                        navController.navigate(Routes.mixEditor(newMix.id))
+                                    }
+                                },
+                                onOpenAccount = { showAccountDrawer = true },
+                            )
+                            AppTab.STATS -> StatsScreen(onOpenAccount = { showAccountDrawer = true })
                         }
                     }
                 }
@@ -275,9 +285,9 @@ fun AppNavHost() {
                 enterTransition = { fadeIn(animationSpec = tween(250)) },
                 exitTransition = { fadeOut(animationSpec = tween(200)) },
             ) { entry ->
-                val rawMixId = entry.arguments?.getString("mixId") ?: Routes.NEW_MIX_ID
+                val mixId = entry.arguments?.getString("mixId") ?: return@composable
                 MixEditorScreen(
-                    mixId = rawMixId.takeIf { it != Routes.NEW_MIX_ID },
+                    mixId = mixId,
                     onDone = { navController.popBackStack() },
                 )
             }
@@ -721,6 +731,17 @@ fun AppNavHost() {
                 SupportInfoScreen(entry.arguments?.getString("key") ?: "about")
             }
             }
+        }
+    }
+
+    if (showAccountDrawer) {
+        ModalBottomSheet(onDismissRequest = { showAccountDrawer = false }) {
+            AccountDrawerContent(
+                onOpenInfo = { key ->
+                    showAccountDrawer = false
+                    navController.navigate(Routes.supportInfo(key))
+                },
+            )
         }
     }
 

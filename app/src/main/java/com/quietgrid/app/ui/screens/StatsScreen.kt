@@ -30,10 +30,11 @@ import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.data.RepositoriesViewModel
+import com.quietgrid.app.ui.components.AccountIconButton
 import kotlinx.coroutines.launch
 
 @Composable
-fun StatsScreen() {
+fun StatsScreen(onOpenAccount: () -> Unit) {
     val repositories: RepositoriesViewModel = hiltViewModel()
     val gameIds = remember { GameCatalog.games.map { it.id } }
     val statsByGame by repositories.statsRepository.statsForGames(gameIds)
@@ -50,6 +51,10 @@ fun StatsScreen() {
     val scope = rememberCoroutineScope()
 
     Column(Modifier.fillMaxWidth().padding(16.dp)) {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+            AccountIconButton(onOpenAccount)
+        }
+
         Row(
             Modifier
                 .fillMaxWidth()

@@ -26,22 +26,17 @@ import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.core.GameMeta
-import com.quietgrid.app.core.MIX_FEATURE_ENABLED
-import com.quietgrid.app.core.mix.Mix
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.RepositoriesViewModel
+import com.quietgrid.app.ui.components.AccountIconButton
 
 @Composable
 fun GamesScreen(
     onOpenGame: (GameId) -> Unit,
-    onResumeGame: (GameId) -> Unit,
-    onPlayMix: (Mix) -> Unit,
-    onEditMix: (String) -> Unit,
-    onNewMix: () -> Unit,
+    onOpenAccount: () -> Unit,
 ) {
     val repositories: RepositoriesViewModel = hiltViewModel()
     val settings by repositories.settingsRepository.settings.collectAsState(initial = AppSettings())
-    val mixes by repositories.mixRepository.mixes.collectAsState(initial = emptyList())
 
     @Composable
     fun sortedBy(list: List<GameMeta>) = list
@@ -53,40 +48,16 @@ fun GamesScreen(
     val betaGames = sortedBy(GameCatalog.games.filter { it.beta })
 
     Column(Modifier.fillMaxWidth().padding(16.dp)) {
-        LazyColumn(contentPadding = PaddingValues(top = 16.dp, bottom = 16.dp)) {
-            if (MIX_FEATURE_ENABLED) {
-                item {
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                        Text(stringResource(R.string.games_your_mixes_heading), style = MaterialTheme.typography.labelLarge)
-                        Text(
-                            stringResource(R.string.games_new_mix_button),
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.clickable(onClick = onNewMix),
-                        )
-                    }
-                }
-                if (mixes.isEmpty()) {
-                    item {
-                        Text(
-                            stringResource(R.string.mix_empty_state),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
-                        )
-                    }
-                } else {
-                    items(mixes) { mix ->
-                        MixCard(mix = mix, onPlay = { onPlayMix(mix) }, onEdit = { onEditMix(mix.id) })
-                    }
-                }
-
-                item {
-                    Text(
-                        stringResource(R.string.games_all_games_heading),
-                        style = MaterialTheme.typography.labelLarge,
-                        modifier = Modifier.padding(top = 20.dp, bottom = 8.dp),
-                    )
-                }
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+            AccountIconButton(onOpenAccount)
+        }
+        LazyColumn(contentPadding = PaddingValues(top = 8.dp, bottom = 16.dp)) {
+            item {
+                Text(
+                    stringResource(R.string.games_all_games_heading),
+                    style = MaterialTheme.typography.labelLarge,
+                    modifier = Modifier.padding(bottom = 8.dp),
+                )
             }
 
             itemsIndexed(readyGames) { index, meta ->
@@ -139,30 +110,5 @@ private fun GameRow(meta: GameMeta, enabled: Boolean, showDivider: Boolean = tru
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun MixCard(mix: Mix, onPlay: () -> Unit, onEdit: () -> Unit) {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onEdit)
-            .padding(vertical = 14.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Column(Modifier.weight(1f)) {
-            Text(mix.name, style = MaterialTheme.typography.titleMedium)
-            Text(
-                stringResource(R.string.mix_card_entry_count, mix.entries.size),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        Text(
-            stringResource(R.string.mix_play_button),
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.clickable(onClick = onPlay).padding(horizontal = 12.dp, vertical = 6.dp),
-        )
     }
 }

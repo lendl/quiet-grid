@@ -5,8 +5,6 @@
     <!-- tabs -->
     <string name="tab_games">Gry</string>
     <string name="tab_stats">Statystyki</string>
-    <string name="tab_settings">Ustawienia</string>
-    <string name="tab_support">Wsparcie</string>
 
     <!-- common -->
     <string name="common_go_home">Przejdź do gier</string>
@@ -23,8 +21,6 @@
     <string name="common_system_default">Domyślne systemu</string>
     <string name="common_end_puzzle">Zakończ łamigłówkę</string>
     <string name="common_continue_puzzle">Kontynuuj łamigłówkę</string>
-    <string name="home_open_repo">Otwórz repozytorium Quiet Grid na GitHubie</string>
-    <string name="home_change_theme">Zmień motyw</string>
     <string name="common_start_new_puzzle">Rozpocznij nową łamigłówkę</string>
     <string name="replace_dialog_title">Zastąpić aktywną łamigłówkę?</string>
     <string name="replace_dialog_message">Masz już aktywną łamigłówkę. Możesz ją teraz kontynuować lub zastąpić nową.</string>
@@ -34,8 +30,6 @@
     <string name="games_coming_soon">Wkrótce</string>
     <string name="games_beta_disclaimer">Te gry są wciąż w fazie testów i mogą zawierać błędy.</string>
     <string name="games_active_puzzle_waiting">Twoja łamigłówka czeka</string>
-    <string name="games_your_mixes_heading">Twoje Miksy</string>
-    <string name="games_new_mix_button">Nowy Miks</string>
     <string name="mix_card_entry_count">%1$d gier</string>
     <string name="mix_play_button">Graj</string>
     <string name="mix_edit_content_description">Edytuj miks</string>
@@ -50,10 +44,8 @@
     <!-- settings -->
     <string name="settings_title">Ustawienia</string>
     <string name="settings_subtitle">Wybierz motyw, język oraz sposób wyświetlania stoperu.</string>
-    <string name="settings_appearance">Wygląd</string>
     <string name="settings_theme">Motyw</string>
     <string name="settings_language">Język</string>
-    <string name="settings_tutorials">Jak grać</string>
     <string name="settings_language_dropdown_detail">Wybierz język aplikacji.</string>
     <string name="settings_language_ai_disclaimer">Tłumaczenia zostały wygenerowane przez sztuczną inteligencję i mogą zawierać drobne błędy.</string>
     <string name="settings_dark">Ciemny</string>
@@ -802,18 +794,15 @@
     <string name="analyzer_pause">Wstrzymaj</string>
 
     <!-- Puzzle Mix editor -->
-    <string name="mix_editor_title_new">Nowy Miks</string>
     <string name="mix_editor_title_edit">Edytuj Miks</string>
     <string name="mix_name_label">Nazwa miksu</string>
     <string name="mix_entries_heading">Gry w tym miksie</string>
     <string name="mix_add_mode_chip_format">+ %1$s</string>
     <string name="mix_available_games_heading">Dodaj Grę</string>
     <string name="mix_available_games_empty">Wszystkie gry są już w tym miksie.</string>
-    <string name="mix_editor_no_entries_hint">Dodaj grę poniżej, aby zacząć tworzyć swój miks.</string>
     <string name="mix_entry_weight_label">Waga</string>
     <string name="mix_entry_remove_content_description">Usuń</string>
     <string name="mix_entry_challenger_chip">Pretendent</string>
-    <string name="mix_save_button">Zapisz Miks</string>
     <string name="mix_delete_button">Usuń Miks</string>
     <string name="mix_delete_confirm_title">Usunąć ten miks?</string>
     <string name="mix_delete_confirm_body">Tej operacji nie można cofnąć.</string>

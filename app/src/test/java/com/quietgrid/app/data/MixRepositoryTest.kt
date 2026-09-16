@@ -54,6 +54,23 @@ class MixRepositoryTest {
     }
 
     @Test
+    fun `saveMix on an existing id preserves its position in the list`() = runTest {
+        val repository = MixRepository(newDataStore(backgroundScope))
+        val first = sampleMix.copy(id = "mix-1", name = "First")
+        val second = sampleMix.copy(id = "mix-2", name = "Second")
+        val third = sampleMix.copy(id = "mix-3", name = "Third")
+        repository.saveMix(first)
+        repository.saveMix(second)
+        repository.saveMix(third)
+
+        repository.saveMix(second.copy(name = "Second Renamed"))
+
+        val stored = repository.mixes.first()
+        assertEquals(listOf("mix-1", "mix-2", "mix-3"), stored.map { it.id })
+        assertEquals("Second Renamed", stored[1].name)
+    }
+
+    @Test
     fun `deleteMix removes it from mixes`() = runTest {
         val repository = MixRepository(newDataStore(backgroundScope))
         repository.saveMix(sampleMix)

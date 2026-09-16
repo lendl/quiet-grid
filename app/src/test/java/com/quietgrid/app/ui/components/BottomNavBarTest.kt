@@ -25,9 +25,9 @@ class BottomNavBarTest {
             BottomNavBar(selectedTab = selected, onSelectTab = { selected = it })
         }
 
-        composeRule.onNodeWithText(composeRule.activity.getString(R.string.tab_settings)).performClick()
+        composeRule.onNodeWithText(composeRule.activity.getString(R.string.tab_mixes)).performClick()
 
-        assertEquals(AppTab.SETTINGS, selected)
+        assertEquals(AppTab.MIXES, selected)
     }
 
     @Test
@@ -37,9 +37,8 @@ class BottomNavBarTest {
         }
 
         composeRule.onNodeWithText(composeRule.activity.getString(R.string.tab_games)).assertIsDisplayed()
+        composeRule.onNodeWithText(composeRule.activity.getString(R.string.tab_mixes)).assertIsDisplayed()
         composeRule.onNodeWithText(composeRule.activity.getString(R.string.tab_stats)).assertIsDisplayed()
-        composeRule.onNodeWithText(composeRule.activity.getString(R.string.tab_settings)).assertIsDisplayed()
-        composeRule.onNodeWithText(composeRule.activity.getString(R.string.tab_support)).assertIsDisplayed()
     }
 
     @Test
@@ -49,8 +48,8 @@ class BottomNavBarTest {
             BottomNavBar(selectedTab = AppTab.GAMES, onSelectTab = { callbackTab = it })
         }
 
-        composeRule.onNodeWithText(composeRule.activity.getString(R.string.tab_support)).performClick()
+        composeRule.onNodeWithText(composeRule.activity.getString(R.string.tab_stats)).performClick()
 
-        assertEquals(AppTab.SUPPORT, callbackTab)
+        assertEquals(AppTab.STATS, callbackTab)
     }
 }

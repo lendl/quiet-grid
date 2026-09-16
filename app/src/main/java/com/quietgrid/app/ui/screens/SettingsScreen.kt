@@ -16,7 +16,6 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.SettingsSuggest
 import androidx.compose.material3.DropdownMenu
@@ -89,7 +88,7 @@ private val PUZZLE_LANGUAGE_OPTIONS = listOf(
 )
 
 @Composable
-fun SettingsScreen() {
+fun PreferencesSection() {
     val repositories: RepositoriesViewModel = hiltViewModel()
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -99,9 +98,7 @@ fun SettingsScreen() {
     var puzzleLanguageMenuOpen by remember { mutableStateOf(false) }
     val currentLanguageTag = AppLocale.currentTag(context)
 
-    Column(Modifier.fillMaxWidth().padding(16.dp)) {
-        SettingsSectionTitle(stringResource(R.string.settings_appearance))
-
+    Column(Modifier.fillMaxWidth()) {
         val selectedTheme = THEME_OPTIONS.firstOrNull { it.mode == settings.themeMode } ?: THEME_OPTIONS[0]
         Box {
             SettingsDropdownRow(
@@ -209,7 +206,7 @@ fun SettingsScreen() {
             onCheckedChange = { scope.launch { repositories.settingsRepository.setShowTimerInPlay(it) } },
         )
 
-        SettingsSectionTitle(stringResource(R.string.settings_tutorials))
+        HorizontalDivider(Modifier.padding(vertical = 4.dp))
 
         SettingsToggleRow(
             label = stringResource(R.string.settings_beta_games_label),
@@ -218,16 +215,6 @@ fun SettingsScreen() {
             onCheckedChange = { scope.launch { repositories.settingsRepository.setBetaGamesEnabled(it) } },
         )
     }
-}
-
-@Composable
-private fun SettingsSectionTitle(title: String) {
-    Text(
-        title,
-        style = MaterialTheme.typography.labelLarge,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = Modifier.padding(top = 20.dp, bottom = 4.dp),
-    )
 }
 
 @Composable

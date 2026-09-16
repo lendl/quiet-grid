@@ -32,7 +32,12 @@ class MixRepository @Inject constructor(private val dataStore: DataStore<Prefere
 
     suspend fun saveMix(mix: Mix) {
         dataStore.edit { prefs ->
-            val updated = prefs.decodeMixes().mixes.filterNot { it.id == mix.id } + mix
+            val current = prefs.decodeMixes().mixes
+            val updated = if (current.any { it.id == mix.id }) {
+                current.map { if (it.id == mix.id) mix else it }
+            } else {
+                current + mix
+            }
             prefs[MIXES_KEY] = mixJson.encodeToString(MixesEnvelope(updated))
         }
     }
