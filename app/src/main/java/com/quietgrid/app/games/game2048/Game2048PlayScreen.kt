@@ -1,5 +1,6 @@
 package com.quietgrid.app.games.game2048
 
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +16,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -27,6 +31,10 @@ import com.quietgrid.app.ui.components.EndPuzzleIconButton
 import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
 import com.quietgrid.app.ui.components.rememberHapticController
+import kotlin.math.abs
+import kotlin.math.max
+
+private val SWIPE_THRESHOLD_DP = 24.dp
 
 @Composable
 fun Game2048PlayScreen(
@@ -43,8 +51,37 @@ fun Game2048PlayScreen(
     var showEndDialog by remember { mutableStateOf(false) }
     val session = viewModel.session
     val haptics = rememberHapticController()
+    val density = LocalDensity.current
+    val thresholdPx = with(density) { SWIPE_THRESHOLD_DP.toPx() }
 
-    Column(Modifier.fillMaxSize().padding(16.dp)) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .pointerInput(Unit) {
+                var totalDrag = Offset.Zero
+                detectDragGestures(
+                    onDragStart = { totalDrag = Offset.Zero },
+                    onDrag = { change, dragAmount ->
+                        totalDrag += dragAmount
+                        change.consume()
+                    },
+                    onDragEnd = {
+                        val dx = totalDrag.x
+                        val dy = totalDrag.y
+                        if (max(abs(dx), abs(dy)) > thresholdPx) {
+                            val direction = if (abs(dx) > abs(dy)) {
+                                if (dx > 0) Game2048Direction.RIGHT else Game2048Direction.LEFT
+                            } else {
+                                if (dy > 0) Game2048Direction.DOWN else Game2048Direction.UP
+                            }
+                            haptics.tapFeedback()
+                            viewModel.onSwipe(direction)
+                        }
+                    },
+                )
+            }
+            .padding(16.dp),
+    ) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             GameBackButton(onBack)
             Row(
@@ -69,10 +106,7 @@ fun Game2048PlayScreen(
 
         PuzzleBoardContainer(visible = session != null, playFresh = !resume, zoomable = false) {
             if (session != null) {
-                Game2048Grid(
-                    board = session.board,
-                    onSwipe = { direction -> haptics.tapFeedback(); viewModel.onSwipe(direction) },
-                )
+                Game2048Grid(board = session.board, lastMove = viewModel.lastMove)
             }
         }
     }

@@ -20,7 +20,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -44,10 +43,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewModelScope
@@ -61,6 +64,7 @@ import com.quietgrid.app.core.mix.Mix
 import com.quietgrid.app.core.mix.MixEntry
 import com.quietgrid.app.core.mix.MixEntryMode
 import com.quietgrid.app.core.mix.MixEntryOption
+import com.quietgrid.app.core.mix.allModeOptionsFor
 import com.quietgrid.app.core.mix.groupEntriesByKnownGame
 import com.quietgrid.app.core.mix.missingModeOptionsFor
 import com.quietgrid.app.data.AppSettings
@@ -71,13 +75,25 @@ import kotlin.math.roundToInt
 internal const val MIX_NAME_FIELD_TEST_TAG = "mix_name_field"
 
 @Composable
-fun MixEditorScreen(mixId: String, onDone: () -> Unit) {
+fun MixEditorScreen(mixId: String, onDone: () -> Unit, renameTrigger: Int = 0, deleteTrigger: Int = 0) {
     val repositories: RepositoriesViewModel = hiltViewModel()
-    MixEditorContent(mixId = mixId, onDone = onDone, repositories = repositories)
+    MixEditorContent(
+        mixId = mixId,
+        onDone = onDone,
+        repositories = repositories,
+        renameTrigger = renameTrigger,
+        deleteTrigger = deleteTrigger,
+    )
 }
 
 @Composable
-internal fun MixEditorContent(mixId: String, onDone: () -> Unit, repositories: RepositoriesViewModel) {
+internal fun MixEditorContent(
+    mixId: String,
+    onDone: () -> Unit,
+    repositories: RepositoriesViewModel,
+    renameTrigger: Int = 0,
+    deleteTrigger: Int = 0,
+) {
     val settings by repositories.settingsRepository.settings.collectAsState(initial = AppSettings())
     val mixes by repositories.mixRepository.mixes.collectAsState(initial = emptyList())
     val existing = remember(mixId, mixes) { mixes.firstOrNull { it.id == mixId } }
@@ -93,6 +109,14 @@ internal fun MixEditorContent(mixId: String, onDone: () -> Unit, repositories: R
     }
     var isEditingName by remember(existing?.id) { mutableStateOf(false) }
     var showDeleteConfirm by remember { mutableStateOf(false) }
+    var expandedAvailableGameId by remember(existing?.id) { mutableStateOf<GameId?>(null) }
+
+    LaunchedEffect(renameTrigger, existing?.id) {
+        if (existing != null && renameTrigger > 0) isEditingName = true
+    }
+    LaunchedEffect(deleteTrigger, existing?.id) {
+        if (existing != null && deleteTrigger > 0) showDeleteConfirm = true
+    }
 
     fun persist(newName: String = name, newEntries: List<MixEntry> = entries) {
         repositories.viewModelScope.launch {
@@ -110,9 +134,11 @@ internal fun MixEditorContent(mixId: String, onDone: () -> Unit, repositories: R
 
     fun addEntry(gameId: GameId, option: MixEntryOption) {
         val alreadyPresent = entries.any { it.gameId == gameId.key && it.mode == option.mode && it.difficulty == option.difficulty }
-        if (alreadyPresent) return
-        entries = entries + MixEntry(gameId = gameId.key, mode = option.mode, difficulty = option.difficulty, weight = 1)
-        persist(newEntries = entries)
+        if (!alreadyPresent) {
+            entries = entries + MixEntry(gameId = gameId.key, mode = option.mode, difficulty = option.difficulty, weight = 1)
+            persist(newEntries = entries)
+        }
+        expandedAvailableGameId = null
     }
 
     fun updateWeight(gameId: String, mode: MixEntryMode, difficulty: String?, newWeight: Int) {
@@ -128,6 +154,7 @@ internal fun MixEditorContent(mixId: String, onDone: () -> Unit, repositories: R
     }
 
     fun commitRename() {
+        if (!isEditingName) return
         isEditingName = false
         val resolvedName = name.ifBlank { existing?.name.orEmpty() }
         name = resolvedName
@@ -137,20 +164,29 @@ internal fun MixEditorContent(mixId: String, onDone: () -> Unit, repositories: R
     if (existing == null) return
 
     Column(Modifier.fillMaxWidth().padding(16.dp).verticalScroll(rememberScrollState())) {
-        MixNameHeader(
-            name = name,
-            isEditing = isEditingName,
-            onNameChange = { name = it },
-            onStartEditing = { isEditingName = true },
-            onCommit = ::commitRename,
-        )
+        if (isEditingName) {
+            MixNameEditField(
+                name = name,
+                onNameChange = { name = it },
+                onCommit = ::commitRename,
+            )
+        }
 
         Box(Modifier.fillMaxWidth().padding(top = 20.dp), contentAlignment = Alignment.Center) {
             MixPie(entries = orderedEntries, modifier = Modifier.size(160.dp))
         }
 
+        if (orderedEntries.isNotEmpty()) {
+            MixPieLegend(groupedEntries = groupedEntries, modifier = Modifier.padding(top = 12.dp))
+        }
+
         if (entries.isEmpty()) {
-            AvailableGamesSection(availableGames = availableGames, onAdd = { meta -> addEntry(meta.id, MixEntryOption(MixEntryMode.PUZZLE, Difficulty.EASY.key)) })
+            AvailableGamesSection(
+                availableGames = availableGames,
+                expandedGameId = expandedAvailableGameId,
+                onToggleExpand = { gameId -> expandedAvailableGameId = if (expandedAvailableGameId == gameId) null else gameId },
+                onAddMode = ::addEntry,
+            )
         } else {
             Text(
                 stringResource(R.string.mix_entries_heading),
@@ -172,16 +208,11 @@ internal fun MixEditorContent(mixId: String, onDone: () -> Unit, repositories: R
 
             AvailableGamesSection(
                 availableGames = availableGames,
-                onAdd = { meta -> addEntry(meta.id, MixEntryOption(MixEntryMode.PUZZLE, Difficulty.EASY.key)) },
+                expandedGameId = expandedAvailableGameId,
+                onToggleExpand = { gameId -> expandedAvailableGameId = if (expandedAvailableGameId == gameId) null else gameId },
+                onAddMode = ::addEntry,
                 topPadding = 24.dp,
             )
-        }
-
-        TextButton(
-            onClick = { showDeleteConfirm = true },
-            modifier = Modifier.fillMaxWidth().padding(top = 24.dp),
-        ) {
-            Text(stringResource(R.string.mix_delete_button), color = MaterialTheme.colorScheme.error)
         }
     }
 
@@ -207,59 +238,46 @@ internal fun MixEditorContent(mixId: String, onDone: () -> Unit, repositories: R
 }
 
 @Composable
-private fun MixNameHeader(
+private fun MixNameEditField(
     name: String,
-    isEditing: Boolean,
     onNameChange: (String) -> Unit,
-    onStartEditing: () -> Unit,
     onCommit: () -> Unit,
 ) {
-    if (isEditing) {
-        val focusRequester = remember { FocusRequester() }
-        var hasBeenFocused by remember { mutableStateOf(false) }
-        LaunchedEffect(Unit) { focusRequester.requestFocus() }
-        OutlinedTextField(
-            value = name,
-            onValueChange = onNameChange,
-            label = { Text(stringResource(R.string.mix_name_label)) },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = { onCommit() }),
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag(MIX_NAME_FIELD_TEST_TAG)
-                .focusRequester(focusRequester)
-                .onFocusChanged { focusState ->
-                    if (focusState.isFocused) {
-                        hasBeenFocused = true
-                    } else if (hasBeenFocused) {
-                        onCommit()
-                    }
-                },
-        )
-    } else {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onStartEditing)
-                .padding(vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Text(name, style = MaterialTheme.typography.headlineSmall, modifier = Modifier.weight(1f))
-            Icon(
-                Icons.Filled.Create,
-                contentDescription = stringResource(R.string.mix_rename_content_description),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-    }
+    val focusRequester = remember { FocusRequester() }
+    var hasBeenFocused by remember { mutableStateOf(false) }
+    var fieldValue by remember { mutableStateOf(TextFieldValue(name, selection = TextRange(0, name.length))) }
+    LaunchedEffect(Unit) { focusRequester.requestFocus() }
+    OutlinedTextField(
+        value = fieldValue,
+        onValueChange = { newValue ->
+            fieldValue = newValue
+            onNameChange(newValue.text)
+        },
+        label = { Text(stringResource(R.string.mix_name_label)) },
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+        keyboardActions = KeyboardActions(onDone = { onCommit() }),
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag(MIX_NAME_FIELD_TEST_TAG)
+            .focusRequester(focusRequester)
+            .onFocusChanged { focusState ->
+                if (focusState.isFocused) {
+                    hasBeenFocused = true
+                } else if (hasBeenFocused) {
+                    onCommit()
+                }
+            },
+    )
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun AvailableGamesSection(
     availableGames: List<com.quietgrid.app.core.GameMeta>,
-    onAdd: (com.quietgrid.app.core.GameMeta) -> Unit,
+    expandedGameId: GameId?,
+    onToggleExpand: (GameId) -> Unit,
+    onAddMode: (GameId, MixEntryOption) -> Unit,
     topPadding: androidx.compose.ui.unit.Dp = 20.dp,
 ) {
     Text(
@@ -284,28 +302,61 @@ private fun AvailableGamesSection(
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { onAdd(meta) }
+                        .clickable { onToggleExpand(meta.id) }
                         .padding(vertical = 14.dp),
                 )
+                if (expandedGameId == meta.id) {
+                    FlowRow(
+                        Modifier.fillMaxWidth().padding(bottom = 12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        allModeOptionsFor(meta.id).forEach { option ->
+                            val label = if (option.mode == MixEntryMode.CHALLENGER) {
+                                stringResource(R.string.mix_entry_challenger_chip)
+                            } else {
+                                val difficulty = Difficulty.entries.first { it.key == option.difficulty }
+                                stringResource(gameDifficultyLabelRes(meta.id, difficulty))
+                            }
+                            ModeChip(label = label, onClick = { onAddMode(meta.id, option) })
+                        }
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
+private fun mixEntryColor(entry: MixEntry): Color {
+    val base = if (entry.mode == MixEntryMode.CHALLENGER) {
+        MaterialTheme.colorScheme.primary
+    } else {
+        val difficulty = Difficulty.entries.firstOrNull { it.key == entry.difficulty } ?: Difficulty.EASY
+        difficultyColor(difficulty)
+    }
+    return shadeForGame(base, entry.gameId)
+}
+
+private fun shadeForGame(base: Color, gameId: String): Color {
+    val bucket = (gameId.hashCode() and 0x7fffffff) % 5
+    val amount = (bucket - 2) * 0.08f
+    return if (amount >= 0) lerp(base, Color.Black, amount) else lerp(base, Color.White, -amount)
+}
+
+@Composable
+private fun mixEntryModeLabel(gameId: GameId, entry: MixEntry): String = if (entry.mode == MixEntryMode.CHALLENGER) {
+    stringResource(R.string.mix_entry_challenger_chip)
+} else {
+    val difficulty = Difficulty.entries.first { it.key == entry.difficulty }
+    stringResource(gameDifficultyLabelRes(gameId, difficulty))
+}
+
+@Composable
 private fun MixPie(entries: List<MixEntry>, modifier: Modifier = Modifier) {
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
-    val challengerColor = MaterialTheme.colorScheme.primary
     val separatorColor = MaterialTheme.colorScheme.surface
-    val wedges = entries.map { entry ->
-        val color = if (entry.mode == MixEntryMode.CHALLENGER) {
-            challengerColor
-        } else {
-            val difficulty = Difficulty.entries.firstOrNull { it.key == entry.difficulty } ?: Difficulty.EASY
-            difficultyColor(difficulty)
-        }
-        entry.weight to color
-    }
+    val wedges = entries.map { entry -> entry.weight to mixEntryColor(entry) }
     val totalWeight = wedges.sumOf { it.first }.coerceAtLeast(1)
 
     Canvas(modifier) {
@@ -320,6 +371,31 @@ private fun MixPie(entries: List<MixEntry>, modifier: Modifier = Modifier) {
             drawArc(color = color, startAngle = startAngle, sweepAngle = sweep, useCenter = true)
             drawArc(color = separatorColor, startAngle = startAngle, sweepAngle = sweep, useCenter = true, style = separatorStroke)
             startAngle += sweep
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun MixPieLegend(groupedEntries: List<Pair<GameId, List<MixEntry>>>, modifier: Modifier = Modifier) {
+    FlowRow(
+        modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        groupedEntries.forEach { (gameId, groupEntries) ->
+            val gameTitle = stringResource(GameCatalog.games.first { it.id == gameId }.titleRes)
+            groupEntries.forEach { entry ->
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(Modifier.size(8.dp).clip(CircleShape).background(mixEntryColor(entry)))
+                    Text(
+                        "$gameTitle · ${mixEntryModeLabel(gameId, entry)}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(start = 6.dp),
+                    )
+                }
+            }
         }
     }
 }
@@ -373,18 +449,8 @@ private fun MixGameGroup(
 
 @Composable
 private fun MixEntryRow(gameId: GameId, entry: MixEntry, onWeightChange: (Int) -> Unit, onRemove: () -> Unit) {
-    val color = if (entry.mode == MixEntryMode.CHALLENGER) {
-        MaterialTheme.colorScheme.primary
-    } else {
-        val difficulty = Difficulty.entries.firstOrNull { it.key == entry.difficulty } ?: Difficulty.EASY
-        difficultyColor(difficulty)
-    }
-    val modeLabel = if (entry.mode == MixEntryMode.CHALLENGER) {
-        stringResource(R.string.mix_entry_challenger_chip)
-    } else {
-        val difficulty = Difficulty.entries.first { it.key == entry.difficulty }
-        stringResource(gameDifficultyLabelRes(gameId, difficulty))
-    }
+    val color = mixEntryColor(entry)
+    val modeLabel = mixEntryModeLabel(gameId, entry)
 
     Column(Modifier.fillMaxWidth().padding(top = 8.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {

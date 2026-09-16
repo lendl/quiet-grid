@@ -13,6 +13,10 @@ object Routes {
     const val LOSS = "loss/{gameId}/{difficulty}/{elapsedSeconds}/{reason}/{score}/{bestTile}"
     const val ANALYZER = "analyzer/{gameId}"
     const val SUPPORT_INFO = "supportInfo/{key}"
+    const val SETTINGS = "settings"
+    const val SUPPORT = "support"
+    const val TRUST = "trust"
+    const val ABOUT = "about"
     const val MIX_EDITOR = "mixEditor/{mixId}"
 
     fun picker(gameId: GameId) = "picker/${gameId.key}"

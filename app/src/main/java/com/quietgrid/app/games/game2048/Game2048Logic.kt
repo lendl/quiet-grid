@@ -37,24 +37,37 @@ fun createGame2048Session(difficulty: Difficulty): Game2048Session {
     return Game2048Session(puzzle = puzzle, board = board)
 }
 
-private fun mergeLine(line: List<Int?>): Pair<List<Int?>, Int> {
-    val values = line.filterNotNull().toMutableList()
+data class Game2048TileMove(val value: Int, val fromRow: Int, val fromCol: Int, val toRow: Int, val toCol: Int, val merged: Boolean)
+data class Game2048MoveResult(val board: Game2048Board, val tileMoves: List<Game2048TileMove>)
+
+private data class LocalMove(val fromIndex: Int, val toIndex: Int, val value: Int, val merged: Boolean)
+private data class LineMergeResult(val line: List<Int?>, val scoreGained: Int, val moves: List<LocalMove>)
+
+private fun mergeLine(line: List<Int?>): LineMergeResult {
+    val indexed = line.withIndex().filter { it.value != null }.map { it.index to it.value!! }
+    val moves = mutableListOf<LocalMove>()
     val merged = mutableListOf<Int>()
     var scoreGained = 0
     var i = 0
-    while (i < values.size) {
-        if (i + 1 < values.size && values[i] == values[i + 1]) {
-            val mergedValue = values[i] * 2
+    while (i < indexed.size) {
+        val (fromIndexA, valueA) = indexed[i]
+        val toIndex = merged.size
+        if (i + 1 < indexed.size && indexed[i + 1].second == valueA) {
+            val (fromIndexB, _) = indexed[i + 1]
+            val mergedValue = valueA * 2
+            moves.add(LocalMove(fromIndexA, toIndex, valueA, merged = false))
+            moves.add(LocalMove(fromIndexB, toIndex, valueA, merged = true))
             merged.add(mergedValue)
             scoreGained += mergedValue
             i += 2
         } else {
-            merged.add(values[i])
+            moves.add(LocalMove(fromIndexA, toIndex, valueA, merged = false))
+            merged.add(valueA)
             i += 1
         }
     }
     val padded: List<Int?> = merged + List(line.size - merged.size) { null }
-    return padded to scoreGained
+    return LineMergeResult(padded, scoreGained, moves)
 }
 
 private fun transpose(tiles: List<List<Int?>>): List<List<Int?>> {
@@ -62,7 +75,15 @@ private fun transpose(tiles: List<List<Int?>>): List<List<Int?>> {
     return (0 until size).map { c -> (0 until size).map { r -> tiles[r][c] } }
 }
 
-private fun slideAndMerge(tiles: List<List<Int?>>, direction: Game2048Direction): Pair<List<List<Int?>>, Int> {
+private fun localToGrid(direction: Game2048Direction, lineIndex: Int, pos: Int, size: Int): Pair<Int, Int> = when (direction) {
+    Game2048Direction.LEFT -> lineIndex to pos
+    Game2048Direction.RIGHT -> lineIndex to (size - 1 - pos)
+    Game2048Direction.UP -> pos to lineIndex
+    Game2048Direction.DOWN -> (size - 1 - pos) to lineIndex
+}
+
+private fun slideAndMerge(tiles: List<List<Int?>>, direction: Game2048Direction): Triple<List<List<Int?>>, Int, List<Game2048TileMove>> {
+    val size = tiles.size
     val lines: List<List<Int?>> = when (direction) {
         Game2048Direction.LEFT -> tiles
         Game2048Direction.RIGHT -> tiles.map { it.reversed() }
@@ -71,10 +92,16 @@ private fun slideAndMerge(tiles: List<List<Int?>>, direction: Game2048Direction)
     }
 
     var scoreGained = 0
-    val mergedLines = lines.map { line ->
-        val (newLine, gained) = mergeLine(line)
-        scoreGained += gained
-        newLine
+    val tileMoves = mutableListOf<Game2048TileMove>()
+    val mergedLines = lines.mapIndexed { lineIndex, line ->
+        val result = mergeLine(line)
+        scoreGained += result.scoreGained
+        result.moves.forEach { move ->
+            val (fromRow, fromCol) = localToGrid(direction, lineIndex, move.fromIndex, size)
+            val (toRow, toCol) = localToGrid(direction, lineIndex, move.toIndex, size)
+            tileMoves.add(Game2048TileMove(move.value, fromRow, fromCol, toRow, toCol, move.merged))
+        }
+        result.line
     }
 
     val restored: List<List<Int?>> = when (direction) {
@@ -84,7 +111,7 @@ private fun slideAndMerge(tiles: List<List<Int?>>, direction: Game2048Direction)
         Game2048Direction.DOWN -> transpose(mergedLines.map { it.reversed() })
     }
 
-    return restored to scoreGained
+    return Triple(restored, scoreGained, tileMoves)
 }
 
 private fun hasAnyMove(tiles: List<List<Int?>>): Boolean {
@@ -99,11 +126,11 @@ private fun hasAnyMove(tiles: List<List<Int?>>): Boolean {
     return false
 }
 
-fun applyGame2048Move(board: Game2048Board, puzzle: Game2048Puzzle, direction: Game2048Direction): Game2048Board {
-    if (board.status != Game2048Status.PLAYING) return board
+fun applyGame2048MoveDetailed(board: Game2048Board, puzzle: Game2048Puzzle, direction: Game2048Direction): Game2048MoveResult {
+    if (board.status != Game2048Status.PLAYING) return Game2048MoveResult(board, emptyList())
 
-    val (moved, scoreGained) = slideAndMerge(board.tiles, direction)
-    if (moved == board.tiles) return board
+    val (moved, scoreGained, tileMoves) = slideAndMerge(board.tiles, direction)
+    if (moved == board.tiles) return Game2048MoveResult(board, emptyList())
 
     val spawned = spawnRandomTile(moved, puzzle.fourSpawnChance)
     val reachedTarget = spawned.any { row -> row.any { it != null && it >= puzzle.targetTile } }
@@ -113,13 +140,17 @@ fun applyGame2048Move(board: Game2048Board, puzzle: Game2048Puzzle, direction: G
         else -> Game2048Status.PLAYING
     }
 
-    return board.copy(
+    val newBoard = board.copy(
         tiles = spawned,
         score = board.score + scoreGained,
         moveCount = board.moveCount + 1,
         status = status,
     )
+    return Game2048MoveResult(newBoard, tileMoves)
 }
+
+fun applyGame2048Move(board: Game2048Board, puzzle: Game2048Puzzle, direction: Game2048Direction): Game2048Board =
+    applyGame2048MoveDetailed(board, puzzle, direction).board
 
 fun game2048BestTile(board: Game2048Board): Int =
     board.tiles.flatten().filterNotNull().maxOrNull() ?: 0

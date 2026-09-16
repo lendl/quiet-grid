@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,6 +28,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.ui.components.CollectPuzzleResult
 import com.quietgrid.app.ui.components.ElapsedTimerText
@@ -72,6 +75,18 @@ fun StarBattlePlayScreen(
                 LaunchedEffect(viewModel.lastOpenEvent) {
                     val event = viewModel.lastOpenEvent
                     if (event != null && !event.wasCorrect) wrongOpenTrigger++
+                }
+                Row(
+                    Modifier.padding(end = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        Icons.Filled.Star,
+                        contentDescription = stringResource(R.string.starbattle_stars_per_group_content_description),
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(end = 2.dp),
+                    )
+                    Text(session.puzzle.k.toString(), style = MaterialTheme.typography.titleMedium)
                 }
                 Row(Modifier.padding(end = 8.dp)) {
                     repeat(STARBATTLE_STARTING_LIVES) { index ->

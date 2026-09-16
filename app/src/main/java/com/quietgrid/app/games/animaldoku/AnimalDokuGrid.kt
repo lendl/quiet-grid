@@ -38,7 +38,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
@@ -92,7 +91,8 @@ fun AnimalDokuGrid(
         var lastTapTimeMs by remember { mutableStateOf(0L) }
         val currentCells by rememberUpdatedState(cells)
         val borderColor = MaterialTheme.colorScheme.outline
-        val borderStrokeWidth = 5.dp
+        val thinBorderStrokeWidth = 1.dp
+        val thickBorderStrokeWidth = 5.dp
 
         Box(
             Modifier
@@ -143,19 +143,25 @@ fun AnimalDokuGrid(
                         for (row in 0 until size) {
                             for (col in 0 until size) {
                                 val region = regions[row][col]
-                                val rightNeighborDifferent = col == size - 1 || regions[row][col + 1] != region
-                                val bottomNeighborDifferent = row == size - 1 || regions[row + 1][col] != region
                                 val x = cellSizePx * col
                                 val y = cellSizePx * row
-                                if (rightNeighborDifferent) {
-                                    drawLine(borderColor, Offset(x + cellSizePx, y), Offset(x + cellSizePx, y + cellSizePx), strokeWidth = borderStrokeWidth.toPx())
+                                if (col < size - 1) {
+                                    drawLine(borderColor, Offset(x + cellSizePx, y), Offset(x + cellSizePx, y + cellSizePx), strokeWidth = thinBorderStrokeWidth.toPx())
                                 }
-                                if (bottomNeighborDifferent) {
-                                    drawLine(borderColor, Offset(x, y + cellSizePx), Offset(x + cellSizePx, y + cellSizePx), strokeWidth = borderStrokeWidth.toPx())
+                                if (row < size - 1) {
+                                    drawLine(borderColor, Offset(x, y + cellSizePx), Offset(x + cellSizePx, y + cellSizePx), strokeWidth = thinBorderStrokeWidth.toPx())
+                                }
+
+                                val rightRegionDifferent = col < size - 1 && regions[row][col + 1] != region
+                                val bottomRegionDifferent = row < size - 1 && regions[row + 1][col] != region
+                                if (rightRegionDifferent) {
+                                    drawLine(borderColor, Offset(x + cellSizePx, y), Offset(x + cellSizePx, y + cellSizePx), strokeWidth = thickBorderStrokeWidth.toPx())
+                                }
+                                if (bottomRegionDifferent) {
+                                    drawLine(borderColor, Offset(x, y + cellSizePx), Offset(x + cellSizePx, y + cellSizePx), strokeWidth = thickBorderStrokeWidth.toPx())
                                 }
                             }
                         }
-                        drawRect(borderColor, style = Stroke(width = borderStrokeWidth.toPx()))
                     }
                 },
         ) {

@@ -51,7 +51,7 @@ fun StatsScreen(onOpenAccount: () -> Unit) {
     val scope = rememberCoroutineScope()
 
     Column(Modifier.fillMaxWidth().padding(16.dp)) {
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
             AccountIconButton(onOpenAccount)
         }
 

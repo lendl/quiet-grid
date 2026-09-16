@@ -3,6 +3,8 @@ package com.quietgrid.app.session
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ProcessLifecycleOwner
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.data.ActiveSessionEnvelope
@@ -26,6 +28,9 @@ class PuzzleSessionController<TSession, TResult>(
     private val statsStore: StatsStore,
     private val historyStore: PlayHistoryStore,
     private val adapter: PuzzleAdapter<TSession, TResult>,
+    private val isAppForeground: () -> Boolean = {
+        ProcessLifecycleOwner.get().lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)
+    },
 ) {
     var session by mutableStateOf<TSession?>(null)
         private set
@@ -157,6 +162,7 @@ class PuzzleSessionController<TSession, TResult>(
         while (true) {
             delay(TICK_INTERVAL_MS)
             if (finalized || session == null) continue
+            if (!isAppForeground()) continue
             elapsedSeconds += 1.0
             persistIfMeaningful()
         }

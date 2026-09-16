@@ -10,10 +10,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Extension
 import androidx.compose.material.icons.filled.Insights
-import androidx.compose.material.icons.filled.LibraryMusic
+import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.outlined.Extension
 import androidx.compose.material.icons.outlined.Insights
-import androidx.compose.material.icons.outlined.LibraryMusic
+import androidx.compose.material.icons.outlined.Repeat
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -46,7 +46,7 @@ private data class BottomNavEntry(
 
 private val BOTTOM_NAV_ENTRIES = listOf(
     BottomNavEntry(AppTab.GAMES, R.string.tab_games, Icons.Filled.Extension, Icons.Outlined.Extension),
-    BottomNavEntry(AppTab.MIXES, R.string.tab_mixes, Icons.Filled.LibraryMusic, Icons.Outlined.LibraryMusic),
+    BottomNavEntry(AppTab.MIXES, R.string.tab_mixes, Icons.Filled.Repeat, Icons.Outlined.Repeat),
     BottomNavEntry(AppTab.STATS, R.string.tab_stats, Icons.Filled.Insights, Icons.Outlined.Insights),
 )
 

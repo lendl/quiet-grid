@@ -1,5 +1,8 @@
 package com.quietgrid.app.games.game2048
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
@@ -97,6 +100,9 @@ class Game2048PlayViewModel @AssistedInject constructor(
     val elapsedSeconds get() = controller.elapsedSeconds
     val result = controller.result
 
+    var lastMove by mutableStateOf<Game2048MoveResult?>(null)
+        private set
+
     init {
         controller.start(requestedDifficulty, resume)
     }
@@ -104,8 +110,10 @@ class Game2048PlayViewModel @AssistedInject constructor(
     fun onSwipe(direction: Game2048Direction) {
         val current = session ?: return
         if (current.board.status != Game2048Status.PLAYING) return
-        val nextBoard = applyGame2048Move(current.board, current.puzzle, direction)
+        val moveResult = applyGame2048MoveDetailed(current.board, current.puzzle, direction)
+        val nextBoard = moveResult.board
         if (nextBoard == current.board) return
+        lastMove = moveResult
 
         val updated = current.copy(board = nextBoard)
         when (nextBoard.status) {

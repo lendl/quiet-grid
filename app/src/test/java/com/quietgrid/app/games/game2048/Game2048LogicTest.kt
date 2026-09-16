@@ -155,6 +155,54 @@ class Game2048LogicTest {
     }
 
     @Test
+    fun `move detail reports slide and merge coordinates for a left move`() {
+        val puzzle = Game2048Puzzle(difficulty = "medium", size = 4, fourSpawnChance = 0.0, targetTile = 2048)
+        val tiles = listOf(
+            listOf<Int?>(null, 2, 2, 4),
+            listOf<Int?>(null, null, null, null),
+            listOf<Int?>(null, null, null, null),
+            listOf<Int?>(null, null, null, null),
+        )
+        val board = Game2048Board(size = 4, tiles = tiles, score = 0, moveCount = 0, status = Game2048Status.PLAYING)
+
+        val result = applyGame2048MoveDetailed(board, puzzle, Game2048Direction.LEFT)
+
+        val mergeMoves = result.tileMoves.filter { it.toRow == 0 && it.toCol == 0 }
+        assertEquals(2, mergeMoves.size)
+        assertTrue(mergeMoves.any { it.fromCol == 1 && !it.merged })
+        assertTrue(mergeMoves.any { it.fromCol == 2 && it.merged })
+        assertTrue(mergeMoves.all { it.value == 2 })
+
+        val slideOnly = result.tileMoves.first { it.fromCol == 3 }
+        assertEquals(0, slideOnly.toRow)
+        assertEquals(1, slideOnly.toCol)
+        assertEquals(4, slideOnly.value)
+        assertFalse(slideOnly.merged)
+    }
+
+    @Test
+    fun `move detail maps coordinates correctly for up and down`() {
+        val puzzle = Game2048Puzzle(difficulty = "medium", size = 4, fourSpawnChance = 0.0, targetTile = 2048)
+        val tiles = listOf(
+            listOf<Int?>(null, null, null, null),
+            listOf<Int?>(2, null, null, null),
+            listOf<Int?>(null, null, null, null),
+            listOf<Int?>(null, null, null, null),
+        )
+        val board = Game2048Board(size = 4, tiles = tiles, score = 0, moveCount = 0, status = Game2048Status.PLAYING)
+
+        val up = applyGame2048MoveDetailed(board, puzzle, Game2048Direction.UP)
+        val upMove = up.tileMoves.single()
+        assertEquals(1 to 0, upMove.fromRow to upMove.fromCol)
+        assertEquals(0 to 0, upMove.toRow to upMove.toCol)
+
+        val down = applyGame2048MoveDetailed(board, puzzle, Game2048Direction.DOWN)
+        val downMove = down.tileMoves.single()
+        assertEquals(1 to 0, downMove.fromRow to downMove.fromCol)
+        assertEquals(3 to 0, downMove.toRow to downMove.toCol)
+    }
+
+    @Test
     fun `hasMeaningfulProgress is false for a freshly created session and true after one move`() {
         val session = createGame2048Session(Difficulty.MEDIUM)
         assertFalse(game2048HasMeaningfulProgress(session))

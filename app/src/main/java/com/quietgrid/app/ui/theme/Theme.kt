@@ -17,17 +17,30 @@ import com.quietgrid.app.R
 val LocalIsPencilTheme = compositionLocalOf { false }
 val LocalIsDarkTheme = compositionLocalOf { false }
 
-val PlusJakartaSansBold = FontFamily(Font(R.font.plus_jakarta_sans_bold, FontWeight.Bold))
-val PlusJakartaSansExtraBold = FontFamily(Font(R.font.plus_jakarta_sans_extrabold, FontWeight.ExtraBold))
+val PlusJakartaSans = FontFamily(
+    Font(R.font.plus_jakarta_sans_regular, FontWeight.Normal),
+    Font(R.font.plus_jakarta_sans_medium, FontWeight.Medium),
+    Font(R.font.plus_jakarta_sans_bold, FontWeight.Bold),
+    Font(R.font.plus_jakarta_sans_extrabold, FontWeight.ExtraBold),
+)
 
 private val BaseTypography = Typography()
 private val QuietGridTypography = BaseTypography.copy(
-    headlineLarge = BaseTypography.headlineLarge.copy(fontFamily = PlusJakartaSansExtraBold, fontWeight = FontWeight.ExtraBold),
-    headlineMedium = BaseTypography.headlineMedium.copy(fontFamily = PlusJakartaSansExtraBold, fontWeight = FontWeight.ExtraBold),
-    headlineSmall = BaseTypography.headlineSmall.copy(fontFamily = PlusJakartaSansBold, fontWeight = FontWeight.Bold),
-    titleLarge = BaseTypography.titleLarge.copy(fontFamily = PlusJakartaSansBold, fontWeight = FontWeight.Bold),
-    titleMedium = BaseTypography.titleMedium.copy(fontFamily = PlusJakartaSansBold, fontWeight = FontWeight.Bold),
-    titleSmall = BaseTypography.titleSmall.copy(fontFamily = PlusJakartaSansBold, fontWeight = FontWeight.Bold),
+    displayLarge = BaseTypography.displayLarge.copy(fontFamily = PlusJakartaSans),
+    displayMedium = BaseTypography.displayMedium.copy(fontFamily = PlusJakartaSans),
+    displaySmall = BaseTypography.displaySmall.copy(fontFamily = PlusJakartaSans),
+    headlineLarge = BaseTypography.headlineLarge.copy(fontFamily = PlusJakartaSans, fontWeight = FontWeight.ExtraBold),
+    headlineMedium = BaseTypography.headlineMedium.copy(fontFamily = PlusJakartaSans, fontWeight = FontWeight.ExtraBold),
+    headlineSmall = BaseTypography.headlineSmall.copy(fontFamily = PlusJakartaSans, fontWeight = FontWeight.Bold),
+    titleLarge = BaseTypography.titleLarge.copy(fontFamily = PlusJakartaSans, fontWeight = FontWeight.Bold),
+    titleMedium = BaseTypography.titleMedium.copy(fontFamily = PlusJakartaSans, fontWeight = FontWeight.Bold),
+    titleSmall = BaseTypography.titleSmall.copy(fontFamily = PlusJakartaSans, fontWeight = FontWeight.Bold),
+    bodyLarge = BaseTypography.bodyLarge.copy(fontFamily = PlusJakartaSans),
+    bodyMedium = BaseTypography.bodyMedium.copy(fontFamily = PlusJakartaSans),
+    bodySmall = BaseTypography.bodySmall.copy(fontFamily = PlusJakartaSans),
+    labelLarge = BaseTypography.labelLarge.copy(fontFamily = PlusJakartaSans),
+    labelMedium = BaseTypography.labelMedium.copy(fontFamily = PlusJakartaSans),
+    labelSmall = BaseTypography.labelSmall.copy(fontFamily = PlusJakartaSans),
 )
 
 private val DarkColors = darkColorScheme(
@@ -51,6 +64,12 @@ private val DarkColors = darkColorScheme(
     onSurfaceVariant = Color(0xFF8B949E),
     outline = Color(0xFF30363D),
     outlineVariant = Color(0xFF30363D),
+    surfaceTint = Color(0xFFDAB9FF),
+    surfaceContainerLowest = Color(0xFF0A0D12),
+    surfaceContainerLow = Color(0xFF161B22),
+    surfaceContainer = Color(0xFF1A2029),
+    surfaceContainerHigh = Color(0xFF1F242D),
+    surfaceContainerHighest = Color(0xFF262C36),
 )
 
 private val LightColors = lightColorScheme(
@@ -74,6 +93,12 @@ private val LightColors = lightColorScheme(
     onSurfaceVariant = Color(0xFF57606A),
     outline = Color(0xFFD0D7DE),
     outlineVariant = Color(0xFFD0D7DE),
+    surfaceTint = Color(0xFF7131E3),
+    surfaceContainerLowest = Color(0xFFFFFFFF),
+    surfaceContainerLow = Color(0xFFF6F8FA),
+    surfaceContainer = Color(0xFFF1F3F5),
+    surfaceContainerHigh = Color(0xFFECEEF1),
+    surfaceContainerHighest = Color(0xFFE6E9ED),
 )
 
 private val PencilColors = lightColorScheme(
@@ -101,6 +126,12 @@ private val PencilColors = lightColorScheme(
     onError = Color(0xFFFFFFFF),
     errorContainer = Color(0xFFE6E6E6),
     onErrorContainer = Color(0xFF1A1A1A),
+    surfaceTint = Color(0xFF000000),
+    surfaceContainerLowest = Color(0xFFFFFFFF),
+    surfaceContainerLow = Color(0xFFF2F2F2),
+    surfaceContainer = Color(0xFFECECEC),
+    surfaceContainerHigh = Color(0xFFE6E6E6),
+    surfaceContainerHighest = Color(0xFFE0E0E0),
 )
 
 enum class ResolvedTheme { LIGHT, DARK, PENCIL }

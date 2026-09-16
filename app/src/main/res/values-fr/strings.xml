@@ -31,7 +31,6 @@
     <string name="mix_play_button">Jouer</string>
     <string name="mix_edit_content_description">Modifier le mix</string>
     <string name="mix_empty_state">Pas encore de mix. Créez-en un avec vos jeux et difficultés préférés.</string>
-    <string name="games_all_games_heading">Tous les Jeux</string>
     <string name="game_takuzu_name">Takuzu</string>
     <string name="game_nonogram_name">Nonogramme</string>
     <string name="game_minesweeper_name">Démineur</string>

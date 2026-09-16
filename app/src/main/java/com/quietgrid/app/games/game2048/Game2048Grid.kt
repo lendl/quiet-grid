@@ -1,7 +1,9 @@
 package com.quietgrid.app.games.game2048
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.offset
@@ -9,13 +11,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -23,11 +28,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import com.quietgrid.app.ui.theme.LocalIsPencilTheme
-import kotlin.math.abs
-import kotlin.math.max
 
 private val GAP = 4.dp
-private val SWIPE_THRESHOLD_DP = 24.dp
+private const val SLIDE_DURATION_MS = 130
+private const val POP_DURATION_MS = 90
+private const val POP_SCALE = 1.15f
 
 private val TILE_COLORS = mapOf(
     2 to Color(0xFFEEE4DA),
@@ -70,47 +75,92 @@ private fun tileTextColor(value: Int, pencil: Boolean): Color = when {
 }
 
 @Composable
-fun Game2048Grid(board: Game2048Board, onSwipe: (Game2048Direction) -> Unit) {
+fun Game2048Grid(board: Game2048Board, lastMove: Game2048MoveResult? = null) {
     val pencil = LocalIsPencilTheme.current
-    val density = LocalDensity.current
-    val thresholdPx = with(density) { SWIPE_THRESHOLD_DP.toPx() }
+    var displayBoard by remember { mutableStateOf(board) }
+    var slidingMoves by remember { mutableStateOf<List<Game2048TileMove>>(emptyList()) }
+    var poppedCells by remember { mutableStateOf<Set<Pair<Int, Int>>>(emptySet()) }
+    val slideProgress = remember { Animatable(1f) }
+    val popScale = remember { Animatable(1f) }
 
-    Box(
-        Modifier.pointerInput(Unit) {
-            var totalDrag = Offset.Zero
-            detectDragGestures(
-                onDragStart = { totalDrag = Offset.Zero },
-                onDrag = { change, dragAmount ->
-                    totalDrag += dragAmount
-                    change.consume()
-                },
-                onDragEnd = {
-                    val dx = totalDrag.x
-                    val dy = totalDrag.y
-                    if (max(abs(dx), abs(dy)) > thresholdPx) {
-                        val direction = if (abs(dx) > abs(dy)) {
-                            if (dx > 0) Game2048Direction.RIGHT else Game2048Direction.LEFT
-                        } else {
-                            if (dy > 0) Game2048Direction.DOWN else Game2048Direction.UP
-                        }
-                        onSwipe(direction)
-                    }
-                },
-            )
-        },
-    ) {
-        BoxWithConstraints(contentAlignment = Alignment.Center) {
-            val cellSize = min(maxWidth / board.size, maxHeight / board.size)
-            val fontSize = (cellSize.value * 0.38f).sp
+    LaunchedEffect(board) {
+        if (slidingMoves.isEmpty()) displayBoard = board
+    }
 
-            Box(Modifier.size(cellSize * board.size)) {
+    LaunchedEffect(lastMove) {
+        val move = lastMove ?: return@LaunchedEffect
+        if (move.tileMoves.isEmpty()) return@LaunchedEffect
+        slidingMoves = move.tileMoves
+        slideProgress.snapTo(0f)
+        slideProgress.animateTo(1f, animationSpec = tween(SLIDE_DURATION_MS, easing = FastOutSlowInEasing))
+        slidingMoves = emptyList()
+        displayBoard = move.board
+
+        val mergedCells = move.tileMoves.filter { it.merged }.map { it.toRow to it.toCol }.toSet()
+        if (mergedCells.isNotEmpty()) {
+            poppedCells = mergedCells
+            popScale.snapTo(1f)
+            popScale.animateTo(POP_SCALE, animationSpec = tween(POP_DURATION_MS))
+            popScale.animateTo(1f, animationSpec = tween(POP_DURATION_MS))
+            poppedCells = emptySet()
+        }
+    }
+
+    BoxWithConstraints(contentAlignment = Alignment.Center) {
+        val cellSize = min(maxWidth / board.size, maxHeight / board.size)
+        val fontSize = (cellSize.value * 0.38f).sp
+
+        Box(Modifier.size(cellSize * board.size)) {
+            if (slidingMoves.isNotEmpty()) {
                 for (row in 0 until board.size) {
                     for (col in 0 until board.size) {
-                        val value = board.tiles[row][col]
                         Box(
                             modifier = Modifier
                                 .offset(x = cellSize * col, y = cellSize * row)
                                 .size(cellSize - GAP)
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(if (pencil) EMPTY_CELL_COLOR_PENCIL else EMPTY_CELL_COLOR),
+                        )
+                    }
+                }
+                slidingMoves.forEach { move ->
+                    val row = move.fromRow + (move.toRow - move.fromRow) * slideProgress.value
+                    val col = move.fromCol + (move.toCol - move.fromCol) * slideProgress.value
+                    Box(
+                        modifier = Modifier
+                            .offset(x = cellSize * col, y = cellSize * row)
+                            .size(cellSize - GAP)
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(tileColor(move.value, pencil)),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        BasicText(
+                            text = move.value.toString(),
+                            style = TextStyle(
+                                fontSize = fontSize,
+                                fontWeight = FontWeight.Bold,
+                                color = tileTextColor(move.value, pencil),
+                                textAlign = TextAlign.Center,
+                            ),
+                        )
+                    }
+                }
+            } else {
+                for (row in 0 until board.size) {
+                    for (col in 0 until board.size) {
+                        val value = displayBoard.tiles[row][col]
+                        val isPopped = (row to col) in poppedCells
+                        Box(
+                            modifier = Modifier
+                                .offset(x = cellSize * col, y = cellSize * row)
+                                .size(cellSize - GAP)
+                                .then(
+                                    if (isPopped) {
+                                        Modifier.graphicsLayer(scaleX = popScale.value, scaleY = popScale.value)
+                                    } else {
+                                        Modifier
+                                    },
+                                )
                                 .clip(RoundedCornerShape(6.dp))
                                 .background(if (value != null) tileColor(value, pencil) else (if (pencil) EMPTY_CELL_COLOR_PENCIL else EMPTY_CELL_COLOR)),
                             contentAlignment = Alignment.Center,

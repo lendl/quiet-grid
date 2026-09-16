@@ -36,7 +36,6 @@
     <string name="mix_edit_content_description">Edit mix</string>
     <string name="mix_empty_state">No mixes yet. Build one from your favorite games and difficulties.</string>
     <string name="mix_new_content_description">New mix</string>
-    <string name="games_all_games_heading">All Games</string>
     <string name="game_takuzu_name">Takuzu</string>
     <string name="game_nonogram_name">Nonogram</string>
     <string name="game_minesweeper_name">Minesweeper</string>
@@ -178,6 +177,7 @@
     <string name="starbattle_quickstart_bullet_2">Drag across cells to mark or clear several at once.</string>
     <string name="starbattle_quickstart_bullet_3">Double-tap to place a star — wrong guesses cost a life.</string>
     <string name="starbattle_quickstart_hook">No two stars may touch, not even diagonally.</string>
+    <string name="starbattle_stars_per_group_content_description">Stars per row, column and region</string>
 
     <!-- tutorial host / puzzle play -->
     <string name="tutorial_host_unavailable_title">Tutorial not available</string>

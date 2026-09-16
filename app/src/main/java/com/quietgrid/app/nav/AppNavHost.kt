@@ -11,14 +11,25 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
@@ -71,6 +82,7 @@ import com.quietgrid.app.ui.components.AppTab
 import com.quietgrid.app.ui.components.AppTopBar
 import com.quietgrid.app.ui.components.BottomNavBar
 import com.quietgrid.app.ui.components.ContinueSessionMiniBar
+import com.quietgrid.app.ui.components.pressScale
 import com.quietgrid.app.ui.screens.AccountDrawerContent
 import com.quietgrid.app.ui.screens.AnalyzerHandoff
 import com.quietgrid.app.ui.screens.ChallengerExtras
@@ -83,9 +95,13 @@ import com.quietgrid.app.ui.screens.GamesScreen
 import com.quietgrid.app.ui.screens.LossScreen
 import com.quietgrid.app.ui.screens.MixEditorScreen
 import com.quietgrid.app.ui.screens.MixesScreen
+import com.quietgrid.app.ui.screens.AboutPageScreen
 import com.quietgrid.app.ui.screens.PuzzlePickerScreen
+import com.quietgrid.app.ui.screens.SettingsPageScreen
 import com.quietgrid.app.ui.screens.StatsScreen
 import com.quietgrid.app.ui.screens.SupportInfoScreen
+import com.quietgrid.app.ui.screens.SupportPageScreen
+import com.quietgrid.app.ui.screens.TrustPageScreen
 import com.quietgrid.app.ui.screens.supportInfoTitleRes
 import java.util.UUID
 
@@ -117,7 +133,9 @@ fun AppNavHost() {
     }
 
     var pendingMixToStart by remember { mutableStateOf<Mix?>(null) }
-    var showAccountDrawer by remember { mutableStateOf(false) }
+    val accountDrawerState = rememberDrawerState(DrawerValue.Closed)
+    var mixEditorRenameTrigger by remember { mutableStateOf(0) }
+    var mixEditorDeleteTrigger by remember { mutableStateOf(0) }
 
     fun goToMixDraw(mix: Mix) {
         scope.launch {
@@ -147,6 +165,32 @@ fun AppNavHost() {
         if (mix != null) goToMixDraw(mix) else fallback()
     }
 
+    ModalNavigationDrawer(
+        drawerState = accountDrawerState,
+        gesturesEnabled = currentRoute != Routes.PLAY,
+        drawerContent = {
+            ModalDrawerSheet {
+                AccountDrawerContent(
+                    onOpenSettings = {
+                        scope.launch { accountDrawerState.close() }
+                        navController.navigate(Routes.SETTINGS)
+                    },
+                    onOpenSupport = {
+                        scope.launch { accountDrawerState.close() }
+                        navController.navigate(Routes.SUPPORT)
+                    },
+                    onOpenTrust = {
+                        scope.launch { accountDrawerState.close() }
+                        navController.navigate(Routes.TRUST)
+                    },
+                    onOpenAbout = {
+                        scope.launch { accountDrawerState.close() }
+                        navController.navigate(Routes.ABOUT)
+                    },
+                )
+            }
+        },
+    ) {
     Scaffold(
         topBar = {
             when {
@@ -172,8 +216,56 @@ fun AppNavHost() {
                     )
                 }
                 currentRoute == Routes.MIX_EDITOR -> {
+                    val editingMixId = backStackEntry?.arguments?.getString("mixId")
+                    val editingMixName = mixes.firstOrNull { it.id == editingMixId }?.name
                     AppTopBar(
-                        title = stringResource(R.string.mix_editor_title_edit),
+                        title = editingMixName ?: stringResource(R.string.mix_editor_title_edit),
+                        onBack = { navController.popBackStack() },
+                        actions = {
+                            val renameInteractionSource = remember { MutableInteractionSource() }
+                            IconButton(
+                                onClick = { mixEditorRenameTrigger++ },
+                                interactionSource = renameInteractionSource,
+                                modifier = Modifier.pressScale(renameInteractionSource),
+                            ) {
+                                Icon(Icons.Filled.Create, contentDescription = stringResource(R.string.mix_rename_content_description))
+                            }
+                            val deleteInteractionSource = remember { MutableInteractionSource() }
+                            IconButton(
+                                onClick = { mixEditorDeleteTrigger++ },
+                                interactionSource = deleteInteractionSource,
+                                modifier = Modifier.pressScale(deleteInteractionSource),
+                            ) {
+                                Icon(
+                                    Icons.Filled.Delete,
+                                    contentDescription = stringResource(R.string.mix_delete_button),
+                                    tint = MaterialTheme.colorScheme.error,
+                                )
+                            }
+                        },
+                    )
+                }
+                currentRoute == Routes.SETTINGS -> {
+                    AppTopBar(
+                        title = stringResource(R.string.account_preferences_section),
+                        onBack = { navController.popBackStack() },
+                    )
+                }
+                currentRoute == Routes.SUPPORT -> {
+                    AppTopBar(
+                        title = stringResource(R.string.support_support_section),
+                        onBack = { navController.popBackStack() },
+                    )
+                }
+                currentRoute == Routes.TRUST -> {
+                    AppTopBar(
+                        title = stringResource(R.string.support_trust_section),
+                        onBack = { navController.popBackStack() },
+                    )
+                }
+                currentRoute == Routes.ABOUT -> {
+                    AppTopBar(
+                        title = stringResource(R.string.support_about_section),
                         onBack = { navController.popBackStack() },
                     )
                 }
@@ -228,7 +320,7 @@ fun AppNavHost() {
                         when (tab) {
                             AppTab.GAMES -> GamesScreen(
                                 onOpenGame = { gameId -> navController.navigate(Routes.picker(gameId)) },
-                                onOpenAccount = { showAccountDrawer = true },
+                                onOpenAccount = { scope.launch { accountDrawerState.open() } },
                             )
                             AppTab.MIXES -> MixesScreen(
                                 mixes = mixes,
@@ -245,9 +337,9 @@ fun AppNavHost() {
                                         navController.navigate(Routes.mixEditor(newMix.id))
                                     }
                                 },
-                                onOpenAccount = { showAccountDrawer = true },
+                                onOpenAccount = { scope.launch { accountDrawerState.open() } },
                             )
-                            AppTab.STATS -> StatsScreen(onOpenAccount = { showAccountDrawer = true })
+                            AppTab.STATS -> StatsScreen(onOpenAccount = { scope.launch { accountDrawerState.open() } })
                         }
                     }
                 }
@@ -286,9 +378,15 @@ fun AppNavHost() {
                 exitTransition = { fadeOut(animationSpec = tween(200)) },
             ) { entry ->
                 val mixId = entry.arguments?.getString("mixId") ?: return@composable
+                LaunchedEffect(mixId) {
+                    mixEditorRenameTrigger = 0
+                    mixEditorDeleteTrigger = 0
+                }
                 MixEditorScreen(
                     mixId = mixId,
                     onDone = { navController.popBackStack() },
+                    renameTrigger = mixEditorRenameTrigger,
+                    deleteTrigger = mixEditorDeleteTrigger,
                 )
             }
 
@@ -730,19 +828,41 @@ fun AppNavHost() {
             ) { entry ->
                 SupportInfoScreen(entry.arguments?.getString("key") ?: "about")
             }
+
+            composable(
+                Routes.SETTINGS,
+                enterTransition = { fadeIn(animationSpec = tween(250)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) },
+            ) {
+                SettingsPageScreen()
+            }
+
+            composable(
+                Routes.SUPPORT,
+                enterTransition = { fadeIn(animationSpec = tween(250)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) },
+            ) {
+                SupportPageScreen()
+            }
+
+            composable(
+                Routes.TRUST,
+                enterTransition = { fadeIn(animationSpec = tween(250)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) },
+            ) {
+                TrustPageScreen(onOpenInfo = { key -> navController.navigate(Routes.supportInfo(key)) })
+            }
+
+            composable(
+                Routes.ABOUT,
+                enterTransition = { fadeIn(animationSpec = tween(250)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) },
+            ) {
+                AboutPageScreen(onOpenInfo = { key -> navController.navigate(Routes.supportInfo(key)) })
+            }
             }
         }
     }
-
-    if (showAccountDrawer) {
-        ModalBottomSheet(onDismissRequest = { showAccountDrawer = false }) {
-            AccountDrawerContent(
-                onOpenInfo = { key ->
-                    showAccountDrawer = false
-                    navController.navigate(Routes.supportInfo(key))
-                },
-            )
-        }
     }
 
     val mixToStart = pendingMixToStart

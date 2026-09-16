@@ -48,18 +48,10 @@ fun GamesScreen(
     val betaGames = sortedBy(GameCatalog.games.filter { it.beta })
 
     Column(Modifier.fillMaxWidth().padding(16.dp)) {
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
             AccountIconButton(onOpenAccount)
         }
         LazyColumn(contentPadding = PaddingValues(top = 8.dp, bottom = 16.dp)) {
-            item {
-                Text(
-                    stringResource(R.string.games_all_games_heading),
-                    style = MaterialTheme.typography.labelLarge,
-                    modifier = Modifier.padding(bottom = 8.dp),
-                )
-            }
-
             itemsIndexed(readyGames) { index, meta ->
                 GameRow(meta, enabled = true, showDivider = index > 0, onClick = { onOpenGame(meta.id) })
             }

@@ -9,9 +9,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -59,8 +60,8 @@ fun MixesScreen(
                     )
                 }
             } else {
-                items(mixes) { mix ->
-                    MixListRow(mix = mix, onPlay = { onPlay(mix) }, onEdit = { onEdit(mix.id) })
+                itemsIndexed(mixes) { index, mix ->
+                    MixListRow(mix = mix, showDivider = index > 0, onPlay = { onPlay(mix) }, onEdit = { onEdit(mix.id) })
                 }
             }
         }
@@ -68,28 +69,32 @@ fun MixesScreen(
 }
 
 @Composable
-private fun MixListRow(mix: Mix, onPlay: () -> Unit, onEdit: () -> Unit) {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onEdit)
-            .padding(vertical = 14.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Column(Modifier.weight(1f)) {
-            Text(mix.name, style = MaterialTheme.typography.titleMedium)
-            Text(
-                stringResource(R.string.mix_card_entry_count, mix.entries.size),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        if (mix.entries.isNotEmpty()) {
-            Text(
-                stringResource(R.string.mix_play_button),
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.clickable(onClick = onPlay).padding(horizontal = 12.dp, vertical = 6.dp),
-            )
+private fun MixListRow(mix: Mix, showDivider: Boolean, onPlay: () -> Unit, onEdit: () -> Unit) {
+    Column(Modifier.fillMaxWidth()) {
+        if (showDivider) HorizontalDivider()
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onEdit)
+                .padding(vertical = 18.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(Modifier.weight(1f)) {
+                Text(mix.name, style = MaterialTheme.typography.titleLarge)
+                Text(
+                    stringResource(R.string.mix_card_entry_count, mix.entries.size),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 2.dp),
+                )
+            }
+            if (mix.entries.isNotEmpty()) {
+                Text(
+                    stringResource(R.string.mix_play_button),
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.clickable(onClick = onPlay).padding(horizontal = 12.dp, vertical = 6.dp),
+                )
+            }
         }
     }
 }

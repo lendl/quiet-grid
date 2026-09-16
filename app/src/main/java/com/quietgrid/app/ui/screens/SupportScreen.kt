@@ -7,12 +7,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
@@ -25,7 +26,6 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.Tag
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -54,7 +54,7 @@ private val TRUST_ICON_COLOR = Color(0xFF34D399)
 private val ABOUT_ICON_COLOR = Color(0xFFF472B6)
 
 @Composable
-fun SupportSections(onOpenInfo: (String) -> Unit) {
+fun SupportPageScreen() {
     val context = LocalContext.current
     val appVersion = remember {
         runCatching { context.packageManager.getPackageInfo(context.packageName, 0).versionName }
@@ -62,36 +62,63 @@ fun SupportSections(onOpenInfo: (String) -> Unit) {
     }
     fun openUrl(url: String): Boolean =
         runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }.isSuccess
-    fun openRateApp() {
-        if (!openUrl(PLAY_STORE_APP_URL)) openUrl(PLAY_STORE_WEB_URL)
-    }
 
-    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        SupportSection(title = stringResource(R.string.support_support_section)) {
-            SupportRow(Icons.Filled.BugReport, SUPPORT_ICON_COLOR, stringResource(R.string.support_report_bug), stringResource(R.string.support_opens_github_issues), external = true) { openUrl(buildBugReportUrl(appVersion)) }
-            SupportRow(Icons.Filled.Lightbulb, SUPPORT_ICON_COLOR, stringResource(R.string.support_request_feature), stringResource(R.string.support_opens_github_issues), external = true) { openUrl(buildFeatureRequestUrl()) }
-            SupportRow(Icons.Filled.Mail, SUPPORT_ICON_COLOR, stringResource(R.string.support_contact), SUPPORT_EMAIL, external = true) { openUrl("mailto:$SUPPORT_EMAIL") }
-            StaticSupportRow(Icons.Filled.Tag, SUPPORT_ICON_COLOR, stringResource(R.string.support_version), appVersion)
-        }
-
-        SupportSection(title = stringResource(R.string.support_trust_section)) {
-            SupportRow(Icons.Filled.PrivacyTip, TRUST_ICON_COLOR, stringResource(R.string.support_privacy), "") { onOpenInfo("privacy") }
-            SupportRow(painterRes = R.drawable.ic_github, iconTint = TRUST_ICON_COLOR, label = stringResource(R.string.support_source_code), detail = stringResource(R.string.support_opens_github), external = true) { openUrl(REPO_URL) }
-            SupportRow(Icons.Filled.Gavel, TRUST_ICON_COLOR, stringResource(R.string.support_licenses), "") { onOpenInfo("licenses") }
-        }
-
-        SupportSection(title = stringResource(R.string.support_about_section)) {
-            SupportRow(Icons.Filled.Info, ABOUT_ICON_COLOR, stringResource(R.string.support_about_quiet_grid), "") { onOpenInfo("about") }
-            SupportRow(Icons.Filled.People, ABOUT_ICON_COLOR, stringResource(R.string.support_contributors), "") { onOpenInfo("contributors") }
-        }
-
-        ShowYourSupportSection(onRate = { openRateApp() }, onStar = { openUrl(REPO_URL) })
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+    ) {
+        SupportRow(Icons.Filled.BugReport, SUPPORT_ICON_COLOR, stringResource(R.string.support_report_bug), stringResource(R.string.support_opens_github_issues), external = true) { openUrl(buildBugReportUrl(appVersion)) }
+        SupportRow(Icons.Filled.Lightbulb, SUPPORT_ICON_COLOR, stringResource(R.string.support_request_feature), stringResource(R.string.support_opens_github_issues), external = true) { openUrl(buildFeatureRequestUrl()) }
+        SupportRow(Icons.Filled.Mail, SUPPORT_ICON_COLOR, stringResource(R.string.support_contact), SUPPORT_EMAIL, external = true) { openUrl("mailto:$SUPPORT_EMAIL") }
+        StaticSupportRow(Icons.Filled.Tag, SUPPORT_ICON_COLOR, stringResource(R.string.support_version), appVersion)
     }
 }
 
 @Composable
-private fun ShowYourSupportSection(onRate: () -> Unit, onStar: () -> Unit) {
-    Column {
+fun TrustPageScreen(onOpenInfo: (String) -> Unit) {
+    val context = LocalContext.current
+    fun openUrl(url: String): Boolean =
+        runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }.isSuccess
+
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+    ) {
+        SupportRow(Icons.Filled.PrivacyTip, TRUST_ICON_COLOR, stringResource(R.string.support_privacy), "") { onOpenInfo("privacy") }
+        SupportRow(painterRes = R.drawable.ic_github, iconTint = TRUST_ICON_COLOR, label = stringResource(R.string.support_source_code), detail = stringResource(R.string.support_opens_github), external = true) { openUrl(REPO_URL) }
+        SupportRow(Icons.Filled.Gavel, TRUST_ICON_COLOR, stringResource(R.string.support_licenses), "") { onOpenInfo("licenses") }
+    }
+}
+
+@Composable
+fun AboutPageScreen(onOpenInfo: (String) -> Unit) {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+    ) {
+        SupportRow(Icons.Filled.Info, ABOUT_ICON_COLOR, stringResource(R.string.support_about_quiet_grid), "") { onOpenInfo("about") }
+        SupportRow(Icons.Filled.People, ABOUT_ICON_COLOR, stringResource(R.string.support_contributors), "") { onOpenInfo("contributors") }
+    }
+}
+
+@Composable
+internal fun ShowYourSupportSection(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    fun openUrl(url: String): Boolean =
+        runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }.isSuccess
+    fun openRateApp() {
+        if (!openUrl(PLAY_STORE_APP_URL)) openUrl(PLAY_STORE_WEB_URL)
+    }
+    val onRate = { openRateApp() }
+    val onStar = { openUrl(REPO_URL); Unit }
+
+    Column(modifier) {
         Text(stringResource(R.string.support_show_your_support), style = MaterialTheme.typography.titleSmall)
         Text(
             stringResource(R.string.support_show_your_support_subtitle),
@@ -139,15 +166,6 @@ private fun SupportCallToActionButton(
             Icon(painter = painterResource(iconRes), contentDescription = null)
         }
         Text(label, style = MaterialTheme.typography.labelLarge, textAlign = TextAlign.Center)
-    }
-}
-
-@Composable
-private fun SupportSection(title: String, content: @Composable ColumnScope.() -> Unit) {
-    Column {
-        Text(title, style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(bottom = 4.dp))
-        HorizontalDivider()
-        Column(content = content)
     }
 }
 

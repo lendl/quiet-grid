@@ -151,13 +151,31 @@ class PuzzleSessionControllerTest {
     @Test
     fun `fresh start ticks elapsed seconds and persists meaningful progress`() = runTest {
         val sessionStore = FakeSessionStore()
-        val controller = PuzzleSessionController(backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter())
+        val controller = PuzzleSessionController(
+            backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
+            isAppForeground = { true },
+        )
 
         controller.start(Difficulty.EASY, resume = false)
         advanceTimeBy(1_001)
 
         assertEquals(1.0, controller.elapsedSeconds, 0.0)
         assertTrue(sessionStore.saveCount > 0)
+    }
+
+    @Test
+    fun `ticker does not advance elapsed seconds while the app is backgrounded`() = runTest {
+        val sessionStore = FakeSessionStore()
+        val controller = PuzzleSessionController(
+            backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
+            isAppForeground = { false },
+        )
+
+        controller.start(Difficulty.EASY, resume = false)
+        advanceTimeBy(3_001)
+
+        assertEquals(0.0, controller.elapsedSeconds, 0.0)
+        assertEquals(0, sessionStore.saveCount)
     }
 
     @Test

@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Create
@@ -86,6 +88,18 @@ private val PUZZLE_LANGUAGE_OPTIONS = listOf(
     LanguageOption("fr", R.string.settings_puzzle_language_french_detail, localeFlagEmoji("fr")),
     LanguageOption("es", R.string.settings_puzzle_language_spanish_detail, localeFlagEmoji("es")),
 )
+
+@Composable
+fun SettingsPageScreen() {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+    ) {
+        PreferencesSection()
+    }
+}
 
 @Composable
 fun PreferencesSection() {
