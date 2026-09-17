@@ -74,7 +74,12 @@ fun NBackPlayScreen(
 
         PuzzleBoardContainer(visible = session != null, playFresh = !resume, zoomable = false) {
             if (session != null) {
-                NBackGrid(litPosition = session.trials.getOrNull(session.currentIndex)?.position)
+                val litPosition = if (session.showStimulus) {
+                    session.trials.getOrNull(session.currentIndex)?.position
+                } else {
+                    null
+                }
+                NBackGrid(litPosition = litPosition)
             }
         }
 

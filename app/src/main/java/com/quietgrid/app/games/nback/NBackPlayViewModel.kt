@@ -118,9 +118,12 @@ class NBackPlayViewModel @AssistedInject constructor(
         stimulusJob = viewModelScope.launch {
             for (index in initial.trials.indices) {
                 val current = session ?: return@launch
-                controller.updateSession(current.copy(currentIndex = index), persist = false)
+                controller.updateSession(current.copy(currentIndex = index, showStimulus = true), persist = false)
                 trialStartMillis = System.currentTimeMillis()
-                delay(current.config.intervalMs)
+                delay(NBACK_STIMULUS_ON_MS)
+                val lit = session ?: return@launch
+                controller.updateSession(lit.copy(showStimulus = false), persist = false)
+                delay(current.config.intervalMs - NBACK_STIMULUS_ON_MS)
             }
             val finished = session ?: return@launch
             controller.updateSession(finished.copy(currentIndex = finished.trials.size), persist = false)

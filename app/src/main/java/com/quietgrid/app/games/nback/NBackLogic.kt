@@ -6,6 +6,7 @@ import kotlin.random.Random
 
 const val NBACK_TOTAL_TRIALS = 32
 const val NBACK_GRID_SIZE = 9
+const val NBACK_STIMULUS_ON_MS = 500L
 private const val NBACK_TARGET_RATE = 0.28
 private const val NBACK_MAX_REACTION_TIME_MS = 2500.0
 private const val NBACK_MAX_REACTION_TIME_BONUS = 1000

@@ -22,4 +22,5 @@ data class NBackSession(
     val config: NBackDifficultyConfig,
     val trials: List<NBackTrial>,
     val currentIndex: Int,
+    val showStimulus: Boolean = true,
 )
