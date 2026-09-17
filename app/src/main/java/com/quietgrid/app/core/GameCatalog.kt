@@ -46,4 +46,4 @@ object GameCatalog {
     fun get(id: GameId): GameMeta = games.first { it.id == id }
 }
 
-val CHALLENGER_CAPABLE_GAMES: Set<GameId> = setOf(GameId.CHIMPTEST, GameId.WORDGUESS, GameId.ANIMALDOKU)
+val CHALLENGER_CAPABLE_GAMES: Set<GameId> = setOf(GameId.CHIMPTEST, GameId.WORDGUESS, GameId.ANIMALDOKU, GameId.STARBATTLE, GameId.SUDOKU, GameId.TAKUZU, GameId.NONOGRAM)

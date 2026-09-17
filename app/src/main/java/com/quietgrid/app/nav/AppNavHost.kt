@@ -69,10 +69,18 @@ import com.quietgrid.app.games.chimptest.ChimpTestPlayScreen
 import com.quietgrid.app.games.game2048.Game2048PlayScreen
 import com.quietgrid.app.games.guessbynumbers.GuessByNumbersPlayScreen
 import com.quietgrid.app.games.minesweeper.MinesweeperPlayScreen
+import com.quietgrid.app.games.nonogram.NonogramChallengerPlayScreen
+import com.quietgrid.app.games.nonogram.NonogramChallengerResultScreen
 import com.quietgrid.app.games.nonogram.NonogramPlayScreen
+import com.quietgrid.app.games.starbattle.StarBattleChallengerPlayScreen
+import com.quietgrid.app.games.starbattle.StarBattleChallengerResultScreen
 import com.quietgrid.app.games.starbattle.StarBattlePlayScreen
+import com.quietgrid.app.games.sudoku.SudokuChallengerPlayScreen
+import com.quietgrid.app.games.sudoku.SudokuChallengerResultScreen
 import com.quietgrid.app.games.sudoku.SudokuPlayScreen
 import com.quietgrid.app.games.takuzu.TakuzuAnalyzerScreen
+import com.quietgrid.app.games.takuzu.TakuzuChallengerPlayScreen
+import com.quietgrid.app.games.takuzu.TakuzuChallengerResultScreen
 import com.quietgrid.app.games.takuzu.TakuzuPlayScreen
 import com.quietgrid.app.games.wordguess.WordGuessChallengerPlayScreen
 import com.quietgrid.app.games.wordguess.WordGuessChallengerResultScreen
@@ -718,6 +726,38 @@ fun AppNavHost() {
                             ) { popUpTo(Routes.TABS) { inclusive = false } }
                         },
                     )
+                    GameId.STARBATTLE -> StarBattleChallengerPlayScreen(
+                        onFinished = { result ->
+                            ChallengerExtras.set(ChallengerRunDetails(result.puzzleHistory, result.solvesInTier))
+                            navController.navigate(
+                                Routes.challengerResult(challengerGameId, result.puzzlesSolved, result.tierReached, result.score, result.isNewHighScore, result.reason, result.previousBest, result.fastestSolveSeconds),
+                            ) { popUpTo(Routes.TABS) { inclusive = false } }
+                        },
+                    )
+                    GameId.SUDOKU -> SudokuChallengerPlayScreen(
+                        onFinished = { result ->
+                            ChallengerExtras.set(ChallengerRunDetails(result.puzzleHistory, result.solvesInTier))
+                            navController.navigate(
+                                Routes.challengerResult(challengerGameId, result.puzzlesSolved, result.tierReached, result.score, result.isNewHighScore, result.reason, result.previousBest, result.fastestSolveSeconds),
+                            ) { popUpTo(Routes.TABS) { inclusive = false } }
+                        },
+                    )
+                    GameId.TAKUZU -> TakuzuChallengerPlayScreen(
+                        onFinished = { result ->
+                            ChallengerExtras.set(ChallengerRunDetails(result.puzzleHistory, result.solvesInTier))
+                            navController.navigate(
+                                Routes.challengerResult(challengerGameId, result.puzzlesSolved, result.tierReached, result.score, result.isNewHighScore, result.reason, result.previousBest, result.fastestSolveSeconds),
+                            ) { popUpTo(Routes.TABS) { inclusive = false } }
+                        },
+                    )
+                    GameId.NONOGRAM -> NonogramChallengerPlayScreen(
+                        onFinished = { result ->
+                            ChallengerExtras.set(ChallengerRunDetails(result.puzzleHistory, result.solvesInTier))
+                            navController.navigate(
+                                Routes.challengerResult(challengerGameId, result.puzzlesSolved, result.tierReached, result.score, result.isNewHighScore, result.reason, result.previousBest, result.fastestSolveSeconds),
+                            ) { popUpTo(Routes.TABS) { inclusive = false } }
+                        },
+                    )
                     else -> Unit
                 }
             }
@@ -792,6 +832,98 @@ fun AppNavHost() {
                             onTryAnotherGame = { endMixAndGoToGames() },
                         )
                         GameId.CHIMPTEST -> ChimpTestChallengerResultScreen(
+                            puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
+                            tierReached = Difficulty.fromKey(entry.arguments?.getString("tier") ?: "easy"),
+                            score = entry.arguments?.getInt("score") ?: 0,
+                            isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
+                            reason = entry.arguments?.getString("reason") ?: "time_up",
+                            previousBest = previousBest,
+                            fastestSolveSeconds = fastestSolveSeconds,
+                            isMixActive = activeMix != null,
+                            onPlayAgain = {
+                                playAgainOrDrawMix {
+                                    navController.navigate(Routes.challenger(resultGameId)) {
+                                        popUpTo(Routes.TABS) { inclusive = false }
+                                    }
+                                }
+                            },
+                            onBackToPuzzles = {
+                                navController.navigate(Routes.picker(resultGameId)) {
+                                    popUpTo(Routes.TABS) { inclusive = false }
+                                }
+                            },
+                            onTryAnotherGame = { endMixAndGoToGames() },
+                        )
+                        GameId.SUDOKU -> SudokuChallengerResultScreen(
+                            puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
+                            tierReached = Difficulty.fromKey(entry.arguments?.getString("tier") ?: "easy"),
+                            score = entry.arguments?.getInt("score") ?: 0,
+                            isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
+                            reason = entry.arguments?.getString("reason") ?: "time_up",
+                            previousBest = previousBest,
+                            fastestSolveSeconds = fastestSolveSeconds,
+                            isMixActive = activeMix != null,
+                            onPlayAgain = {
+                                playAgainOrDrawMix {
+                                    navController.navigate(Routes.challenger(resultGameId)) {
+                                        popUpTo(Routes.TABS) { inclusive = false }
+                                    }
+                                }
+                            },
+                            onBackToPuzzles = {
+                                navController.navigate(Routes.picker(resultGameId)) {
+                                    popUpTo(Routes.TABS) { inclusive = false }
+                                }
+                            },
+                            onTryAnotherGame = { endMixAndGoToGames() },
+                        )
+                        GameId.TAKUZU -> TakuzuChallengerResultScreen(
+                            puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
+                            tierReached = Difficulty.fromKey(entry.arguments?.getString("tier") ?: "easy"),
+                            score = entry.arguments?.getInt("score") ?: 0,
+                            isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
+                            reason = entry.arguments?.getString("reason") ?: "time_up",
+                            previousBest = previousBest,
+                            fastestSolveSeconds = fastestSolveSeconds,
+                            isMixActive = activeMix != null,
+                            onPlayAgain = {
+                                playAgainOrDrawMix {
+                                    navController.navigate(Routes.challenger(resultGameId)) {
+                                        popUpTo(Routes.TABS) { inclusive = false }
+                                    }
+                                }
+                            },
+                            onBackToPuzzles = {
+                                navController.navigate(Routes.picker(resultGameId)) {
+                                    popUpTo(Routes.TABS) { inclusive = false }
+                                }
+                            },
+                            onTryAnotherGame = { endMixAndGoToGames() },
+                        )
+                        GameId.NONOGRAM -> NonogramChallengerResultScreen(
+                            puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
+                            tierReached = Difficulty.fromKey(entry.arguments?.getString("tier") ?: "easy"),
+                            score = entry.arguments?.getInt("score") ?: 0,
+                            isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
+                            reason = entry.arguments?.getString("reason") ?: "time_up",
+                            previousBest = previousBest,
+                            fastestSolveSeconds = fastestSolveSeconds,
+                            isMixActive = activeMix != null,
+                            onPlayAgain = {
+                                playAgainOrDrawMix {
+                                    navController.navigate(Routes.challenger(resultGameId)) {
+                                        popUpTo(Routes.TABS) { inclusive = false }
+                                    }
+                                }
+                            },
+                            onBackToPuzzles = {
+                                navController.navigate(Routes.picker(resultGameId)) {
+                                    popUpTo(Routes.TABS) { inclusive = false }
+                                }
+                            },
+                            onTryAnotherGame = { endMixAndGoToGames() },
+                        )
+                        GameId.STARBATTLE -> StarBattleChallengerResultScreen(
                             puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
                             tierReached = Difficulty.fromKey(entry.arguments?.getString("tier") ?: "easy"),
                             score = entry.arguments?.getInt("score") ?: 0,

@@ -21,7 +21,7 @@ class MixEntryOptionsTest {
 
     @Test
     fun `allModeOptionsFor a non-challenger game returns only the 4 difficulties`() {
-        val options = allModeOptionsFor(GameId.SUDOKU)
+        val options = allModeOptionsFor(GameId.WORDSEARCH)
 
         assertEquals(4, options.size)
         assertTrue(options.none { it.mode == MixEntryMode.CHALLENGER })
@@ -36,9 +36,9 @@ class MixEntryOptionsTest {
 
     @Test
     fun `missingModeOptionsFor excludes a puzzle mode that already has an entry`() {
-        val existing = listOf(MixEntry(gameId = "sudoku", mode = MixEntryMode.PUZZLE, difficulty = "easy", weight = 1))
+        val existing = listOf(MixEntry(gameId = "wordsearch", mode = MixEntryMode.PUZZLE, difficulty = "easy", weight = 1))
 
-        val missing = missingModeOptionsFor(GameId.SUDOKU, existing)
+        val missing = missingModeOptionsFor(GameId.WORDSEARCH, existing)
 
         assertEquals(3, missing.size)
         assertTrue(MixEntryOption(MixEntryMode.PUZZLE, "easy") !in missing)
