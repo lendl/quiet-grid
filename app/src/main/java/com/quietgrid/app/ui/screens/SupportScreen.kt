@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.Tag
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -51,6 +52,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.R
+import com.quietgrid.app.core.HELP_WANTED_ITEMS
+import com.quietgrid.app.core.HelpWantedItem
 import com.quietgrid.app.core.PLAY_STORE_APP_URL
 import com.quietgrid.app.core.PLAY_STORE_WEB_URL
 import com.quietgrid.app.core.REPO_URL
@@ -132,6 +135,11 @@ fun TrustPageScreen(onOpenInfo: (String) -> Unit) {
 
 @Composable
 fun AboutPageScreen(onOpenInfo: (String) -> Unit) {
+    val context = LocalContext.current
+    fun openUrl(url: String) {
+        runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }
+    }
+
     Column(
         Modifier
             .fillMaxWidth()
@@ -140,7 +148,36 @@ fun AboutPageScreen(onOpenInfo: (String) -> Unit) {
     ) {
         SupportRow(Icons.Filled.Info, ABOUT_ICON_COLOR, stringResource(R.string.support_about_quiet_grid), "") { onOpenInfo("about") }
         SupportRow(Icons.Filled.People, ABOUT_ICON_COLOR, stringResource(R.string.support_contributors), "") { onOpenInfo("contributors") }
+        HelpWantedSection(modifier = Modifier.padding(top = 16.dp), onOpenUrl = ::openUrl)
     }
+}
+
+@Composable
+private fun HelpWantedSection(modifier: Modifier = Modifier, onOpenUrl: (String) -> Unit) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(stringResource(R.string.help_wanted_heading), style = MaterialTheme.typography.titleSmall)
+        Text(
+            stringResource(R.string.help_wanted_disclaimer),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Column(Modifier.padding(top = 8.dp)) {
+            HorizontalDivider()
+            HELP_WANTED_ITEMS.forEach { item ->
+                HelpWantedRow(item, onClick = { onOpenUrl(item.url) })
+            }
+        }
+    }
+}
+
+@Composable
+private fun HelpWantedRow(item: HelpWantedItem, onClick: () -> Unit) {
+    SupportRow(
+        label = stringResource(item.titleRes),
+        detail = stringResource(item.blurbRes),
+        external = true,
+        onClick = onClick,
+    )
 }
 
 @Composable
