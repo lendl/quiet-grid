@@ -16,18 +16,14 @@ class StatsRepositoryTest {
     @get:Rule
     val tempFolder = TemporaryFolder()
 
-    @Test
-    fun `statsFor returns an empty GameStats when nothing was recorded`() = runTest {
-        val repository = StatsRepository(newDataStore(backgroundScope))
-
-        assertEquals(GameStats(), repository.statsFor(GameId.SUDOKU).first())
-    }
+    // Non-beta games: statsFor/challengerStatsFor derive from PlayHistoryStore, recordResult/recordChallengerResult are no-ops.
 
     @Test
-    fun `recordResult increments played and solved on a win`() = runTest {
-        val repository = StatsRepository(newDataStore(backgroundScope))
+    fun `statsFor derives played, solved, bestScore and streak from history for a non-beta game`() = runTest {
+        val history = newHistoryStore(backgroundScope)
+        val repository = StatsRepository(newDataStore(backgroundScope, "stats.preferences_pb"), history)
 
-        repository.recordResult(GameId.SUDOKU, Difficulty.EASY, solved = true, score = 42)
+        history.appendRecord(PlayRecord(GameId.SUDOKU.key, Difficulty.EASY.key, "s9-1", true, 42, 30, 1L))
 
         val stats = repository.statsFor(GameId.SUDOKU).first().forDifficulty(Difficulty.EASY)
         assertEquals(1, stats.played)
@@ -37,11 +33,12 @@ class StatsRepositoryTest {
     }
 
     @Test
-    fun `recordResult on a loss increments played but resets streak without touching bestScore`() = runTest {
-        val repository = StatsRepository(newDataStore(backgroundScope))
-        repository.recordResult(GameId.SUDOKU, Difficulty.EASY, solved = true, score = 42)
+    fun `statsFor resets currentStreak after a loss but keeps bestScore for a non-beta game`() = runTest {
+        val history = newHistoryStore(backgroundScope)
+        val repository = StatsRepository(newDataStore(backgroundScope, "stats.preferences_pb"), history)
 
-        repository.recordResult(GameId.SUDOKU, Difficulty.EASY, solved = false, score = 0)
+        history.appendRecord(PlayRecord(GameId.SUDOKU.key, Difficulty.EASY.key, "s9-1", true, 42, 30, 1L))
+        history.appendRecord(PlayRecord(GameId.SUDOKU.key, Difficulty.EASY.key, "s9-2", false, 0, 20, 2L, "abandoned"))
 
         val stats = repository.statsFor(GameId.SUDOKU).first().forDifficulty(Difficulty.EASY)
         assertEquals(2, stats.played)
@@ -51,22 +48,12 @@ class StatsRepositoryTest {
     }
 
     @Test
-    fun `bestScore only rises when a higher-scoring win is recorded`() = runTest {
-        val repository = StatsRepository(newDataStore(backgroundScope))
-        repository.recordResult(GameId.SUDOKU, Difficulty.EASY, solved = true, score = 50)
+    fun `statsFor tracks difficulties independently for a non-beta game`() = runTest {
+        val history = newHistoryStore(backgroundScope)
+        val repository = StatsRepository(newDataStore(backgroundScope, "stats.preferences_pb"), history)
 
-        repository.recordResult(GameId.SUDOKU, Difficulty.EASY, solved = true, score = 30)
-
-        val stats = repository.statsFor(GameId.SUDOKU).first().forDifficulty(Difficulty.EASY)
-        assertEquals(50, stats.bestScore)
-        assertEquals(2, stats.currentStreak)
-    }
-
-    @Test
-    fun `stats are tracked independently per difficulty`() = runTest {
-        val repository = StatsRepository(newDataStore(backgroundScope))
-        repository.recordResult(GameId.SUDOKU, Difficulty.EASY, solved = true, score = 10)
-        repository.recordResult(GameId.SUDOKU, Difficulty.HARD, solved = true, score = 90)
+        history.appendRecord(PlayRecord(GameId.SUDOKU.key, Difficulty.EASY.key, "s9-1", true, 10, 30, 1L))
+        history.appendRecord(PlayRecord(GameId.SUDOKU.key, Difficulty.HARD.key, "s9-2", true, 90, 60, 2L))
 
         val allStats = repository.statsFor(GameId.SUDOKU).first()
         assertEquals(10, allStats.forDifficulty(Difficulty.EASY).bestScore)
@@ -74,54 +61,22 @@ class StatsRepositoryTest {
     }
 
     @Test
-    fun `clear removes stats for one game only`() = runTest {
-        val repository = StatsRepository(newDataStore(backgroundScope))
-        repository.recordResult(GameId.SUDOKU, Difficulty.EASY, solved = true, score = 10)
-        repository.recordResult(GameId.TAKUZU, Difficulty.EASY, solved = true, score = 20)
+    fun `recordResult is a no-op for a non-beta game`() = runTest {
+        val history = newHistoryStore(backgroundScope)
+        val repository = StatsRepository(newDataStore(backgroundScope, "stats.preferences_pb"), history)
 
-        repository.clear(GameId.SUDOKU)
-
-        assertEquals(GameStats(), repository.statsFor(GameId.SUDOKU).first())
-        assertEquals(20, repository.statsFor(GameId.TAKUZU).first().forDifficulty(Difficulty.EASY).bestScore)
-    }
-
-    @Test
-    fun `clearAll removes stats for every game`() = runTest {
-        val repository = StatsRepository(newDataStore(backgroundScope))
-        repository.recordResult(GameId.SUDOKU, Difficulty.EASY, solved = true, score = 10)
-        repository.recordResult(GameId.TAKUZU, Difficulty.EASY, solved = true, score = 20)
-
-        repository.clearAll()
+        repository.recordResult(GameId.SUDOKU, Difficulty.EASY, solved = true, score = 42)
 
         assertEquals(GameStats(), repository.statsFor(GameId.SUDOKU).first())
-        assertEquals(GameStats(), repository.statsFor(GameId.TAKUZU).first())
     }
 
     @Test
-    fun `statsForGames combines stats across multiple games`() = runTest {
-        val repository = StatsRepository(newDataStore(backgroundScope))
-        repository.recordResult(GameId.SUDOKU, Difficulty.EASY, solved = true, score = 10)
-        repository.recordResult(GameId.TAKUZU, Difficulty.EASY, solved = true, score = 20)
+    fun `challengerStatsFor derives best puzzles-solved and best score from history for a non-beta game`() = runTest {
+        val history = newHistoryStore(backgroundScope)
+        val repository = StatsRepository(newDataStore(backgroundScope, "stats.preferences_pb"), history)
 
-        val combined = repository.statsForGames(listOf(GameId.SUDOKU, GameId.TAKUZU)).first()
-
-        assertEquals(10, combined[GameId.SUDOKU]?.forDifficulty(Difficulty.EASY)?.bestScore)
-        assertEquals(20, combined[GameId.TAKUZU]?.forDifficulty(Difficulty.EASY)?.bestScore)
-    }
-
-    @Test
-    fun `challengerStatsFor returns empty DifficultyStats when nothing was recorded`() = runTest {
-        val repository = StatsRepository(newDataStore(backgroundScope))
-
-        assertEquals(DifficultyStats(), repository.challengerStatsFor(GameId.ANIMALDOKU).first())
-    }
-
-    @Test
-    fun `recordChallengerResult tracks best puzzles-solved and best score across runs`() = runTest {
-        val repository = StatsRepository(newDataStore(backgroundScope))
-
-        repository.recordChallengerResult(GameId.ANIMALDOKU, puzzlesSolved = 4, score = 900)
-        repository.recordChallengerResult(GameId.ANIMALDOKU, puzzlesSolved = 7, score = 600)
+        history.appendRecord(challengerRecord(GameId.ANIMALDOKU, puzzlesSolved = 4, score = 900, timestamp = 1L))
+        history.appendRecord(challengerRecord(GameId.ANIMALDOKU, puzzlesSolved = 7, score = 600, timestamp = 2L))
 
         val stats = repository.challengerStatsFor(GameId.ANIMALDOKU).first()
         assertEquals(2, stats.played)
@@ -130,28 +85,132 @@ class StatsRepositoryTest {
     }
 
     @Test
-    fun `challenger stats are independent from normal per-difficulty stats`() = runTest {
-        val repository = StatsRepository(newDataStore(backgroundScope))
-        repository.recordResult(GameId.ANIMALDOKU, Difficulty.EASY, solved = true, score = 500)
+    fun `recordChallengerResult is a no-op for a non-beta game`() = runTest {
+        val history = newHistoryStore(backgroundScope)
+        val repository = StatsRepository(newDataStore(backgroundScope, "stats.preferences_pb"), history)
 
         repository.recordChallengerResult(GameId.ANIMALDOKU, puzzlesSolved = 3, score = 300)
-
-        assertEquals(500, repository.statsFor(GameId.ANIMALDOKU).first().forDifficulty(Difficulty.EASY).bestScore)
-        assertEquals(300, repository.challengerStatsFor(GameId.ANIMALDOKU).first().bestScore)
-    }
-
-    @Test
-    fun `clear removes challenger stats for that game too`() = runTest {
-        val repository = StatsRepository(newDataStore(backgroundScope))
-        repository.recordChallengerResult(GameId.ANIMALDOKU, puzzlesSolved = 3, score = 300)
-
-        repository.clear(GameId.ANIMALDOKU)
 
         assertEquals(DifficultyStats(), repository.challengerStatsFor(GameId.ANIMALDOKU).first())
     }
 
-    private fun newDataStore(scope: CoroutineScope) = PreferenceDataStoreFactory.create(
+    @Test
+    fun `statsForGames combines derived stats across multiple non-beta games`() = runTest {
+        val history = newHistoryStore(backgroundScope)
+        val repository = StatsRepository(newDataStore(backgroundScope, "stats.preferences_pb"), history)
+        history.appendRecord(PlayRecord(GameId.SUDOKU.key, Difficulty.EASY.key, "s9-1", true, 10, 30, 1L))
+        history.appendRecord(PlayRecord(GameId.TAKUZU.key, Difficulty.EASY.key, "t6-1", true, 20, 40, 2L))
+
+        val combined = repository.statsForGames(listOf(GameId.SUDOKU, GameId.TAKUZU)).first()
+
+        assertEquals(10, combined[GameId.SUDOKU]?.forDifficulty(Difficulty.EASY)?.bestScore)
+        assertEquals(20, combined[GameId.TAKUZU]?.forDifficulty(Difficulty.EASY)?.bestScore)
+    }
+
+    // Beta games: statsFor/challengerStatsFor still read/write their own DataStore aggregate, unaffected by history.
+
+    @Test
+    fun `statsFor returns an empty GameStats when nothing was recorded for a beta game`() = runTest {
+        val repository = StatsRepository(newDataStore(backgroundScope, "stats.preferences_pb"), newHistoryStore(backgroundScope))
+
+        assertEquals(GameStats(), repository.statsFor(GameId.BLOCKFILL).first())
+    }
+
+    @Test
+    fun `recordResult increments played and solved on a win for a beta game`() = runTest {
+        val repository = StatsRepository(newDataStore(backgroundScope, "stats.preferences_pb"), newHistoryStore(backgroundScope))
+
+        repository.recordResult(GameId.BLOCKFILL, Difficulty.EASY, solved = true, score = 42)
+
+        val stats = repository.statsFor(GameId.BLOCKFILL).first().forDifficulty(Difficulty.EASY)
+        assertEquals(1, stats.played)
+        assertEquals(1, stats.solved)
+        assertEquals(42, stats.bestScore)
+        assertEquals(1, stats.currentStreak)
+    }
+
+    @Test
+    fun `recordResult on a loss increments played but resets streak without touching bestScore for a beta game`() = runTest {
+        val repository = StatsRepository(newDataStore(backgroundScope, "stats.preferences_pb"), newHistoryStore(backgroundScope))
+        repository.recordResult(GameId.BLOCKFILL, Difficulty.EASY, solved = true, score = 42)
+
+        repository.recordResult(GameId.BLOCKFILL, Difficulty.EASY, solved = false, score = 0)
+
+        val stats = repository.statsFor(GameId.BLOCKFILL).first().forDifficulty(Difficulty.EASY)
+        assertEquals(2, stats.played)
+        assertEquals(1, stats.solved)
+        assertEquals(42, stats.bestScore)
+        assertEquals(0, stats.currentStreak)
+    }
+
+    @Test
+    fun `clear removes stats for one beta game only`() = runTest {
+        val dataStore = newDataStore(backgroundScope, "stats.preferences_pb")
+        val repository = StatsRepository(dataStore, newHistoryStore(backgroundScope))
+        repository.recordResult(GameId.BLOCKFILL, Difficulty.EASY, solved = true, score = 10)
+        repository.recordResult(GameId.GAME_2048, Difficulty.EASY, solved = true, score = 20)
+
+        repository.clear(GameId.BLOCKFILL)
+
+        assertEquals(GameStats(), repository.statsFor(GameId.BLOCKFILL).first())
+        assertEquals(20, repository.statsFor(GameId.GAME_2048).first().forDifficulty(Difficulty.EASY).bestScore)
+    }
+
+    @Test
+    fun `clearAll removes stats for every beta game`() = runTest {
+        val dataStore = newDataStore(backgroundScope, "stats.preferences_pb")
+        val repository = StatsRepository(dataStore, newHistoryStore(backgroundScope))
+        repository.recordResult(GameId.BLOCKFILL, Difficulty.EASY, solved = true, score = 10)
+        repository.recordResult(GameId.GAME_2048, Difficulty.EASY, solved = true, score = 20)
+
+        repository.clearAll()
+
+        assertEquals(GameStats(), repository.statsFor(GameId.BLOCKFILL).first())
+        assertEquals(GameStats(), repository.statsFor(GameId.GAME_2048).first())
+    }
+
+    @Test
+    fun `recordChallengerResult tracks best puzzles-solved and best score across runs for a beta game`() = runTest {
+        val repository = StatsRepository(newDataStore(backgroundScope, "stats.preferences_pb"), newHistoryStore(backgroundScope))
+
+        repository.recordChallengerResult(GameId.STARBATTLE, puzzlesSolved = 4, score = 900)
+        repository.recordChallengerResult(GameId.STARBATTLE, puzzlesSolved = 7, score = 600)
+
+        val stats = repository.challengerStatsFor(GameId.STARBATTLE).first()
+        assertEquals(2, stats.played)
+        assertEquals(7, stats.solved)
+        assertEquals(900, stats.bestScore)
+    }
+
+    @Test
+    fun `clear removes challenger stats for that beta game too`() = runTest {
+        val dataStore = newDataStore(backgroundScope, "stats.preferences_pb")
+        val repository = StatsRepository(dataStore, newHistoryStore(backgroundScope))
+        repository.recordChallengerResult(GameId.STARBATTLE, puzzlesSolved = 3, score = 300)
+
+        repository.clear(GameId.STARBATTLE)
+
+        assertEquals(DifficultyStats(), repository.challengerStatsFor(GameId.STARBATTLE).first())
+    }
+
+    private fun challengerRecord(gameId: GameId, puzzlesSolved: Int, score: Int, timestamp: Long) = PlayRecord(
+        gameId = gameId.key,
+        difficulty = Difficulty.EASY.key,
+        puzzleId = null,
+        solved = true,
+        score = score,
+        elapsedSeconds = 60,
+        timestampMillis = timestamp,
+        lossReason = "time_up",
+        isChallenger = true,
+        puzzlesSolved = puzzlesSolved,
+    )
+
+    private fun newHistoryStore(scope: CoroutineScope): PlayHistoryStore =
+        PlayHistoryRepository(newDataStore(scope, "history.preferences_pb"), FakePlayHistoryDao())
+
+    private fun newDataStore(scope: CoroutineScope, fileName: String) = PreferenceDataStoreFactory.create(
         scope = scope,
-        produceFile = { tempFolder.newFile("stats.preferences_pb") },
+        produceFile = { tempFolder.newFile(fileName) },
     )
 }

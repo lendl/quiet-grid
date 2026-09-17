@@ -1,6 +1,7 @@
 package com.quietgrid.app.data
 
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.edit
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import kotlinx.coroutines.CoroutineScope
@@ -8,7 +9,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -116,13 +120,69 @@ class PlayHistoryRepositoryTest {
         assertTrue(repository.allRecords().first().isEmpty())
     }
 
+    @Test
+    fun `legacy stats for a non-beta game are merged into history as synthetic records`() = runTest {
+        val dataStore = newDataStore(backgroundScope)
+        val json = Json
+        dataStore.edit { prefs ->
+            prefs[statsKeyFor(GameId.SUDOKU)] = json.encodeToString(
+                GameStats(
+                    byDifficulty = mapOf(
+                        Difficulty.EASY.key to DifficultyStats(played = 5, solved = 3, bestScore = 80, currentStreak = 2),
+                    ),
+                ),
+            )
+        }
+        val repository = PlayHistoryRepository(dataStore, FakePlayHistoryDao())
+
+        val stats = StatsRepository(dataStore, repository).statsFor(GameId.SUDOKU).first().forDifficulty(Difficulty.EASY)
+
+        assertEquals(5, stats.played)
+        assertEquals(3, stats.solved)
+        assertEquals(80, stats.bestScore)
+        assertEquals(2, stats.currentStreak)
+    }
+
+    @Test
+    fun `legacy stats migration removes the old stats key so it only runs once`() = runTest {
+        val dataStore = newDataStore(backgroundScope)
+        val json = Json
+        dataStore.edit { prefs ->
+            prefs[statsKeyFor(GameId.SUDOKU)] = json.encodeToString(
+                GameStats(byDifficulty = mapOf(Difficulty.EASY.key to DifficultyStats(played = 1, solved = 1, bestScore = 10, currentStreak = 1))),
+            )
+        }
+        val repository = PlayHistoryRepository(dataStore, FakePlayHistoryDao())
+
+        repository.allRecords().first()
+
+        assertNull(dataStore.data.first()[statsKeyFor(GameId.SUDOKU)])
+    }
+
+    @Test
+    fun `legacy stats for a beta game are left untouched`() = runTest {
+        val dataStore = newDataStore(backgroundScope)
+        val json = Json
+        dataStore.edit { prefs ->
+            prefs[statsKeyFor(GameId.BLOCKFILL)] = json.encodeToString(
+                GameStats(byDifficulty = mapOf(Difficulty.EASY.key to DifficultyStats(played = 1, solved = 1, bestScore = 10, currentStreak = 1))),
+            )
+        }
+        val repository = PlayHistoryRepository(dataStore, FakePlayHistoryDao())
+
+        val allRecords = repository.allRecords().first()
+
+        assertTrue(allRecords.none { it.gameId == GameId.BLOCKFILL.key })
+        assertEquals(json.encodeToString(GameStats(byDifficulty = mapOf(Difficulty.EASY.key to DifficultyStats(played = 1, solved = 1, bestScore = 10, currentStreak = 1)))), dataStore.data.first()[statsKeyFor(GameId.BLOCKFILL)])
+    }
+
     private fun newDataStore(scope: CoroutineScope) = PreferenceDataStoreFactory.create(
         scope = scope,
         produceFile = { tempFolder.newFile("play_history.preferences_pb") },
     )
 }
 
-private class FakePlayHistoryDao : PlayHistoryDao {
+internal class FakePlayHistoryDao : PlayHistoryDao {
     private val records = mutableListOf<PlayRecordEntity>()
 
     override fun allRecords(): Flow<List<PlayRecordEntity>> = flowOf(records.toList())

@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
@@ -89,10 +90,108 @@ class PlayHistoryRepository @Inject constructor(
                 }
                 dataStore.edit { it.remove(PLAY_HISTORY_KEY) }
             }
+            migrateLegacyStats()
             migrated = true
         }
     }
+
+    private suspend fun migrateLegacyStats() {
+        val prefs = dataStore.data.first()
+        val nonBetaGames = GameCatalog.games.filter { !it.beta }
+        var timestamp = LEGACY_STATS_BASE_TIMESTAMP
+        val legacyEntities = mutableListOf<PlayRecordEntity>()
+        val keysToRemove = mutableListOf<Preferences.Key<*>>()
+
+        nonBetaGames.forEach { meta ->
+            val statsKey = statsKeyFor(meta.id)
+            prefs[statsKey]?.let { raw ->
+                runCatching { json.decodeFromString<GameStats>(raw) }.getOrNull()?.let { stats ->
+                    stats.byDifficulty.forEach { (difficultyKey, diffStats) ->
+                        legacyEntities += buildLegacySoloRecords(meta.id.key, difficultyKey, diffStats, timestamp)
+                        timestamp += diffStats.played + 1L
+                    }
+                    keysToRemove += statsKey
+                }
+            }
+
+            val challengerKey = statsChallengerKeyFor(meta.id)
+            prefs[challengerKey]?.let { raw ->
+                runCatching { json.decodeFromString<DifficultyStats>(raw) }.getOrNull()?.let { stats ->
+                    legacyEntities += buildLegacyChallengerRecords(meta.id.key, stats, timestamp)
+                    timestamp += stats.played + 1L
+                    keysToRemove += challengerKey
+                }
+            }
+        }
+
+        if (legacyEntities.isNotEmpty()) {
+            dao.insertAll(legacyEntities)
+        }
+        if (keysToRemove.isNotEmpty()) {
+            dataStore.edit { editable -> keysToRemove.forEach { editable.remove(it) } }
+        }
+    }
+
+    private fun buildLegacySoloRecords(
+        gameId: String,
+        difficulty: String,
+        stats: DifficultyStats,
+        startTimestamp: Long,
+    ): List<PlayRecordEntity> {
+        val streakCount = stats.currentStreak.coerceIn(0, stats.solved)
+        val nonStreakSolvedCount = stats.solved - streakCount
+        val lossCount = (stats.played - stats.solved).coerceAtLeast(0)
+        val entities = mutableListOf<PlayRecordEntity>()
+        var timestamp = startTimestamp
+
+        fun addRecord(solved: Boolean) {
+            entities += PlayRecordEntity(
+                gameId = gameId,
+                difficulty = difficulty,
+                puzzleId = null,
+                solved = solved,
+                score = if (solved) stats.bestScore else 0,
+                elapsedSeconds = 0,
+                timestampMillis = timestamp,
+                lossReason = if (solved) null else LEGACY_LOSS_REASON,
+                isChallenger = false,
+                puzzlesSolved = null,
+            )
+            timestamp += 1
+        }
+
+        repeat(nonStreakSolvedCount) { addRecord(solved = true) }
+        repeat(lossCount) { addRecord(solved = false) }
+        repeat(streakCount) { addRecord(solved = true) }
+        return entities
+    }
+
+    private fun buildLegacyChallengerRecords(
+        gameId: String,
+        stats: DifficultyStats,
+        startTimestamp: Long,
+    ): List<PlayRecordEntity> {
+        if (stats.played <= 0) return emptyList()
+        return (0 until stats.played).map { index ->
+            val isLast = index == stats.played - 1
+            PlayRecordEntity(
+                gameId = gameId,
+                difficulty = Difficulty.EASY.key,
+                puzzleId = null,
+                solved = true,
+                score = if (isLast) stats.bestScore else 0,
+                elapsedSeconds = 0,
+                timestampMillis = startTimestamp + index,
+                lossReason = LEGACY_LOSS_REASON,
+                isChallenger = true,
+                puzzlesSolved = if (isLast) stats.solved else 0,
+            )
+        }
+    }
 }
+
+private const val LEGACY_STATS_BASE_TIMESTAMP = 1577836800000L
+private const val LEGACY_LOSS_REASON = "legacy"
 
 private const val DEFAULT_RECENT_HISTORY_WINDOW = 10
 
