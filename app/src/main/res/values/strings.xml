@@ -283,6 +283,9 @@
     <string name="support_source_code">GitHub / source code</string>
     <string name="support_opens_github">Opens GitHub</string>
     <string name="support_licenses">Open-source licenses</string>
+    <string name="trust_clear_data">Clear Data</string>
+    <string name="trust_clear_data_title">Clear Data</string>
+    <string name="trust_clear_data_message">Remove all saved statistics, logs, and the current active puzzle? This cannot be undone.</string>
     <string name="support_about_quiet_grid">About Quiet Grid</string>
     <string name="support_contributors">Contributors</string>
     <string name="support_show_your_support">Show your support</string>

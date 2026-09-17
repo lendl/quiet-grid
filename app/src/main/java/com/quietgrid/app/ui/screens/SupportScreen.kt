@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.BugReport
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Mail
@@ -26,11 +27,18 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.Tag
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +49,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.R
 import com.quietgrid.app.core.PLAY_STORE_APP_URL
 import com.quietgrid.app.core.PLAY_STORE_WEB_URL
@@ -48,6 +57,8 @@ import com.quietgrid.app.core.REPO_URL
 import com.quietgrid.app.core.SUPPORT_EMAIL
 import com.quietgrid.app.core.buildBugReportUrl
 import com.quietgrid.app.core.buildFeatureRequestUrl
+import com.quietgrid.app.data.RepositoriesViewModel
+import kotlinx.coroutines.launch
 
 private val SUPPORT_ICON_COLOR = Color(0xFF60A5FA)
 private val TRUST_ICON_COLOR = Color(0xFF34D399)
@@ -79,6 +90,9 @@ fun SupportPageScreen() {
 @Composable
 fun TrustPageScreen(onOpenInfo: (String) -> Unit) {
     val context = LocalContext.current
+    val repositories: RepositoriesViewModel = hiltViewModel()
+    val scope = rememberCoroutineScope()
+    var showClearDialog by remember { mutableStateOf(false) }
     fun openUrl(url: String): Boolean =
         runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }.isSuccess
 
@@ -91,6 +105,28 @@ fun TrustPageScreen(onOpenInfo: (String) -> Unit) {
         SupportRow(Icons.Filled.PrivacyTip, TRUST_ICON_COLOR, stringResource(R.string.support_privacy), "") { onOpenInfo("privacy") }
         SupportRow(painterRes = R.drawable.ic_github, iconTint = TRUST_ICON_COLOR, label = stringResource(R.string.support_source_code), detail = stringResource(R.string.support_opens_github), external = true) { openUrl(REPO_URL) }
         SupportRow(Icons.Filled.Gavel, TRUST_ICON_COLOR, stringResource(R.string.support_licenses), "") { onOpenInfo("licenses") }
+        SupportRow(Icons.Filled.Delete, TRUST_ICON_COLOR, stringResource(R.string.trust_clear_data), "") { showClearDialog = true }
+    }
+
+    if (showClearDialog) {
+        AlertDialog(
+            onDismissRequest = { showClearDialog = false },
+            title = { Text(stringResource(R.string.trust_clear_data_title)) },
+            text = { Text(stringResource(R.string.trust_clear_data_message)) },
+            confirmButton = {
+                Button(onClick = {
+                    scope.launch {
+                        repositories.statsRepository.clearAll()
+                        repositories.sessionRepository.clear()
+                        repositories.playHistoryRepository.clear()
+                    }
+                    showClearDialog = false
+                }) { Text(stringResource(R.string.trust_clear_data)) }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = { showClearDialog = false }) { Text(stringResource(R.string.common_cancel)) }
+            },
+        )
     }
 }
 
