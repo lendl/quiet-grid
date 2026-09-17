@@ -191,7 +191,11 @@ class PlayHistoryRepository @Inject constructor(
 }
 
 private const val LEGACY_STATS_BASE_TIMESTAMP = 1577836800000L
+private const val LEGACY_STATS_TIMESTAMP_WINDOW_MILLIS = 86_400_000L
 private const val LEGACY_LOSS_REASON = "legacy"
+
+fun isLegacyMigratedTimestamp(timestampMillis: Long): Boolean =
+    timestampMillis in LEGACY_STATS_BASE_TIMESTAMP until LEGACY_STATS_BASE_TIMESTAMP + LEGACY_STATS_TIMESTAMP_WINDOW_MILLIS
 
 private const val DEFAULT_RECENT_HISTORY_WINDOW = 10
 

@@ -57,7 +57,7 @@
     <string name="settings_language_spanish_detail">App auf Spanisch anzeigen.</string>
     <string name="settings_language_polish_detail">App auf Polnisch anzeigen.</string>
     <string name="settings_puzzle_language">Rätselsprache</string>
-    <string name="settings_puzzle_language_dropdown_detail">Sprache für Wort erraten- und Wortsuche-Rätsel.</string>
+    <string name="settings_puzzle_language_dropdown_detail">Wörterbuch für Wortspiele.</string>
     <string name="settings_puzzle_language_system_detail">Der App-Sprache folgen.</string>
     <string name="settings_puzzle_language_english_detail">Englisch</string>
     <string name="settings_puzzle_language_dutch_detail">Niederländisch</string>

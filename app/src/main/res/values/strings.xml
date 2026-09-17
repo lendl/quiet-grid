@@ -65,7 +65,7 @@
     <string name="settings_language_spanish_detail">Show the app in Spanish.</string>
     <string name="settings_language_polish_detail">Show the app in Polish.</string>
     <string name="settings_puzzle_language">Puzzle language</string>
-    <string name="settings_puzzle_language_dropdown_detail">Language used for Word Guess and Word Search puzzles.</string>
+    <string name="settings_puzzle_language_dropdown_detail">Dictionary used for word-based puzzles.</string>
     <string name="settings_puzzle_language_system_detail">Follow the app language.</string>
     <string name="settings_puzzle_language_english_detail">English</string>
     <string name="settings_puzzle_language_dutch_detail">Dutch</string>

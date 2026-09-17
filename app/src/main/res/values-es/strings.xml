@@ -57,7 +57,7 @@
     <string name="settings_language_spanish_detail">Mostrar la aplicación en español.</string>
     <string name="settings_language_polish_detail">Mostrar la aplicación en polaco.</string>
     <string name="settings_puzzle_language">Idioma de los puzzles</string>
-    <string name="settings_puzzle_language_dropdown_detail">Idioma usado para los puzzles de Adivina la Palabra y Sopa de letras.</string>
+    <string name="settings_puzzle_language_dropdown_detail">Diccionario usado para los puzzles de palabras.</string>
     <string name="settings_puzzle_language_system_detail">Seguir el idioma de la aplicación.</string>
     <string name="settings_puzzle_language_english_detail">Inglés</string>
     <string name="settings_puzzle_language_dutch_detail">Neerlandés</string>

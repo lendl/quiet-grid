@@ -57,7 +57,7 @@
     <string name="settings_language_spanish_detail">Afficher l\'application en espagnol.</string>
     <string name="settings_language_polish_detail">Afficher l\'application en polonais.</string>
     <string name="settings_puzzle_language">Langue des puzzles</string>
-    <string name="settings_puzzle_language_dropdown_detail">Langue utilisée pour les puzzles Devine le Mot et Mots mêlés.</string>
+    <string name="settings_puzzle_language_dropdown_detail">Dictionnaire utilisé pour les puzzles de mots.</string>
     <string name="settings_puzzle_language_system_detail">Suivre la langue de l\'application.</string>
     <string name="settings_puzzle_language_english_detail">Anglais</string>
     <string name="settings_puzzle_language_dutch_detail">Néerlandais</string>

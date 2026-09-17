@@ -39,9 +39,9 @@ object GameCatalog {
         GameMeta(GameId.WORDGUESS, R.string.wordguess_title, R.string.wordguess_tagline),
         GameMeta(GameId.ANIMALDOKU, R.string.animaldoku_title, R.string.animaldoku_tagline),
         GameMeta(GameId.ARROWESCAPE, R.string.arrowescape_title, R.string.arrowescape_tagline, beta = true),
-        GameMeta(GameId.GAME_2048, R.string.game2048_title, R.string.game2048_tagline, beta = true),
-        GameMeta(GameId.STARBATTLE, R.string.starbattle_title, R.string.starbattle_tagline, beta = true),
-        GameMeta(GameId.GUESSBYNUMBERS, R.string.guessbynumbers_title, R.string.guessbynumbers_tagline, beta = true),
+        GameMeta(GameId.GAME_2048, R.string.game2048_title, R.string.game2048_tagline),
+        GameMeta(GameId.STARBATTLE, R.string.starbattle_title, R.string.starbattle_tagline),
+        GameMeta(GameId.GUESSBYNUMBERS, R.string.guessbynumbers_title, R.string.guessbynumbers_tagline),
         GameMeta(GameId.NBACK, R.string.nback_title, R.string.nback_tagline, beta = true),
     )
 

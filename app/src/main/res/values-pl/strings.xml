@@ -61,7 +61,7 @@
     <string name="settings_language_spanish_detail">Wyświetlaj aplikację w języku hiszpańskim.</string>
     <string name="settings_language_polish_detail">Wyświetlaj aplikację w języku polskim.</string>
     <string name="settings_puzzle_language">Język łamigłówek</string>
-    <string name="settings_puzzle_language_dropdown_detail">Język używany w grach Zgadnij słowo i Wykreślanka.</string>
+    <string name="settings_puzzle_language_dropdown_detail">Słownik używany w grach słownych.</string>
     <string name="settings_puzzle_language_system_detail">Zgodny z językiem aplikacji.</string>
     <string name="settings_puzzle_language_english_detail">Angielski</string>
     <string name="settings_puzzle_language_dutch_detail">Holenderski</string>

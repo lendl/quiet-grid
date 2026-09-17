@@ -35,9 +35,11 @@ import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.GameMeta
 import com.quietgrid.app.core.formatElapsed
 import com.quietgrid.app.data.PlayRecord
 import com.quietgrid.app.data.RepositoriesViewModel
+import com.quietgrid.app.data.isLegacyMigratedTimestamp
 import com.quietgrid.app.ui.components.AccountIconButton
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -52,6 +54,11 @@ fun LogsScreen(onOpenAccount: () -> Unit) {
     var selectedRecord by remember { mutableStateOf<PlayRecord?>(null) }
 
     val filtered = remember(records, mode, selectedGame) { filterLogRecords(records, mode, selectedGame) }
+    val availableGames = remember(records) {
+        records.mapNotNull { record -> GameId.entries.firstOrNull { it.key == record.gameId } }
+            .distinct()
+            .let { ids -> GameCatalog.games.filter { it.id in ids } }
+    }
 
     Column(Modifier.fillMaxWidth().padding(16.dp)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
@@ -63,6 +70,7 @@ fun LogsScreen(onOpenAccount: () -> Unit) {
             onModeChange = { mode = it },
             selectedGame = selectedGame,
             onGameChange = { selectedGame = it },
+            availableGames = availableGames,
         )
 
         if (filtered.isEmpty()) {
@@ -88,6 +96,7 @@ private fun LogsFilterRow(
     onModeChange: (LogsMode) -> Unit,
     selectedGame: GameId?,
     onGameChange: (GameId?) -> Unit,
+    availableGames: List<GameMeta>,
 ) {
     var gameMenuExpanded by remember { mutableStateOf(false) }
 
@@ -107,7 +116,7 @@ private fun LogsFilterRow(
             AssistChip(onClick = { gameMenuExpanded = true }, label = { Text(stringResource(R.string.logs_game_chip_prefix, gameLabel)) })
             DropdownMenu(expanded = gameMenuExpanded, onDismissRequest = { gameMenuExpanded = false }) {
                 DropdownMenuItem(text = { Text(stringResource(R.string.common_all)) }, onClick = { onGameChange(null); gameMenuExpanded = false })
-                GameCatalog.games.forEach { meta ->
+                availableGames.forEach { meta ->
                     DropdownMenuItem(text = { Text(stringResource(meta.titleRes)) }, onClick = { onGameChange(meta.id); gameMenuExpanded = false })
                 }
             }
@@ -183,4 +192,8 @@ private fun DetailRow(label: String, value: String) {
 }
 
 private fun formatLogTimestamp(timestampMillis: Long): String =
-    SimpleDateFormat("MMM d, HH:mm", Locale.getDefault()).format(timestampMillis)
+    if (isLegacyMigratedTimestamp(timestampMillis)) {
+        "-"
+    } else {
+        SimpleDateFormat("MMM d, HH:mm", Locale.getDefault()).format(timestampMillis)
+    }
