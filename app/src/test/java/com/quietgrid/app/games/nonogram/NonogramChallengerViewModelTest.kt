@@ -4,6 +4,7 @@ import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeStatsStore
 import com.quietgrid.engine.nonogram.NonogramPuzzleEntry
 import io.mockk.coEvery
@@ -44,8 +45,8 @@ class NonogramChallengerViewModelTest {
         unmockkObject(NonogramPuzzleBank)
     }
 
-    private fun newViewModel(statsStore: FakeStatsStore = FakeStatsStore()) =
-        NonogramChallengerViewModel(mockk<Context>(relaxed = true), statsStore)
+    private fun newViewModel(statsStore: FakeStatsStore = FakeStatsStore(), historyStore: FakeHistoryStore = FakeHistoryStore()) =
+        NonogramChallengerViewModel(mockk<Context>(relaxed = true), statsStore, historyStore)
 
     @Test
     fun `starting fresh loads a puzzle on the Easy tier with starting lives and starting seconds`() {
@@ -161,5 +162,22 @@ class NonogramChallengerViewModelTest {
         assertEquals(500, results.single().previousBest)
 
         collectJob.cancel()
+    }
+
+    @Test
+    fun `finalizeRun appends a Challenger play record`() {
+        val historyStore = FakeHistoryStore()
+        val viewModel = newViewModel(historyStore = historyStore)
+
+        viewModel.endRun()
+
+        mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(500)
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+
+        val record = historyStore.appended.single()
+        assertEquals(GameId.NONOGRAM.key, record.gameId)
+        assertEquals(true, record.isChallenger)
+        assertEquals(0, record.puzzlesSolved)
+        assertEquals("abandoned", record.lossReason)
     }
 }

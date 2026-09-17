@@ -7,6 +7,7 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.SettingsRepository
+import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeStatsStore
 import com.quietgrid.engine.wordguess.WordGuessPuzzleEntry
 import io.mockk.coEvery
@@ -46,10 +47,10 @@ class WordGuessChallengerViewModelTest {
         unmockkAll()
     }
 
-    private fun newViewModel(statsStore: FakeStatsStore = FakeStatsStore()): WordGuessChallengerViewModel {
+    private fun newViewModel(statsStore: FakeStatsStore = FakeStatsStore(), historyStore: FakeHistoryStore = FakeHistoryStore()): WordGuessChallengerViewModel {
         val settingsRepository = mockk<SettingsRepository>(relaxed = true)
         every { settingsRepository.settings } returns MutableStateFlow(AppSettings())
-        return WordGuessChallengerViewModel(mockk<Context>(relaxed = true), settingsRepository, statsStore)
+        return WordGuessChallengerViewModel(mockk<Context>(relaxed = true), settingsRepository, statsStore, historyStore)
     }
 
     @Test
@@ -71,5 +72,22 @@ class WordGuessChallengerViewModelTest {
         assertEquals(emptyList<ChallengerPuzzleSolve>(), result.puzzleHistory)
 
         collectJob.cancel()
+    }
+
+    @Test
+    fun `finalizeRun appends a Challenger play record`() {
+        val historyStore = FakeHistoryStore()
+        val viewModel = newViewModel(historyStore = historyStore)
+
+        viewModel.endRun()
+
+        mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(500)
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+
+        val record = historyStore.appended.single()
+        assertEquals(GameId.WORDGUESS.key, record.gameId)
+        assertEquals(true, record.isChallenger)
+        assertEquals(0, record.puzzlesSolved)
+        assertEquals("abandoned", record.lossReason)
     }
 }

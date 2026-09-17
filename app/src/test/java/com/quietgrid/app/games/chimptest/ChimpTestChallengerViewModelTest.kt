@@ -3,6 +3,7 @@ package com.quietgrid.app.games.chimptest
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeStatsStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -20,7 +21,7 @@ class ChimpTestChallengerViewModelTest {
     fun `finalizeRun on abandoned includes the previous best score and no fastest solve`() {
         val statsStore = FakeStatsStore()
         statsStore.seedChallenger(GameId.CHIMPTEST, solved = 2, bestScore = 500)
-        val viewModel = ChimpTestChallengerViewModel(statsStore)
+        val viewModel = ChimpTestChallengerViewModel(statsStore, FakeHistoryStore())
         val results = mutableListOf<ChimpTestChallengerResult>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 
@@ -35,5 +36,23 @@ class ChimpTestChallengerViewModelTest {
         assertEquals(emptyList<ChallengerPuzzleSolve>(), result.puzzleHistory)
 
         collectJob.cancel()
+    }
+
+    @Test
+    fun `finalizeRun appends a Challenger play record`() {
+        val statsStore = FakeStatsStore()
+        val historyStore = FakeHistoryStore()
+        val viewModel = ChimpTestChallengerViewModel(statsStore, historyStore)
+
+        viewModel.endRun()
+
+        mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(500)
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+
+        val record = historyStore.appended.single()
+        assertEquals(GameId.CHIMPTEST.key, record.gameId)
+        assertEquals(true, record.isChallenger)
+        assertEquals(0, record.puzzlesSolved)
+        assertEquals("abandoned", record.lossReason)
     }
 }

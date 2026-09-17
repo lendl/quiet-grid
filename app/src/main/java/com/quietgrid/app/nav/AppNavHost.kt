@@ -101,6 +101,7 @@ import com.quietgrid.app.ui.screens.CompletionHighlight
 import com.quietgrid.app.ui.screens.CompletionScreen
 import kotlinx.coroutines.launch
 import com.quietgrid.app.ui.screens.GamesScreen
+import com.quietgrid.app.ui.screens.LogsScreen
 import com.quietgrid.app.ui.screens.LossScreen
 import com.quietgrid.app.ui.screens.MixEditorScreen
 import com.quietgrid.app.ui.screens.MixesScreen
@@ -348,6 +349,7 @@ fun AppNavHost() {
                                 },
                                 onOpenAccount = { scope.launch { accountDrawerState.open() } },
                             )
+                            AppTab.LOGS -> LogsScreen(onOpenAccount = { scope.launch { accountDrawerState.open() } })
                             AppTab.STATS -> StatsScreen(onOpenAccount = { scope.launch { accountDrawerState.open() } })
                         }
                     }

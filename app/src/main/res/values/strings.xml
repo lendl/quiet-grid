@@ -243,6 +243,25 @@
     <string name="stats_clear_data_title">Clear Data</string>
     <string name="stats_clear_data_message">Remove all saved statistics and the current active puzzle? This cannot be undone.</string>
 
+    <!-- logs -->
+    <string name="tab_logs">Logs</string>
+    <string name="logs_mode_solo">Solo</string>
+    <string name="logs_mode_challenger">Challenger</string>
+    <string name="logs_game_chip_prefix">Game: %1$s</string>
+    <string name="logs_empty">No games played yet.</string>
+    <string name="logs_result_won">Won</string>
+    <string name="logs_result_lost">Lost</string>
+    <string name="logs_challenger_summary">Score %1$d · %2$d solved</string>
+    <string name="logs_detail_title">Play details</string>
+    <string name="logs_detail_tier_reached">Tier reached</string>
+    <string name="logs_detail_ended_by">Ended by</string>
+    <string name="logs_reason_time_up">Time ran out</string>
+    <string name="logs_reason_lives_exhausted">Out of lives</string>
+    <string name="logs_reason_bank_exhausted">Ran out of puzzles</string>
+    <string name="logs_reason_abandoned">Ended early</string>
+    <string name="logs_reason_rule_failure">Broke a rule</string>
+    <string name="logs_reason_generic">Lost</string>
+
     <!-- support -->
     <string name="support_title">Support</string>
     <string name="support_subtitle">Small, practical help for questions, feedback, and trust details.</string>

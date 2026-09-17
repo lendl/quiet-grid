@@ -5,6 +5,7 @@ import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeStatsStore
 import com.quietgrid.engine.animaldoku.AnimalDokuPuzzleEntry
 import io.mockk.coEvery
@@ -46,8 +47,8 @@ class AnimalDokuChallengerViewModelTest {
         unmockkObject(AnimalDokuPuzzleBank)
     }
 
-    private fun newViewModel(statsStore: FakeStatsStore = FakeStatsStore()) =
-        AnimalDokuChallengerViewModel(mockk<Context>(relaxed = true), statsStore)
+    private fun newViewModel(statsStore: FakeStatsStore = FakeStatsStore(), historyStore: FakeHistoryStore = FakeHistoryStore()) =
+        AnimalDokuChallengerViewModel(mockk<Context>(relaxed = true), statsStore, historyStore)
 
     private fun solveCurrentPuzzle(viewModel: AnimalDokuChallengerViewModel) {
         for (row in testPuzzle.solution.indices) {
@@ -166,5 +167,23 @@ class AnimalDokuChallengerViewModelTest {
         assertEquals(emptyList<ChallengerPuzzleSolve>(), result.puzzleHistory)
 
         collectJob.cancel()
+    }
+
+    @Test
+    fun `finalizeRun appends a Challenger play record`() {
+        val historyStore = FakeHistoryStore()
+        val viewModel = newViewModel(historyStore = historyStore)
+
+        solveCurrentPuzzle(viewModel)
+        viewModel.endRun()
+
+        mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(500)
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+
+        val record = historyStore.appended.single()
+        assertEquals(GameId.ANIMALDOKU.key, record.gameId)
+        assertEquals(true, record.isChallenger)
+        assertEquals(1, record.puzzlesSolved)
+        assertEquals("abandoned", record.lossReason)
     }
 }

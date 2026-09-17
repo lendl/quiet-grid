@@ -8,7 +8,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.data.PlayHistoryStore
+import com.quietgrid.app.data.PlayRecord
 import com.quietgrid.app.data.StatsStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -18,6 +21,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 private const val CHALLENGER_TICK_INTERVAL_MS = 1000L
 private const val CHALLENGER_FINISH_DELAY_MS = 450L
@@ -26,6 +30,7 @@ private const val CHALLENGER_FINISH_DELAY_MS = 450L
 class StarBattleChallengerViewModel @Inject constructor(
     @ApplicationContext private val appContext: Context,
     private val statsStore: StatsStore,
+    private val historyStore: PlayHistoryStore,
 ) : ViewModel() {
 
     var session by mutableStateOf<StarBattleChallengerSession?>(null)
@@ -124,6 +129,22 @@ class StarBattleChallengerViewModel @Inject constructor(
             val previousBest = statsStore.challengerStatsFor(GameId.STARBATTLE).first()
             val isNewHighScore = current.score > previousBest.bestScore
             statsStore.recordChallengerResult(GameId.STARBATTLE, current.puzzlesSolved, current.score)
+            if (!GameCatalog.get(GameId.STARBATTLE).beta) {
+                historyStore.appendRecord(
+                    PlayRecord(
+                        gameId = GameId.STARBATTLE.key,
+                        difficulty = current.tier.key,
+                        puzzleId = null,
+                        solved = true,
+                        score = current.score,
+                        elapsedSeconds = current.puzzleHistory.sumOf { it.elapsedSeconds }.roundToInt(),
+                        timestampMillis = System.currentTimeMillis(),
+                        lossReason = reason,
+                        isChallenger = true,
+                        puzzlesSolved = current.puzzlesSolved,
+                    ),
+                )
+            }
             delay(CHALLENGER_FINISH_DELAY_MS)
             _result.emit(
                 StarBattleChallengerResult(

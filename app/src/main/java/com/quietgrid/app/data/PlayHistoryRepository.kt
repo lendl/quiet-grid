@@ -29,6 +29,8 @@ data class PlayRecord(
     val elapsedSeconds: Int,
     val timestampMillis: Long,
     val lossReason: String? = null,
+    val isChallenger: Boolean = false,
+    val puzzlesSolved: Int? = null,
 )
 
 interface PlayHistoryStore {

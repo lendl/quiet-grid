@@ -21,7 +21,9 @@ object AppModule {
     @Provides
     @Singleton
     fun provideQuietGridDatabase(@ApplicationContext context: Context): QuietGridDatabase =
-        Room.databaseBuilder(context, QuietGridDatabase::class.java, "quiet_grid.db").build()
+        Room.databaseBuilder(context, QuietGridDatabase::class.java, "quiet_grid.db")
+            .fallbackToDestructiveMigration()
+            .build()
 
     @Provides
     fun providePlayHistoryDao(database: QuietGridDatabase): PlayHistoryDao = database.playHistoryDao()

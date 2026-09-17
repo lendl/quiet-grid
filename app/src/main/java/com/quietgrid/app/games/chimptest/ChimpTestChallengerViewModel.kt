@@ -5,7 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.data.PlayHistoryStore
+import com.quietgrid.app.data.PlayRecord
 import com.quietgrid.app.data.StatsStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -14,6 +17,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 private const val CHALLENGER_TICK_INTERVAL_MS = 1000L
 private const val CHALLENGER_FINISH_DELAY_MS = 450L
@@ -23,6 +27,7 @@ private const val CHALLENGER_WRONG_TAP_REVEAL_MS = 700L
 @HiltViewModel
 class ChimpTestChallengerViewModel @Inject constructor(
     private val statsStore: StatsStore,
+    private val historyStore: PlayHistoryStore,
 ) : ViewModel() {
 
     var session by mutableStateOf<ChimpTestChallengerSession?>(null)
@@ -107,6 +112,22 @@ class ChimpTestChallengerViewModel @Inject constructor(
             val previousBest = statsStore.challengerStatsFor(GameId.CHIMPTEST).first()
             val isNewHighScore = current.score > previousBest.bestScore
             statsStore.recordChallengerResult(GameId.CHIMPTEST, current.puzzlesSolved, current.score)
+            if (!GameCatalog.get(GameId.CHIMPTEST).beta) {
+                historyStore.appendRecord(
+                    PlayRecord(
+                        gameId = GameId.CHIMPTEST.key,
+                        difficulty = current.tier.key,
+                        puzzleId = null,
+                        solved = true,
+                        score = current.score,
+                        elapsedSeconds = current.puzzleHistory.sumOf { it.elapsedSeconds }.roundToInt(),
+                        timestampMillis = System.currentTimeMillis(),
+                        lossReason = reason,
+                        isChallenger = true,
+                        puzzlesSolved = current.puzzlesSolved,
+                    ),
+                )
+            }
             delay(CHALLENGER_FINISH_DELAY_MS)
             _result.emit(
                 ChimpTestChallengerResult(

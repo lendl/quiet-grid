@@ -4,6 +4,7 @@ import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeStatsStore
 import com.quietgrid.engine.takuzu.TakuzuPuzzleEntry
 import com.quietgrid.engine.takuzu.gridToHex
@@ -60,10 +61,14 @@ class TakuzuChallengerViewModelTest {
         unmockkObject(TakuzuPuzzleBank)
     }
 
-    private fun newViewModel(puzzle: TakuzuPuzzleEntry, statsStore: FakeStatsStore = FakeStatsStore()): TakuzuChallengerViewModel {
+    private fun newViewModel(
+        puzzle: TakuzuPuzzleEntry,
+        statsStore: FakeStatsStore = FakeStatsStore(),
+        historyStore: FakeHistoryStore = FakeHistoryStore(),
+    ): TakuzuChallengerViewModel {
         mockkObject(TakuzuPuzzleBank)
         coEvery { TakuzuPuzzleBank.randomPuzzle(any(), any(), any()) } returns puzzle
-        return TakuzuChallengerViewModel(mockk<Context>(relaxed = true), statsStore)
+        return TakuzuChallengerViewModel(mockk<Context>(relaxed = true), statsStore, historyStore)
     }
 
     @Test
@@ -155,5 +160,22 @@ class TakuzuChallengerViewModelTest {
         assertEquals(500, results.single().previousBest)
 
         collectJob.cancel()
+    }
+
+    @Test
+    fun `finalizeRun appends a Challenger play record`() {
+        val historyStore = FakeHistoryStore()
+        val viewModel = newViewModel(solvableTestPuzzle, historyStore = historyStore)
+
+        viewModel.endRun()
+
+        mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(500)
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+
+        val record = historyStore.appended.single()
+        assertEquals(GameId.TAKUZU.key, record.gameId)
+        assertEquals(true, record.isChallenger)
+        assertEquals(0, record.puzzlesSolved)
+        assertEquals("abandoned", record.lossReason)
     }
 }

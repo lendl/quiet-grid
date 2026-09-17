@@ -22,6 +22,8 @@ data class PlayRecordEntity(
     val elapsedSeconds: Int,
     val timestampMillis: Long,
     val lossReason: String?,
+    val isChallenger: Boolean = false,
+    val puzzlesSolved: Int? = null,
 )
 
 fun PlayRecord.toEntity(): PlayRecordEntity = PlayRecordEntity(
@@ -33,6 +35,8 @@ fun PlayRecord.toEntity(): PlayRecordEntity = PlayRecordEntity(
     elapsedSeconds = elapsedSeconds,
     timestampMillis = timestampMillis,
     lossReason = lossReason,
+    isChallenger = isChallenger,
+    puzzlesSolved = puzzlesSolved,
 )
 
 fun PlayRecordEntity.toRecord(): PlayRecord = PlayRecord(
@@ -44,4 +48,6 @@ fun PlayRecordEntity.toRecord(): PlayRecord = PlayRecord(
     elapsedSeconds = elapsedSeconds,
     timestampMillis = timestampMillis,
     lossReason = lossReason,
+    isChallenger = isChallenger,
+    puzzlesSolved = puzzlesSolved,
 )

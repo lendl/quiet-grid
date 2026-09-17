@@ -4,6 +4,7 @@ import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeStatsStore
 import com.quietgrid.engine.starbattle.StarBattlePuzzleEntry
 import io.mockk.coEvery
@@ -46,8 +47,8 @@ class StarBattleChallengerViewModelTest {
         unmockkObject(StarBattlePuzzleBank)
     }
 
-    private fun newViewModel(statsStore: FakeStatsStore = FakeStatsStore()) =
-        StarBattleChallengerViewModel(mockk<Context>(relaxed = true), statsStore)
+    private fun newViewModel(statsStore: FakeStatsStore = FakeStatsStore(), historyStore: FakeHistoryStore = FakeHistoryStore()) =
+        StarBattleChallengerViewModel(mockk<Context>(relaxed = true), statsStore, historyStore)
 
     private fun solveCurrentPuzzle(viewModel: StarBattleChallengerViewModel) {
         for (row in testPuzzle.solution.indices) {
@@ -143,5 +144,18 @@ class StarBattleChallengerViewModelTest {
         assertEquals("time_up", results.single().reason)
 
         collectJob.cancel()
+    }
+
+    @Test
+    fun `finalizeRun does not append a history record while Star Battle is beta`() {
+        val historyStore = FakeHistoryStore()
+        val viewModel = newViewModel(historyStore = historyStore)
+
+        viewModel.endRun()
+
+        mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(500)
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+
+        assertTrue(historyStore.appended.isEmpty())
     }
 }

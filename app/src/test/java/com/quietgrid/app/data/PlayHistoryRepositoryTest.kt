@@ -60,6 +60,29 @@ class PlayHistoryRepositoryTest {
     }
 
     @Test
+    fun `appendRecord preserves isChallenger and puzzlesSolved fields`() = runTest {
+        val repository = PlayHistoryRepository(newDataStore(backgroundScope), FakePlayHistoryDao())
+        val record = PlayRecord(
+            gameId = GameId.TAKUZU.key,
+            difficulty = Difficulty.EXPERT.key,
+            puzzleId = null,
+            solved = true,
+            score = 340,
+            elapsedSeconds = 210,
+            timestampMillis = 5_000L,
+            lossReason = "time_up",
+            isChallenger = true,
+            puzzlesSolved = 7,
+        )
+
+        repository.appendRecord(record)
+
+        val stored = repository.allRecords().first().single()
+        assertEquals(true, stored.isChallenger)
+        assertEquals(7, stored.puzzlesSolved)
+    }
+
+    @Test
     fun `recordsFor filters by game`() = runTest {
         val repository = PlayHistoryRepository(newDataStore(backgroundScope), FakePlayHistoryDao())
         repository.appendRecord(PlayRecord(GameId.SUDOKU.key, Difficulty.EASY.key, "s9-1", true, 10, 30, 1L))
