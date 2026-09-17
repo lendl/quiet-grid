@@ -24,6 +24,8 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -91,6 +93,9 @@ fun MinesweeperGrid(
             val stride = cellSize
             val fontSize = (cellSize.value * 0.42f).sp
 
+            val hiddenBase = MaterialTheme.colorScheme.surfaceVariant
+            val hiddenAlt = lerp(hiddenBase, MaterialTheme.colorScheme.onSurfaceVariant, 0.08f)
+
             Box(Modifier.size(cellSize * board.cols, cellSize * board.rows)) {
             for (row in 0 until board.rows) {
                 for (col in 0 until board.cols) {
@@ -104,7 +109,8 @@ fun MinesweeperGrid(
                         isHintEvidence -> MaterialTheme.colorScheme.tertiary.copy(alpha = 0.16f)
                         revealed && cell.isMine -> MaterialTheme.colorScheme.errorContainer
                         revealed -> MaterialTheme.colorScheme.surface
-                        else -> MaterialTheme.colorScheme.surfaceVariant
+                        (row + col) % 2 == 0 -> hiddenBase
+                        else -> hiddenAlt
                     }
 
                     Box(
@@ -115,7 +121,7 @@ fun MinesweeperGrid(
                                 onClick = { onReveal(row, col) },
                                 onLongClick = { onToggleFlag(row, col) },
                             )
-                            .clip(RoundedCornerShape(3.dp))
+                            .clip(RoundedCornerShape(4.dp))
                             .background(backgroundColor)
                             .tileBevel(raised = !revealed)
                             .then(
@@ -159,45 +165,83 @@ private fun MinesweeperFlagGlyph(poleColor: Color, pennantColor: Color) {
     Canvas(Modifier.fillMaxSize().padding(4.dp)) {
         drawLine(
             color = poleColor,
-            start = Offset(size.width * 0.32f, size.height * 0.12f),
-            end = Offset(size.width * 0.32f, size.height * 0.88f),
-            strokeWidth = size.width * 0.1f,
+            start = Offset(size.width * 0.32f, size.height * 0.1f),
+            end = Offset(size.width * 0.32f, size.height * 0.86f),
+            strokeWidth = size.width * 0.09f,
+            cap = StrokeCap.Round,
+        )
+        drawLine(
+            color = poleColor,
+            start = Offset(size.width * 0.18f, size.height * 0.86f),
+            end = Offset(size.width * 0.5f, size.height * 0.86f),
+            strokeWidth = size.width * 0.09f,
             cap = StrokeCap.Round,
         )
         val pennant = Path().apply {
-            moveTo(size.width * 0.36f, size.height * 0.16f)
-            lineTo(size.width * 0.88f, size.height * 0.32f)
-            lineTo(size.width * 0.36f, size.height * 0.48f)
+            moveTo(size.width * 0.36f, size.height * 0.12f)
+            lineTo(size.width * 0.86f, size.height * 0.28f)
+            lineTo(size.width * 0.36f, size.height * 0.46f)
             close()
         }
         drawPath(pennant, color = pennantColor)
     }
 }
 
+private val MINE_CARDINAL_ANGLES = listOf(0, 90, 180, 270)
+private val MINE_DIAGONAL_ANGLES = listOf(45, 135, 225, 315)
+
 @Composable
 private fun MinesweeperMineGlyph(color: Color) {
     Canvas(Modifier.fillMaxSize().padding(4.dp)) {
-        val center = Offset(size.width / 2f, size.height / 2f)
-        val bodyRadius = size.minDimension / 2f * 0.5f
-        val spikeLength = size.minDimension / 2f * 0.9f
-        for (i in 0 until 8) {
-            val angle = Math.toRadians((i * 45).toDouble())
+        val center = Offset(size.width * 0.46f, size.height * 0.52f)
+        val bodyRadius = size.minDimension / 2f * 0.42f
+        val cardinalLength = size.minDimension / 2f * 0.88f
+        val diagonalLength = size.minDimension / 2f * 0.66f
+        val cardinalWidth = size.minDimension * 0.09f
+        val diagonalWidth = size.minDimension * 0.05f
+
+        fun spikeEnd(angleDegrees: Int, length: Float): Offset {
+            val angle = Math.toRadians(angleDegrees.toDouble())
+            return Offset(center.x + (cos(angle) * length).toFloat(), center.y + (sin(angle) * length).toFloat())
+        }
+
+        for (angle in MINE_DIAGONAL_ANGLES) {
+            drawLine(color = color, start = center, end = spikeEnd(angle, diagonalLength), strokeWidth = diagonalWidth, cap = StrokeCap.Round)
+        }
+        for (angle in MINE_CARDINAL_ANGLES) {
+            val tip = spikeEnd(angle, cardinalLength)
+            drawLine(color = color, start = center, end = tip, strokeWidth = cardinalWidth, cap = StrokeCap.Round)
+            val capAngle = Math.toRadians((angle + 90).toDouble())
+            val capHalf = cardinalWidth * 0.9f
             drawLine(
                 color = color,
-                start = center,
-                end = Offset(
-                    center.x + (cos(angle) * spikeLength).toFloat(),
-                    center.y + (sin(angle) * spikeLength).toFloat(),
-                ),
-                strokeWidth = size.minDimension * 0.07f,
+                start = Offset(tip.x - (cos(capAngle) * capHalf).toFloat(), tip.y - (sin(capAngle) * capHalf).toFloat()),
+                end = Offset(tip.x + (cos(capAngle) * capHalf).toFloat(), tip.y + (sin(capAngle) * capHalf).toFloat()),
+                strokeWidth = cardinalWidth * 0.7f,
                 cap = StrokeCap.Round,
             )
         }
+
         drawCircle(color = color, radius = bodyRadius, center = center)
+
+        val fuse = Path().apply {
+            moveTo(center.x + bodyRadius * 0.35f, center.y - bodyRadius * 0.85f)
+            quadraticTo(
+                center.x + bodyRadius * 1.5f, center.y - bodyRadius * 1.9f,
+                center.x + bodyRadius * 2.15f, center.y - bodyRadius * 1.55f,
+            )
+        }
+        drawPath(fuse, color = color, style = Stroke(width = cardinalWidth * 0.55f, cap = StrokeCap.Round))
         drawCircle(
-            color = Color.White.copy(alpha = 0.55f),
-            radius = bodyRadius * 0.3f,
-            center = Offset(center.x - bodyRadius * 0.3f, center.y - bodyRadius * 0.3f),
+            color = Color(0xFFFFC107),
+            radius = bodyRadius * 0.22f,
+            center = Offset(center.x + bodyRadius * 2.15f, center.y - bodyRadius * 1.55f),
+        )
+
+        drawCircle(
+            color = Color.White.copy(alpha = 0.5f),
+            radius = bodyRadius * 0.32f,
+            center = Offset(center.x - bodyRadius * 0.32f, center.y - bodyRadius * 0.32f),
         )
     }
 }
