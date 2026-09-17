@@ -1053,6 +1053,7 @@
     <string name="nback_tip_3_title">Do not guess on every turn</string>
     <string name="nback_tip_3_body">Only about a quarter of turns are real matches, so tapping every time hurts your score.</string>
     <string name="nback_match_button">Match</string>
+    <string name="nback_n_label">%1$d-back</string>
     <string name="nback_progress_label">%1$d / %2$d</string>
     <string name="nback_loss_abandoned_eyebrow">Puzzle ended</string>
     <string name="nback_loss_abandoned_title">Puzzle unfinished</string>
