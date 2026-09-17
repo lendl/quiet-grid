@@ -62,6 +62,7 @@ import com.quietgrid.app.games.chimptest.chimpDifficultyLabelRes
 import com.quietgrid.app.games.game2048.game2048DifficultyLabelRes
 import com.quietgrid.app.games.guessbynumbers.guessByNumbersDifficultyLabelRes
 import com.quietgrid.app.games.minesweeper.minesweeperDifficultyLabelRes
+import com.quietgrid.app.games.nback.nbackDifficultyLabelRes
 import com.quietgrid.app.games.nonogram.nonogramDifficultyLabelRes
 import com.quietgrid.app.games.starbattle.starBattleDifficultyLabelRes
 import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
@@ -141,6 +142,7 @@ fun CompletionScreen(
         GameId.GAME_2048 -> game2048DifficultyLabelRes(difficulty)
         GameId.STARBATTLE -> starBattleDifficultyLabelRes(difficulty)
         GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyLabelRes(difficulty)
+        GameId.NBACK -> nbackDifficultyLabelRes(difficulty)
         else -> chimpDifficultyLabelRes(difficulty)
     }
     val accentColor = difficultyColor(difficulty)
@@ -150,6 +152,7 @@ fun CompletionScreen(
     val highlight = remember { CompletionExtras.consume() }
     val picture = (highlight as? CompletionHighlight.Picture)?.solution?.takeIf { it.isNotEmpty() }
     val themeIcon = (highlight as? CompletionHighlight.ThemeIcon)?.icon
+    val nbackBreakdown = highlight as? CompletionHighlight.NBackBreakdown
 
     val repositories: RepositoriesViewModel = hiltViewModel()
     val stats by repositories.statsRepository.statsFor(gameId).collectAsState(initial = null)
@@ -405,6 +408,19 @@ fun CompletionScreen(
                                 MetaItem(stringResource(R.string.completion_best_tile), bestTile.toString())
                             }
                         }
+
+                        if (nbackBreakdown != null) {
+                            Row(
+                                Modifier.padding(top = 10.dp),
+                                horizontalArrangement = Arrangement.spacedBy(18.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                MetaItem(stringResource(R.string.nback_completion_hits), nbackBreakdown.hits.toString())
+                                MetaItem(stringResource(R.string.nback_completion_misses), nbackBreakdown.misses.toString())
+                                MetaItem(stringResource(R.string.nback_completion_false_positives), nbackBreakdown.falsePositives.toString())
+                                MetaItem(stringResource(R.string.nback_completion_avg_reaction_time), "${nbackBreakdown.avgReactionTimeMs}ms")
+                            }
+                        }
                     }
 
                     Button(onClick = onPlayAgain, modifier = Modifier.fillMaxWidth().padding(top = 24.dp)) {
@@ -436,7 +452,7 @@ fun CompletionScreen(
 
 
 private val FLAWLESS_ELIGIBLE_GAMES = setOf(GameId.TAKUZU, GameId.SUDOKU)
-private val ACCURACY_TRACKED_GAMES = setOf(GameId.TAKUZU, GameId.SUDOKU, GameId.WORDSEARCH)
+private val ACCURACY_TRACKED_GAMES = setOf(GameId.TAKUZU, GameId.SUDOKU, GameId.WORDSEARCH, GameId.NBACK)
 private val BEST_TILE_TRACKED_GAMES = setOf(GameId.GAME_2048)
 
 @Composable

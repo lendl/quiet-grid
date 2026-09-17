@@ -17,6 +17,7 @@ enum class GameId(val key: String) {
     GAME_2048("2048"),
     STARBATTLE("starbattle"),
     GUESSBYNUMBERS("guessbynumbers"),
+    NBACK("nback"),
 }
 
 data class GameMeta(
@@ -41,6 +42,7 @@ object GameCatalog {
         GameMeta(GameId.GAME_2048, R.string.game2048_title, R.string.game2048_tagline, beta = true),
         GameMeta(GameId.STARBATTLE, R.string.starbattle_title, R.string.starbattle_tagline, beta = true),
         GameMeta(GameId.GUESSBYNUMBERS, R.string.guessbynumbers_title, R.string.guessbynumbers_tagline, beta = true),
+        GameMeta(GameId.NBACK, R.string.nback_title, R.string.nback_tagline, beta = true),
     )
 
     fun get(id: GameId): GameMeta = games.first { it.id == id }

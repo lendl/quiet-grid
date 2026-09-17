@@ -4,6 +4,7 @@ sealed interface CompletionHighlight {
     data class Picture(val solution: List<List<Boolean>>) : CompletionHighlight
     data class RevealWord(val word: String) : CompletionHighlight
     data class ThemeIcon(val icon: String) : CompletionHighlight
+    data class NBackBreakdown(val hits: Int, val misses: Int, val falsePositives: Int, val avgReactionTimeMs: Int) : CompletionHighlight
 }
 
 object CompletionExtras {

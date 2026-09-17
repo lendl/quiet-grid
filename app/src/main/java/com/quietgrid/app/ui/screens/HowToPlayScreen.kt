@@ -66,6 +66,7 @@ fun HowToPlayScreen(gameId: GameId) {
             GameId.GAME_2048 -> Game2048HowToPlay()
             GameId.STARBATTLE -> StarBattleHowToPlay()
             GameId.GUESSBYNUMBERS -> GuessByNumbersHowToPlay()
+            GameId.NBACK -> NBackHowToPlay()
         }
 
         HorizontalDivider(Modifier.padding(vertical = 20.dp))
@@ -320,6 +321,35 @@ private fun Game2048HowToPlay() {
     HorizontalDivider(Modifier.padding(vertical = 20.dp))
     Accordion(stringResource(R.string.how_to_play_scoring_title)) {
         BodyText(stringResource(R.string.game2048_how_to_play_scoring))
+    }
+}
+
+@Composable
+private fun NBackHowToPlay() {
+    SectionHeader(Icons.Outlined.EmojiEvents, stringResource(R.string.how_to_play_goal_title))
+    BodyText(stringResource(R.string.nback_how_to_play_goal))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.PanTool, stringResource(R.string.how_to_play_controls_title))
+    BodyText(stringResource(R.string.nback_how_to_play_controls))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.Description, stringResource(R.string.how_to_play_rules_title))
+    RuleRow(1, R.string.nback_rule_1_title, R.string.nback_rule_1_body)
+    RuleRow(2, R.string.nback_rule_2_title, R.string.nback_rule_2_body)
+    RuleRow(3, R.string.nback_rule_3_title, R.string.nback_rule_3_body)
+    RuleRow(4, R.string.nback_rule_4_title, R.string.nback_rule_4_body)
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    Accordion(stringResource(R.string.how_to_play_tips_title)) {
+        TechniqueItem(R.string.nback_tip_1_title, R.string.nback_tip_1_body)
+        TechniqueItem(R.string.nback_tip_2_title, R.string.nback_tip_2_body)
+        TechniqueItem(R.string.nback_tip_3_title, R.string.nback_tip_3_body)
+    }
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    Accordion(stringResource(R.string.how_to_play_scoring_title)) {
+        BodyText(stringResource(R.string.nback_how_to_play_scoring))
     }
 }
 

@@ -56,6 +56,9 @@ import com.quietgrid.app.games.guessbynumbers.guessByNumbersDifficultyLabelRes
 import com.quietgrid.app.games.minesweeper.MinesweeperQuickStart
 import com.quietgrid.app.games.minesweeper.minesweeperDifficultyDescriptionRes
 import com.quietgrid.app.games.minesweeper.minesweeperDifficultyLabelRes
+import com.quietgrid.app.games.nback.NBackQuickStart
+import com.quietgrid.app.games.nback.nbackDifficultyDescriptionRes
+import com.quietgrid.app.games.nback.nbackDifficultyLabelRes
 import com.quietgrid.app.games.nonogram.NonogramQuickStart
 import com.quietgrid.app.games.nonogram.nonogramDifficultyDescriptionRes
 import com.quietgrid.app.games.nonogram.nonogramDifficultyLabelRes
@@ -94,6 +97,7 @@ private fun quickStartFor(gameId: GameId): QuickStartContent = when (gameId) {
     GameId.GAME_2048 -> Game2048QuickStart
     GameId.STARBATTLE -> StarBattleQuickStart
     GameId.GUESSBYNUMBERS -> GuessByNumbersQuickStart
+    GameId.NBACK -> NBackQuickStart
 }
 
 @Composable
@@ -237,6 +241,7 @@ private fun GamePlayPickerTab(
                     GameId.GAME_2048 -> game2048DifficultyLabelRes(difficulty)
                     GameId.STARBATTLE -> starBattleDifficultyLabelRes(difficulty)
                     GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyLabelRes(difficulty)
+                    GameId.NBACK -> nbackDifficultyLabelRes(difficulty)
                     else -> chimpDifficultyLabelRes(difficulty)
                 }
                 val descriptionRes = when (gameId) {
@@ -253,6 +258,7 @@ private fun GamePlayPickerTab(
                     GameId.GAME_2048 -> game2048DifficultyDescriptionRes(difficulty)
                     GameId.STARBATTLE -> starBattleDifficultyDescriptionRes(difficulty)
                     GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyDescriptionRes(difficulty)
+                    GameId.NBACK -> nbackDifficultyDescriptionRes(difficulty)
                 }
                 if (index > 0) HorizontalDivider()
                 Row(
