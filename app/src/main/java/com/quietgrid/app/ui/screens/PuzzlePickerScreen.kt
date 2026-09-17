@@ -50,6 +50,9 @@ import com.quietgrid.app.games.chimptest.chimpDifficultyLabelRes
 import com.quietgrid.app.games.game2048.Game2048QuickStart
 import com.quietgrid.app.games.game2048.game2048DifficultyDescriptionRes
 import com.quietgrid.app.games.game2048.game2048DifficultyLabelRes
+import com.quietgrid.app.games.guessbynumbers.GuessByNumbersQuickStart
+import com.quietgrid.app.games.guessbynumbers.guessByNumbersDifficultyDescriptionRes
+import com.quietgrid.app.games.guessbynumbers.guessByNumbersDifficultyLabelRes
 import com.quietgrid.app.games.minesweeper.MinesweeperQuickStart
 import com.quietgrid.app.games.minesweeper.minesweeperDifficultyDescriptionRes
 import com.quietgrid.app.games.minesweeper.minesweeperDifficultyLabelRes
@@ -90,6 +93,7 @@ private fun quickStartFor(gameId: GameId): QuickStartContent = when (gameId) {
     GameId.ARROWESCAPE -> ArrowEscapeQuickStart
     GameId.GAME_2048 -> Game2048QuickStart
     GameId.STARBATTLE -> StarBattleQuickStart
+    GameId.GUESSBYNUMBERS -> GuessByNumbersQuickStart
 }
 
 @Composable
@@ -232,6 +236,7 @@ private fun GamePlayPickerTab(
                     GameId.ARROWESCAPE -> arrowEscapeDifficultyLabelRes(difficulty)
                     GameId.GAME_2048 -> game2048DifficultyLabelRes(difficulty)
                     GameId.STARBATTLE -> starBattleDifficultyLabelRes(difficulty)
+                    GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyLabelRes(difficulty)
                     else -> chimpDifficultyLabelRes(difficulty)
                 }
                 val descriptionRes = when (gameId) {
@@ -247,6 +252,7 @@ private fun GamePlayPickerTab(
                     GameId.ARROWESCAPE -> arrowEscapeDifficultyDescriptionRes(difficulty)
                     GameId.GAME_2048 -> game2048DifficultyDescriptionRes(difficulty)
                     GameId.STARBATTLE -> starBattleDifficultyDescriptionRes(difficulty)
+                    GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyDescriptionRes(difficulty)
                 }
                 if (index > 0) HorizontalDivider()
                 Row(

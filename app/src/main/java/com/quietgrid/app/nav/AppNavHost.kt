@@ -67,6 +67,7 @@ import com.quietgrid.app.games.arrowescape.ArrowEscapePlayScreen
 import com.quietgrid.app.games.blockfill.BlockFillPlayScreen
 import com.quietgrid.app.games.chimptest.ChimpTestPlayScreen
 import com.quietgrid.app.games.game2048.Game2048PlayScreen
+import com.quietgrid.app.games.guessbynumbers.GuessByNumbersPlayScreen
 import com.quietgrid.app.games.minesweeper.MinesweeperPlayScreen
 import com.quietgrid.app.games.nonogram.NonogramPlayScreen
 import com.quietgrid.app.games.starbattle.StarBattlePlayScreen
@@ -497,6 +498,21 @@ fun AppNavHost() {
                             },
                         )
                         GameId.WORDGUESS -> WordGuessPlayScreen(
+                            difficulty = difficulty,
+                            resume = resume,
+                            onBack = { navController.popBackStack() },
+                            onFinished = { result ->
+                                if (result.solved) {
+                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
+                                } else {
+                                    if (result.targetWord.isNotEmpty()) {
+                                        CompletionExtras.set(CompletionHighlight.RevealWord(result.targetWord))
+                                    }
+                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
+                                }
+                            },
+                        )
+                        GameId.GUESSBYNUMBERS -> GuessByNumbersPlayScreen(
                             difficulty = difficulty,
                             resume = resume,
                             onBack = { navController.popBackStack() },

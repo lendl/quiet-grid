@@ -39,6 +39,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.games.guessbynumbers.GuessByNumbersLetterTile
+import com.quietgrid.app.games.guessbynumbers.GuessByNumbersNumberChip
 import com.quietgrid.app.games.wordguess.WordGuessTile
 import com.quietgrid.engine.wordguess.LetterState
 
@@ -63,6 +65,7 @@ fun HowToPlayScreen(gameId: GameId) {
             GameId.ARROWESCAPE -> ArrowEscapeHowToPlay()
             GameId.GAME_2048 -> Game2048HowToPlay()
             GameId.STARBATTLE -> StarBattleHowToPlay()
+            GameId.GUESSBYNUMBERS -> GuessByNumbersHowToPlay()
         }
 
         HorizontalDivider(Modifier.padding(vertical = 20.dp))
@@ -518,4 +521,36 @@ private fun StarBattleHowToPlay() {
     RuleRow(2, R.string.starbattle_rule_2_title, R.string.starbattle_rule_2_body)
     RuleRow(3, R.string.starbattle_rule_3_title, R.string.starbattle_rule_3_body)
     RuleRow(4, R.string.starbattle_rule_4_title, R.string.starbattle_rule_4_body)
+}
+
+@Composable
+private fun GuessByNumbersExample() {
+    Row(Modifier.padding(top = 10.dp), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+        "wrong".forEach { letter -> GuessByNumbersLetterTile(letter = letter, isActiveRow = false) }
+        GuessByNumbersNumberChip(stringResource(R.string.guessbynumbers_matches_label), 4)
+        GuessByNumbersNumberChip(stringResource(R.string.guessbynumbers_exact_label), 2)
+    }
+}
+
+@Composable
+private fun GuessByNumbersHowToPlay() {
+    SectionHeader(Icons.Outlined.EmojiEvents, stringResource(R.string.how_to_play_goal_title))
+    BodyText(stringResource(R.string.guessbynumbers_how_to_play_goal))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.PanTool, stringResource(R.string.how_to_play_controls_title))
+    BodyText(stringResource(R.string.guessbynumbers_how_to_play_controls))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.Description, stringResource(R.string.how_to_play_rules_title))
+    RuleRow(1, R.string.guessbynumbers_rule_1_title, R.string.guessbynumbers_rule_1_body)
+    RuleRow(2, R.string.guessbynumbers_rule_2_title, R.string.guessbynumbers_rule_2_body)
+    GuessByNumbersExample()
+    RuleRow(3, R.string.guessbynumbers_rule_3_title, R.string.guessbynumbers_rule_3_body)
+    RuleRow(4, R.string.guessbynumbers_rule_4_title, R.string.guessbynumbers_rule_4_body)
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    Accordion(stringResource(R.string.how_to_play_scoring_title)) {
+        BodyText(stringResource(R.string.guessbynumbers_how_to_play_scoring))
+    }
 }
