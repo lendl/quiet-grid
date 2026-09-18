@@ -4,6 +4,9 @@ build/
 app/build/
 bin/
 
+# Kotlin compiler build-session cache
+.kotlin/
+
 # Local config
 local.properties
 
