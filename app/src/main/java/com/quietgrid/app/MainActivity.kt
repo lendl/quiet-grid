@@ -44,10 +44,16 @@ class MainActivity : ComponentActivity() {
                 ThemeMode.LIGHT -> ResolvedTheme.LIGHT
                 ThemeMode.DARK -> ResolvedTheme.DARK
                 ThemeMode.PENCIL -> ResolvedTheme.PENCIL
+                ThemeMode.SILK -> ResolvedTheme.SILK
+                ThemeMode.NORD -> ResolvedTheme.NORD
+                ThemeMode.COFFEE -> ResolvedTheme.COFFEE
+                ThemeMode.DRACULA -> ResolvedTheme.DRACULA
             }
 
             LaunchedEffect(resolvedTheme) {
-                val useDarkIcons = resolvedTheme != ResolvedTheme.DARK
+                val useDarkIcons = resolvedTheme != ResolvedTheme.DARK &&
+                    resolvedTheme != ResolvedTheme.COFFEE &&
+                    resolvedTheme != ResolvedTheme.DRACULA
                 WindowCompat.getInsetsController(window, window.decorView).apply {
                     isAppearanceLightStatusBars = useDarkIcons
                     isAppearanceLightNavigationBars = useDarkIcons

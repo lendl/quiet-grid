@@ -14,11 +14,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AcUnit
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Coffee
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.Nightlight
 import androidx.compose.material.icons.filled.SettingsSuggest
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -53,6 +57,10 @@ import kotlinx.coroutines.launch
 private val DARK_ICON_COLOR = Color(0xFFA78BFA)
 private val LIGHT_ICON_COLOR = Color(0xFFF2B705)
 private val PENCIL_ICON_COLOR = Color(0xFF1A1A1A)
+private val SILK_ICON_COLOR = Color(0xFFFF7700)
+private val NORD_ICON_COLOR = Color(0xFF5E81AC)
+private val COFFEE_ICON_COLOR = Color(0xFFDB924C)
+private val DRACULA_ICON_COLOR = Color(0xFFFF79C6)
 
 private tailrec fun Context.findActivity(): Activity? = when (this) {
     is Activity -> this
@@ -67,6 +75,10 @@ private val THEME_OPTIONS = listOf(
     ThemeOption(ThemeMode.DARK, R.string.settings_dark, Icons.Filled.DarkMode, DARK_ICON_COLOR),
     ThemeOption(ThemeMode.LIGHT, R.string.settings_light, Icons.Filled.LightMode, LIGHT_ICON_COLOR),
     ThemeOption(ThemeMode.PENCIL, R.string.settings_pencil, Icons.Filled.Create, PENCIL_ICON_COLOR),
+    ThemeOption(ThemeMode.SILK, R.string.settings_silk, Icons.Filled.AutoAwesome, SILK_ICON_COLOR),
+    ThemeOption(ThemeMode.NORD, R.string.settings_nord, Icons.Filled.AcUnit, NORD_ICON_COLOR),
+    ThemeOption(ThemeMode.COFFEE, R.string.settings_coffee, Icons.Filled.Coffee, COFFEE_ICON_COLOR),
+    ThemeOption(ThemeMode.DRACULA, R.string.settings_dracula, Icons.Filled.Nightlight, DRACULA_ICON_COLOR),
 )
 
 private data class LanguageOption(val tag: String, val labelRes: Int, val flag: String)

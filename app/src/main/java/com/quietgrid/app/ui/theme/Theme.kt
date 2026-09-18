@@ -134,7 +134,139 @@ private val PencilColors = lightColorScheme(
     surfaceContainerHighest = Color(0xFFE0E0E0),
 )
 
-enum class ResolvedTheme { LIGHT, DARK, PENCIL }
+private val SilkColors = lightColorScheme(
+    primary = Color(0xFF1C1C29),
+    onPrimary = Color(0xFFE1FF00),
+    primaryContainer = Color(0xFFDDF180),
+    onPrimaryContainer = Color(0xFF262E00),
+    secondary = Color(0xFF1C1C29),
+    onSecondary = Color(0xFFFF7700),
+    secondaryContainer = Color(0xFFFFD2A8),
+    onSecondaryContainer = Color(0xFF621100),
+    tertiary = Color(0xFF1C1C29),
+    onTertiary = Color(0xFF00FFF8),
+    tertiaryContainer = Color(0xFFAEF4EF),
+    onTertiaryContainer = Color(0xFF003431),
+    background = Color(0xFFF7F5F3),
+    onBackground = Color(0xFF4B4743),
+    surface = Color(0xFFFEFDFC),
+    onSurface = Color(0xFF4B4743),
+    surfaceVariant = Color(0xFFF3EDE9),
+    onSurfaceVariant = Color(0xFF67625F),
+    outline = Color(0xFFE2DDD9),
+    outlineVariant = Color(0xFFECE7E2),
+    error = Color(0xFFFF7878),
+    onError = Color(0xFF800001),
+    errorContainer = Color(0xFFFFDFDC),
+    onErrorContainer = Color(0xFF800001),
+    surfaceTint = Color(0xFF1C1C29),
+    surfaceContainerLowest = Color(0xFFFFFFFF),
+    surfaceContainerLow = Color(0xFFF7F5F3),
+    surfaceContainer = Color(0xFFF4EFEB),
+    surfaceContainerHigh = Color(0xFFE9E3DF),
+    surfaceContainerHighest = Color(0xFFD8D3CF),
+)
+
+private val NordColors = lightColorScheme(
+    primary = Color(0xFF5E81AC),
+    onPrimary = Color(0xFF03060B),
+    primaryContainer = Color(0xFFC8E1FF),
+    onPrimaryContainer = Color(0xFF122A46),
+    secondary = Color(0xFF81A1C1),
+    onSecondary = Color(0xFF06090D),
+    secondaryContainer = Color(0xFFCAE1F8),
+    onSecondaryContainer = Color(0xFF183046),
+    tertiary = Color(0xFF88C0D0),
+    onTertiary = Color(0xFF070D10),
+    tertiaryContainer = Color(0xFFBEE6F2),
+    onTertiaryContainer = Color(0xFF002F39),
+    background = Color(0xFFECEFF4),
+    onBackground = Color(0xFF2E3440),
+    surface = Color(0xFFF5F7FA),
+    onSurface = Color(0xFF2E3440),
+    surfaceVariant = Color(0xFFE5E9F0),
+    onSurfaceVariant = Color(0xFF4F5561),
+    outline = Color(0xFFD8DEE9),
+    outlineVariant = Color(0xFFE0E5ED),
+    error = Color(0xFFBF616A),
+    onError = Color(0xFF0D0304),
+    errorContainer = Color(0xFFFFD8DA),
+    onErrorContainer = Color(0xFF55101D),
+    surfaceTint = Color(0xFF5E81AC),
+    surfaceContainerLowest = Color(0xFFFFFFFF),
+    surfaceContainerLow = Color(0xFFECEFF4),
+    surfaceContainer = Color(0xFFE6EAF0),
+    surfaceContainerHigh = Color(0xFFD8DEE9),
+    surfaceContainerHighest = Color(0xFFCBD1DC),
+)
+
+private val CoffeeColors = darkColorScheme(
+    primary = Color(0xFFDB924C),
+    onPrimary = Color(0xFF110802),
+    primaryContainer = Color(0xFF5A2D00),
+    onPrimaryContainer = Color(0xFFFFDDBC),
+    secondary = Color(0xFF273E3F),
+    onSecondary = Color(0xFFD0D5D5),
+    secondaryContainer = Color(0xFF1B3234),
+    onSecondaryContainer = Color(0xFFC9DCDC),
+    tertiary = Color(0xFF11576D),
+    onTertiary = Color(0xFFD0DBE0),
+    tertiaryContainer = Color(0xFF003949),
+    onTertiaryContainer = Color(0xFFC3DCE6),
+    background = Color(0xFF261B25),
+    onBackground = Color(0xFFC59F61),
+    surface = Color(0xFF1E151D),
+    onSurface = Color(0xFFC59F61),
+    surfaceVariant = Color(0xFF2A2129),
+    onSurfaceVariant = Color(0xFF9A825D),
+    outline = Color(0xFF4E444D),
+    outlineVariant = Color(0xFF342A33),
+    error = Color(0xFFFC9581),
+    onError = Color(0xFF150806),
+    errorContainer = Color(0xFF642116),
+    onErrorContainer = Color(0xFFFFD7CC),
+    surfaceTint = Color(0xFFDB924C),
+    surfaceContainerLowest = Color(0xFF0B050B),
+    surfaceContainerLow = Color(0xFF170E16),
+    surfaceContainer = Color(0xFF1E141D),
+    surfaceContainerHigh = Color(0xFF281E27),
+    surfaceContainerHighest = Color(0xFF322731),
+)
+
+private val DraculaColors = darkColorScheme(
+    primary = Color(0xFFFF79C6),
+    onPrimary = Color(0xFF16050E),
+    primaryContainer = Color(0xFF631747),
+    onPrimaryContainer = Color(0xFFFFCDF0),
+    secondary = Color(0xFFBD93F9),
+    onSecondary = Color(0xFF0D0815),
+    secondaryContainer = Color(0xFF422862),
+    onSecondaryContainer = Color(0xFFE6D4FF),
+    tertiary = Color(0xFFFFB86C),
+    onTertiary = Color(0xFF160D04),
+    tertiaryContainer = Color(0xFF5E3806),
+    onTertiaryContainer = Color(0xFFFFDEBB),
+    background = Color(0xFF282A36),
+    onBackground = Color(0xFFF8F8F3),
+    surface = Color(0xFF232530),
+    onSurface = Color(0xFFF8F8F3),
+    surfaceVariant = Color(0xFF333540),
+    onSurfaceVariant = Color(0xFFAAADBB),
+    outline = Color(0xFF525461),
+    outlineVariant = Color(0xFF333540),
+    error = Color(0xFFFF5555),
+    onError = Color(0xFF160202),
+    errorContainer = Color(0xFF6F0D14),
+    onErrorContainer = Color(0xFFFFCEC7),
+    surfaceTint = Color(0xFFFF79C6),
+    surfaceContainerLowest = Color(0xFF14151F),
+    surfaceContainerLow = Color(0xFF20222D),
+    surfaceContainer = Color(0xFF282A36),
+    surfaceContainerHigh = Color(0xFF30323E),
+    surfaceContainerHighest = Color(0xFF3A3C49),
+)
+
+enum class ResolvedTheme { LIGHT, DARK, PENCIL, SILK, NORD, COFFEE, DRACULA }
 
 @Composable
 fun QuietGridTheme(
@@ -145,6 +277,10 @@ fun QuietGridTheme(
         ResolvedTheme.DARK -> DarkColors
         ResolvedTheme.LIGHT -> LightColors
         ResolvedTheme.PENCIL -> PencilColors
+        ResolvedTheme.SILK -> SilkColors
+        ResolvedTheme.NORD -> NordColors
+        ResolvedTheme.COFFEE -> CoffeeColors
+        ResolvedTheme.DRACULA -> DraculaColors
     }
     CompositionLocalProvider(
         LocalIsPencilTheme provides (resolvedTheme == ResolvedTheme.PENCIL),

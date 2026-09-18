@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
-enum class ThemeMode { SYSTEM, LIGHT, DARK, PENCIL }
+enum class ThemeMode { SYSTEM, LIGHT, DARK, PENCIL, SILK, NORD, COFFEE, DRACULA }
 
 data class AppSettings(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,

@@ -61,6 +61,14 @@
     <string name="settings_light_detail">Uses a brighter palette across the app.</string>
     <string name="settings_pencil">Pencil</string>
     <string name="settings_pencil_detail">Uses a paper-like grayscale palette across the app.</string>
+    <string name="settings_silk">Silk</string>
+    <string name="settings_silk_detail">Uses a warm cream palette with bold neon accents.</string>
+    <string name="settings_nord">Nord</string>
+    <string name="settings_nord_detail">Uses a cool frosted-blue palette across the app.</string>
+    <string name="settings_coffee">Coffee</string>
+    <string name="settings_coffee_detail">Uses a warm dark-roast palette across the app.</string>
+    <string name="settings_dracula">Dracula</string>
+    <string name="settings_dracula_detail">Uses a dark palette with pink and purple accents.</string>
     <string name="settings_language_system_detail">Follow your Android language setting.</string>
     <string name="settings_language_english_detail">Show the app in English.</string>
     <string name="settings_language_dutch_detail">Show the app in Dutch.</string>
