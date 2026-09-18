@@ -58,27 +58,27 @@ fun GamesScreen(
     val betaGames = sortedBy(GameCatalog.games.filter { it.beta })
 
     Column(Modifier.fillMaxWidth().padding(16.dp)) {
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             AccountIconButton(onOpenAccount)
-        }
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(top = 4.dp)
-                .horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            FilterChip(
-                selected = selectedCategory == null,
-                onClick = { selectedCategory = null },
-                label = { Text(stringResource(R.string.common_all)) },
-            )
-            GameCategory.entries.forEach { category ->
+            Row(
+                Modifier
+                    .weight(1f)
+                    .padding(start = 8.dp)
+                    .horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
                 FilterChip(
-                    selected = selectedCategory == category,
-                    onClick = { selectedCategory = category },
-                    label = { Text(stringResource(category.labelRes)) },
+                    selected = selectedCategory == null,
+                    onClick = { selectedCategory = null },
+                    label = { Text(stringResource(R.string.common_all)) },
                 )
+                GameCategory.entries.forEach { category ->
+                    FilterChip(
+                        selected = selectedCategory == category,
+                        onClick = { selectedCategory = category },
+                        label = { Text(stringResource(category.labelRes)) },
+                    )
+                }
             }
         }
         LazyColumn(contentPadding = PaddingValues(top = 8.dp, bottom = 16.dp)) {
