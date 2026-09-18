@@ -55,6 +55,7 @@ Thumbs.db
 
 # Local planning docs
 docs/superpowers/
+docs/roadmap.md
 
 # Squad: ignore runtime state (logs, inbox, sessions)
 .squad/orchestration-log/
