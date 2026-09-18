@@ -78,6 +78,7 @@ private val LANGUAGE_OPTIONS = listOf(
     LanguageOption("de", R.string.settings_language_german_detail, localeFlagEmoji("de")),
     LanguageOption("fr", R.string.settings_language_french_detail, localeFlagEmoji("fr")),
     LanguageOption("es", R.string.settings_language_spanish_detail, localeFlagEmoji("es")),
+    LanguageOption("pt", R.string.settings_language_portuguese_detail, localeFlagEmoji("pt")),
 )
 
 private val PUZZLE_LANGUAGE_OPTIONS = listOf(
@@ -87,6 +88,7 @@ private val PUZZLE_LANGUAGE_OPTIONS = listOf(
     LanguageOption("de", R.string.settings_puzzle_language_german_detail, localeFlagEmoji("de")),
     LanguageOption("fr", R.string.settings_puzzle_language_french_detail, localeFlagEmoji("fr")),
     LanguageOption("es", R.string.settings_puzzle_language_spanish_detail, localeFlagEmoji("es")),
+    LanguageOption("pt", R.string.settings_puzzle_language_portuguese_detail, localeFlagEmoji("pt")),
 )
 
 @Composable

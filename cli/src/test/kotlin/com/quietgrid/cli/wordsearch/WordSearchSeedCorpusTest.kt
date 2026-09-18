@@ -7,7 +7,7 @@ class WordSearchSeedCorpusTest {
     @Test
     fun `loadWordSearchSeedCorpus has at least 15 themes with at least 50 words each for every language`() {
         val corpus = loadWordSearchSeedCorpus()
-        for (language in listOf("en", "nl", "de", "fr", "es")) {
+        for (language in listOf("en", "nl", "de", "fr", "es", "pt")) {
             val themes = corpus[language]
             assertTrue("missing language $language", themes != null)
             assertTrue("$language has too few themes", themes!!.size >= 15)

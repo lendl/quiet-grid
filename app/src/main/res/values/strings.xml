@@ -64,6 +64,7 @@
     <string name="settings_language_french_detail">Show the app in French.</string>
     <string name="settings_language_spanish_detail">Show the app in Spanish.</string>
     <string name="settings_language_polish_detail">Show the app in Polish.</string>
+    <string name="settings_language_portuguese_detail">Show the app in Portuguese.</string>
     <string name="settings_puzzle_language">Puzzle language</string>
     <string name="settings_puzzle_language_dropdown_detail">Dictionary used for word-based puzzles.</string>
     <string name="settings_puzzle_language_system_detail">Follow the app language.</string>
@@ -73,6 +74,7 @@
     <string name="settings_puzzle_language_french_detail">French</string>
     <string name="settings_puzzle_language_spanish_detail">Spanish</string>
     <string name="settings_puzzle_language_polish_detail">Polish</string>
+    <string name="settings_puzzle_language_portuguese_detail">Portuguese</string>
     <string name="settings_show_timer_in_play_label">Show timer during play</string>
     <string name="settings_show_timer_in_play_detail">Shows the elapsed timer while a puzzle is in progress.</string>
     <string name="settings_beta_games_label">Enable beta games</string>
@@ -316,7 +318,7 @@
     <string name="support_info_licenses_heading_2">Third-party packages</string>
     <string name="support_info_licenses_body_2">Quiet Grid also uses open-source packages that keep their own licenses. You can review the full source code and package list in the project repository.</string>
     <string name="support_info_licenses_heading_3">Word Guess word lists</string>
-    <string name="support_info_licenses_body_3">Word Guess\'s German word list is built from word-frequency data from the FrequencyWords project (hermitdave/FrequencyWords on GitHub), licensed CC BY-SA 3.0. English, Spanish, French, and Dutch word lists are built from Hunspell spelling dictionaries: LibreOffice\'s en_US dictionary (LGPL/BSD), RLA-ES\'s es_ES dictionary (LGPL), Dicollecte\'s French dictionary (MPL 2.0), and OpenTaal\'s Dutch dictionary (BSD/CC BY 3.0).</string>
+    <string name="support_info_licenses_body_3">Word Guess\'s German word list is built from word-frequency data from the FrequencyWords project (hermitdave/FrequencyWords on GitHub), licensed CC BY-SA 3.0. English, Spanish, French, Dutch, and Portuguese word lists are built from Hunspell spelling dictionaries: LibreOffice\'s en_US dictionary (LGPL/BSD), RLA-ES\'s es_ES dictionary (LGPL), Dicollecte\'s French dictionary (MPL 2.0), OpenTaal\'s Dutch dictionary (BSD/CC BY 3.0), and Dep. Informatica, Universidade do Minho\'s pt_PT dictionary (GPL/LGPL/MPL).</string>
     <string name="contributors_title">Contributors</string>
     <string name="contributors_intro">Quiet Grid is better because of the people who contribute to it. Thank you.</string>
     <string name="contributors_cta_title">Want to see your name here?</string>

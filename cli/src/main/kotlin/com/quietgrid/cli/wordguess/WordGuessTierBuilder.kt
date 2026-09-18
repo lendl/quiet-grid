@@ -26,6 +26,7 @@ val WORDGUESS_RARE_LETTERS: Map<String, Set<Char>> = mapOf(
     "fr" to setOf('j', 'k', 'w', 'x', 'y', 'z'),
     "nl" to setOf('c', 'q', 'x', 'y'),
     "pl" to setOf('f', 'h', 'q', 'v', 'x'),
+    "pt" to setOf('k', 'w', 'y'),
 )
 
 private const val WORDGUESS_SHUFFLE_SEED = 20260912L
