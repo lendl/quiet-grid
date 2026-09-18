@@ -1,0 +1,8 @@
+Version 1.3.0
+
+- Neue Spiele: 2048, Star Battle, Zahlenraten und N-Back
+- Challenger-Modus für Sudoku, Takuzu, Nonogramm und Star Battle
+- Neuer Tab "Mixe": Stelle deine eigene Rotation aus Spielen und Schwierigkeitsgraden zusammen und spiele sie mit einem Tap durch
+- Neuer Tab "Verlauf" zeigt deinen Spielverlauf
+- Überarbeitetes Menü
+- Fehlerbehebungen und Stabilitätsverbesserungen

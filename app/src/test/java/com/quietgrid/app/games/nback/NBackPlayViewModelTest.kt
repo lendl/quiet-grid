@@ -21,6 +21,8 @@ class NBackPlayViewModelTest {
     @Test
     fun `starting fresh creates a 32-trial session and begins the stimulus loop`() {
         val viewModel = NBackPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
+        mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(NBACK_START_DELAY_MS)
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
 
         assertNotNull(viewModel.session)
         assertEquals(NBACK_TOTAL_TRIALS, viewModel.session?.trials?.size)
@@ -30,6 +32,8 @@ class NBackPlayViewModelTest {
     @Test
     fun `tapping match marks the current trial responded with a reaction time`() {
         val viewModel = NBackPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
+        mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(NBACK_START_DELAY_MS)
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
         val currentIndex = viewModel.session!!.currentIndex
 
         viewModel.onMatchTap()
@@ -42,6 +46,8 @@ class NBackPlayViewModelTest {
     @Test
     fun `tapping match twice on the same trial does not overwrite the first response`() {
         val viewModel = NBackPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
+        mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(NBACK_START_DELAY_MS)
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
         val currentIndex = viewModel.session!!.currentIndex
 
         viewModel.onMatchTap()
@@ -55,7 +61,7 @@ class NBackPlayViewModelTest {
     fun `the stimulus loop advances to later trials as time passes`() {
         val viewModel = NBackPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
 
-        mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(2500 * 3 + 100)
+        mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(NBACK_START_DELAY_MS + 2500 * 3 + 100)
         mainDispatcherRule.dispatcher.scheduler.runCurrent()
 
         assertTrue(viewModel.session!!.currentIndex >= 3)
@@ -67,7 +73,7 @@ class NBackPlayViewModelTest {
         val results = mutableListOf<NBackResult>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 
-        mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(2500L * (NBACK_TOTAL_TRIALS + 1))
+        mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(NBACK_START_DELAY_MS + 2500L * (NBACK_TOTAL_TRIALS + 1))
         mainDispatcherRule.dispatcher.scheduler.runCurrent()
 
         assertTrue(results.single().solved)

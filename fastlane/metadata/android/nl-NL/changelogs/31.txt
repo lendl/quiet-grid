@@ -1,0 +1,8 @@
+Versie 1.3.0
+
+- Nieuwe games: 2048, Star Battle, Cijfers Raden en N-Back
+- Challenger-modus toegevoegd aan Sudoku, Takuzu, Nonogram en Star Battle
+- Nieuw tabblad Mixen: stel je eigen rotatie van games en moeilijkheidsgraden samen en speel deze met één tik
+- Nieuw tabblad Logboek toont je speelgeschiedenis
+- Vernieuwd accountmenu
+- Bugfixes en stabiliteitsverbeteringen

@@ -1,0 +1,8 @@
+Version 1.3.0
+
+- New games: 2048, Star Battle, Guess by Numbers, and N-Back
+- Challenger mode added to Sudoku, Takuzu, Nonogram, and Star Battle
+- New Mixes tab: build a custom rotation of games and difficulties, then play through it with one tap
+- New Logs tab shows your play history
+- Redesigned account menu
+- Bug fixes and stability improvements

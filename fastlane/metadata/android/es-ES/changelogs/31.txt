@@ -1,0 +1,8 @@
+Versión 1.3.0
+
+- Nuevos juegos: 2048, Batalla de Estrellas, Adivina por Números y N-Back
+- Modo Challenger añadido a Sudoku, Takuzu, Nonograma y Batalla de Estrellas
+- Nueva pestaña Mixes: crea tu propia rotación de juegos y dificultades y juégala con un toque
+- Nueva pestaña Registros muestra tu historial de partidas
+- Menú de cuenta rediseñado
+- Corrección de errores y mejoras de estabilidad

@@ -4,6 +4,7 @@
 
     <!-- tabs -->
     <string name="tab_games">Gry</string>
+    <string name="tab_mixes">Miksy</string>
     <string name="tab_stats">Statystyki</string>
 
     <!-- common -->
@@ -34,6 +35,7 @@
     <string name="mix_play_button">Graj</string>
     <string name="mix_edit_content_description">Edytuj miks</string>
     <string name="mix_empty_state">Nie masz jeszcze żadnych miksów. Stwórz jeden z ulubionych gier i poziomów trudności.</string>
+    <string name="mix_new_content_description">Nowy miks</string>
     <string name="game_takuzu_name">Takuzu</string>
     <string name="game_nonogram_name">Nonogram</string>
     <string name="game_minesweeper_name">Saper</string>
@@ -42,6 +44,8 @@
 
     <!-- settings -->
     <string name="settings_title">Ustawienia</string>
+    <string name="account_menu_content_description">Menu</string>
+    <string name="account_preferences_section">Preferencje</string>
     <string name="settings_subtitle">Wybierz motyw, język oraz sposób wyświetlania stoperu.</string>
     <string name="settings_theme">Motyw</string>
     <string name="settings_language">Język</string>
@@ -132,6 +136,12 @@
     <string name="minesweeper_quickstart_bullet_3">Oznaczaj flagami pola, w których podejrzewasz miny.</string>
     <string name="minesweeper_quickstart_hook">Oczyszczaj planszę szybko, aby utrzymać wysoki wynik.</string>
 
+    <string name="game2048_quickstart_goal">Przesuwaj palcem, aby łączyć pasujące kafelki, aż osiągniesz 2048.</string>
+    <string name="game2048_quickstart_bullet_1">Przesuń palcem w górę, w dół, w lewo lub w prawo, aby przesunąć wszystkie kafelki.</string>
+    <string name="game2048_quickstart_bullet_2">Dwa kafelki z tą samą liczbą łączą się w jeden, gdy się zetkną.</string>
+    <string name="game2048_quickstart_bullet_3">Nowy kafelek pojawia się po każdym ruchu, który przesuwa planszę.</string>
+    <string name="game2048_quickstart_hook">Gdy zabraknie ruchów, gra się kończy, więc planuj z wyprzedzeniem.</string>
+
     <string name="sudoku_quickstart_goal">Wypełnij wszystkie pola cyframi od 1 do 9.</string>
     <string name="sudoku_quickstart_bullet_1">Każdy wiersz, kolumna i kwadrat musi zawierać każdą cyfrę tylko raz.</string>
     <string name="sudoku_quickstart_bullet_2">Cyfry nie mogą się powtarzać w obrębie wiersza, kolumny ani kwadratu.</string>
@@ -162,6 +172,20 @@
     <string name="arrowescape_quickstart_bullet_3">Stuknięcie zablokowanej strzałki kosztuje życie — utrata wszystkich 3 kończy grę.</string>
     <string name="arrowescape_quickstart_hook">Szybsze oczyszczenie planszy zapewnia wyższy wynik.</string>
 
+    <string name="starbattle_quickstart_goal">Umieść dokładnie odpowiednią liczbę gwiazd w każdym wierszu, kolumnie i obszarze.</string>
+    <string name="starbattle_quickstart_bullet_1">Stuknij pole, aby je oznaczyć, stuknij ponownie, aby wyczyścić oznaczenie.</string>
+    <string name="starbattle_quickstart_bullet_2">Przeciągnij palcem po polach, aby oznaczyć lub wyczyścić kilka naraz.</string>
+    <string name="starbattle_quickstart_bullet_3">Stuknij dwukrotnie, aby umieścić gwiazdę — błędne typowania kosztują życie.</string>
+    <string name="starbattle_quickstart_hook">Żadne dwie gwiazdy nie mogą się stykać, nawet po przekątnej.</string>
+    <string name="starbattle_stars_per_group_content_description">Gwiazdy w wierszu, kolumnie i obszarze</string>
+
+    <string name="guessbynumbers_quickstart_goal">Dziesięć prób na odgadnięcie ukrytego słowa — żadnych kolorowych wskazówek, tylko dwie liczby.</string>
+    <string name="guessbynumbers_quickstart_bullet_1">Każde wpisane słowo musi istnieć w słowniku.</string>
+    <string name="guessbynumbers_quickstart_bullet_2">Trafienia liczą wspólne litery. Dokładne liczą litery na właściwym miejscu.</string>
+    <string name="guessbynumbers_quickstart_example_1_word">TARAN</string>
+    <string name="guessbynumbers_quickstart_example_1_hint">Cel to RATAN: 5 wspólnych liter, 3 na właściwym miejscu</string>
+    <string name="guessbynumbers_quickstart_hook">Mniej prób i szybsze rozwiązanie oznaczają więcej punktów.</string>
+
     <!-- tutorial host / puzzle play -->
     <string name="tutorial_host_unavailable_title">Samouczek niedostępny</string>
     <string name="tutorial_host_unavailable_body">Ten typ łamigłówki nie zawiera jeszcze samouczka.</string>
@@ -183,6 +207,7 @@
     <string name="completion_score">Wynik</string>
     <string name="completion_elapsed_time">Czas gry</string>
     <string name="completion_accuracy">Dokładność</string>
+    <string name="completion_best_tile">Najlepszy kafelek</string>
     <string name="completion_try_another_game">Wypróbuj inną grę</string>
     <string name="completion_other_difficulty">Inny poziom trudności</string>
     <string name="completion_play_again">Zagraj ponownie</string>
@@ -218,6 +243,25 @@
     <string name="stats_clear_data_title">Wyczyść dane</string>
     <string name="stats_clear_data_message">Usunąć wszystkie zapisane statystyki oraz aktualną aktywną łamigłówkę? Tego kroku nie można cofnąć.</string>
 
+    <!-- logs -->
+    <string name="tab_logs">Logi</string>
+    <string name="logs_mode_solo">Solo</string>
+    <string name="logs_mode_challenger">Pretendent</string>
+    <string name="logs_game_chip_prefix">Gra: %1$s</string>
+    <string name="logs_empty">Nie rozegrano jeszcze żadnej gry.</string>
+    <string name="logs_result_won">Wygrana</string>
+    <string name="logs_result_lost">Przegrana</string>
+    <string name="logs_challenger_summary">Wynik %1$d · %2$d rozwiązanych</string>
+    <string name="logs_detail_title">Szczegóły rozgrywki</string>
+    <string name="logs_detail_tier_reached">Osiągnięty poziom</string>
+    <string name="logs_detail_ended_by">Powód zakończenia</string>
+    <string name="logs_reason_time_up">Czas się skończył</string>
+    <string name="logs_reason_lives_exhausted">Koniec żyć</string>
+    <string name="logs_reason_bank_exhausted">Zabrakło łamigłówek</string>
+    <string name="logs_reason_abandoned">Zakończono wcześniej</string>
+    <string name="logs_reason_rule_failure">Złamano zasadę</string>
+    <string name="logs_reason_generic">Przegrana</string>
+
     <!-- support -->
     <string name="support_title">Wsparcie</string>
     <string name="support_subtitle">Niewielka, praktyczna pomoc w kwestii pytań, opinii i szczegółów związanych z zaufaniem.</string>
@@ -233,6 +277,9 @@
     <string name="support_source_code">GitHub / kod źródłowy</string>
     <string name="support_opens_github">Otwiera platformę GitHub</string>
     <string name="support_licenses">Licencje open-source</string>
+    <string name="trust_clear_data">Wyczyść dane</string>
+    <string name="trust_clear_data_title">Wyczyść dane</string>
+    <string name="trust_clear_data_message">Usunąć wszystkie zapisane statystyki, logi oraz aktualną aktywną łamigłówkę? Tego kroku nie można cofnąć.</string>
     <string name="support_about_quiet_grid">O Quiet Grid</string>
     <string name="support_contributors">Współtwórcy</string>
     <string name="support_show_your_support">Okaż swoje wsparcie</string>
@@ -268,6 +315,12 @@
     <string name="contributors_intro">Quiet Grid jest lepsze dzięki osobom, które wnoszą w nie swój wkład. Dziękujemy.</string>
     <string name="contributors_cta_title">Chcesz zobaczyć tu swoje imię?</string>
     <string name="contributors_cta_body">Quiet Grid to oprogramowanie o otwartym kodzie źródłowym. Poprawki błędów, tłumaczenia i nowe pomysły na łamigłówki są mile widziane — otwórz pull request na GitHub.</string>
+    <string name="help_wanted_heading">Potrzebna pomoc</string>
+    <string name="help_wanted_disclaimer">Aplikacja działa offline — ta lista może być nieaktualna. Sprawdź aktualny stan na GitHubie.</string>
+    <string name="help_wanted_icons_title">Ikona dla każdej gry</string>
+    <string name="help_wanted_icons_blurb">Gry są obecnie wymienione tylko z nazwy — pomóż zaprojektować małą ikonę dla każdej gry.</string>
+    <string name="help_wanted_store_graphics_title">Zrzuty ekranu i grafiki do sklepu</string>
+    <string name="help_wanted_store_graphics_blurb">Pomóż stworzyć grafiki do wpisów w Play Store / F-Droid.</string>
 
     <!-- Chimp Test -->
     <string name="chimp_title">Test szympansa</string>
@@ -482,6 +535,42 @@
     <string name="minesweeper_loss_rule_failure_title">Łamigłówka przegrana</string>
     <string name="minesweeper_loss_rule_failure_body">Ta łamigłówka zakończyła się trafieniem na minę. Nowa plansza jest już gotowa, kiedy tylko zechcesz spróbować ponownie.</string>
 
+    <!-- 2048 -->
+    <string name="game2048_title">2048</string>
+    <string name="game2048_tagline">Łącz kafelki, aby osiągnąć 2048.</string>
+    <string name="game2048_difficulty_easy">Łatwy</string>
+    <string name="game2048_difficulty_medium">Średni</string>
+    <string name="game2048_difficulty_hard">Trudny</string>
+    <string name="game2048_difficulty_expert">Ekspert</string>
+    <string name="game2048_difficulty_desc_easy">Większa plansza 5x5 daje więcej miejsca na manewry.</string>
+    <string name="game2048_difficulty_desc_medium">Klasyczna plansza 4x4, oryginalny układ 2048.</string>
+    <string name="game2048_difficulty_desc_hard">Ta sama plansza 4x4, ale z większą liczbą utrudniających kafelków z liczbą 4.</string>
+    <string name="game2048_difficulty_desc_expert">Malutka plansza 3x3 — celem jest tu 1024, najwyższy kafelek, jaki ten rozmiar pomieści.</string>
+    <string name="game2048_score_label">Wynik</string>
+    <string name="game2048_how_to_play_goal">Łącz pasujące kafelki, aż jeden z nich osiągnie 2048.</string>
+    <string name="game2048_how_to_play_controls">Przesuwaj palcem w górę, w dół, w lewo lub w prawo, aby przesunąć wszystkie kafelki w tym kierunku.</string>
+    <string name="game2048_rule_1_title">Przesuwaj wszystkie kafelki</string>
+    <string name="game2048_rule_1_body">Przesunięcie palcem przesuwa każdy kafelek najdalej, jak to możliwe w danym kierunku.</string>
+    <string name="game2048_rule_2_title">Łączenie przy zetknięciu</string>
+    <string name="game2048_rule_2_body">Dwa kafelki z tą samą liczbą łączą się w jeden kafelek o podwójnej wartości.</string>
+    <string name="game2048_rule_3_title">Jedno połączenie na ruch</string>
+    <string name="game2048_rule_3_body">Kafelek, który właśnie się połączył, nie może połączyć się ponownie aż do kolejnego ruchu.</string>
+    <string name="game2048_rule_4_title">Nowy kafelek po każdym ruchu</string>
+    <string name="game2048_rule_4_body">Po każdym ruchu, który faktycznie przesuwa planszę, pojawia się nowy kafelek z liczbą 2 lub 4.</string>
+    <string name="game2048_how_to_play_scoring">Każde połączenie dodaje wartość nowego kafelka do Twojego wyniku.</string>
+    <string name="game2048_tip_1_title">Trzymaj swój największy kafelek w rogu</string>
+    <string name="game2048_tip_1_body">Budowanie wokół jednego rogu zapobiega uwięzieniu Twoich największych kafelków.</string>
+    <string name="game2048_tip_2_title">Wybierz jeden kierunek ruchów i trzymaj się go</string>
+    <string name="game2048_tip_2_body">Preferowanie jednego lub dwóch kierunków dłużej utrzymuje porządek na planszy.</string>
+    <string name="game2048_tip_3_title">Nie goń za każdym połączeniem</string>
+    <string name="game2048_tip_3_body">Czasami bezpieczniejszym ruchem jest ten, który jeszcze niczego nie łączy.</string>
+    <string name="game2048_loss_abandoned_eyebrow">Łamigłówka zakończona</string>
+    <string name="game2048_loss_abandoned_title">Łamigłówka nieukończona</string>
+    <string name="game2048_loss_abandoned_body">Ta łamigłówka została zakończona przed jej rozwiązaniem.</string>
+    <string name="game2048_loss_rule_failure_eyebrow">Przegrana</string>
+    <string name="game2048_loss_rule_failure_title">Brak możliwych ruchów</string>
+    <string name="game2048_loss_rule_failure_body">Nie pozostało żadne puste pole ani pasujące kafelki do połączenia.</string>
+
     <!-- Sudoku -->
     <string name="sudoku_title">Sudoku</string>
     <string name="sudoku_tagline">Rozmieść cyfry od 1 do 9 tak, aby każdy wiersz, kolumna i obszar 3×3 pozostały prawidłowe.</string>
@@ -662,7 +751,39 @@
     <string name="wordguess_loss_rule_failure_eyebrow">Przegrana</string>
     <string name="wordguess_loss_rule_failure_title">Koniec prób</string>
     <string name="wordguess_loss_rule_failure_body">Wykorzystano wszystkie sześć prób bez znalezienia słowa.</string>
-    
+
+    <!-- Guess by Numbers -->
+    <string name="guessbynumbers_title">Zgadnij po liczbach</string>
+    <string name="guessbynumbers_tagline">Rozszyfruj ukryte słowo, korzystając tylko z dwóch liczb.</string>
+    <string name="guessbynumbers_difficulty_easy">Łatwy</string>
+    <string name="guessbynumbers_difficulty_medium">Średni</string>
+    <string name="guessbynumbers_difficulty_hard">Trudny</string>
+    <string name="guessbynumbers_difficulty_expert">Ekspert</string>
+    <string name="guessbynumbers_difficulty_desc_easy">Słowa 5-literowe, powszechne słownictwo.</string>
+    <string name="guessbynumbers_difficulty_desc_medium">Słowa 5-literowe, szersze słownictwo zawierające rzadsze wyrazy.</string>
+    <string name="guessbynumbers_difficulty_desc_hard">Słowa 6-literowe, powszechne słownictwo.</string>
+    <string name="guessbynumbers_difficulty_desc_expert">Słowa 6-literowe, szersze słownictwo zawierające rzadsze wyrazy.</string>
+    <string name="guessbynumbers_how_to_play_goal">Odgadnij ukryte słowo w dziesięciu próbach. Po każdej próbie dwie liczby pokazują, jak blisko byłeś rozwiązania.</string>
+    <string name="guessbynumbers_how_to_play_controls">Wpisz słowo za pomocą klawiatury ekranowej i zatwierdź je. Twoja próba musi być prawdziwym słowem o poprawnej długości.</string>
+    <string name="guessbynumbers_rule_1_title">Trafienia</string>
+    <string name="guessbynumbers_rule_1_body">Trafienia liczą, ile liter z Twojej próby występuje również w słowie docelowym, niezależnie od tego, czy są na właściwym miejscu.</string>
+    <string name="guessbynumbers_rule_2_title">Dokładne</string>
+    <string name="guessbynumbers_rule_2_body">Dokładne liczy, ile z tych liter znajduje się dodatkowo na właściwym miejscu. Gdy liczba dokładnych trafień równa się długości słowa, wygrywasz.</string>
+    <string name="guessbynumbers_rule_3_title">Dziesięć prób</string>
+    <string name="guessbynumbers_rule_3_body">Masz dziesięć prób na znalezienie słowa. Łamigłówka kończy się przegraną, jeśli wykorzystasz wszystkie szanse bez poprawnego odgadnięcia.</string>
+    <string name="guessbynumbers_rule_4_title">Próby muszą być prawdziwymi słowami</string>
+    <string name="guessbynumbers_rule_4_body">Każde wpisane słowo jest sprawdzane ze słownikiem. Próby, które nie są prawdziwymi słowami, zostaną odrzucone i nie zużywają szansy.</string>
+    <string name="guessbynumbers_how_to_play_scoring">Rozwiązanie łamigłówki przyznaje punkty na podstawie poziomu trudności, liczby potrzebnych prób oraz czasu ukończenia gry.</string>
+    <string name="guessbynumbers_matches_label">Trafienia</string>
+    <string name="guessbynumbers_exact_label">Dokładne</string>
+    <string name="guessbynumbers_invalid_word_message">To nie jest prawidłowe słowo</string>
+    <string name="guessbynumbers_loss_abandoned_eyebrow">Łamigłówka zakończona</string>
+    <string name="guessbynumbers_loss_abandoned_title">Łamigłówka nieukończona</string>
+    <string name="guessbynumbers_loss_abandoned_body">Ta łamigłówka została zakończona przed jej rozwiązaniem.</string>
+    <string name="guessbynumbers_loss_rule_failure_eyebrow">Przegrana</string>
+    <string name="guessbynumbers_loss_rule_failure_title">Koniec prób</string>
+    <string name="guessbynumbers_loss_rule_failure_body">Wykorzystano wszystkie dziesięć prób bez znalezienia słowa.</string>
+
     <!-- Animal Doku -->
     <string name="animaldoku_title">Zwierzęce Doku</string>
     <string name="animaldoku_tagline">Umieść jedno zwierzę w każdym wierszu, kolumnie i kolorowym obszarze.</string>
@@ -736,6 +857,94 @@
     <string name="wordguess_challenger_stats_title">Pretendent</string>
     <string name="wordguess_challenger_stats_best_run">Najlepsze podejście</string>
 
+    <!-- Star Battle - Challenger Mode -->
+    <string name="starbattle_challenger_label">Pretendent</string>
+    <string name="starbattle_challenger_description">Rozwiąż jak najwięcej łamigłówek, zanim skończy się czas.</string>
+    <string name="starbattle_challenger_solved_label">Rozwiązane</string>
+    <string name="starbattle_challenger_tier_label">Poziom</string>
+    <string name="starbattle_challenger_result_time_up_title">Koniec czasu!</string>
+    <string name="starbattle_challenger_result_time_up_body">Czas minął. Oto podsumowanie Twojego podejścia.</string>
+    <string name="starbattle_challenger_result_hearts_exhausted_title">Koniec żyć!</string>
+    <string name="starbattle_challenger_result_hearts_exhausted_body">Trzy błędne odkrycia zakończyły Twoje podejście.</string>
+    <string name="starbattle_challenger_result_abandoned_title">Podejście przerwane</string>
+    <string name="starbattle_challenger_result_abandoned_body">Podejście zostało przerwane przed czasem.</string>
+    <string name="starbattle_challenger_result_new_high_score">Nowy rekord!</string>
+    <string name="starbattle_challenger_result_puzzles_solved">Rozwiązane łamigłówki</string>
+    <string name="starbattle_challenger_result_score">Wynik</string>
+    <string name="starbattle_challenger_result_fastest_solve">Najszybsze rozwiązanie</string>
+    <string name="starbattle_challenger_result_off_best">%1$d punktów mniej niż twój rekord</string>
+    <string name="starbattle_challenger_play_again">Zagraj ponownie</string>
+    <string name="starbattle_challenger_back_to_puzzles">Powrót do łamigłówek</string>
+    <string name="starbattle_challenger_try_another_game">Spróbuj innej gry</string>
+    <string name="starbattle_challenger_stats_title">Pretendent</string>
+    <string name="starbattle_challenger_stats_best_run">Najlepsze podejście</string>
+
+    <!-- Sudoku - Challenger Mode -->
+    <string name="sudoku_challenger_label">Pretendent</string>
+    <string name="sudoku_challenger_description">Rozwiąż jak najwięcej łamigłówek, zanim skończy się czas.</string>
+    <string name="sudoku_challenger_solved_label">Rozwiązane</string>
+    <string name="sudoku_challenger_tier_label">Poziom</string>
+    <string name="sudoku_challenger_result_time_up_title">Koniec czasu!</string>
+    <string name="sudoku_challenger_result_time_up_body">Czas minął. Oto podsumowanie Twojego podejścia.</string>
+    <string name="sudoku_challenger_result_lives_exhausted_title">Koniec żyć!</string>
+    <string name="sudoku_challenger_result_lives_exhausted_body">Trzy błędy zakończyły Twoje podejście.</string>
+    <string name="sudoku_challenger_result_abandoned_title">Podejście przerwane</string>
+    <string name="sudoku_challenger_result_abandoned_body">Podejście zostało przerwane przed czasem.</string>
+    <string name="sudoku_challenger_result_new_high_score">Nowy rekord!</string>
+    <string name="sudoku_challenger_result_puzzles_solved">Rozwiązane łamigłówki</string>
+    <string name="sudoku_challenger_result_score">Wynik</string>
+    <string name="sudoku_challenger_result_fastest_solve">Najszybsze rozwiązanie</string>
+    <string name="sudoku_challenger_result_off_best">%1$d punktów mniej niż twój rekord</string>
+    <string name="sudoku_challenger_play_again">Zagraj ponownie</string>
+    <string name="sudoku_challenger_back_to_puzzles">Powrót do łamigłówek</string>
+    <string name="sudoku_challenger_try_another_game">Spróbuj innej gry</string>
+    <string name="sudoku_challenger_stats_title">Pretendent</string>
+    <string name="sudoku_challenger_stats_best_run">Najlepsze podejście</string>
+
+    <!-- Takuzu - Challenger Mode -->
+    <string name="takuzu_challenger_label">Pretendent</string>
+    <string name="takuzu_challenger_description">Rozwiąż jak najwięcej łamigłówek, zanim skończy się czas.</string>
+    <string name="takuzu_challenger_solved_label">Rozwiązane</string>
+    <string name="takuzu_challenger_tier_label">Poziom</string>
+    <string name="takuzu_challenger_result_time_up_title">Koniec czasu!</string>
+    <string name="takuzu_challenger_result_time_up_body">Czas minął. Oto podsumowanie Twojego podejścia.</string>
+    <string name="takuzu_challenger_result_lives_exhausted_title">Koniec żyć!</string>
+    <string name="takuzu_challenger_result_lives_exhausted_body">Trzy błędy zakończyły Twoje podejście.</string>
+    <string name="takuzu_challenger_result_abandoned_title">Podejście przerwane</string>
+    <string name="takuzu_challenger_result_abandoned_body">Podejście zostało przerwane przed czasem.</string>
+    <string name="takuzu_challenger_result_new_high_score">Nowy rekord!</string>
+    <string name="takuzu_challenger_result_puzzles_solved">Rozwiązane łamigłówki</string>
+    <string name="takuzu_challenger_result_score">Wynik</string>
+    <string name="takuzu_challenger_result_fastest_solve">Najszybsze rozwiązanie</string>
+    <string name="takuzu_challenger_result_off_best">%1$d punktów mniej niż twój rekord</string>
+    <string name="takuzu_challenger_play_again">Zagraj ponownie</string>
+    <string name="takuzu_challenger_back_to_puzzles">Powrót do łamigłówek</string>
+    <string name="takuzu_challenger_try_another_game">Spróbuj innej gry</string>
+    <string name="takuzu_challenger_stats_title">Pretendent</string>
+    <string name="takuzu_challenger_stats_best_run">Najlepsze podejście</string>
+
+    <!-- Nonogram - Challenger Mode -->
+    <string name="nonogram_challenger_label">Pretendent</string>
+    <string name="nonogram_challenger_description">Rozwiąż jak najwięcej łamigłówek, zanim skończy się czas.</string>
+    <string name="nonogram_challenger_solved_label">Rozwiązane</string>
+    <string name="nonogram_challenger_tier_label">Poziom</string>
+    <string name="nonogram_challenger_result_time_up_title">Koniec czasu!</string>
+    <string name="nonogram_challenger_result_time_up_body">Czas minął. Oto podsumowanie Twojego podejścia.</string>
+    <string name="nonogram_challenger_result_lives_exhausted_title">Koniec żyć!</string>
+    <string name="nonogram_challenger_result_lives_exhausted_body">Trzy błędy zakończyły Twoje podejście.</string>
+    <string name="nonogram_challenger_result_abandoned_title">Podejście przerwane</string>
+    <string name="nonogram_challenger_result_abandoned_body">Podejście zostało przerwane przed czasem.</string>
+    <string name="nonogram_challenger_result_new_high_score">Nowy rekord!</string>
+    <string name="nonogram_challenger_result_puzzles_solved">Rozwiązane łamigłówki</string>
+    <string name="nonogram_challenger_result_score">Wynik</string>
+    <string name="nonogram_challenger_result_fastest_solve">Najszybsze rozwiązanie</string>
+    <string name="nonogram_challenger_result_off_best">%1$d punktów mniej niż twój rekord</string>
+    <string name="nonogram_challenger_play_again">Zagraj ponownie</string>
+    <string name="nonogram_challenger_back_to_puzzles">Powrót do łamigłówek</string>
+    <string name="nonogram_challenger_try_another_game">Spróbuj innej gry</string>
+    <string name="nonogram_challenger_stats_title">Pretendent</string>
+    <string name="nonogram_challenger_stats_best_run">Najlepsze podejście</string>
+
     <!-- Chimp Test - Challenger Mode -->
     <string name="chimp_challenger_label">Pretendent</string>
     <string name="chimp_challenger_description">Zapamiętaj i stukaj jak najwięcej sekwencji, zanim skończy się czas.</string>
@@ -785,6 +994,35 @@
     <string name="arrowescape_loss_rule_failure_title">Plansza nieoczyszczona</string>
     <string name="arrowescape_loss_rule_failure_body">Zabrakło Ci żyć przed usunięciem wszystkich strzałek.</string>
 
+    <!-- Star Battle -->
+    <string name="starbattle_title">Bitwa gwiazd</string>
+    <string name="starbattle_tagline">Rozmieść swoje gwiazdy, trzymając je z dala od siebie</string>
+    <string name="starbattle_difficulty_easy">Łatwy</string>
+    <string name="starbattle_difficulty_medium">Średni</string>
+    <string name="starbattle_difficulty_hard">Trudny</string>
+    <string name="starbattle_difficulty_expert">Ekspert</string>
+    <string name="starbattle_difficulty_desc_easy">Jedna gwiazda w każdym wierszu, kolumnie i obszarze</string>
+    <string name="starbattle_difficulty_desc_medium">Niektóre łamigłówki wymagają dwóch gwiazd w linii</string>
+    <string name="starbattle_difficulty_desc_hard">Głębsze dedukcje, czasem z dwiema gwiazdami w linii</string>
+    <string name="starbattle_difficulty_desc_expert">Najgłębsze dedukcje z dwiema gwiazdami w całej grze</string>
+    <string name="starbattle_how_to_play_goal">Umieść dokładnie odpowiednią liczbę gwiazd w każdym wierszu, kolumnie i obszarze.</string>
+    <string name="starbattle_how_to_play_controls">Stuknij pole, aby je oznaczyć, stuknij ponownie, aby wyczyścić oznaczenie. Przeciągnij palcem po polach, aby oznaczyć lub wyczyścić kilka naraz. Stuknij dwukrotnie, aby umieścić gwiazdę — błędne typowania kosztują życie.</string>
+    <string name="starbattle_how_to_play_wrong_move">Błędne dwukrotne stuknięcie blokuje pole jako źle umieszczoną gwiazdę i kosztuje jedno życie. Utrata wszystkich 3 żyć kończy łamigłówkę.</string>
+    <string name="starbattle_rule_1_title">Gwiazdy w wierszu</string>
+    <string name="starbattle_rule_1_body">Każdy wiersz zawiera dokładnie taką liczbę gwiazd, jakiej wymaga łamigłówka.</string>
+    <string name="starbattle_rule_2_title">Gwiazdy w kolumnie</string>
+    <string name="starbattle_rule_2_body">Każda kolumna zawiera dokładnie taką liczbę gwiazd, jakiej wymaga łamigłówka.</string>
+    <string name="starbattle_rule_3_title">Gwiazdy w obszarze</string>
+    <string name="starbattle_rule_3_body">Każdy kolorowy obszar zawiera dokładnie taką liczbę gwiazd, jakiej wymaga łamigłówka.</string>
+    <string name="starbattle_rule_4_title">Zakaz stykania się</string>
+    <string name="starbattle_rule_4_body">Gwiazdy nie mogą być umieszczane obok siebie, również po przekątnej.</string>
+    <string name="starbattle_loss_abandoned_eyebrow">Łamigłówka zakończona</string>
+    <string name="starbattle_loss_abandoned_title">Łamigłówka nieukończona</string>
+    <string name="starbattle_loss_abandoned_body">Ta łamigłówka została zakończona przed jej rozwiązaniem.</string>
+    <string name="starbattle_loss_rule_failure_eyebrow">Przegrana</string>
+    <string name="starbattle_loss_rule_failure_title">Koniec żyć</string>
+    <string name="starbattle_loss_rule_failure_body">Zbyt wiele gwiazd trafiło w złe miejsce.</string>
+
     <!-- Analyzer -->
     <string name="analyzer_step_of">Krok %1$d z %2$d</string>
     <string name="analyzer_back">Poprzedni krok</string>
@@ -795,6 +1033,7 @@
     <!-- Puzzle Mix editor -->
     <string name="mix_editor_title_edit">Edytuj Miks</string>
     <string name="mix_name_label">Nazwa miksu</string>
+    <string name="mix_rename_content_description">Zmień nazwę miksu</string>
     <string name="mix_entries_heading">Gry w tym miksie</string>
     <string name="mix_add_mode_chip_format">+ %1$s</string>
     <string name="mix_available_games_heading">Dodaj Grę</string>

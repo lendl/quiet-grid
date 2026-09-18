@@ -1,0 +1,8 @@
+Wersja 1.3.0
+
+- Nowe gry: 2048, Bitwa gwiazd, Zgadnij po liczbach i N-Back
+- Tryb Pretendent dodany do Sudoku, Takuzu, Nonogramu i Bitwy gwiazd
+- Nowa zakładka Miksy: zbuduj własną rotację gier i poziomów trudności, a potem graj przez nią jednym dotknięciem
+- Nowa zakładka Logi pokazuje historię Twoich rozgrywek
+- Odświeżone menu konta
+- Poprawki błędów i usprawnienia stabilności

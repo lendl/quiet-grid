@@ -3,6 +3,7 @@
     <string name="app_name">Quiet Grid</string>
 
     <string name="tab_games">Spellen</string>
+    <string name="tab_mixes">Mixen</string>
     <string name="tab_stats">Statistieken</string>
 
     <string name="common_go_home">Ga naar spellen</string>
@@ -31,6 +32,7 @@
     <string name="mix_play_button">Spelen</string>
     <string name="mix_edit_content_description">Mix bewerken</string>
     <string name="mix_empty_state">Nog geen mixen. Maak er een met je favoriete spellen en niveaus.</string>
+    <string name="mix_new_content_description">Nieuwe mix</string>
     <string name="game_takuzu_name">Takuzu</string>
     <string name="game_nonogram_name">Nonogram</string>
     <string name="game_minesweeper_name">Mijnenveger</string>
@@ -38,6 +40,8 @@
     <string name="game_wordsearch_name">Woordzoeker</string>
 
     <string name="settings_title">Instellingen</string>
+    <string name="account_menu_content_description">Menu</string>
+    <string name="account_preferences_section">Voorkeuren</string>
     <string name="settings_subtitle">Kies je thema, taal en timerweergave.</string>
     <string name="settings_theme">Thema</string>
     <string name="settings_language">Taal</string>
@@ -175,6 +179,7 @@
     <string name="completion_score">Score</string>
     <string name="completion_elapsed_time">Verstreken tijd</string>
     <string name="completion_accuracy">Nauwkeurigheid</string>
+    <string name="completion_best_tile">Beste tegel</string>
     <string name="completion_try_another_game">Ander spel proberen</string>
     <string name="completion_other_difficulty">Andere moeilijkheid</string>
     <string name="completion_play_again">Opnieuw spelen</string>
@@ -208,6 +213,25 @@
     <string name="stats_clear_data_title">Gegevens wissen</string>
     <string name="stats_clear_data_message">Alle opgeslagen statistieken en de huidige actieve puzzel verwijderen? Dit kan niet ongedaan worden gemaakt.</string>
 
+    <!-- Logboek -->
+    <string name="tab_logs">Logboek</string>
+    <string name="logs_mode_solo">Solo</string>
+    <string name="logs_mode_challenger">Challenger</string>
+    <string name="logs_game_chip_prefix">Spel: %1$s</string>
+    <string name="logs_empty">Nog geen spellen gespeeld.</string>
+    <string name="logs_result_won">Gewonnen</string>
+    <string name="logs_result_lost">Verloren</string>
+    <string name="logs_challenger_summary">Score %1$d · %2$d opgelost</string>
+    <string name="logs_detail_title">Speldetails</string>
+    <string name="logs_detail_tier_reached">Bereikt niveau</string>
+    <string name="logs_detail_ended_by">Beëindigd door</string>
+    <string name="logs_reason_time_up">Tijd verstreken</string>
+    <string name="logs_reason_lives_exhausted">Geen levens meer</string>
+    <string name="logs_reason_bank_exhausted">Geen puzzels meer over</string>
+    <string name="logs_reason_abandoned">Vroegtijdig beëindigd</string>
+    <string name="logs_reason_rule_failure">Regel overtreden</string>
+    <string name="logs_reason_generic">Verloren</string>
+
     <string name="support_title">Ondersteuning</string>
     <string name="support_subtitle">Kleine, praktische hulp voor vragen, feedback en vertrouwensinformatie.</string>
     <string name="support_support_section">Ondersteuning</string>
@@ -222,6 +246,9 @@
     <string name="support_source_code">GitHub / broncode</string>
     <string name="support_opens_github">Opent GitHub</string>
     <string name="support_licenses">Open-sourcelicenties</string>
+    <string name="trust_clear_data">Gegevens wissen</string>
+    <string name="trust_clear_data_title">Gegevens wissen</string>
+    <string name="trust_clear_data_message">Alle opgeslagen statistieken, logboeken en de huidige actieve puzzel verwijderen? Dit kan niet ongedaan worden gemaakt.</string>
     <string name="support_about_quiet_grid">Over Quiet Grid</string>
     <string name="support_contributors">Bijdragers</string>
     <string name="support_show_your_support">Laat je steun zien</string>
@@ -257,6 +284,12 @@
     <string name="contributors_intro">Quiet Grid is beter dankzij de mensen die eraan bijdragen. Bedankt.</string>
     <string name="contributors_cta_title">Wil je hier ook staan?</string>
     <string name="contributors_cta_body">Quiet Grid is opensourcesoftware. Bugfixes, vertalingen en nieuwe puzzelideeën zijn welkom — open een pull request op GitHub.</string>
+    <string name="help_wanted_heading">Hulp gevraagd</string>
+    <string name="help_wanted_disclaimer">De app werkt offline — deze lijst kan verouderd zijn. Bekijk GitHub voor de actuele status.</string>
+    <string name="help_wanted_icons_title">Icoon per spel</string>
+    <string name="help_wanted_icons_blurb">Spellen staan nu alleen met hun naam vermeld — help een klein icoon per spel ontwerpen.</string>
+    <string name="help_wanted_store_graphics_title">Store-screenshots &amp; afbeeldingen</string>
+    <string name="help_wanted_store_graphics_blurb">Help bij het maken van afbeeldingen voor de Play Store- en F-Droid-vermelding.</string>
 
     <string name="chimp_title">Chimp Test</string>
     <string name="chimp_short_title">Chimp</string>
@@ -765,6 +798,205 @@
     <string name="arrowescape_loss_rule_failure_title">Bord niet leeg</string>
     <string name="arrowescape_loss_rule_failure_body">Je levens waren op voordat je alle pijlen had verwijderd.</string>
 
+    <!-- 2048 -->
+    <string name="game2048_title">2048</string>
+    <string name="game2048_tagline">Voeg tegels samen om 2048 te bereiken.</string>
+    <string name="game2048_difficulty_easy">Makkelijk</string>
+    <string name="game2048_difficulty_medium">Gemiddeld</string>
+    <string name="game2048_difficulty_hard">Moeilijk</string>
+    <string name="game2048_difficulty_expert">Expert</string>
+    <string name="game2048_difficulty_desc_easy">Groter 5x5-bord geeft je meer ruimte om te manoeuvreren.</string>
+    <string name="game2048_difficulty_desc_medium">Klassiek 4x4-bord, de originele 2048-indeling.</string>
+    <string name="game2048_difficulty_desc_hard">Hetzelfde 4x4-bord, maar met meer onhandige 4-tegels.</string>
+    <string name="game2048_difficulty_desc_expert">Piepklein 3x3-bord — het doel hier is 1024, de hoogste tegel die dit formaat aankan.</string>
+    <string name="game2048_score_label">Score</string>
+    <string name="game2048_how_to_play_goal">Voeg gelijke tegels samen totdat er één de waarde 2048 bereikt.</string>
+    <string name="game2048_how_to_play_controls">Veeg omhoog, omlaag, naar links of naar rechts om alle tegels in die richting te schuiven.</string>
+    <string name="game2048_rule_1_title">Schuif alle tegels</string>
+    <string name="game2048_rule_1_body">Vegen verplaatst elke tegel zo ver mogelijk in die richting.</string>
+    <string name="game2048_rule_2_title">Samenvoegen bij contact</string>
+    <string name="game2048_rule_2_body">Twee tegels met hetzelfde getal combineren tot één tegel met de dubbele waarde.</string>
+    <string name="game2048_rule_3_title">Eén samenvoeging per veeg</string>
+    <string name="game2048_rule_3_body">Een tegel die net is samengevoegd, kan pas bij je volgende veeg weer samenvoegen.</string>
+    <string name="game2048_rule_4_title">Nieuwe tegel bij elke zet</string>
+    <string name="game2048_rule_4_body">Na elke veeg die het bord daadwerkelijk verplaatst, verschijnt een nieuwe tegel met een 2 of 4.</string>
+    <string name="game2048_how_to_play_scoring">Elke samenvoeging voegt de waarde van de nieuwe tegel toe aan je score.</string>
+    <string name="game2048_tip_1_title">Houd je grootste tegel in een hoek</string>
+    <string name="game2048_tip_1_body">Bouwen rond één hoek voorkomt dat je hoogste tegels vastlopen.</string>
+    <string name="game2048_tip_2_title">Kies één veegrichting en houd je eraan</string>
+    <string name="game2048_tip_2_body">Door één of twee richtingen te bevoordelen blijft het bord langer overzichtelijk.</string>
+    <string name="game2048_tip_3_title">Jaag niet achter elke samenvoeging aan</string>
+    <string name="game2048_tip_3_body">Soms is de veiligste zet er een die nog niets samenvoegt.</string>
+    <string name="game2048_loss_abandoned_eyebrow">Puzzel beëindigd</string>
+    <string name="game2048_loss_abandoned_title">Puzzel niet af</string>
+    <string name="game2048_loss_abandoned_body">Je hebt deze puzzel beëindigd voordat hij was opgelost.</string>
+    <string name="game2048_loss_rule_failure_eyebrow">Puzzel verloren</string>
+    <string name="game2048_loss_rule_failure_title">Geen zetten meer</string>
+    <string name="game2048_loss_rule_failure_body">Er waren geen lege vakjes meer over en geen gelijke tegels om samen te voegen.</string>
+    <string name="game2048_quickstart_goal">Veeg om gelijke tegels samen te voegen totdat je 2048 bereikt.</string>
+    <string name="game2048_quickstart_bullet_1">Veeg omhoog, omlaag, naar links of naar rechts om alle tegels te schuiven.</string>
+    <string name="game2048_quickstart_bullet_2">Twee tegels met hetzelfde getal voegen samen tot één wanneer ze botsen.</string>
+    <string name="game2048_quickstart_bullet_3">Na elke veeg die het bord verplaatst, verschijnt een nieuwe tegel.</string>
+    <string name="game2048_quickstart_hook">Zonder zetten is het voorbij, dus denk vooruit.</string>
+
+    <!-- Cijfers Raden -->
+    <string name="guessbynumbers_title">Cijfers Raden</string>
+    <string name="guessbynumbers_tagline">Ontrafel het verborgen woord met slechts twee getallen.</string>
+    <string name="guessbynumbers_difficulty_easy">Makkelijk</string>
+    <string name="guessbynumbers_difficulty_medium">Gemiddeld</string>
+    <string name="guessbynumbers_difficulty_hard">Moeilijk</string>
+    <string name="guessbynumbers_difficulty_expert">Expert</string>
+    <string name="guessbynumbers_difficulty_desc_easy">Woorden van 5 letters, veelvoorkomende woordenschat.</string>
+    <string name="guessbynumbers_difficulty_desc_medium">Woorden van 5 letters, bredere woordenschat met zeldzamere woorden.</string>
+    <string name="guessbynumbers_difficulty_desc_hard">Woorden van 6 letters, veelvoorkomende woordenschat.</string>
+    <string name="guessbynumbers_difficulty_desc_expert">Woorden van 6 letters, bredere woordenschat met zeldzamere woorden.</string>
+    <string name="guessbynumbers_how_to_play_goal">Raad het verborgen woord in tien pogingen. Na elke poging laten twee getallen zien hoe dicht je erbij zat.</string>
+    <string name="guessbynumbers_how_to_play_controls">Typ een poging met het schermtoetsenbord en bevestig deze. Je poging moet een echt woord van de juiste lengte zijn.</string>
+    <string name="guessbynumbers_how_to_play_scoring">Het oplossen van de puzzel levert punten op, afhankelijk van de moeilijkheidsgraad, het aantal benodigde pogingen en hoe snel je klaar was.</string>
+    <string name="guessbynumbers_matches_label">Overeenkomsten</string>
+    <string name="guessbynumbers_exact_label">Exact</string>
+    <string name="guessbynumbers_invalid_word_message">Geen geldig woord</string>
+    <string name="guessbynumbers_loss_abandoned_eyebrow">Puzzel beëindigd</string>
+    <string name="guessbynumbers_loss_abandoned_title">Puzzel niet af</string>
+    <string name="guessbynumbers_loss_abandoned_body">Je hebt deze puzzel beëindigd voordat hij was opgelost.</string>
+    <string name="guessbynumbers_loss_rule_failure_eyebrow">Puzzel verloren</string>
+    <string name="guessbynumbers_loss_rule_failure_title">Geen pogingen meer</string>
+    <string name="guessbynumbers_loss_rule_failure_body">Je hebt al je tien pogingen gebruikt zonder het woord te vinden.</string>
+    <string name="guessbynumbers_quickstart_goal">Tien pogingen om het geheime woord te vinden — geen kleurhints, alleen twee getallen.</string>
+    <string name="guessbynumbers_quickstart_bullet_1">Elke invoer moet een echt woord zijn.</string>
+    <string name="guessbynumbers_quickstart_bullet_2">Overeenkomsten telt gedeelde letters. Exact telt letters op de juiste plek.</string>
+    <string name="guessbynumbers_quickstart_example_1_word">WRONG</string>
+    <string name="guessbynumbers_quickstart_example_1_hint">Doelwoord is BROWN: 4 gedeelde letters, 2 op de juiste plek</string>
+    <string name="guessbynumbers_quickstart_hook">Minder pogingen en een snellere oplossing geven een hogere score.</string>
+    <string name="guessbynumbers_rule_1_title">Overeenkomsten</string>
+    <string name="guessbynumbers_rule_1_body">Overeenkomsten telt hoeveel letters uit je poging ook in het doelwoord voorkomen, ongeacht of ze op de juiste plek staan.</string>
+    <string name="guessbynumbers_rule_2_title">Exact</string>
+    <string name="guessbynumbers_rule_2_body">Exact telt hoeveel van die letters ook op de juiste plek staan. Is Exact gelijk aan de woordlengte, dan heb je gewonnen.</string>
+    <string name="guessbynumbers_rule_3_title">Tien pogingen</string>
+    <string name="guessbynumbers_rule_3_body">Je hebt tien pogingen om het woord te vinden. De puzzel eindigt in verlies als je ze allemaal gebruikt zonder het juiste woord te raden.</string>
+    <string name="guessbynumbers_rule_4_title">Pogingen moeten echte woorden zijn</string>
+    <string name="guessbynumbers_rule_4_body">Elke poging wordt gecontroleerd in een woordenboek. Een poging die geen echt woord is, wordt geweigerd en kost geen beurt.</string>
+
+    <!-- Star Battle -->
+    <string name="starbattle_title">Star Battle</string>
+    <string name="starbattle_tagline">Plaats je sterren, houd ze uit elkaar</string>
+    <string name="starbattle_difficulty_easy">Makkelijk</string>
+    <string name="starbattle_difficulty_medium">Gemiddeld</string>
+    <string name="starbattle_difficulty_hard">Moeilijk</string>
+    <string name="starbattle_difficulty_expert">Expert</string>
+    <string name="starbattle_difficulty_desc_easy">Eén ster per rij, kolom en regio</string>
+    <string name="starbattle_difficulty_desc_medium">Sommige puzzels vragen twee sterren per lijn</string>
+    <string name="starbattle_difficulty_desc_hard">Diepere deducties, soms met twee sterren per lijn</string>
+    <string name="starbattle_difficulty_desc_expert">De diepste deducties met twee sterren in het spel</string>
+    <string name="starbattle_how_to_play_goal">Plaats precies het juiste aantal sterren in elke rij, kolom en regio.</string>
+    <string name="starbattle_how_to_play_controls">Tik op een cel om hem te markeren, tik nogmaals om de markering te wissen. Sleep over cellen om er meerdere tegelijk te markeren of te wissen. Dubbeltik om een ster te plaatsen — verkeerde gokken kosten een leven.</string>
+    <string name="starbattle_how_to_play_wrong_move">Een verkeerde dubbeltik vergrendelt de cel als een verkeerd geplaatste ster en kost één leven. Verlies alle 3 levens en de puzzel eindigt.</string>
+    <string name="starbattle_rule_1_title">Sterren per rij</string>
+    <string name="starbattle_rule_1_body">Elke rij bevat precies het juiste aantal sterren voor de puzzel.</string>
+    <string name="starbattle_rule_2_title">Sterren per kolom</string>
+    <string name="starbattle_rule_2_body">Elke kolom bevat precies het juiste aantal sterren voor de puzzel.</string>
+    <string name="starbattle_rule_3_title">Sterren per regio</string>
+    <string name="starbattle_rule_3_body">Elke gekleurde regio bevat precies het juiste aantal sterren voor de puzzel.</string>
+    <string name="starbattle_rule_4_title">Geen aanraken</string>
+    <string name="starbattle_rule_4_body">Sterren mogen niet naast elkaar geplaatst worden, ook niet diagonaal.</string>
+    <string name="starbattle_loss_abandoned_eyebrow">Puzzel beëindigd</string>
+    <string name="starbattle_loss_abandoned_title">Puzzel opgegeven</string>
+    <string name="starbattle_loss_abandoned_body">Je hebt deze puzzel beëindigd voordat hij was afgerond.</string>
+    <string name="starbattle_loss_rule_failure_eyebrow">Puzzel verloren</string>
+    <string name="starbattle_loss_rule_failure_title">Geen levens meer</string>
+    <string name="starbattle_loss_rule_failure_body">Er kwamen te veel sterren op de verkeerde plek terecht.</string>
+    <string name="starbattle_quickstart_goal">Plaats precies het juiste aantal sterren in elke rij, kolom en regio.</string>
+    <string name="starbattle_quickstart_bullet_1">Tik op een cel om hem te markeren, tik nogmaals om de markering te wissen.</string>
+    <string name="starbattle_quickstart_bullet_2">Sleep over cellen om er meerdere tegelijk te markeren of te wissen.</string>
+    <string name="starbattle_quickstart_bullet_3">Dubbeltik om een ster te plaatsen — verkeerde gokken kosten een leven.</string>
+    <string name="starbattle_quickstart_hook">Geen twee sterren mogen elkaar raken, ook niet diagonaal.</string>
+    <string name="starbattle_stars_per_group_content_description">Sterren per rij, kolom en regio</string>
+
+    <!-- Challenger mode -->
+    <string name="nonogram_challenger_label">Challenger</string>
+    <string name="nonogram_challenger_description">Los zoveel mogelijk puzzels op voordat de tijd om is.</string>
+    <string name="nonogram_challenger_solved_label">Opgelost</string>
+    <string name="nonogram_challenger_tier_label">Niveau</string>
+    <string name="nonogram_challenger_result_time_up_title">Tijd om!</string>
+    <string name="nonogram_challenger_result_time_up_body">De tijd is om. Zo verliep je ronde.</string>
+    <string name="nonogram_challenger_result_lives_exhausted_title">Geen hartjes meer!</string>
+    <string name="nonogram_challenger_result_lives_exhausted_body">Drie fouten beëindigden je ronde.</string>
+    <string name="nonogram_challenger_result_abandoned_title">Ronde beëindigd</string>
+    <string name="nonogram_challenger_result_abandoned_body">Je hebt de ronde vroegtijdig gestopt.</string>
+    <string name="nonogram_challenger_result_new_high_score">Nieuwe topscore!</string>
+    <string name="nonogram_challenger_result_puzzles_solved">Puzzels opgelost</string>
+    <string name="nonogram_challenger_result_score">Score</string>
+    <string name="nonogram_challenger_result_fastest_solve">Snelste oplossing</string>
+    <string name="nonogram_challenger_result_off_best">%1$d punten onder je topscore</string>
+    <string name="nonogram_challenger_play_again">Opnieuw spelen</string>
+    <string name="nonogram_challenger_back_to_puzzles">Terug naar puzzels</string>
+    <string name="nonogram_challenger_try_another_game">Ander spel proberen</string>
+    <string name="nonogram_challenger_stats_title">Challenger</string>
+    <string name="nonogram_challenger_stats_best_run">Beste ronde</string>
+
+    <string name="sudoku_challenger_label">Challenger</string>
+    <string name="sudoku_challenger_description">Los zoveel mogelijk puzzels op voordat de tijd om is.</string>
+    <string name="sudoku_challenger_solved_label">Opgelost</string>
+    <string name="sudoku_challenger_tier_label">Niveau</string>
+    <string name="sudoku_challenger_result_time_up_title">Tijd om!</string>
+    <string name="sudoku_challenger_result_time_up_body">De tijd is om. Zo verliep je ronde.</string>
+    <string name="sudoku_challenger_result_lives_exhausted_title">Geen hartjes meer!</string>
+    <string name="sudoku_challenger_result_lives_exhausted_body">Drie fouten beëindigden je ronde.</string>
+    <string name="sudoku_challenger_result_abandoned_title">Ronde beëindigd</string>
+    <string name="sudoku_challenger_result_abandoned_body">Je hebt de ronde vroegtijdig gestopt.</string>
+    <string name="sudoku_challenger_result_new_high_score">Nieuwe topscore!</string>
+    <string name="sudoku_challenger_result_puzzles_solved">Puzzels opgelost</string>
+    <string name="sudoku_challenger_result_score">Score</string>
+    <string name="sudoku_challenger_result_fastest_solve">Snelste oplossing</string>
+    <string name="sudoku_challenger_result_off_best">%1$d punten onder je topscore</string>
+    <string name="sudoku_challenger_play_again">Opnieuw spelen</string>
+    <string name="sudoku_challenger_back_to_puzzles">Terug naar puzzels</string>
+    <string name="sudoku_challenger_try_another_game">Ander spel proberen</string>
+    <string name="sudoku_challenger_stats_title">Challenger</string>
+    <string name="sudoku_challenger_stats_best_run">Beste ronde</string>
+
+    <string name="takuzu_challenger_label">Challenger</string>
+    <string name="takuzu_challenger_description">Los zoveel mogelijk puzzels op voordat de tijd om is.</string>
+    <string name="takuzu_challenger_solved_label">Opgelost</string>
+    <string name="takuzu_challenger_tier_label">Niveau</string>
+    <string name="takuzu_challenger_result_time_up_title">Tijd om!</string>
+    <string name="takuzu_challenger_result_time_up_body">De tijd is om. Zo verliep je ronde.</string>
+    <string name="takuzu_challenger_result_lives_exhausted_title">Geen hartjes meer!</string>
+    <string name="takuzu_challenger_result_lives_exhausted_body">Drie fouten beëindigden je ronde.</string>
+    <string name="takuzu_challenger_result_abandoned_title">Ronde beëindigd</string>
+    <string name="takuzu_challenger_result_abandoned_body">Je hebt de ronde vroegtijdig gestopt.</string>
+    <string name="takuzu_challenger_result_new_high_score">Nieuwe topscore!</string>
+    <string name="takuzu_challenger_result_puzzles_solved">Puzzels opgelost</string>
+    <string name="takuzu_challenger_result_score">Score</string>
+    <string name="takuzu_challenger_result_fastest_solve">Snelste oplossing</string>
+    <string name="takuzu_challenger_result_off_best">%1$d punten onder je topscore</string>
+    <string name="takuzu_challenger_play_again">Opnieuw spelen</string>
+    <string name="takuzu_challenger_back_to_puzzles">Terug naar puzzels</string>
+    <string name="takuzu_challenger_try_another_game">Ander spel proberen</string>
+    <string name="takuzu_challenger_stats_title">Challenger</string>
+    <string name="takuzu_challenger_stats_best_run">Beste ronde</string>
+
+    <string name="starbattle_challenger_label">Challenger</string>
+    <string name="starbattle_challenger_description">Los zoveel mogelijk puzzels op voordat de tijd om is.</string>
+    <string name="starbattle_challenger_solved_label">Opgelost</string>
+    <string name="starbattle_challenger_tier_label">Niveau</string>
+    <string name="starbattle_challenger_result_time_up_title">Tijd om!</string>
+    <string name="starbattle_challenger_result_time_up_body">De tijd is om. Zo verliep je ronde.</string>
+    <string name="starbattle_challenger_result_hearts_exhausted_title">Geen hartjes meer!</string>
+    <string name="starbattle_challenger_result_hearts_exhausted_body">Drie foute openingen beëindigden je ronde.</string>
+    <string name="starbattle_challenger_result_abandoned_title">Ronde beëindigd</string>
+    <string name="starbattle_challenger_result_abandoned_body">Je hebt de ronde vroegtijdig gestopt.</string>
+    <string name="starbattle_challenger_result_new_high_score">Nieuwe topscore!</string>
+    <string name="starbattle_challenger_result_puzzles_solved">Puzzels opgelost</string>
+    <string name="starbattle_challenger_result_score">Score</string>
+    <string name="starbattle_challenger_result_fastest_solve">Snelste oplossing</string>
+    <string name="starbattle_challenger_result_off_best">%1$d punten onder je topscore</string>
+    <string name="starbattle_challenger_play_again">Opnieuw spelen</string>
+    <string name="starbattle_challenger_back_to_puzzles">Terug naar puzzels</string>
+    <string name="starbattle_challenger_try_another_game">Ander spel proberen</string>
+    <string name="starbattle_challenger_stats_title">Challenger</string>
+    <string name="starbattle_challenger_stats_best_run">Beste ronde</string>
+
     <!-- Analyzer -->
     <string name="analyzer_step_of">Stap %1$d van %2$d</string>
     <string name="analyzer_back">Vorige stap</string>
@@ -775,6 +1007,7 @@
     <!-- Puzzle Mix editor -->
     <string name="mix_editor_title_edit">Mix Bewerken</string>
     <string name="mix_name_label">Naam van de mix</string>
+    <string name="mix_rename_content_description">Mix hernoemen</string>
     <string name="mix_entries_heading">Spellen in deze mix</string>
     <string name="mix_add_mode_chip_format">+ %1$s</string>
     <string name="mix_available_games_heading">Spel Toevoegen</string>

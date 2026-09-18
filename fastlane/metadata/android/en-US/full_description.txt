@@ -12,6 +12,10 @@
 <li><b>Word Guess</b> — Guess the hidden word in six tries.</li>
 <li><b>Animal Doku</b> — Place one animal in every row, column, and colored region, with no two animals touching, even diagonally.</li>
 <li><b>Arrow Escape</b> (Beta) — Clear the board, one arrow at a time.</li>
+<li><b>2048</b> — Slide and merge matching tiles until one of them reaches 2048.</li>
+<li><b>Star Battle</b> — Place stars in every row, column, and region with no two touching.</li>
+<li><b>Guess by Numbers</b> — Guess the hidden word in ten tries; two numbers show how close each guess was.</li>
+<li><b>N-Back</b> (Beta) — Watch the grid and tap Match whenever the lit square repeats its position from N steps back.</li>
 </ul>
 
 <p>Each puzzle type offers Easy, Medium, Hard, and Expert difficulty levels.</p>

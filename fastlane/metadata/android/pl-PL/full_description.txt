@@ -12,6 +12,10 @@ Zgadnij słowo — odgadnij ukryte słowo w sześciu próbach.
 Animal Doku — umieść jedno zwierzę w każdym wierszu, kolumnie i kolorowym obszarze, tak aby żadne dwa zwierzęta się nie stykały, nawet po przekątnej.
 Ucieczka strzałek (Beta) — oczyść planszę, usuwając po jednej strzałce naraz.
 Test szympansa — krótkie wyzwanie na refleks i pamięć: stukaj liczby w kolejności, zanim znikną.
+2048 — przesuwaj i łącz takie same kafelki, aż jeden z nich osiągnie wartość 2048.
+Bitwa gwiazd — rozmieść gwiazdy w każdym wierszu, kolumnie i obszarze tak, aby żadne dwie się nie stykały.
+Zgadnij po liczbach — odgadnij ukryte słowo w dziesięciu próbach; dwie liczby pokazują, jak bliska była Twoja odpowiedź.
+N-Back (Beta) — obserwuj siatkę i stukaj Dopasuj, gdy podświetlone pole powtarza pozycję sprzed N kroków.
 
 DLACZEGO QUIET GRID
 

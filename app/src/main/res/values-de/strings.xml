@@ -3,6 +3,7 @@
     <string name="app_name">Quiet Grid</string>
 
     <string name="tab_games">Spiele</string>
+    <string name="tab_mixes">Mixe</string>
     <string name="tab_stats">Statistiken</string>
 
     <string name="common_go_home">Zu Spielen</string>
@@ -31,6 +32,7 @@
     <string name="mix_play_button">Spielen</string>
     <string name="mix_edit_content_description">Mix bearbeiten</string>
     <string name="mix_empty_state">Noch keine Mixe. Erstelle einen aus deinen Lieblingsspielen und -schwierigkeiten.</string>
+    <string name="mix_new_content_description">Neuer Mix</string>
     <string name="game_takuzu_name">Takuzu</string>
     <string name="game_nonogram_name">Nonogramm</string>
     <string name="game_minesweeper_name">Minesweeper</string>
@@ -38,6 +40,8 @@
     <string name="game_wordsearch_name">Wortsuche</string>
 
     <string name="settings_title">Einstellungen</string>
+    <string name="account_menu_content_description">Menü</string>
+    <string name="account_preferences_section">Einstellungen</string>
     <string name="settings_subtitle">Wähle Design, Sprache und Timer-Anzeige.</string>
     <string name="settings_theme">Thema</string>
     <string name="settings_language">Sprache</string>
@@ -175,6 +179,7 @@
     <string name="completion_score">Punkte</string>
     <string name="completion_elapsed_time">Verstrichene Zeit</string>
     <string name="completion_accuracy">Genauigkeit</string>
+    <string name="completion_best_tile">Höchste Kachel</string>
     <string name="completion_try_another_game">Anderes Spiel versuchen</string>
     <string name="completion_other_difficulty">Andere Schwierigkeit</string>
     <string name="completion_play_again">Nochmals spielen</string>
@@ -208,6 +213,25 @@
     <string name="stats_clear_data_title">Daten löschen</string>
     <string name="stats_clear_data_message">Alle gespeicherten Statistiken und das aktuelle aktive Rätsel entfernen? Dies kann nicht rückgängig gemacht werden.</string>
 
+    <!-- logs -->
+    <string name="tab_logs">Verlauf</string>
+    <string name="logs_mode_solo">Solo</string>
+    <string name="logs_mode_challenger">Challenger</string>
+    <string name="logs_game_chip_prefix">Spiel: %1$s</string>
+    <string name="logs_empty">Noch keine Spiele gespielt.</string>
+    <string name="logs_result_won">Gewonnen</string>
+    <string name="logs_result_lost">Verloren</string>
+    <string name="logs_challenger_summary">Punkte %1$d · %2$d gelöst</string>
+    <string name="logs_detail_title">Spieldetails</string>
+    <string name="logs_detail_tier_reached">Erreichte Stufe</string>
+    <string name="logs_detail_ended_by">Beendet durch</string>
+    <string name="logs_reason_time_up">Zeit abgelaufen</string>
+    <string name="logs_reason_lives_exhausted">Keine Leben mehr</string>
+    <string name="logs_reason_bank_exhausted">Keine Rätsel mehr übrig</string>
+    <string name="logs_reason_abandoned">Vorzeitig beendet</string>
+    <string name="logs_reason_rule_failure">Regel verletzt</string>
+    <string name="logs_reason_generic">Verloren</string>
+
     <string name="support_title">Hilfe</string>
     <string name="support_subtitle">Praktische Hilfe für Fragen, Feedback und Vertrauensdetails.</string>
     <string name="support_support_section">Hilfe</string>
@@ -222,6 +246,9 @@
     <string name="support_source_code">GitHub / Quellcode</string>
     <string name="support_opens_github">Öffnet GitHub</string>
     <string name="support_licenses">Open-Source-Lizenzen</string>
+    <string name="trust_clear_data">Daten löschen</string>
+    <string name="trust_clear_data_title">Daten löschen</string>
+    <string name="trust_clear_data_message">Alle gespeicherten Statistiken, den Verlauf und das aktuelle aktive Rätsel entfernen? Dies kann nicht rückgängig gemacht werden.</string>
     <string name="support_about_quiet_grid">Über Quiet Grid</string>
     <string name="support_contributors">Mitwirkende</string>
     <string name="support_show_your_support">Zeig deine Unterstützung</string>
@@ -257,6 +284,12 @@
     <string name="contributors_intro">Quiet Grid ist dank der Menschen, die daran mitwirken, besser geworden. Vielen Dank.</string>
     <string name="contributors_cta_title">Möchtest du hier auch stehen?</string>
     <string name="contributors_cta_body">Quiet Grid ist Open-Source-Software. Fehlerbehebungen, Übersetzungen und neue Rätselideen sind willkommen – erstelle einen Pull Request auf GitHub.</string>
+    <string name="help_wanted_heading">Hilfe gesucht</string>
+    <string name="help_wanted_disclaimer">Die App funktioniert offline — diese Liste kann veraltet sein. Den aktuellen Stand findest du auf GitHub.</string>
+    <string name="help_wanted_icons_title">Symbol pro Spiel</string>
+    <string name="help_wanted_icons_blurb">Spiele werden bisher nur mit Titel angezeigt — hilf mit, für jedes Spiel ein kleines Symbol zu gestalten.</string>
+    <string name="help_wanted_store_graphics_title">Store-Screenshots &amp; Grafiken</string>
+    <string name="help_wanted_store_graphics_blurb">Hilf mit, Bilder für den Play Store-/F-Droid-Eintrag zu erstellen.</string>
 
     <string name="chimp_title">Chimp Test</string>
     <string name="chimp_short_title">Chimp</string>
@@ -357,6 +390,26 @@
     <string name="takuzu_analyzer_already_solved">Dieses Rätsel war bereits vollständig gelöst.</string>
     <string name="takuzu_analyzer_solved_title">Gelöst!</string>
     <string name="takuzu_analyzer_solved_body">Dies ist das vollständige Raster.</string>
+    <string name="takuzu_challenger_label">Challenger</string>
+    <string name="takuzu_challenger_description">Löse so viele Rätsel wie möglich, bevor die Zeit abläuft.</string>
+    <string name="takuzu_challenger_solved_label">Gelöst</string>
+    <string name="takuzu_challenger_tier_label">Stufe</string>
+    <string name="takuzu_challenger_result_time_up_title">Zeit abgelaufen!</string>
+    <string name="takuzu_challenger_result_time_up_body">Die Zeit ist abgelaufen. So lief dein Durchlauf.</string>
+    <string name="takuzu_challenger_result_lives_exhausted_title">Keine Herzen mehr!</string>
+    <string name="takuzu_challenger_result_lives_exhausted_body">Drei Fehler haben deinen Durchlauf beendet.</string>
+    <string name="takuzu_challenger_result_abandoned_title">Durchlauf beendet</string>
+    <string name="takuzu_challenger_result_abandoned_body">Du hast den Durchlauf vorzeitig beendet.</string>
+    <string name="takuzu_challenger_result_new_high_score">Neuer Highscore!</string>
+    <string name="takuzu_challenger_result_puzzles_solved">Gelöste Rätsel</string>
+    <string name="takuzu_challenger_result_score">Punkte</string>
+    <string name="takuzu_challenger_result_fastest_solve">Schnellste Lösung</string>
+    <string name="takuzu_challenger_result_off_best">%1$d Punkte unter deinem Highscore</string>
+    <string name="takuzu_challenger_play_again">Nochmals spielen</string>
+    <string name="takuzu_challenger_back_to_puzzles">Zurück zu den Rätseln</string>
+    <string name="takuzu_challenger_try_another_game">Anderes Spiel versuchen</string>
+    <string name="takuzu_challenger_stats_title">Challenger</string>
+    <string name="takuzu_challenger_stats_best_run">Bester Durchlauf</string>
 
     <!-- Nonogram -->
     <string name="nonogram_tagline">Fülle Zellen, um die Zeilen- und Spaltenhinweise zu erfüllen.</string>
@@ -409,6 +462,26 @@
     <string name="nonogram_loss_abandoned_body">Du hast dieses Rätsel beendet, bevor es gelöst war.</string>
     <string name="nonogram_input_mode_fill">Füllen</string>
     <string name="nonogram_input_mode_cross">Leer markieren</string>
+    <string name="nonogram_challenger_label">Challenger</string>
+    <string name="nonogram_challenger_description">Löse so viele Rätsel wie möglich, bevor die Zeit abläuft.</string>
+    <string name="nonogram_challenger_solved_label">Gelöst</string>
+    <string name="nonogram_challenger_tier_label">Stufe</string>
+    <string name="nonogram_challenger_result_time_up_title">Zeit abgelaufen!</string>
+    <string name="nonogram_challenger_result_time_up_body">Die Zeit ist abgelaufen. So lief dein Durchlauf.</string>
+    <string name="nonogram_challenger_result_lives_exhausted_title">Keine Herzen mehr!</string>
+    <string name="nonogram_challenger_result_lives_exhausted_body">Drei Fehler haben deinen Durchlauf beendet.</string>
+    <string name="nonogram_challenger_result_abandoned_title">Durchlauf beendet</string>
+    <string name="nonogram_challenger_result_abandoned_body">Du hast den Durchlauf vorzeitig beendet.</string>
+    <string name="nonogram_challenger_result_new_high_score">Neuer Highscore!</string>
+    <string name="nonogram_challenger_result_puzzles_solved">Gelöste Rätsel</string>
+    <string name="nonogram_challenger_result_score">Punkte</string>
+    <string name="nonogram_challenger_result_fastest_solve">Schnellste Lösung</string>
+    <string name="nonogram_challenger_result_off_best">%1$d Punkte unter deinem Highscore</string>
+    <string name="nonogram_challenger_play_again">Nochmals spielen</string>
+    <string name="nonogram_challenger_back_to_puzzles">Zurück zu den Rätseln</string>
+    <string name="nonogram_challenger_try_another_game">Anderes Spiel versuchen</string>
+    <string name="nonogram_challenger_stats_title">Challenger</string>
+    <string name="nonogram_challenger_stats_best_run">Bester Durchlauf</string>
 
     <!-- Minesweeper -->
     <string name="minesweeper_title">Minesweeper</string>
@@ -469,6 +542,47 @@
     <string name="minesweeper_loss_rule_failure_eyebrow">Rätsel verloren</string>
     <string name="minesweeper_loss_rule_failure_title">Rätsel verloren</string>
     <string name="minesweeper_loss_rule_failure_body">Dieses Rätsel endete, als eine Mine aufgedeckt wurde. Ein neues Rätsel wartet, wenn du bereit bist.</string>
+
+    <!-- 2048 -->
+    <string name="game2048_title">2048</string>
+    <string name="game2048_tagline">Verschmelze Kacheln, um 2048 zu erreichen.</string>
+    <string name="game2048_difficulty_easy">Leicht</string>
+    <string name="game2048_difficulty_medium">Mittel</string>
+    <string name="game2048_difficulty_hard">Schwer</string>
+    <string name="game2048_difficulty_expert">Experte</string>
+    <string name="game2048_difficulty_desc_easy">Ein größeres 5x5-Feld gibt dir mehr Spielraum.</string>
+    <string name="game2048_difficulty_desc_medium">Klassisches 4x4-Feld, das ursprüngliche 2048-Layout.</string>
+    <string name="game2048_difficulty_desc_hard">Das gleiche 4x4-Feld, aber mit mehr unpraktischen 4er-Kacheln.</string>
+    <string name="game2048_difficulty_desc_expert">Winziges 3x3-Feld – hier ist das Ziel 1024, die höchste Kachel, die bei dieser Größe möglich ist.</string>
+    <string name="game2048_score_label">Punkte</string>
+    <string name="game2048_how_to_play_goal">Verschmelze gleiche Kacheln, bis eine davon 2048 erreicht.</string>
+    <string name="game2048_how_to_play_controls">Wische nach oben, unten, links oder rechts, um alle Kacheln in diese Richtung zu schieben.</string>
+    <string name="game2048_rule_1_title">Alle Kacheln verschieben</string>
+    <string name="game2048_rule_1_body">Ein Wisch bewegt jede Kachel so weit wie möglich in diese Richtung.</string>
+    <string name="game2048_rule_2_title">Verschmelzen bei Berührung</string>
+    <string name="game2048_rule_2_body">Zwei Kacheln mit derselben Zahl verbinden sich zu einer Kachel mit doppeltem Wert.</string>
+    <string name="game2048_rule_3_title">Eine Verschmelzung pro Wisch</string>
+    <string name="game2048_rule_3_body">Eine gerade verschmolzene Kachel kann sich erst beim nächsten Wisch wieder verschmelzen.</string>
+    <string name="game2048_rule_4_title">Neue Kachel bei jedem Zug</string>
+    <string name="game2048_rule_4_body">Nach jedem Wisch, der das Feld tatsächlich verändert, erscheint eine neue 2er- oder 4er-Kachel.</string>
+    <string name="game2048_how_to_play_scoring">Jede Verschmelzung addiert den Wert der neuen Kachel zu deiner Punktzahl.</string>
+    <string name="game2048_tip_1_title">Halte deine größte Kachel in einer Ecke</string>
+    <string name="game2048_tip_1_body">Wenn du dich auf eine Ecke konzentrierst, werden deine höchsten Kacheln nicht eingeschlossen.</string>
+    <string name="game2048_tip_2_title">Wähle eine Wischrichtung und bleibe dabei</string>
+    <string name="game2048_tip_2_body">Wenn du ein oder zwei Richtungen bevorzugst, bleibt das Feld länger übersichtlich.</string>
+    <string name="game2048_tip_3_title">Jage nicht jeder Verschmelzung hinterher</string>
+    <string name="game2048_tip_3_body">Manchmal ist der sicherere Zug der, bei dem noch nichts verschmilzt.</string>
+    <string name="game2048_loss_abandoned_eyebrow">Rätsel beendet</string>
+    <string name="game2048_loss_abandoned_title">Rätsel unvollständig</string>
+    <string name="game2048_loss_abandoned_body">Du hast dieses Rätsel beendet, bevor es gelöst war.</string>
+    <string name="game2048_loss_rule_failure_eyebrow">Rätsel verloren</string>
+    <string name="game2048_loss_rule_failure_title">Keine Züge mehr</string>
+    <string name="game2048_loss_rule_failure_body">Es gab keine leeren Zellen mehr und keine passenden Kacheln zum Verschmelzen.</string>
+    <string name="game2048_quickstart_goal">Wische, um gleiche Kacheln zu verschmelzen, bis du 2048 erreichst.</string>
+    <string name="game2048_quickstart_bullet_1">Wische nach oben, unten, links oder rechts, um alle Kacheln zu verschieben.</string>
+    <string name="game2048_quickstart_bullet_2">Zwei Kacheln mit derselben Zahl verschmelzen beim Zusammenstoß zu einer.</string>
+    <string name="game2048_quickstart_bullet_3">Nach jedem Wisch, der das Feld verändert, erscheint eine neue Kachel.</string>
+    <string name="game2048_quickstart_hook">Gehen dir die Züge aus, ist es vorbei – plane also voraus.</string>
 
     <!-- Sudoku -->
     <string name="sudoku_title">Sudoku</string>
@@ -540,6 +654,26 @@
     <string name="sudoku_loss_abandoned_eyebrow">Rätsel beendet</string>
     <string name="sudoku_loss_abandoned_title">Sudoku-Sitzung beendet</string>
     <string name="sudoku_loss_abandoned_body">Du hast diese Sudoku-Sitzung beendet, bevor du das Raster gelöst hast.</string>
+    <string name="sudoku_challenger_label">Challenger</string>
+    <string name="sudoku_challenger_description">Löse so viele Rätsel wie möglich, bevor die Zeit abläuft.</string>
+    <string name="sudoku_challenger_solved_label">Gelöst</string>
+    <string name="sudoku_challenger_tier_label">Stufe</string>
+    <string name="sudoku_challenger_result_time_up_title">Zeit abgelaufen!</string>
+    <string name="sudoku_challenger_result_time_up_body">Die Zeit ist abgelaufen. So lief dein Durchlauf.</string>
+    <string name="sudoku_challenger_result_lives_exhausted_title">Keine Herzen mehr!</string>
+    <string name="sudoku_challenger_result_lives_exhausted_body">Drei Fehler haben deinen Durchlauf beendet.</string>
+    <string name="sudoku_challenger_result_abandoned_title">Durchlauf beendet</string>
+    <string name="sudoku_challenger_result_abandoned_body">Du hast den Durchlauf vorzeitig beendet.</string>
+    <string name="sudoku_challenger_result_new_high_score">Neuer Highscore!</string>
+    <string name="sudoku_challenger_result_puzzles_solved">Gelöste Rätsel</string>
+    <string name="sudoku_challenger_result_score">Punkte</string>
+    <string name="sudoku_challenger_result_fastest_solve">Schnellste Lösung</string>
+    <string name="sudoku_challenger_result_off_best">%1$d Punkte unter deinem Highscore</string>
+    <string name="sudoku_challenger_play_again">Nochmals spielen</string>
+    <string name="sudoku_challenger_back_to_puzzles">Zurück zu den Rätseln</string>
+    <string name="sudoku_challenger_try_another_game">Anderes Spiel versuchen</string>
+    <string name="sudoku_challenger_stats_title">Challenger</string>
+    <string name="sudoku_challenger_stats_best_run">Bester Durchlauf</string>
 
     <!-- Word Search -->
     <string name="wordsearch_title">Wortsuche</string>
@@ -765,6 +899,99 @@
     <string name="arrowescape_loss_rule_failure_title">Feld nicht geräumt</string>
     <string name="arrowescape_loss_rule_failure_body">Dir sind die Leben ausgegangen, bevor du jeden Pfeil entfernen konntest.</string>
 
+    <!-- Star Battle -->
+    <string name="starbattle_title">Star Battle</string>
+    <string name="starbattle_tagline">Platziere deine Sterne, halte sie auf Abstand</string>
+    <string name="starbattle_difficulty_easy">Leicht</string>
+    <string name="starbattle_difficulty_medium">Mittel</string>
+    <string name="starbattle_difficulty_hard">Schwer</string>
+    <string name="starbattle_difficulty_expert">Experte</string>
+    <string name="starbattle_difficulty_desc_easy">Ein Stern pro Zeile, Spalte und Region</string>
+    <string name="starbattle_difficulty_desc_medium">Manche Rätsel benötigen zwei Sterne pro Linie</string>
+    <string name="starbattle_difficulty_desc_hard">Tiefere Schlussfolgerungen, manchmal mit zwei Sternen pro Linie</string>
+    <string name="starbattle_difficulty_desc_expert">Die tiefsten Zwei-Sterne-Schlussfolgerungen im Spiel</string>
+    <string name="starbattle_how_to_play_goal">Platziere genau die richtige Anzahl an Sternen in jeder Zeile, Spalte und Region.</string>
+    <string name="starbattle_how_to_play_controls">Tippe auf eine Zelle, um sie zu markieren, tippe erneut, um die Markierung zu entfernen. Ziehe über mehrere Zellen, um sie auf einmal zu markieren oder zu leeren. Doppeltippe, um einen Stern zu platzieren — falsche Vermutungen kosten ein Leben.</string>
+    <string name="starbattle_how_to_play_wrong_move">Ein falscher Doppeltipp sperrt die Zelle als falsch platzierten Stern und kostet ein Leben. Verliere alle 3 Leben und das Rätsel endet.</string>
+    <string name="starbattle_rule_1_title">Sterne pro Zeile</string>
+    <string name="starbattle_rule_1_body">Jede Zeile enthält genau die richtige Anzahl an Sternen für das Rätsel.</string>
+    <string name="starbattle_rule_2_title">Sterne pro Spalte</string>
+    <string name="starbattle_rule_2_body">Jede Spalte enthält genau die richtige Anzahl an Sternen für das Rätsel.</string>
+    <string name="starbattle_rule_3_title">Sterne pro Region</string>
+    <string name="starbattle_rule_3_body">Jede farbige Region enthält genau die richtige Anzahl an Sternen für das Rätsel.</string>
+    <string name="starbattle_rule_4_title">Kein Berühren</string>
+    <string name="starbattle_rule_4_body">Sterne dürfen nicht nebeneinander platziert werden, auch nicht diagonal.</string>
+    <string name="starbattle_loss_abandoned_eyebrow">Rätsel beendet</string>
+    <string name="starbattle_loss_abandoned_title">Rätsel abgebrochen</string>
+    <string name="starbattle_loss_abandoned_body">Du hast dieses Rätsel beendet, bevor es fertig war.</string>
+    <string name="starbattle_loss_rule_failure_eyebrow">Rätsel verloren</string>
+    <string name="starbattle_loss_rule_failure_title">Keine Leben mehr</string>
+    <string name="starbattle_loss_rule_failure_body">Zu viele Sterne landeten an der falschen Stelle.</string>
+    <string name="starbattle_quickstart_goal">Platziere genau die richtige Anzahl an Sternen in jeder Zeile, Spalte und Region.</string>
+    <string name="starbattle_quickstart_bullet_1">Tippe auf eine Zelle, um sie zu markieren, tippe erneut, um die Markierung zu entfernen.</string>
+    <string name="starbattle_quickstart_bullet_2">Ziehe über mehrere Zellen, um sie auf einmal zu markieren oder zu leeren.</string>
+    <string name="starbattle_quickstart_bullet_3">Doppeltippe, um einen Stern zu platzieren — falsche Vermutungen kosten ein Leben.</string>
+    <string name="starbattle_quickstart_hook">Keine zwei Sterne dürfen sich berühren, auch nicht diagonal.</string>
+    <string name="starbattle_stars_per_group_content_description">Sterne pro Zeile, Spalte und Region</string>
+    <string name="starbattle_challenger_label">Challenger</string>
+    <string name="starbattle_challenger_description">Löse so viele Rätsel wie möglich, bevor die Zeit abläuft.</string>
+    <string name="starbattle_challenger_solved_label">Gelöst</string>
+    <string name="starbattle_challenger_tier_label">Stufe</string>
+    <string name="starbattle_challenger_result_time_up_title">Zeit abgelaufen!</string>
+    <string name="starbattle_challenger_result_time_up_body">Die Zeit ist abgelaufen. So lief dein Durchlauf.</string>
+    <string name="starbattle_challenger_result_hearts_exhausted_title">Keine Herzen mehr!</string>
+    <string name="starbattle_challenger_result_hearts_exhausted_body">Drei falsche Öffnungen haben deinen Durchlauf beendet.</string>
+    <string name="starbattle_challenger_result_abandoned_title">Durchlauf beendet</string>
+    <string name="starbattle_challenger_result_abandoned_body">Du hast den Durchlauf vorzeitig beendet.</string>
+    <string name="starbattle_challenger_result_new_high_score">Neuer Highscore!</string>
+    <string name="starbattle_challenger_result_puzzles_solved">Gelöste Rätsel</string>
+    <string name="starbattle_challenger_result_score">Punkte</string>
+    <string name="starbattle_challenger_result_fastest_solve">Schnellste Lösung</string>
+    <string name="starbattle_challenger_result_off_best">%1$d Punkte unter deinem Highscore</string>
+    <string name="starbattle_challenger_play_again">Nochmals spielen</string>
+    <string name="starbattle_challenger_back_to_puzzles">Zurück zu den Rätseln</string>
+    <string name="starbattle_challenger_try_another_game">Anderes Spiel versuchen</string>
+    <string name="starbattle_challenger_stats_title">Challenger</string>
+    <string name="starbattle_challenger_stats_best_run">Bester Durchlauf</string>
+
+    <!-- Guess by Numbers -->
+    <string name="guessbynumbers_title">Zahlenraten</string>
+    <string name="guessbynumbers_tagline">Knacke das versteckte Wort nur mit zwei Zahlen.</string>
+    <string name="guessbynumbers_difficulty_easy">Leicht</string>
+    <string name="guessbynumbers_difficulty_medium">Mittel</string>
+    <string name="guessbynumbers_difficulty_hard">Schwer</string>
+    <string name="guessbynumbers_difficulty_expert">Experte</string>
+    <string name="guessbynumbers_difficulty_desc_easy">5-Buchstaben-Wörter, geläufiger Wortschatz.</string>
+    <string name="guessbynumbers_difficulty_desc_medium">5-Buchstaben-Wörter, breiterer Wortschatz mit selteneren Wörtern.</string>
+    <string name="guessbynumbers_difficulty_desc_hard">6-Buchstaben-Wörter, geläufiger Wortschatz.</string>
+    <string name="guessbynumbers_difficulty_desc_expert">6-Buchstaben-Wörter, breiterer Wortschatz mit selteneren Wörtern.</string>
+    <string name="guessbynumbers_how_to_play_goal">Errate das versteckte Wort in zehn Versuchen. Nach jedem Versuch zeigen dir zwei Zahlen, wie nah du dran warst.</string>
+    <string name="guessbynumbers_how_to_play_controls">Tippe einen Versuch über die Bildschirmtastatur ein und bestätige ihn. Dein Versuch muss ein echtes Wort mit der richtigen Länge sein.</string>
+    <string name="guessbynumbers_rule_1_title">Treffer</string>
+    <string name="guessbynumbers_rule_1_body">Treffer zählt, wie viele Buchstaben deines Versuchs auch im Zielwort vorkommen, egal ob an der richtigen Stelle.</string>
+    <string name="guessbynumbers_rule_2_title">Exakt</string>
+    <string name="guessbynumbers_rule_2_body">Exakt zählt, wie viele dieser Buchstaben auch an der richtigen Stelle stehen. Ist Exakt gleich der Wortlänge, hast du gewonnen.</string>
+    <string name="guessbynumbers_rule_3_title">Zehn Versuche</string>
+    <string name="guessbynumbers_rule_3_body">Du hast zehn Versuche, um das Wort zu finden. Nutzt du alle auf, ohne richtig zu raten, endet das Rätsel als Niederlage.</string>
+    <string name="guessbynumbers_rule_4_title">Versuche müssen echte Wörter sein</string>
+    <string name="guessbynumbers_rule_4_body">Jeder Versuch wird gegen ein Wörterbuch geprüft. Kein echtes Wort wird abgelehnt und verbraucht keinen Versuch.</string>
+    <string name="guessbynumbers_how_to_play_scoring">Das Lösen des Rätsels bringt Punkte, abhängig von der Schwierigkeit, der Anzahl der benötigten Versuche und deiner Geschwindigkeit.</string>
+    <string name="guessbynumbers_matches_label">Treffer</string>
+    <string name="guessbynumbers_exact_label">Exakt</string>
+    <string name="guessbynumbers_invalid_word_message">Kein gültiges Wort</string>
+    <string name="guessbynumbers_loss_abandoned_eyebrow">Rätsel beendet</string>
+    <string name="guessbynumbers_loss_abandoned_title">Rätsel unvollständig</string>
+    <string name="guessbynumbers_loss_abandoned_body">Du hast dieses Rätsel beendet, bevor es gelöst war.</string>
+    <string name="guessbynumbers_loss_rule_failure_eyebrow">Rätsel verloren</string>
+    <string name="guessbynumbers_loss_rule_failure_title">Keine Versuche mehr</string>
+    <string name="guessbynumbers_loss_rule_failure_body">Du hast alle zehn Versuche verbraucht, ohne das Wort zu finden.</string>
+    <string name="guessbynumbers_quickstart_goal">Zehn Versuche, um das geheime Wort zu finden — keine Farbhinweise, nur zwei Zahlen.</string>
+    <string name="guessbynumbers_quickstart_bullet_1">Jede Eingabe muss ein gültiges Wort sein.</string>
+    <string name="guessbynumbers_quickstart_bullet_2">Treffer zählt gemeinsame Buchstaben. Exakt zählt Buchstaben an der richtigen Stelle.</string>
+    <string name="guessbynumbers_quickstart_example_1_word">WRONG</string>
+    <string name="guessbynumbers_quickstart_example_1_hint">Zielwort ist BROWN: 4 gemeinsame Buchstaben, 2 an der richtigen Stelle</string>
+    <string name="guessbynumbers_quickstart_hook">Weniger Versuche und eine schnellere Lösung bringen mehr Punkte.</string>
+
     <!-- Analyzer -->
     <string name="analyzer_step_of">Schritt %1$d von %2$d</string>
     <string name="analyzer_back">Vorheriger Schritt</string>
@@ -775,6 +1002,7 @@
     <!-- Puzzle Mix editor -->
     <string name="mix_editor_title_edit">Mix Bearbeiten</string>
     <string name="mix_name_label">Name des Mix</string>
+    <string name="mix_rename_content_description">Mix umbenennen</string>
     <string name="mix_entries_heading">Spiele in diesem Mix</string>
     <string name="mix_add_mode_chip_format">+ %1$s</string>
     <string name="mix_available_games_heading">Spiel Hinzufügen</string>

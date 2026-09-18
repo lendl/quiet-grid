@@ -1,0 +1,8 @@
+Version 1.3.0
+
+- Nouveaux jeux : 2048, Star Battle, Devine par les Nombres et N-Back
+- Mode Challenger ajouté à Sudoku, Takuzu, Nonogramme et Star Battle
+- Nouvel onglet Mixes : composez votre propre rotation de jeux et de difficultés, puis jouez-la en un tap
+- Nouvel onglet Historique affiche votre historique de parties
+- Menu de compte repensé
+- Corrections de bugs et améliorations de stabilité

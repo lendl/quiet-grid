@@ -147,7 +147,7 @@ class StarBattleChallengerViewModelTest {
     }
 
     @Test
-    fun `finalizeRun does not append a history record while Star Battle is beta`() {
+    fun `finalizeRun appends a history record now that Star Battle is out of beta`() {
         val historyStore = FakeHistoryStore()
         val viewModel = newViewModel(historyStore = historyStore)
 
@@ -156,6 +156,9 @@ class StarBattleChallengerViewModelTest {
         mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(500)
         mainDispatcherRule.dispatcher.scheduler.runCurrent()
 
-        assertTrue(historyStore.appended.isEmpty())
+        val record = historyStore.appended.single()
+        assertEquals(GameId.STARBATTLE.key, record.gameId)
+        assertTrue(record.isChallenger)
+        assertEquals("abandoned", record.lossReason)
     }
 }

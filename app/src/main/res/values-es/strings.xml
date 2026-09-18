@@ -3,6 +3,7 @@
     <string name="app_name">Quiet Grid</string>
 
     <string name="tab_games">Juegos</string>
+    <string name="tab_mixes">Mixes</string>
     <string name="tab_stats">Estadísticas</string>
 
     <string name="common_go_home">Ir a Juegos</string>
@@ -31,6 +32,7 @@
     <string name="mix_play_button">Jugar</string>
     <string name="mix_edit_content_description">Editar mix</string>
     <string name="mix_empty_state">Aún no tienes mixes. Crea uno con tus juegos y dificultades favoritos.</string>
+    <string name="mix_new_content_description">Nuevo mix</string>
     <string name="game_takuzu_name">Takuzu</string>
     <string name="game_nonogram_name">Nonograma</string>
     <string name="game_minesweeper_name">Buscaminas</string>
@@ -38,6 +40,8 @@
     <string name="game_wordsearch_name">Sopa de letras</string>
 
     <string name="settings_title">Ajustes</string>
+    <string name="account_menu_content_description">Menú</string>
+    <string name="account_preferences_section">Preferencias</string>
     <string name="settings_subtitle">Elige tu tema, idioma y visualización del temporizador.</string>
     <string name="settings_theme">Tema</string>
     <string name="settings_language">Idioma</string>
@@ -156,6 +160,25 @@
     <string name="arrowescape_quickstart_bullet_3">Un toque bloqueado cuesta una vida — pierde las 3 y la partida termina.</string>
     <string name="arrowescape_quickstart_hook">Cuanto más rápido despejes el tablero, mayor será tu puntuación.</string>
 
+    <string name="game2048_quickstart_goal">Desliza para combinar fichas iguales hasta llegar a 2048.</string>
+    <string name="game2048_quickstart_bullet_1">Desliza hacia arriba, abajo, izquierda o derecha para mover todas las fichas.</string>
+    <string name="game2048_quickstart_bullet_2">Dos fichas con el mismo número se combinan en una al chocar.</string>
+    <string name="game2048_quickstart_bullet_3">Aparece una ficha nueva después de cada deslizamiento que mueve el tablero.</string>
+    <string name="game2048_quickstart_hook">Si te quedas sin movimientos se acaba, así que planifica con antelación.</string>
+
+    <string name="guessbynumbers_quickstart_goal">Diez intentos para encontrar la palabra secreta: sin pistas de color, solo dos números.</string>
+    <string name="guessbynumbers_quickstart_bullet_1">Cada intento debe ser una palabra real.</string>
+    <string name="guessbynumbers_quickstart_bullet_2">Coincidencias cuenta las letras compartidas. Exactas cuenta las letras en el lugar correcto.</string>
+    <string name="guessbynumbers_quickstart_example_1_word">WRONG</string>
+    <string name="guessbynumbers_quickstart_example_1_hint">El objetivo es BROWN: 4 letras compartidas, 2 en el lugar correcto</string>
+    <string name="guessbynumbers_quickstart_hook">Menos intentos y una solución más rápida dan una puntuación mayor.</string>
+
+    <string name="starbattle_quickstart_goal">Coloca exactamente el número correcto de estrellas en cada fila, columna y región.</string>
+    <string name="starbattle_quickstart_bullet_1">Toca una celda para marcarla, tócala de nuevo para borrar la marca.</string>
+    <string name="starbattle_quickstart_bullet_2">Arrastra por varias celdas para marcarlas o borrarlas a la vez.</string>
+    <string name="starbattle_quickstart_bullet_3">Toca dos veces para colocar una estrella — los errores cuestan un corazón.</string>
+    <string name="starbattle_quickstart_hook">Dos estrellas no pueden tocarse, ni siquiera en diagonal.</string>
+
     <string name="tutorial_host_unavailable_title">Tutorial no disponible</string>
     <string name="tutorial_host_unavailable_body">Este tipo de puzzle aún no incluye un tutorial.</string>
     <string name="puzzle_play_loading">Cargando puzzle…</string>
@@ -175,6 +198,7 @@
     <string name="completion_score">Puntuación</string>
     <string name="completion_elapsed_time">Tiempo transcurrido</string>
     <string name="completion_accuracy">Precisión</string>
+    <string name="completion_best_tile">Mejor ficha</string>
     <string name="completion_try_another_game">Probar otro juego</string>
     <string name="completion_other_difficulty">Otra dificultad</string>
     <string name="completion_play_again">Jugar de nuevo</string>
@@ -208,6 +232,25 @@
     <string name="stats_clear_data_title">Borrar datos</string>
     <string name="stats_clear_data_message">¿Eliminar todas las estadísticas guardadas y el puzzle activo actual? Esta acción no se puede deshacer.</string>
 
+    <!-- Logs -->
+    <string name="tab_logs">Registros</string>
+    <string name="logs_mode_solo">Solo</string>
+    <string name="logs_mode_challenger">Challenger</string>
+    <string name="logs_game_chip_prefix">Juego: %1$s</string>
+    <string name="logs_empty">Todavía no has jugado ninguna partida.</string>
+    <string name="logs_result_won">Ganado</string>
+    <string name="logs_result_lost">Perdido</string>
+    <string name="logs_challenger_summary">Puntuación %1$d · %2$d resueltos</string>
+    <string name="logs_detail_title">Detalles de la partida</string>
+    <string name="logs_detail_tier_reached">Nivel alcanzado</string>
+    <string name="logs_detail_ended_by">Terminado por</string>
+    <string name="logs_reason_time_up">Se acabó el tiempo</string>
+    <string name="logs_reason_lives_exhausted">Sin corazones</string>
+    <string name="logs_reason_bank_exhausted">Se acabaron los puzzles</string>
+    <string name="logs_reason_abandoned">Terminado antes de tiempo</string>
+    <string name="logs_reason_rule_failure">Infringió una regla</string>
+    <string name="logs_reason_generic">Perdido</string>
+
     <string name="support_title">Soporte</string>
     <string name="support_subtitle">Ayuda práctica para preguntas, comentarios y detalles de confianza.</string>
     <string name="support_support_section">Soporte</string>
@@ -222,6 +265,9 @@
     <string name="support_source_code">GitHub / código fuente</string>
     <string name="support_opens_github">Abre GitHub</string>
     <string name="support_licenses">Licencias de código abierto</string>
+    <string name="trust_clear_data">Borrar datos</string>
+    <string name="trust_clear_data_title">Borrar datos</string>
+    <string name="trust_clear_data_message">¿Eliminar todas las estadísticas guardadas, los registros y el puzzle activo actual? Esta acción no se puede deshacer.</string>
     <string name="support_about_quiet_grid">Acerca de Quiet Grid</string>
     <string name="support_contributors">Colaboradores</string>
     <string name="support_show_your_support">Muestra tu apoyo</string>
@@ -257,6 +303,12 @@
     <string name="contributors_intro">Quiet Grid es mejor gracias a las personas que colaboran en él. Gracias.</string>
     <string name="contributors_cta_title">¿Quieres ver tu nombre aquí?</string>
     <string name="contributors_cta_body">Quiet Grid es de código abierto. Se agradecen correcciones de errores, traducciones e ideas para nuevos puzles: abre una pull request en GitHub.</string>
+    <string name="help_wanted_heading">Se busca ayuda</string>
+    <string name="help_wanted_disclaimer">La app funciona sin conexión — esta lista puede estar desactualizada. Consulta GitHub para ver el estado actual.</string>
+    <string name="help_wanted_icons_title">Icono por juego</string>
+    <string name="help_wanted_icons_blurb">Los juegos aparecen listados solo con su título — ayuda a diseñar un pequeño icono para cada uno.</string>
+    <string name="help_wanted_store_graphics_title">Capturas y gráficos para la tienda</string>
+    <string name="help_wanted_store_graphics_blurb">Ayuda a crear imágenes para la ficha de Play Store / F-Droid.</string>
 
     <string name="chimp_title">Chimp Test</string>
     <string name="chimp_short_title">Chimp</string>
@@ -739,6 +791,90 @@
     <string name="chimp_challenger_stats_title">Challenger</string>
     <string name="chimp_challenger_stats_best_run">Mejor partida</string>
 
+    <string name="nonogram_challenger_label">Challenger</string>
+    <string name="nonogram_challenger_description">Resuelve tantos puzzles como puedas antes de que se acabe el tiempo.</string>
+    <string name="nonogram_challenger_solved_label">Resueltos</string>
+    <string name="nonogram_challenger_tier_label">Nivel</string>
+    <string name="nonogram_challenger_result_time_up_title">¡Se acabó el tiempo!</string>
+    <string name="nonogram_challenger_result_time_up_body">Se acabó el tiempo. Así fue tu partida.</string>
+    <string name="nonogram_challenger_result_lives_exhausted_title">¡Sin corazones!</string>
+    <string name="nonogram_challenger_result_lives_exhausted_body">Tres errores terminaron tu partida.</string>
+    <string name="nonogram_challenger_result_abandoned_title">Partida terminada</string>
+    <string name="nonogram_challenger_result_abandoned_body">Detuviste la partida antes de tiempo.</string>
+    <string name="nonogram_challenger_result_new_high_score">¡Nueva puntuación máxima!</string>
+    <string name="nonogram_challenger_result_puzzles_solved">Puzzles resueltos</string>
+    <string name="nonogram_challenger_result_score">Puntuación</string>
+    <string name="nonogram_challenger_result_fastest_solve">Resolución más rápida</string>
+    <string name="nonogram_challenger_result_off_best">%1$d puntos por debajo de tu récord</string>
+    <string name="nonogram_challenger_play_again">Jugar de nuevo</string>
+    <string name="nonogram_challenger_back_to_puzzles">Volver a los puzzles</string>
+    <string name="nonogram_challenger_try_another_game">Probar otro juego</string>
+    <string name="nonogram_challenger_stats_title">Challenger</string>
+    <string name="nonogram_challenger_stats_best_run">Mejor partida</string>
+
+    <string name="sudoku_challenger_label">Challenger</string>
+    <string name="sudoku_challenger_description">Resuelve tantos puzzles como puedas antes de que se acabe el tiempo.</string>
+    <string name="sudoku_challenger_solved_label">Resueltos</string>
+    <string name="sudoku_challenger_tier_label">Nivel</string>
+    <string name="sudoku_challenger_result_time_up_title">¡Se acabó el tiempo!</string>
+    <string name="sudoku_challenger_result_time_up_body">Se acabó el tiempo. Así fue tu partida.</string>
+    <string name="sudoku_challenger_result_lives_exhausted_title">¡Sin corazones!</string>
+    <string name="sudoku_challenger_result_lives_exhausted_body">Tres errores terminaron tu partida.</string>
+    <string name="sudoku_challenger_result_abandoned_title">Partida terminada</string>
+    <string name="sudoku_challenger_result_abandoned_body">Detuviste la partida antes de tiempo.</string>
+    <string name="sudoku_challenger_result_new_high_score">¡Nueva puntuación máxima!</string>
+    <string name="sudoku_challenger_result_puzzles_solved">Puzzles resueltos</string>
+    <string name="sudoku_challenger_result_score">Puntuación</string>
+    <string name="sudoku_challenger_result_fastest_solve">Resolución más rápida</string>
+    <string name="sudoku_challenger_result_off_best">%1$d puntos por debajo de tu récord</string>
+    <string name="sudoku_challenger_play_again">Jugar de nuevo</string>
+    <string name="sudoku_challenger_back_to_puzzles">Volver a los puzzles</string>
+    <string name="sudoku_challenger_try_another_game">Probar otro juego</string>
+    <string name="sudoku_challenger_stats_title">Challenger</string>
+    <string name="sudoku_challenger_stats_best_run">Mejor partida</string>
+
+    <string name="takuzu_challenger_label">Challenger</string>
+    <string name="takuzu_challenger_description">Resuelve tantos puzzles como puedas antes de que se acabe el tiempo.</string>
+    <string name="takuzu_challenger_solved_label">Resueltos</string>
+    <string name="takuzu_challenger_tier_label">Nivel</string>
+    <string name="takuzu_challenger_result_time_up_title">¡Se acabó el tiempo!</string>
+    <string name="takuzu_challenger_result_time_up_body">Se acabó el tiempo. Así fue tu partida.</string>
+    <string name="takuzu_challenger_result_lives_exhausted_title">¡Sin corazones!</string>
+    <string name="takuzu_challenger_result_lives_exhausted_body">Tres errores terminaron tu partida.</string>
+    <string name="takuzu_challenger_result_abandoned_title">Partida terminada</string>
+    <string name="takuzu_challenger_result_abandoned_body">Detuviste la partida antes de tiempo.</string>
+    <string name="takuzu_challenger_result_new_high_score">¡Nueva puntuación máxima!</string>
+    <string name="takuzu_challenger_result_puzzles_solved">Puzzles resueltos</string>
+    <string name="takuzu_challenger_result_score">Puntuación</string>
+    <string name="takuzu_challenger_result_fastest_solve">Resolución más rápida</string>
+    <string name="takuzu_challenger_result_off_best">%1$d puntos por debajo de tu récord</string>
+    <string name="takuzu_challenger_play_again">Jugar de nuevo</string>
+    <string name="takuzu_challenger_back_to_puzzles">Volver a los puzzles</string>
+    <string name="takuzu_challenger_try_another_game">Probar otro juego</string>
+    <string name="takuzu_challenger_stats_title">Challenger</string>
+    <string name="takuzu_challenger_stats_best_run">Mejor partida</string>
+
+    <string name="starbattle_challenger_label">Challenger</string>
+    <string name="starbattle_challenger_description">Resuelve tantos puzzles como puedas antes de que se acabe el tiempo.</string>
+    <string name="starbattle_challenger_solved_label">Resueltos</string>
+    <string name="starbattle_challenger_tier_label">Nivel</string>
+    <string name="starbattle_challenger_result_time_up_title">¡Se acabó el tiempo!</string>
+    <string name="starbattle_challenger_result_time_up_body">Se acabó el tiempo. Así fue tu partida.</string>
+    <string name="starbattle_challenger_result_hearts_exhausted_title">¡Sin corazones!</string>
+    <string name="starbattle_challenger_result_hearts_exhausted_body">Tres aperturas incorrectas terminaron tu partida.</string>
+    <string name="starbattle_challenger_result_abandoned_title">Partida terminada</string>
+    <string name="starbattle_challenger_result_abandoned_body">Detuviste la partida antes de tiempo.</string>
+    <string name="starbattle_challenger_result_new_high_score">¡Nueva puntuación máxima!</string>
+    <string name="starbattle_challenger_result_puzzles_solved">Puzzles resueltos</string>
+    <string name="starbattle_challenger_result_score">Puntuación</string>
+    <string name="starbattle_challenger_result_fastest_solve">Resolución más rápida</string>
+    <string name="starbattle_challenger_result_off_best">%1$d puntos por debajo de tu récord</string>
+    <string name="starbattle_challenger_play_again">Jugar de nuevo</string>
+    <string name="starbattle_challenger_back_to_puzzles">Volver a los puzzles</string>
+    <string name="starbattle_challenger_try_another_game">Probar otro juego</string>
+    <string name="starbattle_challenger_stats_title">Challenger</string>
+    <string name="starbattle_challenger_stats_best_run">Mejor partida</string>
+
     <string name="arrowescape_title">Escape de Flechas</string>
     <string name="arrowescape_tagline">Despeja el tablero, una flecha a la vez.</string>
     <string name="arrowescape_difficulty_easy">Fácil</string>
@@ -765,6 +901,104 @@
     <string name="arrowescape_loss_rule_failure_title">Tablero sin despejar</string>
     <string name="arrowescape_loss_rule_failure_body">Te quedaste sin vidas antes de retirar todas las flechas.</string>
 
+    <!-- 2048 -->
+    <string name="game2048_title">2048</string>
+    <string name="game2048_tagline">Combina fichas para llegar a 2048.</string>
+    <string name="game2048_difficulty_easy">Fácil</string>
+    <string name="game2048_difficulty_medium">Medio</string>
+    <string name="game2048_difficulty_hard">Difícil</string>
+    <string name="game2048_difficulty_expert">Experto</string>
+    <string name="game2048_difficulty_desc_easy">Un tablero más grande de 5x5 te da más espacio para maniobrar.</string>
+    <string name="game2048_difficulty_desc_medium">Tablero clásico de 4x4, la disposición original de 2048.</string>
+    <string name="game2048_difficulty_desc_hard">El mismo tablero de 4x4 pero con más fichas de 4 poco útiles.</string>
+    <string name="game2048_difficulty_desc_expert">Tablero diminuto de 3x3: el objetivo aquí es 1024, la ficha más alta que este tamaño puede contener.</string>
+    <string name="game2048_score_label">Puntuación</string>
+    <string name="game2048_how_to_play_goal">Combina fichas iguales hasta que una de ellas llegue a 2048.</string>
+    <string name="game2048_how_to_play_controls">Desliza hacia arriba, abajo, izquierda o derecha para mover todas las fichas en esa dirección.</string>
+    <string name="game2048_rule_1_title">Desliza todas las fichas</string>
+    <string name="game2048_rule_1_body">Deslizar mueve cada ficha lo más lejos posible en esa dirección.</string>
+    <string name="game2048_rule_2_title">Combínalas al contacto</string>
+    <string name="game2048_rule_2_body">Dos fichas con el mismo número se combinan en una sola ficha con el doble de valor.</string>
+    <string name="game2048_rule_3_title">Una combinación por deslizamiento</string>
+    <string name="game2048_rule_3_body">Una ficha que acaba de combinarse no puede volver a combinarse hasta tu siguiente deslizamiento.</string>
+    <string name="game2048_rule_4_title">Ficha nueva en cada movimiento</string>
+    <string name="game2048_rule_4_body">Aparece una nueva ficha de 2 o 4 después de cualquier deslizamiento que realmente mueva el tablero.</string>
+    <string name="game2048_how_to_play_scoring">Cada combinación suma el valor de la nueva ficha a tu puntuación.</string>
+    <string name="game2048_tip_1_title">Mantén tu ficha más grande en una esquina</string>
+    <string name="game2048_tip_1_body">Construir alrededor de una esquina evita que tus fichas más altas queden atrapadas.</string>
+    <string name="game2048_tip_2_title">Elige una dirección de deslizamiento y mantente en ella</string>
+    <string name="game2048_tip_2_body">Favorecer una o dos direcciones mantiene el tablero organizado más tiempo.</string>
+    <string name="game2048_tip_3_title">No persigas cada combinación</string>
+    <string name="game2048_tip_3_body">A veces el movimiento más seguro es el que todavía no combina nada.</string>
+    <string name="game2048_loss_abandoned_eyebrow">Puzzle terminado</string>
+    <string name="game2048_loss_abandoned_title">Puzzle sin terminar</string>
+    <string name="game2048_loss_abandoned_body">Terminaste este puzzle antes de resolverlo.</string>
+    <string name="game2048_loss_rule_failure_eyebrow">Puzzle perdido</string>
+    <string name="game2048_loss_rule_failure_title">Sin movimientos</string>
+    <string name="game2048_loss_rule_failure_body">No quedaban celdas vacías ni fichas iguales para combinar.</string>
+
+    <!-- Guess by Numbers -->
+    <string name="guessbynumbers_title">Adivina por Números</string>
+    <string name="guessbynumbers_tagline">Descubre la palabra oculta usando solo dos números.</string>
+    <string name="guessbynumbers_difficulty_easy">Fácil</string>
+    <string name="guessbynumbers_difficulty_medium">Medio</string>
+    <string name="guessbynumbers_difficulty_hard">Difícil</string>
+    <string name="guessbynumbers_difficulty_expert">Experto</string>
+    <string name="guessbynumbers_difficulty_desc_easy">Palabras de 5 letras, vocabulario común.</string>
+    <string name="guessbynumbers_difficulty_desc_medium">Palabras de 5 letras, vocabulario más amplio con palabras menos comunes.</string>
+    <string name="guessbynumbers_difficulty_desc_hard">Palabras de 6 letras, vocabulario común.</string>
+    <string name="guessbynumbers_difficulty_desc_expert">Palabras de 6 letras, vocabulario más amplio con palabras menos comunes.</string>
+    <string name="guessbynumbers_how_to_play_goal">Adivina la palabra oculta en diez intentos. Después de cada intento, dos números te dicen cuánto te acercaste.</string>
+    <string name="guessbynumbers_how_to_play_controls">Escribe un intento con el teclado en pantalla y envíalo. Tu intento debe ser una palabra real de la longitud correcta.</string>
+    <string name="guessbynumbers_rule_1_title">Coincidencias</string>
+    <string name="guessbynumbers_rule_1_body">Coincidencias cuenta cuántas letras de tu intento también aparecen en la palabra objetivo, estén o no en el lugar correcto.</string>
+    <string name="guessbynumbers_rule_2_title">Exactas</string>
+    <string name="guessbynumbers_rule_2_body">Exactas cuenta cuántas de esas letras están también en la posición correcta. Cuando Exactas sea igual a la longitud de la palabra, habrás ganado.</string>
+    <string name="guessbynumbers_rule_3_title">Diez intentos</string>
+    <string name="guessbynumbers_rule_3_body">Tienes diez intentos para encontrar la palabra. El puzzle termina en derrota si los usas todos sin acertar.</string>
+    <string name="guessbynumbers_rule_4_title">Los intentos deben ser palabras reales</string>
+    <string name="guessbynumbers_rule_4_body">Cada intento se comprueba contra un diccionario. Los intentos que no sean palabras reales se rechazan y no gastan un turno.</string>
+    <string name="guessbynumbers_how_to_play_scoring">Resolver el puzzle otorga puntos según la dificultad, cuántos intentos necesitaste y lo rápido que terminaste.</string>
+    <string name="guessbynumbers_matches_label">Coincidencias</string>
+    <string name="guessbynumbers_exact_label">Exactas</string>
+    <string name="guessbynumbers_invalid_word_message">No es una palabra válida</string>
+    <string name="guessbynumbers_loss_abandoned_eyebrow">Puzzle terminado</string>
+    <string name="guessbynumbers_loss_abandoned_title">Puzzle sin terminar</string>
+    <string name="guessbynumbers_loss_abandoned_body">Terminaste este puzzle antes de resolverlo.</string>
+    <string name="guessbynumbers_loss_rule_failure_eyebrow">Puzzle perdido</string>
+    <string name="guessbynumbers_loss_rule_failure_title">Sin intentos</string>
+    <string name="guessbynumbers_loss_rule_failure_body">Usaste los diez intentos sin encontrar la palabra.</string>
+
+    <!-- Star Battle -->
+    <string name="starbattle_title">Batalla de Estrellas</string>
+    <string name="starbattle_tagline">Coloca tus estrellas, mantenlas separadas</string>
+    <string name="starbattle_difficulty_easy">Fácil</string>
+    <string name="starbattle_difficulty_medium">Medio</string>
+    <string name="starbattle_difficulty_hard">Difícil</string>
+    <string name="starbattle_difficulty_expert">Experto</string>
+    <string name="starbattle_difficulty_desc_easy">Una estrella por fila, columna y región</string>
+    <string name="starbattle_difficulty_desc_medium">Algunos puzzles necesitan dos estrellas por línea</string>
+    <string name="starbattle_difficulty_desc_hard">Deducciones más profundas, a veces con dos estrellas por línea</string>
+    <string name="starbattle_difficulty_desc_expert">Las deducciones de dos estrellas más profundas del juego</string>
+    <string name="starbattle_stars_per_group_content_description">Estrellas por fila, columna y región</string>
+    <string name="starbattle_how_to_play_goal">Coloca exactamente el número correcto de estrellas en cada fila, columna y región.</string>
+    <string name="starbattle_how_to_play_controls">Toca una celda para marcarla, tócala de nuevo para borrar la marca. Arrastra por varias celdas para marcarlas o borrarlas a la vez. Toca dos veces para colocar una estrella — los errores cuestan un corazón.</string>
+    <string name="starbattle_how_to_play_wrong_move">Un doble toque incorrecto bloquea la celda como una estrella mal colocada y cuesta un corazón. Pierde los 3 corazones y el puzzle termina.</string>
+    <string name="starbattle_rule_1_title">Estrellas por fila</string>
+    <string name="starbattle_rule_1_body">Cada fila contiene exactamente el número correcto de estrellas para el puzzle.</string>
+    <string name="starbattle_rule_2_title">Estrellas por columna</string>
+    <string name="starbattle_rule_2_body">Cada columna contiene exactamente el número correcto de estrellas para el puzzle.</string>
+    <string name="starbattle_rule_3_title">Estrellas por región</string>
+    <string name="starbattle_rule_3_body">Cada región de color contiene exactamente el número correcto de estrellas para el puzzle.</string>
+    <string name="starbattle_rule_4_title">Sin contacto</string>
+    <string name="starbattle_rule_4_body">Las estrellas no pueden colocarse una junto a otra, ni siquiera en diagonal.</string>
+    <string name="starbattle_loss_abandoned_eyebrow">Puzzle terminado</string>
+    <string name="starbattle_loss_abandoned_title">Puzzle abandonado</string>
+    <string name="starbattle_loss_abandoned_body">Terminaste este puzzle antes de acabarlo.</string>
+    <string name="starbattle_loss_rule_failure_eyebrow">Puzzle perdido</string>
+    <string name="starbattle_loss_rule_failure_title">Sin corazones</string>
+    <string name="starbattle_loss_rule_failure_body">Demasiadas estrellas quedaron mal colocadas.</string>
+
     <!-- Analyzer -->
     <string name="analyzer_step_of">Paso %1$d de %2$d</string>
     <string name="analyzer_back">Paso anterior</string>
@@ -775,6 +1009,7 @@
     <!-- Puzzle Mix editor -->
     <string name="mix_editor_title_edit">Editar Mix</string>
     <string name="mix_name_label">Nombre del mix</string>
+    <string name="mix_rename_content_description">Renombrar mix</string>
     <string name="mix_entries_heading">Juegos en este mix</string>
     <string name="mix_add_mode_chip_format">+ %1$s</string>
     <string name="mix_available_games_heading">Añadir Juego</string>

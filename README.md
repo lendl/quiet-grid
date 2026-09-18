@@ -25,8 +25,12 @@ No ads. No account. No internet required. Everything stays on your device.
 | Takuzu | Available |
 | Word Search | Available |
 | Word Guess | Available |
+| 2048 | Available |
+| Star Battle | Available |
+| Guess by Numbers | Available |
 | Arrow Escape | Beta |
 | Block Fill | Beta |
+| N-Back | Beta |
 
 Each puzzle type has Easy, Medium, Hard, and Expert difficulty levels.
 
