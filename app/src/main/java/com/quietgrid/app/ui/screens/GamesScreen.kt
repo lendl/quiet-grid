@@ -4,18 +4,24 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -23,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
 import com.quietgrid.app.core.GameCatalog
+import com.quietgrid.app.core.GameCategory
 import com.quietgrid.app.core.GameId
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.core.GameMeta
@@ -38,8 +45,11 @@ fun GamesScreen(
     val repositories: RepositoriesViewModel = hiltViewModel()
     val settings by repositories.settingsRepository.settings.collectAsState(initial = AppSettings())
 
+    var selectedCategory by remember { mutableStateOf<GameCategory?>(null) }
+
     @Composable
     fun sortedBy(list: List<GameMeta>) = list
+        .filter { selectedCategory == null || selectedCategory in it.categories }
         .map { it to stringResource(it.titleRes) }
         .sortedBy { it.second }
         .map { it.first }
@@ -50,6 +60,26 @@ fun GamesScreen(
     Column(Modifier.fillMaxWidth().padding(16.dp)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
             AccountIconButton(onOpenAccount)
+        }
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 4.dp)
+                .horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            FilterChip(
+                selected = selectedCategory == null,
+                onClick = { selectedCategory = null },
+                label = { Text(stringResource(R.string.common_all)) },
+            )
+            GameCategory.entries.forEach { category ->
+                FilterChip(
+                    selected = selectedCategory == category,
+                    onClick = { selectedCategory = category },
+                    label = { Text(stringResource(category.labelRes)) },
+                )
+            }
         }
         LazyColumn(contentPadding = PaddingValues(top = 8.dp, bottom = 16.dp)) {
             itemsIndexed(readyGames) { index, meta ->

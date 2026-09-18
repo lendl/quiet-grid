@@ -30,6 +30,10 @@
     <string name="games_subtitle">Choose a puzzle and keep your active run close.</string>
     <string name="games_coming_soon">Coming Soon</string>
     <string name="games_beta_disclaimer">These games are still in testing and may have rough edges.</string>
+    <string name="games_category_logic">Logic</string>
+    <string name="games_category_word">Word</string>
+    <string name="games_category_memory">Memory</string>
+    <string name="games_category_spatial">Spatial</string>
     <string name="games_active_puzzle_waiting">Your puzzle is waiting</string>
     <string name="mix_card_entry_count">%1$d games</string>
     <string name="mix_play_button">Play</string>
