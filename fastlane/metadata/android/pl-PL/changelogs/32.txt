@@ -1,0 +1,6 @@
+Wersja 1.4.0
+
+- Nowy język: portugalski
+- Nowe motywy: Jedwab, Nord, Kawa i Dracula
+- Filtrowanie listy gier według kategorii (Logika, Słowa, Pamięć, Przestrzenne)
+- Poprawki błędów i stabilności

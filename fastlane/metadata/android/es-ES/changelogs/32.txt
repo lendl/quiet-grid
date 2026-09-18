@@ -1,0 +1,6 @@
+Versión 1.4.0
+
+- Nuevo idioma: portugués
+- Nuevos temas: Seda, Nord, Café y Drácula
+- Filtra el selector de juegos por categoría (Lógica, Palabras, Memoria, Espacial)
+- Corrección de errores y mejoras de estabilidad

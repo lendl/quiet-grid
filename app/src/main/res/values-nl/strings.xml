@@ -27,6 +27,10 @@
     <string name="games_subtitle">Kies een puzzel en houd je actieve spel dichtbij.</string>
     <string name="games_coming_soon">Binnenkort beschikbaar</string>
     <string name="games_beta_disclaimer">Deze spellen zijn nog in ontwikkeling en kunnen problemen bevatten.</string>
+    <string name="games_category_logic">Logica</string>
+    <string name="games_category_word">Woord</string>
+    <string name="games_category_memory">Geheugen</string>
+    <string name="games_category_spatial">Ruimtelijk</string>
     <string name="games_active_puzzle_waiting">Je puzzel wacht op je</string>
     <string name="mix_card_entry_count">%1$d spellen</string>
     <string name="mix_play_button">Spelen</string>
@@ -53,6 +57,14 @@
     <string name="settings_light_detail">Gebruikt een lichter palet in de hele app.</string>
     <string name="settings_pencil">Potlood</string>
     <string name="settings_pencil_detail">Gebruikt een papierachtige grijsschaal in de hele app.</string>
+    <string name="settings_silk">Zijde</string>
+    <string name="settings_silk_detail">Gebruikt een warm crèmekleurig palet met felle neonaccenten.</string>
+    <string name="settings_nord">Nord</string>
+    <string name="settings_nord_detail">Gebruikt een koel, ijsblauw palet in de hele app.</string>
+    <string name="settings_coffee">Koffie</string>
+    <string name="settings_coffee_detail">Gebruikt een warm, donker geroosterd palet in de hele app.</string>
+    <string name="settings_dracula">Dracula</string>
+    <string name="settings_dracula_detail">Gebruikt een donker palet met roze en paarse accenten.</string>
     <string name="settings_language_system_detail">Volg je Android-taalinstelling.</string>
     <string name="settings_language_english_detail">Toon de app in het Engels.</string>
     <string name="settings_language_dutch_detail">Toon de app in het Nederlands.</string>

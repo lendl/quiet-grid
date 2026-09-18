@@ -30,6 +30,10 @@
     <string name="games_subtitle">Escolha um quebra-cabeça e mantenha sua partida ativa por perto.</string>
     <string name="games_coming_soon">Em breve</string>
     <string name="games_beta_disclaimer">Estes jogos ainda estão em teste e podem ter algumas arestas.</string>
+    <string name="games_category_logic">Lógica</string>
+    <string name="games_category_word">Palavras</string>
+    <string name="games_category_memory">Memória</string>
+    <string name="games_category_spatial">Espacial</string>
     <string name="games_active_puzzle_waiting">Seu quebra-cabeça está esperando</string>
     <string name="mix_card_entry_count">%1$d jogos</string>
     <string name="mix_play_button">Jogar</string>
@@ -57,6 +61,14 @@
     <string name="settings_light_detail">Usa uma paleta mais clara em todo o aplicativo.</string>
     <string name="settings_pencil">Lápis</string>
     <string name="settings_pencil_detail">Usa uma paleta em escala de cinza, como papel, em todo o aplicativo.</string>
+    <string name="settings_silk">Seda</string>
+    <string name="settings_silk_detail">Usa uma paleta quente em tom creme com acentos neon vibrantes.</string>
+    <string name="settings_nord">Nord</string>
+    <string name="settings_nord_detail">Usa uma paleta fria em tom azul gelado em todo o aplicativo.</string>
+    <string name="settings_coffee">Café</string>
+    <string name="settings_coffee_detail">Usa uma paleta quente de torra escura em todo o aplicativo.</string>
+    <string name="settings_dracula">Drácula</string>
+    <string name="settings_dracula_detail">Usa uma paleta escura com acentos rosa e roxo.</string>
     <string name="settings_language_system_detail">Segue o idioma configurado no seu Android.</string>
     <string name="settings_language_english_detail">Mostrar o aplicativo em inglês.</string>
     <string name="settings_language_dutch_detail">Mostrar o aplicativo em holandês.</string>

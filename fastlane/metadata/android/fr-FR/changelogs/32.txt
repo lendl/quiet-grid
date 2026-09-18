@@ -1,0 +1,6 @@
+Version 1.4.0
+
+- Nouvelle langue : portugais
+- Nouveaux thèmes : Soie, Nord, Café et Dracula
+- Filtrez la liste des jeux par catégorie (Logique, Mots, Mémoire, Spatial)
+- Corrections de bugs et améliorations de stabilité

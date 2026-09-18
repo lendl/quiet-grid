@@ -27,6 +27,10 @@
     <string name="games_subtitle">Elige un puzzle y mantén tu partida activa cerca.</string>
     <string name="games_coming_soon">Próximamente</string>
     <string name="games_beta_disclaimer">Estos juegos aún están en pruebas y pueden tener problemas.</string>
+    <string name="games_category_logic">Lógica</string>
+    <string name="games_category_word">Palabras</string>
+    <string name="games_category_memory">Memoria</string>
+    <string name="games_category_spatial">Espacial</string>
     <string name="games_active_puzzle_waiting">Tu puzzle te espera</string>
     <string name="mix_card_entry_count">%1$d juegos</string>
     <string name="mix_play_button">Jugar</string>
@@ -53,6 +57,14 @@
     <string name="settings_light_detail">Usa una paleta más brillante en toda la aplicación.</string>
     <string name="settings_pencil">Lápiz</string>
     <string name="settings_pencil_detail">Usa una paleta en escala de grises tipo papel en toda la aplicación.</string>
+    <string name="settings_silk">Seda</string>
+    <string name="settings_silk_detail">Usa una paleta cálida color crema con acentos neón vivos.</string>
+    <string name="settings_nord">Nord</string>
+    <string name="settings_nord_detail">Usa una paleta fría en tonos azul escarcha en toda la aplicación.</string>
+    <string name="settings_coffee">Café</string>
+    <string name="settings_coffee_detail">Usa una paleta cálida de tostado oscuro en toda la aplicación.</string>
+    <string name="settings_dracula">Drácula</string>
+    <string name="settings_dracula_detail">Usa una paleta oscura con acentos rosas y morados.</string>
     <string name="settings_language_system_detail">Sigue tu configuración de idioma de Android.</string>
     <string name="settings_language_english_detail">Mostrar la aplicación en inglés.</string>
     <string name="settings_language_dutch_detail">Mostrar la aplicación en neerlandés.</string>

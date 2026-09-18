@@ -27,6 +27,10 @@
     <string name="games_subtitle">Wähle ein Rätsel und behalte dein aktives Spiel im Blick.</string>
     <string name="games_coming_soon">Demnächst verfügbar</string>
     <string name="games_beta_disclaimer">Diese Spiele befinden sich noch in der Entwicklung und können Fehler enthalten.</string>
+    <string name="games_category_logic">Logik</string>
+    <string name="games_category_word">Wort</string>
+    <string name="games_category_memory">Gedächtnis</string>
+    <string name="games_category_spatial">Räumlich</string>
     <string name="games_active_puzzle_waiting">Dein Rätsel wartet</string>
     <string name="mix_card_entry_count">%1$d Spiele</string>
     <string name="mix_play_button">Spielen</string>
@@ -53,6 +57,14 @@
     <string name="settings_light_detail">Verwendet eine hellere Palette in der gesamten App.</string>
     <string name="settings_pencil">Bleistift</string>
     <string name="settings_pencil_detail">Verwendet eine papierähnliche Grauskalenpalette in der gesamten App.</string>
+    <string name="settings_silk">Seide</string>
+    <string name="settings_silk_detail">Verwendet eine warme Cremepalette mit kräftigen Neonakzenten.</string>
+    <string name="settings_nord">Nord</string>
+    <string name="settings_nord_detail">Verwendet eine kühle, frostig-blaue Palette in der gesamten App.</string>
+    <string name="settings_coffee">Kaffee</string>
+    <string name="settings_coffee_detail">Verwendet eine warme, dunkle Röstpalette in der gesamten App.</string>
+    <string name="settings_dracula">Dracula</string>
+    <string name="settings_dracula_detail">Verwendet eine dunkle Palette mit pinken und violetten Akzenten.</string>
     <string name="settings_language_system_detail">Folgt deiner Android-Spracheinstellung.</string>
     <string name="settings_language_english_detail">App auf Englisch anzeigen.</string>
     <string name="settings_language_dutch_detail">App auf Niederländisch anzeigen.</string>

@@ -1,0 +1,6 @@
+Versie 1.4.0
+
+- Nieuwe taal: Portugees
+- Nieuwe thema's: Zijde, Nord, Koffie en Dracula
+- Filter de spellenkiezer op categorie (Logica, Woord, Geheugen, Ruimtelijk)
+- Bugfixes en stabiliteitsverbeteringen

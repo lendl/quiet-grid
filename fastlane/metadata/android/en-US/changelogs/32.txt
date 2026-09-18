@@ -1,0 +1,6 @@
+Version 1.4.0
+
+- New languages: Portuguese
+- New themes: Silk, Nord, Coffee, and Dracula
+- Filter the games picker by category (Logic, Word, Memory, Spatial)
+- Bug fixes and stability improvements

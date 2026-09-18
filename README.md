@@ -45,7 +45,7 @@ Each puzzle type has Easy, Medium, Hard, and Expert difficulty levels.
 
 ## Languages
 
-English, Dutch, German, French, Spanish.
+English, Dutch, German, French, Spanish, Portuguese.
 
 ## Getting Started
 

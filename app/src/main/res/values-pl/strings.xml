@@ -30,6 +30,10 @@
     <string name="games_subtitle">Wybierz łamigłówkę i miej swoją aktywną rozgrywkę pod ręką.</string>
     <string name="games_coming_soon">Wkrótce</string>
     <string name="games_beta_disclaimer">Te gry są wciąż w fazie testów i mogą zawierać błędy.</string>
+    <string name="games_category_logic">Logika</string>
+    <string name="games_category_word">Słowa</string>
+    <string name="games_category_memory">Pamięć</string>
+    <string name="games_category_spatial">Przestrzenne</string>
     <string name="games_active_puzzle_waiting">Twoja łamigłówka czeka</string>
     <string name="mix_card_entry_count">%1$d gier</string>
     <string name="mix_play_button">Graj</string>
@@ -57,6 +61,14 @@
     <string name="settings_light_detail">Zmienia planszę i menu na jaśniejszą paletę barw.</string>
     <string name="settings_pencil">Ołówek</string>
     <string name="settings_pencil_detail">Zmienia paletę barw w całej aplikacji na odcienie szarości przypominające papier.</string>
+    <string name="settings_silk">Jedwab</string>
+    <string name="settings_silk_detail">Ciepła kremowa paleta z wyrazistymi neonowymi akcentami.</string>
+    <string name="settings_nord">Nord</string>
+    <string name="settings_nord_detail">Chłodna, lodowo-niebieska paleta w całej aplikacji.</string>
+    <string name="settings_coffee">Kawa</string>
+    <string name="settings_coffee_detail">Ciepła paleta w odcieniach ciemnej palonej kawy w całej aplikacji.</string>
+    <string name="settings_dracula">Dracula</string>
+    <string name="settings_dracula_detail">Ciemna paleta z różowymi i fioletowymi akcentami.</string>
     <string name="settings_language_system_detail">Użyj języka ustawionego w systemie Android.</string>
     <string name="settings_language_english_detail">Wyświetlaj aplikację w języku angielskim.</string>
     <string name="settings_language_dutch_detail">Wyświetlaj aplikację w języku holenderskim.</string>
