@@ -49,7 +49,6 @@
     <string name="settings_subtitle">Wähle Design, Sprache und Timer-Anzeige.</string>
     <string name="settings_theme">Thema</string>
     <string name="settings_language">Sprache</string>
-    <string name="settings_language_dropdown_detail">Wähle die App-Sprache.</string>
     <string name="settings_language_ai_disclaimer">Sprachtexte wurden mit KI erstellt und können kleine Fehler enthalten.</string>
     <string name="settings_dark">Dunkel</string>
     <string name="settings_dark_detail">Hält Brett und Menüs in einer dunkleren Palette.</string>
@@ -65,7 +64,7 @@
     <string name="settings_coffee_detail">Verwendet eine warme, dunkle Röstpalette in der gesamten App.</string>
     <string name="settings_dracula">Dracula</string>
     <string name="settings_dracula_detail">Verwendet eine dunkle Palette mit pinken und violetten Akzenten.</string>
-    <string name="settings_language_system_detail">Folgt deiner Android-Spracheinstellung.</string>
+    <string name="settings_language_system_detail">System</string>
     <string name="settings_language_english_detail">App auf Englisch anzeigen.</string>
     <string name="settings_language_dutch_detail">App auf Niederländisch anzeigen.</string>
     <string name="settings_language_german_detail">App auf Deutsch anzeigen.</string>
@@ -74,7 +73,7 @@
     <string name="settings_language_polish_detail">App auf Polnisch anzeigen.</string>
     <string name="settings_puzzle_language">Rätselsprache</string>
     <string name="settings_puzzle_language_dropdown_detail">Wörterbuch für Wortspiele.</string>
-    <string name="settings_puzzle_language_system_detail">Der App-Sprache folgen.</string>
+    <string name="settings_puzzle_language_system_detail">App-Sprache</string>
     <string name="settings_puzzle_language_english_detail">Englisch</string>
     <string name="settings_puzzle_language_dutch_detail">Niederländisch</string>
     <string name="settings_puzzle_language_german_detail">Deutsch</string>
@@ -82,7 +81,6 @@
     <string name="settings_puzzle_language_spanish_detail">Spanisch</string>
     <string name="settings_puzzle_language_polish_detail">Polnisch</string>
     <string name="settings_show_timer_in_play_label">Timer während des Spielens anzeigen</string>
-    <string name="settings_show_timer_in_play_detail">Zeigt den verstrichenen Timer während eines laufenden Rätsels an.</string>
     <string name="settings_beta_games_label">Beta-Spiele aktivieren</string>
     <string name="settings_beta_games_detail">Schaltet Spiele frei, die sich noch in der Entwicklung befinden. Diese können Fehler enthalten.</string>
 

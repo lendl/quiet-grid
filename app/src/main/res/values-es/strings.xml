@@ -49,7 +49,6 @@
     <string name="settings_subtitle">Elige tu tema, idioma y visualización del temporizador.</string>
     <string name="settings_theme">Tema</string>
     <string name="settings_language">Idioma</string>
-    <string name="settings_language_dropdown_detail">Elige el idioma de la aplicación.</string>
     <string name="settings_language_ai_disclaimer">Los textos del idioma fueron generados por IA y pueden contener pequeños errores.</string>
     <string name="settings_dark">Oscuro</string>
     <string name="settings_dark_detail">Mantiene el tablero y los menús en una paleta oscura.</string>
@@ -65,7 +64,7 @@
     <string name="settings_coffee_detail">Usa una paleta cálida de tostado oscuro en toda la aplicación.</string>
     <string name="settings_dracula">Drácula</string>
     <string name="settings_dracula_detail">Usa una paleta oscura con acentos rosas y morados.</string>
-    <string name="settings_language_system_detail">Sigue tu configuración de idioma de Android.</string>
+    <string name="settings_language_system_detail">Sistema</string>
     <string name="settings_language_english_detail">Mostrar la aplicación en inglés.</string>
     <string name="settings_language_dutch_detail">Mostrar la aplicación en neerlandés.</string>
     <string name="settings_language_german_detail">Mostrar la aplicación en alemán.</string>
@@ -82,7 +81,6 @@
     <string name="settings_puzzle_language_spanish_detail">Español</string>
     <string name="settings_puzzle_language_polish_detail">Polaco</string>
     <string name="settings_show_timer_in_play_label">Mostrar temporizador durante el juego</string>
-    <string name="settings_show_timer_in_play_detail">Muestra el temporizador transcurrido mientras un puzzle está en progreso.</string>
     <string name="settings_beta_games_label">Activar juegos beta</string>
     <string name="settings_beta_games_detail">Desbloquea juegos que aún están en pruebas. Estos pueden tener problemas.</string>
 

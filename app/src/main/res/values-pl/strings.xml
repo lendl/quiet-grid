@@ -53,7 +53,6 @@
     <string name="settings_subtitle">Wybierz motyw, język oraz sposób wyświetlania stoperu.</string>
     <string name="settings_theme">Motyw</string>
     <string name="settings_language">Język</string>
-    <string name="settings_language_dropdown_detail">Wybierz język aplikacji.</string>
     <string name="settings_language_ai_disclaimer">Tłumaczenia zostały wygenerowane przez sztuczną inteligencję i mogą zawierać drobne błędy.</string>
     <string name="settings_dark">Ciemny</string>
     <string name="settings_dark_detail">Zmienia planszę i menu na ciemniejszą paletę barw.</string>
@@ -86,7 +85,6 @@
     <string name="settings_puzzle_language_spanish_detail">Hiszpański</string>
     <string name="settings_puzzle_language_polish_detail">Polski</string>
     <string name="settings_show_timer_in_play_label">Pokaż stoper podczas gry</string>
-    <string name="settings_show_timer_in_play_detail">Wyświetla upływający czas podczas rozwiązywania łamigłówki.</string>
     <string name="settings_beta_games_label">Włącz gry beta</string>
     <string name="settings_beta_games_detail">Odblokowuje gry będące wciąż w fazie testów. Mogą one zawierać błędy.</string>
 

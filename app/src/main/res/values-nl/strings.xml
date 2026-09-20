@@ -49,7 +49,6 @@
     <string name="settings_subtitle">Kies je thema, taal en timerweergave.</string>
     <string name="settings_theme">Thema</string>
     <string name="settings_language">Taal</string>
-    <string name="settings_language_dropdown_detail">Kies de taal van de app.</string>
     <string name="settings_language_ai_disclaimer">De taalteksten zijn met AI gegenereerd en kunnen kleine fouten bevatten.</string>
     <string name="settings_dark">Donker</string>
     <string name="settings_dark_detail">Houdt bord en menu\'s in een donker palet.</string>
@@ -65,7 +64,7 @@
     <string name="settings_coffee_detail">Gebruikt een warm, donker geroosterd palet in de hele app.</string>
     <string name="settings_dracula">Dracula</string>
     <string name="settings_dracula_detail">Gebruikt een donker palet met roze en paarse accenten.</string>
-    <string name="settings_language_system_detail">Volg je Android-taalinstelling.</string>
+    <string name="settings_language_system_detail">Systeem</string>
     <string name="settings_language_english_detail">Toon de app in het Engels.</string>
     <string name="settings_language_dutch_detail">Toon de app in het Nederlands.</string>
     <string name="settings_language_german_detail">Toon de app in het Duits.</string>
@@ -74,7 +73,7 @@
     <string name="settings_language_polish_detail">Toon de app in het Pools.</string>
     <string name="settings_puzzle_language">Puzzeltaal</string>
     <string name="settings_puzzle_language_dropdown_detail">Woordenboek voor woordpuzzels.</string>
-    <string name="settings_puzzle_language_system_detail">Volg de apptaal.</string>
+    <string name="settings_puzzle_language_system_detail">Apptaal</string>
     <string name="settings_puzzle_language_english_detail">Engels</string>
     <string name="settings_puzzle_language_dutch_detail">Nederlands</string>
     <string name="settings_puzzle_language_german_detail">Duits</string>
@@ -82,7 +81,6 @@
     <string name="settings_puzzle_language_spanish_detail">Spaans</string>
     <string name="settings_puzzle_language_polish_detail">Pools</string>
     <string name="settings_show_timer_in_play_label">Timer tonen tijdens spelen</string>
-    <string name="settings_show_timer_in_play_detail">Toont de verstreken tijd terwijl een puzzel bezig is.</string>
     <string name="settings_beta_games_label">Bètaspellen inschakelen</string>
     <string name="settings_beta_games_detail">Ontgrendelt spellen die nog in ontwikkeling zijn. Deze kunnen problemen bevatten.</string>
 

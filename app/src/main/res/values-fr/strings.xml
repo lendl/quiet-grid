@@ -53,7 +53,6 @@
     <string name="settings_subtitle">Choisissez votre thème, langue et affichage de la minuterie.</string>
     <string name="settings_theme">Thème</string>
     <string name="settings_language">Langue</string>
-    <string name="settings_language_dropdown_detail">Choisissez la langue de l\'application.</string>
     <string name="settings_language_ai_disclaimer">Les textes de langue ont été générés par IA et peuvent contenir de petites erreurs.</string>
     <string name="settings_dark">Sombre</string>
     <string name="settings_dark_detail">Maintient le plateau et les menus dans une palette sombre.</string>
@@ -69,7 +68,7 @@
     <string name="settings_coffee_detail">Utilise une palette chaude façon torréfaction foncée dans toute l\'application.</string>
     <string name="settings_dracula">Dracula</string>
     <string name="settings_dracula_detail">Utilise une palette sombre avec des accents roses et violets.</string>
-    <string name="settings_language_system_detail">Suit votre paramètre de langue Android.</string>
+    <string name="settings_language_system_detail">Système</string>
     <string name="settings_language_english_detail">Afficher l\'application en anglais.</string>
     <string name="settings_language_dutch_detail">Afficher l\'application en néerlandais.</string>
     <string name="settings_language_german_detail">Afficher l\'application en allemand.</string>
@@ -78,7 +77,7 @@
     <string name="settings_language_polish_detail">Afficher l\'application en polonais.</string>
     <string name="settings_puzzle_language">Langue des puzzles</string>
     <string name="settings_puzzle_language_dropdown_detail">Dictionnaire utilisé pour les puzzles de mots.</string>
-    <string name="settings_puzzle_language_system_detail">Suivre la langue de l\'application.</string>
+    <string name="settings_puzzle_language_system_detail">Langue de l\'app</string>
     <string name="settings_puzzle_language_english_detail">Anglais</string>
     <string name="settings_puzzle_language_dutch_detail">Néerlandais</string>
     <string name="settings_puzzle_language_german_detail">Allemand</string>
@@ -86,7 +85,6 @@
     <string name="settings_puzzle_language_spanish_detail">Espagnol</string>
     <string name="settings_puzzle_language_polish_detail">Polonais</string>
     <string name="settings_show_timer_in_play_label">Afficher la minuterie pendant le jeu</string>
-    <string name="settings_show_timer_in_play_detail">Affiche la minuterie écoulée pendant un puzzle en cours.</string>
     <string name="settings_beta_games_label">Activer les jeux bêta</string>
     <string name="settings_beta_games_detail">Déverrouille les jeux encore en cours de test. Ceux-ci peuvent avoir des imperfections.</string>
 

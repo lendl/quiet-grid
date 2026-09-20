@@ -53,7 +53,6 @@
     <string name="settings_subtitle">Escolha seu tema, idioma e a exibição do cronômetro.</string>
     <string name="settings_theme">Tema</string>
     <string name="settings_language">Idioma</string>
-    <string name="settings_language_dropdown_detail">Escolha o idioma do aplicativo.</string>
     <string name="settings_language_ai_disclaimer">Os textos deste idioma foram gerados por IA e podem conter pequenos erros.</string>
     <string name="settings_dark">Escuro</string>
     <string name="settings_dark_detail">Mantém o tabuleiro e os menus em uma paleta mais escura.</string>
@@ -88,7 +87,6 @@
     <string name="settings_puzzle_language_polish_detail">Polonês</string>
     <string name="settings_puzzle_language_portuguese_detail">Português</string>
     <string name="settings_show_timer_in_play_label">Mostrar cronômetro durante o jogo</string>
-    <string name="settings_show_timer_in_play_detail">Mostra o tempo decorrido enquanto um quebra-cabeça está em andamento.</string>
     <string name="settings_beta_games_label">Ativar jogos beta</string>
     <string name="settings_beta_games_detail">Desbloqueia jogos que ainda estão em teste. Estes podem ter algumas arestas.</string>
 

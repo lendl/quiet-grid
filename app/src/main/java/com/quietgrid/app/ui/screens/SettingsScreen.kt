@@ -163,7 +163,6 @@ fun PreferencesSection() {
             SettingsDropdownRow(
                 emoji = selectedLanguage.flag,
                 label = stringResource(R.string.settings_language),
-                detail = stringResource(R.string.settings_language_dropdown_detail),
                 value = stringResource(selectedLanguage.labelRes),
                 expanded = languageMenuOpen,
                 onClick = { languageMenuOpen = true },
@@ -229,7 +228,6 @@ fun PreferencesSection() {
 
         SettingsToggleRow(
             label = stringResource(R.string.settings_show_timer_in_play_label),
-            detail = stringResource(R.string.settings_show_timer_in_play_detail),
             checked = settings.showTimerInPlay,
             onCheckedChange = { scope.launch { repositories.settingsRepository.setShowTimerInPlay(it) } },
         )
@@ -284,7 +282,7 @@ private fun SettingsDropdownRow(
 }
 
 @Composable
-private fun SettingsToggleRow(label: String, detail: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+private fun SettingsToggleRow(label: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit, detail: String? = null) {
     Row(
         Modifier.fillMaxWidth().padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -292,7 +290,9 @@ private fun SettingsToggleRow(label: String, detail: String, checked: Boolean, o
     ) {
         Column(Modifier.weight(1f)) {
             Text(label, style = MaterialTheme.typography.bodyLarge)
-            Text(detail, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            if (detail != null) {
+                Text(detail, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
         }
         Switch(checked = checked, onCheckedChange = onCheckedChange)
     }

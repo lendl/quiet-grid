@@ -53,7 +53,6 @@
     <string name="settings_subtitle">Choose your theme, language, and timer display.</string>
     <string name="settings_theme">Theme</string>
     <string name="settings_language">Language</string>
-    <string name="settings_language_dropdown_detail">Choose the app language.</string>
     <string name="settings_language_ai_disclaimer">Language texts were AI-generated and may contain small mistakes.</string>
     <string name="settings_dark">Dark</string>
     <string name="settings_dark_detail">Keeps the board and menus in a darker palette.</string>
@@ -69,7 +68,7 @@
     <string name="settings_coffee_detail">Uses a warm dark-roast palette across the app.</string>
     <string name="settings_dracula">Dracula</string>
     <string name="settings_dracula_detail">Uses a dark palette with pink and purple accents.</string>
-    <string name="settings_language_system_detail">Follow your Android language setting.</string>
+    <string name="settings_language_system_detail">System</string>
     <string name="settings_language_english_detail">Show the app in English.</string>
     <string name="settings_language_dutch_detail">Show the app in Dutch.</string>
     <string name="settings_language_german_detail">Show the app in German.</string>
@@ -79,7 +78,7 @@
     <string name="settings_language_portuguese_detail">Show the app in Portuguese.</string>
     <string name="settings_puzzle_language">Puzzle language</string>
     <string name="settings_puzzle_language_dropdown_detail">Dictionary used for word-based puzzles.</string>
-    <string name="settings_puzzle_language_system_detail">Follow the app language.</string>
+    <string name="settings_puzzle_language_system_detail">App language</string>
     <string name="settings_puzzle_language_english_detail">English</string>
     <string name="settings_puzzle_language_dutch_detail">Dutch</string>
     <string name="settings_puzzle_language_german_detail">German</string>
@@ -88,7 +87,6 @@
     <string name="settings_puzzle_language_polish_detail">Polish</string>
     <string name="settings_puzzle_language_portuguese_detail">Portuguese</string>
     <string name="settings_show_timer_in_play_label">Show timer during play</string>
-    <string name="settings_show_timer_in_play_detail">Shows the elapsed timer while a puzzle is in progress.</string>
     <string name="settings_beta_games_label">Enable beta games</string>
     <string name="settings_beta_games_detail">Unlocks games that are still in testing. These may have rough edges.</string>
 
