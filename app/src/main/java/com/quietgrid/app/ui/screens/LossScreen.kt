@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -54,6 +53,7 @@ import com.quietgrid.app.games.wordguess.wordGuessDifficultyLabelRes
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
 import com.quietgrid.app.nav.LocalAnimatedVisibilityScope
 import com.quietgrid.app.nav.LocalSharedTransitionScope
+import com.quietgrid.app.ui.components.OutlinedGlowButton
 import com.quietgrid.app.ui.components.SharedElementKeys
 import com.quietgrid.app.ui.components.rememberHapticController
 
@@ -318,8 +318,11 @@ fun LossScreen(
                     }
                 }
 
-                Button(onClick = onRetry, modifier = Modifier.fillMaxWidth().padding(top = 24.dp)) {
-                    Text(stringResource(mixAwarePrimaryLabel(isMixActive, R.string.loss_try_again)))
+                OutlinedGlowButton(onClick = onRetry, modifier = Modifier.padding(top = 24.dp)) {
+                    Text(
+                        stringResource(mixAwarePrimaryLabel(isMixActive, R.string.loss_try_again)),
+                        fontWeight = FontWeight.Bold,
+                    )
                 }
 
                 if (analyzerSnapshot != null) {

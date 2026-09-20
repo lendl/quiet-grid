@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -73,6 +72,7 @@ import com.quietgrid.app.nav.LocalAnimatedVisibilityScope
 import com.quietgrid.app.nav.LocalSharedTransitionScope
 import com.quietgrid.app.ui.components.BadgePill
 import com.quietgrid.app.ui.components.ConfettiBurst
+import com.quietgrid.app.ui.components.OutlinedGlowButton
 import com.quietgrid.app.ui.components.SharedElementKeys
 import com.quietgrid.app.ui.components.rememberHapticController
 import com.quietgrid.app.ui.components.systemAnimationsDisabled
@@ -423,8 +423,11 @@ fun CompletionScreen(
                         }
                     }
 
-                    Button(onClick = onPlayAgain, modifier = Modifier.fillMaxWidth().padding(top = 24.dp)) {
-                        Text(stringResource(mixAwarePrimaryLabel(isMixActive, R.string.completion_play_again)))
+                    OutlinedGlowButton(onClick = onPlayAgain, modifier = Modifier.padding(top = 24.dp)) {
+                        Text(
+                            stringResource(mixAwarePrimaryLabel(isMixActive, R.string.completion_play_again)),
+                            fontWeight = FontWeight.Bold,
+                        )
                     }
 
                     Row(

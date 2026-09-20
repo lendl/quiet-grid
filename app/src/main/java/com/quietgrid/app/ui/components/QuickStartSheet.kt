@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -20,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
 
@@ -96,8 +96,11 @@ fun QuickStartSheet(content: QuickStartContent, onDismiss: () -> Unit, onQuickPl
                 modifier = Modifier.padding(top = 20.dp, bottom = 20.dp),
             )
 
-            Button(onClick = onQuickPlay, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.how_to_play_quick_play))
+            OutlinedGlowButton(
+                onClick = onQuickPlay,
+                modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 4.dp),
+            ) {
+                Text(stringResource(R.string.how_to_play_quick_play), fontWeight = FontWeight.Bold)
             }
         }
     }

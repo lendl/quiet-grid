@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -212,8 +211,11 @@ fun ChallengerResultScreen(
                     }
                 }
 
-                Button(onClick = onPlayAgain, modifier = Modifier.fillMaxWidth().padding(top = 24.dp)) {
-                    Text(stringResource(mixAwarePrimaryLabel(isMixActive, strings.playAgainRes)))
+                OutlinedGlowButton(onClick = onPlayAgain, modifier = Modifier.padding(top = 24.dp)) {
+                    Text(
+                        stringResource(mixAwarePrimaryLabel(isMixActive, strings.playAgainRes)),
+                        fontWeight = FontWeight.Bold,
+                    )
                 }
 
                 Row(

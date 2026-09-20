@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,6 +28,7 @@ import com.quietgrid.app.ui.components.CollectPuzzleResult
 import com.quietgrid.app.ui.components.ElapsedTimerText
 import com.quietgrid.app.ui.components.EndPuzzleDialog
 import com.quietgrid.app.ui.components.EndPuzzleIconButton
+import com.quietgrid.app.ui.components.ChunkyPressButton
 import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
 import com.quietgrid.app.ui.components.rememberHapticController
@@ -110,14 +109,15 @@ fun NBackPlayScreen(
             },
             label = "nbackMatchButtonColor",
         )
-        Button(
+        ChunkyPressButton(
             onClick = {
                 haptics.tapFeedback()
                 viewModel.onMatchTap()
                 tapPulse++
             },
             enabled = session != null,
-            colors = ButtonDefaults.buttonColors(containerColor = buttonColor),
+            containerColor = buttonColor,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
             modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
         ) {
             Text(stringResource(R.string.nback_match_button))
