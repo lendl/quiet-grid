@@ -140,11 +140,15 @@ private fun resolveMinesweeperHintText(hint: MinesweeperNextMoveHint): Pair<Stri
     val clueLabel = pattern.clueCell?.let { minesweeperCellLabel(it) }
     val secondaryClueLabel = pattern.secondaryClueCell?.let { minesweeperCellLabel(it) }
 
-    val title = if (pattern.pattern == MinesweeperHintPattern.ONLY_ONE_POSSIBLE_MINE) {
-        stringResource(R.string.minesweeper_hint_title_compare_clues)
-    } else {
-        stringResource(R.string.minesweeper_hint_title_near_clue, clueLabel ?: "")
-    }
+    val title = stringResource(
+        when (pattern.pattern) {
+            MinesweeperHintPattern.ONLY_ONE_POSSIBLE_MINE -> R.string.minesweeper_hint_title_only_one_possible_mine
+            MinesweeperHintPattern.GUARANTEED_SAFE_TILE -> R.string.minesweeper_hint_title_guaranteed_safe_tile
+            MinesweeperHintPattern.SINGLE_MINE_LOGIC -> R.string.minesweeper_hint_title_single_mine_logic
+            MinesweeperHintPattern.FULL_CLUE_RESOLUTION -> R.string.minesweeper_hint_title_full_clue_resolution
+            MinesweeperHintPattern.ALL_MINES_ACCOUNTED_FOR -> R.string.minesweeper_hint_title_all_mines_accounted_for
+        },
+    )
     val body = when (pattern.pattern) {
         MinesweeperHintPattern.SINGLE_MINE_LOGIC -> stringResource(R.string.minesweeper_hint_single_mine_logic_body, tileLabel)
         MinesweeperHintPattern.ALL_MINES_ACCOUNTED_FOR -> stringResource(

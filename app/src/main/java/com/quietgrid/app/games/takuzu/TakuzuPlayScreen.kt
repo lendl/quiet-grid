@@ -173,20 +173,20 @@ internal fun resolveTakuzuHintText(hint: TakuzuNextMoveHint): Pair<String, Strin
 
     is TakuzuNextMoveHint.FindPairs -> {
         val label = lineLabel(hint.lineKind, hint.lineIndex)
-        stringResource(R.string.takuzu_hint_next_move_title, label) to
+        stringResource(R.string.takuzu_rule_1_title) to
             stringResource(R.string.takuzu_hint_find_pairs_body, hint.targetValue, hint.repeatedValue, label)
     }
 
     is TakuzuNextMoveHint.AvoidTrios -> {
         val label = lineLabel(hint.lineKind, hint.lineIndex)
-        stringResource(R.string.takuzu_hint_next_move_title, label) to
+        stringResource(R.string.takuzu_rule_1_title) to
             stringResource(R.string.takuzu_hint_avoid_trios_body, hint.targetValue, label, hint.repeatedValue)
     }
 
     is TakuzuNextMoveHint.CompleteLines -> {
         val label = lineLabel(hint.lineKind, hint.lineIndex)
         val suffix = if (hint.filledCount == 1) "" else stringResource(R.string.takuzu_hint_digit_plural_suffix)
-        stringResource(R.string.takuzu_hint_next_move_title, label) to
+        stringResource(R.string.takuzu_rule_2_title) to
             stringResource(R.string.takuzu_hint_complete_lines_body, hint.targetValue, label, hint.filledCount, hint.filledValue, suffix)
     }
 
@@ -194,20 +194,20 @@ internal fun resolveTakuzuHintText(hint: TakuzuNextMoveHint): Pair<String, Strin
         val label = lineLabel(hint.lineKind, hint.lineIndex)
         val matchingLabel = lineLabel(hint.lineKind, hint.matchingLineIndex)
         val kindWord = lineKindWord(hint.lineKind, plural = false)
-        stringResource(R.string.takuzu_hint_next_move_title, label) to
+        stringResource(R.string.takuzu_rule_3_title) to
             stringResource(R.string.takuzu_hint_eliminate_filled_lines_body, hint.targetValue, label, matchingLabel, kindWord)
     }
 
     is TakuzuNextMoveHint.AvoidTriosRepair -> {
         val label = lineLabel(hint.lineKind, hint.lineIndex)
-        stringResource(R.string.takuzu_hint_repair_avoid_trios_title, label) to
+        stringResource(R.string.takuzu_hint_repair_title, stringResource(R.string.takuzu_rule_1_title)) to
             stringResource(R.string.takuzu_hint_repair_avoid_trios_body, label, hint.repeatedValue)
     }
 
     is TakuzuNextMoveHint.CompleteLinesRepair -> {
         val label = lineLabel(hint.lineKind, hint.lineIndex)
         val suffix = if (hint.filledCount == 1) "" else stringResource(R.string.takuzu_hint_digit_plural_suffix)
-        stringResource(R.string.takuzu_hint_repair_complete_lines_title, label) to
+        stringResource(R.string.takuzu_hint_repair_title, stringResource(R.string.takuzu_rule_2_title)) to
             stringResource(R.string.takuzu_hint_repair_complete_lines_body, label, hint.filledCount, hint.filledValue, suffix, hint.limit)
     }
 
@@ -215,7 +215,7 @@ internal fun resolveTakuzuHintText(hint: TakuzuNextMoveHint): Pair<String, Strin
         val firstLabel = lineLabel(hint.lineKind, hint.firstLineIndex)
         val secondLabel = lineLabel(hint.lineKind, hint.secondLineIndex)
         val kindWord = lineKindWord(hint.lineKind, plural = true)
-        stringResource(R.string.takuzu_hint_repair_eliminate_filled_lines_title, kindWord) to
+        stringResource(R.string.takuzu_hint_repair_title, stringResource(R.string.takuzu_rule_3_title)) to
             stringResource(R.string.takuzu_hint_repair_eliminate_filled_lines_body, kindWord, firstLabel, secondLabel)
     }
 
