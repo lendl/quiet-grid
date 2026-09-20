@@ -232,6 +232,9 @@
     <string name="completion_other_difficulty">Other Difficulty</string>
     <string name="completion_play_again">Play Again</string>
     <string name="mix_next_puzzle">Next Puzzle</string>
+    <string name="mix_add_to_mix">Add to Mix</string>
+    <string name="mix_add_to_mix_sheet_title">Add to Mix</string>
+    <string name="mix_added_confirmation">Added to %1$s</string>
     <string name="completion_streak_badge">%1$d puzzle streak</string>
     <string name="completion_flawless_badge">Flawless</string>
     <string name="completion_milestone_game_badge">%1$d solved</string>

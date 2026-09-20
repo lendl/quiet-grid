@@ -92,6 +92,41 @@ class MixRepositoryTest {
     }
 
     @Test
+    fun `addEntryToMix appends the entry to the matching mix`() = runTest {
+        val repository = MixRepository(newDataStore(backgroundScope))
+        repository.saveMix(sampleMix)
+        val newEntry = MixEntry(gameId = "wordsearch", mode = MixEntryMode.PUZZLE, difficulty = "easy", weight = 1)
+
+        repository.addEntryToMix(sampleMix.id, newEntry)
+
+        val stored = repository.mixes.first().single()
+        assertEquals(sampleMix.entries + newEntry, stored.entries)
+    }
+
+    @Test
+    fun `addEntryToMix leaves other mixes untouched`() = runTest {
+        val repository = MixRepository(newDataStore(backgroundScope))
+        val other = sampleMix.copy(id = "mix-2", name = "Other")
+        repository.saveMix(sampleMix)
+        repository.saveMix(other)
+
+        repository.addEntryToMix(sampleMix.id, MixEntry(gameId = "wordsearch", mode = MixEntryMode.PUZZLE, difficulty = "easy", weight = 1))
+
+        val stored = repository.mixes.first()
+        assertEquals(other.entries, stored.first { it.id == "mix-2" }.entries)
+    }
+
+    @Test
+    fun `addEntryToMix is a no-op when mixId does not match any stored mix`() = runTest {
+        val repository = MixRepository(newDataStore(backgroundScope))
+        repository.saveMix(sampleMix)
+
+        repository.addEntryToMix("does-not-exist", MixEntry(gameId = "wordsearch", mode = MixEntryMode.PUZZLE, difficulty = "easy", weight = 1))
+
+        assertEquals(listOf(sampleMix), repository.mixes.first())
+    }
+
+    @Test
     fun `setActiveMix then clearActiveMix round-trips`() = runTest {
         val repository = MixRepository(newDataStore(backgroundScope))
 

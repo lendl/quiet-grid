@@ -64,4 +64,52 @@ class MixEntryOptionsTest {
 
         assertTrue(missing.isEmpty())
     }
+
+    @Test
+    fun `mixesEligibleForQuickAdd returns every mix when none has the entry`() {
+        val mixes = listOf(
+            Mix(id = "mix-1", name = "Evenings", entries = emptyList()),
+            Mix(id = "mix-2", name = "Weekends", entries = listOf(MixEntry(gameId = "sudoku", mode = MixEntryMode.PUZZLE, difficulty = "hard", weight = 1))),
+        )
+
+        val eligible = mixesEligibleForQuickAdd(mixes, GameId.WORDSEARCH, Difficulty.EASY)
+
+        assertEquals(mixes, eligible)
+    }
+
+    @Test
+    fun `mixesEligibleForQuickAdd excludes a mix that already has the entry`() {
+        val hasIt = Mix(id = "mix-1", name = "Evenings", entries = listOf(MixEntry(gameId = "wordsearch", mode = MixEntryMode.PUZZLE, difficulty = "easy", weight = 1)))
+        val missingIt = Mix(id = "mix-2", name = "Weekends", entries = emptyList())
+
+        val eligible = mixesEligibleForQuickAdd(listOf(hasIt, missingIt), GameId.WORDSEARCH, Difficulty.EASY)
+
+        assertEquals(listOf(missingIt), eligible)
+    }
+
+    @Test
+    fun `mixesEligibleForQuickAdd returns empty once every mix has the entry`() {
+        val mixes = listOf(
+            Mix(id = "mix-1", name = "Evenings", entries = listOf(MixEntry(gameId = "wordsearch", mode = MixEntryMode.PUZZLE, difficulty = "easy", weight = 1))),
+            Mix(id = "mix-2", name = "Weekends", entries = listOf(MixEntry(gameId = "wordsearch", mode = MixEntryMode.PUZZLE, difficulty = "easy", weight = 3))),
+        )
+
+        val eligible = mixesEligibleForQuickAdd(mixes, GameId.WORDSEARCH, Difficulty.EASY)
+
+        assertTrue(eligible.isEmpty())
+    }
+
+    @Test
+    fun `mixesEligibleForQuickAdd ignores a Challenger entry for the same game`() {
+        val mix = Mix(id = "mix-1", name = "Evenings", entries = listOf(MixEntry(gameId = "wordguess", mode = MixEntryMode.CHALLENGER, difficulty = null, weight = 1)))
+
+        val eligible = mixesEligibleForQuickAdd(listOf(mix), GameId.WORDGUESS, Difficulty.EASY)
+
+        assertEquals(listOf(mix), eligible)
+    }
+
+    @Test
+    fun `mixesEligibleForQuickAdd returns empty for an empty mixes list`() {
+        assertTrue(mixesEligibleForQuickAdd(emptyList(), GameId.SUDOKU, Difficulty.HARD).isEmpty())
+    }
 }

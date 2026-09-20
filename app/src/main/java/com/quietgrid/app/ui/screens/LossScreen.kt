@@ -37,6 +37,7 @@ import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.formatElapsed
+import com.quietgrid.app.core.mix.Mix
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyLabelRes
 import com.quietgrid.app.games.arrowescape.arrowEscapeDifficultyLabelRes
 import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
@@ -54,6 +55,7 @@ import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
 import com.quietgrid.app.nav.LocalAnimatedVisibilityScope
 import com.quietgrid.app.nav.LocalSharedTransitionScope
 import com.quietgrid.app.ui.components.OutlinedGlowButton
+import com.quietgrid.app.ui.components.AddToMixControl
 import com.quietgrid.app.ui.components.SharedElementKeys
 import com.quietgrid.app.ui.components.rememberHapticController
 
@@ -67,6 +69,8 @@ fun LossScreen(
     score: Int,
     bestTile: Int,
     isMixActive: Boolean,
+    eligibleMixes: List<Mix>,
+    onAddToMix: (Mix) -> Unit,
     onRetry: () -> Unit,
     onOtherDifficulty: () -> Unit,
     onTryAnotherGame: () -> Unit,
@@ -351,6 +355,7 @@ fun LossScreen(
                     TextButton(onClick = onTryAnotherGame) {
                         Text(stringResource(R.string.loss_try_another_game), color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
+                    AddToMixControl(eligibleMixes = eligibleMixes, onAddToMix = onAddToMix)
                 }
             }
         }

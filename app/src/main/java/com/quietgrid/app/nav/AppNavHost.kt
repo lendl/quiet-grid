@@ -55,6 +55,9 @@ import com.quietgrid.app.core.mix.Mix
 import com.quietgrid.app.core.mix.MixMode
 import com.quietgrid.app.core.mix.drawWeighted
 import com.quietgrid.app.core.mix.nextMixName
+import com.quietgrid.app.core.mix.MixEntry
+import com.quietgrid.app.core.mix.MixEntryMode
+import com.quietgrid.app.core.mix.mixesEligibleForQuickAdd
 import com.quietgrid.app.core.mix.resolvedCandidates
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.RepositoriesViewModel
@@ -643,6 +646,9 @@ fun AppNavHost() {
                 ) {
                     val completionGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
                     val completionDifficulty = Difficulty.fromKey(entry.arguments?.getString("difficulty") ?: "easy")
+                    val completionEligibleMixes = remember(mixes, completionGameId, completionDifficulty) {
+                        mixesEligibleForQuickAdd(mixes, completionGameId, completionDifficulty)
+                    }
                     CompletionScreen(
                         gameId = completionGameId,
                         difficulty = completionDifficulty,
@@ -653,6 +659,15 @@ fun AppNavHost() {
                         isFirstSolve = entry.arguments?.getBoolean("isFirstSolve") ?: false,
                         isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
                         isMixActive = activeMix != null,
+                        eligibleMixes = completionEligibleMixes,
+                        onAddToMix = { mix ->
+                            scope.launch {
+                                repositories.mixRepository.addEntryToMix(
+                                    mix.id,
+                                    MixEntry(gameId = completionGameId.key, mode = MixEntryMode.PUZZLE, difficulty = completionDifficulty.key, weight = 1),
+                                )
+                            }
+                        },
                         onPlayAgain = {
                             playAgainOrDrawMix {
                                 navController.navigate(Routes.play(completionGameId, completionDifficulty, resume = false)) {
@@ -689,6 +704,9 @@ fun AppNavHost() {
                 ) {
                     val lossGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
                     val lossDifficulty = Difficulty.fromKey(entry.arguments?.getString("difficulty") ?: "easy")
+                    val lossEligibleMixes = remember(mixes, lossGameId, lossDifficulty) {
+                        mixesEligibleForQuickAdd(mixes, lossGameId, lossDifficulty)
+                    }
                     LossScreen(
                         gameId = lossGameId,
                         difficulty = lossDifficulty,
@@ -697,6 +715,15 @@ fun AppNavHost() {
                         score = entry.arguments?.getInt("score") ?: 0,
                         bestTile = entry.arguments?.getInt("bestTile") ?: 0,
                         isMixActive = activeMix != null,
+                        eligibleMixes = lossEligibleMixes,
+                        onAddToMix = { mix ->
+                            scope.launch {
+                                repositories.mixRepository.addEntryToMix(
+                                    mix.id,
+                                    MixEntry(gameId = lossGameId.key, mode = MixEntryMode.PUZZLE, difficulty = lossDifficulty.key, weight = 1),
+                                )
+                            }
+                        },
                         onRetry = {
                             playAgainOrDrawMix {
                                 navController.navigate(Routes.play(lossGameId, lossDifficulty, resume = false)) {

@@ -50,6 +50,7 @@ import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.difficultyColor
+import com.quietgrid.app.core.mix.Mix
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.core.formatElapsed
 import com.quietgrid.app.data.RepositoriesViewModel
@@ -73,6 +74,7 @@ import com.quietgrid.app.nav.LocalSharedTransitionScope
 import com.quietgrid.app.ui.components.BadgePill
 import com.quietgrid.app.ui.components.ConfettiBurst
 import com.quietgrid.app.ui.components.OutlinedGlowButton
+import com.quietgrid.app.ui.components.AddToMixControl
 import com.quietgrid.app.ui.components.SharedElementKeys
 import com.quietgrid.app.ui.components.rememberHapticController
 import com.quietgrid.app.ui.components.systemAnimationsDisabled
@@ -99,6 +101,8 @@ fun CompletionScreen(
     isFirstSolve: Boolean,
     isNewHighScore: Boolean,
     isMixActive: Boolean,
+    eligibleMixes: List<Mix>,
+    onAddToMix: (Mix) -> Unit,
     onPlayAgain: () -> Unit,
     onOtherDifficulty: () -> Unit,
     onTryAnotherGame: () -> Unit,
@@ -444,6 +448,7 @@ fun CompletionScreen(
                         TextButton(onClick = onTryAnotherGame) {
                             Text(stringResource(R.string.completion_try_another_game), color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
+                        AddToMixControl(eligibleMixes = eligibleMixes, onAddToMix = onAddToMix)
                     }
                 }
             }

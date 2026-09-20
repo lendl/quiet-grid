@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.quietgrid.app.core.mix.Mix
+import com.quietgrid.app.core.mix.MixEntry
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
@@ -38,6 +39,14 @@ class MixRepository @Inject constructor(private val dataStore: DataStore<Prefere
             } else {
                 current + mix
             }
+            prefs[MIXES_KEY] = mixJson.encodeToString(MixesEnvelope(updated))
+        }
+    }
+
+    suspend fun addEntryToMix(mixId: String, entry: MixEntry) {
+        dataStore.edit { prefs ->
+            val current = prefs.decodeMixes().mixes
+            val updated = current.map { if (it.id == mixId) it.copy(entries = it.entries + entry) else it }
             prefs[MIXES_KEY] = mixJson.encodeToString(MixesEnvelope(updated))
         }
     }
