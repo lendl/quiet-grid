@@ -56,6 +56,7 @@ import com.quietgrid.app.core.formatElapsed
 import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.ui.theme.LocalIsDarkTheme
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyLabelRes
+import com.quietgrid.app.games.battleship.battleshipDifficultyLabelRes
 import com.quietgrid.app.games.arrowescape.arrowEscapeDifficultyLabelRes
 import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
 import com.quietgrid.app.games.chimptest.chimpDifficultyLabelRes
@@ -149,6 +150,7 @@ fun CompletionScreen(
         GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyLabelRes(difficulty)
         GameId.NBACK -> nbackDifficultyLabelRes(difficulty)
         GameId.FLOWFREE -> flowFreeDifficultyLabelRes(difficulty)
+        GameId.BATTLESHIP -> battleshipDifficultyLabelRes(difficulty)
         else -> chimpDifficultyLabelRes(difficulty)
     }
     val accentColor = difficultyColor(difficulty)

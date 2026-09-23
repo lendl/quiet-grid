@@ -61,6 +61,7 @@ import com.quietgrid.app.core.mix.mixesEligibleForQuickAdd
 import com.quietgrid.app.core.mix.resolvedCandidates
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.RepositoriesViewModel
+import com.quietgrid.app.games.battleship.BattleshipPlayScreen
 import com.quietgrid.app.games.animaldoku.AnimalDokuChallengerPlayScreen
 import com.quietgrid.app.games.animaldoku.AnimalDokuChallengerResultScreen
 import com.quietgrid.app.games.animaldoku.AnimalDokuPlayScreen
@@ -567,6 +568,18 @@ fun AppNavHost() {
                             },
                         )
                         GameId.STARBATTLE -> StarBattlePlayScreen(
+                            difficulty = difficulty,
+                            resume = resume,
+                            onBack = { navController.popBackStack() },
+                            onFinished = { result ->
+                                if (result.solved) {
+                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
+                                } else {
+                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
+                                }
+                            },
+                        )
+                        GameId.BATTLESHIP -> BattleshipPlayScreen(
                             difficulty = difficulty,
                             resume = resume,
                             onBack = { navController.popBackStack() },

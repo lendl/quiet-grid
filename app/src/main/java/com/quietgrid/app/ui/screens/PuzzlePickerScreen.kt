@@ -35,6 +35,9 @@ import com.quietgrid.app.core.GameId
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.core.difficultyColor
 import com.quietgrid.app.data.RepositoriesViewModel
+import com.quietgrid.app.games.battleship.BattleshipQuickStart
+import com.quietgrid.app.games.battleship.battleshipDifficultyDescriptionRes
+import com.quietgrid.app.games.battleship.battleshipDifficultyLabelRes
 import com.quietgrid.app.games.animaldoku.AnimalDokuQuickStart
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyDescriptionRes
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyLabelRes
@@ -102,6 +105,7 @@ private fun quickStartFor(gameId: GameId): QuickStartContent = when (gameId) {
     GameId.GUESSBYNUMBERS -> GuessByNumbersQuickStart
     GameId.NBACK -> NBackQuickStart
     GameId.FLOWFREE -> FlowFreeQuickStart
+    GameId.BATTLESHIP -> BattleshipQuickStart
 }
 
 @Composable
@@ -247,6 +251,7 @@ private fun GamePlayPickerTab(
                     GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyLabelRes(difficulty)
                     GameId.NBACK -> nbackDifficultyLabelRes(difficulty)
                     GameId.FLOWFREE -> flowFreeDifficultyLabelRes(difficulty)
+                    GameId.BATTLESHIP -> battleshipDifficultyLabelRes(difficulty)
                     else -> chimpDifficultyLabelRes(difficulty)
                 }
                 val descriptionRes = when (gameId) {
@@ -265,6 +270,7 @@ private fun GamePlayPickerTab(
                     GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyDescriptionRes(difficulty)
                     GameId.NBACK -> nbackDifficultyDescriptionRes(difficulty)
                     GameId.FLOWFREE -> flowFreeDifficultyDescriptionRes(difficulty)
+                    GameId.BATTLESHIP -> battleshipDifficultyDescriptionRes(difficulty)
                 }
                 if (index > 0) HorizontalDivider()
                 Row(
