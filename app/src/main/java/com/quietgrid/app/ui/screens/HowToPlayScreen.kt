@@ -67,6 +67,7 @@ fun HowToPlayScreen(gameId: GameId) {
             GameId.STARBATTLE -> StarBattleHowToPlay()
             GameId.GUESSBYNUMBERS -> GuessByNumbersHowToPlay()
             GameId.NBACK -> NBackHowToPlay()
+            GameId.FLOWFREE -> FlowFreeHowToPlay()
         }
 
         HorizontalDivider(Modifier.padding(vertical = 20.dp))
@@ -551,6 +552,22 @@ private fun StarBattleHowToPlay() {
     RuleRow(2, R.string.starbattle_rule_2_title, R.string.starbattle_rule_2_body)
     RuleRow(3, R.string.starbattle_rule_3_title, R.string.starbattle_rule_3_body)
     RuleRow(4, R.string.starbattle_rule_4_title, R.string.starbattle_rule_4_body)
+}
+
+@Composable
+private fun FlowFreeHowToPlay() {
+    SectionHeader(Icons.Outlined.EmojiEvents, stringResource(R.string.how_to_play_goal_title))
+    BodyText(stringResource(R.string.flowfree_how_to_play_goal))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.PanTool, stringResource(R.string.how_to_play_controls_title))
+    BodyText(stringResource(R.string.flowfree_how_to_play_controls))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.Description, stringResource(R.string.how_to_play_rules_title))
+    RuleRow(1, R.string.flowfree_rule_1_title, R.string.flowfree_rule_1_body)
+    RuleRow(2, R.string.flowfree_rule_2_title, R.string.flowfree_rule_2_body)
+    RuleRow(3, R.string.flowfree_rule_3_title, R.string.flowfree_rule_3_body)
 }
 
 @Composable

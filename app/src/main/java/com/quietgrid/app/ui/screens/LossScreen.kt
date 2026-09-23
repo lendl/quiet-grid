@@ -42,6 +42,7 @@ import com.quietgrid.app.games.animaldoku.animalDokuDifficultyLabelRes
 import com.quietgrid.app.games.arrowescape.arrowEscapeDifficultyLabelRes
 import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
 import com.quietgrid.app.games.chimptest.chimpDifficultyLabelRes
+import com.quietgrid.app.games.flowfree.flowFreeDifficultyLabelRes
 import com.quietgrid.app.games.game2048.game2048DifficultyLabelRes
 import com.quietgrid.app.games.guessbynumbers.guessByNumbersDifficultyLabelRes
 import com.quietgrid.app.games.minesweeper.minesweeperDifficultyLabelRes
@@ -187,6 +188,11 @@ fun LossScreen(
             titleRes = R.string.nback_loss_abandoned_title
             bodyRes = R.string.nback_loss_abandoned_body
         }
+        gameId == GameId.FLOWFREE -> {
+            eyebrowRes = R.string.flowfree_loss_abandoned_eyebrow
+            titleRes = R.string.flowfree_loss_abandoned_title
+            bodyRes = R.string.flowfree_loss_abandoned_body
+        }
         reason == "abandoned" -> {
             eyebrowRes = R.string.chimp_loss_abandoned_eyebrow
             titleRes = R.string.chimp_loss_abandoned_title
@@ -212,6 +218,7 @@ fun LossScreen(
         GameId.STARBATTLE -> starBattleDifficultyLabelRes(difficulty)
         GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyLabelRes(difficulty)
         GameId.NBACK -> nbackDifficultyLabelRes(difficulty)
+        GameId.FLOWFREE -> flowFreeDifficultyLabelRes(difficulty)
         else -> chimpDifficultyLabelRes(difficulty)
     }
     val icon = if (reason == "abandoned") "⏸" else "💥"

@@ -69,6 +69,7 @@ import com.quietgrid.app.games.chimptest.ChimpTestChallengerResultScreen
 import com.quietgrid.app.games.arrowescape.ArrowEscapePlayScreen
 import com.quietgrid.app.games.blockfill.BlockFillPlayScreen
 import com.quietgrid.app.games.chimptest.ChimpTestPlayScreen
+import com.quietgrid.app.games.flowfree.FlowFreePlayScreen
 import com.quietgrid.app.games.game2048.Game2048PlayScreen
 import com.quietgrid.app.games.nback.NBackPlayScreen
 import com.quietgrid.app.games.guessbynumbers.GuessByNumbersPlayScreen
@@ -604,6 +605,18 @@ fun AppNavHost() {
                                         ),
                                     )
                                     goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
+                                } else {
+                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
+                                }
+                            },
+                        )
+                        GameId.FLOWFREE -> FlowFreePlayScreen(
+                            difficulty = difficulty,
+                            resume = resume,
+                            onBack = { navController.popBackStack() },
+                            onFinished = { result ->
+                                if (result.solved) {
+                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
                                 } else {
                                     goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
                                 }
