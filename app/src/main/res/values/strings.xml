@@ -1162,4 +1162,12 @@
     <string name="battleship_loss_abandoned_eyebrow">Puzzle ended</string>
     <string name="battleship_loss_abandoned_title">Puzzle unfinished</string>
     <string name="battleship_loss_abandoned_body">You ended the puzzle before every ship was found.</string>
+    <string name="daily_reminder_channel_name">Daily puzzle reminder</string>
+    <string name="daily_reminder_channel_description">A daily reminder when your subscribed daily puzzles are still unfinished.</string>
+    <string name="daily_reminder_title">Daily puzzles</string>
+    <string name="daily_reminder_text">Today\'s puzzles are ready: %1$s</string>
+    <string name="settings_daily_reminder">Daily reminder</string>
+    <string name="settings_daily_reminder_detail">Notify me when subscribed daily puzzles are unfinished</string>
+    <string name="settings_daily_reminder_time">Reminder time</string>
+    <string name="settings_daily_reminder_ok">OK</string>
 </resources>

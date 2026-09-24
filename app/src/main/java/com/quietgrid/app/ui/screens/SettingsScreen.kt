@@ -53,6 +53,27 @@ import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.data.ThemeMode
 import kotlinx.coroutines.launch
+import android.Manifest
+import android.content.Intent
+import android.os.Build
+import android.provider.Settings
+import android.text.format.DateFormat
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.rememberTimePickerState
+import androidx.compose.runtime.DisposableEffect
+import androidx.core.app.ActivityCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.quietgrid.app.notifications.DailyReminderNotifier
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 private val DARK_ICON_COLOR = Color(0xFFA78BFA)
 private val LIGHT_ICON_COLOR = Color(0xFFF2B705)
@@ -234,6 +255,10 @@ fun PreferencesSection() {
 
         HorizontalDivider(Modifier.padding(vertical = 4.dp))
 
+        DailyReminderSettings(settings)
+
+        HorizontalDivider(Modifier.padding(vertical = 4.dp))
+
         SettingsToggleRow(
             label = stringResource(R.string.settings_beta_games_label),
             detail = stringResource(R.string.settings_beta_games_detail),
@@ -295,5 +320,107 @@ private fun SettingsToggleRow(label: String, checked: Boolean, onCheckedChange: 
             }
         }
         Switch(checked = checked, onCheckedChange = onCheckedChange)
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DailyReminderSettings(settings: AppSettings) {
+    val repositories: RepositoriesViewModel = hiltViewModel()
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    var permissionGranted by remember { mutableStateOf(DailyReminderNotifier.hasPermission(context)) }
+    var showTimePicker by remember { mutableStateOf(false) }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) permissionGranted = DailyReminderNotifier.hasPermission(context)
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        permissionGranted = DailyReminderNotifier.hasPermission(context)
+        if (granted) scope.launch { repositories.settingsRepository.setDailyReminderEnabled(true) }
+    }
+
+    fun openSystemNotificationSettings() {
+        val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+            .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
+    }
+
+    val active = settings.dailyReminderEnabled && permissionGranted
+
+    SettingsToggleRow(
+        label = stringResource(R.string.settings_daily_reminder),
+        detail = stringResource(R.string.settings_daily_reminder_detail),
+        checked = active,
+        onCheckedChange = { turnOn ->
+            if (!turnOn) {
+                scope.launch { repositories.settingsRepository.setDailyReminderEnabled(false) }
+            } else if (permissionGranted) {
+                scope.launch { repositories.settingsRepository.setDailyReminderEnabled(true) }
+            } else {
+                scope.launch { repositories.settingsRepository.setDailyReminderEnabled(true) }
+                val activity = context.findActivity()
+                val permanentlyDenied = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                    settings.dailyReminderPermissionAsked &&
+                    activity != null &&
+                    !ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.POST_NOTIFICATIONS)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !permanentlyDenied) {
+                    scope.launch { repositories.settingsRepository.markDailyReminderPermissionAsked() }
+                    launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                } else {
+                    openSystemNotificationSettings()
+                }
+            }
+        },
+    )
+
+    val timeText = settings.dailyReminderTime.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .clickable(enabled = active) { showTimePicker = true }
+            .padding(vertical = 12.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        val alpha = if (active) 1f else 0.38f
+        Text(
+            stringResource(R.string.settings_daily_reminder_time),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha),
+        )
+        Text(
+            timeText,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.primary.copy(alpha = alpha),
+        )
+    }
+
+    if (showTimePicker) {
+        val pickerState = rememberTimePickerState(
+            initialHour = settings.dailyReminderTime.hour,
+            initialMinute = settings.dailyReminderTime.minute,
+            is24Hour = DateFormat.is24HourFormat(context),
+        )
+        AlertDialog(
+            onDismissRequest = { showTimePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    showTimePicker = false
+                    scope.launch { repositories.settingsRepository.setDailyReminderTime(LocalTime.of(pickerState.hour, pickerState.minute)) }
+                }) { Text(stringResource(R.string.settings_daily_reminder_ok)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showTimePicker = false }) { Text(stringResource(R.string.common_cancel)) }
+            },
+            text = { TimePicker(state = pickerState) },
+        )
     }
 }

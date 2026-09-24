@@ -36,6 +36,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
+import com.quietgrid.app.notifications.rememberFirstSubscribePermissionRequest
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -134,6 +135,7 @@ fun PuzzlePickerScreen(
     var pendingChallenger by remember(gameId) { mutableStateOf(false) }
     val dailyViewModel: DailyViewModel = hiltViewModel()
     val dailyState by dailyViewModel.state.collectAsState()
+    val requestNotificationPermission = rememberFirstSubscribePermissionRequest()
     val context = LocalContext.current
     var pendingDaily by remember(gameId) { mutableStateOf<Pair<Difficulty, LocalDate>?>(null) }
     val requestStartDaily: (Difficulty, LocalDate) -> Unit = { difficulty, date ->
@@ -279,7 +281,10 @@ fun PuzzlePickerScreen(
                     DailyPickerRow(
                         gameId = gameId,
                         state = dailyState,
-                        onSubscribe = { dailyViewModel.setSubscribed(gameId, true) },
+                        onSubscribe = {
+                            dailyViewModel.setSubscribed(gameId, true)
+                            requestNotificationPermission()
+                        },
                         onTierClick = { tier ->
                             when (tier.status) {
                                 DailyTierStatus.Unplayed -> requestStartDaily(tier.difficulty, dailyState.today)

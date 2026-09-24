@@ -132,7 +132,7 @@ val LocalAnimatedVisibilityScope = compositionLocalOf<AnimatedVisibilityScope?> 
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun AppNavHost() {
+fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit = {}) {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
@@ -160,6 +160,13 @@ fun AppNavHost() {
     fun goToDailyTab() {
         selectedTab = AppTab.DAILY
         navController.popBackStack(Routes.TABS, inclusive = false)
+    }
+
+    LaunchedEffect(openDailyTab) {
+        if (openDailyTab) {
+            goToDailyTab()
+            onOpenDailyTabHandled()
+        }
     }
 
     var pendingMixToStart by remember { mutableStateOf<Mix?>(null) }

@@ -35,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.R
+import com.quietgrid.app.notifications.rememberFirstSubscribePermissionRequest
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
@@ -56,6 +57,7 @@ fun DailyScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var showSubscriptions by remember { mutableStateOf(false) }
+    val requestNotificationPermission = rememberFirstSubscribePermissionRequest()
 
     Column(Modifier.fillMaxSize().padding(16.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -133,7 +135,10 @@ fun DailyScreen(
                 ListItem(
                     headlineContent = { Text(stringResource(GameCatalog.get(gameId).titleRes)) },
                     trailingContent = {
-                        Switch(checked = subscribed, onCheckedChange = { viewModel.setSubscribed(gameId, it) })
+                        Switch(checked = subscribed, onCheckedChange = {
+                            viewModel.setSubscribed(gameId, it)
+                            if (it) requestNotificationPermission()
+                        })
                     },
                 )
             }

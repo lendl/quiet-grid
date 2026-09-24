@@ -10,8 +10,34 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import java.time.LocalTime
 
 class SettingsRepositoryTest {
+
+    @Test
+    fun `daily reminder defaults to enabled at nine with permission not asked`() = runTest {
+        val repository = SettingsRepository(newDataStore(backgroundScope))
+
+        val settings = repository.settings.first()
+
+        assertTrue(settings.dailyReminderEnabled)
+        assertEquals(LocalTime.of(9, 0), settings.dailyReminderTime)
+        assertFalse(settings.dailyReminderPermissionAsked)
+    }
+
+    @Test
+    fun `daily reminder settings persist`() = runTest {
+        val repository = SettingsRepository(newDataStore(backgroundScope))
+
+        repository.setDailyReminderEnabled(false)
+        repository.setDailyReminderTime(LocalTime.of(20, 45))
+        repository.markDailyReminderPermissionAsked()
+
+        val settings = repository.settings.first()
+        assertFalse(settings.dailyReminderEnabled)
+        assertEquals(LocalTime.of(20, 45), settings.dailyReminderTime)
+        assertTrue(settings.dailyReminderPermissionAsked)
+    }
 
     @get:Rule
     val tempFolder = TemporaryFolder()
