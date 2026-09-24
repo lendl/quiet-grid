@@ -2,6 +2,7 @@ package com.quietgrid.app.session
 
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import java.time.LocalDate
 
 data class PuzzleOutcome(
     val difficulty: Difficulty,
@@ -33,4 +34,8 @@ interface PuzzleAdapter<TSession, TResult> {
     fun puzzleIdOf(session: TSession): String? = null
 
     fun buildResult(session: TSession?, outcome: PuzzleOutcome): TResult
+
+    suspend fun dailySession(difficulty: Difficulty, date: LocalDate): TSession? = null
+
+    fun dailyShareDetail(session: TSession): String? = null
 }

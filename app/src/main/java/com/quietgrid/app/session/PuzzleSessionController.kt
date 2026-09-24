@@ -7,6 +7,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameCatalog
+import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.ActiveSessionEnvelope
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.PlayRecord
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 private const val FINISH_TRANSITION_DELAY_MS = 450L
 private const val TICK_INTERVAL_MS = 1000L
@@ -36,6 +38,8 @@ class PuzzleSessionController<TSession, TResult>(
         private set
     var elapsedSeconds by mutableStateOf(0.0)
         private set
+    var dailyDate by mutableStateOf<LocalDate?>(null)
+        private set
 
     val isFinalized: Boolean
         get() = finalized
@@ -46,10 +50,15 @@ class PuzzleSessionController<TSession, TResult>(
     private val _result = MutableSharedFlow<TResult>(extraBufferCapacity = 1)
     val result: SharedFlow<TResult> = _result
 
-    fun start(requestedDifficulty: Difficulty, resume: Boolean) {
+    fun start(requestedDifficulty: Difficulty, resume: Boolean, requestedDailyDate: LocalDate? = null) {
         difficulty = requestedDifficulty
         scope.launch {
-            session = if (resume) restoreOrCreate(requestedDifficulty) else adapter.freshSession(requestedDifficulty)
+            session = if (resume) {
+                restoreOrCreate(requestedDifficulty, requestedDailyDate)
+            } else {
+                forfeitStaleDaily(requestedDifficulty, requestedDailyDate)
+                createFresh(requestedDifficulty, requestedDailyDate)
+            }
             runTicker()
         }
     }
@@ -84,6 +93,8 @@ class PuzzleSessionController<TSession, TResult>(
                         elapsedSeconds = elapsedSeconds.toInt(),
                         timestampMillis = System.currentTimeMillis(),
                         lossReason = null,
+                        dailyDate = dailyDate?.toString(),
+                        shareDetail = if (dailyDate != null) adapter.dailyShareDetail(current) else null,
                     ),
                 )
             }
@@ -123,6 +134,8 @@ class PuzzleSessionController<TSession, TResult>(
                         elapsedSeconds = elapsedSeconds.toInt(),
                         timestampMillis = System.currentTimeMillis(),
                         lossReason = reason,
+                        dailyDate = dailyDate?.toString(),
+                        shareDetail = if (dailyDate != null) session?.let { adapter.dailyShareDetail(it) } else null,
                     ),
                 )
             }
@@ -145,17 +158,54 @@ class PuzzleSessionController<TSession, TResult>(
         }
     }
 
-    private suspend fun restoreOrCreate(requestedDifficulty: Difficulty): TSession? {
+    private suspend fun restoreOrCreate(requestedDifficulty: Difficulty, requestedDailyDate: LocalDate?): TSession? {
         val envelope = sessionStore.activeSession.first()
         if (envelope != null && envelope.gameId == adapter.gameId.key) {
             val restored = adapter.restoreSession(envelope.payload, envelope.elapsedSeconds)
             if (restored != null) {
                 elapsedSeconds = envelope.elapsedSeconds
                 difficulty = adapter.difficultyOf(restored)
+                dailyDate = envelope.dailyDate?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
                 return restored
             }
         }
-        return adapter.freshSession(requestedDifficulty)
+        return createFresh(requestedDifficulty, requestedDailyDate)
+    }
+
+    private suspend fun createFresh(requestedDifficulty: Difficulty, requestedDailyDate: LocalDate?): TSession? {
+        dailyDate = requestedDailyDate
+        return if (requestedDailyDate != null) {
+            adapter.dailySession(requestedDifficulty, requestedDailyDate)
+        } else {
+            adapter.freshSession(requestedDifficulty)
+        }
+    }
+
+    private suspend fun forfeitStaleDaily(requestedDifficulty: Difficulty, requestedDailyDate: LocalDate?) {
+        val envelope = sessionStore.activeSession.first() ?: return
+        val staleDate = envelope.dailyDate ?: return
+        val staleTier = envelope.dailyTier ?: return
+        val sameRun = envelope.gameId == adapter.gameId.key &&
+            staleDate == requestedDailyDate?.toString() &&
+            staleTier == requestedDifficulty.key
+        if (sameRun) return
+        val staleGameId = GameId.entries.firstOrNull { it.key == envelope.gameId } ?: return
+        val staleDifficulty = Difficulty.entries.firstOrNull { it.key == staleTier } ?: return
+        statsStore.recordResult(staleGameId, staleDifficulty, solved = false, score = 0)
+        historyStore.appendRecord(
+            PlayRecord(
+                gameId = envelope.gameId,
+                difficulty = staleTier,
+                puzzleId = null,
+                solved = false,
+                score = 0,
+                elapsedSeconds = envelope.elapsedSeconds.toInt(),
+                timestampMillis = System.currentTimeMillis(),
+                lossReason = "abandoned",
+                dailyDate = staleDate,
+            ),
+        )
+        sessionStore.clear()
     }
 
     private suspend fun runTicker() {
@@ -179,6 +229,8 @@ class PuzzleSessionController<TSession, TResult>(
                     gameId = adapter.gameId.key,
                     elapsedSeconds = elapsedSeconds,
                     payload = payload,
+                    dailyDate = dailyDate?.toString(),
+                    dailyTier = dailyDate?.let { difficulty.key },
                 ),
             )
         }

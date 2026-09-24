@@ -1,5 +1,12 @@
 package com.quietgrid.app.nav
 
+import com.quietgrid.app.ui.screens.DailyScreen
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.platform.LocalContext
+import com.quietgrid.app.ui.components.DailyPlayBanner
+import com.quietgrid.app.core.daily.shareDailyResult
+import java.time.LocalDate
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -107,7 +114,6 @@ import com.quietgrid.app.ui.screens.CompletionHighlight
 import com.quietgrid.app.ui.screens.CompletionScreen
 import kotlinx.coroutines.launch
 import com.quietgrid.app.ui.screens.GamesScreen
-import com.quietgrid.app.ui.screens.LogsScreen
 import com.quietgrid.app.ui.screens.LossScreen
 import com.quietgrid.app.ui.screens.MixEditorScreen
 import com.quietgrid.app.ui.screens.MixesScreen
@@ -148,7 +154,16 @@ fun AppNavHost() {
         navController.popBackStack(Routes.TABS, inclusive = false)
     }
 
+    fun resumeActiveRoute(gameId: GameId): String =
+        Routes.play(gameId, Difficulty.EASY, resume = true, daily = activeSession?.dailyDate?.let { runCatching { LocalDate.parse(it) }.getOrNull() })
+
+    fun goToDailyTab() {
+        selectedTab = AppTab.DAILY
+        navController.popBackStack(Routes.TABS, inclusive = false)
+    }
+
     var pendingMixToStart by remember { mutableStateOf<Mix?>(null) }
+    var pendingDailyRoute by remember { mutableStateOf<String?>(null) }
     val accountDrawerState = rememberDrawerState(DrawerValue.Closed)
     var mixEditorRenameTrigger by remember { mutableStateOf(0) }
     var mixEditorDeleteTrigger by remember { mutableStateOf(0) }
@@ -299,7 +314,7 @@ fun AppNavHost() {
                             ContinueSessionMiniBar(
                                 gameTitle = activeGameTitle,
                                 onClick = {
-                                    navController.navigate(Routes.play(activeGameId, Difficulty.EASY, resume = true))
+                                    navController.navigate(resumeActiveRoute(activeGameId))
                                 },
                             )
                         }
@@ -334,6 +349,14 @@ fun AppNavHost() {
                         transitionSpec = { fadeIn(animationSpec = tween(180)) togetherWith fadeOut(animationSpec = tween(150)) },
                     ) { tab ->
                         when (tab) {
+                            AppTab.DAILY -> DailyScreen(
+                                onOpenAccount = { scope.launch { accountDrawerState.open() } },
+                                onStartDaily = { gameId, difficulty, date ->
+                                    val route = Routes.play(gameId, difficulty, resume = false, daily = date)
+                                    if (activeGameKey != null) pendingDailyRoute = route else navController.navigate(route)
+                                },
+                                onResumeDaily = { gameId -> navController.navigate(resumeActiveRoute(gameId)) },
+                            )
                             AppTab.GAMES -> GamesScreen(
                                 onOpenGame = { gameId -> navController.navigate(Routes.picker(gameId)) },
                                 onOpenAccount = { scope.launch { accountDrawerState.open() } },
@@ -355,7 +378,6 @@ fun AppNavHost() {
                                 },
                                 onOpenAccount = { scope.launch { accountDrawerState.open() } },
                             )
-                            AppTab.LOGS -> LogsScreen(onOpenAccount = { scope.launch { accountDrawerState.open() } })
                             AppTab.STATS -> StatsScreen(onOpenAccount = { scope.launch { accountDrawerState.open() } })
                         }
                     }
@@ -379,7 +401,10 @@ fun AppNavHost() {
                             scope.launch { repositories.mixRepository.clearActiveMix() }
                             navController.navigate(Routes.play(gameId, difficulty, resume = false))
                         },
-                        onResumeActiveGame = { activeGameId -> navController.navigate(Routes.play(activeGameId, Difficulty.EASY, resume = true)) },
+                        onResumeActiveGame = { activeGameId -> navController.navigate(resumeActiveRoute(activeGameId)) },
+                        onStartDaily = { difficulty, date ->
+                            navController.navigate(Routes.play(gameId, difficulty, resume = false, daily = date))
+                        },
                         onStartChallenger = {
                             scope.launch { repositories.mixRepository.clearActiveMix() }
                             navController.navigate(Routes.challenger(gameId))
@@ -413,6 +438,7 @@ fun AppNavHost() {
                     navArgument("gameId") { type = NavType.StringType },
                     navArgument("difficulty") { type = NavType.StringType },
                     navArgument("resume") { type = NavType.BoolType },
+                    navArgument("daily") { type = NavType.StringType; nullable = true; defaultValue = null },
                 ),
                 enterTransition = { fadeIn(animationSpec = tween(250)) },
                 exitTransition = { fadeOut(animationSpec = tween(200)) },
@@ -424,229 +450,241 @@ fun AppNavHost() {
                     val difficulty = Difficulty.fromKey(entry.arguments?.getString("difficulty") ?: "easy")
                     val resume = entry.arguments?.getBoolean("resume") ?: false
                     val gameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
+                    val dailyKey = entry.arguments?.getString("daily")
+                    val dailyDate = dailyKey?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
 
                     fun goToCompletion(resultDifficulty: Difficulty, score: Int, accuracyPct: Int, elapsedSeconds: Int, isFirstSolve: Boolean, isNewHighScore: Boolean, bestTile: Int) {
                         navController.navigate(
-                            Routes.completion(gameId, resultDifficulty, score, accuracyPct, elapsedSeconds, isFirstSolve, isNewHighScore, bestTile),
+                            Routes.completion(gameId, resultDifficulty, score, accuracyPct, elapsedSeconds, isFirstSolve, isNewHighScore, bestTile, daily = dailyKey),
                         ) { popUpTo(Routes.TABS) { inclusive = false } }
                     }
 
                     fun goToLoss(resultDifficulty: Difficulty, elapsedSeconds: Int, reason: String, score: Int, bestTile: Int) {
                         navController.navigate(
-                            Routes.loss(gameId, resultDifficulty, elapsedSeconds, reason, score, bestTile),
+                            Routes.loss(gameId, resultDifficulty, elapsedSeconds, reason, score, bestTile, daily = dailyKey),
                         ) { popUpTo(Routes.TABS) { inclusive = false } }
                     }
 
-                    when (gameId) {
-                        GameId.TAKUZU -> TakuzuPlayScreen(
-                            difficulty = difficulty,
-                            resume = resume,
-                            onBack = { navController.popBackStack() },
-                            onFinished = { result ->
-                                AnalyzerHandoff.set(result.analyzerSnapshot)
-                                if (result.solved) {
-                                    goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                } else {
-                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                }
-                            },
-                        )
-                        GameId.NONOGRAM -> NonogramPlayScreen(
-                            difficulty = difficulty,
-                            resume = resume,
-                            onBack = { navController.popBackStack() },
-                            onFinished = { result ->
-                                if (result.solved) {
-                                    CompletionExtras.set(CompletionHighlight.Picture(result.solution))
-                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                } else {
-                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                }
-                            },
-                        )
-                        GameId.MINESWEEPER -> MinesweeperPlayScreen(
-                            difficulty = difficulty,
-                            resume = resume,
-                            onBack = { navController.popBackStack() },
-                            onFinished = { result ->
-                                if (result.solved) {
-                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                } else {
-                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                }
-                            },
-                        )
-                        GameId.SUDOKU -> SudokuPlayScreen(
-                            difficulty = difficulty,
-                            resume = resume,
-                            onBack = { navController.popBackStack() },
-                            onFinished = { result ->
-                                if (result.solved) {
-                                    goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                } else {
-                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                }
-                            },
-                        )
-                        GameId.WORDSEARCH -> WordSearchPlayScreen(
-                            difficulty = difficulty,
-                            resume = resume,
-                            onBack = { navController.popBackStack() },
-                            onFinished = { result ->
-                                if (result.solved) {
-                                    wordSearchThemeIcon(result.themeId)?.let { CompletionExtras.set(CompletionHighlight.ThemeIcon(it)) }
-                                    goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                } else {
-                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                }
-                            },
-                        )
-                        GameId.BLOCKFILL -> BlockFillPlayScreen(
-                            difficulty = difficulty,
-                            resume = resume,
-                            onBack = { navController.popBackStack() },
-                            onFinished = { result ->
-                                if (result.solved) {
-                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                } else {
-                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                }
-                            },
-                        )
-                        GameId.WORDGUESS -> WordGuessPlayScreen(
-                            difficulty = difficulty,
-                            resume = resume,
-                            onBack = { navController.popBackStack() },
-                            onFinished = { result ->
-                                if (result.solved) {
-                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                } else {
-                                    if (result.targetWord.isNotEmpty()) {
-                                        CompletionExtras.set(CompletionHighlight.RevealWord(result.targetWord))
-                                    }
-                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                }
-                            },
-                        )
-                        GameId.GUESSBYNUMBERS -> GuessByNumbersPlayScreen(
-                            difficulty = difficulty,
-                            resume = resume,
-                            onBack = { navController.popBackStack() },
-                            onFinished = { result ->
-                                if (result.solved) {
-                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                } else {
-                                    if (result.targetWord.isNotEmpty()) {
-                                        CompletionExtras.set(CompletionHighlight.RevealWord(result.targetWord))
-                                    }
-                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                }
-                            },
-                        )
-                        GameId.ANIMALDOKU -> AnimalDokuPlayScreen(
-                            difficulty = difficulty,
-                            resume = resume,
-                            onBack = { navController.popBackStack() },
-                            onFinished = { result ->
-                                if (result.solved) {
-                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                } else {
-                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                }
-                            },
-                        )
-                        GameId.ARROWESCAPE -> ArrowEscapePlayScreen(
-                            difficulty = difficulty,
-                            resume = resume,
-                            onBack = { navController.popBackStack() },
-                            onFinished = { result ->
-                                if (result.solved) {
-                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                } else {
-                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                }
-                            },
-                        )
-                        GameId.STARBATTLE -> StarBattlePlayScreen(
-                            difficulty = difficulty,
-                            resume = resume,
-                            onBack = { navController.popBackStack() },
-                            onFinished = { result ->
-                                if (result.solved) {
-                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                } else {
-                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                }
-                            },
-                        )
-                        GameId.BATTLESHIP -> BattleshipPlayScreen(
-                            difficulty = difficulty,
-                            resume = resume,
-                            onBack = { navController.popBackStack() },
-                            onFinished = { result ->
-                                if (result.solved) {
-                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                } else {
-                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                }
-                            },
-                        )
-                        GameId.GAME_2048 -> Game2048PlayScreen(
-                            difficulty = difficulty,
-                            resume = resume,
-                            onBack = { navController.popBackStack() },
-                            onFinished = { result ->
-                                if (result.solved) {
-                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, result.bestTile)
-                                } else {
-                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, result.bestTile)
-                                }
-                            },
-                        )
-                        GameId.NBACK -> NBackPlayScreen(
-                            difficulty = difficulty,
-                            resume = resume,
-                            onBack = { navController.popBackStack() },
-                            onFinished = { result ->
-                                if (result.solved) {
-                                    CompletionExtras.set(
-                                        CompletionHighlight.NBackBreakdown(
-                                            hits = result.hits,
-                                            misses = result.misses,
-                                            falsePositives = result.falsePositives,
-                                            avgReactionTimeMs = result.averageReactionTimeMs,
-                                        ),
-                                    )
-                                    goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                } else {
-                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                }
-                            },
-                        )
-                        GameId.FLOWFREE -> FlowFreePlayScreen(
-                            difficulty = difficulty,
-                            resume = resume,
-                            onBack = { navController.popBackStack() },
-                            onFinished = { result ->
-                                if (result.solved) {
-                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                } else {
-                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                }
-                            },
-                        )
-                        else -> ChimpTestPlayScreen(
-                            difficulty = difficulty,
-                            resume = resume,
-                            onBack = { navController.popBackStack() },
-                            onFinished = { result ->
-                                if (result.solved) {
-                                    goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                } else {
-                                    goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                }
-                            },
-                        )
+                    Column(Modifier.fillMaxSize()) {
+                        if (dailyKey != null) DailyPlayBanner(dailyKey)
+                        Box(Modifier.weight(1f)) {
+                            when (gameId) {
+                                GameId.TAKUZU -> TakuzuPlayScreen(
+                                    difficulty = difficulty,
+                                    resume = resume,
+                                    dailyDate = dailyDate,
+                                    onBack = { navController.popBackStack() },
+                                    onFinished = { result ->
+                                        AnalyzerHandoff.set(result.analyzerSnapshot)
+                                        if (result.solved) {
+                                            goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
+                                        } else {
+                                            goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
+                                        }
+                                    },
+                                )
+                                GameId.NONOGRAM -> NonogramPlayScreen(
+                                    difficulty = difficulty,
+                                    resume = resume,
+                                    onBack = { navController.popBackStack() },
+                                    onFinished = { result ->
+                                        if (result.solved) {
+                                            CompletionExtras.set(CompletionHighlight.Picture(result.solution))
+                                            goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
+                                        } else {
+                                            goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
+                                        }
+                                    },
+                                )
+                                GameId.MINESWEEPER -> MinesweeperPlayScreen(
+                                    difficulty = difficulty,
+                                    resume = resume,
+                                    onBack = { navController.popBackStack() },
+                                    onFinished = { result ->
+                                        if (result.solved) {
+                                            goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
+                                        } else {
+                                            goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
+                                        }
+                                    },
+                                )
+                                GameId.SUDOKU -> SudokuPlayScreen(
+                                    difficulty = difficulty,
+                                    resume = resume,
+                                    dailyDate = dailyDate,
+                                    onBack = { navController.popBackStack() },
+                                    onFinished = { result ->
+                                        if (result.solved) {
+                                            goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
+                                        } else {
+                                            goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
+                                        }
+                                    },
+                                )
+                                GameId.WORDSEARCH -> WordSearchPlayScreen(
+                                    difficulty = difficulty,
+                                    resume = resume,
+                                    dailyDate = dailyDate,
+                                    onBack = { navController.popBackStack() },
+                                    onFinished = { result ->
+                                        if (result.solved) {
+                                            wordSearchThemeIcon(result.themeId)?.let { CompletionExtras.set(CompletionHighlight.ThemeIcon(it)) }
+                                            goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
+                                        } else {
+                                            goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
+                                        }
+                                    },
+                                )
+                                GameId.BLOCKFILL -> BlockFillPlayScreen(
+                                    difficulty = difficulty,
+                                    resume = resume,
+                                    onBack = { navController.popBackStack() },
+                                    onFinished = { result ->
+                                        if (result.solved) {
+                                            goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
+                                        } else {
+                                            goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
+                                        }
+                                    },
+                                )
+                                GameId.WORDGUESS -> WordGuessPlayScreen(
+                                    difficulty = difficulty,
+                                    resume = resume,
+                                    dailyDate = dailyDate,
+                                    onBack = { navController.popBackStack() },
+                                    onFinished = { result ->
+                                        if (result.solved) {
+                                            goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
+                                        } else {
+                                            if (result.targetWord.isNotEmpty()) {
+                                                CompletionExtras.set(CompletionHighlight.RevealWord(result.targetWord))
+                                            }
+                                            goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
+                                        }
+                                    },
+                                )
+                                GameId.GUESSBYNUMBERS -> GuessByNumbersPlayScreen(
+                                    difficulty = difficulty,
+                                    resume = resume,
+                                    onBack = { navController.popBackStack() },
+                                    onFinished = { result ->
+                                        if (result.solved) {
+                                            goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
+                                        } else {
+                                            if (result.targetWord.isNotEmpty()) {
+                                                CompletionExtras.set(CompletionHighlight.RevealWord(result.targetWord))
+                                            }
+                                            goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
+                                        }
+                                    },
+                                )
+                                GameId.ANIMALDOKU -> AnimalDokuPlayScreen(
+                                    difficulty = difficulty,
+                                    resume = resume,
+                                    dailyDate = dailyDate,
+                                    onBack = { navController.popBackStack() },
+                                    onFinished = { result ->
+                                        if (result.solved) {
+                                            goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
+                                        } else {
+                                            goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
+                                        }
+                                    },
+                                )
+                                GameId.ARROWESCAPE -> ArrowEscapePlayScreen(
+                                    difficulty = difficulty,
+                                    resume = resume,
+                                    onBack = { navController.popBackStack() },
+                                    onFinished = { result ->
+                                        if (result.solved) {
+                                            goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
+                                        } else {
+                                            goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
+                                        }
+                                    },
+                                )
+                                GameId.STARBATTLE -> StarBattlePlayScreen(
+                                    difficulty = difficulty,
+                                    resume = resume,
+                                    onBack = { navController.popBackStack() },
+                                    onFinished = { result ->
+                                        if (result.solved) {
+                                            goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
+                                        } else {
+                                            goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
+                                        }
+                                    },
+                                )
+                                GameId.BATTLESHIP -> BattleshipPlayScreen(
+                                    difficulty = difficulty,
+                                    resume = resume,
+                                    onBack = { navController.popBackStack() },
+                                    onFinished = { result ->
+                                        if (result.solved) {
+                                            goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
+                                        } else {
+                                            goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
+                                        }
+                                    },
+                                )
+                                GameId.GAME_2048 -> Game2048PlayScreen(
+                                    difficulty = difficulty,
+                                    resume = resume,
+                                    onBack = { navController.popBackStack() },
+                                    onFinished = { result ->
+                                        if (result.solved) {
+                                            goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, result.bestTile)
+                                        } else {
+                                            goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, result.bestTile)
+                                        }
+                                    },
+                                )
+                                GameId.NBACK -> NBackPlayScreen(
+                                    difficulty = difficulty,
+                                    resume = resume,
+                                    onBack = { navController.popBackStack() },
+                                    onFinished = { result ->
+                                        if (result.solved) {
+                                            CompletionExtras.set(
+                                                CompletionHighlight.NBackBreakdown(
+                                                    hits = result.hits,
+                                                    misses = result.misses,
+                                                    falsePositives = result.falsePositives,
+                                                    avgReactionTimeMs = result.averageReactionTimeMs,
+                                                ),
+                                            )
+                                            goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
+                                        } else {
+                                            goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
+                                        }
+                                    },
+                                )
+                                GameId.FLOWFREE -> FlowFreePlayScreen(
+                                    difficulty = difficulty,
+                                    resume = resume,
+                                    onBack = { navController.popBackStack() },
+                                    onFinished = { result ->
+                                        if (result.solved) {
+                                            goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
+                                        } else {
+                                            goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
+                                        }
+                                    },
+                                )
+                                else -> ChimpTestPlayScreen(
+                                    difficulty = difficulty,
+                                    resume = resume,
+                                    onBack = { navController.popBackStack() },
+                                    onFinished = { result ->
+                                        if (result.solved) {
+                                            goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
+                                        } else {
+                                            goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
+                                        }
+                                    },
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -662,6 +700,7 @@ fun AppNavHost() {
                     navArgument("isFirstSolve") { type = NavType.BoolType },
                     navArgument("isNewHighScore") { type = NavType.BoolType },
                     navArgument("bestTile") { type = NavType.IntType },
+                    navArgument("daily") { type = NavType.StringType; nullable = true; defaultValue = null },
                 ),
                 enterTransition = { fadeIn(animationSpec = tween(250)) },
                 exitTransition = { fadeOut(animationSpec = tween(200)) },
@@ -672,6 +711,8 @@ fun AppNavHost() {
                 ) {
                     val completionGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
                     val completionDifficulty = Difficulty.fromKey(entry.arguments?.getString("difficulty") ?: "easy")
+                    val resultDailyKey = entry.arguments?.getString("daily")
+                    val resultContext = LocalContext.current
                     val completionEligibleMixes = remember(mixes, completionGameId, completionDifficulty) {
                         mixesEligibleForQuickAdd(mixes, completionGameId, completionDifficulty)
                     }
@@ -707,6 +748,15 @@ fun AppNavHost() {
                             }
                         },
                         onTryAnotherGame = { endMixAndGoToGames() },
+                        dailyDate = resultDailyKey,
+                        onShareDaily = {
+                            if (resultDailyKey != null) {
+                                scope.launch {
+                                    shareDailyResult(resultContext, repositories.playHistoryRepository, completionGameId, completionDifficulty, resultDailyKey)
+                                }
+                            }
+                        },
+                        onBackToDaily = { goToDailyTab() },
                     )
                 }
             }
@@ -720,6 +770,7 @@ fun AppNavHost() {
                     navArgument("reason") { type = NavType.StringType },
                     navArgument("score") { type = NavType.IntType },
                     navArgument("bestTile") { type = NavType.IntType },
+                    navArgument("daily") { type = NavType.StringType; nullable = true; defaultValue = null },
                 ),
                 enterTransition = { fadeIn(animationSpec = tween(250)) },
                 exitTransition = { fadeOut(animationSpec = tween(200)) },
@@ -730,6 +781,8 @@ fun AppNavHost() {
                 ) {
                     val lossGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
                     val lossDifficulty = Difficulty.fromKey(entry.arguments?.getString("difficulty") ?: "easy")
+                    val resultDailyKey = entry.arguments?.getString("daily")
+                    val resultContext = LocalContext.current
                     val lossEligibleMixes = remember(mixes, lossGameId, lossDifficulty) {
                         mixesEligibleForQuickAdd(mixes, lossGameId, lossDifficulty)
                     }
@@ -766,6 +819,15 @@ fun AppNavHost() {
                         onWalkThroughSolve = {
                             navController.navigate(Routes.analyzer(lossGameId))
                         },
+                        dailyDate = resultDailyKey,
+                        onShareDaily = {
+                            if (resultDailyKey != null) {
+                                scope.launch {
+                                    shareDailyResult(resultContext, repositories.playHistoryRepository, lossGameId, lossDifficulty, resultDailyKey)
+                                }
+                            }
+                        },
+                        onBackToDaily = { goToDailyTab() },
                     )
                 }
             }
@@ -1089,12 +1151,46 @@ fun AppNavHost() {
     }
     }
 
+    val dailyRouteToStart = pendingDailyRoute
+    if (dailyRouteToStart != null) {
+        AlertDialog(
+            onDismissRequest = { pendingDailyRoute = null },
+            title = { Text(stringResource(R.string.replace_dialog_title)) },
+            text = {
+                Text(
+                    stringResource(
+                        if (activeSession?.dailyDate != null) R.string.daily_replace_dialog_message else R.string.replace_dialog_message,
+                    ),
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    pendingDailyRoute = null
+                    navController.navigate(dailyRouteToStart)
+                }) { Text(stringResource(R.string.common_start_new_puzzle)) }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    pendingDailyRoute = null
+                    val activeGameId = activeGameKey?.let { key -> GameId.entries.firstOrNull { it.key == key } }
+                    if (activeGameId != null) navController.navigate(resumeActiveRoute(activeGameId))
+                }) { Text(stringResource(R.string.common_continue_puzzle)) }
+            },
+        )
+    }
+
     val mixToStart = pendingMixToStart
     if (mixToStart != null) {
         AlertDialog(
             onDismissRequest = { pendingMixToStart = null },
             title = { Text(stringResource(R.string.replace_dialog_title)) },
-            text = { Text(stringResource(R.string.replace_dialog_message)) },
+            text = {
+                Text(
+                    stringResource(
+                        if (activeSession?.dailyDate != null) R.string.daily_replace_dialog_message else R.string.replace_dialog_message,
+                    ),
+                )
+            },
             confirmButton = {
                 TextButton(onClick = {
                     pendingMixToStart = null
@@ -1106,7 +1202,7 @@ fun AppNavHost() {
                     pendingMixToStart = null
                     val activeGameId = activeGameKey?.let { key -> GameId.entries.firstOrNull { it.key == key } }
                     if (activeGameId != null) {
-                        navController.navigate(Routes.play(activeGameId, Difficulty.EASY, resume = true))
+                        navController.navigate(resumeActiveRoute(activeGameId))
                     }
                 }) { Text(stringResource(R.string.common_continue_puzzle)) }
             },

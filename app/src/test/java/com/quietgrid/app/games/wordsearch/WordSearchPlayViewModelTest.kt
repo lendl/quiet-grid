@@ -62,7 +62,7 @@ class WordSearchPlayViewModelTest {
         val settingsRepository = mockk<SettingsRepository>(relaxed = true)
         every { settingsRepository.settings } returns MutableStateFlow(AppSettings())
         return WordSearchPlayViewModel(
-            mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), settingsRepository, Difficulty.EASY, resume = false,
+            mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), settingsRepository, Difficulty.EASY, resume = false, dailyDate = null,
         )
     }
 

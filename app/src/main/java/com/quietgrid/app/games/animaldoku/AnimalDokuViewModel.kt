@@ -7,6 +7,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.core.daily.selectDaily
+import java.time.LocalDate
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
@@ -64,6 +66,11 @@ private class AnimalDokuPuzzleAdapter(
         return createAnimalDokuSession(puzzle)
     }
 
+    override suspend fun dailySession(difficulty: Difficulty, date: LocalDate): AnimalDokuSession? {
+        val puzzle = selectDaily(AnimalDokuPuzzleBank.dailyPool(appContext, difficulty), { it.id }, gameId.key, difficulty.key, date) ?: return null
+        return createAnimalDokuSession(puzzle)
+    }
+
     override fun restoreSession(payload: String, elapsedSeconds: Double): AnimalDokuSession? = runCatching {
         val persisted = json.decodeFromString<AnimalDokuPersistedSession>(payload)
         if (persisted.status != AnimalDokuStatus.PLAYING.name) return@runCatching null
@@ -113,11 +120,12 @@ class AnimalDokuPlayViewModel @AssistedInject constructor(
     historyRepository: PlayHistoryStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
+    @Assisted dailyDate: LocalDate?,
 ) : ViewModel() {
 
     @AssistedFactory
     interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean): AnimalDokuPlayViewModel
+        fun create(requestedDifficulty: Difficulty, resume: Boolean, dailyDate: LocalDate?): AnimalDokuPlayViewModel
     }
 
     private val controller = PuzzleSessionController(
@@ -136,7 +144,7 @@ class AnimalDokuPlayViewModel @AssistedInject constructor(
         private set
 
     init {
-        controller.start(requestedDifficulty, resume)
+        controller.start(requestedDifficulty, resume, dailyDate)
     }
 
     fun onCellTap(row: Int, col: Int) {

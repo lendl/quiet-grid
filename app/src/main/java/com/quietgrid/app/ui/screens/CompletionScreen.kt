@@ -108,6 +108,9 @@ fun CompletionScreen(
     onPlayAgain: () -> Unit,
     onOtherDifficulty: () -> Unit,
     onTryAnotherGame: () -> Unit,
+    dailyDate: String? = null,
+    onShareDaily: () -> Unit = {},
+    onBackToDaily: () -> Unit = {},
 ) {
     val haptics = rememberHapticController()
     LaunchedEffect(Unit) { haptics.correctFeedback() }
@@ -431,28 +434,43 @@ fun CompletionScreen(
                         }
                     }
 
-                    OutlinedGlowButton(onClick = onPlayAgain, modifier = Modifier.padding(top = 24.dp)) {
-                        Text(
-                            stringResource(mixAwarePrimaryLabel(isMixActive, R.string.completion_play_again)),
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
-
-                    Row(
-                        Modifier.fillMaxWidth().padding(top = 8.dp),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        if (!isMixActive) {
-                            TextButton(onClick = onOtherDifficulty) {
-                                Text(stringResource(R.string.completion_other_difficulty), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    if (dailyDate != null) {
+                        OutlinedGlowButton(onClick = onShareDaily, modifier = Modifier.padding(top = 24.dp)) {
+                            Text(stringResource(R.string.daily_share), fontWeight = FontWeight.Bold)
+                        }
+                        Row(
+                            Modifier.fillMaxWidth().padding(top = 8.dp),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            TextButton(onClick = onBackToDaily) {
+                                Text(stringResource(R.string.daily_back_to_daily), color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
-                            Box(Modifier.width(1.dp).height(16.dp).background(MaterialTheme.colorScheme.outlineVariant))
                         }
-                        TextButton(onClick = onTryAnotherGame) {
-                            Text(stringResource(R.string.completion_try_another_game), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    } else {
+                        OutlinedGlowButton(onClick = onPlayAgain, modifier = Modifier.padding(top = 24.dp)) {
+                            Text(
+                                stringResource(mixAwarePrimaryLabel(isMixActive, R.string.completion_play_again)),
+                                fontWeight = FontWeight.Bold,
+                            )
                         }
-                        AddToMixControl(eligibleMixes = eligibleMixes, onAddToMix = onAddToMix)
+
+                        Row(
+                            Modifier.fillMaxWidth().padding(top = 8.dp),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            if (!isMixActive) {
+                                TextButton(onClick = onOtherDifficulty) {
+                                    Text(stringResource(R.string.completion_other_difficulty), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                }
+                                Box(Modifier.width(1.dp).height(16.dp).background(MaterialTheme.colorScheme.outlineVariant))
+                            }
+                            TextButton(onClick = onTryAnotherGame) {
+                                Text(stringResource(R.string.completion_try_another_game), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                            AddToMixControl(eligibleMixes = eligibleMixes, onAddToMix = onAddToMix)
+                        }
                     }
                 }
             }

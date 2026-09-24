@@ -18,6 +18,8 @@ data class ActiveSessionEnvelope(
     val gameId: String,
     val elapsedSeconds: Double,
     val payload: String,
+    val dailyDate: String? = null,
+    val dailyTier: String? = null,
 )
 
 interface SessionStore {

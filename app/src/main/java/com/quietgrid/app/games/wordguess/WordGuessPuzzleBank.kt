@@ -35,14 +35,16 @@ object WordGuessPuzzleBank {
         return cache[locale] ?: emptySet()
     }
 
+    suspend fun dailyPool(context: Context, locale: String, difficulty: Difficulty): List<WordGuessPuzzleEntry> =
+        loadAnswers(context)["$locale:${difficulty.key}"].orEmpty()
+
     suspend fun randomPuzzle(
         context: Context,
         locale: String,
         difficulty: Difficulty,
         recentlyPlayedIds: Set<String> = emptySet(),
     ): WordGuessPuzzleEntry? {
-        val key = "$locale:${difficulty.key}"
-        val pool = loadAnswers(context)[key] ?: return null
+        val pool = dailyPool(context, locale, difficulty)
         if (pool.isEmpty()) return null
         val candidates = pool.filter { it.id !in recentlyPlayedIds }
         return candidates.ifEmpty { pool }.random()

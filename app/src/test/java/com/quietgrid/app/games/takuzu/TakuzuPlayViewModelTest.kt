@@ -66,7 +66,7 @@ class TakuzuPlayViewModelTest {
     }
 
     private fun newViewModel(sessionStore: FakeSessionStore = FakeSessionStore(), statsStore: FakeStatsStore = FakeStatsStore()) =
-        TakuzuPlayViewModel(mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), Difficulty.EASY, resume = false)
+        TakuzuPlayViewModel(mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), Difficulty.EASY, resume = false, dailyDate = null)
 
     @Test
     fun `starting fresh loads the mocked puzzle with only the ungiven cell blank`() {

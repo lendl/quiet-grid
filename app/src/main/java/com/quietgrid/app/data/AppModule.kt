@@ -22,6 +22,7 @@ object AppModule {
     @Singleton
     fun provideQuietGridDatabase(@ApplicationContext context: Context): QuietGridDatabase =
         Room.databaseBuilder(context, QuietGridDatabase::class.java, "quiet_grid.db")
+            .addMigrations(MIGRATION_2_3)
             .fallbackToDestructiveMigration()
             .build()
 

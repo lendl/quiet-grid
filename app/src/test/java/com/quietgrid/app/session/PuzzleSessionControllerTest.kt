@@ -19,6 +19,9 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlinx.coroutines.flow.first
+import org.junit.Assert.assertFalse
+import java.time.LocalDate
 
 private data class TestSession(val value: Int, val meaningful: Boolean = true)
 
@@ -115,6 +118,7 @@ private class FakePuzzleAdapter(
     private val restoreValue: TestSession? = null,
     private val puzzleId: String? = null,
     override val gameId: GameId = GameId.TAKUZU,
+    private val shareDetail: String? = null,
 ) : PuzzleAdapter<TestSession, TestResult> {
     var freshSessionCalls = 0
         private set
@@ -125,6 +129,16 @@ private class FakePuzzleAdapter(
     }
 
     override fun restoreSession(payload: String, elapsedSeconds: Double): TestSession? = restoreValue
+
+    var dailySessionCalls = 0
+        private set
+
+    override suspend fun dailySession(difficulty: Difficulty, date: LocalDate): TestSession {
+        dailySessionCalls++
+        return TestSession(freshValue + 1000)
+    }
+
+    override fun dailyShareDetail(session: TestSession): String? = shareDetail
 
     override fun difficultyOf(session: TestSession): Difficulty = Difficulty.MEDIUM
 
@@ -147,6 +161,128 @@ private class FakePuzzleAdapter(
 }
 
 class PuzzleSessionControllerTest {
+
+    private val dailyDay = LocalDate.of(2026, 9, 24)
+
+    @Test
+    fun `daily start uses dailySession and tags the envelope`() = runTest {
+        val sessionStore = FakeSessionStore()
+        val adapter = FakePuzzleAdapter(freshValue = 1)
+        val controller = PuzzleSessionController(
+            backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), adapter,
+            isAppForeground = { true },
+        )
+
+        controller.start(Difficulty.HARD, resume = false, requestedDailyDate = dailyDay)
+        advanceTimeBy(1_001)
+
+        assertEquals(1, adapter.dailySessionCalls)
+        assertEquals(0, adapter.freshSessionCalls)
+        assertEquals(dailyDay, controller.dailyDate)
+        val envelope = sessionStore.activeSession.first()
+        assertEquals("2026-09-24", envelope?.dailyDate)
+        assertEquals("hard", envelope?.dailyTier)
+    }
+
+    @Test
+    fun `daily win record carries daily date and share detail`() = runTest {
+        val history = FakeHistoryStore()
+        val controller = PuzzleSessionController(
+            backgroundScope, FakeSessionStore(), FakeStatsStore(), history, FakePuzzleAdapter(shareDetail = "grid"),
+            isAppForeground = { true },
+        )
+
+        controller.start(Difficulty.HARD, resume = false, requestedDailyDate = dailyDay)
+        runCurrent()
+        controller.finishAsWin()
+        runCurrent()
+
+        val record = history.appended.single()
+        assertEquals("2026-09-24", record.dailyDate)
+        assertEquals("grid", record.shareDetail)
+    }
+
+    @Test
+    fun `non-daily win record has no daily fields`() = runTest {
+        val history = FakeHistoryStore()
+        val controller = PuzzleSessionController(
+            backgroundScope, FakeSessionStore(), FakeStatsStore(), history, FakePuzzleAdapter(shareDetail = "grid"),
+            isAppForeground = { true },
+        )
+
+        controller.start(Difficulty.HARD, resume = false)
+        runCurrent()
+        controller.finishAsWin()
+        runCurrent()
+
+        assertNull(history.appended.single().dailyDate)
+        assertNull(history.appended.single().shareDetail)
+    }
+
+    @Test
+    fun `fresh start over an in-progress daily forfeits it as a loss`() = runTest {
+        val sessionStore = FakeSessionStore()
+        sessionStore.preload(ActiveSessionEnvelope("sudoku", 33.0, "p", "2026-09-23", "expert"))
+        val history = FakeHistoryStore()
+        val controller = PuzzleSessionController(
+            backgroundScope, sessionStore, FakeStatsStore(), history, FakePuzzleAdapter(),
+        )
+
+        controller.start(Difficulty.EASY, resume = false)
+        runCurrent()
+
+        val forfeit = history.appended.single()
+        assertEquals("sudoku", forfeit.gameId)
+        assertEquals("expert", forfeit.difficulty)
+        assertEquals("2026-09-23", forfeit.dailyDate)
+        assertFalse(forfeit.solved)
+        assertEquals("abandoned", forfeit.lossReason)
+        assertEquals(33, forfeit.elapsedSeconds)
+    }
+
+    @Test
+    fun `fresh start over a regular session records nothing`() = runTest {
+        val sessionStore = FakeSessionStore()
+        sessionStore.preload(ActiveSessionEnvelope("sudoku", 33.0, "p"))
+        val history = FakeHistoryStore()
+        val controller = PuzzleSessionController(
+            backgroundScope, sessionStore, FakeStatsStore(), history, FakePuzzleAdapter(),
+        )
+
+        controller.start(Difficulty.EASY, resume = false)
+        runCurrent()
+
+        assertTrue(history.appended.isEmpty())
+    }
+
+    @Test
+    fun `restarting the same daily run does not forfeit it`() = runTest {
+        val sessionStore = FakeSessionStore()
+        sessionStore.preload(ActiveSessionEnvelope(GameId.TAKUZU.key, 10.0, "p", "2026-09-24", "hard"))
+        val history = FakeHistoryStore()
+        val controller = PuzzleSessionController(
+            backgroundScope, sessionStore, FakeStatsStore(), history, FakePuzzleAdapter(),
+        )
+
+        controller.start(Difficulty.HARD, resume = false, requestedDailyDate = dailyDay)
+        runCurrent()
+
+        assertTrue(history.appended.isEmpty())
+    }
+
+    @Test
+    fun `resume restores daily date from the envelope`() = runTest {
+        val sessionStore = FakeSessionStore()
+        sessionStore.preload(ActiveSessionEnvelope(GameId.TAKUZU.key, 12.0, "p", "2026-09-24", "medium"))
+        val controller = PuzzleSessionController(
+            backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(restoreValue = TestSession(7)),
+        )
+
+        controller.start(Difficulty.EASY, resume = true)
+        runCurrent()
+
+        assertEquals(dailyDay, controller.dailyDate)
+    }
 
     @Test
     fun `fresh start ticks elapsed seconds and persists meaningful progress`() = runTest {

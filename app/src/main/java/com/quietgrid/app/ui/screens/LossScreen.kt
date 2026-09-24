@@ -77,6 +77,9 @@ fun LossScreen(
     onOtherDifficulty: () -> Unit,
     onTryAnotherGame: () -> Unit,
     onWalkThroughSolve: () -> Unit,
+    dailyDate: String? = null,
+    onShareDaily: () -> Unit = {},
+    onBackToDaily: () -> Unit = {},
 ) {
     val haptics = rememberHapticController()
     LaunchedEffect(Unit) { if (reason != "abandoned") haptics.incorrectFeedback() }
@@ -336,11 +339,17 @@ fun LossScreen(
                     }
                 }
 
-                OutlinedGlowButton(onClick = onRetry, modifier = Modifier.padding(top = 24.dp)) {
-                    Text(
-                        stringResource(mixAwarePrimaryLabel(isMixActive, R.string.loss_try_again)),
-                        fontWeight = FontWeight.Bold,
-                    )
+                if (dailyDate != null) {
+                    OutlinedGlowButton(onClick = onShareDaily, modifier = Modifier.padding(top = 24.dp)) {
+                        Text(stringResource(R.string.daily_share), fontWeight = FontWeight.Bold)
+                    }
+                } else {
+                    OutlinedGlowButton(onClick = onRetry, modifier = Modifier.padding(top = 24.dp)) {
+                        Text(
+                            stringResource(mixAwarePrimaryLabel(isMixActive, R.string.loss_try_again)),
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
                 }
 
                 if (analyzerSnapshot != null) {
@@ -360,16 +369,22 @@ fun LossScreen(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    if (!isMixActive) {
-                        TextButton(onClick = onOtherDifficulty) {
-                            Text(stringResource(R.string.loss_other_difficulty), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    if (dailyDate != null) {
+                        TextButton(onClick = onBackToDaily) {
+                            Text(stringResource(R.string.daily_back_to_daily), color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
-                        Box(Modifier.width(1.dp).height(16.dp).background(MaterialTheme.colorScheme.outlineVariant))
+                    } else {
+                        if (!isMixActive) {
+                            TextButton(onClick = onOtherDifficulty) {
+                                Text(stringResource(R.string.loss_other_difficulty), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                            Box(Modifier.width(1.dp).height(16.dp).background(MaterialTheme.colorScheme.outlineVariant))
+                        }
+                        TextButton(onClick = onTryAnotherGame) {
+                            Text(stringResource(R.string.loss_try_another_game), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                        AddToMixControl(eligibleMixes = eligibleMixes, onAddToMix = onAddToMix)
                     }
-                    TextButton(onClick = onTryAnotherGame) {
-                        Text(stringResource(R.string.loss_try_another_game), color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
-                    AddToMixControl(eligibleMixes = eligibleMixes, onAddToMix = onAddToMix)
                 }
             }
         }

@@ -12,6 +12,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -20,18 +23,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
-import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.quietgrid.app.data.GameStats
 import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.ui.components.AccountIconButton
 import kotlinx.coroutines.launch
+
+private enum class StatsView { OVERVIEW, LOGS }
 
 @Composable
 fun StatsScreen(onOpenAccount: () -> Unit) {
@@ -39,20 +45,34 @@ fun StatsScreen(onOpenAccount: () -> Unit) {
     val gameIds = remember { GameCatalog.games.map { it.id } }
     val statsByGame by repositories.statsRepository.statsForGames(gameIds)
         .collectAsState(initial = emptyMap())
-    val playedGameIds = remember(statsByGame) {
-        GameCatalog.games
-            .filter { meta -> (statsByGame[meta.id]?.let { s -> Difficulty.entries.sumOf { s.forDifficulty(it).played } } ?: 0) > 0 }
-            .sortedByDescending { meta -> statsByGame[meta.id]?.let { s -> Difficulty.entries.sumOf { s.forDifficulty(it).played } } ?: 0 }
-            .map { it.id }
-    }
+    val records by repositories.playHistoryRepository.allRecords().collectAsState(initial = emptyList())
+    val filterGames = remember(statsByGame, records) { statsFilterGames(statsByGame, records) }
 
-    var selectedScope by remember { mutableStateOf<GameId?>(null) }
-    var showClearDialog by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
+    var view by rememberSaveable { mutableStateOf(StatsView.OVERVIEW) }
+    var selectedGame by remember { mutableStateOf<GameId?>(null) }
 
     Column(Modifier.fillMaxWidth().padding(16.dp)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
             AccountIconButton(onOpenAccount)
+        }
+
+        SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().padding(top = 12.dp)) {
+            StatsView.entries.forEachIndexed { index, entry ->
+                SegmentedButton(
+                    selected = view == entry,
+                    onClick = { view = entry },
+                    shape = SegmentedButtonDefaults.itemShape(index = index, count = StatsView.entries.size),
+                ) {
+                    Text(
+                        stringResource(
+                            when (entry) {
+                                StatsView.OVERVIEW -> R.string.stats_view_overview
+                                StatsView.LOGS -> R.string.tab_logs
+                            },
+                        ),
+                    )
+                }
+            }
         }
 
         Row(
@@ -63,22 +83,37 @@ fun StatsScreen(onOpenAccount: () -> Unit) {
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             FilterChip(
-                selected = selectedScope == null,
-                onClick = { selectedScope = null },
+                selected = selectedGame == null,
+                onClick = { selectedGame = null },
                 label = { Text(stringResource(R.string.common_all)) },
             )
-            playedGameIds.forEach { gameId ->
-                val meta = GameCatalog.games.first { it.id == gameId }
+            filterGames.forEach { gameId ->
                 FilterChip(
-                    selected = selectedScope == gameId,
-                    onClick = { selectedScope = gameId },
-                    label = { Text(stringResource(meta.titleRes)) },
+                    selected = selectedGame == gameId,
+                    onClick = { selectedGame = gameId },
+                    label = { Text(stringResource(GameCatalog.get(gameId).titleRes)) },
                 )
             }
         }
 
-        val overview = remember(statsByGame, selectedScope) { buildStatsOverview(selectedScope, statsByGame) }
+        when (view) {
+            StatsView.OVERVIEW -> OverviewContent(statsByGame, selectedGame, repositories)
+            StatsView.LOGS -> LogsContent(records, selectedGame)
+        }
+    }
+}
 
+@Composable
+private fun OverviewContent(
+    statsByGame: Map<GameId, GameStats>,
+    selectedGame: GameId?,
+    repositories: RepositoriesViewModel,
+) {
+    var showClearDialog by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val overview = remember(statsByGame, selectedGame) { buildStatsOverview(selectedGame, statsByGame) }
+
+    Column(Modifier.fillMaxWidth()) {
         StatsOverviewContent(overview, modifier = Modifier.padding(top = 16.dp))
 
         TextButton(

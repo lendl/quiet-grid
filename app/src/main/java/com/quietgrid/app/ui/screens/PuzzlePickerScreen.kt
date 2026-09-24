@@ -1,5 +1,11 @@
 package com.quietgrid.app.ui.screens
 
+import androidx.compose.material3.OutlinedButton
+import com.quietgrid.app.ui.components.DailyTierChips
+import com.quietgrid.app.core.daily.DailyTierUi
+import com.quietgrid.app.core.daily.DailyTierStatus
+import androidx.compose.ui.platform.LocalContext
+import java.time.LocalDate
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -114,6 +120,7 @@ fun PuzzlePickerScreen(
     onPickDifficulty: (Difficulty) -> Unit,
     onResumeActiveGame: (GameId) -> Unit,
     onStartChallenger: () -> Unit,
+    onStartDaily: (Difficulty, LocalDate) -> Unit,
 ) {
     var selectedTab by remember { mutableStateOf(GamePageTab.PLAY) }
 
@@ -125,6 +132,13 @@ fun PuzzlePickerScreen(
     var showQuickStart by remember(gameId) { mutableStateOf(false) }
     var pendingDifficulty by remember(gameId) { mutableStateOf<Difficulty?>(null) }
     var pendingChallenger by remember(gameId) { mutableStateOf(false) }
+    val dailyViewModel: DailyViewModel = hiltViewModel()
+    val dailyState by dailyViewModel.state.collectAsState()
+    val context = LocalContext.current
+    var pendingDaily by remember(gameId) { mutableStateOf<Pair<Difficulty, LocalDate>?>(null) }
+    val requestStartDaily: (Difficulty, LocalDate) -> Unit = { difficulty, date ->
+        if (activeGameKey != null) pendingDaily = difficulty to date else onStartDaily(difficulty, date)
+    }
 
     val requestStartDifficulty: (Difficulty) -> Unit = { difficulty ->
         if (activeGameKey != null) pendingDifficulty = difficulty else onPickDifficulty(difficulty)
@@ -158,7 +172,13 @@ fun PuzzlePickerScreen(
         AlertDialog(
             onDismissRequest = { pendingDifficulty = null },
             title = { Text(stringResource(R.string.replace_dialog_title)) },
-            text = { Text(stringResource(R.string.replace_dialog_message)) },
+            text = {
+                Text(
+                    stringResource(
+                        if (activeSession?.dailyDate != null) R.string.daily_replace_dialog_message else R.string.replace_dialog_message,
+                    ),
+                )
+            },
             confirmButton = {
                 TextButton(onClick = {
                     pendingDifficulty = null
@@ -174,11 +194,44 @@ fun PuzzlePickerScreen(
             },
         )
     }
+    val dailyToStart = pendingDaily
+    if (dailyToStart != null) {
+        AlertDialog(
+            onDismissRequest = { pendingDaily = null },
+            title = { Text(stringResource(R.string.replace_dialog_title)) },
+            text = {
+                Text(
+                    stringResource(
+                        if (activeSession?.dailyDate != null) R.string.daily_replace_dialog_message else R.string.replace_dialog_message,
+                    ),
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    pendingDaily = null
+                    onStartDaily(dailyToStart.first, dailyToStart.second)
+                }) { Text(stringResource(R.string.common_start_new_puzzle)) }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    pendingDaily = null
+                    val activeGameId = activeGameKey?.let { key -> GameId.entries.firstOrNull { it.key == key } }
+                    if (activeGameId != null) onResumeActiveGame(activeGameId)
+                }) { Text(stringResource(R.string.common_continue_puzzle)) }
+            },
+        )
+    }
     if (pendingChallenger) {
         AlertDialog(
             onDismissRequest = { pendingChallenger = false },
             title = { Text(stringResource(R.string.replace_dialog_title)) },
-            text = { Text(stringResource(R.string.replace_dialog_message)) },
+            text = {
+                Text(
+                    stringResource(
+                        if (activeSession?.dailyDate != null) R.string.daily_replace_dialog_message else R.string.replace_dialog_message,
+                    ),
+                )
+            },
             confirmButton = {
                 TextButton(onClick = {
                     pendingChallenger = false
@@ -218,7 +271,26 @@ fun PuzzlePickerScreen(
         }
 
         when (selectedTab) {
-            GamePageTab.PLAY -> GamePlayPickerTab(gameId, requestStartDifficulty, requestStartChallenger)
+            GamePageTab.PLAY -> GamePlayPickerTab(
+                gameId,
+                requestStartDifficulty,
+                requestStartChallenger,
+                dailySlot = {
+                    DailyPickerRow(
+                        gameId = gameId,
+                        state = dailyState,
+                        onSubscribe = { dailyViewModel.setSubscribed(gameId, true) },
+                        onTierClick = { tier ->
+                            when (tier.status) {
+                                DailyTierStatus.Unplayed -> requestStartDaily(tier.difficulty, dailyState.today)
+                                DailyTierStatus.InProgress -> onResumeActiveGame(gameId)
+                                is DailyTierStatus.Solved, DailyTierStatus.Lost ->
+                                    coroutineScope.launch { dailyViewModel.share(context, gameId, tier.difficulty, dailyState.today) }
+                            }
+                        },
+                    )
+                },
+            )
             GamePageTab.RULES -> HowToPlayScreen(gameId)
             GamePageTab.STATS -> GameStatsTab(gameId)
         }
@@ -232,8 +304,10 @@ private fun GamePlayPickerTab(
     gameId: GameId,
     requestStartDifficulty: (Difficulty) -> Unit,
     requestStartChallenger: () -> Unit,
+    dailySlot: @Composable () -> Unit,
 ) {
     Column(Modifier.fillMaxWidth().padding(16.dp)) {
+        dailySlot()
         Column {
             pickableDifficultiesFor(gameId).forEachIndexed { index, difficulty ->
                 val labelRes = when (gameId) {
@@ -420,6 +494,27 @@ private fun GameStatsTab(gameId: GameId) {
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun DailyPickerRow(
+    gameId: GameId,
+    state: DailyUiState,
+    onSubscribe: () -> Unit,
+    onTierClick: (DailyTierUi) -> Unit,
+) {
+    if (gameId !in state.eligible) return
+    val game = state.games.firstOrNull { it.gameId == gameId }
+    if (gameId in state.subscribed && game == null) return
+    Column(Modifier.fillMaxWidth().padding(bottom = 16.dp)) {
+        Text(stringResource(R.string.daily_picker_title), style = MaterialTheme.typography.titleSmall)
+        when {
+            game != null -> Box(Modifier.padding(top = 8.dp)) { DailyTierChips(gameId, game.tiers, onTierClick) }
+            else -> OutlinedButton(onClick = onSubscribe, modifier = Modifier.padding(top = 8.dp)) {
+                Text(stringResource(R.string.daily_subscribe))
             }
         }
     }

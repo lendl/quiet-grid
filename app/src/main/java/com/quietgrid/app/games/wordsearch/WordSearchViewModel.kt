@@ -7,6 +7,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.core.daily.selectDaily
+import java.time.LocalDate
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
@@ -62,6 +64,20 @@ private class WordSearchPuzzleAdapter(
         val locale = currentWordSearchLocale(settingsRepository.settings.first().puzzleLanguage)
         val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
         val entry = WordSearchPuzzleBank.randomPuzzle(appContext, locale, difficulty, recentIds) ?: return null
+        return WordSearchSession(
+            puzzle = entry,
+            foundWordIds = emptyList(),
+            tempSelection = null,
+            hiddenWordMode = false,
+            hiddenWordProgress = emptyList(),
+            hiddenWordSolved = false,
+            accuracyDrops = 0,
+        )
+    }
+
+    override suspend fun dailySession(difficulty: Difficulty, date: LocalDate): WordSearchSession? {
+        val locale = currentWordSearchLocale(settingsRepository.settings.first().puzzleLanguage)
+        val entry = selectDaily(WordSearchPuzzleBank.dailyPool(appContext, locale, difficulty), { it.id }, gameId.key, difficulty.key, date) ?: return null
         return WordSearchSession(
             puzzle = entry,
             foundWordIds = emptyList(),
@@ -130,11 +146,12 @@ class WordSearchPlayViewModel @AssistedInject constructor(
     settingsRepository: SettingsRepository,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
+    @Assisted dailyDate: LocalDate?,
 ) : ViewModel() {
 
     @AssistedFactory
     interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean): WordSearchPlayViewModel
+        fun create(requestedDifficulty: Difficulty, resume: Boolean, dailyDate: LocalDate?): WordSearchPlayViewModel
     }
 
     private val controller = PuzzleSessionController(
@@ -167,7 +184,7 @@ class WordSearchPlayViewModel @AssistedInject constructor(
     private var selectionEventSeq = 0
 
     init {
-        controller.start(requestedDifficulty, resume)
+        controller.start(requestedDifficulty, resume, dailyDate)
     }
 
     private fun clearHint() {

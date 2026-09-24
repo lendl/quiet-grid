@@ -9,13 +9,13 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Extension
-import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Insights
 import androidx.compose.material.icons.filled.Repeat
+import androidx.compose.material.icons.filled.Today
 import androidx.compose.material.icons.outlined.Extension
-import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Insights
 import androidx.compose.material.icons.outlined.Repeat
+import androidx.compose.material.icons.outlined.Today
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -37,7 +37,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
 
-enum class AppTab { GAMES, MIXES, LOGS, STATS }
+enum class AppTab { DAILY, GAMES, MIXES, STATS }
 
 private data class BottomNavEntry(
     val tab: AppTab,
@@ -47,9 +47,9 @@ private data class BottomNavEntry(
 )
 
 private val BOTTOM_NAV_ENTRIES = listOf(
+    BottomNavEntry(AppTab.DAILY, R.string.tab_daily, Icons.Filled.Today, Icons.Outlined.Today),
     BottomNavEntry(AppTab.GAMES, R.string.tab_games, Icons.Filled.Extension, Icons.Outlined.Extension),
     BottomNavEntry(AppTab.MIXES, R.string.tab_mixes, Icons.Filled.Repeat, Icons.Outlined.Repeat),
-    BottomNavEntry(AppTab.LOGS, R.string.tab_logs, Icons.Filled.History, Icons.Outlined.History),
     BottomNavEntry(AppTab.STATS, R.string.tab_stats, Icons.Filled.Insights, Icons.Outlined.Insights),
 )
 

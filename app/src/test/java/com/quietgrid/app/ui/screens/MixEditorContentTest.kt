@@ -56,6 +56,7 @@ class MixEditorContentTest {
             sessionRepository = sessionRepository,
             playHistoryRepository = playHistoryRepository,
             mixRepository = mixRepository,
+            dailyRepository = mockk(relaxed = true),
         )
     }
 

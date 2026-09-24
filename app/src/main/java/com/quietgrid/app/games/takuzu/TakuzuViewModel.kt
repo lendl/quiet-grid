@@ -7,6 +7,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.core.daily.selectDaily
+import java.time.LocalDate
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
@@ -57,6 +59,11 @@ private class TakuzuPuzzleAdapter(
     override suspend fun freshSession(difficulty: Difficulty): TakuzuSession? {
         val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
         val puzzle = TakuzuPuzzleBank.randomPuzzle(appContext, difficulty, recentIds) ?: return null
+        return createTakuzuSession(puzzle)
+    }
+
+    override suspend fun dailySession(difficulty: Difficulty, date: LocalDate): TakuzuSession? {
+        val puzzle = selectDaily(TakuzuPuzzleBank.dailyPool(appContext, difficulty), { it.id }, gameId.key, difficulty.key, date) ?: return null
         return createTakuzuSession(puzzle)
     }
 
@@ -119,11 +126,12 @@ class TakuzuPlayViewModel @AssistedInject constructor(
     historyRepository: PlayHistoryStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
+    @Assisted dailyDate: LocalDate?,
 ) : ViewModel() {
 
     @AssistedFactory
     interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean): TakuzuPlayViewModel
+        fun create(requestedDifficulty: Difficulty, resume: Boolean, dailyDate: LocalDate?): TakuzuPlayViewModel
     }
 
     private val controller = PuzzleSessionController(
@@ -162,7 +170,7 @@ class TakuzuPlayViewModel @AssistedInject constructor(
     private var hintJob: Job? = null
 
     init {
-        controller.start(requestedDifficulty, resume)
+        controller.start(requestedDifficulty, resume, dailyDate)
     }
 
     private fun clearHint() {

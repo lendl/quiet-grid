@@ -24,8 +24,11 @@ object AnimalDokuPuzzleBank {
         }
     }
 
+    suspend fun dailyPool(context: Context, difficulty: Difficulty): List<AnimalDokuPuzzleEntry> =
+        load(context)[difficulty.key].orEmpty()
+
     suspend fun randomPuzzle(context: Context, difficulty: Difficulty, recentlyPlayedIds: Set<String> = emptySet()): AnimalDokuPuzzleEntry? {
-        val pool = load(context)[difficulty.key] ?: return null
+        val pool = dailyPool(context, difficulty)
         if (pool.isEmpty()) return null
         val candidates = pool.filter { it.id !in recentlyPlayedIds }
         return candidates.ifEmpty { pool }.random()

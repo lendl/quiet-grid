@@ -3,7 +3,6 @@ package com.quietgrid.app.ui.screens
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,9 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
@@ -21,7 +17,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,48 +25,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
-import com.quietgrid.app.core.GameMeta
 import com.quietgrid.app.core.formatElapsed
 import com.quietgrid.app.data.PlayRecord
-import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.data.isLegacyMigratedTimestamp
-import com.quietgrid.app.ui.components.AccountIconButton
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
-fun LogsScreen(onOpenAccount: () -> Unit) {
-    val repositories: RepositoriesViewModel = hiltViewModel()
-    val records by repositories.playHistoryRepository.allRecords().collectAsState(initial = emptyList())
-
+fun LogsContent(records: List<PlayRecord>, selectedGame: GameId?, modifier: Modifier = Modifier) {
     var mode by remember { mutableStateOf(LogsMode.ALL) }
-    var selectedGame by remember { mutableStateOf<GameId?>(null) }
     var selectedRecord by remember { mutableStateOf<PlayRecord?>(null) }
 
     val filtered = remember(records, mode, selectedGame) { filterLogRecords(records, mode, selectedGame) }
-    val availableGames = remember(records) {
-        records.mapNotNull { record -> GameId.entries.firstOrNull { it.key == record.gameId } }
-            .distinct()
-            .let { ids -> GameCatalog.games.filter { it.id in ids } }
-    }
 
-    Column(Modifier.fillMaxWidth().padding(16.dp)) {
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
-            AccountIconButton(onOpenAccount)
-        }
-
-        LogsFilterRow(
-            mode = mode,
-            onModeChange = { mode = it },
-            selectedGame = selectedGame,
-            onGameChange = { selectedGame = it },
-            availableGames = availableGames,
-        )
+    Column(modifier.fillMaxWidth()) {
+        LogsModeRow(mode = mode, onModeChange = { mode = it })
 
         if (filtered.isEmpty()) {
             Text(stringResource(R.string.logs_empty), modifier = Modifier.padding(top = 32.dp))
@@ -91,15 +63,7 @@ fun LogsScreen(onOpenAccount: () -> Unit) {
 }
 
 @Composable
-private fun LogsFilterRow(
-    mode: LogsMode,
-    onModeChange: (LogsMode) -> Unit,
-    selectedGame: GameId?,
-    onGameChange: (GameId?) -> Unit,
-    availableGames: List<GameMeta>,
-) {
-    var gameMenuExpanded by remember { mutableStateOf(false) }
-
+private fun LogsModeRow(mode: LogsMode, onModeChange: (LogsMode) -> Unit) {
     Row(
         Modifier
             .fillMaxWidth()
@@ -110,17 +74,6 @@ private fun LogsFilterRow(
         FilterChip(selected = mode == LogsMode.ALL, onClick = { onModeChange(LogsMode.ALL) }, label = { Text(stringResource(R.string.common_all)) })
         FilterChip(selected = mode == LogsMode.SOLO, onClick = { onModeChange(LogsMode.SOLO) }, label = { Text(stringResource(R.string.logs_mode_solo)) })
         FilterChip(selected = mode == LogsMode.CHALLENGER, onClick = { onModeChange(LogsMode.CHALLENGER) }, label = { Text(stringResource(R.string.logs_mode_challenger)) })
-
-        Box {
-            val gameLabel = selectedGame?.let { stringResource(GameCatalog.get(it).titleRes) } ?: stringResource(R.string.common_all)
-            AssistChip(onClick = { gameMenuExpanded = true }, label = { Text(stringResource(R.string.logs_game_chip_prefix, gameLabel)) })
-            DropdownMenu(expanded = gameMenuExpanded, onDismissRequest = { gameMenuExpanded = false }) {
-                DropdownMenuItem(text = { Text(stringResource(R.string.common_all)) }, onClick = { onGameChange(null); gameMenuExpanded = false })
-                availableGames.forEach { meta ->
-                    DropdownMenuItem(text = { Text(stringResource(meta.titleRes)) }, onClick = { onGameChange(meta.id); gameMenuExpanded = false })
-                }
-            }
-        }
     }
 }
 

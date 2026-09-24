@@ -7,6 +7,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.core.daily.selectDaily
+import com.quietgrid.app.core.daily.wordGuessShareGrid
+import java.time.LocalDate
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
@@ -61,6 +64,23 @@ private class WordGuessPuzzleAdapter(
             status = WordGuessStatus.PLAYING,
         )
     }
+
+    override suspend fun dailySession(difficulty: Difficulty, date: LocalDate): WordGuessSession? {
+        val locale = currentWordGuessLocale(settingsRepository.settings.first().puzzleLanguage)
+        val entry = selectDaily(WordGuessPuzzleBank.dailyPool(appContext, locale, difficulty), { it.id }, gameId.key, "$locale:${difficulty.key}", date) ?: return null
+        return WordGuessSession(
+            puzzleId = entry.id,
+            locale = locale,
+            difficulty = entry.difficulty,
+            targetWord = entry.word,
+            wordLength = entry.word.length,
+            guesses = emptyList(),
+            status = WordGuessStatus.PLAYING,
+        )
+    }
+
+    override fun dailyShareDetail(session: WordGuessSession): String =
+        wordGuessShareGrid(session.guesses.map { it.feedback })
 
     override fun restoreSession(payload: String, elapsedSeconds: Double): WordGuessSession? {
         val persisted = runCatching { json.decodeFromString<WordGuessPersistedSession>(payload) }.getOrNull() ?: return null
@@ -118,11 +138,12 @@ class WordGuessPlayViewModel @AssistedInject constructor(
     settingsRepository: SettingsRepository,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
+    @Assisted dailyDate: LocalDate?,
 ) : ViewModel() {
 
     @AssistedFactory
     interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean): WordGuessPlayViewModel
+        fun create(requestedDifficulty: Difficulty, resume: Boolean, dailyDate: LocalDate?): WordGuessPlayViewModel
     }
 
     private val controller = PuzzleSessionController(
@@ -144,7 +165,7 @@ class WordGuessPlayViewModel @AssistedInject constructor(
     private var dictionary: Set<String> = emptySet()
 
     init {
-        controller.start(requestedDifficulty, resume)
+        controller.start(requestedDifficulty, resume, dailyDate)
     }
 
     fun onSubmitGuess(rawGuess: String, onInvalid: () -> Unit) {

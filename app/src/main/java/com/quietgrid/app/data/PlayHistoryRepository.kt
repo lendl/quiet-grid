@@ -32,6 +32,8 @@ data class PlayRecord(
     val lossReason: String? = null,
     val isChallenger: Boolean = false,
     val puzzlesSolved: Int? = null,
+    val dailyDate: String? = null,
+    val shareDetail: String? = null,
 )
 
 interface PlayHistoryStore {

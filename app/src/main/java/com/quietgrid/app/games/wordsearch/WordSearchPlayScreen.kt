@@ -1,5 +1,6 @@
 package com.quietgrid.app.games.wordsearch
 
+import java.time.LocalDate
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -47,11 +48,12 @@ import com.quietgrid.app.ui.components.rememberHapticController
 fun WordSearchPlayScreen(
     difficulty: Difficulty,
     resume: Boolean,
+    dailyDate: LocalDate? = null,
     onBack: () -> Unit,
     onFinished: (WordSearchResult) -> Unit,
 ) {
     val viewModel = hiltViewModel<WordSearchPlayViewModel, WordSearchPlayViewModel.Factory>(
-        creationCallback = { factory -> factory.create(difficulty, resume) },
+        creationCallback = { factory -> factory.create(difficulty, resume, dailyDate) },
     )
     CollectPuzzleResult(viewModel.result, onFinished)
 

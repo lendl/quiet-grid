@@ -1,6 +1,7 @@
 // app/src/main/java/com/quietgrid/app/games/animaldoku/AnimalDokuPlayScreen.kt
 package com.quietgrid.app.games.animaldoku
 
+import java.time.LocalDate
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.keyframes
 import androidx.compose.foundation.layout.Column
@@ -39,11 +40,12 @@ import com.quietgrid.app.ui.components.rememberHapticController
 fun AnimalDokuPlayScreen(
     difficulty: Difficulty,
     resume: Boolean,
+    dailyDate: LocalDate? = null,
     onBack: () -> Unit,
     onFinished: (AnimalDokuResult) -> Unit,
 ) {
     val viewModel = hiltViewModel<AnimalDokuPlayViewModel, AnimalDokuPlayViewModel.Factory>(
-        creationCallback = { factory -> factory.create(difficulty, resume) },
+        creationCallback = { factory -> factory.create(difficulty, resume, dailyDate) },
     )
     CollectPuzzleResult(viewModel.result, onFinished)
 

@@ -28,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.R
+import java.time.LocalDate
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.ui.components.CollectPuzzleResult
 import com.quietgrid.app.ui.components.ElapsedTimerText
@@ -41,11 +42,12 @@ import com.quietgrid.app.ui.components.rememberHapticController
 fun TakuzuPlayScreen(
     difficulty: Difficulty,
     resume: Boolean,
+    dailyDate: LocalDate? = null,
     onBack: () -> Unit,
     onFinished: (TakuzuResult) -> Unit,
 ) {
     val viewModel = hiltViewModel<TakuzuPlayViewModel, TakuzuPlayViewModel.Factory>(
-        creationCallback = { factory -> factory.create(difficulty, resume) },
+        creationCallback = { factory -> factory.create(difficulty, resume, dailyDate) },
     )
     CollectPuzzleResult(viewModel.result, onFinished)
 

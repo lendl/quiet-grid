@@ -10,6 +10,7 @@ import androidx.room.PrimaryKey
         Index("gameId"),
         Index(value = ["gameId", "difficulty"]),
         Index(value = ["gameId", "puzzleId", "difficulty"]),
+        Index(value = ["gameId", "dailyDate"]),
     ],
 )
 data class PlayRecordEntity(
@@ -24,6 +25,8 @@ data class PlayRecordEntity(
     val lossReason: String?,
     val isChallenger: Boolean = false,
     val puzzlesSolved: Int? = null,
+    val dailyDate: String? = null,
+    val shareDetail: String? = null,
 )
 
 fun PlayRecord.toEntity(): PlayRecordEntity = PlayRecordEntity(
@@ -37,6 +40,8 @@ fun PlayRecord.toEntity(): PlayRecordEntity = PlayRecordEntity(
     lossReason = lossReason,
     isChallenger = isChallenger,
     puzzlesSolved = puzzlesSolved,
+    dailyDate = dailyDate,
+    shareDetail = shareDetail,
 )
 
 fun PlayRecordEntity.toRecord(): PlayRecord = PlayRecord(
@@ -50,4 +55,6 @@ fun PlayRecordEntity.toRecord(): PlayRecord = PlayRecord(
     lossReason = lossReason,
     isChallenger = isChallenger,
     puzzlesSolved = puzzlesSolved,
+    dailyDate = dailyDate,
+    shareDetail = shareDetail,
 )

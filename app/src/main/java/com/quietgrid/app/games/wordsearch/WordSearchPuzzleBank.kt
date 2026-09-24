@@ -23,15 +23,19 @@ object WordSearchPuzzleBank {
         }
     }
 
+    suspend fun dailyPool(context: Context, locale: String, difficulty: Difficulty): List<WordSearchPuzzleEntry> {
+        val all = load(context, difficulty)
+        return all.filter { it.locale == locale }.ifEmpty { all.filter { it.locale == "en" } }.ifEmpty { all }
+    }
+
     suspend fun randomPuzzle(
         context: Context,
         locale: String,
         difficulty: Difficulty,
         recentlyPlayedIds: Set<String> = emptySet(),
     ): WordSearchPuzzleEntry? {
-        val all = load(context, difficulty)
-        if (all.isEmpty()) return null
-        val pool = all.filter { it.locale == locale }.ifEmpty { all.filter { it.locale == "en" } }.ifEmpty { all }
+        val pool = dailyPool(context, locale, difficulty)
+        if (pool.isEmpty()) return null
         val candidates = pool.filter { it.id !in recentlyPlayedIds }
         return candidates.ifEmpty { pool }.random()
     }

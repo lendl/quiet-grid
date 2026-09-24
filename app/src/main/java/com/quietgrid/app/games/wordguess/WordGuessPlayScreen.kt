@@ -1,5 +1,6 @@
 package com.quietgrid.app.games.wordguess
 
+import java.time.LocalDate
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,11 +38,12 @@ import kotlinx.coroutines.delay
 fun WordGuessPlayScreen(
     difficulty: Difficulty,
     resume: Boolean,
+    dailyDate: LocalDate? = null,
     onBack: () -> Unit,
     onFinished: (WordGuessResult) -> Unit,
 ) {
     val viewModel = hiltViewModel<WordGuessPlayViewModel, WordGuessPlayViewModel.Factory>(
-        creationCallback = { factory -> factory.create(difficulty, resume) },
+        creationCallback = { factory -> factory.create(difficulty, resume, dailyDate) },
     )
     CollectPuzzleResult(viewModel.result, onFinished)
 

@@ -35,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.R
+import java.time.LocalDate
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.ui.components.CollectPuzzleResult
 import com.quietgrid.app.ui.components.ElapsedTimerText
@@ -77,11 +78,12 @@ private fun SudokuPadButton(
 fun SudokuPlayScreen(
     difficulty: Difficulty,
     resume: Boolean,
+    dailyDate: LocalDate? = null,
     onBack: () -> Unit,
     onFinished: (SudokuResult) -> Unit,
 ) {
     val viewModel = hiltViewModel<SudokuPlayViewModel, SudokuPlayViewModel.Factory>(
-        creationCallback = { factory -> factory.create(difficulty, resume) },
+        creationCallback = { factory -> factory.create(difficulty, resume, dailyDate) },
     )
     CollectPuzzleResult(viewModel.result, onFinished)
 

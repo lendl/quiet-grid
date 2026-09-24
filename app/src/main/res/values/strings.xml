@@ -266,6 +266,26 @@
 
     <!-- logs -->
     <string name="tab_logs">Logs</string>
+    <string name="stats_view_overview">Overview</string>
+    <string name="tab_daily">Daily</string>
+    <string name="daily_title">Today\'s puzzles</string>
+    <string name="daily_streak">🔥 %1$d</string>
+    <string name="daily_manage">Choose daily games</string>
+    <string name="daily_empty_title">Pick games for your daily</string>
+    <string name="daily_empty_body">Choose which games give you a fresh puzzle every day, in every difficulty.</string>
+    <string name="daily_empty_action">Choose games</string>
+    <string name="daily_subscriptions_title">Daily games</string>
+    <string name="daily_share">Share result</string>
+    <string name="daily_back_to_daily">Back to Daily</string>
+    <string name="daily_banner">Daily · %1$s</string>
+    <string name="daily_share_header">Quiet Grid Daily · %1$s · %2$s</string>
+    <string name="daily_share_solved">%1$s · ✅ %2$s</string>
+    <string name="daily_share_lost">%1$s · ❌</string>
+    <string name="daily_share_streak">🔥 %1$d-day streak</string>
+    <string name="daily_share_chooser">Share result</string>
+    <string name="daily_picker_title">Daily puzzle</string>
+    <string name="daily_subscribe">Get a daily puzzle</string>
+    <string name="daily_replace_dialog_message">Your daily puzzle in progress will count as lost. Start a new puzzle anyway?</string>
     <string name="logs_mode_solo">Solo</string>
     <string name="logs_mode_challenger">Challenger</string>
     <string name="logs_game_chip_prefix">Game: %1$s</string>

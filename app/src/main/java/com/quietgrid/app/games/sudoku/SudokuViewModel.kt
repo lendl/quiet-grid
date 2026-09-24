@@ -7,6 +7,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.core.daily.selectDaily
+import java.time.LocalDate
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
@@ -57,6 +59,11 @@ private class SudokuPuzzleAdapter(
     override suspend fun freshSession(difficulty: Difficulty): SudokuSession? {
         val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
         val entry = SudokuPuzzleBank.randomPuzzle(appContext, difficulty, recentIds) ?: return null
+        return createSudokuSession(entry)
+    }
+
+    override suspend fun dailySession(difficulty: Difficulty, date: LocalDate): SudokuSession? {
+        val entry = selectDaily(SudokuPuzzleBank.dailyPool(appContext, difficulty), { it.id }, gameId.key, difficulty.key, date) ?: return null
         return createSudokuSession(entry)
     }
 
@@ -116,11 +123,12 @@ class SudokuPlayViewModel @AssistedInject constructor(
     historyRepository: PlayHistoryStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
+    @Assisted dailyDate: LocalDate?,
 ) : ViewModel() {
 
     @AssistedFactory
     interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean): SudokuPlayViewModel
+        fun create(requestedDifficulty: Difficulty, resume: Boolean, dailyDate: LocalDate?): SudokuPlayViewModel
     }
 
     private val controller = PuzzleSessionController(
@@ -170,7 +178,7 @@ class SudokuPlayViewModel @AssistedInject constructor(
     private val undoHistory = mutableListOf<SudokuSession>()
 
     init {
-        controller.start(requestedDifficulty, resume)
+        controller.start(requestedDifficulty, resume, dailyDate)
     }
 
     private fun clearHint() {

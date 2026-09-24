@@ -55,7 +55,7 @@ class WordGuessPlayViewModelTest {
         val settingsRepository = mockk<SettingsRepository>(relaxed = true)
         every { settingsRepository.settings } returns MutableStateFlow(AppSettings())
         return WordGuessPlayViewModel(
-            mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), settingsRepository, Difficulty.EASY, resume = false,
+            mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), settingsRepository, Difficulty.EASY, resume = false, dailyDate = null,
         )
     }
 
