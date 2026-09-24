@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.QuietGrid.Launch.Light" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowBackground">#F6F8FA</item>
+        <item name="android:windowSplashScreenBackground" tools:targetApi="31">#F6F8FA</item>
+    </style>
+    <style name="Theme.QuietGrid.Launch.Dark" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowBackground">#0D1117</item>
+        <item name="android:windowSplashScreenBackground" tools:targetApi="31">#0D1117</item>
+    </style>
+    <style name="Theme.QuietGrid.Launch.Pencil" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowBackground">#F7F7F7</item>
+        <item name="android:windowSplashScreenBackground" tools:targetApi="31">#F7F7F7</item>
+    </style>
+    <style name="Theme.QuietGrid.Launch.Silk" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowBackground">#F7F5F3</item>
+        <item name="android:windowSplashScreenBackground" tools:targetApi="31">#F7F5F3</item>
+    </style>
+    <style name="Theme.QuietGrid.Launch.Nord" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowBackground">#ECEFF4</item>
+        <item name="android:windowSplashScreenBackground" tools:targetApi="31">#ECEFF4</item>
+    </style>
+    <style name="Theme.QuietGrid.Launch.Coffee" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowBackground">#261B25</item>
+        <item name="android:windowSplashScreenBackground" tools:targetApi="31">#261B25</item>
+    </style>
+    <style name="Theme.QuietGrid.Launch.Dracula" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowBackground">#282A36</item>
+        <item name="android:windowSplashScreenBackground" tools:targetApi="31">#282A36</item>
+    </style>
+</resources>
