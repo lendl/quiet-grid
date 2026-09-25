@@ -105,7 +105,7 @@ class DailyStatusTest {
     @Test
     fun `buildDailyGames keeps catalog order, drops unsubscribed and games without tiers`() {
         val games = buildDailyGames(
-            subscribed = setOf(GameId.WORDSEARCH, GameId.SUDOKU, GameId.TAKUZU),
+            subscribed = listOf(GameId.WORDSEARCH, GameId.SUDOKU, GameId.TAKUZU).associateWith { Difficulty.entries.toSet() },
             eligible = listOf(GameId.TAKUZU, GameId.SUDOKU, GameId.WORDSEARCH, GameId.WORDGUESS),
             poolSizes = mapOf(
                 GameId.TAKUZU to fullPools,
@@ -118,5 +118,25 @@ class DailyStatusTest {
         )
         assertEquals(listOf(GameId.TAKUZU, GameId.SUDOKU), games.map { it.gameId })
         assertEquals(Difficulty.entries, games.first().tiers.map { it.difficulty })
+    }
+
+    @Test
+    fun `buildDailyGames keeps only subscribed tiers and drops games with none available`() {
+        val games = buildDailyGames(
+            subscribed = mapOf(
+                GameId.SUDOKU to setOf(Difficulty.HARD, Difficulty.EASY),
+                GameId.WORDSEARCH to setOf(Difficulty.EXPERT),
+            ),
+            eligible = listOf(GameId.SUDOKU, GameId.WORDSEARCH),
+            poolSizes = mapOf(
+                GameId.SUDOKU to fullPools,
+                GameId.WORDSEARCH to mapOf(Difficulty.EASY to 40),
+            ),
+            records = emptyList(),
+            envelope = null,
+            today = today,
+        )
+        assertEquals(listOf(GameId.SUDOKU), games.map { it.gameId })
+        assertEquals(listOf(Difficulty.EASY, Difficulty.HARD), games.first().tiers.map { it.difficulty })
     }
 }

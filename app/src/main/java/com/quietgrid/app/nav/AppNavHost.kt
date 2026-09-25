@@ -409,9 +409,6 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
                             navController.navigate(Routes.play(gameId, difficulty, resume = false))
                         },
                         onResumeActiveGame = { activeGameId -> navController.navigate(resumeActiveRoute(activeGameId)) },
-                        onStartDaily = { difficulty, date ->
-                            navController.navigate(Routes.play(gameId, difficulty, resume = false, daily = date))
-                        },
                         onStartChallenger = {
                             scope.launch { repositories.mixRepository.clearActiveMix() }
                             navController.navigate(Routes.challenger(gameId))

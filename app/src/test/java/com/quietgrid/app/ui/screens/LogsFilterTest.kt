@@ -5,6 +5,9 @@ import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.PlayRecord
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 private fun record(gameId: GameId, isChallenger: Boolean, timestampMillis: Long) = PlayRecord(
     gameId = gameId.key,
@@ -58,6 +61,20 @@ class LogsFilterTest {
         val result = filterLogRecords(listOf(sudoku, takuzu), LogsMode.ALL, gameId = GameId.SUDOKU)
 
         assertEquals(listOf(sudoku), result)
+    }
+
+    @Test
+    fun `groupLogsByDay splits by local day newest first`() {
+        val utc = ZoneId.of("UTC")
+        fun at(day: Int, hour: Int) = LocalDateTime.of(2026, 9, day, hour, 0).atZone(utc).toInstant().toEpochMilli()
+        val morning24 = record(GameId.SUDOKU, isChallenger = false, timestampMillis = at(24, 8))
+        val evening24 = record(GameId.TAKUZU, isChallenger = false, timestampMillis = at(24, 22))
+        val noon25 = record(GameId.SUDOKU, isChallenger = false, timestampMillis = at(25, 12))
+
+        val days = groupLogsByDay(listOf(morning24, noon25, evening24), utc)
+
+        assertEquals(listOf(LocalDate.of(2026, 9, 25), LocalDate.of(2026, 9, 24)), days.map { it.date })
+        assertEquals(listOf(evening24, morning24), days[1].records)
     }
 
     @Test

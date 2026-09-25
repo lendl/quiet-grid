@@ -60,26 +60,26 @@ class DailyReminderLogicTest {
 
     @Test
     fun `no subscriptions needs no reminder`() {
-        val result = gamesNeedingReminder(emptySet(), listOf(GameId.SUDOKU), mapOf(GameId.SUDOKU to fullPools), emptyList(), null, today)
+        val result = gamesNeedingReminder(emptyMap(), listOf(GameId.SUDOKU), mapOf(GameId.SUDOKU to fullPools), emptyList(), null, today)
         assertEquals(emptyList<GameId>(), result)
     }
 
     @Test
     fun `subscribed but ineligible game is ignored`() {
-        val result = gamesNeedingReminder(setOf(GameId.SUDOKU), emptyList(), mapOf(GameId.SUDOKU to fullPools), emptyList(), null, today)
+        val result = gamesNeedingReminder(allTiers(GameId.SUDOKU), emptyList(), mapOf(GameId.SUDOKU to fullPools), emptyList(), null, today)
         assertEquals(emptyList<GameId>(), result)
     }
 
     @Test
     fun `unplayed subscribed game needs reminder`() {
-        val result = gamesNeedingReminder(setOf(GameId.SUDOKU), listOf(GameId.SUDOKU), mapOf(GameId.SUDOKU to fullPools), emptyList(), null, today)
+        val result = gamesNeedingReminder(allTiers(GameId.SUDOKU), listOf(GameId.SUDOKU), mapOf(GameId.SUDOKU to fullPools), emptyList(), null, today)
         assertEquals(listOf(GameId.SUDOKU), result)
     }
 
     @Test
     fun `all tiers solved or lost needs no reminder`() {
         val records = Difficulty.entries.mapIndexed { i, d -> record(GameId.SUDOKU, d, solved = i % 2 == 0) }
-        val result = gamesNeedingReminder(setOf(GameId.SUDOKU), listOf(GameId.SUDOKU), mapOf(GameId.SUDOKU to fullPools), records, null, today)
+        val result = gamesNeedingReminder(allTiers(GameId.SUDOKU), listOf(GameId.SUDOKU), mapOf(GameId.SUDOKU to fullPools), records, null, today)
         assertEquals(emptyList<GameId>(), result)
     }
 
@@ -87,7 +87,7 @@ class DailyReminderLogicTest {
     fun `in progress tier still needs reminder`() {
         val records = Difficulty.entries.drop(1).map { record(GameId.SUDOKU, it, solved = true) }
         val envelope = ActiveSessionEnvelope(GameId.SUDOKU.key, 10.0, "{}", today.toString(), Difficulty.entries.first().key)
-        val result = gamesNeedingReminder(setOf(GameId.SUDOKU), listOf(GameId.SUDOKU), mapOf(GameId.SUDOKU to fullPools), records, envelope, today)
+        val result = gamesNeedingReminder(allTiers(GameId.SUDOKU), listOf(GameId.SUDOKU), mapOf(GameId.SUDOKU to fullPools), records, envelope, today)
         assertEquals(listOf(GameId.SUDOKU), result)
     }
 
@@ -95,7 +95,9 @@ class DailyReminderLogicTest {
     fun `tier hidden by small language pool is ignored`() {
         val pools = fullPools + (Difficulty.entries.last() to 5)
         val records = Difficulty.entries.dropLast(1).map { record(GameId.SUDOKU, it, solved = true) }
-        val result = gamesNeedingReminder(setOf(GameId.SUDOKU), listOf(GameId.SUDOKU), mapOf(GameId.SUDOKU to pools), records, null, today)
+        val result = gamesNeedingReminder(allTiers(GameId.SUDOKU), listOf(GameId.SUDOKU), mapOf(GameId.SUDOKU to pools), records, null, today)
         assertEquals(emptyList<GameId>(), result)
     }
+
+    private fun allTiers(vararg games: GameId) = games.associateWith { Difficulty.entries.toSet() }
 }

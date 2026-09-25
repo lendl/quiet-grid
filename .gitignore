@@ -72,3 +72,9 @@ docs/roadmap.md
 .copilot
 .claude
 .github/agents
+
+# Store art capture tooling
+tools/store-art/captures/
+tools/store-art/out/
+tools/store-art/store-art-*.html
+tools/store-art/node_modules/

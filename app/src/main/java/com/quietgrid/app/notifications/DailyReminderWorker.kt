@@ -35,7 +35,7 @@ class DailyReminderWorker @AssistedInject constructor(
                 val eligible = dailyEligibleGames()
                 val poolSizes = eligible.associateWith { DailyPools.poolSizes(applicationContext, it, settings.puzzleLanguage) }
                 val games = gamesNeedingReminder(
-                    subscribed = dailyRepository.subscribedGames.first(),
+                    subscribed = dailyRepository.subscriptions.first(),
                     eligible = eligible,
                     poolSizes = poolSizes,
                     records = historyRepository.allRecords().first(),

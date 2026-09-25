@@ -1,19 +1,16 @@
 package com.quietgrid.app.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +23,8 @@ import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.difficultyColor
 import com.quietgrid.app.data.GameStats
+import com.quietgrid.app.ui.components.StatGroup
+import com.quietgrid.app.ui.components.StatItem
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyLabelRes
 import com.quietgrid.app.games.arrowescape.arrowEscapeDifficultyLabelRes
 import com.quietgrid.app.games.battleship.battleshipDifficultyLabelRes
@@ -76,6 +75,7 @@ data class StatsDifficultyRow(
 
 data class StatsOverviewModel(
     val totalSolved: Int,
+    val totalPlayed: Int,
     val streak: Int,
     val winRate: Int,
     val rows: List<StatsDifficultyRow>,
@@ -109,23 +109,31 @@ fun buildStatsOverview(
     val streak = gameIds.sumOf { gameId -> statsByGame[gameId]?.let(::gameStreak) ?: 0 }
     val overallWinRate = if (totalPlayed > 0) Math.round(totalSolved * 100f / totalPlayed) else 0
 
-    return StatsOverviewModel(totalSolved, streak, overallWinRate, rows)
+    return StatsOverviewModel(totalSolved, totalPlayed, streak, overallWinRate, rows)
 }
 
 @Composable
 fun StatsOverviewContent(overview: StatsOverviewModel, modifier: Modifier = Modifier) {
     Column(modifier) {
-        Row(
-            Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            StatsSummaryStat(stringResource(R.string.stats_solved), overview.totalSolved.toString())
-            VerticalDivider(Modifier.height(32.dp))
-            StatsSummaryStat(stringResource(R.string.stats_streak), overview.streak.toString())
-            VerticalDivider(Modifier.height(32.dp))
-            StatsSummaryStat(stringResource(R.string.stats_win_rate), "${overview.winRate}%")
-        }
+        StatGroup(
+            listOf(
+                StatItem(
+                    stringResource(R.string.stats_solved),
+                    overview.totalSolved.toString(),
+                    stringResource(R.string.stat_desc_played, overview.totalPlayed),
+                ),
+                StatItem(
+                    stringResource(R.string.stats_streak),
+                    overview.streak.toString(),
+                    stringResource(R.string.stat_desc_wins_in_row),
+                ),
+                StatItem(
+                    stringResource(R.string.stats_win_rate),
+                    "${overview.winRate}%",
+                    stringResource(R.string.stat_desc_all_difficulties),
+                ),
+            ),
+        )
 
         HorizontalDivider(Modifier.padding(top = 20.dp))
 
@@ -164,13 +172,5 @@ fun StatsOverviewContent(overview: StatsOverviewModel, modifier: Modifier = Modi
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun StatsSummaryStat(label: String, value: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(value, style = MaterialTheme.typography.titleLarge)
-        Text(label, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }

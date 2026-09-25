@@ -53,7 +53,7 @@ fun dailyStreak(records: List<PlayRecord>, gameIds: Set<GameId>, today: LocalDat
 }
 
 fun buildDailyGames(
-    subscribed: Set<GameId>,
+    subscribed: Map<GameId, Set<Difficulty>>,
     eligible: List<GameId>,
     poolSizes: Map<GameId, Map<Difficulty, Int>>,
     records: List<PlayRecord>,
@@ -63,7 +63,8 @@ fun buildDailyGames(
     .map { it.id }
     .filter { it in subscribed && it in eligible }
     .mapNotNull { gameId ->
-        val tiers = availableDailyTiers(poolSizes[gameId].orEmpty())
+        val subscribedTiers = subscribed[gameId].orEmpty()
+        val tiers = availableDailyTiers(poolSizes[gameId].orEmpty()).filter { it in subscribedTiers }
         if (tiers.isEmpty()) return@mapNotNull null
         DailyGameUi(
             gameId = gameId,

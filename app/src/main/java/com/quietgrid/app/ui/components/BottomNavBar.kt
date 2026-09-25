@@ -37,7 +37,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
 
-enum class AppTab { DAILY, GAMES, MIXES, STATS }
+enum class AppTab { GAMES, DAILY, MIXES, STATS }
 
 private data class BottomNavEntry(
     val tab: AppTab,
@@ -47,8 +47,8 @@ private data class BottomNavEntry(
 )
 
 private val BOTTOM_NAV_ENTRIES = listOf(
-    BottomNavEntry(AppTab.DAILY, R.string.tab_daily, Icons.Filled.Today, Icons.Outlined.Today),
     BottomNavEntry(AppTab.GAMES, R.string.tab_games, Icons.Filled.Extension, Icons.Outlined.Extension),
+    BottomNavEntry(AppTab.DAILY, R.string.tab_daily, Icons.Filled.Today, Icons.Outlined.Today),
     BottomNavEntry(AppTab.MIXES, R.string.tab_mixes, Icons.Filled.Repeat, Icons.Outlined.Repeat),
     BottomNavEntry(AppTab.STATS, R.string.tab_stats, Icons.Filled.Insights, Icons.Outlined.Insights),
 )

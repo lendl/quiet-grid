@@ -90,6 +90,15 @@
     if this recurs after a future Kotlin bump — don't assume the pinned version here stays compatible
     forever).
 
+- **Store screenshots** — `StoreArtCaptureTest`
+  (`app/src/test/java/com/quietgrid/app/storeart/StoreArtCaptureTest.kt`) is a Roborazzi capture
+  class, parameterized per locale, that seeds fixture data and Robolectric-renders the real app
+  into `tools/store-art/captures/<lang>/*.png` for framing into store listing images. It's
+  English-only for now and skipped in normal `./gradlew test` runs; run it explicitly with
+  `./gradlew :app:recordRoborazziDebug --tests "com.quietgrid.app.storeart.StoreArtCaptureTest"`.
+  See [`tools/store-art/README.md`](../tools/store-art/README.md) for the full capture-to-store-art
+  pipeline.
+
 ## Not yet covered
 
 Instrumented (`androidTest`) tests, end-to-end tests. Only one component has a behavior test

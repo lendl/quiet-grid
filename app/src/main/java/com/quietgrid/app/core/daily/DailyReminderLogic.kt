@@ -16,7 +16,7 @@ fun nextReminderDelay(now: ZonedDateTime, time: LocalTime): Duration {
 }
 
 fun gamesNeedingReminder(
-    subscribed: Set<GameId>,
+    subscribed: Map<GameId, Set<Difficulty>>,
     eligible: List<GameId>,
     poolSizes: Map<GameId, Map<Difficulty, Int>>,
     records: List<PlayRecord>,

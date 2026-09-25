@@ -20,3 +20,11 @@ fun statsFilterGames(statsByGame: Map<GameId, GameStats>, records: List<PlayReco
         .map { it.id }
     return statsGames + historyOnly
 }
+
+fun logsFilterGames(records: List<PlayRecord>): List<GameId> {
+    val countByKey = records.groupingBy { it.gameId }.eachCount()
+    return GameCatalog.games
+        .filter { (countByKey[it.id.key] ?: 0) > 0 }
+        .sortedByDescending { countByKey[it.id.key] ?: 0 }
+        .map { it.id }
+}
