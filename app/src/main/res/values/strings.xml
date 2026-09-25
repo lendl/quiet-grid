@@ -380,8 +380,6 @@
     <string name="help_wanted_disclaimer">App works offline — this list may be out of date. Check GitHub for current status.</string>
     <string name="help_wanted_icons_title">Icon per game</string>
     <string name="help_wanted_icons_blurb">Games are listed by title only — help design a small icon per game.</string>
-    <string name="help_wanted_store_graphics_title">Store screenshots &amp; graphics</string>
-    <string name="help_wanted_store_graphics_blurb">Help create Play Store / F-Droid listing images.</string>
 
     <!-- Chimp Test -->
     <string name="chimp_title">Chimp Test</string>
