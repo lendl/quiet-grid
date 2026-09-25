@@ -1,0 +1,7 @@
+Versão 1.5.0
+
+- Novo: quebra-cabeças diários. Escolha seus jogos e receba novos quebra-cabeças todos os dias, com sequências e resultados para compartilhar
+- Lembrete diário opcional para quebra-cabeças diários não terminados
+- Estatísticas e Registros unidos em uma única aba
+- Adicione a um combinado direto das telas de vitória e derrota
+- Correções de erros e melhorias de estabilidade

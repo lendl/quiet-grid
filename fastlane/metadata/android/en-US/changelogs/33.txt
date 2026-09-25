@@ -1,0 +1,7 @@
+Version 1.5.0
+
+- New: Daily puzzles. Pick your games and get fresh puzzles every day, with streaks and shareable results
+- Optional daily reminder for unfinished daily puzzles
+- Stats and Logs merged into one tab
+- Add to Mix straight from the win and loss screens
+- Bug fixes and stability improvements

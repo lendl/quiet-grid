@@ -1,0 +1,7 @@
+Version 1.5.0
+
+- Neu: Tagesrätsel. Wähle deine Spiele und erhalte jeden Tag neue Rätsel, mit Streaks und teilbaren Ergebnissen
+- Optionale tägliche Erinnerung an unvollendete Tagesrätsel
+- Statistiken und Verlauf in einem Tab zusammengeführt
+- Direkt vom Sieg- und Niederlagenbildschirm zum Mix hinzufügen
+- Fehlerbehebungen und Stabilitätsverbesserungen

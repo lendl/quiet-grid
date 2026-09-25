@@ -1,0 +1,7 @@
+Wersja 1.5.0
+
+- Nowość: codzienne łamigłówki. Wybierz gry i dostawaj codziennie nowe łamigłówki, z seriami i wynikami do udostępnienia
+- Opcjonalne codzienne przypomnienie o nieukończonych codziennych łamigłówkach
+- Statystyki i Logi połączone w jednej karcie
+- Dodawanie do miksu prosto z ekranu wygranej i przegranej
+- Poprawki błędów i stabilności

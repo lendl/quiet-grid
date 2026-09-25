@@ -1,0 +1,7 @@
+Versión 1.5.0
+
+- Nuevo: puzzles diarios. Elige tus juegos y recibe puzzles nuevos cada día, con rachas y resultados para compartir
+- Recordatorio diario opcional para puzzles diarios sin terminar
+- Estadísticas y Registros unidos en una sola pestaña
+- Añade al mix directamente desde las pantallas de victoria y derrota
+- Corrección de errores y mejoras de estabilidad

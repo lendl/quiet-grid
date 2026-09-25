@@ -1,0 +1,7 @@
+Versie 1.5.0
+
+- Nieuw: dagelijkse puzzels. Kies je spellen en krijg elke dag nieuwe puzzels, met streaks en deelbare resultaten
+- Optionele dagelijkse herinnering voor onafgemaakte dagelijkse puzzels
+- Statistieken en Logboek samengevoegd in één tabblad
+- Voeg direct toe aan een mix vanaf het winst- en verliesscherm
+- Bugfixes en stabiliteitsverbeteringen
