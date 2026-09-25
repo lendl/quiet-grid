@@ -139,4 +139,29 @@ class DailyStatusTest {
         assertEquals(listOf(GameId.SUDOKU), games.map { it.gameId })
         assertEquals(listOf(Difficulty.EASY, Difficulty.HARD), games.first().tiers.map { it.difficulty })
     }
+
+    @Test
+    fun `next daily skips the finished tier and played tiers`() {
+        val games = listOf(
+            DailyGameUi(
+                GameId.SUDOKU,
+                0,
+                listOf(
+                    DailyTierUi(Difficulty.EASY, DailyTierStatus.Solved(60)),
+                    DailyTierUi(Difficulty.MEDIUM, DailyTierStatus.Unplayed),
+                ),
+            ),
+            DailyGameUi(GameId.TAKUZU, 0, listOf(DailyTierUi(Difficulty.EASY, DailyTierStatus.Unplayed))),
+        )
+        assertEquals(GameId.TAKUZU to Difficulty.EASY, nextUnplayedDaily(games, GameId.SUDOKU, Difficulty.MEDIUM))
+        assertEquals(GameId.SUDOKU to Difficulty.MEDIUM, nextUnplayedDaily(games, GameId.SUDOKU, Difficulty.EASY))
+    }
+
+    @Test
+    fun `no next daily when everything is played`() {
+        val games = listOf(
+            DailyGameUi(GameId.SUDOKU, 0, listOf(DailyTierUi(Difficulty.EASY, DailyTierStatus.Lost))),
+        )
+        assertEquals(null, nextUnplayedDaily(games, GameId.SUDOKU, Difficulty.EASY))
+    }
 }

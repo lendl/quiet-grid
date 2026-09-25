@@ -1,10 +1,12 @@
 package com.quietgrid.app.nav
 
 import com.quietgrid.app.ui.screens.DailyScreen
+import com.quietgrid.app.ui.screens.DailyViewModel
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.platform.LocalContext
 import com.quietgrid.app.ui.components.DailyPlayBanner
+import com.quietgrid.app.core.daily.nextUnplayedDaily
 import com.quietgrid.app.core.daily.shareDailyResult
 import java.time.LocalDate
 import androidx.compose.animation.AnimatedContent
@@ -68,7 +70,6 @@ import com.quietgrid.app.core.mix.mixesEligibleForQuickAdd
 import com.quietgrid.app.core.mix.resolvedCandidates
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.RepositoriesViewModel
-import com.quietgrid.app.games.battleship.BattleshipPlayScreen
 import com.quietgrid.app.games.animaldoku.AnimalDokuChallengerPlayScreen
 import com.quietgrid.app.games.animaldoku.AnimalDokuChallengerResultScreen
 import com.quietgrid.app.games.animaldoku.AnimalDokuPlayScreen
@@ -156,6 +157,14 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
 
     fun resumeActiveRoute(gameId: GameId): String =
         Routes.play(gameId, Difficulty.EASY, resume = true, daily = activeSession?.dailyDate?.let { runCatching { LocalDate.parse(it) }.getOrNull() })
+
+    fun playNextDaily(next: Pair<GameId, Difficulty>?, dailyKey: String?) {
+        val date = dailyKey?.let { runCatching { LocalDate.parse(it) }.getOrNull() } ?: return
+        val (gameId, difficulty) = next ?: return
+        navController.navigate(Routes.play(gameId, difficulty, resume = false, daily = date)) {
+            popUpTo(Routes.TABS) { inclusive = false }
+        }
+    }
 
     fun goToDailyTab() {
         selectedTab = AppTab.DAILY
@@ -619,18 +628,6 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
                                         }
                                     },
                                 )
-                                GameId.BATTLESHIP -> BattleshipPlayScreen(
-                                    difficulty = difficulty,
-                                    resume = resume,
-                                    onBack = { navController.popBackStack() },
-                                    onFinished = { result ->
-                                        if (result.solved) {
-                                            goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                        } else {
-                                            goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                        }
-                                    },
-                                )
                                 GameId.GAME_2048 -> Game2048PlayScreen(
                                     difficulty = difficulty,
                                     resume = resume,
@@ -716,6 +713,7 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
                     val completionGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
                     val completionDifficulty = Difficulty.fromKey(entry.arguments?.getString("difficulty") ?: "easy")
                     val resultDailyKey = entry.arguments?.getString("daily")
+                    val nextDaily = rememberNextDaily(resultDailyKey, completionGameId, completionDifficulty)
                     val resultContext = LocalContext.current
                     val completionEligibleMixes = remember(mixes, completionGameId, completionDifficulty) {
                         mixesEligibleForQuickAdd(mixes, completionGameId, completionDifficulty)
@@ -761,6 +759,8 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
                             }
                         },
                         onBackToDaily = { goToDailyTab() },
+                        hasNextDaily = nextDaily != null,
+                        onPlayNextDaily = { playNextDaily(nextDaily, resultDailyKey) },
                     )
                 }
             }
@@ -786,6 +786,7 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
                     val lossGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
                     val lossDifficulty = Difficulty.fromKey(entry.arguments?.getString("difficulty") ?: "easy")
                     val resultDailyKey = entry.arguments?.getString("daily")
+                    val nextDaily = rememberNextDaily(resultDailyKey, lossGameId, lossDifficulty)
                     val resultContext = LocalContext.current
                     val lossEligibleMixes = remember(mixes, lossGameId, lossDifficulty) {
                         mixesEligibleForQuickAdd(mixes, lossGameId, lossDifficulty)
@@ -832,6 +833,8 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
                             }
                         },
                         onBackToDaily = { goToDailyTab() },
+                        hasNextDaily = nextDaily != null,
+                        onPlayNextDaily = { playNextDaily(nextDaily, resultDailyKey) },
                     )
                 }
             }
@@ -1211,5 +1214,16 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
                 }) { Text(stringResource(R.string.common_continue_puzzle)) }
             },
         )
+    }
+}
+
+@Composable
+private fun rememberNextDaily(dailyKey: String?, finishedGameId: GameId, finishedDifficulty: Difficulty): Pair<GameId, Difficulty>? {
+    if (dailyKey == null) return null
+    val dailyViewModel: DailyViewModel = hiltViewModel()
+    val dailyState by dailyViewModel.state.collectAsState()
+    if (dailyState.loading || dailyState.today.toString() != dailyKey) return null
+    return remember(dailyState.games, finishedGameId, finishedDifficulty) {
+        nextUnplayedDaily(dailyState.games, finishedGameId, finishedDifficulty)
     }
 }

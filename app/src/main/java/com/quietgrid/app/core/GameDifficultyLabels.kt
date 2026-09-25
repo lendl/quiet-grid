@@ -1,7 +1,6 @@
 package com.quietgrid.app.core
 
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyLabelRes
-import com.quietgrid.app.games.battleship.battleshipDifficultyLabelRes
 import com.quietgrid.app.games.arrowescape.arrowEscapeDifficultyLabelRes
 import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
 import com.quietgrid.app.games.chimptest.chimpDifficultyLabelRes
@@ -30,6 +29,5 @@ fun gameDifficultyLabelRes(gameId: GameId, difficulty: Difficulty): Int = when (
     GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyLabelRes(difficulty)
     GameId.NBACK -> nbackDifficultyLabelRes(difficulty)
     GameId.FLOWFREE -> flowFreeDifficultyLabelRes(difficulty)
-    GameId.BATTLESHIP -> battleshipDifficultyLabelRes(difficulty)
     else -> chimpDifficultyLabelRes(difficulty)
 }

@@ -7,6 +7,8 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
+import android.view.View
+import android.view.ViewTreeObserver
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -14,6 +16,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,6 +36,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val openDailyTab = mutableStateOf(false)
+    private var firstFrameReady = false
 
     private fun Intent?.opensDailyTab(): Boolean = this?.getStringExtra(OPEN_TAB_EXTRA) == OPEN_TAB_DAILY
 
@@ -64,6 +68,7 @@ class MainActivity : ComponentActivity() {
             statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
         )
+        holdFirstDrawUntilReady()
 
         setContent {
             val repositories: RepositoriesViewModel = hiltViewModel()
@@ -99,8 +104,9 @@ class MainActivity : ComponentActivity() {
 
             QuietGridTheme(resolvedTheme = resolvedTheme) {
                 val windowBackground = MaterialTheme.colorScheme.background.toArgb()
-                LaunchedEffect(windowBackground) {
+                SideEffect {
                     window.setBackgroundDrawable(ColorDrawable(windowBackground))
+                    firstFrameReady = true
                 }
                 AppNavHost(
                     openDailyTab = openDailyTab.value,
@@ -108,5 +114,17 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
+    }
+    private fun holdFirstDrawUntilReady() {
+        val content = findViewById<View>(android.R.id.content)
+        content.viewTreeObserver.addOnPreDrawListener(
+            object : ViewTreeObserver.OnPreDrawListener {
+                override fun onPreDraw(): Boolean {
+                    if (!firstFrameReady) return false
+                    content.viewTreeObserver.removeOnPreDrawListener(this)
+                    return true
+                }
+            },
+        )
     }
 }

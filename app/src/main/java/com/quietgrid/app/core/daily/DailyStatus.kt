@@ -72,3 +72,13 @@ fun buildDailyGames(
             tiers = tiers.map { DailyTierUi(it, dailyTierStatus(records, envelope, gameId, it, today)) },
         )
     }
+
+fun nextUnplayedDaily(games: List<DailyGameUi>, finishedGameId: GameId, finishedDifficulty: Difficulty): Pair<GameId, Difficulty>? =
+    games.firstNotNullOfOrNull { game ->
+        game.tiers
+            .firstOrNull { tier ->
+                tier.status == DailyTierStatus.Unplayed &&
+                    !(game.gameId == finishedGameId && tier.difficulty == finishedDifficulty)
+            }
+            ?.let { game.gameId to it.difficulty }
+    }

@@ -56,7 +56,6 @@ import com.quietgrid.app.core.formatElapsed
 import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.ui.theme.LocalIsDarkTheme
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyLabelRes
-import com.quietgrid.app.games.battleship.battleshipDifficultyLabelRes
 import com.quietgrid.app.games.arrowescape.arrowEscapeDifficultyLabelRes
 import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
 import com.quietgrid.app.games.chimptest.chimpDifficultyLabelRes
@@ -111,6 +110,8 @@ fun CompletionScreen(
     dailyDate: String? = null,
     onShareDaily: () -> Unit = {},
     onBackToDaily: () -> Unit = {},
+    hasNextDaily: Boolean = false,
+    onPlayNextDaily: () -> Unit = {},
 ) {
     val haptics = rememberHapticController()
     LaunchedEffect(Unit) { haptics.correctFeedback() }
@@ -153,7 +154,6 @@ fun CompletionScreen(
         GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyLabelRes(difficulty)
         GameId.NBACK -> nbackDifficultyLabelRes(difficulty)
         GameId.FLOWFREE -> flowFreeDifficultyLabelRes(difficulty)
-        GameId.BATTLESHIP -> battleshipDifficultyLabelRes(difficulty)
         else -> chimpDifficultyLabelRes(difficulty)
     }
     val accentColor = difficultyColor(difficulty)
@@ -435,18 +435,8 @@ fun CompletionScreen(
                     }
 
                     if (dailyDate != null) {
-                        OutlinedGlowButton(onClick = onShareDaily, modifier = Modifier.padding(top = 24.dp)) {
-                            Text(stringResource(R.string.daily_share), fontWeight = FontWeight.Bold)
-                        }
-                        Row(
-                            Modifier.fillMaxWidth().padding(top = 8.dp),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            TextButton(onClick = onBackToDaily) {
-                                Text(stringResource(R.string.daily_back_to_daily), color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            }
-                        }
+                        DailyResultPrimaryButton(hasNextDaily, onPlayNextDaily, onShareDaily)
+                        DailyResultLinks(hasNextDaily, onShareDaily, onBackToDaily, onTryAnotherGame)
                     } else {
                         OutlinedGlowButton(onClick = onPlayAgain, modifier = Modifier.padding(top = 24.dp)) {
                             Text(

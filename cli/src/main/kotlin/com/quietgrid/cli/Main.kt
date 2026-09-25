@@ -13,14 +13,10 @@ import com.quietgrid.cli.starbattle.growStarBattleRegions
 import com.quietgrid.cli.starbattle.repairStarBattleRegionsTowardUniqueSolution
 import com.quietgrid.cli.starbattle.softenStarBattleTowardGrade
 import com.quietgrid.cli.flowfree.generateFlowFreePuzzleForTier
-import com.quietgrid.cli.battleship.generateBattleshipPuzzleForTier
 import com.quietgrid.engine.animaldoku.ANIMALDOKU_SIZES_BY_DIFFICULTY
 import com.quietgrid.engine.animaldoku.AnimalDokuPuzzleEntry
 import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
 import com.quietgrid.engine.arrowescape.scoreArrowEscapePuzzle
-import com.quietgrid.engine.battleship.BATTLESHIP_FLEET_BY_DIFFICULTY
-import com.quietgrid.engine.battleship.BATTLESHIP_SIZE_BY_DIFFICULTY
-import com.quietgrid.engine.battleship.BattleshipPuzzleEntry
 import com.quietgrid.engine.core.Difficulty
 import com.quietgrid.engine.flowfree.FLOWFREE_PAIR_COUNT_RANGE
 import com.quietgrid.engine.flowfree.FLOWFREE_SIZE
@@ -318,24 +314,6 @@ fun main(args: Array<String>) {
             state.save()
             appendPuzzleEntries("${command.outDir}/flowfree_puzzles.json", entries, FlowFreePuzzleEntry.serializer()) { it.id }
             println("Generated ${entries.size}/${command.count} flowfree puzzles at $difficulty into ${command.outDir}/flowfree_puzzles.json")
-        }
-        "battleship" -> {
-            val size = BATTLESHIP_SIZE_BY_DIFFICULTY.getValue(difficulty)
-            val fleet = BATTLESHIP_FLEET_BY_DIFFICULTY.getValue(difficulty)
-            val state = GenerationState("${command.outDir}/.generation-state/battleship.json")
-            val maxTotalAttempts = command.count * 30
-            val entries = mutableListOf<BattleshipPuzzleEntry>()
-            var attempts = 0
-            while (entries.size < command.count && attempts < maxTotalAttempts) {
-                attempts++
-                val candidate = generateBattleshipPuzzleForTier(size, fleet, difficulty, idPrefix = "bs$size") ?: continue
-                if (state.hasTried(candidate.solution)) continue
-                state.recordTried(candidate.solution, "valid")
-                entries += candidate
-            }
-            state.save()
-            appendPuzzleEntries("${command.outDir}/battleship_puzzles.json", entries, BattleshipPuzzleEntry.serializer()) { it.solution }
-            println("Generated ${entries.size}/${command.count} battleship puzzles at $difficulty into ${command.outDir}/battleship_puzzles.json")
         }
         else -> error("Unknown or not-yet-wired game '${command.game}'.")
     }

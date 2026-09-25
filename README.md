@@ -55,7 +55,7 @@
 
 - **2048** — Merge tiles to reach 2048.
 
-In beta, enable in Settings: Arrow Escape, Block Fill, N-Back, Flow Free, Battleship.
+In beta, enable in Settings: Arrow Escape, Block Fill, N-Back, Flow Free.
 
 ### Also
 

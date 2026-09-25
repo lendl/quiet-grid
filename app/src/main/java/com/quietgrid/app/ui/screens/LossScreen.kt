@@ -40,7 +40,6 @@ import com.quietgrid.app.core.formatElapsed
 import com.quietgrid.app.core.mix.Mix
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyLabelRes
 import com.quietgrid.app.games.arrowescape.arrowEscapeDifficultyLabelRes
-import com.quietgrid.app.games.battleship.battleshipDifficultyLabelRes
 import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
 import com.quietgrid.app.games.chimptest.chimpDifficultyLabelRes
 import com.quietgrid.app.games.flowfree.flowFreeDifficultyLabelRes
@@ -80,6 +79,8 @@ fun LossScreen(
     dailyDate: String? = null,
     onShareDaily: () -> Unit = {},
     onBackToDaily: () -> Unit = {},
+    hasNextDaily: Boolean = false,
+    onPlayNextDaily: () -> Unit = {},
 ) {
     val haptics = rememberHapticController()
     LaunchedEffect(Unit) { if (reason != "abandoned") haptics.incorrectFeedback() }
@@ -197,11 +198,6 @@ fun LossScreen(
             titleRes = R.string.flowfree_loss_abandoned_title
             bodyRes = R.string.flowfree_loss_abandoned_body
         }
-        gameId == GameId.BATTLESHIP -> {
-            eyebrowRes = R.string.battleship_loss_abandoned_eyebrow
-            titleRes = R.string.battleship_loss_abandoned_title
-            bodyRes = R.string.battleship_loss_abandoned_body
-        }
         reason == "abandoned" -> {
             eyebrowRes = R.string.chimp_loss_abandoned_eyebrow
             titleRes = R.string.chimp_loss_abandoned_title
@@ -228,7 +224,6 @@ fun LossScreen(
         GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyLabelRes(difficulty)
         GameId.NBACK -> nbackDifficultyLabelRes(difficulty)
         GameId.FLOWFREE -> flowFreeDifficultyLabelRes(difficulty)
-        GameId.BATTLESHIP -> battleshipDifficultyLabelRes(difficulty)
         else -> chimpDifficultyLabelRes(difficulty)
     }
     val icon = if (reason == "abandoned") "⏸" else "💥"
@@ -340,9 +335,7 @@ fun LossScreen(
                 }
 
                 if (dailyDate != null) {
-                    OutlinedGlowButton(onClick = onShareDaily, modifier = Modifier.padding(top = 24.dp)) {
-                        Text(stringResource(R.string.daily_share), fontWeight = FontWeight.Bold)
-                    }
+                    DailyResultPrimaryButton(hasNextDaily, onPlayNextDaily, onShareDaily)
                 } else {
                     OutlinedGlowButton(onClick = onRetry, modifier = Modifier.padding(top = 24.dp)) {
                         Text(
@@ -364,16 +357,14 @@ fun LossScreen(
                     }
                 }
 
-                Row(
-                    Modifier.fillMaxWidth().padding(top = 8.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    if (dailyDate != null) {
-                        TextButton(onClick = onBackToDaily) {
-                            Text(stringResource(R.string.daily_back_to_daily), color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        }
-                    } else {
+                if (dailyDate != null) {
+                    DailyResultLinks(hasNextDaily, onShareDaily, onBackToDaily, onTryAnotherGame)
+                } else {
+                    Row(
+                        Modifier.fillMaxWidth().padding(top = 8.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
                         if (!isMixActive) {
                             TextButton(onClick = onOtherDifficulty) {
                                 Text(stringResource(R.string.loss_other_difficulty), color = MaterialTheme.colorScheme.onSurfaceVariant)
