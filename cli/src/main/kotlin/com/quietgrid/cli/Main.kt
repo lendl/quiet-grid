@@ -12,15 +12,11 @@ import com.quietgrid.cli.starbattle.generateStarBattleSolution
 import com.quietgrid.cli.starbattle.growStarBattleRegions
 import com.quietgrid.cli.starbattle.repairStarBattleRegionsTowardUniqueSolution
 import com.quietgrid.cli.starbattle.softenStarBattleTowardGrade
-import com.quietgrid.cli.flowfree.generateFlowFreePuzzleForTier
 import com.quietgrid.engine.animaldoku.ANIMALDOKU_SIZES_BY_DIFFICULTY
 import com.quietgrid.engine.animaldoku.AnimalDokuPuzzleEntry
 import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
 import com.quietgrid.engine.arrowescape.scoreArrowEscapePuzzle
 import com.quietgrid.engine.core.Difficulty
-import com.quietgrid.engine.flowfree.FLOWFREE_PAIR_COUNT_RANGE
-import com.quietgrid.engine.flowfree.FLOWFREE_SIZE
-import com.quietgrid.engine.flowfree.FlowFreePuzzleEntry
 import com.quietgrid.engine.starbattle.StarBattlePuzzleEntry
 import com.quietgrid.engine.starbattle.classifyStarBattleK2Grade
 import com.quietgrid.engine.sudoku.SudokuPuzzleEntry
@@ -296,24 +292,6 @@ fun main(args: Array<String>) {
             }
             appendPuzzleEntries("${command.outDir}/starbattle_puzzles.json", entries, StarBattlePuzzleEntry.serializer()) { it.id }
             println("Generated ${entries.size}/${command.count} starbattle puzzles at $difficulty into ${command.outDir}/starbattle_puzzles.json")
-        }
-        "flowfree" -> {
-            val pairCountRange = FLOWFREE_PAIR_COUNT_RANGE.getValue(difficulty)
-            val state = GenerationState("${command.outDir}/.generation-state/flowfree.json")
-            val maxTotalAttempts = command.count * 3000
-            val entries = mutableListOf<FlowFreePuzzleEntry>()
-            var attempts = 0
-            while (entries.size < command.count && attempts < maxTotalAttempts) {
-                attempts++
-                val pairCount = pairCountRange.random()
-                val entry = generateFlowFreePuzzleForTier(FLOWFREE_SIZE, pairCount, difficulty, idPrefix = "ff7") ?: continue
-                if (state.hasTried(entry.id)) continue
-                state.recordTried(entry.id, "valid")
-                entries += entry
-            }
-            state.save()
-            appendPuzzleEntries("${command.outDir}/flowfree_puzzles.json", entries, FlowFreePuzzleEntry.serializer()) { it.id }
-            println("Generated ${entries.size}/${command.count} flowfree puzzles at $difficulty into ${command.outDir}/flowfree_puzzles.json")
         }
         else -> error("Unknown or not-yet-wired game '${command.game}'.")
     }

@@ -25,7 +25,7 @@ Puzzle banks are generated offline by the `:cli` module (backed by shared rules 
 
 | Flag | Required | Default | Notes |
 | --- | --- | --- | --- |
-| `--game` | yes | — | `takuzu`, `nonogram`, `sudoku`, `wordsearch`, `wordguess`, `animaldoku`, `arrowescape`, `starbattle`, `flowfree` |
+| `--game` | yes | — | `takuzu`, `nonogram`, `sudoku`, `wordsearch`, `wordguess`, `animaldoku`, `arrowescape`, `starbattle` |
 | `--difficulty` | yes | — | `easy`, `medium`, `hard`, `expert` |
 | `--count` | no | `1` | number of puzzles to attempt |
 | `--out` | no | `app/src/main/assets` | output dir; merges into that game's `*_puzzles.json` |
