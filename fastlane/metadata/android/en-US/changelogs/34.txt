@@ -1,0 +1,6 @@
+Version 1.6.0
+
+- New game: Theme Clear. Clear the grid by spelling words from one theme
+- Choose which themes you play in Word Search and Theme Clear from the new Settings tab
+- Many more Word Search puzzles, with bigger word lists for every theme
+- Bug fixes and stability improvements

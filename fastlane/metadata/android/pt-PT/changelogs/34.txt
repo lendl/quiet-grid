@@ -1,0 +1,6 @@
+Versão 1.6.0
+
+- Novo jogo: Limpe o Tema. Limpe a grade formando palavras de um tema
+- Escolha os temas de Caça-Palavras e Limpe o Tema na nova aba Ajustes
+- Muito mais quebra-cabeças de Caça-Palavras, com listas de palavras maiores para cada tema
+- Correções de erros e melhorias de estabilidade

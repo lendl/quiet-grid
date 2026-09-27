@@ -1,0 +1,6 @@
+Versie 1.6.0
+
+- Nieuw spel: Thema Wissen. Wis het raster door woorden uit één thema te spellen
+- Kies de thema's voor Woordzoeker en Thema Wissen in het nieuwe tabblad Instellingen
+- Veel meer puzzels voor Woordzoeker, met grotere woordenlijsten voor elk thema
+- Bugfixes en stabiliteitsverbeteringen

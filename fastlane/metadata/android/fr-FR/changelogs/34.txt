@@ -1,0 +1,6 @@
+Version 1.6.0
+
+- Nouveau jeu : Efface le Thème. Videz la grille en formant des mots d'un même thème
+- Choisissez les thèmes de Mots mêlés et Efface le Thème depuis le nouvel onglet Paramètres
+- Beaucoup plus de puzzles de Mots mêlés, avec des listes de mots plus riches pour chaque thème
+- Corrections de bugs et améliorations de stabilité

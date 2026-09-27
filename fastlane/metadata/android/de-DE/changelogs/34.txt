@@ -1,0 +1,6 @@
+Version 1.6.0
+
+- Neues Spiel: Thema Leeren. Leere das Raster, indem du Wörter aus einem Thema bildest
+- Wähle die Themen für Wortsuche und Thema Leeren im neuen Tab "Einstellungen"
+- Viel mehr Wortsuche-Rätsel, mit größeren Wortlisten für jedes Thema
+- Fehlerbehebungen und Stabilitätsverbesserungen

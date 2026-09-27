@@ -1,0 +1,6 @@
+Versión 1.6.0
+
+- Nuevo juego: Despeja el Tema. Despeja la cuadrícula formando palabras de un tema
+- Elige los temas de Sopa de Letras y Despeja el Tema desde la nueva pestaña Ajustes
+- Muchos más puzzles de Sopa de Letras, con listas de palabras más amplias para cada tema
+- Corrección de errores y mejoras de estabilidad

@@ -1,0 +1,6 @@
+Wersja 1.6.0
+
+- Nowa gra: Wyczyść temat. Wyczyść siatkę, układając słowa z jednego tematu
+- Wybierz tematy w grach Wykreślanka i Wyczyść temat w nowej zakładce Ustawienia
+- Znacznie więcej łamigłówek w grze Wykreślanka, z większymi listami słów dla każdego tematu
+- Poprawki błędów i stabilności
