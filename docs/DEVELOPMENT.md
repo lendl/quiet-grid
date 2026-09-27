@@ -25,11 +25,13 @@ Puzzle banks are generated offline by the `:cli` module (backed by shared rules 
 
 | Flag | Required | Default | Notes |
 | --- | --- | --- | --- |
-| `--game` | yes | — | `takuzu`, `nonogram`, `sudoku`, `wordsearch`, `wordguess`, `animaldoku`, `arrowescape`, `starbattle` |
+| `--game` | yes | — | `takuzu`, `nonogram`, `sudoku`, `wordsearch`, `wordguess`, `animaldoku`, `arrowescape`, `starbattle`, `themeclear` |
 | `--difficulty` | yes | — | `easy`, `medium`, `hard`, `expert` |
 | `--count` | no | `1` | number of puzzles to attempt |
 | `--out` | no | `app/src/main/assets` | output dir; merges into that game's `*_puzzles.json` |
-| `--locale` | no | `en` | `wordsearch` and `wordguess` only — `en`, `nl`, `de`, `fr`, `es` |
+| `--locale` | no | `en` | `wordsearch`, `wordguess` and `themeclear` only — `en`, `nl`, `de`, `fr`, `es`, `pl`, `pt` |
+| `--fill-to` | no | — | `wordsearch` only — tops up every theme of `--locale` to at least this many puzzles for the difficulty (ignores `--count`) |
+| `--threads` | no | all cores | `wordsearch` only — parallel generation attempts |
 
 `nonogram` requires existing seed puzzles already present in `<out>/nonogram_puzzles.json` (variants are generated from those seeds). Generation is deduplicated per game (and per locale, for `wordsearch`/`wordguess`) via state files under `<out>/.generation-state/`.
 
@@ -41,6 +43,9 @@ Examples:
 
 # 10 hard sudoku puzzles
 ./gradlew :cli:run --args="generate --game sudoku --difficulty hard --count 10"
+
+# top up every English expert word search theme to at least 30 puzzles
+./gradlew :cli:run --args="generate --game wordsearch --difficulty expert --locale en --fill-to 30"
 ```
 
 ## Testing

@@ -34,4 +34,18 @@ class ArgsTest {
         val withoutLocale = parseArgs(arrayOf("generate", "--game", "wordguess", "--difficulty", "easy"))
         assertEquals("en", withoutLocale.locale)
     }
+
+    @Test
+    fun `parseArgs reads optional fill-to and threads flags`() {
+        val command = parseArgs(arrayOf("generate", "--game", "wordsearch", "--difficulty", "hard", "--fill-to", "30", "--threads", "6"))
+        assertEquals(30, command.fillTo)
+        assertEquals(6, command.threads)
+    }
+
+    @Test
+    fun `parseArgs leaves fill-to unset and uses every processor when flags are omitted`() {
+        val command = parseArgs(arrayOf("generate", "--game", "wordsearch", "--difficulty", "hard"))
+        assertEquals(null, command.fillTo)
+        assertEquals(Runtime.getRuntime().availableProcessors(), command.threads)
+    }
 }

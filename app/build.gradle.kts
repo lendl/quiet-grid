@@ -93,6 +93,47 @@ android {
     }
 }
 
+abstract class GenerateThemeCountsTask : DefaultTask() {
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.NAME_ONLY)
+    abstract val puzzleFiles: ConfigurableFileCollection
+
+    @get:OutputDirectory
+    abstract val outputDir: DirectoryProperty
+
+    @TaskAction
+    fun generate() {
+        val counts = sortedMapOf<String, MutableMap<String, MutableMap<String, MutableMap<String, Int>>>>()
+        puzzleFiles.files.sortedBy { it.name }.forEach { file ->
+            val game = file.name.substringBefore("_puzzles")
+            @Suppress("UNCHECKED_CAST")
+            val entries = groovy.json.JsonSlurper().parse(file) as List<Map<String, Any?>>
+            entries.forEach { entry ->
+                val tier = entry["difficulty"] as String
+                val locale = entry["locale"] as String? ?: "en"
+                val theme = entry["themeId"] as String
+                val byTheme = counts.getOrPut(game) { sortedMapOf() }
+                    .getOrPut(tier) { sortedMapOf() }
+                    .getOrPut(locale) { sortedMapOf() }
+                byTheme[theme] = (byTheme[theme] ?: 0) + 1
+            }
+        }
+        val out = outputDir.get().asFile
+        out.mkdirs()
+        out.resolve("theme_counts.json").writeText(groovy.json.JsonOutput.toJson(counts))
+    }
+}
+
+val generateThemeCounts = tasks.register<GenerateThemeCountsTask>("generateThemeCounts") {
+    puzzleFiles.from(fileTree("src/main/assets") { include("wordsearch_puzzles_*.json", "themeclear_puzzles.json") })
+}
+
+androidComponents {
+    onVariants { variant ->
+        variant.sources.assets?.addGeneratedSourceDirectory(generateThemeCounts, GenerateThemeCountsTask::outputDir)
+    }
+}
+
 kotlin {
     compilerOptions {
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)

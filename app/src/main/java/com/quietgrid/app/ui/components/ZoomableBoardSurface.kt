@@ -42,7 +42,6 @@ fun ZoomableBoardSurface(
     resetTrigger: Int = 0,
     panTarget: Offset? = null,
     onVisibleBoundsChange: (Rect) -> Unit = {},
-    onContentSizeChange: (IntSize) -> Unit = {},
     content: @Composable () -> Unit,
 ) {
     var scale by remember { mutableFloatStateOf(1f) }
@@ -144,12 +143,7 @@ fun ZoomableBoardSurface(
             ),
         contentAlignment = Alignment.Center,
     ) {
-        Box(
-            Modifier.onSizeChanged {
-                contentSize = it
-                onContentSizeChange(it)
-            },
-        ) {
+        Box(Modifier.onSizeChanged { contentSize = it }) {
             content()
         }
     }

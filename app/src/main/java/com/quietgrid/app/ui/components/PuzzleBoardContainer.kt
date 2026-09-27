@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -24,8 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.quietgrid.app.ui.theme.LocalIsDarkTheme
 import kotlinx.coroutines.delay
@@ -78,30 +75,15 @@ private fun PuzzleBoardContainerBox(
         if (visible) {
             if (zoomable) {
                 BoardEntrance(playFresh = playFresh, modifier = Modifier.fillMaxSize()) {
-                    var naturalContentSize by remember { mutableStateOf(IntSize.Zero) }
-                    val density = LocalDensity.current
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        if (showFrame && naturalContentSize != IntSize.Zero) {
-                            val naturalWidthDp = with(density) { naturalContentSize.width.toDp() }
-                            val naturalHeightDp = with(density) { naturalContentSize.height.toDp() }
-                            Box(
-                                frameModifier.size(
-                                    naturalWidthDp + BOARD_FRAME_PADDING * 2,
-                                    naturalHeightDp + BOARD_FRAME_PADDING * 2,
-                                ),
-                            )
-                        }
-                        ZoomableBoardSurface(
-                            Modifier.matchParentSize(),
-                            onZoomChange = onZoomChange,
-                            resetTrigger = resetTrigger,
-                            panTarget = panTarget,
-                            onVisibleBoundsChange = onVisibleBoundsChange,
-                            onContentSizeChange = { naturalContentSize = it },
-                        ) {
-                            Box(if (showFrame) Modifier.padding(BOARD_FRAME_PADDING) else Modifier) {
-                                content()
-                            }
+                    ZoomableBoardSurface(
+                        Modifier.fillMaxSize(),
+                        onZoomChange = onZoomChange,
+                        resetTrigger = resetTrigger,
+                        panTarget = panTarget,
+                        onVisibleBoundsChange = onVisibleBoundsChange,
+                    ) {
+                        Box(if (showFrame) frameModifier.padding(BOARD_FRAME_PADDING) else Modifier) {
+                            content()
                         }
                     }
                 }

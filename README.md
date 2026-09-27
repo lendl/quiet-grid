@@ -19,7 +19,7 @@
   </a>
 </p>
 
-<p align="center">Also on <a href="https://github.com/lendl/quiet-grid/releases/latest">GitHub Releases</a> · <a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/lendl/quiet-grid">Obtainium</a> · <a href="https://apkpure.com/p/com.quietgrid.app">APKPure</a></p>
+<p align="center">Also on <a href="https://github.com/lendl/quiet-grid/releases/latest">GitHub Releases</a> · <a href="https://apkpure.com/p/com.quietgrid.app">APKPure</a></p>
 
 <p align="center">
   <img src="assets/phone/01.png" alt="Daily puzzle screenshot" width="200">
@@ -46,6 +46,7 @@
 - **Word Search** — Trace listed words in straight lines and solve the hidden bonus word from the grid.
 - **Word Guess** — Guess the hidden word in six tries.
 - **Guess by Numbers** — Crack the hidden word using only two numbers.
+- **Theme Clear** — Clear the grid with words from one theme.
 
 ### Memory
 

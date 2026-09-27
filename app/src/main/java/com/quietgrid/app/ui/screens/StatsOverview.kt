@@ -37,6 +37,7 @@ import com.quietgrid.app.games.nonogram.nonogramDifficultyLabelRes
 import com.quietgrid.app.games.starbattle.starBattleDifficultyLabelRes
 import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
 import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
+import com.quietgrid.app.games.themeclear.themeClearDifficultyLabelRes
 import com.quietgrid.app.games.wordguess.wordGuessDifficultyLabelRes
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
 
@@ -55,6 +56,7 @@ fun difficultyLabelRes(gameId: GameId, difficulty: Difficulty): Int = when (game
     GameId.STARBATTLE -> starBattleDifficultyLabelRes(difficulty)
     GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyLabelRes(difficulty)
     GameId.NBACK -> nbackDifficultyLabelRes(difficulty)
+    GameId.THEMECLEAR -> themeClearDifficultyLabelRes(difficulty)
 }
 
 private fun gameStreak(stats: GameStats): Int =

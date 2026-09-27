@@ -12,4 +12,5 @@ class RepositoriesViewModel @Inject constructor(
     val playHistoryRepository: PlayHistoryRepository,
     val mixRepository: MixRepository,
     val dailyRepository: DailyRepository,
+    val themePreferencesRepository: ThemePreferencesRepository,
 ) : ViewModel()

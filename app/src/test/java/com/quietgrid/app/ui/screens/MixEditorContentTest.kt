@@ -14,6 +14,7 @@ import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.data.SessionRepository
 import com.quietgrid.app.data.SettingsRepository
 import com.quietgrid.app.data.StatsRepository
+import com.quietgrid.app.data.ThemePreferencesRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -57,6 +58,7 @@ class MixEditorContentTest {
             playHistoryRepository = playHistoryRepository,
             mixRepository = mixRepository,
             dailyRepository = mockk(relaxed = true),
+            themePreferencesRepository = mockk(relaxed = true),
         )
     }
 

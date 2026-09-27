@@ -50,6 +50,7 @@ import com.quietgrid.app.games.nonogram.nonogramDifficultyLabelRes
 import com.quietgrid.app.games.starbattle.starBattleDifficultyLabelRes
 import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
 import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
+import com.quietgrid.app.games.themeclear.themeClearDifficultyLabelRes
 import com.quietgrid.app.games.wordguess.wordGuessDifficultyLabelRes
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
 import com.quietgrid.app.nav.LocalAnimatedVisibilityScope
@@ -187,6 +188,11 @@ fun LossScreen(
             titleRes = R.string.guessbynumbers_loss_rule_failure_title
             bodyRes = R.string.guessbynumbers_loss_rule_failure_body
         }
+        gameId == GameId.THEMECLEAR -> {
+            eyebrowRes = R.string.themeclear_loss_abandoned_eyebrow
+            titleRes = R.string.themeclear_loss_abandoned_title
+            bodyRes = R.string.themeclear_loss_abandoned_body
+        }
         gameId == GameId.NBACK -> {
             eyebrowRes = R.string.nback_loss_abandoned_eyebrow
             titleRes = R.string.nback_loss_abandoned_title
@@ -217,6 +223,7 @@ fun LossScreen(
         GameId.STARBATTLE -> starBattleDifficultyLabelRes(difficulty)
         GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyLabelRes(difficulty)
         GameId.NBACK -> nbackDifficultyLabelRes(difficulty)
+        GameId.THEMECLEAR -> themeClearDifficultyLabelRes(difficulty)
         else -> chimpDifficultyLabelRes(difficulty)
     }
     val icon = if (reason == "abandoned") "⏸" else "💥"
@@ -224,6 +231,7 @@ fun LossScreen(
 
     val highlight = remember { CompletionExtras.consume() }
     val revealWord = (highlight as? CompletionHighlight.RevealWord)?.word?.takeIf { it.isNotEmpty() }
+    val revealWordList = (highlight as? CompletionHighlight.RevealWordList)?.words?.takeIf { it.isNotEmpty() }
     val analyzerSnapshot = rememberSaveable { mutableStateOf(AnalyzerHandoff.consume()) }.value
 
     val pageOpacity = remember { Animatable(0f) }
@@ -303,6 +311,23 @@ fun LossScreen(
                         )
                         Text(
                             revealWord.uppercase(),
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(top = 2.dp),
+                        )
+                    }
+                }
+
+                if (revealWordList != null) {
+                    Column(Modifier.padding(top = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            stringResource(R.string.themeclear_reveal_words_label),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Text(
+                            revealWordList.joinToString(" · "),
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center,

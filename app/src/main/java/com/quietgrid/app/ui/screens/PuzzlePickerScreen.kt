@@ -71,6 +71,9 @@ import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
 import com.quietgrid.app.games.takuzu.TakuzuQuickStart
 import com.quietgrid.app.games.takuzu.takuzuDifficultyDescriptionRes
 import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
+import com.quietgrid.app.games.themeclear.ThemeClearQuickStart
+import com.quietgrid.app.games.themeclear.themeClearDifficultyDescriptionRes
+import com.quietgrid.app.games.themeclear.themeClearDifficultyLabelRes
 import com.quietgrid.app.games.wordguess.WordGuessQuickStart
 import com.quietgrid.app.games.wordguess.wordGuessDifficultyDescriptionRes
 import com.quietgrid.app.games.wordguess.wordGuessDifficultyLabelRes
@@ -81,7 +84,7 @@ import com.quietgrid.app.ui.components.QuickStartContent
 import com.quietgrid.app.ui.components.QuickStartSheet
 import kotlinx.coroutines.launch
 
-private enum class GamePageTab { PLAY, RULES, STATS }
+private enum class GamePageTab { PLAY, RULES, STATS, SETTINGS }
 
 private fun quickStartFor(gameId: GameId): QuickStartContent = when (gameId) {
     GameId.CHIMPTEST -> ChimpTestQuickStart
@@ -98,6 +101,7 @@ private fun quickStartFor(gameId: GameId): QuickStartContent = when (gameId) {
     GameId.STARBATTLE -> StarBattleQuickStart
     GameId.GUESSBYNUMBERS -> GuessByNumbersQuickStart
     GameId.NBACK -> NBackQuickStart
+    GameId.THEMECLEAR -> ThemeClearQuickStart
 }
 
 @Composable
@@ -200,8 +204,12 @@ fun PuzzlePickerScreen(
     }
 
     Column(Modifier.fillMaxWidth()) {
+        val visibleTabs = remember(gameId) {
+            listOf(GamePageTab.PLAY, GamePageTab.RULES, GamePageTab.STATS) +
+                if (gameHasSettings(gameId)) listOf(GamePageTab.SETTINGS) else emptyList()
+        }
         TabRow(
-            selectedTabIndex = selectedTab.ordinal,
+            selectedTabIndex = visibleTabs.indexOf(selectedTab).coerceAtLeast(0),
             containerColor = MaterialTheme.colorScheme.background,
         ) {
             Tab(
@@ -219,6 +227,13 @@ fun PuzzlePickerScreen(
                 onClick = { selectedTab = GamePageTab.STATS },
                 text = { Text(stringResource(R.string.common_stats)) },
             )
+            if (GamePageTab.SETTINGS in visibleTabs) {
+                Tab(
+                    selected = selectedTab == GamePageTab.SETTINGS,
+                    onClick = { selectedTab = GamePageTab.SETTINGS },
+                    text = { Text(stringResource(R.string.common_settings)) },
+                )
+            }
         }
 
         when (selectedTab) {
@@ -229,6 +244,7 @@ fun PuzzlePickerScreen(
             )
             GamePageTab.RULES -> HowToPlayScreen(gameId)
             GamePageTab.STATS -> GameStatsTab(gameId)
+            GamePageTab.SETTINGS -> GameSettingsTab(gameId)
         }
     }
 }
@@ -258,6 +274,7 @@ private fun GamePlayPickerTab(
                     GameId.STARBATTLE -> starBattleDifficultyLabelRes(difficulty)
                     GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyLabelRes(difficulty)
                     GameId.NBACK -> nbackDifficultyLabelRes(difficulty)
+                    GameId.THEMECLEAR -> themeClearDifficultyLabelRes(difficulty)
                     else -> chimpDifficultyLabelRes(difficulty)
                 }
                 val descriptionRes = when (gameId) {
@@ -275,6 +292,7 @@ private fun GamePlayPickerTab(
                     GameId.STARBATTLE -> starBattleDifficultyDescriptionRes(difficulty)
                     GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyDescriptionRes(difficulty)
                     GameId.NBACK -> nbackDifficultyDescriptionRes(difficulty)
+                    GameId.THEMECLEAR -> themeClearDifficultyDescriptionRes(difficulty)
                 }
                 if (index > 0) HorizontalDivider()
                 Row(

@@ -16,6 +16,7 @@
 <li><b>Star Battle</b> — Place stars in every row, column, and region with no two touching.</li>
 <li><b>Guess by Numbers</b> — Guess the hidden word in ten tries; two numbers show how close each guess was.</li>
 <li><b>N-Back</b> (Beta) — Watch the grid and tap Match whenever the lit square repeats its position from N steps back.</li>
+<li><b>Theme Clear</b> — Clear the grid by spelling words from one theme until every letter is used.</li>
 </ul>
 
 <p>Each puzzle type offers Easy, Medium, Hard, and Expert difficulty levels.</p>

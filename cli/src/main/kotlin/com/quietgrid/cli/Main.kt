@@ -28,6 +28,8 @@ data class GenerateCommand(
     val count: Int,
     val outDir: String,
     val locale: String,
+    val fillTo: Int? = null,
+    val threads: Int = Runtime.getRuntime().availableProcessors(),
 )
 
 private fun requireFlag(args: Array<String>, flag: String): String {
@@ -42,13 +44,17 @@ private fun optionalFlag(args: Array<String>, flag: String, default: String): St
 }
 
 fun parseArgs(args: Array<String>): GenerateCommand {
-    require(args.isNotEmpty() && args[0] == "generate") { "Usage: generate --game <id> --difficulty <d> [--count <n>] [--out <dir>] [--locale <l>]" }
+    require(args.isNotEmpty() && args[0] == "generate") {
+        "Usage: generate --game <id> --difficulty <d> [--count <n>] [--out <dir>] [--locale <l>] [--fill-to <n>] [--threads <n>]"
+    }
     return GenerateCommand(
         game = requireFlag(args, "--game"),
         difficulty = requireFlag(args, "--difficulty"),
         count = optionalFlag(args, "--count", "1").toInt(),
         outDir = optionalFlag(args, "--out", "app/src/main/assets"),
         locale = optionalFlag(args, "--locale", "en"),
+        fillTo = optionalFlag(args, "--fill-to", "").toIntOrNull(),
+        threads = optionalFlag(args, "--threads", "${Runtime.getRuntime().availableProcessors()}").toInt(),
     )
 }
 
@@ -148,24 +154,26 @@ fun main(args: Array<String>) {
             println("Generated ${entries.size}/${command.count} sudoku puzzles at $difficulty into ${command.outDir}/sudoku_puzzles.json")
         }
         "wordsearch" -> {
-            val sizes = com.quietgrid.engine.wordsearch.wordSearchAllowedSizes(difficulty)
             val locale = command.locale
-            val state = GenerationState("${command.outDir}/.generation-state/wordsearch-$locale.json")
-            val maxTotalAttempts = command.count * 30
-            val entries = mutableListOf<com.quietgrid.engine.wordsearch.WordSearchPuzzleEntry>()
-            var attempts = 0
-            while (entries.size < command.count && attempts < maxTotalAttempts) {
-                attempts++
-                val (rows, cols) = sizes.random()
-                val generated = com.quietgrid.cli.wordsearch.generateWordSearchPuzzle(rows, cols, difficulty, preferredLanguages = listOf(locale)) ?: continue
-                if (state.hasTried(generated.id)) continue
-                state.recordTried(generated.id, "valid")
-                entries += generated
-            }
-            state.save()
+            val serializer = com.quietgrid.engine.wordsearch.WordSearchPuzzleEntry.serializer()
             val outFile = "${command.outDir}/wordsearch_puzzles_${difficulty.key}.json"
-            appendPuzzleEntries(outFile, entries, com.quietgrid.engine.wordsearch.WordSearchPuzzleEntry.serializer()) { it.id }
-            println("Generated ${entries.size}/${command.count} wordsearch puzzles ($locale/$difficulty) into $outFile")
+            val bank = readPuzzleEntries(outFile, serializer)
+            val themeIds = com.quietgrid.cli.themes.loadSharedThemes().getValue(locale).map { it.themeId }
+            val quotas = command.fillTo?.let { com.quietgrid.cli.wordsearch.wordSearchThemeDeficits(bank, locale, themeIds, it) }
+                ?: List(command.count) { themeIds.random() }.groupingBy { it }.eachCount()
+            val requested = quotas.values.sum()
+            val state = GenerationState("${command.outDir}/.generation-state/wordsearch-$locale.json")
+            val existingIds = bank.map { it.id }.toSet()
+            val startedAt = System.currentTimeMillis()
+            val entries = com.quietgrid.cli.wordsearch.generateWordSearchForQuotas(difficulty, locale, quotas, command.threads, maxAttempts = requested * 30) {
+                !state.hasTried(it.id) && it.id !in existingIds
+            }
+            entries.forEach { state.recordTried(it.id, "valid") }
+            state.save()
+            appendPuzzleEntries(outFile, entries, serializer) { it.id }
+            val shortfall = quotas.mapValues { (themeId, quota) -> quota - entries.count { it.themeId == themeId } }.filterValues { it > 0 }
+            println("Generated ${entries.size}/$requested wordsearch puzzles ($locale/$difficulty) in ${System.currentTimeMillis() - startedAt}ms into $outFile")
+            if (shortfall.isNotEmpty()) println("Themes still short: $shortfall")
         }
         "wordguess" -> {
             val locale = command.locale
@@ -292,6 +300,24 @@ fun main(args: Array<String>) {
             }
             appendPuzzleEntries("${command.outDir}/starbattle_puzzles.json", entries, StarBattlePuzzleEntry.serializer()) { it.id }
             println("Generated ${entries.size}/${command.count} starbattle puzzles at $difficulty into ${command.outDir}/starbattle_puzzles.json")
+        }
+        "themeclear" -> {
+            val locale = command.locale
+            val generator = com.quietgrid.cli.themeclear.ThemeClearGenerator(com.quietgrid.cli.themeclear.loadThemeClearThemes(locale))
+            val state = GenerationState("${command.outDir}/.generation-state/themeclear-$locale.json")
+            val entries = mutableListOf<com.quietgrid.engine.themeclear.ThemeClearPuzzleEntry>()
+            var attempts = 0
+            val startedAt = System.currentTimeMillis()
+            while (entries.size < command.count && attempts < command.count * 5) {
+                attempts++
+                val generated = generator.generate(difficulty, locale) ?: continue
+                if (state.hasTried(generated.id)) continue
+                state.recordTried(generated.id, "valid")
+                entries += generated
+            }
+            state.save()
+            appendPuzzleEntries("${command.outDir}/themeclear_puzzles.json", entries, com.quietgrid.engine.themeclear.ThemeClearPuzzleEntry.serializer()) { it.id }
+            println("Generated ${entries.size}/${command.count} themeclear puzzles ($locale/$difficulty) in ${System.currentTimeMillis() - startedAt}ms into ${command.outDir}/themeclear_puzzles.json")
         }
         else -> error("Unknown or not-yet-wired game '${command.game}'.")
     }

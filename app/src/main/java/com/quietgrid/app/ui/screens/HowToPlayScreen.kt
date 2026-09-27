@@ -16,6 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.EmojiEvents
 import androidx.compose.material.icons.outlined.Flag
@@ -67,10 +68,11 @@ fun HowToPlayScreen(gameId: GameId) {
             GameId.STARBATTLE -> StarBattleHowToPlay()
             GameId.GUESSBYNUMBERS -> GuessByNumbersHowToPlay()
             GameId.NBACK -> NBackHowToPlay()
+            GameId.THEMECLEAR -> ThemeClearHowToPlay()
         }
 
         HorizontalDivider(Modifier.padding(vertical = 20.dp))
-        InGameIconsAccordion()
+        InGameIconsAccordion(gameId)
     }
 }
 
@@ -132,10 +134,13 @@ private fun TechniqueItem(titleRes: Int, bodyRes: Int) {
 }
 
 @Composable
-private fun InGameIconsAccordion() {
+private fun InGameIconsAccordion(gameId: GameId) {
     Accordion(stringResource(R.string.how_to_play_in_game_icons_title)) {
         InGameIconRow(Icons.Outlined.Lightbulb, R.string.how_to_play_icon_hint_label, R.string.how_to_play_icon_hint_description)
         InGameIconRow(Icons.Outlined.Flag, R.string.how_to_play_icon_forfeit_label, R.string.how_to_play_icon_forfeit_description)
+        if (gameId == GameId.THEMECLEAR) {
+            InGameIconRow(Icons.Filled.Shuffle, R.string.how_to_play_icon_shuffle_label, R.string.how_to_play_icon_shuffle_description)
+        }
     }
 }
 
@@ -350,6 +355,29 @@ private fun NBackHowToPlay() {
     HorizontalDivider(Modifier.padding(vertical = 20.dp))
     Accordion(stringResource(R.string.how_to_play_scoring_title)) {
         BodyText(stringResource(R.string.nback_how_to_play_scoring))
+    }
+}
+
+@Composable
+private fun ThemeClearHowToPlay() {
+    SectionHeader(Icons.Outlined.EmojiEvents, stringResource(R.string.how_to_play_goal_title))
+    BodyText(stringResource(R.string.themeclear_how_to_play_goal))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.PanTool, stringResource(R.string.how_to_play_controls_title))
+    BodyText(stringResource(R.string.themeclear_how_to_play_controls))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.Description, stringResource(R.string.how_to_play_rules_title))
+    RuleRow(1, R.string.themeclear_rule_1_title, R.string.themeclear_rule_1_body)
+    RuleRow(2, R.string.themeclear_rule_2_title, R.string.themeclear_rule_2_body)
+    RuleRow(3, R.string.themeclear_rule_3_title, R.string.themeclear_rule_3_body)
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    Accordion(stringResource(R.string.how_to_play_tips_title)) {
+        TechniqueItem(R.string.themeclear_tip_1_title, R.string.themeclear_tip_1_body)
+        TechniqueItem(R.string.themeclear_tip_2_title, R.string.themeclear_tip_2_body)
+        TechniqueItem(R.string.themeclear_tip_3_title, R.string.themeclear_tip_3_body)
     }
 }
 

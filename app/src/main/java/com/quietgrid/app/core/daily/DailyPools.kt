@@ -17,7 +17,7 @@ object DailyPools {
         GameId.TAKUZU -> TakuzuPuzzleBank.dailyPool(context, difficulty).size
         GameId.ANIMALDOKU -> AnimalDokuPuzzleBank.dailyPool(context, difficulty).size
         GameId.WORDGUESS -> WordGuessPuzzleBank.dailyPool(context, currentWordGuessLocale(puzzleLanguage), difficulty).size
-        GameId.WORDSEARCH -> WordSearchPuzzleBank.dailyPool(context, currentWordSearchLocale(puzzleLanguage), difficulty).size
+        GameId.WORDSEARCH -> WordSearchPuzzleBank.dailyPoolSize(context, currentWordSearchLocale(puzzleLanguage), difficulty)
         else -> 0
     }
 

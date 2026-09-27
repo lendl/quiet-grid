@@ -5,6 +5,7 @@ import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.SettingsRepository
+import com.quietgrid.app.data.ThemePreferencesRepository
 import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeSessionStore
 import com.quietgrid.app.testutil.FakeStatsStore
@@ -13,6 +14,7 @@ import com.quietgrid.engine.wordsearch.WSHiddenWord
 import com.quietgrid.engine.wordsearch.WSWordEntry
 import com.quietgrid.engine.wordsearch.WordSearchPuzzleEntry
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
@@ -20,6 +22,7 @@ import io.mockk.unmockkObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.After
@@ -50,7 +53,7 @@ class WordSearchPlayViewModelTest {
     @Before
     fun setUp() {
         mockkObject(WordSearchPuzzleBank)
-        coEvery { WordSearchPuzzleBank.randomPuzzle(any(), any(), any(), any()) } returns puzzleEntry
+        coEvery { WordSearchPuzzleBank.randomPuzzle(any(), any(), any(), any(), any()) } returns puzzleEntry
     }
 
     @After
@@ -58,11 +61,17 @@ class WordSearchPlayViewModelTest {
         unmockkObject(WordSearchPuzzleBank)
     }
 
-    private fun newViewModel(sessionStore: FakeSessionStore = FakeSessionStore(), statsStore: FakeStatsStore = FakeStatsStore()): WordSearchPlayViewModel {
+    private fun newViewModel(
+        sessionStore: FakeSessionStore = FakeSessionStore(),
+        statsStore: FakeStatsStore = FakeStatsStore(),
+        excludedThemes: Set<String> = emptySet(),
+    ): WordSearchPlayViewModel {
         val settingsRepository = mockk<SettingsRepository>(relaxed = true)
         every { settingsRepository.settings } returns MutableStateFlow(AppSettings())
+        val themePreferencesRepository = mockk<ThemePreferencesRepository>()
+        every { themePreferencesRepository.excludedThemes(any(), any()) } returns flowOf(excludedThemes)
         return WordSearchPlayViewModel(
-            mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), settingsRepository, Difficulty.EASY, resume = false, dailyDate = null,
+            mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), settingsRepository, themePreferencesRepository, Difficulty.EASY, resume = false, dailyDate = null,
         )
     }
 
@@ -149,5 +158,12 @@ class WordSearchPlayViewModelTest {
 
         assertFalse(viewModel.isComputingHint)
         assertNull(viewModel.nextMoveHint)
+    }
+
+    @Test
+    fun `fresh puzzle is drawn without the excluded themes`() {
+        newViewModel(excludedThemes = setOf("animals"))
+
+        coVerify { WordSearchPuzzleBank.randomPuzzle(any(), any(), Difficulty.EASY, any(), setOf("animals")) }
     }
 }

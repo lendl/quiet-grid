@@ -42,7 +42,7 @@ fun hasDuplicateOccurrence(grid: List<List<String>>, words: List<Pair<String, Li
                     if (sequence.length in wordLengths) {
                         val intendedList = intendedByText[sequence.toString()]
                         if (intendedList != null) {
-                            val isIntended = intendedList.any { positionsMatch(positions, it) }
+                            val isIntended = intendedList.all { positionsMatch(positions, it) }
                             if (!isIntended) return true
                         }
                     }

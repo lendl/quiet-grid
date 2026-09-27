@@ -16,6 +16,7 @@ Test szympansa — krótkie wyzwanie na refleks i pamięć: stukaj liczby w kole
 Bitwa gwiazd — rozmieść gwiazdy w każdym wierszu, kolumnie i obszarze tak, aby żadne dwie się nie stykały.
 Zgadnij po liczbach — odgadnij ukryte słowo w dziesięciu próbach; dwie liczby pokazują, jak bliska była Twoja odpowiedź.
 N-Back (Beta) — obserwuj siatkę i stukaj Dopasuj, gdy podświetlone pole powtarza pozycję sprzed N kroków.
+Wyczyść temat — układaj słowa z jednego tematu, aż wykorzystasz wszystkie litery w siatce.
 
 DLACZEGO QUIET GRID
 

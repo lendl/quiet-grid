@@ -28,3 +28,11 @@ fun reserveHiddenWordCells(word: String, rows: Int, cols: Int): ReservedHiddenWo
     val positions = allCells.take(word.length).sortedWith(compareBy({ it.row }, { it.col }))
     return ReservedHiddenWord(word, positions)
 }
+
+fun fillGhostFreeHiddenWord(grid: List<MutableList<String>>, placements: List<WordPlacement>, positions: List<WSCellRef>, candidates: List<String>): String? {
+    val placedWords = placements.map { it.word to it.positions }
+    return candidates.firstOrNull { candidate ->
+        positions.forEachIndexed { index, cell -> grid[cell.row][cell.col] = candidate[index].toString() }
+        !hasDuplicateOccurrence(grid, placedWords + listOf(candidate to positions))
+    }
+}

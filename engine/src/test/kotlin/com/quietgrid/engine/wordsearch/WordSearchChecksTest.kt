@@ -31,4 +31,28 @@ class WordSearchChecksTest {
         val words = listOf("CAT" to listOf(WSCellRef(0, 0), WSCellRef(0, 1), WSCellRef(0, 2)))
         assertTrue(hasDuplicateOccurrence(grid, words))
     }
+
+    @Test
+    fun `hasDuplicateOccurrence is true when a word reads backwards across another word's cells`() {
+        val grid = listOf(
+            listOf("C", "A", "T", "T", "A", "C"),
+        )
+        val words = listOf(
+            "CAT" to listOf(WSCellRef(0, 0), WSCellRef(0, 1), WSCellRef(0, 2)),
+            "TAC" to listOf(WSCellRef(0, 3), WSCellRef(0, 4), WSCellRef(0, 5)),
+        )
+        assertTrue(hasDuplicateOccurrence(grid, words))
+    }
+
+    @Test
+    fun `hasDuplicateOccurrence is false for a palindrome read in both directions`() {
+        val grid = listOf(
+            listOf("E", "Y", "E", "D", "O", "G"),
+        )
+        val words = listOf(
+            "EYE" to listOf(WSCellRef(0, 0), WSCellRef(0, 1), WSCellRef(0, 2)),
+            "DOG" to listOf(WSCellRef(0, 3), WSCellRef(0, 4), WSCellRef(0, 5)),
+        )
+        assertFalse(hasDuplicateOccurrence(grid, words))
+    }
 }

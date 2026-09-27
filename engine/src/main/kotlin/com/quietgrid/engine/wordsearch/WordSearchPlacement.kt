@@ -1,197 +1,206 @@
 package com.quietgrid.engine.wordsearch
 
+import kotlin.math.abs
+import kotlin.random.Random
+
 data class WordPlacement(val id: String, val word: String, val start: WSCellRef, val direction: WordSearchDirection, val positions: List<WSCellRef>)
 data class PlacementResult(val grid: List<MutableList<String>>, val placements: List<WordPlacement>)
 
-private data class CandidatePlacement(val start: WSCellRef, val direction: WordSearchDirection, val positions: List<WSCellRef>)
-private data class RepairCandidate(val word: String, val start: WSCellRef, val direction: WordSearchDirection, val positions: List<WSCellRef>, val score: Double)
+private data class CandidatePlacement(val word: String, val start: WSCellRef, val direction: WordSearchDirection, val positions: List<WSCellRef>, val score: Double)
 
-private const val MAX_REPAIR_STEPS = 20_000
+private const val MAX_REPAIR_STEPS = 300
 private const val TABU_TENURE = 15
 
-private fun createGrid(rows: Int, cols: Int, reserved: Set<Int>): List<MutableList<String>> {
-    val grid = List(rows) { MutableList(cols) { "" } }
-    reserved.forEach { key -> grid[key / 1000][key % 1000] = "#" }
-    return grid
-}
+private class CoverageBuilder(
+    private val rows: Int,
+    private val cols: Int,
+    reservedCells: Set<Int>,
+    private val allowedDirections: List<WordSearchDirection>,
+    private val overlapFrequency: Double,
+) {
+    val grid: List<MutableList<String>> = List(rows) { MutableList(cols) { "" } }
+    val placements = mutableListOf<WordPlacement>()
+    private val uncovered = mutableSetOf<Int>()
+    private val coveringIds = mutableMapOf<Int, MutableSet<String>>()
+    private val placementsById = mutableMapOf<String, WordPlacement>()
+    private var nextId = 1
 
-private fun buildStraightPositions(startRow: Int, startCol: Int, dRow: Int, dCol: Int, wordLen: Int): List<WSCellRef> =
-    (0 until wordLen).map { WSCellRef(startRow + dRow * it, startCol + dCol * it) }
-
-private fun canPlace(grid: List<List<String>>, positions: List<WSCellRef>, word: String): Boolean =
-    positions.withIndex().all { (index, cell) -> val existing = grid[cell.row][cell.col]; existing == "" || existing == word[index].toString() }
-
-private fun placeWord(grid: List<MutableList<String>>, positions: List<WSCellRef>, word: String) {
-    positions.forEachIndexed { index, cell -> grid[cell.row][cell.col] = word[index].toString() }
-}
-
-private fun scorePlacement(grid: List<List<String>>, positions: List<WSCellRef>, word: String, uncovered: Set<Int>, overlapFrequency: Double): Double {
-    var overlapCount = 0
-    var uncoveredCoverage = 0
-    positions.forEachIndexed { index, cell ->
-        val key = toGridKey(cell)
-        if (key in uncovered) uncoveredCoverage += 1
-        if (grid[cell.row][cell.col] == word[index].toString()) overlapCount += 1
+    init {
+        reservedCells.forEach { key -> grid[key / 1000][key % 1000] = "#" }
+        for (row in 0 until rows) for (col in 0 until cols) {
+            val key = row * 1000 + col
+            if (key !in reservedCells) uncovered.add(key)
+        }
     }
-    return uncoveredCoverage * 100.0 + overlapCount * overlapFrequency * 10.0 + Math.random()
-}
 
-private fun findBestPlacement(
-    grid: List<MutableList<String>>, rows: Int, cols: Int, word: String, directions: List<WordSearchDirection>,
-    uncovered: Set<Int>, overlapFrequency: Double,
-): CandidatePlacement? {
-    val wordLen = word.length
-    var best: CandidatePlacement? = null
-    var bestScore = Double.NEGATIVE_INFINITY
+    fun build(wordPool: List<String>): Boolean {
+        val pool = wordPool.distinct()
+        spread(pool)
+        return uncovered.isEmpty() || repair(pool)
+    }
 
-    for (direction in directions) {
-        val (dRow, dCol) = directionToDelta.getValue(direction)
-        val minRow = if (dRow < 0) wordLen - 1 else 0
-        val maxRow = if (dRow > 0) rows - wordLen else rows - 1
-        val minCol = if (dCol < 0) wordLen - 1 else 0
-        val maxCol = if (dCol > 0) cols - wordLen else cols - 1
-        if (minRow > maxRow || minCol > maxCol) continue
+    private fun spread(pool: List<String>) {
+        for (word in pool.sortedByDescending { it.length }) {
+            if (uncovered.isEmpty()) return
+            val candidate = bestPlacementAnywhere(word) ?: continue
+            commitUnlessDuplicate(candidate)
+        }
+    }
 
-        for (row in minRow..maxRow) {
-            for (col in minCol..maxCol) {
-                val positions = buildStraightPositions(row, col, dRow, dCol, wordLen)
-                if (!canPlace(grid, positions, word)) continue
-                val score = scorePlacement(grid, positions, word, uncovered, overlapFrequency)
-                if (score > bestScore) { bestScore = score; best = CandidatePlacement(WSCellRef(row, col), direction, positions) }
+    private fun repair(pool: List<String>): Boolean {
+        val usedWords = placements.map { it.word }.toMutableSet()
+        val tabuUntilStep = mutableMapOf<String, Int>()
+        var step = 0
+        while (uncovered.isNotEmpty()) {
+            step += 1
+            if (step > MAX_REPAIR_STEPS) return false
+
+            var targetKey = -1
+            var targetCandidates: List<CandidatePlacement>? = null
+            for (key in uncovered) {
+                val candidates = pool.mapNotNull { word ->
+                    if (word in usedWords || (tabuUntilStep[word] ?: 0) >= step) null else bestPlacementThrough(word, key)
+                }
+                if (targetCandidates == null || candidates.size < targetCandidates.size) {
+                    targetKey = key
+                    targetCandidates = candidates
+                }
+                if (candidates.isEmpty()) break
+            }
+
+            val best = targetCandidates?.maxByOrNull { it.score }
+            if (best != null) {
+                usedWords.add(best.word)
+                if (!commitUnlessDuplicate(best)) {
+                    usedWords.remove(best.word)
+                    tabuUntilStep[best.word] = step + TABU_TENURE
+                }
+                continue
+            }
+
+            val evicted = placements
+                .filter { placement -> placement.positions.any { isOrthogonallyAdjacent(it, targetKey) } }
+                .minByOrNull { it.positions.size } ?: return false
+            evict(evicted)
+            usedWords.remove(evicted.word)
+            tabuUntilStep[evicted.word] = step + TABU_TENURE
+        }
+        return true
+    }
+
+    private fun bestPlacementAnywhere(word: String): CandidatePlacement? {
+        val length = word.length
+        var best: CandidatePlacement? = null
+        for (direction in allowedDirections) {
+            val (dRow, dCol) = directionToDelta.getValue(direction)
+            val minRow = if (dRow < 0) length - 1 else 0
+            val maxRow = if (dRow > 0) rows - length else rows - 1
+            val minCol = if (dCol < 0) length - 1 else 0
+            val maxCol = if (dCol > 0) cols - length else cols - 1
+            for (row in minRow..maxRow) for (col in minCol..maxCol) {
+                best = higherScoring(best, evaluate(word, row, col, direction))
             }
         }
+        return best
     }
-    return best
-}
 
-private fun findBestPlacementThroughCell(
-    grid: List<MutableList<String>>, rows: Int, cols: Int, word: String, directions: List<WordSearchDirection>,
-    mustCoverRow: Int, mustCoverCol: Int, uncovered: Set<Int>, overlapFrequency: Double,
-): CandidatePlacement? {
-    val wordLen = word.length
-    var best: CandidatePlacement? = null
-    var bestScore = Double.NEGATIVE_INFINITY
-
-    for (direction in directions) {
-        val (dRow, dCol) = directionToDelta.getValue(direction)
-        for (i in 0 until wordLen) {
-            val startRow = mustCoverRow - dRow * i
-            val startCol = mustCoverCol - dCol * i
-            val endRow = startRow + dRow * (wordLen - 1)
-            val endCol = startCol + dCol * (wordLen - 1)
-            if (startRow !in 0 until rows || startCol !in 0 until cols) continue
-            if (endRow !in 0 until rows || endCol !in 0 until cols) continue
-
-            val positions = buildStraightPositions(startRow, startCol, dRow, dCol, wordLen)
-            if (!canPlace(grid, positions, word)) continue
-            val score = scorePlacement(grid, positions, word, uncovered, overlapFrequency)
-            if (score > bestScore) { bestScore = score; best = CandidatePlacement(WSCellRef(startRow, startCol), direction, positions) }
-        }
-    }
-    return best
-}
-
-private fun isOrthogonallyAdjacent(a: WSCellRef, b: WSCellRef): Boolean = kotlin.math.abs(a.row - b.row) + kotlin.math.abs(a.col - b.col) == 1
-
-private fun incrementCover(coverCounts: MutableMap<Int, Int>, key: Int) { coverCounts[key] = (coverCounts[key] ?: 0) + 1 }
-
-private fun decrementCover(coverCounts: MutableMap<Int, Int>, key: Int): Int {
-    val next = (coverCounts[key] ?: 1) - 1
-    if (next <= 0) coverCounts.remove(key) else coverCounts[key] = next
-    return next
-}
-
-private fun repairCoverage(
-    grid: List<MutableList<String>>, rows: Int, cols: Int, wordPool: List<String>, uncovered: MutableSet<Int>,
-    usedWords: MutableSet<String>, placements: MutableList<WordPlacement>, coverCounts: MutableMap<Int, Int>,
-    nextId: IntArray, allowedDirections: List<WordSearchDirection>, overlapFrequency: Double,
-): Boolean {
-    val tabuUntilStep = mutableMapOf<String, Int>()
-    var step = 0
-
-    while (uncovered.isNotEmpty()) {
-        step += 1
-        if (step > MAX_REPAIR_STEPS) return false
-
-        var targetKey: Int? = null
-        var targetCandidates: List<RepairCandidate>? = null
-        for (key in uncovered) {
-            val row = key / 1000
-            val col = key % 1000
-            val candidates = mutableListOf<RepairCandidate>()
-            for (word in wordPool) {
-                if (word in usedWords) continue
-                if ((tabuUntilStep[word] ?: 0) >= step) continue
-                val candidate = findBestPlacementThroughCell(grid, rows, cols, word, allowedDirections, row, col, uncovered, overlapFrequency) ?: continue
-                candidates.add(RepairCandidate(word, candidate.start, candidate.direction, candidate.positions, scorePlacement(grid, candidate.positions, word, uncovered, overlapFrequency)))
+    private fun bestPlacementThrough(word: String, key: Int): CandidatePlacement? {
+        val length = word.length
+        val targetRow = key / 1000
+        val targetCol = key % 1000
+        var best: CandidatePlacement? = null
+        for (direction in allowedDirections) {
+            val (dRow, dCol) = directionToDelta.getValue(direction)
+            for (offset in 0 until length) {
+                val startRow = targetRow - dRow * offset
+                val startCol = targetCol - dCol * offset
+                val endRow = startRow + dRow * (length - 1)
+                val endCol = startCol + dCol * (length - 1)
+                if (startRow !in 0 until rows || startCol !in 0 until cols) continue
+                if (endRow !in 0 until rows || endCol !in 0 until cols) continue
+                best = higherScoring(best, evaluate(word, startRow, startCol, direction))
             }
-            if (targetCandidates == null || candidates.size < targetCandidates.size) { targetKey = key; targetCandidates = candidates }
-            if (targetCandidates.isEmpty()) break
         }
+        return best
+    }
 
-        if (targetKey == null || targetCandidates == null) return false
+    private fun higherScoring(current: CandidatePlacement?, next: CandidatePlacement?): CandidatePlacement? =
+        if (next != null && (current == null || next.score > current.score)) next else current
 
-        if (targetCandidates.isNotEmpty()) {
-            val best = targetCandidates.maxByOrNull { it.score }!!
-            val touchedKeys = best.positions.map { toGridKey(it) }
-            placeWord(grid, best.positions, best.word)
-            usedWords.add(best.word)
-            touchedKeys.forEach { incrementCover(coverCounts, it); uncovered.remove(it) }
-            placements.add(WordPlacement("${nextId[0]}", best.word, best.start, best.direction, best.positions))
-            nextId[0] += 1
-            continue
+    private fun evaluate(word: String, startRow: Int, startCol: Int, direction: WordSearchDirection): CandidatePlacement? {
+        val (dRow, dCol) = directionToDelta.getValue(direction)
+        val positions = word.indices.map { WSCellRef(startRow + dRow * it, startCol + dCol * it) }
+        var freshCells = 0
+        var overlapCells = 0
+        positions.forEachIndexed { index, cell ->
+            val existing = grid[cell.row][cell.col]
+            when {
+                existing.isEmpty() -> freshCells += 1
+                existing[0] == word[index] -> overlapCells += 1
+                else -> return null
+            }
         }
+        if (freshCells == 0 || takesLastOwnCell(positions)) return null
+        val score = freshCells * 100.0 + overlapCells * overlapFrequency * 10.0 + Random.nextDouble()
+        return CandidatePlacement(word, WSCellRef(startRow, startCol), direction, positions, score)
+    }
 
-        val targetRow = targetKey / 1000
-        val targetCol = targetKey % 1000
-        val nearbyPlacements = placements.filter { placement -> placement.positions.any { isOrthogonallyAdjacent(it, WSCellRef(targetRow, targetCol)) } }
-        if (nearbyPlacements.isEmpty()) return false
+    private fun takesLastOwnCell(positions: List<WSCellRef>): Boolean {
+        val lostCells = mutableMapOf<String, Int>()
+        for (cell in positions) {
+            val owners = coveringIds[toGridKey(cell)] ?: continue
+            if (owners.size == 1) {
+                val owner = owners.first()
+                lostCells[owner] = (lostCells[owner] ?: 0) + 1
+            }
+        }
+        return lostCells.any { (id, lost) -> ownCellCount(placementsById.getValue(id)) <= lost }
+    }
 
-        val evicted = nearbyPlacements.minByOrNull { it.positions.size }!!
-        placements.remove(evicted)
-        usedWords.remove(evicted.word)
-        evicted.positions.forEach { cell ->
+    private fun ownCellCount(placement: WordPlacement): Int = placement.positions.count { coveringIds[toGridKey(it)]?.size == 1 }
+
+    private fun isOrthogonallyAdjacent(cell: WSCellRef, key: Int): Boolean = abs(cell.row - key / 1000) + abs(cell.col - key % 1000) == 1
+
+    private fun commitUnlessDuplicate(candidate: CandidatePlacement): Boolean {
+        val placement = commit(candidate)
+        if (!hasDuplicateOccurrence(grid, placements.map { it.word to it.positions })) return true
+        evict(placement)
+        return false
+    }
+
+    private fun commit(candidate: CandidatePlacement): WordPlacement {
+        val placement = WordPlacement("${nextId++}", candidate.word, candidate.start, candidate.direction, candidate.positions)
+        placement.positions.forEachIndexed { index, cell ->
             val key = toGridKey(cell)
-            if (decrementCover(coverCounts, key) == 0) { uncovered.add(key); grid[cell.row][cell.col] = "" }
+            grid[cell.row][cell.col] = placement.word[index].toString()
+            coveringIds.getOrPut(key) { mutableSetOf() }.add(placement.id)
+            uncovered.remove(key)
         }
-        tabuUntilStep[evicted.word] = step + TABU_TENURE
+        placements.add(placement)
+        placementsById[placement.id] = placement
+        return placement
     }
-    return true
+
+    private fun evict(placement: WordPlacement) {
+        placements.remove(placement)
+        placementsById.remove(placement.id)
+        placement.positions.forEach { cell ->
+            val key = toGridKey(cell)
+            val owners = coveringIds.getValue(key)
+            owners.remove(placement.id)
+            if (owners.isEmpty()) {
+                coveringIds.remove(key)
+                uncovered.add(key)
+                grid[cell.row][cell.col] = ""
+            }
+        }
+    }
 }
 
 fun buildFullCoverageGrid(
     rows: Int, cols: Int, wordPool: List<String>, reservedCells: Set<Int>,
     allowedDirections: List<WordSearchDirection>, overlapFrequency: Double,
 ): PlacementResult? {
-    val grid = createGrid(rows, cols, reservedCells)
-    val placements = mutableListOf<WordPlacement>()
-    val coverCounts = mutableMapOf<Int, Int>()
-
-    val uncovered = mutableSetOf<Int>()
-    for (row in 0 until rows) for (col in 0 until cols) {
-        val key = row * 1000 + col
-        if (key !in reservedCells) uncovered.add(key)
-    }
-
-    val dedupedPool = wordPool.distinct()
-
-    val spreadOrder = dedupedPool.sortedByDescending { it.length }
-    var nextIdCounter = 1
-    for (word in spreadOrder) {
-        if (uncovered.isEmpty()) break
-        val placement = findBestPlacement(grid, rows, cols, word, allowedDirections, uncovered, overlapFrequency) ?: continue
-        placeWord(grid, placement.positions, word)
-        placement.positions.forEach { cell -> val key = toGridKey(cell); incrementCover(coverCounts, key); uncovered.remove(key) }
-        placements.add(WordPlacement("$nextIdCounter", word, placement.start, placement.direction, placement.positions))
-        nextIdCounter += 1
-    }
-
-    if (uncovered.isEmpty()) return PlacementResult(grid, placements)
-
-    val usedWords = placements.map { it.word }.toMutableSet()
-    val nextId = intArrayOf(nextIdCounter)
-    val repaired = repairCoverage(grid, rows, cols, dedupedPool, uncovered, usedWords, placements, coverCounts, nextId, allowedDirections, overlapFrequency)
-    if (!repaired) return null
-
-    return PlacementResult(grid, placements)
+    val builder = CoverageBuilder(rows, cols, reservedCells, allowedDirections, overlapFrequency)
+    return if (builder.build(wordPool)) PlacementResult(builder.grid, builder.placements) else null
 }

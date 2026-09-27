@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.core.themes.themeLabelRes
 import com.quietgrid.app.ui.components.CollectPuzzleResult
 import com.quietgrid.app.ui.components.ElapsedTimerText
 import com.quietgrid.app.ui.components.EndPuzzleDialog
@@ -93,7 +94,7 @@ fun WordSearchPlayScreen(
                     if (!session.hiddenWordSolved) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(stringResource(R.string.wordsearch_theme_label), style = MaterialTheme.typography.labelSmall)
-                            Text(wordSearchThemeLabel(session.puzzle.hiddenWord.clue), style = MaterialTheme.typography.titleMedium)
+                            Text(stringResource(themeLabelRes(session.puzzle.hiddenWord.clue)), style = MaterialTheme.typography.titleMedium)
                         }
                     }
                 }
@@ -131,7 +132,7 @@ fun WordSearchPlayScreen(
                 Column(Modifier.padding(12.dp)) {
                     val title = when (hint) {
                         is WSNextMoveHint.FindWord -> stringResource(R.string.wordsearch_next_move_title, hint.word)
-                        is WSNextMoveHint.FindHiddenLetter -> stringResource(R.string.wordsearch_hidden_word_next_letter_title, hint.clue)
+                        is WSNextMoveHint.FindHiddenLetter -> stringResource(R.string.wordsearch_hidden_word_next_letter_title, stringResource(themeLabelRes(hint.clue)))
                     }
                     val body = when (hint) {
                         is WSNextMoveHint.FindWord -> stringResource(R.string.wordsearch_next_move_body)

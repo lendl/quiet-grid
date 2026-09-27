@@ -95,11 +95,12 @@ import com.quietgrid.app.games.takuzu.TakuzuAnalyzerScreen
 import com.quietgrid.app.games.takuzu.TakuzuChallengerPlayScreen
 import com.quietgrid.app.games.takuzu.TakuzuChallengerResultScreen
 import com.quietgrid.app.games.takuzu.TakuzuPlayScreen
+import com.quietgrid.app.games.themeclear.ThemeClearPlayScreen
 import com.quietgrid.app.games.wordguess.WordGuessChallengerPlayScreen
 import com.quietgrid.app.games.wordguess.WordGuessChallengerResultScreen
 import com.quietgrid.app.games.wordguess.WordGuessPlayScreen
+import com.quietgrid.app.core.themes.themeIcon
 import com.quietgrid.app.games.wordsearch.WordSearchPlayScreen
-import com.quietgrid.app.games.wordsearch.wordSearchThemeIcon
 import com.quietgrid.app.ui.components.AppTab
 import com.quietgrid.app.ui.components.AppTopBar
 import com.quietgrid.app.ui.components.BottomNavBar
@@ -540,7 +541,7 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
                                     onBack = { navController.popBackStack() },
                                     onFinished = { result ->
                                         if (result.solved) {
-                                            wordSearchThemeIcon(result.themeId)?.let { CompletionExtras.set(CompletionHighlight.ThemeIcon(it)) }
+                                            themeIcon(result.themeId)?.let { CompletionExtras.set(CompletionHighlight.ThemeIcon(it)) }
                                             goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
                                         } else {
                                             goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
@@ -655,6 +656,21 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
                                             )
                                             goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
                                         } else {
+                                            goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
+                                        }
+                                    },
+                                )
+                                GameId.THEMECLEAR -> ThemeClearPlayScreen(
+                                    difficulty = difficulty,
+                                    resume = resume,
+                                    onBack = { navController.popBackStack() },
+                                    onFinished = { result ->
+                                        if (result.solved) {
+                                            goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
+                                        } else {
+                                            if (result.intendedWords.isNotEmpty()) {
+                                                CompletionExtras.set(CompletionHighlight.RevealWordList(result.intendedWords))
+                                            }
                                             goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
                                         }
                                     },

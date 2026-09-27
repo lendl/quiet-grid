@@ -10,18 +10,18 @@ import java.io.File
 
 private val json = Json { ignoreUnknownKeys = true }
 
-fun <T> appendPuzzleEntries(path: String, newEntries: List<T>, serializer: KSerializer<T>, dedupeKey: (T) -> String) {
-    val listSerializer = ListSerializer(serializer)
+fun <T> readPuzzleEntries(path: String, serializer: KSerializer<T>): List<T> {
     val file = File(path)
-    val existing: List<T> = if (file.exists()) {
-        json.decodeFromString(listSerializer, file.readText())
-    } else {
-        emptyList()
-    }
+    return if (file.exists()) json.decodeFromString(ListSerializer(serializer), file.readText()) else emptyList()
+}
+
+fun <T> appendPuzzleEntries(path: String, newEntries: List<T>, serializer: KSerializer<T>, dedupeKey: (T) -> String) {
+    val file = File(path)
+    val existing = readPuzzleEntries(path, serializer)
 
     val existingKeys = existing.map(dedupeKey).toSet()
     val merged = existing + newEntries.filter { dedupeKey(it) !in existingKeys }
 
     file.parentFile?.mkdirs()
-    file.writeText(json.encodeToString(listSerializer, merged))
+    file.writeText(json.encodeToString(ListSerializer(serializer), merged))
 }

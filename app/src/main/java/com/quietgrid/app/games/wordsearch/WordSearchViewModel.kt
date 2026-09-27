@@ -14,6 +14,7 @@ import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.SettingsRepository
 import com.quietgrid.app.data.StatsStore
+import com.quietgrid.app.data.ThemePreferencesRepository
 import com.quietgrid.app.data.recentlyPlayedPuzzleIds
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
@@ -56,6 +57,7 @@ data class WSSelectionEvent(val id: Int, val wasCorrect: Boolean)
 private class WordSearchPuzzleAdapter(
     private val appContext: Context,
     private val settingsRepository: SettingsRepository,
+    private val themePreferencesRepository: ThemePreferencesRepository,
     private val historyStore: PlayHistoryStore,
 ) : PuzzleAdapter<WordSearchSession, WordSearchResult> {
     override val gameId: GameId = GameId.WORDSEARCH
@@ -63,7 +65,8 @@ private class WordSearchPuzzleAdapter(
     override suspend fun freshSession(difficulty: Difficulty): WordSearchSession? {
         val locale = currentWordSearchLocale(settingsRepository.settings.first().puzzleLanguage)
         val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
-        val entry = WordSearchPuzzleBank.randomPuzzle(appContext, locale, difficulty, recentIds) ?: return null
+        val excludedThemes = themePreferencesRepository.excludedThemes(gameId, locale).first()
+        val entry = WordSearchPuzzleBank.randomPuzzle(appContext, locale, difficulty, recentIds, excludedThemes) ?: return null
         return WordSearchSession(
             puzzle = entry,
             foundWordIds = emptyList(),
@@ -144,6 +147,7 @@ class WordSearchPlayViewModel @AssistedInject constructor(
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     settingsRepository: SettingsRepository,
+    themePreferencesRepository: ThemePreferencesRepository,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
     @Assisted dailyDate: LocalDate?,
@@ -159,7 +163,7 @@ class WordSearchPlayViewModel @AssistedInject constructor(
         sessionStore = sessionRepository,
         statsStore = statsRepository,
         historyStore = historyRepository,
-        adapter = WordSearchPuzzleAdapter(appContext, settingsRepository, historyRepository),
+        adapter = WordSearchPuzzleAdapter(appContext, settingsRepository, themePreferencesRepository, historyRepository),
     )
 
     val session get() = controller.session
