@@ -1,0 +1,6 @@
+Version 1.6.1
+
+- Deutlich kleinere Downloadgröße
+- Flüssigeres Spielen mit weniger Hintergrundarbeit beim Lösen
+- Beim Vorbereiten eines Rätsels erscheint jetzt eine Ladeanzeige
+- Fehlerbehebungen und Stabilitätsverbesserungen

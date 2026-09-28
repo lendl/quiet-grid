@@ -1,0 +1,6 @@
+Versión 1.6.1
+
+- Tamaño de descarga mucho menor
+- Juego más fluido, con menos trabajo en segundo plano mientras resuelves
+- Ahora se muestra un indicador de carga mientras se prepara un puzzle
+- Corrección de errores y mejoras de estabilidad

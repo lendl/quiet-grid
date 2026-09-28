@@ -1,0 +1,6 @@
+Wersja 1.6.1
+
+- Znacznie mniejszy rozmiar pobierania
+- Płynniejsza gra, mniej pracy w tle podczas rozwiązywania
+- Podczas przygotowywania łamigłówki widać teraz wskaźnik ładowania
+- Poprawki błędów i stabilności

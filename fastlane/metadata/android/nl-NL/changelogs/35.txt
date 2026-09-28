@@ -1,0 +1,6 @@
+Versie 1.6.1
+
+- Veel kleinere downloadgrootte
+- Soepeler spelen, met minder achtergrondwerk tijdens het oplossen
+- Er verschijnt nu een laadindicator terwijl een puzzel wordt voorbereid
+- Bugfixes en stabiliteitsverbeteringen

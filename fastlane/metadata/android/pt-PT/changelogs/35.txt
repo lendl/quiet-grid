@@ -1,0 +1,6 @@
+Versão 1.6.1
+
+- Tamanho de download muito menor
+- Jogo mais fluido, com menos trabalho em segundo plano enquanto você resolve
+- Agora um indicador de carregamento aparece enquanto um quebra-cabeça é preparado
+- Correções de erros e melhorias de estabilidade
