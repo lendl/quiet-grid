@@ -75,7 +75,6 @@ In beta, enable in Settings: Arrow Escape, Block Fill, N-Back.
 | F-Droid | <https://f-droid.org/en/packages/com.quietgrid.app/> |
 | Google Play | <https://play.google.com/store/apps/details?id=com.quietgrid.app> |
 | GitHub Releases | <https://github.com/lendl/quiet-grid/releases/latest> |
-| Obtainium | <https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/lendl/quiet-grid> |
 | APKPure | <https://apkpure.com/p/com.quietgrid.app> |
 
 ## Development
