@@ -142,7 +142,7 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
     val scope = rememberCoroutineScope()
     val repositories: RepositoriesViewModel = hiltViewModel()
     val settings by repositories.settingsRepository.settings.collectAsState(initial = AppSettings())
-    val activeSession by repositories.sessionRepository.activeSession.collectAsState(initial = null)
+    val activeSession by repositories.sessionRepository.activeSessionSummary.collectAsState(initial = null)
     val activeGameKey = activeSession?.gameId
 
     val mixes by repositories.mixRepository.mixes.collectAsState(initial = emptyList())

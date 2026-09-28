@@ -7,12 +7,12 @@ import com.quietgrid.engine.themeclear.THEMECLEAR_MAX_COLS
 import com.quietgrid.engine.themeclear.THEMECLEAR_MIN_WORD_LENGTH
 import com.quietgrid.engine.themeclear.THEMECLEAR_TIERS
 import com.quietgrid.engine.themeclear.ThemeClearDictionary
-import com.quietgrid.engine.themeclear.ThemeClearMetrics
 import com.quietgrid.engine.themeclear.ThemeClearPuzzleEntry
 import com.quietgrid.engine.themeclear.ThemeClearSolver
 import com.quietgrid.engine.themeclear.ThemeClearTheme
 import com.quietgrid.engine.themeclear.ThemeClearTierSpec
 import com.quietgrid.engine.themeclear.themeClearMeetsTier
+import com.quietgrid.engine.themeclear.themeClearPuzzleId
 import kotlin.random.Random
 
 fun loadThemeClearThemes(locale: String, path: String = SHARED_THEMES_ASSET): List<ThemeClearTheme> =
@@ -38,27 +38,32 @@ fun drawThemeClearWords(pool: List<String>, spec: ThemeClearTierSpec, random: Ra
     return picked.takeIf { it.size >= spec.minWords && letters in spec.letters }
 }
 
+const val THEMECLEAR_MAX_PUZZLES_PER_THEME = 50
+
+fun themeClearThemeDeficits(perTheme: Map<String, Int>, themeIds: List<String>, target: Int): Map<String, Int> {
+    val capped = minOf(target, THEMECLEAR_MAX_PUZZLES_PER_THEME)
+    return themeIds.associateWith { capped - (perTheme[it] ?: 0) }.filterValues { it > 0 }
+}
+
 data class ThemeClearCandidate(
     val themeId: String,
     val words: List<String>,
     val rows: Int,
     val cols: Int,
-    val metrics: ThemeClearMetrics,
 ) {
-    val letterCount: Int get() = rows * cols
+    val letters: String get() = words.joinToString("")
 }
 
 fun ThemeClearCandidate.toEntry(difficulty: Difficulty, locale: String, random: Random): ThemeClearPuzzleEntry {
-    val scattered = words.joinToString("").toList().shuffled(random).joinToString("")
+    val grid = words.joinToString("").toList().shuffled(random).joinToString("").chunked(cols)
     return ThemeClearPuzzleEntry(
-        id = "tc-${difficulty.key}-$themeId-${scattered.lowercase()}",
+        id = themeClearPuzzleId(difficulty.key, themeId, grid),
         difficulty = difficulty.key,
         themeId = themeId,
         rows = rows,
         cols = cols,
-        grid = scattered.chunked(cols),
+        grid = grid,
         words = words,
-        metrics = metrics,
         locale = locale,
     )
 }
@@ -71,19 +76,23 @@ class ThemeClearGenerator(themes: List<ThemeClearTheme>, private val random: Ran
         ThemePool(theme.themeId, ThemeClearSolver(dictionary), dictionary.words.sorted())
     }
 
-    fun drawCandidate(spec: ThemeClearTierSpec): ThemeClearCandidate? {
-        val pool = pools.random(random)
+    val themeIds: List<String> get() = pools.map { it.themeId }
+
+    private fun poolFor(themeId: String?): ThemePool =
+        if (themeId == null) pools.random(random) else pools.first { it.themeId == themeId }
+
+    fun drawCandidate(spec: ThemeClearTierSpec, themeId: String? = null): ThemeClearCandidate? {
+        val pool = poolFor(themeId)
         val words = drawThemeClearWords(pool.words, spec, random) ?: return null
-        val letters = words.joinToString("")
-        val (rows, cols) = themeClearRectangles(letters.length).randomOrNull(random) ?: return null
-        return ThemeClearCandidate(pool.themeId, words, rows, cols, pool.solver.analyze(letters))
+        val (rows, cols) = themeClearRectangles(words.sumOf { it.length }).randomOrNull(random) ?: return null
+        return ThemeClearCandidate(pool.themeId, words, rows, cols)
     }
 
-    fun generate(difficulty: Difficulty, locale: String, maxAttempts: Int = 400): ThemeClearPuzzleEntry? {
+    fun generate(difficulty: Difficulty, locale: String, themeId: String? = null, maxAttempts: Int = 400): ThemeClearPuzzleEntry? {
         val spec = THEMECLEAR_TIERS.getValue(difficulty)
         repeat(maxAttempts) {
-            val candidate = drawCandidate(spec) ?: return@repeat
-            if (themeClearMeetsTier(difficulty, candidate.letterCount, candidate.metrics)) {
+            val candidate = drawCandidate(spec, themeId) ?: return@repeat
+            if (themeClearMeetsTier(difficulty, candidate.letters, poolFor(candidate.themeId).solver)) {
                 return candidate.toEntry(difficulty, locale, random)
             }
         }

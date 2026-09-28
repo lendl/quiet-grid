@@ -2,8 +2,8 @@ package com.quietgrid.app.games.wordguess
 
 import android.content.Context
 import com.quietgrid.app.core.Difficulty
-import com.quietgrid.engine.wordguess.WordGuessDictionaryEntry
 import com.quietgrid.engine.wordguess.WordGuessPuzzleEntry
+import com.quietgrid.engine.wordguess.wordGuessDictionarySerializer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
@@ -13,7 +13,7 @@ private val json = Json { ignoreUnknownKeys = true }
 
 object WordGuessPuzzleBank {
     private var answerCache: Map<String, List<WordGuessPuzzleEntry>>? = null
-    private var dictionaryCache: Map<String, Set<String>>? = null
+    private var dictionaryCache: Pair<String, Set<String>>? = null
 
     private suspend fun loadAnswers(context: Context): Map<String, List<WordGuessPuzzleEntry>> {
         answerCache?.let { return it }
@@ -27,12 +27,12 @@ object WordGuessPuzzleBank {
     }
 
     suspend fun loadDictionary(context: Context, locale: String): Set<String> {
-        val cache = dictionaryCache ?: withContext(Dispatchers.IO) {
+        dictionaryCache?.takeIf { it.first == locale }?.let { return it.second }
+        return withContext(Dispatchers.IO) {
             val text = context.assets.open("wordguess_dictionary.json").bufferedReader().use { it.readText() }
-            val entries = json.decodeFromString<List<WordGuessDictionaryEntry>>(text)
-            entries.groupBy { it.locale }.mapValues { (_, v) -> v.map { it.word }.toSet() }
-        }.also { dictionaryCache = it }
-        return cache[locale] ?: emptySet()
+            json.decodeFromString(wordGuessDictionarySerializer, text)[locale].orEmpty().toHashSet()
+                .also { dictionaryCache = locale to it }
+        }
     }
 
     suspend fun dailyPool(context: Context, locale: String, difficulty: Difficulty): List<WordGuessPuzzleEntry> =

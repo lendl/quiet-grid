@@ -34,6 +34,16 @@ class LogsFilterTest {
     }
 
     @Test
+    fun `records of games no longer in the app are dropped`() {
+        val known = record(GameId.SUDOKU, isChallenger = false, timestampMillis = 1L)
+        val removed = known.copy(gameId = "flowfree", timestampMillis = 2L)
+
+        val result = filterLogRecords(listOf(known, removed), LogsMode.ALL, gameId = null)
+
+        assertEquals(listOf(known), result)
+    }
+
+    @Test
     fun `SOLO mode excludes Challenger records`() {
         val solo = record(GameId.SUDOKU, isChallenger = false, timestampMillis = 1L)
         val challenger = record(GameId.SUDOKU, isChallenger = true, timestampMillis = 2L)

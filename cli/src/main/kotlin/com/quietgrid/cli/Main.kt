@@ -21,6 +21,9 @@ import com.quietgrid.engine.starbattle.StarBattlePuzzleEntry
 import com.quietgrid.engine.starbattle.classifyStarBattleK2Grade
 import com.quietgrid.engine.sudoku.SudokuPuzzleEntry
 import com.quietgrid.engine.takuzu.TakuzuPuzzleEntry
+import com.quietgrid.engine.themeclear.toBankEntry
+import com.quietgrid.engine.wordsearch.toBankEntry
+import com.quietgrid.engine.wordsearch.toPuzzleEntry
 
 data class GenerateCommand(
     val game: String,
@@ -155,9 +158,9 @@ fun main(args: Array<String>) {
         }
         "wordsearch" -> {
             val locale = command.locale
-            val serializer = com.quietgrid.engine.wordsearch.WordSearchPuzzleEntry.serializer()
+            val serializer = com.quietgrid.engine.wordsearch.WordSearchBankEntry.serializer()
             val outFile = "${command.outDir}/wordsearch_puzzles_${difficulty.key}.json"
-            val bank = readPuzzleEntries(outFile, serializer)
+            val bank = readPuzzleEntries(outFile, serializer).map { it.toPuzzleEntry(difficulty.key) }
             val themeIds = com.quietgrid.cli.themes.loadSharedThemes().getValue(locale).map { it.themeId }
             val quotas = command.fillTo?.let { com.quietgrid.cli.wordsearch.wordSearchThemeDeficits(bank, locale, themeIds, it) }
                 ?: List(command.count) { themeIds.random() }.groupingBy { it }.eachCount()
@@ -170,7 +173,7 @@ fun main(args: Array<String>) {
             }
             entries.forEach { state.recordTried(it.id, "valid") }
             state.save()
-            appendPuzzleEntries(outFile, entries, serializer) { it.id }
+            appendPuzzleEntries(outFile, entries.map { it.toBankEntry() }, serializer) { it.id }
             val shortfall = quotas.mapValues { (themeId, quota) -> quota - entries.count { it.themeId == themeId } }.filterValues { it > 0 }
             println("Generated ${entries.size}/$requested wordsearch puzzles ($locale/$difficulty) in ${System.currentTimeMillis() - startedAt}ms into $outFile")
             if (shortfall.isNotEmpty()) println("Themes still short: $shortfall")
@@ -197,16 +200,10 @@ fun main(args: Array<String>) {
                 com.quietgrid.engine.wordguess.WordGuessPuzzleEntry.serializer(),
             ) { "${it.locale}:${it.difficulty}:${it.word}" }
 
-            val dictionaryEntries = (tiers5.dictionary + tiers6.dictionary).map {
-                com.quietgrid.engine.wordguess.WordGuessDictionaryEntry(locale, it)
-            }
-            appendPuzzleEntries(
-                "${command.outDir}/wordguess_dictionary.json",
-                dictionaryEntries,
-                com.quietgrid.engine.wordguess.WordGuessDictionaryEntry.serializer(),
-            ) { "${it.locale}:${it.word}" }
+            val dictionaryWords = tiers5.dictionary + tiers6.dictionary
+            com.quietgrid.cli.wordguess.appendWordGuessDictionary("${command.outDir}/wordguess_dictionary.json", locale, dictionaryWords)
 
-            println("Generated ${answerEntries.size}/${command.count} wordguess answers ($locale/$difficulty) + ${dictionaryEntries.size} dictionary words into ${command.outDir}")
+            println("Generated ${answerEntries.size}/${command.count} wordguess answers ($locale/$difficulty) + ${dictionaryWords.size} dictionary words into ${command.outDir}")
         }
         "animaldoku" -> {
             val sizes = ANIMALDOKU_SIZES_BY_DIFFICULTY.getValue(difficulty)
@@ -305,19 +302,40 @@ fun main(args: Array<String>) {
             val locale = command.locale
             val generator = com.quietgrid.cli.themeclear.ThemeClearGenerator(com.quietgrid.cli.themeclear.loadThemeClearThemes(locale))
             val state = GenerationState("${command.outDir}/.generation-state/themeclear-$locale.json")
+            val outFile = "${command.outDir}/themeclear_puzzles.json"
+            val serializer = com.quietgrid.engine.themeclear.ThemeClearBankEntry.serializer()
+            val perTheme = readPuzzleEntries(outFile, serializer)
+                .filter { it.difficulty == difficulty.key && it.locale == locale }
+                .groupingBy { it.themeId }
+                .eachCount()
+                .toMutableMap()
+            val quotas: Map<String?, Int> = command.fillTo
+                ?.let { com.quietgrid.cli.themeclear.themeClearThemeDeficits(perTheme, generator.themeIds, it).toMap<String?, Int>() }
+                ?: mapOf(null to command.count)
+            val requested = quotas.values.sum()
             val entries = mutableListOf<com.quietgrid.engine.themeclear.ThemeClearPuzzleEntry>()
-            var attempts = 0
             val startedAt = System.currentTimeMillis()
-            while (entries.size < command.count && attempts < command.count * 5) {
-                attempts++
-                val generated = generator.generate(difficulty, locale) ?: continue
-                if (state.hasTried(generated.id)) continue
-                state.recordTried(generated.id, "valid")
-                entries += generated
+            for ((themeId, quota) in quotas) {
+                var added = 0
+                var attempts = 0
+                while (added < quota && attempts < quota * 5) {
+                    attempts++
+                    val generated = generator.generate(difficulty, locale, themeId) ?: continue
+                    if ((perTheme[generated.themeId] ?: 0) >= com.quietgrid.cli.themeclear.THEMECLEAR_MAX_PUZZLES_PER_THEME) continue
+                    if (state.hasTried(generated.id)) continue
+                    state.recordTried(generated.id, "valid")
+                    entries += generated
+                    perTheme.merge(generated.themeId, 1, Int::plus)
+                    added++
+                }
             }
             state.save()
-            appendPuzzleEntries("${command.outDir}/themeclear_puzzles.json", entries, com.quietgrid.engine.themeclear.ThemeClearPuzzleEntry.serializer()) { it.id }
-            println("Generated ${entries.size}/${command.count} themeclear puzzles ($locale/$difficulty) in ${System.currentTimeMillis() - startedAt}ms into ${command.outDir}/themeclear_puzzles.json")
+            appendPuzzleEntries(outFile, entries.map { it.toBankEntry() }, serializer) { it.id }
+            println("Generated ${entries.size}/$requested themeclear puzzles ($locale/$difficulty) in ${System.currentTimeMillis() - startedAt}ms into $outFile")
+            val shortfall = quotas.filterKeys { it != null }
+                .mapValues { (themeId, quota) -> quota - entries.count { it.themeId == themeId } }
+                .filterValues { it > 0 }
+            if (shortfall.isNotEmpty()) println("Themes still short: $shortfall")
         }
         else -> error("Unknown or not-yet-wired game '${command.game}'.")
     }

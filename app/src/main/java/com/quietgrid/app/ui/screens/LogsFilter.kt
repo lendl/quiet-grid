@@ -10,7 +10,10 @@ import java.time.ZoneId
 
 enum class LogsMode { ALL, SOLO, CHALLENGER }
 
+private val knownGameKeys: Set<String> = GameId.entries.mapTo(HashSet()) { it.key }
+
 fun filterLogRecords(records: List<PlayRecord>, mode: LogsMode, gameId: GameId?): List<PlayRecord> = records
+    .filter { record -> record.gameId in knownGameKeys }
     .filter { record ->
         when (mode) {
             LogsMode.ALL -> true

@@ -1,6 +1,10 @@
 package com.quietgrid.engine.wordguess
 
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.serializer
 
 @Serializable
 data class WordGuessPuzzleEntry(
@@ -10,8 +14,5 @@ data class WordGuessPuzzleEntry(
     val word: String,
 )
 
-@Serializable
-data class WordGuessDictionaryEntry(
-    val locale: String,
-    val word: String,
-)
+val wordGuessDictionarySerializer: KSerializer<Map<String, List<String>>> =
+    MapSerializer(String.serializer(), ListSerializer(String.serializer()))

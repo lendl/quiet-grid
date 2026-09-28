@@ -1,17 +1,25 @@
 package com.quietgrid.app.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,13 +31,38 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.quietgrid.app.R
 import com.quietgrid.app.ui.theme.LocalIsDarkTheme
 import kotlinx.coroutines.delay
 
 private val BOARD_FRAME_SHAPE = RoundedCornerShape(20.dp)
 private val BOARD_FRAME_PADDING = 8.dp
 private val BOARD_FRAME_ELEVATION = 4.dp
+private const val LOADING_REVEAL_DELAY_MS = 250L
+
+@Composable
+private fun PuzzleLoadingIndicator() {
+    var revealed by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        delay(LOADING_REVEAL_DELAY_MS)
+        revealed = true
+    }
+    AnimatedVisibility(visible = revealed, enter = fadeIn(tween(200))) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            CircularProgressIndicator(Modifier.size(32.dp), strokeWidth = 3.dp)
+            Text(
+                stringResource(R.string.puzzle_play_loading),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
 
 @Composable
 private fun PuzzleBoardContainerBox(
@@ -94,6 +127,8 @@ private fun PuzzleBoardContainerBox(
                     }
                 }
             }
+        } else {
+            PuzzleLoadingIndicator()
         }
     }
 }

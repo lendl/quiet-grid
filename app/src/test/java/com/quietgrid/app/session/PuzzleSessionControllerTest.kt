@@ -9,10 +9,13 @@ import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.PlayRecord
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -174,7 +177,7 @@ class PuzzleSessionControllerTest {
         )
 
         controller.start(Difficulty.HARD, resume = false, requestedDailyDate = dailyDay)
-        advanceTimeBy(1_001)
+        advanceTimeBy(15_001)
 
         assertEquals(1, adapter.dailySessionCalls)
         assertEquals(0, adapter.freshSessionCalls)
@@ -285,7 +288,7 @@ class PuzzleSessionControllerTest {
     }
 
     @Test
-    fun `fresh start ticks elapsed seconds and persists meaningful progress`() = runTest {
+    fun `ticker counts every second but checkpoints meaningful progress every 15 seconds`() = runTest {
         val sessionStore = FakeSessionStore()
         val controller = PuzzleSessionController(
             backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
@@ -293,10 +296,69 @@ class PuzzleSessionControllerTest {
         )
 
         controller.start(Difficulty.EASY, resume = false)
-        advanceTimeBy(1_001)
+        advanceTimeBy(14_001)
+        assertEquals(14.0, controller.elapsedSeconds, 0.0)
+        assertEquals(0, sessionStore.saveCount)
 
-        assertEquals(1.0, controller.elapsedSeconds, 0.0)
-        assertTrue(sessionStore.saveCount > 0)
+        advanceTimeBy(1_000)
+        assertEquals(1, sessionStore.saveCount)
+        assertEquals(15.0, sessionStore.activeSession.first()!!.elapsedSeconds, 0.0)
+    }
+
+    @Test
+    fun `going to the background saves the session once`() = runTest {
+        val sessionStore = FakeSessionStore()
+        var foreground = true
+        val controller = PuzzleSessionController(
+            backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
+            isAppForeground = { foreground },
+        )
+
+        controller.start(Difficulty.EASY, resume = false)
+        advanceTimeBy(3_001)
+        foreground = false
+        advanceTimeBy(5_000)
+
+        assertEquals(1, sessionStore.saveCount)
+        assertEquals(3.0, sessionStore.activeSession.first()!!.elapsedSeconds, 0.0)
+    }
+
+    @Test
+    fun `cancelling the scope saves the latest elapsed time`() = runTest {
+        val sessionStore = FakeSessionStore()
+        val scope = CoroutineScope(StandardTestDispatcher(testScheduler))
+        val controller = PuzzleSessionController(
+            scope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
+            isAppForeground = { true },
+        )
+
+        controller.start(Difficulty.EASY, resume = false)
+        advanceTimeBy(7_001)
+        scope.cancel()
+        runCurrent()
+
+        assertEquals(1, sessionStore.saveCount)
+        assertEquals(7.0, sessionStore.activeSession.first()!!.elapsedSeconds, 0.0)
+    }
+
+    @Test
+    fun `cancelling the scope after the puzzle ended saves nothing`() = runTest {
+        val sessionStore = FakeSessionStore()
+        val scope = CoroutineScope(StandardTestDispatcher(testScheduler))
+        val controller = PuzzleSessionController(
+            scope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
+            isAppForeground = { true },
+        )
+
+        controller.start(Difficulty.EASY, resume = false)
+        advanceTimeBy(2_001)
+        controller.endPuzzle()
+        advanceTimeBy(500)
+        scope.cancel()
+        runCurrent()
+
+        assertEquals(0, sessionStore.saveCount)
+        assertTrue(sessionStore.cleared)
     }
 
     @Test

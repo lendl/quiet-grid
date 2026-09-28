@@ -2,10 +2,11 @@ package com.quietgrid.cli.starbattle
 
 import com.quietgrid.engine.starbattle.StarBattleSolveResult
 import com.quietgrid.engine.starbattle.solveStarBattle
+import kotlin.random.Random
 
 private val ORTHOGONAL_DELTAS = listOf(-1 to 0, 1 to 0, 0 to -1, 0 to 1)
 
-fun growStarBattleRegions(size: Int, solution: List<List<Int>>): List<List<Int>>? {
+fun growStarBattleRegions(size: Int, solution: List<List<Int>>, random: Random = Random.Default): List<List<Int>>? {
     val regionOf = Array(size) { IntArray(size) { -1 } }
     val claimed = List(size) { mutableListOf<Pair<Int, Int>>() }
     for (row in 0 until size) {
@@ -20,7 +21,7 @@ fun growStarBattleRegions(size: Int, solution: List<List<Int>>): List<List<Int>>
     var unclaimed = size * size - claimed.sumOf { it.size }
 
     while (unclaimed > 0) {
-        val order = (0 until size).shuffled()
+        val order = (0 until size).shuffled(random)
         var progressed = false
         for (regionId in order) {
             if (unclaimed == 0) break
@@ -33,7 +34,7 @@ fun growStarBattleRegions(size: Int, solution: List<List<Int>>): List<List<Int>>
                 }
             }
             if (candidates.isEmpty()) continue
-            val (cr, cc) = candidates.random()
+            val (cr, cc) = candidates.random(random)
             regionOf[cr][cc] = regionId
             claimed[regionId].add(cr to cc)
             unclaimed--
@@ -52,12 +53,13 @@ fun repairStarBattleRegionsTowardUniqueSolution(
     solution: List<List<Int>>,
     initialRegions: List<List<Int>>,
     maxRepairAttempts: Int = 50,
+    random: Random = Random.Default,
 ): StarBattleRepairedPuzzle? {
     var regions = initialRegions
     repeat(maxRepairAttempts) {
         val result = solveStarBattle(size, k, regions)
         if (result.solved) return StarBattleRepairedPuzzle(regions, result)
-        regions = mutateOneStarBattleBoundaryCell(size, solution, regions) ?: return@repeat
+        regions = mutateOneStarBattleBoundaryCell(size, solution, regions, random = random) ?: return@repeat
     }
     val finalResult = solveStarBattle(size, k, regions)
     return if (finalResult.solved) StarBattleRepairedPuzzle(regions, finalResult) else null
@@ -92,6 +94,7 @@ internal fun mutateOneStarBattleBoundaryCell(
     solution: List<List<Int>>,
     regionOf: List<List<Int>>,
     minDonorRegionSizeToPrefer: Int = MIN_DONOR_REGION_SIZE_TO_PREFER_SB,
+    random: Random = Random.Default,
 ): List<List<Int>>? {
     val regionSizes = IntArray(size)
     for (row in 0 until size) for (col in 0 until size) regionSizes[regionOf[row][col]]++
@@ -122,6 +125,6 @@ internal fun mutateOneStarBattleBoundaryCell(
     }
     val pool = balancedCandidates.ifEmpty { allCandidates }
     if (pool.isEmpty()) return null
-    val (row, col, newRegion) = pool.random()
+    val (row, col, newRegion) = pool.random(random)
     return regionOf.mapIndexed { r, line -> if (r != row) line else line.mapIndexed { c, v -> if (c != col) v else newRegion } }
 }

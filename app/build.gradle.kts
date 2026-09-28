@@ -109,7 +109,7 @@ abstract class GenerateThemeCountsTask : DefaultTask() {
             @Suppress("UNCHECKED_CAST")
             val entries = groovy.json.JsonSlurper().parse(file) as List<Map<String, Any?>>
             entries.forEach { entry ->
-                val tier = entry["difficulty"] as String
+                val tier = entry["difficulty"] as String? ?: file.name.substringAfter("_puzzles_").substringBefore(".json")
                 val locale = entry["locale"] as String? ?: "en"
                 val theme = entry["themeId"] as String
                 val byTheme = counts.getOrPut(game) { sortedMapOf() }

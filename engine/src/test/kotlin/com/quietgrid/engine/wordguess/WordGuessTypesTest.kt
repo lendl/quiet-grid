@@ -17,9 +17,10 @@ class WordGuessTypesTest {
     }
 
     @Test
-    fun `WordGuessDictionaryEntry round-trips through JSON`() {
-        val entry = WordGuessDictionaryEntry(locale = "de", word = "weiss")
-        val encoded = json.encodeToString(entry)
-        assertEquals(entry, json.decodeFromString<WordGuessDictionaryEntry>(encoded))
+    fun `dictionary stores each locale's words as one list`() {
+        val dictionary = mapOf("de" to listOf("weiss", "haben"), "nl" to listOf("fiets"))
+        val encoded = json.encodeToString(wordGuessDictionarySerializer, dictionary)
+        assertEquals("""{"de":["weiss","haben"],"nl":["fiets"]}""", encoded)
+        assertEquals(dictionary, json.decodeFromString(wordGuessDictionarySerializer, encoded))
     }
 }

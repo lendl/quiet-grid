@@ -19,10 +19,14 @@ val THEMECLEAR_TIERS: Map<Difficulty, ThemeClearTierSpec> = mapOf(
     Difficulty.EXPERT to ThemeClearTierSpec(letters = 40..48, minWords = 5, minBlindSuccess = 0.0, maxBlindSuccess = 0.20),
 )
 
-fun themeClearMeetsTier(difficulty: Difficulty, letterCount: Int, metrics: ThemeClearMetrics): Boolean {
+private fun ThemeClearTierSpec.acceptsBlindPlay(letterCount: Int, blindSuccessRate: Double): Boolean =
+    letterCount in letters && blindSuccessRate >= minBlindSuccess && blindSuccessRate <= maxBlindSuccess
+
+fun themeClearMeetsTier(difficulty: Difficulty, letterCount: Int, metrics: ThemeClearMetrics): Boolean =
+    THEMECLEAR_TIERS.getValue(difficulty).acceptsBlindPlay(letterCount, metrics.blindSuccessRate) && metrics.finishCount >= 1
+
+fun themeClearMeetsTier(difficulty: Difficulty, letters: String, solver: ThemeClearSolver): Boolean {
     val spec = THEMECLEAR_TIERS.getValue(difficulty)
-    return letterCount in spec.letters &&
-        metrics.finishCount >= 1 &&
-        metrics.blindSuccessRate >= spec.minBlindSuccess &&
-        metrics.blindSuccessRate <= spec.maxBlindSuccess
+    if (letters.length !in spec.letters) return false
+    return spec.acceptsBlindPlay(letters.length, solver.blindSuccessRate(letters)) && solver.findFinish(letters) != null
 }

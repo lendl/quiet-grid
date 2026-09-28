@@ -3,10 +3,12 @@ package com.quietgrid.cli.wordsearch
 import com.quietgrid.cli.themes.loadSharedThemes
 import com.quietgrid.engine.core.Difficulty
 import com.quietgrid.engine.wordsearch.WordPlacement
+import com.quietgrid.engine.wordsearch.WordSearchBankEntry
 import com.quietgrid.engine.wordsearch.WordSearchDirection
 import com.quietgrid.engine.wordsearch.WordSearchPuzzleEntry
 import com.quietgrid.engine.wordsearch.hasCoverageViolation
 import com.quietgrid.engine.wordsearch.hasDuplicateOccurrence
+import com.quietgrid.engine.wordsearch.toPuzzleEntry
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
@@ -20,9 +22,9 @@ class WordSearchBankVerificationTest {
         private val bank: List<WordSearchPuzzleEntry> by lazy {
             Difficulty.entries.flatMap { difficulty ->
                 json.decodeFromString(
-                    ListSerializer(WordSearchPuzzleEntry.serializer()),
+                    ListSerializer(WordSearchBankEntry.serializer()),
                     File("app/src/main/assets/wordsearch_puzzles_${difficulty.key}.json").readText(),
-                )
+                ).map { it.toPuzzleEntry(difficulty.key) }
             }
         }
     }
@@ -50,7 +52,6 @@ class WordSearchBankVerificationTest {
     fun `every puzzle uses a shared theme id for its locale`() {
         bank.forEach { entry ->
             assertTrue("${entry.id}: ${entry.locale}/${entry.themeId}", wordsByTheme[entry.locale]?.containsKey(entry.themeId) == true)
-            assertEquals(entry.id, entry.themeId, entry.hiddenWord.clue)
         }
     }
 

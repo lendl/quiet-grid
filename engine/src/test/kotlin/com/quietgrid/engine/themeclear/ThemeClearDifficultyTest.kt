@@ -1,11 +1,26 @@
 package com.quietgrid.engine.themeclear
 
 import com.quietgrid.engine.core.Difficulty
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ThemeClearDifficultyTest {
+
+    @Test
+    fun `solver tier check agrees with the full metrics check`() {
+        val solver = ThemeClearSolver(ThemeClearDictionary(listOf("CAT", "DOG", "EEL", "OWL", "APE", "YAK", "BAT", "RAT", "TAB", "ACT")))
+        val samples = listOf("CATDOGEELOWL", "CATDOGEELOWX", "BATRATTABACT", "CATDOGEELOWLAPEYAK", "CATDOGEELOWLAPEYAKBAT")
+        Difficulty.entries.forEach { difficulty ->
+            samples.forEach { letters ->
+                val expected = themeClearMeetsTier(difficulty, letters.length, solver.analyze(letters))
+                assertEquals("$difficulty $letters", expected, themeClearMeetsTier(difficulty, letters, solver))
+            }
+        }
+        assertTrue(themeClearMeetsTier(Difficulty.EASY, "CATDOGEELOWL", solver))
+        assertFalse(themeClearMeetsTier(Difficulty.EASY, "CATDOGEELOWX", solver))
+    }
 
     @Test
     fun `letter bands of all tiers are disjoint and ascending`() {

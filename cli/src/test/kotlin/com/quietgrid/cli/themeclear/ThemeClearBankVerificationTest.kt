@@ -1,10 +1,12 @@
 package com.quietgrid.cli.themeclear
 
 import com.quietgrid.engine.core.Difficulty
+import com.quietgrid.engine.themeclear.ThemeClearBankEntry
 import com.quietgrid.engine.themeclear.ThemeClearDictionary
 import com.quietgrid.engine.themeclear.ThemeClearPuzzleEntry
 import com.quietgrid.engine.themeclear.ThemeClearSolver
 import com.quietgrid.engine.themeclear.themeClearMeetsTier
+import com.quietgrid.engine.themeclear.toPuzzleEntry
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
@@ -15,7 +17,8 @@ import java.io.File
 class ThemeClearBankVerificationTest {
     private val bankJson = Json { ignoreUnknownKeys = true }
     private val bank: List<ThemeClearPuzzleEntry> = bankJson
-        .decodeFromString(ListSerializer(ThemeClearPuzzleEntry.serializer()), File("app/src/main/assets/themeclear_puzzles.json").readText())
+        .decodeFromString(ListSerializer(ThemeClearBankEntry.serializer()), File("app/src/main/assets/themeclear_puzzles.json").readText())
+        .map { it.toPuzzleEntry() }
     private val themesByLocale: Map<String, Map<String, Set<String>>> =
         com.quietgrid.cli.themes.loadSharedThemes()
             .mapValues { (_, themes) ->
@@ -29,6 +32,23 @@ class ThemeClearBankVerificationTest {
                 assertTrue("${difficulty.key}", entries.count { it.difficulty == difficulty.key } >= 50)
             }
         }
+    }
+
+    @Test
+    fun `every theme has at least 30 puzzles per difficulty and locale`() {
+        val counts = bank.groupingBy { Triple(it.difficulty, it.locale, it.themeId) }.eachCount()
+        val buckets = Difficulty.entries.flatMap { difficulty ->
+            themesByLocale.flatMap { (locale, themes) -> themes.keys.map { themeId -> Triple(difficulty.key, locale, themeId) } }
+        }
+        val short = buckets.filter { (counts[it] ?: 0) < 30 }.map { "$it=${counts[it] ?: 0}" }
+        assertTrue("${short.size} of ${buckets.size} buckets have fewer than 30 puzzles: ${short.take(20)}", short.isEmpty())
+    }
+
+    @Test
+    fun `no theme exceeds the puzzle cap per difficulty and locale`() {
+        val over = bank.groupingBy { Triple(it.difficulty, it.locale, it.themeId) }.eachCount()
+            .filterValues { it > THEMECLEAR_MAX_PUZZLES_PER_THEME }
+        assertTrue("${over.size} groups exceed the cap: ${over.entries.take(20)}", over.isEmpty())
     }
 
     @Test
@@ -55,14 +75,15 @@ class ThemeClearBankVerificationTest {
     }
 
     @Test
-    fun `stored metrics match a fresh solver run and meet the tier`() {
-        bank.forEach { entry ->
-            val themes = themesByLocale.getValue(entry.locale)
-            val solver = ThemeClearSolver(ThemeClearDictionary(themes.getValue(entry.themeId)))
-            val letters = entry.grid.joinToString("")
-            assertEquals(entry.id, entry.metrics, solver.analyze(letters))
+    fun `every puzzle meets its tier on a fresh solver run`() {
+        val solvers = HashMap<Pair<String, String>, ThemeClearSolver>()
+        val failing = bank.filterNot { entry ->
+            val solver = solvers.getOrPut(entry.locale to entry.themeId) {
+                ThemeClearSolver(ThemeClearDictionary(themesByLocale.getValue(entry.locale).getValue(entry.themeId)))
+            }
             val difficulty = Difficulty.entries.first { it.key == entry.difficulty }
-            assertTrue(entry.id, themeClearMeetsTier(difficulty, letters.length, entry.metrics))
+            themeClearMeetsTier(difficulty, entry.grid.joinToString(""), solver)
         }
+        assertTrue("${failing.size} puzzles miss their tier: ${failing.take(20).map { it.id }}", failing.isEmpty())
     }
 }

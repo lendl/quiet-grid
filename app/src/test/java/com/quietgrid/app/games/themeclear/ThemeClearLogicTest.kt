@@ -1,6 +1,5 @@
 package com.quietgrid.app.games.themeclear
 
-import com.quietgrid.engine.themeclear.ThemeClearMetrics
 import com.quietgrid.engine.themeclear.ThemeClearPuzzleEntry
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -17,7 +16,6 @@ class ThemeClearLogicTest {
         cols = 3,
         grid = listOf("CAT", "DOG"),
         words = listOf("CAT", "DOG"),
-        metrics = ThemeClearMetrics(1, 0, 2),
     )
 
     private fun select(session: ThemeClearSession, vararg ids: Int) = ids.fold(session) { acc, id -> tcToggleTile(acc, id) }

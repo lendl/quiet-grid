@@ -4,6 +4,7 @@ import com.quietgrid.engine.starbattle.StarBattleSolveResult
 import com.quietgrid.engine.starbattle.analyzeStarBattleSolveResult
 import com.quietgrid.engine.starbattle.classifyStarBattleK2Grade
 import com.quietgrid.engine.starbattle.solveStarBattle
+import kotlin.random.Random
 
 data class StarBattleHardnessKey(val maxChainDepth: Int, val chainRepeats: Int) : Comparable<StarBattleHardnessKey> {
     override fun compareTo(other: StarBattleHardnessKey): Int {
@@ -40,6 +41,7 @@ fun softenStarBattleTowardGrade(
     initialSolveResult: StarBattleSolveResult,
     targetGrade: String,
     maxStallMutations: Int = 2000,
+    random: Random = Random.Default,
 ): StarBattleRepairedPuzzle {
     if (starBattleGradeRank(classifyStarBattleK2Grade(initialSolveResult)) < starBattleGradeRank(targetGrade)) {
         return StarBattleRepairedPuzzle(initialRegions, initialSolveResult)
@@ -51,7 +53,7 @@ fun softenStarBattleTowardGrade(
     var stall = 0
 
     while (stall < maxStallMutations && classifyStarBattleK2Grade(bestResult) != targetGrade) {
-        val mutated = mutateOneStarBattleBoundaryCell(size, solution, bestRegions)
+        val mutated = mutateOneStarBattleBoundaryCell(size, solution, bestRegions, random = random)
         if (mutated == null) {
             stall++
             continue

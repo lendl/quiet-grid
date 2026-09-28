@@ -372,7 +372,7 @@ private fun GamePlayPickerTab(
 @Composable
 private fun GameStatsTab(gameId: GameId) {
     val repositories: RepositoriesViewModel = hiltViewModel()
-    val stats by repositories.statsRepository.statsFor(gameId).collectAsState(initial = null)
+    val stats by remember(repositories, gameId) { repositories.statsRepository.statsFor(gameId) }.collectAsState(initial = null)
     val currentStats = stats ?: return
     val overview = remember(currentStats) { buildStatsOverview(gameId, mapOf(gameId to currentStats)) }
 
@@ -420,7 +420,8 @@ private fun GameStatsTab(gameId: GameId) {
             else -> null
         }
         if (challengerStatsTitleRes != null && challengerStatsBestRunRes != null && challengerSolvedLabelRes != null && challengerScoreLabelRes != null) {
-            val challengerStats by repositories.statsRepository.challengerStatsFor(gameId).collectAsState(initial = null)
+            val challengerStats by remember(repositories, gameId) { repositories.statsRepository.challengerStatsFor(gameId) }
+                .collectAsState(initial = null)
             challengerStats?.let { current ->
                 HorizontalDivider(Modifier.padding(top = 20.dp))
                 Text(

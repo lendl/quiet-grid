@@ -166,11 +166,13 @@ fun CompletionScreen(
     val nbackBreakdown = highlight as? CompletionHighlight.NBackBreakdown
 
     val repositories: RepositoriesViewModel = hiltViewModel()
-    val stats by repositories.statsRepository.statsFor(gameId).collectAsState(initial = null)
+    val stats by remember(repositories, gameId) { repositories.statsRepository.statsFor(gameId) }.collectAsState(initial = null)
     val streak = stats?.forDifficulty(difficulty)?.currentStreak ?: 0
 
-    val gameRecords by repositories.playHistoryRepository.recordsFor(gameId).collectAsState(initial = emptyList())
-    val allHistoryRecords by repositories.playHistoryRepository.allRecords().collectAsState(initial = emptyList())
+    val gameRecords by remember(repositories, gameId) { repositories.playHistoryRepository.recordsFor(gameId) }
+        .collectAsState(initial = emptyList())
+    val allHistoryRecords by remember(repositories) { repositories.playHistoryRepository.allRecords() }
+        .collectAsState(initial = emptyList())
     val currentWinTimestamp = remember(gameRecords) { gameRecords.maxOfOrNull { it.timestampMillis } ?: 0L }
     val gameMilestone = remember(gameRecords) { milestoneReached(gameRecords.count { it.solved }) }
     val difficultyMilestone = remember(gameRecords, difficulty) {
@@ -397,12 +399,7 @@ fun CompletionScreen(
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
-                        Text(
-                            (score * scoreProgress.value).roundToInt().toString(),
-                            style = MaterialTheme.typography.displayMedium,
-                            fontWeight = FontWeight.Black,
-                            modifier = Modifier.padding(top = 2.dp),
-                        )
+                        CountUpScore(score = score, progress = { scoreProgress.value })
 
                         Row(
                             Modifier.padding(top = 14.dp),
@@ -499,6 +496,16 @@ private fun NonogramMiniPicture(solution: List<List<Boolean>>, fillColor: Color,
             }
         }
     }
+}
+
+@Composable
+private fun CountUpScore(score: Int, progress: () -> Float) {
+    Text(
+        (score * progress()).roundToInt().toString(),
+        style = MaterialTheme.typography.displayMedium,
+        fontWeight = FontWeight.Black,
+        modifier = Modifier.padding(top = 2.dp),
+    )
 }
 
 @Composable

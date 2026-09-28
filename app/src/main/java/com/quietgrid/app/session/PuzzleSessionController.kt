@@ -14,15 +14,18 @@ import com.quietgrid.app.data.PlayRecord
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 
 private const val FINISH_TRANSITION_DELAY_MS = 450L
 private const val TICK_INTERVAL_MS = 1000L
+private const val CHECKPOINT_INTERVAL_TICKS = 15
 
 class PuzzleSessionController<TSession, TResult>(
     private val scope: CoroutineScope,
@@ -209,30 +212,47 @@ class PuzzleSessionController<TSession, TResult>(
     }
 
     private suspend fun runTicker() {
-        while (true) {
-            delay(TICK_INTERVAL_MS)
-            if (finalized || session == null) continue
-            if (!isAppForeground()) continue
-            elapsedSeconds += 1.0
-            persistIfMeaningful()
+        var ticksSinceCheckpoint = 0
+        var wasForeground = isAppForeground()
+        try {
+            while (true) {
+                delay(TICK_INTERVAL_MS)
+                if (finalized || session == null) continue
+                if (!isAppForeground()) {
+                    if (wasForeground) persistIfMeaningful()
+                    wasForeground = false
+                    continue
+                }
+                wasForeground = true
+                elapsedSeconds += 1.0
+                ticksSinceCheckpoint++
+                if (ticksSinceCheckpoint >= CHECKPOINT_INTERVAL_TICKS) {
+                    ticksSinceCheckpoint = 0
+                    persistIfMeaningful()
+                }
+            }
+        } finally {
+            withContext(NonCancellable) {
+                meaningfulEnvelope()?.let { sessionStore.save(it) }
+            }
         }
     }
 
+    private fun meaningfulEnvelope(): ActiveSessionEnvelope? {
+        val current = session ?: return null
+        if (finalized) return null
+        if (!adapter.hasMeaningfulProgress(current)) return null
+        return ActiveSessionEnvelope(
+            gameId = adapter.gameId.key,
+            elapsedSeconds = elapsedSeconds,
+            payload = adapter.encode(current),
+            dailyDate = dailyDate?.toString(),
+            dailyTier = dailyDate?.let { difficulty.key },
+        )
+    }
+
     private fun persistIfMeaningful() {
-        val current = session ?: return
-        if (finalized) return
-        if (!adapter.hasMeaningfulProgress(current)) return
-        val payload = adapter.encode(current)
-        scope.launch {
-            sessionStore.save(
-                ActiveSessionEnvelope(
-                    gameId = adapter.gameId.key,
-                    elapsedSeconds = elapsedSeconds,
-                    payload = payload,
-                    dailyDate = dailyDate?.toString(),
-                    dailyTier = dailyDate?.let { difficulty.key },
-                ),
-            )
-        }
+        val envelope = meaningfulEnvelope() ?: return
+        scope.launch { sessionStore.save(envelope) }
     }
 }

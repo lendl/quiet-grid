@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.quietgrid.app.core.mix.Mix
 import com.quietgrid.app.core.mix.MixEntry
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
@@ -22,14 +23,19 @@ private val mixJson = Json { ignoreUnknownKeys = true }
 private val MIXES_KEY = stringPreferencesKey("mixes")
 private val ACTIVE_MIX_ID_KEY = stringPreferencesKey("active_mix_id")
 
-private fun Preferences.decodeMixes(): MixesEnvelope =
-    this[MIXES_KEY]?.let { raw -> runCatching { mixJson.decodeFromString<MixesEnvelope>(raw) }.getOrNull() } ?: MixesEnvelope()
+private fun decodeMixes(raw: String?): MixesEnvelope =
+    raw?.let { runCatching { mixJson.decodeFromString<MixesEnvelope>(it) }.getOrNull() } ?: MixesEnvelope()
+
+private fun Preferences.decodeMixes(): MixesEnvelope = decodeMixes(this[MIXES_KEY])
 
 @Singleton
 class MixRepository @Inject constructor(private val dataStore: DataStore<Preferences>) {
-    val mixes: Flow<List<Mix>> = dataStore.data.map { it.decodeMixes().mixes }
+    val mixes: Flow<List<Mix>> = dataStore.data
+        .map { it[MIXES_KEY] }
+        .distinctUntilChanged()
+        .map { decodeMixes(it).mixes }
 
-    val activeMixId: Flow<String?> = dataStore.data.map { it[ACTIVE_MIX_ID_KEY] }
+    val activeMixId: Flow<String?> = dataStore.data.map { it[ACTIVE_MIX_ID_KEY] }.distinctUntilChanged()
 
     suspend fun saveMix(mix: Mix) {
         dataStore.edit { prefs ->

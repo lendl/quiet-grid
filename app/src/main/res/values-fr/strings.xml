@@ -386,14 +386,14 @@
     <string name="takuzu_hint_repair_title">%1$s : correction nécessaire</string>
     <string name="takuzu_hint_find_pairs_body">Place %1$d dans la case mise en évidence. Pourquoi : deux %2$d sont déjà côte à côte dans %3$s, donc un autre %2$d créerait trois à la suite.</string>
     <string name="takuzu_hint_avoid_trios_body">Place %1$d dans la case mise en évidence. Pourquoi : %2$s montre déjà %3$d _ %3$d, donc la case ouverte entre eux doit être %1$d pour éviter trois à la suite.</string>
-    <string name="takuzu_hint_complete_lines_body">Place %1$d dans la case mise en évidence. Pourquoi : %2$s a déjà %3$d %4$d, donc la case ouverte restante doit être %1$d pour garder la ligne équilibrée.</string>
+    <string name="takuzu_hint_complete_lines_body">Place %1$d dans la case mise en évidence. Pourquoi : %2$s a déjà %3$d %4$d%5$s, donc la case ouverte restante doit être %1$d pour garder la ligne équilibrée.</string>
     <string name="takuzu_hint_eliminate_filled_lines_body">Place %1$d dans la case mise en évidence. Pourquoi : si %2$s correspondait à %3$s, les %4$s complètes ne seraient plus uniques.</string>
     <string name="takuzu_hint_reveal_title">Prochain coup</string>
     <string name="takuzu_hint_reveal_body">Place %1$d dans la case mise en évidence.</string>
     <string name="takuzu_hint_repair_avoid_trios_body">Change une case mise en évidence dans %1$s. Pourquoi : trois %2$d à la suite enfreignent la règle sans triplets.</string>
-    <string name="takuzu_hint_repair_complete_lines_body">Change une case mise en évidence dans %1$s. Pourquoi : %1$s contient déjà %2$d %3$d, mais la limite est %5$d.</string>
+    <string name="takuzu_hint_repair_complete_lines_body">Change une case mise en évidence dans %1$s. Pourquoi : %1$s contient déjà %2$d %3$d%4$s, mais la limite est %5$d.</string>
     <string name="takuzu_hint_repair_eliminate_filled_lines_body">Change une case mise en évidence. Pourquoi : %2$s et %3$s sont identiques, mais les %1$s complètes doivent rester uniques.</string>
-    <string name="takuzu_hint_digit_plural_suffix">s</string>
+    <string name="takuzu_hint_digit_plural_suffix"></string>
     <string name="takuzu_how_to_play_scoring">Commence à 10 000 et diminue pendant que le chronomètre tourne. Chaque ligne incorrectement complétée coûte 500 points. Le score diminue plus lentement aux difficultés élevées.</string>
     <string name="takuzu_tip_watch_flashes_title">Surveiller les éclairs</string>
     <string name="takuzu_tip_watch_flashes_body">Quand tu complètes correctement une ligne ou une colonne, toutes ses cases clignotent brièvement en confirmation.</string>

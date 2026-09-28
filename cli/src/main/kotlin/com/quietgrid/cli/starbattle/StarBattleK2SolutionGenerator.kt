@@ -1,30 +1,32 @@
 package com.quietgrid.cli.starbattle
 
-fun generateStarBattleSolution(size: Int, k: Int, maxAttempts: Int = 2000): List<List<Int>>? {
+import kotlin.random.Random
+
+fun generateStarBattleSolution(size: Int, k: Int, maxAttempts: Int = 2000, random: Random = Random.Default): List<List<Int>>? {
     repeat(maxAttempts) {
-        val result = tryBuildStarBattleSolution(size, k)
+        val result = tryBuildStarBattleSolution(size, k, random)
         if (result != null) return result
     }
     return null
 }
 
-private fun tryBuildStarBattleSolution(size: Int, k: Int): List<List<Int>>? {
+private fun tryBuildStarBattleSolution(size: Int, k: Int, random: Random): List<List<Int>>? {
     val colCount = IntArray(size)
     val rows = mutableListOf<List<Int>>()
     for (row in 0 until size) {
         val prevRowCols = rows.lastOrNull() ?: emptyList()
         val available = (0 until size).filter { col -> colCount[col] < k }
-        val chosen = chooseNonTouchingColumns(available, prevRowCols, k) ?: return null
+        val chosen = chooseNonTouchingColumns(available, prevRowCols, k, random) ?: return null
         chosen.forEach { colCount[it]++ }
         rows.add(chosen.sorted())
     }
     return if (colCount.all { it == k }) rows else null
 }
 
-private fun chooseNonTouchingColumns(available: List<Int>, prevRowCols: List<Int>, k: Int): List<Int>? {
+private fun chooseNonTouchingColumns(available: List<Int>, prevRowCols: List<Int>, k: Int, random: Random): List<Int>? {
     val usable = available.filter { col -> prevRowCols.none { prev -> kotlin.math.abs(col - prev) <= 1 } }
     if (usable.size < k) return null
-    val shuffled = usable.shuffled()
+    val shuffled = usable.shuffled(random)
     val chosen = mutableListOf<Int>()
     for (col in shuffled) {
         if (chosen.size == k) break

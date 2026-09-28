@@ -38,9 +38,10 @@ private enum class StatsView { OVERVIEW, LOGS }
 fun StatsScreen(onOpenAccount: () -> Unit) {
     val repositories: RepositoriesViewModel = hiltViewModel()
     val gameIds = remember { GameCatalog.games.map { it.id } }
-    val statsByGame by repositories.statsRepository.statsForGames(gameIds)
+    val statsByGame by remember(repositories) { repositories.statsRepository.statsForGames(gameIds) }
         .collectAsState(initial = emptyMap())
-    val records by repositories.playHistoryRepository.allRecords().collectAsState(initial = emptyList())
+    val records by remember(repositories) { repositories.playHistoryRepository.allRecords() }
+        .collectAsState(initial = emptyList())
     var view by rememberSaveable { mutableStateOf(StatsView.OVERVIEW) }
     var selectedGame by remember { mutableStateOf<GameId?>(null) }
     val filterGames = remember(statsByGame, records, view) {

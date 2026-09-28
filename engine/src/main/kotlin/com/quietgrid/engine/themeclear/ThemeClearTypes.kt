@@ -32,7 +32,6 @@ data class ThemeClearPuzzleEntry(
     val cols: Int,
     val grid: List<String>,
     val words: List<String>,
-    val metrics: ThemeClearMetrics,
     val locale: String = "en",
 )
 

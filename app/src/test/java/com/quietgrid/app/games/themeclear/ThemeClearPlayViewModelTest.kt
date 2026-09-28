@@ -10,7 +10,6 @@ import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeSessionStore
 import com.quietgrid.app.testutil.FakeStatsStore
 import com.quietgrid.engine.themeclear.ThemeClearDictionary
-import com.quietgrid.engine.themeclear.ThemeClearMetrics
 import com.quietgrid.engine.themeclear.ThemeClearPuzzleEntry
 import com.quietgrid.engine.themeclear.ThemeClearSelectionState
 import io.mockk.coEvery
@@ -47,7 +46,6 @@ class ThemeClearPlayViewModelTest {
         cols = 3,
         grid = listOf("CAT", "DOG"),
         words = listOf("CAT", "DOG"),
-        metrics = ThemeClearMetrics(1, 0, 2),
     )
 
     private var dictionary = ThemeClearDictionary(listOf("CAT", "DOG", "COD", "CODA"))
@@ -198,7 +196,6 @@ class ThemeClearPlayViewModelTest {
             cols = 3,
             grid = listOf("CAT", "DOG", "EEL"),
             words = listOf("CAT", "DOG", "EEL"),
-            metrics = ThemeClearMetrics(1, 0, 3),
         )
         coEvery { ThemeClearPuzzleBank.randomPuzzle(any(), any(), any(), any(), any()) } returns puzzle3x3
         val viewModel = newViewModel()

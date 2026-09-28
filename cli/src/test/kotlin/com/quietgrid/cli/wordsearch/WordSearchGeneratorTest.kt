@@ -9,10 +9,10 @@ class WordSearchGeneratorTest {
     @Test
     fun `generateWordSearchPuzzle builds the requested theme`() {
         val entry = (1..20).firstNotNullOfOrNull {
-            generateWordSearchPuzzle(rows = 8, cols = 8, difficulty = Difficulty.EASY, preferredLanguages = listOf("en"), themeId = "space")
+            generateWordSearchPuzzle(rows = 8, cols = 8, difficulty = Difficulty.EASY, preferredLanguages = listOf("en"), themeId = "animals")
         }
         requireNotNull(entry)
-        assertEquals("space", entry.themeId)
+        assertEquals("animals", entry.themeId)
     }
 
     @Test
