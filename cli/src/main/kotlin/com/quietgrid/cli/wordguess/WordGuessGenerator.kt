@@ -14,9 +14,9 @@ fun generateWordGuessAnswerEntries(
 ): List<WordGuessPuzzleEntry> {
     val pool = when (difficulty) {
         Difficulty.EASY -> tiers5.common
-        Difficulty.MEDIUM -> tiers5.full
+        Difficulty.MEDIUM -> wideWordGuessPool(tiers5)
         Difficulty.HARD -> tiers6.common
-        Difficulty.EXPERT -> tiers6.full
+        Difficulty.EXPERT -> wideWordGuessPool(tiers6)
     }
 
     return pool

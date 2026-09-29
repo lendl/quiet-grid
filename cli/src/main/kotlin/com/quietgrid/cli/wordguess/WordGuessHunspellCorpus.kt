@@ -8,6 +8,8 @@ private val cache = mutableMapOf<String, List<String>>()
 
 private val unescapedSlash = Regex("(?<!\\\\)/")
 
+val WORDGUESS_COMMON_NOUN_FLAGS: Map<String, String> = mapOf("de" to "m")
+
 private fun compoundPositionFlags(affText: String): Set<String> {
     val flagWidth = if (Regex("(?m)^FLAG\\s+long").containsMatchIn(affText)) 2 else 1
     return Regex("(?m)^COMPOUND(BEGIN|MIDDLE|END)\\s+(\\S+)")
@@ -17,7 +19,7 @@ private fun compoundPositionFlags(affText: String): Set<String> {
         .toSet()
 }
 
-fun loadWordGuessHunspellWords(locale: String): List<String> {
+fun loadWordGuessHunspellWords(locale: String, commonNounFlag: String? = WORDGUESS_COMMON_NOUN_FLAGS[locale]): List<String> {
     cache[locale]?.let { return it }
     val classLoader = object {}.javaClass.classLoader
 
@@ -49,10 +51,14 @@ fun loadWordGuessHunspellWords(locale: String): List<String> {
                 flags.chunked(flagWidth).filterNot { it in compoundFlags }.joinToString("")
             }
 
+            val isCommonNoun = commonNounFlag != null && commonNounFlag in flags.chunked(flagWidth)
+
             for (affixedWord in generator.getAllWordForms(stem, strippedFlags, checkCanceled)) {
                 val word = affixedWord.word
                 if (word.none { it.isUpperCase() }) {
                     words.add(word)
+                } else if (isCommonNoun && word.first().isUpperCase() && word.drop(1).none { it.isUpperCase() }) {
+                    words.add(word.lowercase())
                 }
             }
         }

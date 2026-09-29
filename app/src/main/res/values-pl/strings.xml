@@ -74,6 +74,7 @@
     <string name="settings_language_german_detail">Wyświetlaj aplikację w języku niemieckim.</string>
     <string name="settings_language_french_detail">Wyświetlaj aplikację w języku francuskim.</string>
     <string name="settings_language_spanish_detail">Wyświetlaj aplikację w języku hiszpańskim.</string>
+    <string name="settings_language_italian_detail">Wyświetlaj aplikację w języku włoskim.</string>
     <string name="settings_language_polish_detail">Wyświetlaj aplikację w języku polskim.</string>
     <string name="settings_puzzle_language">Język łamigłówek</string>
     <string name="settings_puzzle_language_dropdown_detail">Słownik używany w grach słownych.</string>
@@ -83,6 +84,7 @@
     <string name="settings_puzzle_language_german_detail">Niemiecki</string>
     <string name="settings_puzzle_language_french_detail">Francuski</string>
     <string name="settings_puzzle_language_spanish_detail">Hiszpański</string>
+    <string name="settings_puzzle_language_italian_detail">Włoski</string>
     <string name="settings_puzzle_language_polish_detail">Polski</string>
     <string name="settings_show_timer_in_play_label">Pokaż stoper podczas gry</string>
     <string name="settings_beta_games_label">Włącz gry beta</string>
@@ -322,7 +324,7 @@
     <string name="support_info_licenses_heading_2">Pakiety stron trzecich</string>
     <string name="support_info_licenses_body_2">Quiet Grid korzysta również z pakietów open-source, które posiadają własne licencje. Pełny kod źródłowy oraz listę pakietów możesz sprawdzić w repozytorium projektu.</string>
     <string name="support_info_licenses_heading_3">Listy słów Word Guess</string>
-    <string name="support_info_licenses_body_3">Niemiecka lista słów w Word Guess została utworzona na podstawie danych o częstotliwości występowania słów z projektu FrequencyWords (hermitdave/FrequencyWords na GitHubie) na licencji CC BY-SA 3.0. Listy słów w języku angielskim, hiszpańskim, francuskim i holenderskim powstały na bazie słowników ortograficznych Hunspell: słownika en_US pakietu LibreOffice (LGPL/BSD), słownika es_ES projektu RLA-ES (LGPL), słownika francuskiego Dicollecte (MPL 2.0) oraz słownika holenderskiego OpenTaal (BSD/CC BY 3.0).</string>
+    <string name="support_info_licenses_body_3">Listy słów w Word Guess powstały na bazie słowników ortograficznych Hunspell: słownika en_US pakietu LibreOffice (LGPL/BSD), słownika es_ES projektu RLA-ES (LGPL), słownika francuskiego Dicollecte (MPL 2.0), słownika holenderskiego OpenTaal (BSD/CC BY 3.0), słownika de_DE_frami autorstwa Björna Jackego i Franza Michaela Baumanna (GPL), słownika it_IT autorstwa Gianluki Turconiego i Davide Priny (GPL), słownika polskiego SJP.PL (GPL/LGPL/MPL/Apache 2.0/CC BY-SA), słownika VERO pt_BR autorstwa Raimundo Moury (LGPL/MPL) oraz słownika pt_PT Dep. Informática, Universidade do Minho (GPL/LGPL/MPL). Odpowiedzi w językach angielskim, hiszpańskim, francuskim, holenderskim, niemieckim i portugalskim są dodatkowo szeregowane według danych o częstotliwości występowania słów z projektu FrequencyWords (hermitdave/FrequencyWords na GitHubie) na licencji CC BY-SA 3.0.</string>
     <string name="contributors_title">Współtwórcy</string>
     <string name="contributors_intro">Quiet Grid jest lepsze dzięki osobom, które wnoszą w nie swój wkład. Dziękujemy.</string>
     <string name="contributors_cta_title">Chcesz zobaczyć tu swoje imię?</string>

@@ -3,6 +3,7 @@ package com.quietgrid.cli.wordguess
 import com.quietgrid.cli.GenerationState
 import com.quietgrid.engine.core.Difficulty
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.nio.file.Files
 
@@ -25,15 +26,28 @@ class WordGuessGeneratorTest {
     }
 
     @Test
-    fun `generateWordGuessAnswerEntries picks from the full tier for medium, respects count`() {
-        val tiers5 = tiers(common = listOf("apple"), full = listOf("apple", "grape", "mango"))
+    fun `generateWordGuessAnswerEntries picks medium from the full tier minus the common tier, respects count`() {
+        val tiers5 = tiers(common = listOf("apple"), full = listOf("apple", "grape", "mango", "peach"))
         val tiers6 = tiers(common = emptyList(), full = emptyList())
         val stateFile = Files.createTempDirectory("wordguess-test").resolve("state.json").toString()
         val state = GenerationState(stateFile)
 
         val entries = generateWordGuessAnswerEntries("en", Difficulty.MEDIUM, tiers5, tiers6, count = 2, state)
 
-        assertEquals(listOf("apple", "grape"), entries.map { it.word })
+        assertEquals(2, entries.size)
+        assertTrue(entries.none { it.word == "apple" })
+    }
+
+    @Test
+    fun `generateWordGuessAnswerEntries picks expert from the six-letter full tier minus its common tier`() {
+        val tiers5 = tiers(common = emptyList(), full = emptyList())
+        val tiers6 = tiers(common = listOf("banana"), full = listOf("banana", "orange", "cherry"))
+        val stateFile = Files.createTempDirectory("wordguess-test").resolve("state.json").toString()
+        val state = GenerationState(stateFile)
+
+        val entries = generateWordGuessAnswerEntries("en", Difficulty.EXPERT, tiers5, tiers6, count = 10, state)
+
+        assertEquals(setOf("orange", "cherry"), entries.map { it.word }.toSet())
     }
 
     @Test

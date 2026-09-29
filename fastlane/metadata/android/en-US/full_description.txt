@@ -24,4 +24,4 @@
 <p><b>Privacy by design:</b></p>
 <p>Quiet Grid does not use the internet or collect any data. The only permission it asks for is notifications, used for optional daily puzzle reminders. All progress and settings are stored locally on your device.</p>
 
-<p>Available in English, Dutch, German, French, Spanish, Portuguese, and Polish.</p>
+<p>Available in English, Dutch, German, French, Spanish, Italian, Portuguese, and Polish.</p>

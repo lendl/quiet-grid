@@ -6,6 +6,8 @@ fun localeFlagEmoji(languageTag: String): String = when (languageTag) {
     "de" -> "🇩🇪"
     "fr" -> "🇫🇷"
     "es" -> "🇪🇸"
-    "pt" -> "🇵🇹"
+    "it" -> "🇮🇹"
+    "pl" -> "🇵🇱"
+    "pt" -> "🇧🇷"
     else -> "🌐"
 }

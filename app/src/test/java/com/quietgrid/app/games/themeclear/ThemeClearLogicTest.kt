@@ -100,7 +100,7 @@ class ThemeClearLogicTest {
     fun `supported locale is used as-is and unsupported locale falls back to english`() {
         assertEquals("nl", currentThemeClearLocale("nl"))
         assertEquals("de", currentThemeClearLocale("de"))
-        assertEquals("en", currentThemeClearLocale("it"))
+        assertEquals("en", currentThemeClearLocale("sv"))
     }
 
     @Test

@@ -74,6 +74,7 @@
     <string name="settings_language_german_detail">Mostrar o aplicativo em alemão.</string>
     <string name="settings_language_french_detail">Mostrar o aplicativo em francês.</string>
     <string name="settings_language_spanish_detail">Mostrar o aplicativo em espanhol.</string>
+    <string name="settings_language_italian_detail">Mostrar o aplicativo em italiano.</string>
     <string name="settings_language_polish_detail">Mostrar o aplicativo em polonês.</string>
     <string name="settings_language_portuguese_detail">Mostrar o aplicativo em português.</string>
     <string name="settings_puzzle_language">Idioma dos quebra-cabeças</string>
@@ -84,6 +85,7 @@
     <string name="settings_puzzle_language_german_detail">Alemão</string>
     <string name="settings_puzzle_language_french_detail">Francês</string>
     <string name="settings_puzzle_language_spanish_detail">Espanhol</string>
+    <string name="settings_puzzle_language_italian_detail">Italiano</string>
     <string name="settings_puzzle_language_polish_detail">Polonês</string>
     <string name="settings_puzzle_language_portuguese_detail">Português</string>
     <string name="settings_show_timer_in_play_label">Mostrar cronômetro durante o jogo</string>
@@ -330,7 +332,7 @@
     <string name="support_info_licenses_heading_2">Pacotes de terceiros</string>
     <string name="support_info_licenses_body_2">O Quiet Grid também usa pacotes de código aberto que mantêm suas próprias licenças. Você pode conferir o código-fonte completo e a lista de pacotes no repositório do projeto.</string>
     <string name="support_info_licenses_heading_3">Listas de palavras do Adivinhe a Palavra</string>
-    <string name="support_info_licenses_body_3">A lista de palavras em alemão do Adivinhe a Palavra é construída a partir de dados de frequência de palavras do projeto FrequencyWords (hermitdave/FrequencyWords no GitHub), licenciado como CC BY-SA 3.0. As listas de palavras em inglês, espanhol, francês, holandês e português são construídas a partir de dicionários ortográficos Hunspell: o dicionário en_US do LibreOffice (LGPL/BSD), o dicionário es_ES da RLA-ES (LGPL), o dicionário francês da Dicollecte (MPL 2.0), o dicionário holandês da OpenTaal (BSD/CC BY 3.0) e o dicionário pt_PT do Dep. Informática da Universidade do Minho (GPL/LGPL/MPL).</string>
+    <string name="support_info_licenses_body_3">As listas de palavras do Adivinhe a Palavra são construídas a partir de dicionários ortográficos Hunspell: o dicionário en_US do LibreOffice (LGPL/BSD), o dicionário es_ES da RLA-ES (LGPL), o dicionário francês da Dicollecte (MPL 2.0), o dicionário holandês da OpenTaal (BSD/CC BY 3.0), o dicionário de_DE_frami de Björn Jacke e Franz Michael Baumann (GPL), o dicionário it_IT de Gianluca Turconi e Davide Prina (GPL), o dicionário polonês do SJP.PL (GPL/LGPL/MPL/Apache 2.0/CC BY-SA), o dicionário VERO pt_BR de Raimundo Moura (LGPL/MPL) e o dicionário pt_PT do Dep. Informática da Universidade do Minho (GPL/LGPL/MPL). As respostas em inglês, espanhol, francês, holandês, alemão e português também são ordenadas com dados de frequência de palavras do projeto FrequencyWords (hermitdave/FrequencyWords no GitHub), licenciado como CC BY-SA 3.0.</string>
     <string name="contributors_title">Colaboradores</string>
     <string name="contributors_intro">O Quiet Grid é melhor graças às pessoas que colaboram com ele. Obrigado.</string>
     <string name="contributors_cta_title">Quer ver seu nome aqui?</string>

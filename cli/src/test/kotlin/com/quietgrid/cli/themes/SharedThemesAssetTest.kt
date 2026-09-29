@@ -5,7 +5,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class SharedThemesAssetTest {
-    private val expectedLocales = setOf("en", "nl", "de", "es", "fr", "pl", "pt")
+    private val expectedLocales = setOf("en", "nl", "de", "es", "fr", "it", "pl", "pt")
     private val expectedThemeIds = setOf(
         "animals", "food", "nature", "weather", "sports", "clothing", "transport", "home", "professions",
         "emotions", "space", "art", "bodyparts", "school", "music", "technology", "geography", "fantasy",

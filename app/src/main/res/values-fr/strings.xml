@@ -74,6 +74,7 @@
     <string name="settings_language_german_detail">Afficher l\'application en allemand.</string>
     <string name="settings_language_french_detail">Afficher l\'application en français.</string>
     <string name="settings_language_spanish_detail">Afficher l\'application en espagnol.</string>
+    <string name="settings_language_italian_detail">Afficher l\'application en italien.</string>
     <string name="settings_language_polish_detail">Afficher l\'application en polonais.</string>
     <string name="settings_puzzle_language">Langue des puzzles</string>
     <string name="settings_puzzle_language_dropdown_detail">Dictionnaire utilisé pour les puzzles de mots.</string>
@@ -83,6 +84,7 @@
     <string name="settings_puzzle_language_german_detail">Allemand</string>
     <string name="settings_puzzle_language_french_detail">Français</string>
     <string name="settings_puzzle_language_spanish_detail">Espagnol</string>
+    <string name="settings_puzzle_language_italian_detail">Italien</string>
     <string name="settings_puzzle_language_polish_detail">Polonais</string>
     <string name="settings_show_timer_in_play_label">Afficher la minuterie pendant le jeu</string>
     <string name="settings_beta_games_label">Activer les jeux bêta</string>
@@ -297,7 +299,7 @@
     <string name="support_info_licenses_heading_2">Paquets tiers</string>
     <string name="support_info_licenses_body_2">Quiet Grid utilise également des paquets open source qui conservent leurs propres licences. Vous pouvez consulter le code source complet et la liste des paquets dans le dépôt du projet.</string>
     <string name="support_info_licenses_heading_3">Listes de mots de Devine le Mot</string>
-    <string name="support_info_licenses_body_3">La liste de mots allemande de Devine le Mot provient des données de fréquence de mots du projet FrequencyWords (hermitdave/FrequencyWords sur GitHub), sous licence CC BY-SA 3.0. Les listes de mots anglaise, espagnole, française et néerlandaise proviennent de dictionnaires orthographiques Hunspell : le dictionnaire en_US de LibreOffice (LGPL/BSD), le dictionnaire es_ES de RLA-ES (LGPL), le dictionnaire français de Dicollecte (MPL 2.0) et le dictionnaire néerlandais d\'OpenTaal (BSD/CC BY 3.0).</string>
+    <string name="support_info_licenses_body_3">Les listes de mots de Devine le Mot proviennent de dictionnaires orthographiques Hunspell : le dictionnaire en_US de LibreOffice (LGPL/BSD), le dictionnaire es_ES de RLA-ES (LGPL), le dictionnaire français de Dicollecte (MPL 2.0), le dictionnaire néerlandais d\'OpenTaal (BSD/CC BY 3.0), le dictionnaire de_DE_frami de Björn Jacke et Franz Michael Baumann (GPL), le dictionnaire it_IT de Gianluca Turconi et Davide Prina (GPL), le dictionnaire polonais de SJP.PL (GPL/LGPL/MPL/Apache 2.0/CC BY-SA), le dictionnaire VERO pt_BR de Raimundo Moura (LGPL/MPL) et le dictionnaire pt_PT du Dep. Informática de l\'Universidade do Minho (GPL/LGPL/MPL). Les réponses anglaises, espagnoles, françaises, néerlandaises, allemandes et portugaises sont en outre classées à l\'aide des données de fréquence de mots du projet FrequencyWords (hermitdave/FrequencyWords sur GitHub), sous licence CC BY-SA 3.0.</string>
     <string name="contributors_title">Contributeurs</string>
     <string name="contributors_intro">Quiet Grid est meilleur grâce aux personnes qui y contribuent. Merci.</string>
     <string name="contributors_cta_title">Envie de voir votre nom ici ?</string>

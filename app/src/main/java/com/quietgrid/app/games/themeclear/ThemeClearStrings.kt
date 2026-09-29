@@ -5,7 +5,7 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.ui.components.QuickStartContent
 import java.util.Locale
 
-val THEMECLEAR_SUPPORTED_LOCALES = setOf("en", "nl", "de", "es", "fr", "pl", "pt")
+val THEMECLEAR_SUPPORTED_LOCALES = setOf("en", "nl", "de", "es", "fr", "it", "pl", "pt")
 
 fun currentThemeClearLocale(puzzleLanguageOverride: String): String {
     val candidate = puzzleLanguageOverride.ifEmpty { Locale.getDefault().language }

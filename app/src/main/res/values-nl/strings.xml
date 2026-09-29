@@ -70,6 +70,7 @@
     <string name="settings_language_german_detail">Toon de app in het Duits.</string>
     <string name="settings_language_french_detail">Toon de app in het Frans.</string>
     <string name="settings_language_spanish_detail">Toon de app in het Spaans.</string>
+    <string name="settings_language_italian_detail">Toon de app in het Italiaans.</string>
     <string name="settings_language_polish_detail">Toon de app in het Pools.</string>
     <string name="settings_puzzle_language">Puzzeltaal</string>
     <string name="settings_puzzle_language_dropdown_detail">Woordenboek voor woordpuzzels.</string>
@@ -79,6 +80,7 @@
     <string name="settings_puzzle_language_german_detail">Duits</string>
     <string name="settings_puzzle_language_french_detail">Frans</string>
     <string name="settings_puzzle_language_spanish_detail">Spaans</string>
+    <string name="settings_puzzle_language_italian_detail">Italiaans</string>
     <string name="settings_puzzle_language_polish_detail">Pools</string>
     <string name="settings_show_timer_in_play_label">Timer tonen tijdens spelen</string>
     <string name="settings_beta_games_label">Bètaspellen inschakelen</string>
@@ -291,7 +293,7 @@
     <string name="support_info_licenses_heading_2">Pakketten van derden</string>
     <string name="support_info_licenses_body_2">Quiet Grid gebruikt ook opensourcepakketten die hun eigen licenties behouden. Je kunt de volledige broncode en pakketlijst bekijken in de projectrepository.</string>
     <string name="support_info_licenses_heading_3">Woordlijsten van Woord Raden</string>
-    <string name="support_info_licenses_body_3">De Duitse woordlijst van Woord Raden is gebaseerd op woordfrequentiegegevens van het FrequencyWords-project (hermitdave/FrequencyWords op GitHub), onder CC BY-SA 3.0-licentie. De Engelse, Spaanse, Franse en Nederlandse woordlijsten zijn gebaseerd op Hunspell-spellingwoordenboeken: het en_US-woordenboek van LibreOffice (LGPL/BSD), het es_ES-woordenboek van RLA-ES (LGPL), het Franse woordenboek van Dicollecte (MPL 2.0) en het Nederlandse woordenboek van OpenTaal (BSD/CC BY 3.0).</string>
+    <string name="support_info_licenses_body_3">De woordlijsten van Woord Raden zijn gebaseerd op Hunspell-spellingwoordenboeken: het en_US-woordenboek van LibreOffice (LGPL/BSD), het es_ES-woordenboek van RLA-ES (LGPL), het Franse woordenboek van Dicollecte (MPL 2.0), het Nederlandse woordenboek van OpenTaal (BSD/CC BY 3.0), het de_DE_frami-woordenboek van Björn Jacke en Franz Michael Baumann (GPL), het it_IT-woordenboek van Gianluca Turconi en Davide Prina (GPL), het Poolse woordenboek van SJP.PL (GPL/LGPL/MPL/Apache 2.0/CC BY-SA), het VERO pt_BR-woordenboek van Raimundo Moura (LGPL/MPL) en het pt_PT-woordenboek van Dep. Informática, Universidade do Minho (GPL/LGPL/MPL). De Engelse, Spaanse, Franse, Nederlandse, Duitse en Portugese antwoorden worden daarnaast gerangschikt met woordfrequentiegegevens van het FrequencyWords-project (hermitdave/FrequencyWords op GitHub), onder CC BY-SA 3.0-licentie.</string>
     <string name="contributors_title">Bijdragers</string>
     <string name="contributors_intro">Quiet Grid is beter dankzij de mensen die eraan bijdragen. Bedankt.</string>
     <string name="contributors_cta_title">Wil je hier ook staan?</string>

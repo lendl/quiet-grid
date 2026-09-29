@@ -7,6 +7,25 @@ import org.junit.Test
 
 class WordGuessTierBuilderTest {
     @Test
+    fun `loadWordGuessBlocklist reads lowercased entries and is empty for a locale without a file`() {
+        assertEquals(setOf("peter", "fucks"), loadWordGuessBlocklist("xx"))
+        assertEquals(emptySet<String>(), loadWordGuessBlocklist("zz"))
+    }
+
+    @Test
+    fun `removeWordGuessBlocklisted drops blocklisted words and keeps order`() {
+        val words = listOf("there", "Peter", "right", "fücks")
+        assertEquals(listOf("there", "right"), removeWordGuessBlocklisted(words, setOf("peter", "fucks")))
+    }
+
+    @Test
+    fun `filterWordGuessByDictionary keeps frequency order and drops words missing from the dictionary`() {
+        val ranked = listOf("nicht", "peter", "weiss", "haben", "daddy")
+        val dictionary = listOf("haben", "weiß", "nicht")
+        assertEquals(listOf("nicht", "weiss", "haben"), filterWordGuessByDictionary(ranked, dictionary))
+    }
+
+    @Test
     fun `buildWordGuessTiers keeps only words of the requested length`() {
         val raw = listOf("apple", "grape", "kiwi", "mango", "fig")
         val tiers = buildWordGuessTiers(raw, wordLength = 5, commonSize = 10, fullSize = 10)

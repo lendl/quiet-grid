@@ -1,0 +1,27 @@
+<p>Quiet Grid è una raccolta di puzzle di logica per Android. Niente pubblicità, niente tracciamento, nessuna connessione a internet richiesta: tutto funziona interamente sul tuo dispositivo.</p>
+
+<p><b>Puzzle inclusi:</b></p>
+<ul>
+<li><b>Chimp Test</b> — Tocca i numeri in ordine prima che scompaiano.</li>
+<li><b>Takuzu</b> — Riempi una griglia con 0 e 1: ogni riga e colonna deve averne lo stesso numero, mai tre uguali di fila, e non possono esserci due righe o colonne identiche.</li>
+<li><b>Nonogram</b> — Deduci quali caselle riempire in base agli indizi numerici di righe e colonne.</li>
+<li><b>Campo minato</b> — Il classico puzzle a griglia. Scopri tutte le caselle sicure senza far esplodere una mina.</li>
+<li><b>Sudoku</b> — Inserisci le cifre da 1 a 9 in modo che ogni riga, colonna e riquadro 3×3 contenga ogni cifra esattamente una volta.</li>
+<li><b>Cerca parole</b> — Trova le parole nascoste in una griglia di lettere.</li>
+<li><b>Block Fill</b> (Beta) — Trascina i pezzi sulla griglia e libera le linee complete.</li>
+<li><b>Indovina la parola</b> — Indovina la parola nascosta in sei tentativi.</li>
+<li><b>Animal Doku</b> — Metti un animale in ogni riga, colonna e regione colorata, senza che due animali si tocchino, nemmeno in diagonale.</li>
+<li><b>Fuga delle frecce</b> (Beta) — Libera la griglia, una freccia alla volta.</li>
+<li><b>2048</b> — Fai scorrere e unisci le tessere uguali finché una di esse arriva a 2048.</li>
+<li><b>Battaglia di stelle</b> — Metti le stelle in ogni riga, colonna e regione senza che due si tocchino.</li>
+<li><b>Indovina con i numeri</b> — Indovina la parola nascosta in dieci tentativi; due numeri mostrano quanto ogni tentativo si è avvicinato.</li>
+<li><b>N-Back</b> (Beta) — Osserva la griglia e tocca Uguale ogni volta che il quadrato acceso ripete la posizione di N passi prima.</li>
+<li><b>Svuota il tema</b> — Svuota la griglia componendo parole di un solo tema finché ogni lettera è stata usata.</li>
+</ul>
+
+<p>Ogni tipo di puzzle offre i livelli di difficoltà Facile, Medio, Difficile ed Esperto.</p>
+
+<p><b>Privacy fin dalla progettazione:</b></p>
+<p>Quiet Grid non usa internet e non raccoglie alcun dato. L'unico permesso che chiede è quello per le notifiche, usato per i promemoria facoltativi dei puzzle giornalieri. Tutti i progressi e le impostazioni sono salvati localmente sul tuo dispositivo.</p>
+
+<p>Disponibile in inglese, olandese, tedesco, francese, spagnolo, italiano, portoghese e polacco.</p>

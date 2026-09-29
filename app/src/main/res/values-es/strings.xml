@@ -70,6 +70,7 @@
     <string name="settings_language_german_detail">Mostrar la aplicación en alemán.</string>
     <string name="settings_language_french_detail">Mostrar la aplicación en francés.</string>
     <string name="settings_language_spanish_detail">Mostrar la aplicación en español.</string>
+    <string name="settings_language_italian_detail">Mostrar la aplicación en italiano.</string>
     <string name="settings_language_polish_detail">Mostrar la aplicación en polaco.</string>
     <string name="settings_puzzle_language">Idioma de los puzzles</string>
     <string name="settings_puzzle_language_dropdown_detail">Diccionario usado para los puzzles de palabras.</string>
@@ -79,6 +80,7 @@
     <string name="settings_puzzle_language_german_detail">Alemán</string>
     <string name="settings_puzzle_language_french_detail">Francés</string>
     <string name="settings_puzzle_language_spanish_detail">Español</string>
+    <string name="settings_puzzle_language_italian_detail">Italiano</string>
     <string name="settings_puzzle_language_polish_detail">Polaco</string>
     <string name="settings_show_timer_in_play_label">Mostrar temporizador durante el juego</string>
     <string name="settings_beta_games_label">Activar juegos beta</string>
@@ -310,7 +312,7 @@
     <string name="support_info_licenses_heading_2">Paquetes de terceros</string>
     <string name="support_info_licenses_body_2">Quiet Grid también utiliza paquetes de código abierto que mantienen sus propias licencias. Puedes revisar el código fuente completo y la lista de paquetes en el repositorio del proyecto.</string>
     <string name="support_info_licenses_heading_3">Listas de palabras de Adivina la Palabra</string>
-    <string name="support_info_licenses_body_3">La lista de palabras en alemán de Adivina la Palabra se basa en datos de frecuencia de palabras del proyecto FrequencyWords (hermitdave/FrequencyWords en GitHub), con licencia CC BY-SA 3.0. Las listas de palabras en inglés, español, francés y neerlandés se basan en diccionarios ortográficos Hunspell: el diccionario en_US de LibreOffice (LGPL/BSD), el diccionario es_ES de RLA-ES (LGPL), el diccionario francés de Dicollecte (MPL 2.0) y el diccionario neerlandés de OpenTaal (BSD/CC BY 3.0).</string>
+    <string name="support_info_licenses_body_3">Las listas de palabras de Adivina la Palabra se basan en diccionarios ortográficos Hunspell: el diccionario en_US de LibreOffice (LGPL/BSD), el diccionario es_ES de RLA-ES (LGPL), el diccionario francés de Dicollecte (MPL 2.0), el diccionario neerlandés de OpenTaal (BSD/CC BY 3.0), el diccionario de_DE_frami de Björn Jacke y Franz Michael Baumann (GPL), el diccionario it_IT de Gianluca Turconi y Davide Prina (GPL), el diccionario polaco de SJP.PL (GPL/LGPL/MPL/Apache 2.0/CC BY-SA), el diccionario VERO pt_BR de Raimundo Moura (LGPL/MPL) y el diccionario pt_PT del Dep. Informática de la Universidade do Minho (GPL/LGPL/MPL). Las respuestas en inglés, español, francés, neerlandés, alemán y portugués además se ordenan con datos de frecuencia de palabras del proyecto FrequencyWords (hermitdave/FrequencyWords en GitHub), con licencia CC BY-SA 3.0.</string>
     <string name="contributors_title">Colaboradores</string>
     <string name="contributors_intro">Quiet Grid es mejor gracias a las personas que colaboran en él. Gracias.</string>
     <string name="contributors_cta_title">¿Quieres ver tu nombre aquí?</string>

@@ -30,4 +30,4 @@ Statystyki i poziomy trudności dla każdej gry, dzięki czemu możesz śledzić
 
 Quiet Grid powstało z myślą o spokojnym, skupionym czasie z łamigłówkami, bez presji czasu. Codzienne łamigłówki z seriami i przypomnieniami są opcjonalne — powiadomienia pojawią się tylko wtedy, gdy je subskrybujesz.
 
-Dostępne w językach: angielskim, niderlandzkim, niemieckim, francuskim, hiszpańskim, portugalskim i polskim.
+Dostępne w językach: angielskim, niderlandzkim, niemieckim, francuskim, hiszpańskim, włoskim, portugalskim i polskim.

@@ -180,14 +180,19 @@ fun main(args: Array<String>) {
         }
         "wordguess" -> {
             val locale = command.locale
-            val raw = if (locale == "de") {
-                com.quietgrid.cli.wordguess.loadWordGuessFrequencyWords(locale)
-            } else {
-                com.quietgrid.cli.wordguess.sortWordGuessByRarity(
-                    com.quietgrid.cli.wordguess.loadWordGuessHunspellWords(locale),
-                    locale,
+            val hunspellWords = com.quietgrid.cli.wordguess.loadWordGuessHunspellWords(locale)
+            val ranked = if (locale in com.quietgrid.cli.wordguess.WORDGUESS_FREQUENCY_RANKED_LOCALES) {
+                com.quietgrid.cli.wordguess.filterWordGuessByDictionary(
+                    com.quietgrid.cli.wordguess.loadWordGuessFrequencyWords(locale),
+                    hunspellWords,
                 )
+            } else {
+                com.quietgrid.cli.wordguess.sortWordGuessByRarity(hunspellWords, locale)
             }
+            val raw = com.quietgrid.cli.wordguess.removeWordGuessBlocklisted(
+                ranked,
+                com.quietgrid.cli.wordguess.loadWordGuessBlocklist(locale),
+            )
             val tiers5 = com.quietgrid.cli.wordguess.buildWordGuessTiers(raw, wordLength = 5)
             val tiers6 = com.quietgrid.cli.wordguess.buildWordGuessTiers(raw, wordLength = 6)
             val state = GenerationState("${command.outDir}/.generation-state/wordguess-$locale.json")
@@ -200,7 +205,8 @@ fun main(args: Array<String>) {
                 com.quietgrid.engine.wordguess.WordGuessPuzzleEntry.serializer(),
             ) { "${it.locale}:${it.difficulty}:${it.word}" }
 
-            val dictionaryWords = tiers5.dictionary + tiers6.dictionary
+            val dictionaryWords = com.quietgrid.cli.wordguess.buildWordGuessTiers(hunspellWords, wordLength = 5).dictionary +
+                com.quietgrid.cli.wordguess.buildWordGuessTiers(hunspellWords, wordLength = 6).dictionary
             com.quietgrid.cli.wordguess.appendWordGuessDictionary("${command.outDir}/wordguess_dictionary.json", locale, dictionaryWords)
 
             println("Generated ${answerEntries.size}/${command.count} wordguess answers ($locale/$difficulty) + ${dictionaryWords.size} dictionary words into ${command.outDir}")
