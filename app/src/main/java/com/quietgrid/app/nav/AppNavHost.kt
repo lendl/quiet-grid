@@ -48,6 +48,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.keepScreenOn
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
@@ -478,7 +479,8 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
                         ) { popUpTo(Routes.TABS) { inclusive = false } }
                     }
 
-                    Column(Modifier.fillMaxSize()) {
+                    val keepAwake = settings.keepScreenOnInPlay || gameId == GameId.NBACK
+                    Column(Modifier.fillMaxSize().then(if (keepAwake) Modifier.keepScreenOn() else Modifier)) {
                         if (dailyKey != null) DailyPlayBanner(dailyKey)
                         Box(Modifier.weight(1f)) {
                             when (gameId) {
@@ -849,6 +851,7 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
                 exitTransition = { fadeOut(animationSpec = tween(200)) },
             ) { entry ->
                 val challengerGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
+                if (settings.keepScreenOnInPlay) Box(Modifier.keepScreenOn())
                 when (challengerGameId) {
                     GameId.ANIMALDOKU -> AnimalDokuChallengerPlayScreen(
                         onFinished = { result ->

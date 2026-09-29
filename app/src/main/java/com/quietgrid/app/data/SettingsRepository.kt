@@ -20,6 +20,7 @@ enum class ThemeMode { SYSTEM, LIGHT, DARK, PENCIL, SILK, NORD, COFFEE, DRACULA 
 data class AppSettings(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val showTimerInPlay: Boolean = true,
+    val keepScreenOnInPlay: Boolean = false,
     val betaGamesEnabled: Boolean = false,
     val puzzleLanguage: String = "",
     val quickStartSeenGameIds: Set<String> = emptySet(),
@@ -33,6 +34,7 @@ class SettingsRepository @Inject constructor(private val dataStore: DataStore<Pr
     private object Keys {
         val THEME_MODE = stringPreferencesKey("theme_mode")
         val SHOW_TIMER_IN_PLAY = booleanPreferencesKey("show_timer_in_play")
+        val KEEP_SCREEN_ON_IN_PLAY = booleanPreferencesKey("keep_screen_on_in_play")
         val BETA_GAMES_ENABLED = booleanPreferencesKey("beta_games_enabled")
         val PUZZLE_LANGUAGE = stringPreferencesKey("puzzle_language")
         val QUICK_START_SEEN = stringSetPreferencesKey("quick_start_seen_game_ids")
@@ -46,6 +48,7 @@ class SettingsRepository @Inject constructor(private val dataStore: DataStore<Pr
             themeMode = prefs[Keys.THEME_MODE]?.let { runCatching { ThemeMode.valueOf(it) }.getOrNull() }
                 ?: ThemeMode.SYSTEM,
             showTimerInPlay = prefs[Keys.SHOW_TIMER_IN_PLAY] ?: true,
+            keepScreenOnInPlay = prefs[Keys.KEEP_SCREEN_ON_IN_PLAY] ?: false,
             betaGamesEnabled = prefs[Keys.BETA_GAMES_ENABLED] ?: false,
             puzzleLanguage = prefs[Keys.PUZZLE_LANGUAGE] ?: "",
             quickStartSeenGameIds = prefs[Keys.QUICK_START_SEEN] ?: emptySet(),
@@ -61,6 +64,10 @@ class SettingsRepository @Inject constructor(private val dataStore: DataStore<Pr
 
     suspend fun setShowTimerInPlay(enabled: Boolean) {
         dataStore.edit { it[Keys.SHOW_TIMER_IN_PLAY] = enabled }
+    }
+
+    suspend fun setKeepScreenOnInPlay(enabled: Boolean) {
+        dataStore.edit { it[Keys.KEEP_SCREEN_ON_IN_PLAY] = enabled }
     }
 
     suspend fun setBetaGamesEnabled(enabled: Boolean) {

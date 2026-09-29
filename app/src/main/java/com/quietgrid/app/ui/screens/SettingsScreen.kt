@@ -255,6 +255,15 @@ fun PreferencesSection() {
 
         HorizontalDivider(Modifier.padding(vertical = 4.dp))
 
+        SettingsToggleRow(
+            label = stringResource(R.string.settings_keep_screen_on_label),
+            detail = stringResource(R.string.settings_keep_screen_on_detail),
+            checked = settings.keepScreenOnInPlay,
+            onCheckedChange = { scope.launch { repositories.settingsRepository.setKeepScreenOnInPlay(it) } },
+        )
+
+        HorizontalDivider(Modifier.padding(vertical = 4.dp))
+
         DailyReminderSettings(settings)
 
         HorizontalDivider(Modifier.padding(vertical = 4.dp))
