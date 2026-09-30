@@ -7,8 +7,10 @@ const val BLOCKFILL_BOARD_SIZE = 8
 @Serializable
 enum class BlockFillShapeFamily {
     SINGLE, DOMINO, DIAGONAL_DOMINO, STRAIGHT3, CORNER_TROMINO, DIAGONAL_STAIRCASE3,
-    SQUARE2X2, STRAIGHT4, T_TETROMINO, SZ, LJ, PLUS, STRAIGHT5, RECTANGLE, SQUARE3X3,
+    SQUARE2X2, STRAIGHT4, T_TETROMINO, SZ, LJ, PLUS, STRAIGHT5, RECTANGLE, SQUARE3X3, STONE,
 }
+
+enum class BlockFillClutterStyle { MIRROR, ROTATIONAL, MIRRORED_SHAPES, DIAGONAL_MIRROR, FOUR_WAY }
 
 data class BlockFillShapeDef(
     val id: String,
@@ -42,6 +44,22 @@ data class BlockFillSession(
     val score: Int,
     val comboStreak: Int,
     val status: BlockFillStatus,
+    val multiplier: Int = 1,
+    val moves: Int = 0,
+)
+
+@Serializable
+data class BlockFillEndlessSession(
+    val board: BlockFillBoard,
+    val tray: List<BlockFillPiece?>,
+    val score: Int,
+    val comboStreak: Int,
+    val multiplier: Int,
+    val moves: Int,
+    val movesSinceClear: Int,
+    val linesCleared: Int,
+    val bestAtStart: Int,
+    val status: BlockFillStatus,
 )
 
 @Serializable
@@ -52,4 +70,6 @@ data class BlockFillPersistedSession(
     val score: Int,
     val comboStreak: Int,
     val status: BlockFillStatus,
+    val multiplier: Int = 1,
+    val moves: Int = 0,
 )

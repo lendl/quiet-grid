@@ -2,6 +2,7 @@ package com.quietgrid.app.nav
 
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.games.blockfill.BlockFillEndlessResult
 import java.time.LocalDate
 
 object Routes {
@@ -19,12 +20,20 @@ object Routes {
     const val TRUST = "trust"
     const val ABOUT = "about"
     const val MIX_EDITOR = "mixEditor/{mixId}"
+    const val ENDLESS = "endless/{gameId}/{resume}"
+    const val ENDLESS_RESULT = "endlessResult/{score}/{level}/{lines}/{moves}/{isNewBest}/{previousBest}/{reason}"
 
     fun picker(gameId: GameId) = "picker/${gameId.key}"
     fun play(gameId: GameId, difficulty: Difficulty, resume: Boolean, daily: LocalDate? = null) =
         "play/${gameId.key}/${difficulty.key}/$resume" + (daily?.let { "?daily=$it" } ?: "")
 
     fun challenger(gameId: GameId) = "challenger/${gameId.key}"
+
+    fun endless(gameId: GameId, resume: Boolean) = "endless/${gameId.key}/$resume"
+
+    fun endlessResult(result: BlockFillEndlessResult) =
+        "endlessResult/${result.score}/${result.levelReached}/${result.linesCleared}/${result.moves}/" +
+            "${result.isNewBest}/${result.previousBest}/${result.reason}"
 
     fun challengerResult(
         gameId: GameId,

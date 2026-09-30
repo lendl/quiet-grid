@@ -3,6 +3,7 @@ package com.quietgrid.app.testutil
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.ActiveSessionEnvelope
+import com.quietgrid.app.data.EndlessStats
 import com.quietgrid.app.data.GameStats
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.PlayRecord
@@ -71,6 +72,19 @@ class FakeStatsStore : StatsStore {
             solved = maxOf(existing.solved, puzzlesSolved),
             bestScore = maxOf(existing.bestScore, score),
         )
+    }
+
+    private val endlessStats = mutableMapOf<GameId, EndlessStats>()
+
+    fun seedEndless(gameId: GameId, bestScore: Int, bestLevel: Int) {
+        endlessStats[gameId] = EndlessStats(bestScore, bestLevel)
+    }
+
+    override fun endlessStatsFor(gameId: GameId): Flow<EndlessStats> = MutableStateFlow(endlessStats[gameId] ?: EndlessStats())
+
+    override suspend fun recordEndlessResult(gameId: GameId, score: Int, level: Int) {
+        val existing = endlessStats[gameId] ?: EndlessStats()
+        endlessStats[gameId] = EndlessStats(maxOf(existing.bestScore, score), maxOf(existing.bestLevel, level))
     }
 }
 

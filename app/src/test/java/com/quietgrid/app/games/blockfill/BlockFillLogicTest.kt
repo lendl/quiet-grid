@@ -22,6 +22,23 @@ class BlockFillLogicTest {
     }
 
     @Test
+    fun `pieceFitsAnywhere is true on an empty board`() {
+        assertTrue(pieceFitsAnywhere(createEmptyBoard(), listOf(0 to 0, 0 to 1, 0 to 2)))
+    }
+
+    @Test
+    fun `pieceFitsAnywhere is false when only isolated single holes remain`() {
+        var board = createEmptyBoard()
+        for (row in 0 until BLOCKFILL_BOARD_SIZE) {
+            for (col in 0 until BLOCKFILL_BOARD_SIZE) {
+                if ((row + col) % 2 == 0) board = placePieceAt(board, listOf(0 to 0), row, col, FAMILY)
+            }
+        }
+        assertFalse(pieceFitsAnywhere(board, listOf(0 to 0, 0 to 1)))
+        assertTrue(pieceFitsAnywhere(board, listOf(0 to 0)))
+    }
+
+    @Test
     fun `canPlacePieceAt accepts open in-bounds placement`() {
         assertTrue(canPlacePieceAt(createEmptyBoard(), listOf(0 to 0, 0 to 1), 0, 0))
     }
@@ -62,17 +79,31 @@ class BlockFillLogicTest {
     }
 
     @Test
-    fun `previewClearedCells returns empty for invalid placement`() {
+    fun `previewClearedLines is empty for an invalid placement`() {
         val board = placePieceAt(createEmptyBoard(), listOf(0 to 0), 0, 0, FAMILY)
-        assertTrue(previewClearedCells(board, listOf(0 to 0), 0, 0, FAMILY).isEmpty())
+        assertEquals(BlockFillClearedLines(emptySet(), emptySet()), previewClearedLines(board, listOf(0 to 0), 0, 0))
     }
 
     @Test
-    fun `previewClearedCells returns the cells a placement would clear`() {
+    fun `previewClearedLines is empty when the placement completes nothing`() {
+        assertEquals(BlockFillClearedLines(emptySet(), emptySet()), previewClearedLines(createEmptyBoard(), listOf(0 to 0), 3, 3))
+    }
+
+    @Test
+    fun `previewClearedLines returns the row a placement completes`() {
         var board = createEmptyBoard()
         for (col in 0 until BLOCKFILL_BOARD_SIZE - 1) board = placePieceAt(board, listOf(0 to 0), 4, col, FAMILY)
-        val preview = previewClearedCells(board, listOf(0 to 0), 4, BLOCKFILL_BOARD_SIZE - 1, FAMILY)
-        assertEquals(BLOCKFILL_BOARD_SIZE, preview.size)
+        val lines = previewClearedLines(board, listOf(0 to 0), 4, BLOCKFILL_BOARD_SIZE - 1)
+        assertEquals(BlockFillClearedLines(rows = setOf(4), cols = emptySet()), lines)
+    }
+
+    @Test
+    fun `previewClearedLines returns a row and a column completed together`() {
+        var board = createEmptyBoard()
+        for (col in 1 until BLOCKFILL_BOARD_SIZE) board = placePieceAt(board, listOf(0 to 0), 2, col, FAMILY)
+        for (row in 0 until BLOCKFILL_BOARD_SIZE) if (row != 2) board = placePieceAt(board, listOf(0 to 0), row, 0, FAMILY)
+        val lines = previewClearedLines(board, listOf(0 to 0), 2, 0)
+        assertEquals(BlockFillClearedLines(rows = setOf(2), cols = setOf(0)), lines)
     }
 
     @Test

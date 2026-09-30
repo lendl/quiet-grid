@@ -63,32 +63,32 @@ val ALL_SHAPES: List<BlockFillShapeDef> = listOf(
 
 val SHAPE_WEIGHTS_BY_DIFFICULTY: Map<String, Map<BlockFillShapeFamily, Int>> = mapOf(
     "easy" to mapOf(
-        BlockFillShapeFamily.SINGLE to 20, BlockFillShapeFamily.DOMINO to 16, BlockFillShapeFamily.STRAIGHT3 to 14,
+        BlockFillShapeFamily.SINGLE to 8, BlockFillShapeFamily.DOMINO to 16, BlockFillShapeFamily.STRAIGHT3 to 14,
         BlockFillShapeFamily.CORNER_TROMINO to 12, BlockFillShapeFamily.SQUARE2X2 to 10, BlockFillShapeFamily.STRAIGHT4 to 8,
         BlockFillShapeFamily.RECTANGLE to 6, BlockFillShapeFamily.STRAIGHT5 to 5, BlockFillShapeFamily.T_TETROMINO to 4,
         BlockFillShapeFamily.SQUARE3X3 to 3, BlockFillShapeFamily.DIAGONAL_DOMINO to 1, BlockFillShapeFamily.LJ to 1,
         BlockFillShapeFamily.SZ to 0, BlockFillShapeFamily.DIAGONAL_STAIRCASE3 to 0, BlockFillShapeFamily.PLUS to 0,
     ),
     "medium" to mapOf(
-        BlockFillShapeFamily.SINGLE to 10, BlockFillShapeFamily.DOMINO to 9, BlockFillShapeFamily.STRAIGHT3 to 9,
+        BlockFillShapeFamily.SINGLE to 5, BlockFillShapeFamily.DOMINO to 9, BlockFillShapeFamily.STRAIGHT3 to 9,
         BlockFillShapeFamily.CORNER_TROMINO to 8, BlockFillShapeFamily.SQUARE2X2 to 8, BlockFillShapeFamily.STRAIGHT4 to 8,
         BlockFillShapeFamily.RECTANGLE to 7, BlockFillShapeFamily.STRAIGHT5 to 7, BlockFillShapeFamily.T_TETROMINO to 7,
         BlockFillShapeFamily.SQUARE3X3 to 6, BlockFillShapeFamily.DIAGONAL_DOMINO to 5, BlockFillShapeFamily.LJ to 5,
         BlockFillShapeFamily.SZ to 4, BlockFillShapeFamily.DIAGONAL_STAIRCASE3 to 2, BlockFillShapeFamily.PLUS to 1,
     ),
     "hard" to mapOf(
-        BlockFillShapeFamily.SINGLE to 5, BlockFillShapeFamily.DOMINO to 5, BlockFillShapeFamily.STRAIGHT3 to 5,
+        BlockFillShapeFamily.SINGLE to 3, BlockFillShapeFamily.DOMINO to 5, BlockFillShapeFamily.STRAIGHT3 to 5,
         BlockFillShapeFamily.CORNER_TROMINO to 5, BlockFillShapeFamily.SQUARE2X2 to 6, BlockFillShapeFamily.STRAIGHT4 to 6,
-        BlockFillShapeFamily.RECTANGLE to 6, BlockFillShapeFamily.STRAIGHT5 to 6, BlockFillShapeFamily.T_TETROMINO to 6,
-        BlockFillShapeFamily.SQUARE3X3 to 7, BlockFillShapeFamily.DIAGONAL_DOMINO to 7, BlockFillShapeFamily.LJ to 8,
-        BlockFillShapeFamily.SZ to 8, BlockFillShapeFamily.DIAGONAL_STAIRCASE3 to 7, BlockFillShapeFamily.PLUS to 8,
+        BlockFillShapeFamily.RECTANGLE to 6, BlockFillShapeFamily.STRAIGHT5 to 7, BlockFillShapeFamily.T_TETROMINO to 8,
+        BlockFillShapeFamily.SQUARE3X3 to 7, BlockFillShapeFamily.DIAGONAL_DOMINO to 5, BlockFillShapeFamily.LJ to 10,
+        BlockFillShapeFamily.SZ to 10, BlockFillShapeFamily.DIAGONAL_STAIRCASE3 to 4, BlockFillShapeFamily.PLUS to 6,
     ),
     "expert" to mapOf(
-        BlockFillShapeFamily.SINGLE to 2, BlockFillShapeFamily.DOMINO to 2, BlockFillShapeFamily.STRAIGHT3 to 3,
-        BlockFillShapeFamily.CORNER_TROMINO to 3, BlockFillShapeFamily.SQUARE2X2 to 3, BlockFillShapeFamily.STRAIGHT4 to 4,
-        BlockFillShapeFamily.RECTANGLE to 4, BlockFillShapeFamily.STRAIGHT5 to 5, BlockFillShapeFamily.T_TETROMINO to 5,
-        BlockFillShapeFamily.SQUARE3X3 to 6, BlockFillShapeFamily.DIAGONAL_DOMINO to 6, BlockFillShapeFamily.LJ to 8,
-        BlockFillShapeFamily.SZ to 9, BlockFillShapeFamily.DIAGONAL_STAIRCASE3 to 10, BlockFillShapeFamily.PLUS to 12,
+        BlockFillShapeFamily.SINGLE to 2, BlockFillShapeFamily.DOMINO to 3, BlockFillShapeFamily.STRAIGHT3 to 5,
+        BlockFillShapeFamily.CORNER_TROMINO to 5, BlockFillShapeFamily.SQUARE2X2 to 5, BlockFillShapeFamily.STRAIGHT4 to 7,
+        BlockFillShapeFamily.RECTANGLE to 6, BlockFillShapeFamily.STRAIGHT5 to 8, BlockFillShapeFamily.T_TETROMINO to 10,
+        BlockFillShapeFamily.SQUARE3X3 to 7, BlockFillShapeFamily.DIAGONAL_DOMINO to 4, BlockFillShapeFamily.LJ to 12,
+        BlockFillShapeFamily.SZ to 12, BlockFillShapeFamily.DIAGONAL_STAIRCASE3 to 5, BlockFillShapeFamily.PLUS to 8,
     ),
 )
 
@@ -98,8 +98,10 @@ private val SHAPES_BY_FAMILY: Map<BlockFillShapeFamily, List<BlockFillShapeDef>>
 fun shapeDefToPiece(shape: BlockFillShapeDef): BlockFillPiece =
     BlockFillPiece(shapeId = shape.id, family = shape.family, cells = shape.cells)
 
-fun drawWeightedPiece(difficulty: String, random: Random = Random.Default): BlockFillPiece {
-    val familyWeights = SHAPE_WEIGHTS_BY_DIFFICULTY.getValue(difficulty)
+fun drawWeightedPiece(difficulty: String, random: Random = Random.Default): BlockFillPiece =
+    drawWeightedPiece(SHAPE_WEIGHTS_BY_DIFFICULTY.getValue(difficulty), random)
+
+fun drawWeightedPiece(familyWeights: Map<BlockFillShapeFamily, Int>, random: Random): BlockFillPiece {
     val entries = mutableListOf<Pair<BlockFillShapeDef, Double>>()
 
     for ((family, weight) in familyWeights) {

@@ -9,6 +9,7 @@ import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
@@ -19,6 +20,13 @@ import javax.inject.Singleton
 
 internal fun statsKeyFor(gameId: GameId) = stringPreferencesKey("stats_${gameId.key}")
 internal fun statsChallengerKeyFor(gameId: GameId) = stringPreferencesKey("stats_challenger_${gameId.key}")
+internal fun statsEndlessKeyFor(gameId: GameId) = stringPreferencesKey("stats_endless_${gameId.key}")
+
+@Serializable
+data class EndlessStats(
+    val bestScore: Int = 0,
+    val bestLevel: Int = 0,
+)
 
 @Serializable
 data class DifficultyStats(
@@ -41,6 +49,8 @@ interface StatsStore {
     suspend fun recordResult(gameId: GameId, difficulty: Difficulty, solved: Boolean, score: Int)
     fun challengerStatsFor(gameId: GameId): Flow<DifficultyStats>
     suspend fun recordChallengerResult(gameId: GameId, puzzlesSolved: Int, score: Int)
+    fun endlessStatsFor(gameId: GameId): Flow<EndlessStats> = flowOf(EndlessStats())
+    suspend fun recordEndlessResult(gameId: GameId, score: Int, level: Int) {}
 }
 
 private val json = Json { ignoreUnknownKeys = true }
@@ -108,10 +118,28 @@ class StatsRepository @Inject constructor(
         }
     }
 
+    override fun endlessStatsFor(gameId: GameId): Flow<EndlessStats> =
+        dataStore.data.map { prefs ->
+            prefs[statsEndlessKeyFor(gameId)]?.let { raw ->
+                runCatching { json.decodeFromString<EndlessStats>(raw) }.getOrNull()
+            } ?: EndlessStats()
+        }
+
+    override suspend fun recordEndlessResult(gameId: GameId, score: Int, level: Int) {
+        dataStore.edit { prefs ->
+            val key = statsEndlessKeyFor(gameId)
+            val existing = prefs[key]?.let { runCatching { json.decodeFromString<EndlessStats>(it) }.getOrNull() }
+                ?: EndlessStats()
+            val updated = EndlessStats(bestScore = maxOf(existing.bestScore, score), bestLevel = maxOf(existing.bestLevel, level))
+            prefs[key] = json.encodeToString(updated)
+        }
+    }
+
     suspend fun clear(gameId: GameId) {
         dataStore.edit { prefs ->
             prefs.remove(statsKeyFor(gameId))
             prefs.remove(statsChallengerKeyFor(gameId))
+            prefs.remove(statsEndlessKeyFor(gameId))
         }
     }
 
@@ -120,6 +148,7 @@ class StatsRepository @Inject constructor(
             GameId.entries.forEach {
                 prefs.remove(statsKeyFor(it))
                 prefs.remove(statsChallengerKeyFor(it))
+                prefs.remove(statsEndlessKeyFor(it))
             }
         }
     }

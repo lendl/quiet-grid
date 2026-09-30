@@ -20,15 +20,32 @@ fun findValidPlacements(board: BlockFillBoard, cells: List<Pair<Int, Int>>): Lis
     return placements
 }
 
+fun pieceFitsAnywhere(board: BlockFillBoard, cells: List<Pair<Int, Int>>): Boolean {
+    for (row in 0 until BLOCKFILL_BOARD_SIZE) {
+        for (col in 0 until BLOCKFILL_BOARD_SIZE) {
+            if (canPlacePieceAt(board, cells, row, col)) return true
+        }
+    }
+    return false
+}
+
 fun placePieceAt(board: BlockFillBoard, cells: List<Pair<Int, Int>>, anchorRow: Int, anchorCol: Int, family: BlockFillShapeFamily): BlockFillBoard {
     val next = board.map { it.toMutableList() }
     for ((dr, dc) in cells) next[anchorRow + dr][anchorCol + dc] = family
     return next
 }
 
+data class BlockFillClearedLines(val rows: Set<Int>, val cols: Set<Int>)
+
+private val NO_CLEARED_LINES = BlockFillClearedLines(emptySet(), emptySet())
+
+internal fun fullLines(board: BlockFillBoard): BlockFillClearedLines = BlockFillClearedLines(
+    rows = (0 until BLOCKFILL_BOARD_SIZE).filter { row -> board[row].all { it != null } }.toSet(),
+    cols = (0 until BLOCKFILL_BOARD_SIZE).filter { col -> board.all { it[col] != null } }.toSet(),
+)
+
 fun clearFullLines(board: BlockFillBoard): Pair<BlockFillBoard, Int> {
-    val fullRows = (0 until BLOCKFILL_BOARD_SIZE).filter { row -> board[row].all { it != null } }.toSet()
-    val fullCols = (0 until BLOCKFILL_BOARD_SIZE).filter { col -> board.all { it[col] != null } }.toSet()
+    val (fullRows, fullCols) = fullLines(board)
 
     if (fullRows.isEmpty() && fullCols.isEmpty()) return board to 0
 
@@ -38,20 +55,9 @@ fun clearFullLines(board: BlockFillBoard): Pair<BlockFillBoard, Int> {
     return next to (fullRows.size + fullCols.size)
 }
 
-fun previewClearedCells(board: BlockFillBoard, cells: List<Pair<Int, Int>>, anchorRow: Int, anchorCol: Int, family: BlockFillShapeFamily): List<Pair<Int, Int>> {
-    if (!canPlacePieceAt(board, cells, anchorRow, anchorCol)) return emptyList()
-
-    val placed = placePieceAt(board, cells, anchorRow, anchorCol, family)
-    val (afterClear, linesCleared) = clearFullLines(placed)
-    if (linesCleared == 0) return emptyList()
-
-    val result = mutableListOf<Pair<Int, Int>>()
-    for (row in 0 until BLOCKFILL_BOARD_SIZE) {
-        for (col in 0 until BLOCKFILL_BOARD_SIZE) {
-            if (placed[row][col] != null && afterClear[row][col] == null) result.add(row to col)
-        }
-    }
-    return result
+fun previewClearedLines(board: BlockFillBoard, cells: List<Pair<Int, Int>>, anchorRow: Int, anchorCol: Int): BlockFillClearedLines {
+    if (!canPlacePieceAt(board, cells, anchorRow, anchorCol)) return NO_CLEARED_LINES
+    return fullLines(placePieceAt(board, cells, anchorRow, anchorCol, BlockFillShapeFamily.SINGLE))
 }
 
 fun countFilledCells(board: BlockFillBoard): Int = board.sumOf { row -> row.count { it != null } }

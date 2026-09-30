@@ -85,6 +85,17 @@ class StatsRepositoryTest {
     }
 
     @Test
+    fun `endless stats keep the best score and level`() = runTest {
+        val history = newHistoryStore(backgroundScope)
+        val repository = StatsRepository(newDataStore(backgroundScope, "stats.preferences_pb"), history)
+
+        repository.recordEndlessResult(GameId.BLOCKFILL, score = 500, level = 3)
+        repository.recordEndlessResult(GameId.BLOCKFILL, score = 300, level = 5)
+
+        assertEquals(EndlessStats(bestScore = 500, bestLevel = 5), repository.endlessStatsFor(GameId.BLOCKFILL).first())
+    }
+
+    @Test
     fun `recordChallengerResult is a no-op for a non-beta game`() = runTest {
         val history = newHistoryStore(backgroundScope)
         val repository = StatsRepository(newDataStore(backgroundScope, "stats.preferences_pb"), history)

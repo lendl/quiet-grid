@@ -653,10 +653,10 @@
     <string name="blockfill_difficulty_medium">Medio</string>
     <string name="blockfill_difficulty_hard">Difícil</string>
     <string name="blockfill_difficulty_expert">Experto</string>
-    <string name="blockfill_difficulty_desc_easy">Piezas sencillas y fáciles de colocar. Llega a 300 puntos.</string>
-    <string name="blockfill_difficulty_desc_medium">Una mezcla más amplia de formas. Llega a 600 puntos.</string>
+    <string name="blockfill_difficulty_desc_easy">Piezas sencillas y fáciles de colocar. Llega a 1000 puntos.</string>
+    <string name="blockfill_difficulty_desc_medium">Una mezcla más amplia de formas. Llega a 1000 puntos.</string>
     <string name="blockfill_difficulty_desc_hard">Empiezan a aparecer formas incómodas con frecuencia. Llega a 1000 puntos.</string>
-    <string name="blockfill_difficulty_desc_expert">Tablero denso, mayormente piezas irregulares. Llega a 1500 puntos.</string>
+    <string name="blockfill_difficulty_desc_expert">Tablero denso, mayormente piezas irregulares. Llega a 1000 puntos.</string>
     <string name="blockfill_how_to_play_goal">Arrastra cada pieza de la bandeja a la cuadrícula de 8x8. Despeja filas y columnas completas para sumar puntos y alcanza la puntuación objetivo para resolver el rompecabezas.</string>
     <string name="blockfill_how_to_play_controls">Arrastra una pieza de la bandeja bajo el tablero y suéltala en la cuadrícula. Solo se puede colocar donde todas sus celdas caigan en una casilla vacía. Cuando se coloquen las 3 piezas de la bandeja, aparece un nuevo grupo de 3.</string>
     <string name="blockfill_how_to_play_wrong_move">No hay un movimiento incorrecto que deshacer — si ninguna de tus 3 piezas actuales cabe en algún lugar del tablero, el rompecabezas termina de inmediato.</string>

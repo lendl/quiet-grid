@@ -81,6 +81,8 @@ import com.quietgrid.app.games.wordsearch.WordSearchQuickStart
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyDescriptionRes
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
 import com.quietgrid.app.ui.components.QuickStartContent
+import com.quietgrid.app.ui.components.StatGroup
+import com.quietgrid.app.ui.components.StatItem
 import com.quietgrid.app.ui.components.QuickStartSheet
 import kotlinx.coroutines.launch
 
@@ -110,6 +112,7 @@ fun PuzzlePickerScreen(
     onPickDifficulty: (Difficulty) -> Unit,
     onResumeActiveGame: (GameId) -> Unit,
     onStartChallenger: () -> Unit,
+    onStartEndless: () -> Unit = {},
 ) {
     var selectedTab by remember { mutableStateOf(GamePageTab.PLAY) }
 
@@ -120,13 +123,16 @@ fun PuzzlePickerScreen(
     val coroutineScope = rememberCoroutineScope()
     var showQuickStart by remember(gameId) { mutableStateOf(false) }
     var pendingDifficulty by remember(gameId) { mutableStateOf<Difficulty?>(null) }
-    var pendingChallenger by remember(gameId) { mutableStateOf(false) }
+    var pendingStart by remember(gameId) { mutableStateOf<(() -> Unit)?>(null) }
 
     val requestStartDifficulty: (Difficulty) -> Unit = { difficulty ->
         if (activeGameKey != null) pendingDifficulty = difficulty else onPickDifficulty(difficulty)
     }
     val requestStartChallenger: () -> Unit = {
-        if (activeGameKey != null) pendingChallenger = true else onStartChallenger()
+        if (activeGameKey != null) pendingStart = onStartChallenger else onStartChallenger()
+    }
+    val requestStartEndless: () -> Unit = {
+        if (activeGameKey != null) pendingStart = onStartEndless else onStartEndless()
     }
 
     LaunchedEffect(gameId, settings) {
@@ -176,9 +182,9 @@ fun PuzzlePickerScreen(
             },
         )
     }
-    if (pendingChallenger) {
+    pendingStart?.let { startMode ->
         AlertDialog(
-            onDismissRequest = { pendingChallenger = false },
+            onDismissRequest = { pendingStart = null },
             title = { Text(stringResource(R.string.replace_dialog_title)) },
             text = {
                 Text(
@@ -189,13 +195,13 @@ fun PuzzlePickerScreen(
             },
             confirmButton = {
                 TextButton(onClick = {
-                    pendingChallenger = false
-                    onStartChallenger()
+                    pendingStart = null
+                    startMode()
                 }) { Text(stringResource(R.string.common_start_new_puzzle)) }
             },
             dismissButton = {
                 TextButton(onClick = {
-                    pendingChallenger = false
+                    pendingStart = null
                     val activeGameId = activeGameKey?.let { key -> GameId.entries.firstOrNull { it.key == key } }
                     if (activeGameId != null) onResumeActiveGame(activeGameId)
                 }) { Text(stringResource(R.string.common_continue_puzzle)) }
@@ -241,6 +247,7 @@ fun PuzzlePickerScreen(
                 gameId,
                 requestStartDifficulty,
                 requestStartChallenger,
+                requestStartEndless,
             )
             GamePageTab.RULES -> HowToPlayScreen(gameId)
             GamePageTab.STATS -> GameStatsTab(gameId)
@@ -256,6 +263,7 @@ private fun GamePlayPickerTab(
     gameId: GameId,
     requestStartDifficulty: (Difficulty) -> Unit,
     requestStartChallenger: () -> Unit,
+    requestStartEndless: () -> Unit,
 ) {
     Column(Modifier.fillMaxWidth().padding(16.dp)) {
         Column {
@@ -340,30 +348,55 @@ private fun GamePlayPickerTab(
                 else -> null
             }
             if (challengerLabelRes != null && challengerDescriptionRes != null) {
-                HorizontalDivider()
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .clickable { requestStartChallenger() }
-                        .padding(vertical = 18.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Box(
-                        Modifier
-                            .size(10.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.primary),
-                    )
-                    Column(Modifier.padding(start = 14.dp)) {
-                        Text(stringResource(challengerLabelRes), style = MaterialTheme.typography.titleLarge)
-                        Text(
-                            stringResource(challengerDescriptionRes),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(top = 2.dp),
-                        )
-                    }
-                }
+                PickerModeRow(stringResource(challengerLabelRes), stringResource(challengerDescriptionRes), detail = null, onClick = requestStartChallenger)
+            }
+            if (gameId == GameId.BLOCKFILL) {
+                val repositories: RepositoriesViewModel = hiltViewModel()
+                val endlessStats by remember(repositories, gameId) { repositories.statsRepository.endlessStatsFor(gameId) }
+                    .collectAsState(initial = null)
+                val bestScore = endlessStats?.bestScore ?: 0
+                PickerModeRow(
+                    stringResource(R.string.blockfill_endless_label),
+                    stringResource(R.string.blockfill_endless_description),
+                    detail = if (bestScore > 0) stringResource(R.string.blockfill_endless_best_value, bestScore) else null,
+                    onClick = requestStartEndless,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun PickerModeRow(label: String, description: String, detail: String?, onClick: () -> Unit) {
+    HorizontalDivider()
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(vertical = 18.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(
+            Modifier
+                .size(10.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primary),
+        )
+        Column(Modifier.padding(start = 14.dp)) {
+            Text(label, style = MaterialTheme.typography.titleLarge)
+            Text(
+                description,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 2.dp),
+            )
+            if (detail != null) {
+                Text(
+                    detail,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(top = 4.dp),
+                )
             }
         }
     }
@@ -443,6 +476,27 @@ private fun GameStatsTab(gameId: GameId) {
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
+            }
+        }
+        if (gameId == GameId.BLOCKFILL) {
+            val endlessStats by remember(repositories, gameId) { repositories.statsRepository.endlessStatsFor(gameId) }
+                .collectAsState(initial = null)
+            endlessStats?.let { current ->
+                HorizontalDivider(Modifier.padding(top = 20.dp))
+                Text(
+                    stringResource(R.string.blockfill_endless_stats_title),
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.padding(top = 20.dp, bottom = 4.dp),
+                )
+                StatGroup(
+                    listOf(
+                        StatItem(stringResource(R.string.blockfill_endless_stats_best_score), current.bestScore.toString()),
+                        StatItem(
+                            stringResource(R.string.blockfill_endless_stats_best_level),
+                            if (current.bestLevel > 0) stringResource(R.string.blockfill_multiplier_value, current.bestLevel) else "-",
+                        ),
+                    ),
+                )
             }
         }
     }

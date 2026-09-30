@@ -71,12 +71,17 @@ import com.quietgrid.app.core.mix.mixesEligibleForQuickAdd
 import com.quietgrid.app.core.mix.resolvedCandidates
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.RepositoriesViewModel
+import com.quietgrid.app.data.SESSION_MODE_ENDLESS
 import com.quietgrid.app.games.animaldoku.AnimalDokuChallengerPlayScreen
 import com.quietgrid.app.games.animaldoku.AnimalDokuChallengerResultScreen
 import com.quietgrid.app.games.animaldoku.AnimalDokuPlayScreen
 import com.quietgrid.app.games.chimptest.ChimpTestChallengerPlayScreen
 import com.quietgrid.app.games.chimptest.ChimpTestChallengerResultScreen
 import com.quietgrid.app.games.arrowescape.ArrowEscapePlayScreen
+import com.quietgrid.app.games.blockfill.BLOCKFILL_ENDLESS_REASON_STUCK
+import com.quietgrid.app.games.blockfill.BlockFillEndlessPlayScreen
+import com.quietgrid.app.games.blockfill.BlockFillEndlessResult
+import com.quietgrid.app.games.blockfill.BlockFillEndlessResultScreen
 import com.quietgrid.app.games.blockfill.BlockFillPlayScreen
 import com.quietgrid.app.games.chimptest.ChimpTestPlayScreen
 import com.quietgrid.app.games.game2048.Game2048PlayScreen
@@ -157,7 +162,11 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
     }
 
     fun resumeActiveRoute(gameId: GameId): String =
-        Routes.play(gameId, Difficulty.EASY, resume = true, daily = activeSession?.dailyDate?.let { runCatching { LocalDate.parse(it) }.getOrNull() })
+        if (activeSession?.mode == SESSION_MODE_ENDLESS) {
+            Routes.endless(gameId, resume = true)
+        } else {
+            Routes.play(gameId, Difficulty.EASY, resume = true, daily = activeSession?.dailyDate?.let { runCatching { LocalDate.parse(it) }.getOrNull() })
+        }
 
     fun playNextDaily(next: Pair<GameId, Difficulty>?, dailyKey: String?) {
         val date = dailyKey?.let { runCatching { LocalDate.parse(it) }.getOrNull() } ?: return
@@ -255,6 +264,7 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
                 currentRoute == Routes.PLAY -> Unit
                 currentRoute == Routes.COMPLETION || currentRoute == Routes.LOSS -> Unit
                 currentRoute == Routes.CHALLENGER || currentRoute == Routes.CHALLENGER_RESULT -> Unit
+                currentRoute == Routes.ENDLESS || currentRoute == Routes.ENDLESS_RESULT -> Unit
                 currentRoute == Routes.SUPPORT_INFO -> {
                     val infoKey = backStackEntry?.arguments?.getString("key")
                     val infoTitleRes = infoKey?.let { supportInfoTitleRes(it) }
@@ -422,6 +432,10 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
                         onStartChallenger = {
                             scope.launch { repositories.mixRepository.clearActiveMix() }
                             navController.navigate(Routes.challenger(gameId))
+                        },
+                        onStartEndless = {
+                            scope.launch { repositories.mixRepository.clearActiveMix() }
+                            navController.navigate(Routes.endless(gameId, resume = false))
                         },
                     )
                 }
@@ -911,6 +925,59 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
                     )
                     else -> Unit
                 }
+            }
+
+            composable(
+                Routes.ENDLESS,
+                arguments = listOf(
+                    navArgument("gameId") { type = NavType.StringType },
+                    navArgument("resume") { type = NavType.BoolType },
+                ),
+                enterTransition = { fadeIn(animationSpec = tween(250)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) },
+            ) { entry ->
+                if (settings.keepScreenOnInPlay) Box(Modifier.keepScreenOn())
+                BlockFillEndlessPlayScreen(
+                    resume = entry.arguments?.getBoolean("resume") ?: false,
+                    onBack = { navController.popBackStack() },
+                    onFinished = { result ->
+                        navController.navigate(Routes.endlessResult(result)) { popUpTo(Routes.TABS) { inclusive = false } }
+                    },
+                )
+            }
+
+            composable(
+                Routes.ENDLESS_RESULT,
+                arguments = listOf(
+                    navArgument("score") { type = NavType.IntType },
+                    navArgument("level") { type = NavType.IntType },
+                    navArgument("lines") { type = NavType.IntType },
+                    navArgument("moves") { type = NavType.IntType },
+                    navArgument("isNewBest") { type = NavType.BoolType },
+                    navArgument("previousBest") { type = NavType.IntType },
+                    navArgument("reason") { type = NavType.StringType },
+                ),
+                enterTransition = { fadeIn(animationSpec = tween(250)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) },
+            ) { entry ->
+                val args = entry.arguments
+                BlockFillEndlessResultScreen(
+                    result = BlockFillEndlessResult(
+                        score = args?.getInt("score") ?: 0,
+                        levelReached = args?.getInt("level") ?: 1,
+                        linesCleared = args?.getInt("lines") ?: 0,
+                        moves = args?.getInt("moves") ?: 0,
+                        isNewBest = args?.getBoolean("isNewBest") ?: false,
+                        previousBest = args?.getInt("previousBest") ?: 0,
+                        reason = args?.getString("reason") ?: BLOCKFILL_ENDLESS_REASON_STUCK,
+                    ),
+                    onPlayAgain = {
+                        navController.navigate(Routes.endless(GameId.BLOCKFILL, resume = false)) { popUpTo(Routes.TABS) { inclusive = false } }
+                    },
+                    onBack = {
+                        navController.navigate(Routes.picker(GameId.BLOCKFILL)) { popUpTo(Routes.TABS) { inclusive = false } }
+                    },
+                )
             }
 
             composable(

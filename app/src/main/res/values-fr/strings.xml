@@ -702,10 +702,10 @@
     <string name="blockfill_difficulty_medium">Moyen</string>
     <string name="blockfill_difficulty_hard">Difficile</string>
     <string name="blockfill_difficulty_expert">Expert</string>
-    <string name="blockfill_difficulty_desc_easy">Des pièces simples, faciles à placer. Atteignez 300 points.</string>
-    <string name="blockfill_difficulty_desc_medium">Un plus large éventail de formes. Atteignez 600 points.</string>
+    <string name="blockfill_difficulty_desc_easy">Des pièces simples, faciles à placer. Atteignez 1000 points.</string>
+    <string name="blockfill_difficulty_desc_medium">Un plus large éventail de formes. Atteignez 1000 points.</string>
     <string name="blockfill_difficulty_desc_hard">Des formes gênantes apparaissent plus souvent. Atteignez 1000 points.</string>
-    <string name="blockfill_difficulty_desc_expert">Plateau dense, surtout des pièces irrégulières. Atteignez 1500 points.</string>
+    <string name="blockfill_difficulty_desc_expert">Plateau dense, surtout des pièces irrégulières. Atteignez 1000 points.</string>
     <string name="blockfill_how_to_play_goal">Glissez chaque pièce du plateau vers la grille 8x8. Videz des lignes et des colonnes complètes pour marquer des points, et atteignez le score cible pour résoudre le puzzle.</string>
     <string name="blockfill_how_to_play_controls">Glissez une pièce du plateau sous la grille et déposez-la sur la grille. Elle ne peut être posée que si chacune de ses cases tombe sur une case vide. Une fois les 3 pièces posées, un nouveau lot de 3 apparaît.</string>
     <string name="blockfill_how_to_play_wrong_move">Il n\'y a pas de mauvais coup à annuler — si aucune de vos 3 pièces actuelles ne peut être posée nulle part sur la grille, le puzzle se termine immédiatement.</string>

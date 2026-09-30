@@ -710,10 +710,10 @@
     <string name="blockfill_difficulty_medium">Médio</string>
     <string name="blockfill_difficulty_hard">Difícil</string>
     <string name="blockfill_difficulty_expert">Especialista</string>
-    <string name="blockfill_difficulty_desc_easy">Peças na maioria limpas e fáceis de encaixar. Alcance 300 pontos.</string>
-    <string name="blockfill_difficulty_desc_medium">Uma mistura maior de formatos. Alcance 600 pontos.</string>
+    <string name="blockfill_difficulty_desc_easy">Peças na maioria limpas e fáceis de encaixar. Alcance 1000 pontos.</string>
+    <string name="blockfill_difficulty_desc_medium">Uma mistura maior de formatos. Alcance 1000 pontos.</string>
     <string name="blockfill_difficulty_desc_hard">Formatos incômodos começam a aparecer com frequência. Alcance 1000 pontos.</string>
-    <string name="blockfill_difficulty_desc_expert">Tabuleiro denso, principalmente peças irregulares. Alcance 1500 pontos.</string>
+    <string name="blockfill_difficulty_desc_expert">Tabuleiro denso, principalmente peças irregulares. Alcance 1000 pontos.</string>
     <string name="blockfill_how_to_play_goal">Arraste cada peça da bandeja para a grade 8x8. Limpe linhas e colunas inteiras para pontuar e alcance a pontuação alvo para resolver o quebra-cabeça.</string>
     <string name="blockfill_how_to_play_controls">Arraste uma peça da bandeja abaixo do tabuleiro e solte-a na grade. Ela só pode ser colocada onde todas as suas células caiam em um quadrado vazio. Assim que as 3 peças da bandeja forem colocadas, um novo conjunto de 3 aparece.</string>
     <string name="blockfill_how_to_play_wrong_move">Não há movimento errado para desfazer — se nenhuma das suas 3 peças atuais couber em lugar nenhum do tabuleiro, o quebra-cabeça termina na hora.</string>

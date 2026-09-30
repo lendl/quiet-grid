@@ -4,8 +4,14 @@ const val BLOCKFILL_POINTS_PER_LINE_CLEARED = 80
 const val BLOCKFILL_MULTI_CLEAR_BONUS_PER_EXTRA_LINE = 40
 const val BLOCKFILL_COMBO_BONUS_PER_STREAK = 20
 const val BLOCKFILL_FULL_BOARD_CLEAR_BONUS = 300
+const val BLOCKFILL_PUZZLE_SCORE_BASE = 50_000
+const val BLOCKFILL_PUZZLE_SCORE_PENALTY_PER_MOVE = 500
+const val BLOCKFILL_PUZZLE_SCORE_FLOOR = 100
 
-fun scorePlacement(linesCleared: Int, comboStreakBeforeThisMove: Int, boardEmptiedAfter: Boolean): Int {
+fun blockFillPuzzleScore(movesUsed: Int): Int =
+    maxOf(BLOCKFILL_PUZZLE_SCORE_FLOOR, BLOCKFILL_PUZZLE_SCORE_BASE - movesUsed * BLOCKFILL_PUZZLE_SCORE_PENALTY_PER_MOVE)
+
+fun scorePlacement(linesCleared: Int, comboStreakBeforeThisMove: Int, boardEmptiedAfter: Boolean, multiplier: Int = 1): Int {
     if (linesCleared == 0) return 0
 
     var points = linesCleared * BLOCKFILL_POINTS_PER_LINE_CLEARED
@@ -13,5 +19,5 @@ fun scorePlacement(linesCleared: Int, comboStreakBeforeThisMove: Int, boardEmpti
     points += comboStreakBeforeThisMove * BLOCKFILL_COMBO_BONUS_PER_STREAK
     if (boardEmptiedAfter) points += BLOCKFILL_FULL_BOARD_CLEAR_BONUS
 
-    return points
+    return points * multiplier
 }

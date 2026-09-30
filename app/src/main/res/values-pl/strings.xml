@@ -702,10 +702,10 @@
     <string name="blockfill_difficulty_medium">Średni</string>
     <string name="blockfill_difficulty_hard">Trudny</string>
     <string name="blockfill_difficulty_expert">Ekspert</string>
-    <string name="blockfill_difficulty_desc_easy">Przeważnie proste, łatwe do umieszczenia klocki. Osiągnij 300 punktów.</string>
-    <string name="blockfill_difficulty_desc_medium">Szersza mieszanka kształtów. Osiągnij 600 punktów.</string>
+    <string name="blockfill_difficulty_desc_easy">Przeważnie proste, łatwe do umieszczenia klocki. Osiągnij 1000 punktów.</string>
+    <string name="blockfill_difficulty_desc_medium">Szersza mieszanka kształtów. Osiągnij 1000 punktów.</string>
     <string name="blockfill_difficulty_desc_hard">Niewygodne kształty zaczynają pojawiać się często. Osiągnij 1000 punktów.</string>
-    <string name="blockfill_difficulty_desc_expert">Gęsto zapełniona plansza, głównie nieregularne klocki. Osiągnij 1500 punktów.</string>
+    <string name="blockfill_difficulty_desc_expert">Gęsto zapełniona plansza, głównie nieregularne klocki. Osiągnij 1000 punktów.</string>
     <string name="blockfill_how_to_play_goal">Przeciągaj każdy klocek z zasobnika na siatkę 8x8. Oczyszczaj pełne wiersze i kolumny, aby zdobywać punkty i osiągnąć cel niezbędny do rozwiązania łamigłówki.</string>
     <string name="blockfill_how_to_play_controls">Przeciągnij klocek z zasobnika pod planszą i upuść go na siatkę. Można go umieścić tylko tam, gdzie każda z jego części trafia na puste pole. Po ułożeniu wszystkich 3 klocków z zasobnika pojawia się nowy zestaw 3 elementów.</string>
     <string name="blockfill_how_to_play_wrong_move">Nie ma nieprawidłowego ruchu, który można cofnąć — jeśli żadnego z 3 obecnych klocków nie da się umieścić nigdzie na planszy, łamigłówka natychmiast się kończy.</string>

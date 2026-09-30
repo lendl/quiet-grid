@@ -117,4 +117,35 @@ class BlockFillActionsTest {
 
         assertTrue("second clear's combo bonus ($secondGain) should exceed the first's ($firstGain)", secondGain > firstGain)
     }
+
+    private fun sessionWithTopRowMissingLastCell(extraBlock: Pair<Int, Int>?, multiplier: Int): BlockFillSession {
+        var board = createEmptyBoard()
+        for (col in 0 until BLOCKFILL_BOARD_SIZE - 1) board = placePieceAt(board, listOf(0 to 0), 0, col, BlockFillShapeFamily.SINGLE)
+        if (extraBlock != null) board = placePieceAt(board, listOf(0 to 0), extraBlock.first, extraBlock.second, BlockFillShapeFamily.SINGLE)
+        return freshSession(scoreTarget = 999_999).copy(board = board, multiplier = multiplier)
+    }
+
+    @Test
+    fun `every placement counts as one move`() {
+        var session = freshSession(scoreTarget = 999_999)
+        session = applyBlockFillPlacement(session, 0, 0, 0, random = Random(1))!!
+        session = applyBlockFillPlacement(session, 1, 0, 1, random = Random(1))!!
+        assertEquals(2, session.moves)
+    }
+
+    @Test
+    fun `emptying the board scores at the old multiplier and raises it by one`() {
+        val session = sessionWithTopRowMissingLastCell(extraBlock = null, multiplier = 1)
+        val result = applyBlockFillPlacement(session, pieceIndex = 0, anchorRow = 0, anchorCol = BLOCKFILL_BOARD_SIZE - 1, random = Random(1))!!
+        assertEquals(80 + 300, result.score)
+        assertEquals(2, result.multiplier)
+    }
+
+    @Test
+    fun `line clears after a full clear are multiplied and keep the multiplier`() {
+        val session = sessionWithTopRowMissingLastCell(extraBlock = 5 to 5, multiplier = 2)
+        val result = applyBlockFillPlacement(session, pieceIndex = 0, anchorRow = 0, anchorCol = BLOCKFILL_BOARD_SIZE - 1, random = Random(1))!!
+        assertEquals(80 * 2, result.score)
+        assertEquals(2, result.multiplier)
+    }
 }

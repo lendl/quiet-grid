@@ -1,8 +1,7 @@
 package com.quietgrid.app.games.blockfill
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,25 +12,29 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.R
-import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.ui.components.CollectPuzzleResult
-import com.quietgrid.app.ui.components.ElapsedTimerText
+import com.quietgrid.app.ui.components.CrownIcon
 import com.quietgrid.app.ui.components.EndPuzzleDialog
 import com.quietgrid.app.ui.components.EndPuzzleIconButton
 import com.quietgrid.app.ui.components.GameBackButton
 
+private val CROWN_SIZE = 18.dp
+
+fun endlessHeaderShowsCrown(score: Int, bestAtStart: Int): Boolean = bestAtStart == 0 || score > bestAtStart
+
 @Composable
-fun BlockFillPlayScreen(
-    difficulty: Difficulty,
+fun BlockFillEndlessPlayScreen(
     resume: Boolean,
     onBack: () -> Unit,
-    onFinished: (BlockFillResult) -> Unit,
+    onFinished: (BlockFillEndlessResult) -> Unit,
 ) {
-    val viewModel = hiltViewModel<BlockFillPlayViewModel, BlockFillPlayViewModel.Factory>(
-        creationCallback = { factory -> factory.create(difficulty, resume) },
+    val viewModel = hiltViewModel<BlockFillEndlessViewModel, BlockFillEndlessViewModel.Factory>(
+        creationCallback = { factory -> factory.create(resume) },
     )
     CollectPuzzleResult(viewModel.result, onFinished)
 
@@ -46,14 +49,7 @@ fun BlockFillPlayScreen(
     ) {
         GameBackButton(onBack)
         Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-            if (session != null) {
-                BlockFillScoreHeader(
-                    score = session.score,
-                    multiplier = session.multiplier,
-                    target = session.puzzle.scoreTarget,
-                    elapsedSeconds = viewModel.elapsedSeconds.toInt(),
-                )
-            }
+            if (session != null) BlockFillEndlessHeader(session.score, session.multiplier, session.bestAtStart)
         }
         EndPuzzleIconButton(onClick = { showEndDialog = true })
     }
@@ -63,24 +59,29 @@ fun BlockFillPlayScreen(
         onDismiss = { showEndDialog = false },
         onConfirm = {
             showEndDialog = false
-            viewModel.endPuzzle()
+            viewModel.endRun()
         },
     )
 }
 
 @Composable
-private fun BlockFillScoreHeader(score: Int, multiplier: Int, target: Int, elapsedSeconds: Int) {
-    val progress = if (target > 0) score.toFloat() / target else 0f
-    val secondaryText = MaterialTheme.colorScheme.onSurfaceVariant
-
-    BlockFillScoreRow(score = score, multiplier = multiplier, showMultiplier = multiplier > 1)
-    BlockFillHeaderProgress(progress)
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+private fun BlockFillEndlessHeader(score: Int, multiplier: Int, bestAtStart: Int) {
+    val crowned = endlessHeaderShowsCrown(score, bestAtStart)
+    val crownDescription = stringResource(R.string.blockfill_endless_crown_description)
+    BlockFillScoreRow(score = score, multiplier = multiplier, showMultiplier = true) {
+        if (crowned) {
+            CrownIcon(
+                Modifier.size(CROWN_SIZE).semantics { contentDescription = crownDescription },
+                tint = MaterialTheme.colorScheme.primary,
+            )
+        }
+    }
+    if (!crowned) {
+        BlockFillHeaderProgress(score.toFloat() / bestAtStart)
         Text(
-            stringResource(R.string.blockfill_target_value, target),
+            stringResource(R.string.blockfill_endless_best_value, bestAtStart),
             style = MaterialTheme.typography.labelSmall,
-            color = secondaryText,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        ElapsedTimerText(elapsedSeconds, style = MaterialTheme.typography.labelSmall, color = secondaryText)
     }
 }

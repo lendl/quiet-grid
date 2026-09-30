@@ -634,10 +634,10 @@
     <string name="blockfill_difficulty_medium">Gemiddeld</string>
     <string name="blockfill_difficulty_hard">Moeilijk</string>
     <string name="blockfill_difficulty_expert">Expert</string>
-    <string name="blockfill_difficulty_desc_easy">Vooral simpele, makkelijk te plaatsen stukken. Haal 300 punten.</string>
-    <string name="blockfill_difficulty_desc_medium">Een bredere mix aan vormen. Haal 600 punten.</string>
+    <string name="blockfill_difficulty_desc_easy">Vooral simpele, makkelijk te plaatsen stukken. Haal 1000 punten.</string>
+    <string name="blockfill_difficulty_desc_medium">Een bredere mix aan vormen. Haal 1000 punten.</string>
     <string name="blockfill_difficulty_desc_hard">Onhandige vormen komen vaker voor. Haal 1000 punten.</string>
-    <string name="blockfill_difficulty_desc_expert">Vol bord, vooral onregelmatige stukken. Haal 1500 punten.</string>
+    <string name="blockfill_difficulty_desc_expert">Vol bord, vooral onregelmatige stukken. Haal 1000 punten.</string>
     <string name="blockfill_how_to_play_goal">Sleep elk stuk uit het vak naar het 8x8-bord. Maak volle rijen en kolommen leeg om punten te scoren en haal de doelscore om de puzzel op te lossen.</string>
     <string name="blockfill_how_to_play_controls">Sleep een stuk uit het vak onder het bord en zet het op het bord neer. Het kan alleen geplaatst worden als elk van zijn vakjes op een leeg vakje valt. Zodra alle 3 de stukken geplaatst zijn, verschijnt er een nieuwe set van 3.</string>
     <string name="blockfill_how_to_play_wrong_move">Er is geen foute zet om ongedaan te maken — als geen van je 3 huidige stukken ergens op het bord past, eindigt de puzzel meteen.</string>

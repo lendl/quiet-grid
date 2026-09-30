@@ -755,10 +755,10 @@
     <string name="blockfill_difficulty_medium">Medio</string>
     <string name="blockfill_difficulty_hard">Difficile</string>
     <string name="blockfill_difficulty_expert">Esperto</string>
-    <string name="blockfill_difficulty_desc_easy">Pezzi per lo più regolari e facili da posizionare. Arriva a 300 punti.</string>
-    <string name="blockfill_difficulty_desc_medium">Un assortimento più vario di forme. Arriva a 600 punti.</string>
+    <string name="blockfill_difficulty_desc_easy">Pezzi per lo più regolari e facili da posizionare. Arriva a 1000 punti.</string>
+    <string name="blockfill_difficulty_desc_medium">Un assortimento più vario di forme. Arriva a 1000 punti.</string>
     <string name="blockfill_difficulty_desc_hard">Le forme scomode iniziano a comparire spesso. Arriva a 1000 punti.</string>
-    <string name="blockfill_difficulty_desc_expert">Griglia fitta, pezzi per lo più irregolari. Arriva a 1500 punti.</string>
+    <string name="blockfill_difficulty_desc_expert">Griglia fitta, pezzi per lo più irregolari. Arriva a 1000 punti.</string>
     <string name="blockfill_how_to_play_goal">Trascina ogni pezzo dal vassoio alla griglia 8x8. Libera righe e colonne complete per fare punti e raggiungi il punteggio obiettivo per risolvere il puzzle.</string>
     <string name="blockfill_how_to_play_controls">Trascina un pezzo dal vassoio sotto la griglia e rilascialo sulla griglia. Puoi posizionarlo solo dove ognuna delle sue caselle finisce su un quadrato vuoto. Quando hai posizionato tutti e 3 i pezzi del vassoio, ne compare una nuova serie di 3.</string>
     <string name="blockfill_how_to_play_wrong_move">Non ci sono mosse sbagliate da annullare: se nessuno dei tuoi 3 pezzi attuali può essere posizionato sulla griglia, il puzzle finisce subito.</string>

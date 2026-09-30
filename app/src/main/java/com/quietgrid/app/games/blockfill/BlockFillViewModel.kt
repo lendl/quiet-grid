@@ -14,20 +14,11 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlin.math.max
-import kotlin.math.round
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 private val json = Json { ignoreUnknownKeys = true }
-
-private const val PUZZLE_SCORE_BASE = 50_000
-private const val PUZZLE_SCORE_PENALTY_PER_SECOND = 50
-private const val MIN_SCORE = 100
-
-private fun computeBlockFillPuzzleScore(elapsedSeconds: Int): Int =
-    max(MIN_SCORE, PUZZLE_SCORE_BASE - round(elapsedSeconds * PUZZLE_SCORE_PENALTY_PER_SECOND.toDouble()).toInt())
 
 data class BlockFillResult(
     val difficulty: Difficulty,
@@ -55,6 +46,8 @@ private class BlockFillPuzzleAdapter : PuzzleAdapter<BlockFillSession, BlockFill
             score = persisted.score,
             comboStreak = persisted.comboStreak,
             status = persisted.status,
+            multiplier = persisted.multiplier,
+            moves = persisted.moves,
         )
     }
 
@@ -70,11 +63,13 @@ private class BlockFillPuzzleAdapter : PuzzleAdapter<BlockFillSession, BlockFill
             score = session.score,
             comboStreak = session.comboStreak,
             status = session.status,
+            multiplier = session.multiplier,
+            moves = session.moves,
         ),
     )
 
     override fun scoreOnWin(session: BlockFillSession, difficulty: Difficulty, elapsedSeconds: Int): Int =
-        computeBlockFillPuzzleScore(elapsedSeconds)
+        blockFillPuzzleScore(session.moves)
 
     override fun buildResult(session: BlockFillSession?, outcome: PuzzleOutcome): BlockFillResult = BlockFillResult(
         difficulty = outcome.difficulty,

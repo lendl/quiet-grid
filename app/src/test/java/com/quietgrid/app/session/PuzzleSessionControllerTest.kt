@@ -7,6 +7,7 @@ import com.quietgrid.app.data.DifficultyStats
 import com.quietgrid.app.data.GameStats
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.PlayRecord
+import com.quietgrid.app.data.SESSION_MODE_ENDLESS
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
 import kotlinx.coroutines.CoroutineScope
@@ -388,6 +389,22 @@ class PuzzleSessionControllerTest {
 
         assertEquals(TestSession(7), controller.session)
         assertEquals(42.0, controller.elapsedSeconds, 0.0)
+    }
+
+    @Test
+    fun `controller ignores envelopes with a mode`() = runTest {
+        val sessionStore = FakeSessionStore()
+        sessionStore.preload(
+            ActiveSessionEnvelope(gameId = GameId.TAKUZU.key, elapsedSeconds = 42.0, payload = "p", mode = SESSION_MODE_ENDLESS),
+        )
+        val adapter = FakePuzzleAdapter(freshValue = 3, restoreValue = TestSession(7))
+        val controller = PuzzleSessionController(backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), adapter)
+
+        controller.start(Difficulty.EASY, resume = true)
+        runCurrent()
+
+        assertEquals(TestSession(3), controller.session)
+        assertEquals(1, adapter.freshSessionCalls)
     }
 
     @Test

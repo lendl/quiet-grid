@@ -163,7 +163,7 @@ class PuzzleSessionController<TSession, TResult>(
 
     private suspend fun restoreOrCreate(requestedDifficulty: Difficulty, requestedDailyDate: LocalDate?): TSession? {
         val envelope = sessionStore.activeSession.first()
-        if (envelope != null && envelope.gameId == adapter.gameId.key) {
+        if (envelope != null && envelope.gameId == adapter.gameId.key && envelope.mode == null) {
             val restored = adapter.restoreSession(envelope.payload, envelope.elapsedSeconds)
             if (restored != null) {
                 elapsedSeconds = envelope.elapsedSeconds

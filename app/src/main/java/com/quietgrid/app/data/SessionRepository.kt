@@ -21,9 +21,12 @@ data class ActiveSessionEnvelope(
     val payload: String,
     val dailyDate: String? = null,
     val dailyTier: String? = null,
+    val mode: String? = null,
 )
 
-data class ActiveSessionSummary(val gameId: String, val dailyDate: String?)
+const val SESSION_MODE_ENDLESS = "endless"
+
+data class ActiveSessionSummary(val gameId: String, val dailyDate: String?, val mode: String? = null)
 
 interface SessionStore {
     val activeSession: Flow<ActiveSessionEnvelope?>
@@ -42,7 +45,7 @@ class SessionRepository @Inject constructor(private val dataStore: DataStore<Pre
         .map { raw -> raw?.let { runCatching { json.decodeFromString<ActiveSessionEnvelope>(it) }.getOrNull() } }
 
     val activeSessionSummary: Flow<ActiveSessionSummary?> = activeSession
-        .map { envelope -> envelope?.let { ActiveSessionSummary(it.gameId, it.dailyDate) } }
+        .map { envelope -> envelope?.let { ActiveSessionSummary(it.gameId, it.dailyDate, it.mode) } }
         .distinctUntilChanged()
 
     override suspend fun save(envelope: ActiveSessionEnvelope) {
