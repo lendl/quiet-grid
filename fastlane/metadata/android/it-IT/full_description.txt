@@ -1,27 +1,46 @@
-<p>Quiet Grid è una raccolta di puzzle di logica per Android. Niente pubblicità, niente tracciamento, nessuna connessione a internet richiesta: tutto funziona interamente sul tuo dispositivo.</p>
+<p>Quiet Grid è una raccolta rilassante di puzzle di logica e giochi di parole: Sudoku, Nonogram, Takuzu, Campo minato, Battaglia di stelle, Cerca parole, 2048 e altro ancora. Niente pubblicità, niente account, niente internet. Tutto resta sul tuo dispositivo.</p>
 
-<p><b>Puzzle inclusi:</b></p>
+<p><b>UN NUOVO PUZZLE OGNI GIORNO</b><br>
+Scegli quali giochi ti danno un nuovo puzzle ogni giorno, in ogni difficoltà. Condividi il risultato quando hai finito e ricevi un promemoria facoltativo se non hai ancora giocato.</p>
+
+<p><b>PUZZLE LEALI</b></p>
 <ul>
-<li><b>Chimp Test</b> — Tocca i numeri in ordine prima che scompaiano.</li>
-<li><b>Takuzu</b> — Riempi una griglia con 0 e 1: ogni riga e colonna deve averne lo stesso numero, mai tre uguali di fila, e non possono esserci due righe o colonne identiche.</li>
-<li><b>Nonogram</b> — Deduci quali caselle riempire in base agli indizi numerici di righe e colonne.</li>
-<li><b>Campo minato</b> — Il classico puzzle a griglia. Scopri tutte le caselle sicure senza far esplodere una mina.</li>
-<li><b>Sudoku</b> — Inserisci le cifre da 1 a 9 in modo che ogni riga, colonna e riquadro 3×3 contenga ogni cifra esattamente una volta.</li>
-<li><b>Cerca parole</b> — Trova le parole nascoste in una griglia di lettere.</li>
-<li><b>Block Fill</b> (Beta) — Trascina i pezzi sulla griglia e libera le linee complete.</li>
-<li><b>Indovina la parola</b> — Indovina la parola nascosta in sei tentativi.</li>
-<li><b>Animal Doku</b> — Metti un animale in ogni riga, colonna e regione colorata, senza che due animali si tocchino, nemmeno in diagonale.</li>
-<li><b>Fuga delle frecce</b> (Beta) — Libera la griglia, una freccia alla volta.</li>
-<li><b>2048</b> — Fai scorrere e unisci le tessere uguali finché una di esse arriva a 2048.</li>
-<li><b>Battaglia di stelle</b> — Metti le stelle in ogni riga, colonna e regione senza che due si tocchino.</li>
-<li><b>Indovina con i numeri</b> — Indovina la parola nascosta in dieci tentativi; due numeri mostrano quanto ogni tentativo si è avvicinato.</li>
-<li><b>N-Back</b> (Beta) — Osserva la griglia e tocca Uguale ogni volta che il quadrato acceso ripete la posizione di N passi prima.</li>
-<li><b>Svuota il tema</b> — Svuota la griglia componendo parole di un solo tema finché ogni lettera è stata usata.</li>
+<li>Quattro livelli, da Facile a Esperto, classificati in base alla logica che ogni puzzle richiede, non a quante caselle sono vuote.</li>
+<li>Serve un aiuto? Un suggerimento ti mostra il passo successivo.</li>
+<li>Modalità Challenger: risolvi più puzzle che puoi prima che scada il tempo.</li>
+<li>Crea Mix con i tuoi giochi e le tue difficoltà preferite e giocali uno dopo l'altro.</li>
+<li>Tieni traccia di vittorie, serie e punteggi per ogni gioco e difficoltà, con la cronologia completa di ogni puzzle giocato.</li>
 </ul>
 
-<p>Ogni tipo di puzzle offre i livelli di difficoltà Facile, Medio, Difficile ed Esperto.</p>
+<p><b>PUZZLE DI LOGICA</b></p>
+<ul>
+<li><b>Sudoku</b> — Inserisci le cifre da 1 a 9 in modo che ogni riga, colonna e riquadro 3×3 contenga ogni cifra una sola volta.</li>
+<li><b>Takuzu (Binairo)</b> — Riempi la griglia con 0 e 1. Stesso numero di ciascuno, mai tre di fila, nessuna riga identica.</li>
+<li><b>Nonogram (Hanjie)</b> — Svela un'immagine nascosta con gli indizi numerici di ogni riga e colonna.</li>
+<li><b>Campo minato</b> — Scopri tutte le caselle sicure senza colpire una mina.</li>
+<li><b>Battaglia di stelle</b> — Metti le stelle in ogni riga, colonna e regione, senza che due si tocchino.</li>
+<li><b>Animal Doku</b> — Un animale per riga, colonna e regione colorata, mai a contatto, nemmeno in diagonale.</li>
+</ul>
 
-<p><b>Privacy fin dalla progettazione:</b></p>
-<p>Quiet Grid non usa internet e non raccoglie alcun dato. L'unico permesso che chiede è quello per le notifiche, usato per i promemoria facoltativi dei puzzle giornalieri. Tutti i progressi e le impostazioni sono salvati localmente sul tuo dispositivo.</p>
+<p><b>GIOCHI DI PAROLE</b></p>
+<ul>
+<li><b>Cerca parole</b> — Trova le parole nascoste in griglie a tema.</li>
+<li><b>Indovina la parola</b> — Indovina la parola nascosta in sei tentativi.</li>
+<li><b>Indovina con i numeri</b> — Indovina la parola in dieci tentativi; due numeri mostrano quanto è vicino ogni tentativo.</li>
+<li><b>Svuota il tema</b> — Componi parole di un solo tema finché ogni lettera è stata usata.</li>
+</ul>
 
-<p>Disponibile in inglese, olandese, tedesco, francese, spagnolo, italiano, portoghese e polacco.</p>
+<p><b>MEMORIA E NUMERI</b></p>
+<ul>
+<li><b>Chimp Test</b> — Tocca i numeri in ordine prima che scompaiano.</li>
+<li><b>2048</b> — Fai scorrere e unisci le tessere fino a raggiungere 2048.</li>
+</ul>
+
+<p><b>A MODO TUO</b><br>
+Sette temi di colore, tra cui Matita, un tema in scala di grigi effetto carta, adatto ai giocatori daltonici. Gioca in inglese, olandese, tedesco, francese, spagnolo, italiano, portoghese o polacco, e scegli a parte la lingua dei giochi di parole.</p>
+
+<p><b>CALMO PER SCELTA</b><br>
+Quiet Grid è pensato per momenti di puzzle calmi e concentrati. Nascondi il timer se preferisci. Puzzle giornalieri, serie e promemoria valgono solo per i giochi che scegli tu. Pressione del tempo solo se avvii tu la modalità Challenger.</p>
+
+<p><b>PRIVATO E OPEN SOURCE</b><br>
+Niente pubblicità, niente tracciamento, niente account e nessun permesso internet. L'unico permesso richiesto è quello per le notifiche, per i promemoria giornalieri facoltativi. Open source con licenza GPLv3.</p>

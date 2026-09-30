@@ -1,0 +1,46 @@
+<p>Quiet Grid es una colección tranquila de puzzles de lógica y juegos de palabras: Sudoku, Nonograma, Takuzu, Buscaminas, Batalla de Estrellas, Sopa de Letras, 2048 y más. Sin anuncios, sin cuenta, sin internet. Todo se queda en tu dispositivo.</p>
+
+<p><b>UN PUZZLE NUEVO CADA DÍA</b><br>
+Elige qué juegos te dan un puzzle nuevo cada día, en cada dificultad. Comparte tu resultado al terminar y recibe un recordatorio opcional si aún no has jugado.</p>
+
+<p><b>PUZZLES JUSTOS</b></p>
+<ul>
+<li>Cuatro niveles, de Fácil a Experto, clasificados según la lógica que necesita cada puzzle, no según cuántas casillas están vacías.</li>
+<li>¿Te has atascado? Una pista te muestra el siguiente paso.</li>
+<li>Modo Challenger: resuelve tantos puzzles como puedas antes de que se acabe el tiempo.</li>
+<li>Crea Mixes con tus juegos y dificultades favoritos y juégalos uno tras otro.</li>
+<li>Sigue tus victorias, rachas y puntuaciones en cada juego y dificultad, con un historial completo de cada puzzle que juegas.</li>
+</ul>
+
+<p><b>PUZZLES DE LÓGICA</b></p>
+<ul>
+<li><b>Sudoku</b> — Coloca los dígitos del 1 al 9 para que cada fila, columna y caja de 3×3 contenga cada dígito una sola vez.</li>
+<li><b>Takuzu (Binairo)</b> — Llena la cuadrícula con 0 y 1. El mismo número de cada uno, nunca tres seguidos, ninguna fila idéntica.</li>
+<li><b>Nonograma (Hanjie)</b> — Descubre una imagen oculta con las pistas numéricas de cada fila y columna.</li>
+<li><b>Buscaminas</b> — Descubre todas las casillas seguras sin tocar ninguna mina.</li>
+<li><b>Batalla de Estrellas</b> — Coloca estrellas en cada fila, columna y región, sin que dos se toquen.</li>
+<li><b>Animal Doku</b> — Un animal por fila, columna y región de color, sin tocarse nunca, ni siquiera en diagonal.</li>
+</ul>
+
+<p><b>JUEGOS DE PALABRAS</b></p>
+<ul>
+<li><b>Sopa de Letras</b> — Encuentra palabras ocultas en cuadrículas temáticas.</li>
+<li><b>Adivina la Palabra</b> — Adivina la palabra oculta en seis intentos.</li>
+<li><b>Adivina por Números</b> — Adivina la palabra en diez intentos; dos números muestran lo cerca que estás.</li>
+<li><b>Despeja el Tema</b> — Forma palabras de un mismo tema hasta usar todas las letras.</li>
+</ul>
+
+<p><b>MEMORIA Y NÚMEROS</b></p>
+<ul>
+<li><b>Chimp Test</b> — Toca los números en orden antes de que desaparezcan.</li>
+<li><b>2048</b> — Desliza y combina fichas hasta llegar a 2048.</li>
+</ul>
+
+<p><b>A TU MANERA</b><br>
+Siete temas de color, entre ellos Lápiz, un tema en escala de grises con aspecto de papel, ideal para jugadores daltónicos. Juega en inglés, neerlandés, alemán, francés, español, italiano, portugués o polaco, y elige por separado el idioma de los juegos de palabras.</p>
+
+<p><b>CALMA POR DISEÑO</b><br>
+Quiet Grid está hecho para ratos de puzzles tranquilos y concentrados. Oculta el temporizador si lo prefieres. Los puzzles diarios, las rachas y los recordatorios solo se aplican a los juegos que tú eliges. Presión de tiempo solo si inicias tú el modo Challenger.</p>
+
+<p><b>PRIVADO Y DE CÓDIGO ABIERTO</b><br>
+Sin anuncios, sin rastreo, sin cuenta y sin permiso de internet. El único permiso que pide es el de notificaciones, para los recordatorios diarios opcionales. Código abierto bajo GPLv3.</p>

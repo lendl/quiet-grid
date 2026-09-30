@@ -1,0 +1,46 @@
+<p>Quiet Grid est une collection apaisante de puzzles logiques et de jeux de mots : Sudoku, Nonogramme, Takuzu, Démineur, Star Battle, Mots mêlés, 2048 et plus encore. Sans publicité, sans compte, sans internet. Tout reste sur votre appareil.</p>
+
+<p><b>UN NOUVEAU PUZZLE CHAQUE JOUR</b><br>
+Choisissez les jeux qui vous proposent un nouveau puzzle chaque jour, dans chaque difficulté. Partagez votre résultat une fois terminé et recevez un rappel facultatif si vous n'avez pas encore joué.</p>
+
+<p><b>DES PUZZLES ÉQUITABLES</b></p>
+<ul>
+<li>Quatre niveaux, de Facile à Expert, classés selon la logique requise par chaque puzzle, et non selon le nombre de cases vides.</li>
+<li>Besoin d'un coup de pouce ? Un indice vous montre l'étape suivante.</li>
+<li>Mode Challenger : résolvez un maximum de puzzles avant la fin du temps imparti.</li>
+<li>Créez des Mixes de vos jeux et difficultés préférés et enchaînez-les.</li>
+<li>Suivez vos victoires, séries et scores pour chaque jeu et chaque difficulté, avec l'historique complet de chaque puzzle joué.</li>
+</ul>
+
+<p><b>PUZZLES LOGIQUES</b></p>
+<ul>
+<li><b>Sudoku</b> — Placez les chiffres de 1 à 9 pour que chaque ligne, colonne et bloc 3×3 contienne chaque chiffre une seule fois.</li>
+<li><b>Takuzu (Binairo)</b> — Remplissez la grille de 0 et de 1. Autant de chaque, jamais trois à la suite, aucune ligne identique.</li>
+<li><b>Nonogramme (Hanjie)</b> — Révélez une image cachée grâce aux indices chiffrés de chaque ligne et colonne.</li>
+<li><b>Démineur</b> — Découvrez toutes les cases sûres sans toucher de mine.</li>
+<li><b>Star Battle</b> — Placez des étoiles dans chaque ligne, colonne et région, sans que deux se touchent.</li>
+<li><b>Animal Doku</b> — Un animal par ligne, colonne et région colorée, jamais en contact, même en diagonale.</li>
+</ul>
+
+<p><b>JEUX DE MOTS</b></p>
+<ul>
+<li><b>Mots mêlés</b> — Trouvez les mots cachés dans des grilles à thème.</li>
+<li><b>Devine le Mot</b> — Devinez le mot caché en six essais.</li>
+<li><b>Devine par les Nombres</b> — Devinez le mot en dix essais ; deux nombres indiquent à quel point vous êtes proche.</li>
+<li><b>Efface le Thème</b> — Formez des mots d'un même thème jusqu'à utiliser toutes les lettres.</li>
+</ul>
+
+<p><b>MÉMOIRE ET NOMBRES</b></p>
+<ul>
+<li><b>Chimp Test</b> — Touchez les nombres dans l'ordre avant qu'ils ne disparaissent.</li>
+<li><b>2048</b> — Faites glisser et fusionnez les tuiles pour atteindre 2048.</li>
+</ul>
+
+<p><b>À VOTRE GOÛT</b><br>
+Sept thèmes de couleurs, dont Crayon, un thème en niveaux de gris façon papier, adapté aux joueurs daltoniens. Jouez en anglais, néerlandais, allemand, français, espagnol, italien, portugais ou polonais, et choisissez séparément la langue des jeux de mots.</p>
+
+<p><b>CALME PAR NATURE</b><br>
+Quiet Grid est conçu pour des moments de puzzle calmes et concentrés. Masquez la minuterie si vous préférez. Puzzles quotidiens, séries et rappels ne concernent que les jeux que vous choisissez. La pression du temps uniquement si vous lancez vous-même le mode Challenger.</p>
+
+<p><b>PRIVÉ ET OPEN SOURCE</b><br>
+Pas de publicité, pas de pistage, pas de compte et pas d'autorisation internet. La seule autorisation demandée concerne les notifications, pour les rappels quotidiens facultatifs. Open source sous licence GPLv3.</p>

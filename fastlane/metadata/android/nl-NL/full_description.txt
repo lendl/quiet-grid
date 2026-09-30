@@ -1,0 +1,46 @@
+<p>Quiet Grid is een rustige verzameling logicapuzzels en woordspellen: Sudoku, Nonogram, Takuzu, Mijnenveger, Star Battle, Woordzoeker, 2048 en meer. Geen advertenties, geen account, geen internet. Alles blijft op je apparaat.</p>
+
+<p><b>ELKE DAG EEN NIEUWE PUZZEL</b><br>
+Kies zelf welke spellen je elke dag een nieuwe puzzel geven, in elke moeilijkheidsgraad. Deel je resultaat als je klaar bent, en krijg een optionele herinnering als je nog niet hebt gespeeld.</p>
+
+<p><b>EERLIJKE PUZZELS</b></p>
+<ul>
+<li>Vier niveaus, van Makkelijk tot Expert, ingedeeld op de logica die een puzzel vraagt, niet op het aantal lege vakjes.</li>
+<li>Vast? Een hint laat je de volgende stap zien.</li>
+<li>Challenger-modus: los zoveel mogelijk puzzels op voordat de tijd om is.</li>
+<li>Stel Mixen samen van je favoriete spellen en moeilijkheidsgraden en speel ze achter elkaar.</li>
+<li>Houd overwinningen, streaks en scores bij voor elk spel en elke moeilijkheidsgraad, met een volledige geschiedenis van elke puzzel die je speelt.</li>
+</ul>
+
+<p><b>LOGICAPUZZELS</b></p>
+<ul>
+<li><b>Sudoku</b> — Plaats de cijfers 1–9 zodat elke rij, kolom en elk 3×3-blok elk cijfer precies één keer bevat.</li>
+<li><b>Takuzu (Binairo)</b> — Vul het raster met nullen en enen. Evenveel van elk, nooit drie op een rij, geen gelijke rijen.</li>
+<li><b>Nonogram (Hanjie)</b> — Onthul een verborgen afbeelding met de cijferhints bij elke rij en kolom.</li>
+<li><b>Mijnenveger</b> — Open elk veilig vakje zonder een mijn te raken.</li>
+<li><b>Star Battle</b> — Plaats sterren in elke rij, kolom en regio, zonder dat twee sterren elkaar raken.</li>
+<li><b>Animal Doku</b> — Eén dier per rij, kolom en gekleurde regio, nooit naast elkaar, ook niet diagonaal.</li>
+</ul>
+
+<p><b>WOORDSPELLEN</b></p>
+<ul>
+<li><b>Woordzoeker</b> — Vind verborgen woorden in rasters met een thema.</li>
+<li><b>Woord Raden</b> — Raad het verborgen woord in zes pogingen.</li>
+<li><b>Cijfers Raden</b> — Raad het woord in tien pogingen; twee getallen laten zien hoe dichtbij je bent.</li>
+<li><b>Thema Wissen</b> — Vorm woorden uit één thema tot elke letter is gebruikt.</li>
+</ul>
+
+<p><b>GEHEUGEN EN GETALLEN</b></p>
+<ul>
+<li><b>Chimp Test</b> — Tik de cijfers op volgorde aan voordat ze verdwijnen.</li>
+<li><b>2048</b> — Schuif en voeg tegels samen tot je 2048 bereikt.</li>
+</ul>
+
+<p><b>HELEMAAL VAN JOU</b><br>
+Zeven kleurthema's, waaronder Potlood: een grijstintenthema als op papier, prettig voor kleurenblinde spelers. Speel in het Engels, Nederlands, Duits, Frans, Spaans, Italiaans, Portugees of Pools, en kies de taal voor woordpuzzels apart.</p>
+
+<p><b>RUSTIG VAN OPZET</b><br>
+Quiet Grid is gemaakt voor rustige, gefocuste puzzeltijd. De timer kun je verbergen. Dagelijkse puzzels, streaks en herinneringen gelden alleen voor de spellen die je zelf kiest. Tijdsdruk alleen als je zelf de Challenger-modus start.</p>
+
+<p><b>PRIVÉ EN OPEN SOURCE</b><br>
+Geen advertenties, geen tracking, geen account en geen internettoestemming. De enige toestemming die de app vraagt is voor meldingen, voor optionele dagelijkse herinneringen. Open source onder GPLv3.</p>

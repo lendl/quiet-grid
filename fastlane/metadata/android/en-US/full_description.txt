@@ -1,27 +1,46 @@
-<p>Quiet Grid is a collection of logic puzzles for Android. No ads, no tracking, no internet connection required — everything runs entirely on your device.</p>
+<p>Quiet Grid is a calm collection of logic puzzles and word games: Sudoku, Nonogram, Takuzu, Minesweeper, Star Battle, Word Search, 2048 and more. No ads, no account, no internet. Everything stays on your device.</p>
 
-<p><b>Puzzles included:</b></p>
+<p><b>A FRESH PUZZLE EVERY DAY</b><br>
+Choose which games give you a new puzzle every day, in every difficulty. Share your result when you're done, and get an optional reminder if you haven't played yet.</p>
+
+<p><b>PUZZLES THAT PLAY FAIR</b></p>
 <ul>
-<li><b>Chimp Test</b> — Tap the numbers in order before they disappear.</li>
-<li><b>Takuzu</b> — Fill a grid with 0s and 1s: each row and column must have equal counts, no three in a row, and no two rows or columns may be identical.</li>
-<li><b>Nonogram</b> — Deduce which cells to fill based on number clues along rows and columns.</li>
-<li><b>Minesweeper</b> — Classic grid puzzle. Uncover all safe cells without triggering a mine.</li>
-<li><b>Sudoku</b> — Place digits 1–9 so every row, column, and 3×3 box contains each digit exactly once.</li>
-<li><b>Word Search</b> — Find hidden words in a grid of letters.</li>
-<li><b>Block Fill</b> (Beta) — Drag pieces onto the grid and clear full lines.</li>
-<li><b>Word Guess</b> — Guess the hidden word in six tries.</li>
-<li><b>Animal Doku</b> — Place one animal in every row, column, and colored region, with no two animals touching, even diagonally.</li>
-<li><b>Arrow Escape</b> (Beta) — Clear the board, one arrow at a time.</li>
-<li><b>2048</b> — Slide and merge matching tiles until one of them reaches 2048.</li>
-<li><b>Star Battle</b> — Place stars in every row, column, and region with no two touching.</li>
-<li><b>Guess by Numbers</b> — Guess the hidden word in ten tries; two numbers show how close each guess was.</li>
-<li><b>N-Back</b> (Beta) — Watch the grid and tap Match whenever the lit square repeats its position from N steps back.</li>
-<li><b>Theme Clear</b> — Clear the grid by spelling words from one theme until every letter is used.</li>
+<li>Four levels, Easy to Expert, graded by the logic each puzzle needs, not by how many squares are empty.</li>
+<li>Stuck? A hint shows you the next step.</li>
+<li>Challenger mode: solve as many puzzles as you can before the clock runs out.</li>
+<li>Build Mixes of your favorite games and difficulties and play them back to back.</li>
+<li>Track wins, streaks and scores for every game and difficulty, with a full history of every puzzle you play.</li>
 </ul>
 
-<p>Each puzzle type offers Easy, Medium, Hard, and Expert difficulty levels.</p>
+<p><b>LOGIC PUZZLES</b></p>
+<ul>
+<li><b>Sudoku</b> — Place digits 1–9 so every row, column and 3×3 box contains each digit once.</li>
+<li><b>Takuzu (Binairo)</b> — Fill the grid with 0s and 1s. Equal counts, no three in a row, no identical rows.</li>
+<li><b>Nonogram (Hanjie)</b> — Reveal a hidden picture using the number clues on each row and column.</li>
+<li><b>Minesweeper</b> — Uncover every safe cell without hitting a mine.</li>
+<li><b>Star Battle</b> — Place stars in every row, column and region, with no two touching.</li>
+<li><b>Animal Doku</b> — One animal per row, column and colored region, never touching, not even diagonally.</li>
+</ul>
 
-<p><b>Privacy by design:</b></p>
-<p>Quiet Grid does not use the internet or collect any data. The only permission it asks for is notifications, used for optional daily puzzle reminders. All progress and settings are stored locally on your device.</p>
+<p><b>WORD GAMES</b></p>
+<ul>
+<li><b>Word Search</b> — Find hidden words in themed grids.</li>
+<li><b>Word Guess</b> — Guess the hidden word in six tries.</li>
+<li><b>Guess by Numbers</b> — Guess the word in ten tries; two numbers show how close you are.</li>
+<li><b>Theme Clear</b> — Spell words from one theme until every letter is used.</li>
+</ul>
 
-<p>Available in English, Dutch, German, French, Spanish, Italian, Portuguese, and Polish.</p>
+<p><b>MEMORY AND NUMBERS</b></p>
+<ul>
+<li><b>Chimp Test</b> — Tap the numbers in order before they disappear.</li>
+<li><b>2048</b> — Slide and merge tiles to reach 2048.</li>
+</ul>
+
+<p><b>MAKE IT YOURS</b><br>
+Seven color themes, including Pencil, a paper-like grayscale theme that works well for colorblind players. Play in English, Dutch, German, French, Spanish, Italian, Portuguese or Polish, and pick the language for word puzzles separately.</p>
+
+<p><b>CALM BY DESIGN</b><br>
+Quiet Grid is made for calm, focused puzzle time. Hide the timer if you prefer. Daily puzzles, streaks and reminders only apply to the games you choose. Time pressure only when you start Challenger mode yourself.</p>
+
+<p><b>PRIVATE AND OPEN SOURCE</b><br>
+No ads, no tracking, no account, and no internet permission. The only permission it asks for is notifications, for optional daily reminders. Open source under GPLv3.</p>

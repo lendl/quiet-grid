@@ -1,33 +1,46 @@
-Quiet Grid to aplikacja z łamigłówkami logicznymi. Bez konta. Bez internetu. Open source. Twoje dane pozostają na urządzeniu.
+<p>Quiet Grid to spokojna kolekcja łamigłówek logicznych i gier słownych: Sudoku, Nonogram, Takuzu, Saper, Bitwa gwiazd, Wykreślanka, 2048 i więcej. Bez reklam, bez konta, bez internetu. Wszystko zostaje na Twoim urządzeniu.</p>
 
-ŁAMIGŁÓWKI
+<p><b>NOWA ŁAMIGŁÓWKA CODZIENNIE</b><br>
+Wybierz, które gry mają codziennie dawać Ci nową łamigłówkę, na każdym poziomie trudności. Udostępnij wynik po ukończeniu i włącz opcjonalne przypomnienie, gdy dzisiejsza łamigłówka wciąż czeka.</p>
 
-Sudoku — wypełnij siatkę 9x9 tak, aby każdy wiersz, kolumna i blok zawierały cyfry od 1 do 9. Cztery poziomy trudności, od łatwego do eksperckiego.
-Takuzu — wypełnij siatkę zerami i jedynkami zgodnie z kilkoma prostymi zasadami. Łatwo się nauczyć, trudno opanować.
-Nonogram — wypełniaj pola zgodnie ze wskazówkami liczbowymi w wierszach i kolumnach.
-Saper — klasyka, z czytelną grafiką i czterema poziomami trudności.
-Wykreślanka — odnajduj wskazane słowa w liniach prostych i odgadnij ukryte hasło bonusowe z pozostałych liter.
-Układanka z klocków (Beta) — przeciągaj klocki na siatkę i oczyszczaj pełne linie.
-Zgadnij słowo — odgadnij ukryte słowo w sześciu próbach.
-Animal Doku — umieść jedno zwierzę w każdym wierszu, kolumnie i kolorowym obszarze, tak aby żadne dwa zwierzęta się nie stykały, nawet po przekątnej.
-Ucieczka strzałek (Beta) — oczyść planszę, usuwając po jednej strzałce naraz.
-Test szympansa — krótkie wyzwanie na refleks i pamięć: stukaj liczby w kolejności, zanim znikną.
-2048 — przesuwaj i łącz takie same kafelki, aż jeden z nich osiągnie wartość 2048.
-Bitwa gwiazd — rozmieść gwiazdy w każdym wierszu, kolumnie i obszarze tak, aby żadne dwie się nie stykały.
-Zgadnij po liczbach — odgadnij ukryte słowo w dziesięciu próbach; dwie liczby pokazują, jak bliska była Twoja odpowiedź.
-N-Back (Beta) — obserwuj siatkę i stukaj Dopasuj, gdy podświetlone pole powtarza pozycję sprzed N kroków.
-Wyczyść temat — układaj słowa z jednego tematu, aż wykorzystasz wszystkie litery w siatce.
+<p><b>UCZCIWE ŁAMIGŁÓWKI</b></p>
+<ul>
+<li>Cztery poziomy: Łatwy, Średni, Trudny i Ekspert, oceniane według logiki, jakiej wymaga łamigłówka, a nie liczby pustych pól.</li>
+<li>Brak pomysłu? Podpowiedź pokaże Ci następny krok.</li>
+<li>Tryb Pretendent: rozwiąż jak najwięcej łamigłówek, zanim skończy się czas.</li>
+<li>Twórz Miksy ulubionych gier i poziomów trudności i graj w nie jedna po drugiej.</li>
+<li>Śledź zwycięstwa, serie i wyniki dla każdej gry i poziomu, z pełną historią każdej rozegranej łamigłówki.</li>
+</ul>
 
-DLACZEGO QUIET GRID
+<p><b>ŁAMIGŁÓWKI LOGICZNE</b></p>
+<ul>
+<li><b>Sudoku</b> — Wpisz cyfry 1–9 tak, aby każdy wiersz, kolumna i blok 3×3 zawierały każdą cyfrę dokładnie raz.</li>
+<li><b>Takuzu (Binairo)</b> — Wypełnij siatkę zerami i jedynkami. Tyle samo jednych i drugich, nigdy trzy z rzędu, żadnych identycznych wierszy.</li>
+<li><b>Nonogram (Hanjie)</b> — Odkryj ukryty obrazek dzięki wskazówkom liczbowym przy każdym wierszu i kolumnie.</li>
+<li><b>Saper</b> — Odkryj wszystkie bezpieczne pola, nie trafiając na minę.</li>
+<li><b>Bitwa gwiazd</b> — Rozmieść gwiazdy w każdym wierszu, kolumnie i obszarze tak, aby żadne dwie się nie stykały.</li>
+<li><b>Zwierzęce Doku</b> — Jedno zwierzę w każdym wierszu, kolumnie i kolorowym obszarze, bez stykania się, nawet po przekątnej.</li>
+</ul>
 
-Bez konta i rejestracji.
-Działa w pełni offline, bez potrzeby połączenia z internetem.
-Bez reklam.
-Open source — kod jest publiczny i każdy może go sprawdzić.
-Nic nie opuszcza Twojego urządzenia: brak analityki, brak śledzenia, brak zbierania danych.
-Motyw ciemny, jasny oraz odcienie szarości „Pencil” przyjazny dla osób z daltonizmem.
-Statystyki i poziomy trudności dla każdej gry, dzięki czemu możesz śledzić swoje postępy we własnym tempie.
+<p><b>GRY SŁOWNE</b></p>
+<ul>
+<li><b>Wykreślanka</b> — Znajdź ukryte słowa w tematycznych siatkach.</li>
+<li><b>Zgadnij słowo</b> — Odgadnij ukryte słowo w sześciu próbach.</li>
+<li><b>Zgadnij po liczbach</b> — Odgadnij słowo w dziesięciu próbach; dwie liczby pokazują, jak blisko jesteś.</li>
+<li><b>Wyczyść temat</b> — Układaj słowa z jednego tematu, aż wykorzystasz wszystkie litery.</li>
+</ul>
 
-Quiet Grid powstało z myślą o spokojnym, skupionym czasie z łamigłówkami, bez presji czasu. Codzienne łamigłówki z seriami i przypomnieniami są opcjonalne — powiadomienia pojawią się tylko wtedy, gdy je subskrybujesz.
+<p><b>PAMIĘĆ I LICZBY</b></p>
+<ul>
+<li><b>Test szympansa</b> — Stukaj liczby po kolei, zanim znikną.</li>
+<li><b>2048</b> — Przesuwaj i łącz kafelki, aż osiągniesz 2048.</li>
+</ul>
 
-Dostępne w językach: angielskim, niderlandzkim, niemieckim, francuskim, hiszpańskim, włoskim, portugalskim i polskim.
+<p><b>PO SWOJEMU</b><br>
+Siedem motywów kolorystycznych, w tym Ołówek: motyw w odcieniach szarości przypominający papier, przyjazny dla osób z daltonizmem. Graj po angielsku, niderlandzku, niemiecku, francusku, hiszpańsku, włosku, portugalsku lub polsku, a język gier słownych wybierz osobno.</p>
+
+<p><b>SPOKÓJ Z ZAŁOŻENIA</b><br>
+Quiet Grid powstało z myślą o spokojnym, skupionym czasie z łamigłówkami. Ukryj stoper, jeśli wolisz. Codzienne łamigłówki, serie i przypomnienia dotyczą tylko wybranych przez Ciebie gier. Presja czasu tylko wtedy, gdy samodzielnie włączysz tryb Pretendent.</p>
+
+<p><b>PRYWATNIE I OPEN SOURCE</b><br>
+Bez reklam, bez śledzenia, bez konta i bez uprawnienia do internetu. Jedyne uprawnienie, o które prosi aplikacja, to powiadomienia – do opcjonalnych codziennych przypomnień. Open source na licencji GPLv3.</p>

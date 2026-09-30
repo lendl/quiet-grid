@@ -1,0 +1,46 @@
+<p>Quiet Grid ist eine ruhige Sammlung von Logikrätseln und Wortspielen: Sudoku, Nonogramm, Takuzu, Minesweeper, Star Battle, Wortsuche, 2048 und mehr. Keine Werbung, kein Konto, kein Internet. Alles bleibt auf deinem Gerät.</p>
+
+<p><b>JEDEN TAG EIN NEUES RÄTSEL</b><br>
+Wähle, welche Spiele dir jeden Tag ein neues Rätsel geben, in jeder Schwierigkeitsstufe. Teile dein Ergebnis, wenn du fertig bist, und erhalte auf Wunsch eine Erinnerung, falls du noch nicht gespielt hast.</p>
+
+<p><b>FAIRE RÄTSEL</b></p>
+<ul>
+<li>Vier Stufen von Leicht bis Experte, eingestuft nach der Logik, die ein Rätsel verlangt, nicht nach der Zahl leerer Felder.</li>
+<li>Nicht weiter? Ein Hinweis zeigt dir den nächsten Schritt.</li>
+<li>Challenger-Modus: Löse so viele Rätsel wie möglich, bevor die Zeit abläuft.</li>
+<li>Stelle Mixe aus deinen Lieblingsspielen und Schwierigkeitsstufen zusammen und spiele sie nacheinander.</li>
+<li>Verfolge Siege, Streaks und Punkte für jedes Spiel und jede Stufe, mit einem vollständigen Verlauf aller gespielten Rätsel.</li>
+</ul>
+
+<p><b>LOGIKRÄTSEL</b></p>
+<ul>
+<li><b>Sudoku</b> — Setze die Ziffern 1–9 so, dass jede Zeile, jede Spalte und jeder 3×3-Block jede Ziffer genau einmal enthält.</li>
+<li><b>Takuzu (Binairo)</b> — Fülle das Raster mit Nullen und Einsen. Gleich viele von beiden, nie drei in Folge, keine identischen Zeilen.</li>
+<li><b>Nonogramm (Hanjie)</b> — Decke mit den Zahlenhinweisen an jeder Zeile und Spalte ein verborgenes Bild auf.</li>
+<li><b>Minesweeper</b> — Decke alle sicheren Felder auf, ohne eine Mine zu treffen.</li>
+<li><b>Star Battle</b> — Setze Sterne in jede Zeile, Spalte und Region, ohne dass sich zwei berühren.</li>
+<li><b>Animal Doku</b> — Ein Tier pro Zeile, Spalte und farbiger Region, die sich nie berühren, auch nicht diagonal.</li>
+</ul>
+
+<p><b>WORTSPIELE</b></p>
+<ul>
+<li><b>Wortsuche</b> — Finde versteckte Wörter in thematischen Rastern.</li>
+<li><b>Wort erraten</b> — Errate das verborgene Wort in sechs Versuchen.</li>
+<li><b>Zahlenraten</b> — Errate das Wort in zehn Versuchen; zwei Zahlen zeigen, wie nah du dran bist.</li>
+<li><b>Thema Leeren</b> — Bilde Wörter aus einem Thema, bis jeder Buchstabe verwendet ist.</li>
+</ul>
+
+<p><b>GEDÄCHTNIS UND ZAHLEN</b></p>
+<ul>
+<li><b>Chimp Test</b> — Tippe die Zahlen der Reihe nach an, bevor sie verschwinden.</li>
+<li><b>2048</b> — Schiebe und verbinde Kacheln, bis du 2048 erreichst.</li>
+</ul>
+
+<p><b>GANZ NACH DEINEM GESCHMACK</b><br>
+Sieben Farbthemen, darunter Bleistift: ein papierartiges Graustufenthema, das sich gut für farbenblinde Spieler eignet. Spiele auf Englisch, Niederländisch, Deutsch, Französisch, Spanisch, Italienisch, Portugiesisch oder Polnisch und wähle die Sprache für Worträtsel separat.</p>
+
+<p><b>BEWUSST RUHIG</b><br>
+Quiet Grid ist für ruhige, konzentrierte Rätselzeit gemacht. Blende den Timer aus, wenn du möchtest. Tagesrätsel, Streaks und Erinnerungen gelten nur für die Spiele, die du auswählst. Zeitdruck nur, wenn du selbst den Challenger-Modus startest.</p>
+
+<p><b>PRIVAT UND OPEN SOURCE</b><br>
+Keine Werbung, kein Tracking, kein Konto und keine Internetberechtigung. Die einzige Berechtigung, die die App anfragt, betrifft Benachrichtigungen für optionale tägliche Erinnerungen. Open Source unter GPLv3.</p>

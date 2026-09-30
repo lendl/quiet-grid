@@ -1,0 +1,46 @@
+<p>Quiet Grid é uma coleção tranquila de quebra-cabeças de lógica e jogos de palavras: Sudoku, Nonograma, Takuzu, Campo Minado, Batalha de Estrelas, Caça-Palavras, 2048 e mais. Sem anúncios, sem conta, sem internet. Tudo fica no seu dispositivo.</p>
+
+<p><b>UM QUEBRA-CABEÇA NOVO TODO DIA</b><br>
+Escolha quais jogos oferecem um quebra-cabeça novo todo dia, em cada dificuldade. Compartilhe seu resultado ao terminar e receba um lembrete opcional se ainda não tiver jogado.</p>
+
+<p><b>QUEBRA-CABEÇAS JUSTOS</b></p>
+<ul>
+<li>Quatro níveis, de Fácil a Especialista, classificados pela lógica que cada quebra-cabeça exige, não pela quantidade de casas vazias.</li>
+<li>Travou? Uma dica mostra o próximo passo.</li>
+<li>Modo Desafiante: resolva o máximo de quebra-cabeças possível antes que o tempo acabe.</li>
+<li>Monte Combinados com seus jogos e dificuldades favoritos e jogue um atrás do outro.</li>
+<li>Acompanhe vitórias, sequências e pontuações de cada jogo e dificuldade, com o histórico completo de cada quebra-cabeça que você jogar.</li>
+</ul>
+
+<p><b>QUEBRA-CABEÇAS DE LÓGICA</b></p>
+<ul>
+<li><b>Sudoku</b> — Coloque os dígitos de 1 a 9 para que cada linha, coluna e bloco 3×3 tenha cada dígito uma única vez.</li>
+<li><b>Takuzu (Binairo)</b> — Preencha a grade com 0 e 1. A mesma quantidade de cada, nunca três seguidos, nenhuma linha idêntica.</li>
+<li><b>Nonograma (Hanjie)</b> — Revele uma imagem escondida usando as pistas numéricas de cada linha e coluna.</li>
+<li><b>Campo Minado</b> — Descubra todas as casas seguras sem acertar uma mina.</li>
+<li><b>Batalha de Estrelas</b> — Coloque estrelas em cada linha, coluna e região, sem que duas se toquem.</li>
+<li><b>Animal Doku</b> — Um animal por linha, coluna e região colorida, sem nunca se tocarem, nem na diagonal.</li>
+</ul>
+
+<p><b>JOGOS DE PALAVRAS</b></p>
+<ul>
+<li><b>Caça-Palavras</b> — Encontre palavras escondidas em grades temáticas.</li>
+<li><b>Adivinhe a Palavra</b> — Adivinhe a palavra escondida em seis tentativas.</li>
+<li><b>Adivinhe por Números</b> — Adivinhe a palavra em dez tentativas; dois números mostram o quanto você está perto.</li>
+<li><b>Limpe o Tema</b> — Forme palavras de um mesmo tema até usar todas as letras.</li>
+</ul>
+
+<p><b>MEMÓRIA E NÚMEROS</b></p>
+<ul>
+<li><b>Chimp Test</b> — Toque nos números em ordem antes que desapareçam.</li>
+<li><b>2048</b> — Deslize e junte peças até chegar a 2048.</li>
+</ul>
+
+<p><b>DO SEU JEITO</b><br>
+Sete temas de cores, incluindo Lápis, um tema em tons de cinza com aparência de papel, ótimo para jogadores daltônicos. Jogue em inglês, holandês, alemão, francês, espanhol, italiano, português ou polonês, e escolha separadamente o idioma dos jogos de palavras.</p>
+
+<p><b>CALMO POR NATUREZA</b><br>
+Quiet Grid foi feito para momentos de quebra-cabeça calmos e focados. Oculte o cronômetro se preferir. Quebra-cabeças diários, sequências e lembretes valem só para os jogos que você escolher. Pressão de tempo só quando você iniciar o modo Desafiante por conta própria.</p>
+
+<p><b>PRIVADO E DE CÓDIGO ABERTO</b><br>
+Sem anúncios, sem rastreamento, sem conta e sem permissão de internet. A única permissão que o app pede é a de notificações, para lembretes diários opcionais. Código aberto sob a licença GPLv3.</p>
