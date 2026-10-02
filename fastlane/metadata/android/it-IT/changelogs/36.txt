@@ -1,0 +1,5 @@
+Versione 1.7.0
+
+- Nuovo gioco: Block Fill. Trascina i pezzi sulla griglia e libera righe e colonne complete, con modalità infinita
+- Risposte migliori in Indovina la parola: parole più comuni, meno nomi propri e parole rare
+- Correzioni di bug e miglioramenti della stabilità

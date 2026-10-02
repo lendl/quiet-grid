@@ -1,0 +1,5 @@
+Version 1.7.0
+
+- New game: Block Fill. Drag pieces onto the board and clear full rows and columns, with an Endless mode
+- Better Word Guess answers: more common words, fewer names and rare words
+- Bug fixes and stability improvements

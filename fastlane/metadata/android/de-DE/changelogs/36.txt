@@ -1,0 +1,5 @@
+Version 1.7.0
+
+- Neues Spiel: Block Fill. Ziehe Teile aufs Feld und räume volle Reihen und Spalten, mit Endlos-Modus
+- Bessere Lösungen bei Wort erraten: häufigere Wörter, weniger Namen und seltene Wörter
+- Fehlerbehebungen und Stabilitätsverbesserungen

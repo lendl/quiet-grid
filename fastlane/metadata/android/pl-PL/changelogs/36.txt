@@ -1,0 +1,5 @@
+Wersja 1.7.0
+
+- Nowa gra: Układanka z klocków. Przeciągaj klocki na planszę i oczyszczaj pełne wiersze i kolumny, z trybem bez końca
+- Lepsze hasła w grze Zgadnij słowo: częstsze słowa, mniej nazw własnych i rzadkich słów
+- Poprawki błędów i stabilności

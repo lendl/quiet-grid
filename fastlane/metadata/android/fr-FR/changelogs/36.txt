@@ -1,0 +1,5 @@
+Version 1.7.0
+
+- Nouveau jeu : Block Fill. Faites glisser des pièces sur la grille et videz des lignes et colonnes complètes, avec un mode infini
+- De meilleures réponses dans Devine le Mot : des mots plus courants, moins de noms propres et de mots rares
+- Corrections de bugs et améliorations de stabilité

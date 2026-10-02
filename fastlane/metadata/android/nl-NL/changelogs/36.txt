@@ -1,0 +1,5 @@
+Versie 1.7.0
+
+- Nieuw spel: Block Fill. Sleep stukken op het bord en maak volle rijen en kolommen leeg, met eindeloze modus
+- Betere antwoorden bij Woord Raden: meer gangbare woorden, minder namen en zeldzame woorden
+- Bugfixes en stabiliteitsverbeteringen

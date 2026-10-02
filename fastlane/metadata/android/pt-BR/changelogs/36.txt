@@ -1,0 +1,5 @@
+Versão 1.7.0
+
+- Novo jogo: Block Fill. Arraste peças para o tabuleiro e limpe linhas e colunas inteiras, com modo infinito
+- Respostas melhores em Adivinhe a Palavra: palavras mais comuns, menos nomes próprios e palavras raras
+- Correções de erros e melhorias de estabilidade

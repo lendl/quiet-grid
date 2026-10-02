@@ -1,0 +1,5 @@
+Versión 1.7.0
+
+- Nuevo juego: Block Fill. Arrastra piezas al tablero y despeja filas y columnas completas, con un modo sin fin
+- Mejores respuestas en Adivina la Palabra: palabras más comunes, menos nombres propios y palabras raras
+- Corrección de errores y mejoras de estabilidad
