@@ -224,7 +224,7 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
 
     ModalNavigationDrawer(
         drawerState = accountDrawerState,
-        gesturesEnabled = currentRoute != Routes.PLAY,
+        gesturesEnabled = isTabsRoute || accountDrawerState.isOpen,
         drawerContent = {
             ModalDrawerSheet {
                 AccountDrawerContent(
@@ -977,6 +977,7 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
                     onBack = {
                         navController.navigate(Routes.picker(GameId.BLOCKFILL)) { popUpTo(Routes.TABS) { inclusive = false } }
                     },
+                    onTryAnotherGame = { endMixAndGoToGames() },
                 )
             }
 

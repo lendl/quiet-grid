@@ -785,6 +785,12 @@
     <string name="blockfill_endless_result_stuck_title">No moves left</string>
     <string name="blockfill_endless_result_abandoned_title">Run ended</string>
     <string name="blockfill_endless_result_new_best">New best!</string>
+    <string name="blockfill_endless_result_stuck_body">The tray had no room left.</string>
+    <string name="blockfill_endless_result_abandoned_body">You ended the run.</string>
+    <string name="blockfill_endless_result_new_best_body">You beat your previous best.</string>
+    <string name="blockfill_endless_result_first_run_body">Your first Endless run.</string>
+    <string name="blockfill_endless_result_short_of_best">%1$d short of your best</string>
+    <string name="blockfill_endless_result_over_best">+%1$d over your best</string>
     <string name="blockfill_endless_result_level">Highest multiplier</string>
     <string name="blockfill_endless_result_lines">Lines cleared</string>
     <string name="blockfill_endless_result_moves">Moves</string>
