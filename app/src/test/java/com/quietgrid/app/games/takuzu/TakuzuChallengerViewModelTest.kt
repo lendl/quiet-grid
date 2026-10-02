@@ -4,6 +4,8 @@ import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.session.AppForeground
+import com.quietgrid.app.session.ChallengerResult
 import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeStatsStore
 import com.quietgrid.engine.takuzu.TakuzuPuzzleEntry
@@ -65,10 +67,11 @@ class TakuzuChallengerViewModelTest {
         puzzle: TakuzuPuzzleEntry,
         statsStore: FakeStatsStore = FakeStatsStore(),
         historyStore: FakeHistoryStore = FakeHistoryStore(),
+        appForeground: AppForeground = AppForeground { true },
     ): TakuzuChallengerViewModel {
         mockkObject(TakuzuPuzzleBank)
         coEvery { TakuzuPuzzleBank.randomPuzzle(any(), any(), any()) } returns puzzle
-        return TakuzuChallengerViewModel(mockk<Context>(relaxed = true), statsStore, historyStore)
+        return TakuzuChallengerViewModel(mockk<Context>(relaxed = true), statsStore, historyStore, appForeground)
     }
 
     @Test
@@ -110,7 +113,7 @@ class TakuzuChallengerViewModelTest {
     @Test
     fun `endRun finalizes the run as abandoned and emits exactly once`() {
         val viewModel = newViewModel(solvableTestPuzzle)
-        val results = mutableListOf<TakuzuChallengerResult>()
+        val results = mutableListOf<ChallengerResult>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 
         viewModel.endRun()
@@ -132,7 +135,7 @@ class TakuzuChallengerViewModelTest {
     @Test
     fun `the ticker counting down to zero finalizes the run as time_up`() {
         val viewModel = newViewModel(solvableTestPuzzle)
-        val results = mutableListOf<TakuzuChallengerResult>()
+        val results = mutableListOf<ChallengerResult>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 
         mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(TAKUZU_CHALLENGER_STARTING_SECONDS.toLong() * 1000L + 500L)
@@ -149,7 +152,7 @@ class TakuzuChallengerViewModelTest {
         val statsStore = FakeStatsStore()
         statsStore.seedChallenger(GameId.TAKUZU, solved = 2, bestScore = 500)
         val viewModel = newViewModel(solvableTestPuzzle, statsStore)
-        val results = mutableListOf<TakuzuChallengerResult>()
+        val results = mutableListOf<ChallengerResult>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 
         viewModel.endRun()
@@ -177,5 +180,15 @@ class TakuzuChallengerViewModelTest {
         assertEquals(true, record.isChallenger)
         assertEquals(0, record.puzzlesSolved)
         assertEquals("abandoned", record.lossReason)
+    }
+
+    @Test
+    fun `the ticker does not count down while the app is backgrounded`() {
+        val viewModel = newViewModel(solvableTestPuzzle, appForeground = { false })
+
+        mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(TAKUZU_CHALLENGER_STARTING_SECONDS.toLong() * 1000L + 500L)
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+
+        assertEquals(TAKUZU_CHALLENGER_STARTING_SECONDS, viewModel.session!!.secondsRemaining, 0.0)
     }
 }

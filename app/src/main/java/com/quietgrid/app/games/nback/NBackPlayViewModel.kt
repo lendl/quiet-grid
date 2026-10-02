@@ -8,6 +8,7 @@ import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
+import com.quietgrid.app.session.AppForeground
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
@@ -20,6 +21,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+
+private const val NBACK_FOREGROUND_POLL_MS = 250L
 
 data class NBackResult(
     val difficulty: Difficulty,
@@ -81,6 +84,7 @@ class NBackPlayViewModel @AssistedInject constructor(
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
+    private val appForeground: AppForeground,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
 ) : ViewModel() {
@@ -96,6 +100,7 @@ class NBackPlayViewModel @AssistedInject constructor(
         statsStore = statsRepository,
         historyStore = historyRepository,
         adapter = NBackPuzzleAdapter(),
+        isAppForeground = appForeground::isForeground,
     )
 
     val session get() = controller.session
@@ -117,7 +122,9 @@ class NBackPlayViewModel @AssistedInject constructor(
         stimulusJob?.cancel()
         stimulusJob = viewModelScope.launch {
             delay(NBACK_START_DELAY_MS)
-            for (index in initial.trials.indices) {
+            var index = 0
+            while (index < initial.trials.size) {
+                while (!appForeground.isForeground()) delay(NBACK_FOREGROUND_POLL_MS)
                 val current = session ?: return@launch
                 controller.updateSession(current.copy(currentIndex = index, showStimulus = true), persist = false)
                 trialStartMillis = System.currentTimeMillis()
@@ -125,6 +132,7 @@ class NBackPlayViewModel @AssistedInject constructor(
                 val lit = session ?: return@launch
                 controller.updateSession(lit.copy(showStimulus = false), persist = false)
                 delay(current.config.intervalMs - NBACK_STIMULUS_ON_MS)
+                if (appForeground.isForeground()) index++
             }
             val finished = session ?: return@launch
             controller.updateSession(finished.copy(currentIndex = finished.trials.size), persist = false)

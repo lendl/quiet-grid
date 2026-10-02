@@ -9,68 +9,64 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.Difficulty
-import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.PlayHistoryStore
-import com.quietgrid.app.data.PlayRecord
 import com.quietgrid.app.data.StatsStore
+import com.quietgrid.app.session.AppForeground
+import com.quietgrid.app.session.ChallengerRunController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.roundToInt
-
-private const val CHALLENGER_TICK_INTERVAL_MS = 1000L
-private const val CHALLENGER_FINISH_DELAY_MS = 450L
 
 @HiltViewModel
 class AnimalDokuChallengerViewModel @Inject constructor(
     @ApplicationContext private val appContext: Context,
-    private val statsStore: StatsStore,
-    private val historyStore: PlayHistoryStore,
+    statsStore: StatsStore,
+    historyStore: PlayHistoryStore,
+    appForeground: AppForeground,
 ) : ViewModel() {
 
-    var session by mutableStateOf<AnimalDokuChallengerSession?>(null)
-        private set
+    private val controller = ChallengerRunController(
+        scope = viewModelScope,
+        gameId = GameId.ANIMALDOKU,
+        statsStore = statsStore,
+        historyStore = historyStore,
+        appForeground = appForeground,
+        tick = ::tickChallenger,
+    )
+
+    val session get() = controller.session
+    val result = controller.result
 
     var lastOpenEvent by mutableStateOf<AnimalDokuOpenEvent?>(null)
         private set
-
-    private var finalized = false
-
-    private val _result = MutableSharedFlow<AnimalDokuChallengerResult>(extraBufferCapacity = 1)
-    val result: SharedFlow<AnimalDokuChallengerResult> = _result
 
     init {
         viewModelScope.launch {
             val firstPuzzle = AnimalDokuPuzzleBank.randomPuzzle(appContext, Difficulty.EASY)
             if (firstPuzzle != null) {
-                session = createInitialChallengerSession(firstPuzzle)
-                runTicker()
+                controller.start(createInitialChallengerSession(firstPuzzle))
             }
         }
     }
 
     fun onCellTap(row: Int, col: Int) {
-        if (finalized) return
+        if (controller.isFinalized) return
         val current = session ?: return
         val next = applyAnimalDokuTap(current.puzzleSession, row, col) ?: return
-        session = current.copy(puzzleSession = next)
+        controller.session = current.copy(puzzleSession = next)
     }
 
     fun onCellDrag(markAll: Boolean, visited: List<Pair<Int, Int>>) {
-        if (finalized) return
+        if (controller.isFinalized) return
         val current = session ?: return
         val next = applyAnimalDokuDrag(current.puzzleSession, markAll, visited) ?: return
-        session = current.copy(puzzleSession = next)
+        controller.session = current.copy(puzzleSession = next)
     }
 
     fun onCellDoubleTap(row: Int, col: Int) {
-        if (finalized) return
+        if (controller.isFinalized) return
         val current = session ?: return
         val opened = applyAnimalDokuOpen(current.puzzleSession, row, col) ?: return
         lastOpenEvent = AnimalDokuOpenEvent(row, col, opened.wasCorrect)
@@ -78,7 +74,7 @@ class AnimalDokuChallengerViewModel @Inject constructor(
         when (opened.session.status) {
             AnimalDokuStatus.WON -> {
                 val withOpen = current.copy(puzzleSession = opened.session)
-                session = withOpen
+                controller.session = withOpen
                 val (nextTier, nextSolvesInTier) = tierAfterSolve(current.tier, current.solvesInTier)
                 viewModelScope.launch {
                     val nextPuzzle = AnimalDokuPuzzleBank.randomPuzzle(appContext, nextTier, withOpen.servedPuzzleIds)
@@ -90,76 +86,22 @@ class AnimalDokuChallengerViewModel @Inject constructor(
                             fastestSolveSeconds = animalDokuChallengerFastestSolve(withOpen),
                             puzzleHistory = withOpen.puzzleHistory + ChallengerPuzzleSolve(withOpen.tier, withOpen.secondsOnCurrentPuzzle),
                         )
-                        finalizeRun(credited, "bank_exhausted")
+                        controller.finalizeRun(credited, "bank_exhausted")
                     } else {
-                        session = advanceChallengerAfterSolve(withOpen, nextTier, nextSolvesInTier, nextPuzzle)
+                        controller.session = advanceChallengerAfterSolve(withOpen, nextTier, nextSolvesInTier, nextPuzzle)
                     }
                 }
             }
             AnimalDokuStatus.LOST -> {
                 val withOpen = current.copy(puzzleSession = opened.session)
-                session = withOpen
-                finalizeRun(withOpen, "lives_exhausted")
+                controller.session = withOpen
+                controller.finalizeRun(withOpen, "lives_exhausted")
             }
             AnimalDokuStatus.PLAYING -> {
-                session = current.copy(puzzleSession = opened.session)
+                controller.session = current.copy(puzzleSession = opened.session)
             }
         }
     }
 
-    fun endRun() {
-        val current = session ?: return
-        finalizeRun(current, "abandoned")
-    }
-
-    private suspend fun runTicker() {
-        while (true) {
-            delay(CHALLENGER_TICK_INTERVAL_MS)
-            if (finalized) continue
-            val current = session ?: continue
-            val ticked = tickChallenger(current)
-            session = ticked
-            if (ticked.secondsRemaining <= 0) finalizeRun(ticked, "time_up")
-        }
-    }
-
-    private fun finalizeRun(current: AnimalDokuChallengerSession, reason: String) {
-        if (finalized) return
-        finalized = true
-        viewModelScope.launch {
-            val previousBest = statsStore.challengerStatsFor(GameId.ANIMALDOKU).first()
-            val isNewHighScore = current.score > previousBest.bestScore
-            statsStore.recordChallengerResult(GameId.ANIMALDOKU, current.puzzlesSolved, current.score)
-            if (!GameCatalog.get(GameId.ANIMALDOKU).beta) {
-                historyStore.appendRecord(
-                    PlayRecord(
-                        gameId = GameId.ANIMALDOKU.key,
-                        difficulty = current.tier.key,
-                        puzzleId = null,
-                        solved = true,
-                        score = current.score,
-                        elapsedSeconds = current.puzzleHistory.sumOf { it.elapsedSeconds }.roundToInt(),
-                        timestampMillis = System.currentTimeMillis(),
-                        lossReason = reason,
-                        isChallenger = true,
-                        puzzlesSolved = current.puzzlesSolved,
-                    ),
-                )
-            }
-            delay(CHALLENGER_FINISH_DELAY_MS)
-            _result.emit(
-                AnimalDokuChallengerResult(
-                    puzzlesSolved = current.puzzlesSolved,
-                    tierReached = current.tier,
-                    score = current.score,
-                    isNewHighScore = isNewHighScore,
-                    reason = reason,
-                    previousBest = previousBest.bestScore,
-                    fastestSolveSeconds = current.fastestSolveSeconds,
-                    puzzleHistory = current.puzzleHistory,
-                    solvesInTier = current.solvesInTier,
-                ),
-            )
-        }
-    }
+    fun endRun() = controller.endRun()
 }

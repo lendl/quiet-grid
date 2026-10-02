@@ -4,6 +4,8 @@ import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.session.AppForeground
+import com.quietgrid.app.session.ChallengerResult
 import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeStatsStore
 import com.quietgrid.engine.sudoku.SudokuPuzzleEntry
@@ -56,8 +58,12 @@ class SudokuChallengerViewModelTest {
         unmockkObject(SudokuPuzzleBank)
     }
 
-    private fun newViewModel(statsStore: FakeStatsStore = FakeStatsStore(), historyStore: FakeHistoryStore = FakeHistoryStore()) =
-        SudokuChallengerViewModel(mockk<Context>(relaxed = true), statsStore, historyStore)
+    private fun newViewModel(
+        statsStore: FakeStatsStore = FakeStatsStore(),
+        historyStore: FakeHistoryStore = FakeHistoryStore(),
+        appForeground: AppForeground = AppForeground { true },
+    ) =
+        SudokuChallengerViewModel(mockk<Context>(relaxed = true), statsStore, historyStore, appForeground)
 
     @Test
     fun `starting fresh loads a puzzle on the Easy tier with starting lives and starting seconds`() {
@@ -86,7 +92,7 @@ class SudokuChallengerViewModelTest {
     fun `filling the last cell wrong invalidates every touched unit at once and exhausts lives`() {
         val statsStore = FakeStatsStore()
         val viewModel = newViewModel(statsStore)
-        val results = mutableListOf<SudokuChallengerResult>()
+        val results = mutableListOf<ChallengerResult>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 
         viewModel.onDigit(0, 0, 9)
@@ -109,7 +115,7 @@ class SudokuChallengerViewModelTest {
     @Test
     fun `endRun finalizes the run as abandoned and emits exactly once`() {
         val viewModel = newViewModel()
-        val results = mutableListOf<SudokuChallengerResult>()
+        val results = mutableListOf<ChallengerResult>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 
         viewModel.endRun()
@@ -131,7 +137,7 @@ class SudokuChallengerViewModelTest {
     @Test
     fun `the ticker counting down to zero finalizes the run as time_up`() {
         val viewModel = newViewModel()
-        val results = mutableListOf<SudokuChallengerResult>()
+        val results = mutableListOf<ChallengerResult>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 
         mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(SUDOKU_CHALLENGER_STARTING_SECONDS.toLong() * 1000L + 500L)
@@ -148,7 +154,7 @@ class SudokuChallengerViewModelTest {
         val statsStore = FakeStatsStore()
         statsStore.seedChallenger(GameId.SUDOKU, solved = 2, bestScore = 500)
         val viewModel = newViewModel(statsStore)
-        val results = mutableListOf<SudokuChallengerResult>()
+        val results = mutableListOf<ChallengerResult>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 
         viewModel.endRun()
@@ -176,5 +182,15 @@ class SudokuChallengerViewModelTest {
         assertEquals(true, record.isChallenger)
         assertEquals(0, record.puzzlesSolved)
         assertEquals("abandoned", record.lossReason)
+    }
+
+    @Test
+    fun `the ticker does not count down while the app is backgrounded`() {
+        val viewModel = newViewModel(appForeground = { false })
+
+        mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(SUDOKU_CHALLENGER_STARTING_SECONDS.toLong() * 1000L + 500L)
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+
+        assertEquals(SUDOKU_CHALLENGER_STARTING_SECONDS, viewModel.session!!.secondsRemaining, 0.0)
     }
 }

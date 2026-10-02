@@ -7,6 +7,8 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.SettingsRepository
+import com.quietgrid.app.session.AppForeground
+import com.quietgrid.app.session.ChallengerResult
 import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeStatsStore
 import com.quietgrid.engine.wordguess.WordGuessPuzzleEntry
@@ -47,10 +49,14 @@ class WordGuessChallengerViewModelTest {
         unmockkAll()
     }
 
-    private fun newViewModel(statsStore: FakeStatsStore = FakeStatsStore(), historyStore: FakeHistoryStore = FakeHistoryStore()): WordGuessChallengerViewModel {
+    private fun newViewModel(
+        statsStore: FakeStatsStore = FakeStatsStore(),
+        historyStore: FakeHistoryStore = FakeHistoryStore(),
+        appForeground: AppForeground = AppForeground { true },
+    ): WordGuessChallengerViewModel {
         val settingsRepository = mockk<SettingsRepository>(relaxed = true)
         every { settingsRepository.settings } returns MutableStateFlow(AppSettings())
-        return WordGuessChallengerViewModel(mockk<Context>(relaxed = true), settingsRepository, statsStore, historyStore)
+        return WordGuessChallengerViewModel(mockk<Context>(relaxed = true), settingsRepository, statsStore, historyStore, appForeground)
     }
 
     @Test
@@ -58,7 +64,7 @@ class WordGuessChallengerViewModelTest {
         val statsStore = FakeStatsStore()
         statsStore.seedChallenger(GameId.WORDGUESS, solved = 2, bestScore = 500)
         val viewModel = newViewModel(statsStore)
-        val results = mutableListOf<WordGuessChallengerResult>()
+        val results = mutableListOf<ChallengerResult>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 
         viewModel.endRun()
@@ -89,5 +95,15 @@ class WordGuessChallengerViewModelTest {
         assertEquals(true, record.isChallenger)
         assertEquals(0, record.puzzlesSolved)
         assertEquals("abandoned", record.lossReason)
+    }
+
+    @Test
+    fun `the ticker does not count down while the app is backgrounded`() {
+        val viewModel = newViewModel(appForeground = { false })
+
+        mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(WORDGUESS_CHALLENGER_STARTING_SECONDS.toLong() * 1000L + 500L)
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+
+        assertEquals(WORDGUESS_CHALLENGER_STARTING_SECONDS, viewModel.session!!.secondsRemaining, 0.0)
     }
 }

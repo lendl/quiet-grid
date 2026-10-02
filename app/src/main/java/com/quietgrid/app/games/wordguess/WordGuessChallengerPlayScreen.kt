@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.R
 import com.quietgrid.app.core.formatElapsed
+import com.quietgrid.app.session.ChallengerResult
 import com.quietgrid.app.ui.components.ChallengerHeartIcon
 import com.quietgrid.app.ui.components.CollectPuzzleResult
 import com.quietgrid.app.ui.components.EndPuzzleDialog
@@ -38,7 +39,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun WordGuessChallengerPlayScreen(
-    onFinished: (WordGuessChallengerResult) -> Unit,
+    onFinished: (ChallengerResult) -> Unit,
 ) {
     val viewModel = hiltViewModel<WordGuessChallengerViewModel>()
 

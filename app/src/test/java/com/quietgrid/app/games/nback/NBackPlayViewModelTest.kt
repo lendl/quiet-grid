@@ -2,6 +2,7 @@ package com.quietgrid.app.games.nback
 
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.session.AppForeground
 import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeSessionStore
 import com.quietgrid.app.testutil.FakeStatsStore
@@ -20,7 +21,7 @@ class NBackPlayViewModelTest {
 
     @Test
     fun `starting fresh creates a 32-trial session and begins the stimulus loop`() {
-        val viewModel = NBackPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
+        val viewModel = NBackPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), AppForeground { true }, Difficulty.EASY, resume = false)
         mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(NBACK_START_DELAY_MS)
         mainDispatcherRule.dispatcher.scheduler.runCurrent()
 
@@ -31,7 +32,7 @@ class NBackPlayViewModelTest {
 
     @Test
     fun `tapping match marks the current trial responded with a reaction time`() {
-        val viewModel = NBackPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
+        val viewModel = NBackPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), AppForeground { true }, Difficulty.EASY, resume = false)
         mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(NBACK_START_DELAY_MS)
         mainDispatcherRule.dispatcher.scheduler.runCurrent()
         val currentIndex = viewModel.session!!.currentIndex
@@ -45,7 +46,7 @@ class NBackPlayViewModelTest {
 
     @Test
     fun `tapping match twice on the same trial does not overwrite the first response`() {
-        val viewModel = NBackPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
+        val viewModel = NBackPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), AppForeground { true }, Difficulty.EASY, resume = false)
         mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(NBACK_START_DELAY_MS)
         mainDispatcherRule.dispatcher.scheduler.runCurrent()
         val currentIndex = viewModel.session!!.currentIndex
@@ -59,7 +60,7 @@ class NBackPlayViewModelTest {
 
     @Test
     fun `the stimulus loop advances to later trials as time passes`() {
-        val viewModel = NBackPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
+        val viewModel = NBackPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), AppForeground { true }, Difficulty.EASY, resume = false)
 
         mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(NBACK_START_DELAY_MS + 2500 * 3 + 100)
         mainDispatcherRule.dispatcher.scheduler.runCurrent()
@@ -69,7 +70,7 @@ class NBackPlayViewModelTest {
 
     @Test
     fun `completing every trial finishes the round as a win`() {
-        val viewModel = NBackPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
+        val viewModel = NBackPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), AppForeground { true }, Difficulty.EASY, resume = false)
         val results = mutableListOf<NBackResult>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 
@@ -83,7 +84,7 @@ class NBackPlayViewModelTest {
     @Test
     fun `endPuzzle finalizes the session as an abandoned loss`() {
         val sessionStore = FakeSessionStore()
-        val viewModel = NBackPlayViewModel(sessionStore, FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
+        val viewModel = NBackPlayViewModel(sessionStore, FakeStatsStore(), FakeHistoryStore(), AppForeground { true }, Difficulty.EASY, resume = false)
         val results = mutableListOf<NBackResult>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 
@@ -93,6 +94,30 @@ class NBackPlayViewModelTest {
 
         assertTrue(sessionStore.cleared)
         assertEquals("abandoned", results.single().lossReason)
+        collectJob.cancel()
+    }
+
+    @Test
+    fun `the stimulus loop holds while the app is backgrounded and resumes on return`() {
+        var foreground = true
+        val viewModel = NBackPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), AppForeground { foreground }, Difficulty.EASY, resume = false)
+        val results = mutableListOf<NBackResult>()
+        val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
+        mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(NBACK_START_DELAY_MS + 100)
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+
+        foreground = false
+        mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(2500L * (NBACK_TOTAL_TRIALS + 1))
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+
+        assertEquals(0, viewModel.session!!.currentIndex)
+        assertTrue(results.isEmpty())
+
+        foreground = true
+        mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(2500L * 3)
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+
+        assertTrue(viewModel.session!!.currentIndex >= 1)
         collectJob.cancel()
     }
 }

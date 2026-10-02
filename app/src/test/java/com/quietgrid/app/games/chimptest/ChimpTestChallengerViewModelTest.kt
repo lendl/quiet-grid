@@ -3,6 +3,8 @@ package com.quietgrid.app.games.chimptest
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.session.AppForeground
+import com.quietgrid.app.session.ChallengerResult
 import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeStatsStore
 import kotlinx.coroutines.CoroutineScope
@@ -21,8 +23,8 @@ class ChimpTestChallengerViewModelTest {
     fun `finalizeRun on abandoned includes the previous best score and no fastest solve`() {
         val statsStore = FakeStatsStore()
         statsStore.seedChallenger(GameId.CHIMPTEST, solved = 2, bestScore = 500)
-        val viewModel = ChimpTestChallengerViewModel(statsStore, FakeHistoryStore())
-        val results = mutableListOf<ChimpTestChallengerResult>()
+        val viewModel = ChimpTestChallengerViewModel(statsStore, FakeHistoryStore(), AppForeground { true })
+        val results = mutableListOf<ChallengerResult>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 
         viewModel.endRun()
@@ -42,7 +44,7 @@ class ChimpTestChallengerViewModelTest {
     fun `finalizeRun appends a Challenger play record`() {
         val statsStore = FakeStatsStore()
         val historyStore = FakeHistoryStore()
-        val viewModel = ChimpTestChallengerViewModel(statsStore, historyStore)
+        val viewModel = ChimpTestChallengerViewModel(statsStore, historyStore, AppForeground { true })
 
         viewModel.endRun()
 
@@ -54,5 +56,15 @@ class ChimpTestChallengerViewModelTest {
         assertEquals(true, record.isChallenger)
         assertEquals(0, record.puzzlesSolved)
         assertEquals("abandoned", record.lossReason)
+    }
+
+    @Test
+    fun `the ticker does not count down while the app is backgrounded`() {
+        val viewModel = ChimpTestChallengerViewModel(FakeStatsStore(), FakeHistoryStore(), AppForeground { false })
+
+        mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(CHIMPTEST_CHALLENGER_STARTING_SECONDS.toLong() * 1000L + 500L)
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+
+        assertEquals(CHIMPTEST_CHALLENGER_STARTING_SECONDS, viewModel.session!!.secondsRemaining, 0.0)
     }
 }

@@ -5,6 +5,8 @@ import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.session.AppForeground
+import com.quietgrid.app.session.ChallengerResult
 import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeStatsStore
 import com.quietgrid.engine.animaldoku.AnimalDokuPuzzleEntry
@@ -47,8 +49,12 @@ class AnimalDokuChallengerViewModelTest {
         unmockkObject(AnimalDokuPuzzleBank)
     }
 
-    private fun newViewModel(statsStore: FakeStatsStore = FakeStatsStore(), historyStore: FakeHistoryStore = FakeHistoryStore()) =
-        AnimalDokuChallengerViewModel(mockk<Context>(relaxed = true), statsStore, historyStore)
+    private fun newViewModel(
+        statsStore: FakeStatsStore = FakeStatsStore(),
+        historyStore: FakeHistoryStore = FakeHistoryStore(),
+        appForeground: AppForeground = AppForeground { true },
+    ) =
+        AnimalDokuChallengerViewModel(mockk<Context>(relaxed = true), statsStore, historyStore, appForeground)
 
     private fun solveCurrentPuzzle(viewModel: AnimalDokuChallengerViewModel) {
         for (row in testPuzzle.solution.indices) {
@@ -86,7 +92,7 @@ class AnimalDokuChallengerViewModelTest {
     fun `losing all shared lives finalizes the run and records challenger stats`() {
         val statsStore = FakeStatsStore()
         val viewModel = newViewModel(statsStore)
-        val results = mutableListOf<AnimalDokuChallengerResult>()
+        val results = mutableListOf<ChallengerResult>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 
         solveCurrentPuzzle(viewModel)
@@ -114,7 +120,7 @@ class AnimalDokuChallengerViewModelTest {
     @Test
     fun `endRun finalizes the run as abandoned and emits exactly once`() {
         val viewModel = newViewModel()
-        val results = mutableListOf<AnimalDokuChallengerResult>()
+        val results = mutableListOf<ChallengerResult>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 
         viewModel.endRun()
@@ -136,7 +142,7 @@ class AnimalDokuChallengerViewModelTest {
     @Test
     fun `the ticker counting down to zero finalizes the run as time_up`() {
         val viewModel = newViewModel()
-        val results = mutableListOf<AnimalDokuChallengerResult>()
+        val results = mutableListOf<ChallengerResult>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 
         mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(ANIMALDOKU_CHALLENGER_STARTING_SECONDS.toLong() * 1000L + 500L)
@@ -153,7 +159,7 @@ class AnimalDokuChallengerViewModelTest {
         val statsStore = FakeStatsStore()
         statsStore.seedChallenger(GameId.ANIMALDOKU, solved = 2, bestScore = 500)
         val viewModel = newViewModel(statsStore)
-        val results = mutableListOf<AnimalDokuChallengerResult>()
+        val results = mutableListOf<ChallengerResult>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 
         viewModel.endRun()
@@ -185,5 +191,15 @@ class AnimalDokuChallengerViewModelTest {
         assertEquals(true, record.isChallenger)
         assertEquals(1, record.puzzlesSolved)
         assertEquals("abandoned", record.lossReason)
+    }
+
+    @Test
+    fun `the ticker does not count down while the app is backgrounded`() {
+        val viewModel = newViewModel(appForeground = { false })
+
+        mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(ANIMALDOKU_CHALLENGER_STARTING_SECONDS.toLong() * 1000L + 500L)
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+
+        assertEquals(ANIMALDOKU_CHALLENGER_STARTING_SECONDS, viewModel.session!!.secondsRemaining, 0.0)
     }
 }

@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.R
 import com.quietgrid.app.core.formatElapsed
+import com.quietgrid.app.session.ChallengerResult
 import com.quietgrid.app.ui.components.ChallengerHeartIcon
 import com.quietgrid.app.ui.components.CollectPuzzleResult
 import com.quietgrid.app.ui.components.EndPuzzleDialog
@@ -36,7 +37,7 @@ import com.quietgrid.app.ui.components.rememberHapticController
 
 @Composable
 fun SudokuChallengerPlayScreen(
-    onFinished: (SudokuChallengerResult) -> Unit,
+    onFinished: (ChallengerResult) -> Unit,
 ) {
     val viewModel = hiltViewModel<SudokuChallengerViewModel>()
 

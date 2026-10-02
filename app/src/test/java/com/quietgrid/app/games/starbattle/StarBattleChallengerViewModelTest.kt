@@ -4,6 +4,8 @@ import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.session.AppForeground
+import com.quietgrid.app.session.ChallengerResult
 import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeStatsStore
 import com.quietgrid.engine.starbattle.StarBattlePuzzleEntry
@@ -47,8 +49,12 @@ class StarBattleChallengerViewModelTest {
         unmockkObject(StarBattlePuzzleBank)
     }
 
-    private fun newViewModel(statsStore: FakeStatsStore = FakeStatsStore(), historyStore: FakeHistoryStore = FakeHistoryStore()) =
-        StarBattleChallengerViewModel(mockk<Context>(relaxed = true), statsStore, historyStore)
+    private fun newViewModel(
+        statsStore: FakeStatsStore = FakeStatsStore(),
+        historyStore: FakeHistoryStore = FakeHistoryStore(),
+        appForeground: AppForeground = AppForeground { true },
+    ) =
+        StarBattleChallengerViewModel(mockk<Context>(relaxed = true), statsStore, historyStore, appForeground)
 
     private fun solveCurrentPuzzle(viewModel: StarBattleChallengerViewModel) {
         for (row in testPuzzle.solution.indices) {
@@ -84,7 +90,7 @@ class StarBattleChallengerViewModelTest {
     fun `losing all shared lives finalizes the run and records challenger stats`() {
         val statsStore = FakeStatsStore()
         val viewModel = newViewModel(statsStore)
-        val results = mutableListOf<StarBattleChallengerResult>()
+        val results = mutableListOf<ChallengerResult>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 
         solveCurrentPuzzle(viewModel)
@@ -112,7 +118,7 @@ class StarBattleChallengerViewModelTest {
     @Test
     fun `endRun finalizes the run as abandoned and emits exactly once`() {
         val viewModel = newViewModel()
-        val results = mutableListOf<StarBattleChallengerResult>()
+        val results = mutableListOf<ChallengerResult>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 
         viewModel.endRun()
@@ -134,7 +140,7 @@ class StarBattleChallengerViewModelTest {
     @Test
     fun `the ticker counting down to zero finalizes the run as time_up`() {
         val viewModel = newViewModel()
-        val results = mutableListOf<StarBattleChallengerResult>()
+        val results = mutableListOf<ChallengerResult>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 
         mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(STARBATTLE_CHALLENGER_STARTING_SECONDS.toLong() * 1000L + 500L)
@@ -160,5 +166,15 @@ class StarBattleChallengerViewModelTest {
         assertEquals(GameId.STARBATTLE.key, record.gameId)
         assertTrue(record.isChallenger)
         assertEquals("abandoned", record.lossReason)
+    }
+
+    @Test
+    fun `the ticker does not count down while the app is backgrounded`() {
+        val viewModel = newViewModel(appForeground = { false })
+
+        mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(STARBATTLE_CHALLENGER_STARTING_SECONDS.toLong() * 1000L + 500L)
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+
+        assertEquals(STARBATTLE_CHALLENGER_STARTING_SECONDS, viewModel.session!!.secondsRemaining, 0.0)
     }
 }
