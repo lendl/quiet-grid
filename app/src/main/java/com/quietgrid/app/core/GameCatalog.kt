@@ -44,7 +44,7 @@ object GameCatalog {
         GameMeta(GameId.MINESWEEPER, R.string.minesweeper_title, R.string.minesweeper_tagline, setOf(GameCategory.LOGIC)),
         GameMeta(GameId.SUDOKU, R.string.sudoku_title, R.string.sudoku_tagline, setOf(GameCategory.LOGIC)),
         GameMeta(GameId.WORDSEARCH, R.string.wordsearch_title, R.string.wordsearch_tagline, setOf(GameCategory.WORD)),
-        GameMeta(GameId.BLOCKFILL, R.string.blockfill_title, R.string.blockfill_tagline, setOf(GameCategory.SPATIAL), beta = true),
+        GameMeta(GameId.BLOCKFILL, R.string.blockfill_title, R.string.blockfill_tagline, setOf(GameCategory.SPATIAL)),
         GameMeta(GameId.WORDGUESS, R.string.wordguess_title, R.string.wordguess_tagline, setOf(GameCategory.WORD)),
         GameMeta(GameId.ANIMALDOKU, R.string.animaldoku_title, R.string.animaldoku_tagline, setOf(GameCategory.LOGIC, GameCategory.SPATIAL)),
         GameMeta(GameId.ARROWESCAPE, R.string.arrowescape_title, R.string.arrowescape_tagline, setOf(GameCategory.SPATIAL), beta = true),

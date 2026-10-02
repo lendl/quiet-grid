@@ -30,10 +30,11 @@ Elige qué juegos te dan un puzzle nuevo cada día, en cada dificultad. Comparte
 <li><b>Despeja el Tema</b> — Forma palabras de un mismo tema hasta usar todas las letras.</li>
 </ul>
 
-<p><b>MEMORIA Y NÚMEROS</b></p>
+<p><b>MEMORIA, NÚMEROS Y BLOQUES</b></p>
 <ul>
 <li><b>Chimp Test</b> — Toca los números en orden antes de que desaparezcan.</li>
 <li><b>2048</b> — Desliza y combina fichas hasta llegar a 2048.</li>
+<li><b>Block Fill</b> — Arrastra piezas al tablero y despeja filas y columnas completas. Incluye un modo sin fin.</li>
 </ul>
 
 <p><b>A TU MANERA</b><br>

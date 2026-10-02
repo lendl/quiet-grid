@@ -30,10 +30,11 @@ Kies zelf welke spellen je elke dag een nieuwe puzzel geven, in elke moeilijkhei
 <li><b>Thema Wissen</b> — Vorm woorden uit één thema tot elke letter is gebruikt.</li>
 </ul>
 
-<p><b>GEHEUGEN EN GETALLEN</b></p>
+<p><b>GEHEUGEN, GETALLEN EN BLOKKEN</b></p>
 <ul>
 <li><b>Chimp Test</b> — Tik de cijfers op volgorde aan voordat ze verdwijnen.</li>
 <li><b>2048</b> — Schuif en voeg tegels samen tot je 2048 bereikt.</li>
+<li><b>Block Fill</b> — Sleep stukken op het bord en maak volle rijen en kolommen leeg. Met eindeloze modus.</li>
 </ul>
 
 <p><b>HELEMAAL VAN JOU</b><br>

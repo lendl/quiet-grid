@@ -187,10 +187,11 @@ class BlockFillGeneratorTest {
     }
 
     @Test
-    fun `every difficulty shares the same score target`() {
+    fun `score target rises with difficulty`() {
+        val expected = mapOf(Difficulty.EASY to 1000, Difficulty.MEDIUM to 1500, Difficulty.HARD to 2000, Difficulty.EXPERT to 2500)
         for (difficulty in Difficulty.entries) {
             val session = createBlockFillSession(difficulty.key, random = Random(1))
-            assertEquals("unexpected scoreTarget for ${difficulty.key}", BLOCKFILL_SCORE_TARGET, session.puzzle.scoreTarget)
+            assertEquals("unexpected scoreTarget for ${difficulty.key}", expected.getValue(difficulty), session.puzzle.scoreTarget)
         }
     }
 

@@ -30,10 +30,11 @@ Wybierz, które gry mają codziennie dawać Ci nową łamigłówkę, na każdym 
 <li><b>Wyczyść temat</b> — Układaj słowa z jednego tematu, aż wykorzystasz wszystkie litery.</li>
 </ul>
 
-<p><b>PAMIĘĆ I LICZBY</b></p>
+<p><b>PAMIĘĆ, LICZBY I KLOCKI</b></p>
 <ul>
 <li><b>Test szympansa</b> — Stukaj liczby po kolei, zanim znikną.</li>
 <li><b>2048</b> — Przesuwaj i łącz kafelki, aż osiągniesz 2048.</li>
+<li><b>Układanka z klocków</b> — Przeciągaj klocki na planszę i oczyszczaj pełne wiersze i kolumny. Z trybem bez końca.</li>
 </ul>
 
 <p><b>PO SWOJEMU</b><br>

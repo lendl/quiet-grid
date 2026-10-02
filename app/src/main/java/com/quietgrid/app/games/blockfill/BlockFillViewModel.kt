@@ -69,7 +69,7 @@ private class BlockFillPuzzleAdapter : PuzzleAdapter<BlockFillSession, BlockFill
     )
 
     override fun scoreOnWin(session: BlockFillSession, difficulty: Difficulty, elapsedSeconds: Int): Int =
-        blockFillPuzzleScore(session.moves)
+        blockFillPuzzleScore(session.moves, session.puzzle.scoreTarget)
 
     override fun buildResult(session: BlockFillSession?, outcome: PuzzleOutcome): BlockFillResult = BlockFillResult(
         difficulty = outcome.difficulty,

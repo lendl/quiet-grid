@@ -755,10 +755,10 @@
     <string name="blockfill_difficulty_medium">Medium</string>
     <string name="blockfill_difficulty_hard">Hard</string>
     <string name="blockfill_difficulty_expert">Expert</string>
-    <string name="blockfill_difficulty_desc_easy">A small starting pattern and easy-to-place pieces. Reach 1000 points.</string>
-    <string name="blockfill_difficulty_desc_medium">A slightly bigger pattern and a wider mix of shapes. Reach 1000 points.</string>
-    <string name="blockfill_difficulty_desc_hard">A bigger pattern, awkward shapes and sets that need planning. Reach 1000 points.</string>
-    <string name="blockfill_difficulty_desc_expert">The biggest pattern, irregular pieces and tight sets. Reach 1000 points.</string>
+    <string name="blockfill_difficulty_desc_easy">A small starting pattern and easy-to-place pieces. Try to score 1000 points.</string>
+    <string name="blockfill_difficulty_desc_medium">A slightly bigger pattern and a wider mix of shapes. Try to score 1500 points.</string>
+    <string name="blockfill_difficulty_desc_hard">A bigger pattern, awkward shapes and sets that need planning. Try to score 2000 points.</string>
+    <string name="blockfill_difficulty_desc_expert">The biggest pattern, irregular pieces and tight sets. Try to score 2500 points.</string>
     <string name="blockfill_how_to_play_goal">Drag every piece from the tray onto the 8x8 grid. Clear full rows and columns to score points, and reach the target score to solve the puzzle.</string>
     <string name="blockfill_how_to_play_controls">Drag a piece from the tray below the board and drop it onto the grid. It can only be placed where every one of its cells lands on an empty square. Once all 3 tray pieces are placed, a new set of 3 appears.</string>
     <string name="blockfill_how_to_play_wrong_move">There is no wrong move to undo — if none of your 3 current pieces can be placed anywhere on the board, the puzzle ends immediately.</string>
@@ -774,7 +774,7 @@
     <string name="blockfill_tip_1_body">Solid pieces (squares, rectangles, straight lines) clear predictably. Irregular shapes tend to leave small unusable gaps — place them early, while the board still has room to absorb the awkward leftover.</string>
     <string name="blockfill_tip_2_title">Save straight pieces for the finishing blow</string>
     <string name="blockfill_tip_2_body">Building the board up close to full, then dropping a long straight piece to clear it, is the most reliable way to bank a big score.</string>
-    <string name="blockfill_how_to_play_scoring">Placing a piece scores nothing on its own — only clearing a line scores points. Clearing multiple lines at once, or clearing on consecutive placements, adds further bonuses. Clearing the entire board scores the largest bonus and raises your score multiplier by one for the rest of the puzzle, so every later clear is worth more. Solving the puzzle itself also earns a separate score based on how few moves you needed — starting at 50,000 and dropping 500 per move, so take all the time you need.</string>
+    <string name="blockfill_how_to_play_scoring">Placing a piece scores nothing on its own — only clearing a line scores points. Clearing multiple lines at once, or clearing on consecutive placements, adds further bonuses. Clearing the entire board scores the largest bonus and raises your score multiplier by one for the rest of the puzzle, so every later clear is worth more. Solving the puzzle itself also earns a separate score based on how few moves you needed — it starts higher on harder levels and drops 500 per move, so take all the time you need.</string>
     <string name="blockfill_score_label">Score</string>
     <string name="blockfill_target_label">Target</string>
     <string name="blockfill_target_value">Target %1$d</string>
@@ -785,7 +785,7 @@
     <string name="blockfill_endless_result_stuck_title">No moves left</string>
     <string name="blockfill_endless_result_abandoned_title">Run ended</string>
     <string name="blockfill_endless_result_new_best">New best!</string>
-    <string name="blockfill_endless_result_stuck_body">The tray had no room left.</string>
+    <string name="blockfill_endless_result_stuck_body">None of your pieces fit on the board.</string>
     <string name="blockfill_endless_result_abandoned_body">You ended the run.</string>
     <string name="blockfill_endless_result_new_best_body">You beat your previous best.</string>
     <string name="blockfill_endless_result_first_run_body">Your first Endless run.</string>

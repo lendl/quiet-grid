@@ -30,10 +30,11 @@ Choisissez les jeux qui vous proposent un nouveau puzzle chaque jour, dans chaqu
 <li><b>Efface le Thème</b> — Formez des mots d'un même thème jusqu'à utiliser toutes les lettres.</li>
 </ul>
 
-<p><b>MÉMOIRE ET NOMBRES</b></p>
+<p><b>MÉMOIRE, NOMBRES ET BLOCS</b></p>
 <ul>
 <li><b>Chimp Test</b> — Touchez les nombres dans l'ordre avant qu'ils ne disparaissent.</li>
 <li><b>2048</b> — Faites glisser et fusionnez les tuiles pour atteindre 2048.</li>
+<li><b>Block Fill</b> — Faites glisser des pièces sur la grille et videz des lignes et colonnes complètes. Avec un mode infini.</li>
 </ul>
 
 <p><b>À VOTRE GOÛT</b><br>

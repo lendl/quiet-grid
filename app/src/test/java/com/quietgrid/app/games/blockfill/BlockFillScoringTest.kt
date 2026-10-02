@@ -37,13 +37,19 @@ class BlockFillScoringTest {
 
     @Test
     fun `puzzle score drops with every move needed`() {
-        assertEquals(50_000 - 30 * 500, blockFillPuzzleScore(movesUsed = 30))
-        assertEquals(true, blockFillPuzzleScore(movesUsed = 25) > blockFillPuzzleScore(movesUsed = 26))
+        assertEquals(50_000 - 30 * 500, blockFillPuzzleScore(movesUsed = 30, scoreTarget = 1000))
+        assertEquals(true, blockFillPuzzleScore(movesUsed = 25, scoreTarget = 1000) > blockFillPuzzleScore(movesUsed = 26, scoreTarget = 1000))
+    }
+
+    @Test
+    fun `puzzle score starts higher for a higher target`() {
+        assertEquals(125_000 - 75 * 500, blockFillPuzzleScore(movesUsed = 75, scoreTarget = 2500))
+        assertEquals(75_000, blockFillPuzzleScore(movesUsed = 0, scoreTarget = 1500))
     }
 
     @Test
     fun `puzzle score never drops below the floor`() {
-        assertEquals(100, blockFillPuzzleScore(movesUsed = 10_000))
+        assertEquals(100, blockFillPuzzleScore(movesUsed = 10_000, scoreTarget = 2500))
     }
 
     @Test

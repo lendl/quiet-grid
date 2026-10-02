@@ -30,10 +30,11 @@ Wähle, welche Spiele dir jeden Tag ein neues Rätsel geben, in jeder Schwierigk
 <li><b>Thema Leeren</b> — Bilde Wörter aus einem Thema, bis jeder Buchstabe verwendet ist.</li>
 </ul>
 
-<p><b>GEDÄCHTNIS UND ZAHLEN</b></p>
+<p><b>GEDÄCHTNIS, ZAHLEN UND BLÖCKE</b></p>
 <ul>
 <li><b>Chimp Test</b> — Tippe die Zahlen der Reihe nach an, bevor sie verschwinden.</li>
 <li><b>2048</b> — Schiebe und verbinde Kacheln, bis du 2048 erreichst.</li>
+<li><b>Block Fill</b> — Ziehe Teile aufs Feld und räume volle Reihen und Spalten. Mit Endlos-Modus.</li>
 </ul>
 
 <p><b>GANZ NACH DEINEM GESCHMACK</b><br>

@@ -30,10 +30,11 @@ Scegli quali giochi ti danno un nuovo puzzle ogni giorno, in ogni difficoltà. C
 <li><b>Svuota il tema</b> — Componi parole di un solo tema finché ogni lettera è stata usata.</li>
 </ul>
 
-<p><b>MEMORIA E NUMERI</b></p>
+<p><b>MEMORIA, NUMERI E BLOCCHI</b></p>
 <ul>
 <li><b>Chimp Test</b> — Tocca i numeri in ordine prima che scompaiano.</li>
 <li><b>2048</b> — Fai scorrere e unisci le tessere fino a raggiungere 2048.</li>
+<li><b>Block Fill</b> — Trascina i pezzi sulla griglia e libera righe e colonne complete. Con modalità infinita.</li>
 </ul>
 
 <p><b>A MODO TUO</b><br>

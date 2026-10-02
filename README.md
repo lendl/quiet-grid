@@ -55,8 +55,9 @@
 ### Spatial
 
 - **2048** — Merge tiles to reach 2048.
+- **Block Fill** — Drag pieces onto the board and clear full lines. Includes an Endless mode.
 
-In beta, enable in Settings: Arrow Escape, Block Fill, N-Back.
+In beta, enable in Settings: Arrow Escape, N-Back.
 
 ### Also
 

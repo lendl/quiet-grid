@@ -30,10 +30,11 @@ Escolha quais jogos oferecem um quebra-cabeça novo todo dia, em cada dificuldad
 <li><b>Limpe o Tema</b> — Forme palavras de um mesmo tema até usar todas as letras.</li>
 </ul>
 
-<p><b>MEMÓRIA E NÚMEROS</b></p>
+<p><b>MEMÓRIA, NÚMEROS E BLOCOS</b></p>
 <ul>
 <li><b>Chimp Test</b> — Toque nos números em ordem antes que desapareçam.</li>
 <li><b>2048</b> — Deslize e junte peças até chegar a 2048.</li>
+<li><b>Block Fill</b> — Arraste peças para o tabuleiro e limpe linhas e colunas inteiras. Inclui modo infinito.</li>
 </ul>
 
 <p><b>DO SEU JEITO</b><br>

@@ -2,8 +2,14 @@ package com.quietgrid.app.games.blockfill
 
 import kotlin.random.Random
 
-const val BLOCKFILL_SCORE_TARGET = 1000
 const val BLOCKFILL_REFILL_RETRY_CAP = 25
+
+val BLOCKFILL_SCORE_TARGETS: Map<String, Int> = mapOf(
+    "easy" to 1000,
+    "medium" to 1500,
+    "hard" to 2000,
+    "expert" to 2500,
+)
 
 val BLOCKFILL_STARTING_BLOCKS: Map<String, IntRange> = mapOf(
     "easy" to 4..8,
@@ -229,7 +235,7 @@ fun createBlockFillSession(difficulty: String, random: Random = Random.Default):
         val tray = drawTray(difficulty, board, random = random)
         if (!canPlaceTrayInSomeOrder(board, tray.filterNotNull())) return@repeat
 
-        val puzzle = BlockFillPuzzle(id = "$difficulty-${System.currentTimeMillis()}", difficulty = difficulty, scoreTarget = BLOCKFILL_SCORE_TARGET)
+        val puzzle = BlockFillPuzzle(id = "$difficulty-${System.currentTimeMillis()}", difficulty = difficulty, scoreTarget = BLOCKFILL_SCORE_TARGETS.getValue(difficulty))
         return BlockFillSession(puzzle = puzzle, board = board, tray = tray, score = 0, comboStreak = 0, status = BlockFillStatus.PLAYING)
     }
 

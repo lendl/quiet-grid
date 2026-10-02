@@ -30,10 +30,11 @@ Choose which games give you a new puzzle every day, in every difficulty. Share y
 <li><b>Theme Clear</b> — Spell words from one theme until every letter is used.</li>
 </ul>
 
-<p><b>MEMORY AND NUMBERS</b></p>
+<p><b>MEMORY, NUMBERS AND BLOCKS</b></p>
 <ul>
 <li><b>Chimp Test</b> — Tap the numbers in order before they disappear.</li>
 <li><b>2048</b> — Slide and merge tiles to reach 2048.</li>
+<li><b>Block Fill</b> — Drag pieces onto the board and clear full rows and columns. Includes an Endless mode.</li>
 </ul>
 
 <p><b>MAKE IT YOURS</b><br>

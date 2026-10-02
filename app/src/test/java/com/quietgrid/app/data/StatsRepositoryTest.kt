@@ -124,16 +124,16 @@ class StatsRepositoryTest {
     fun `statsFor returns an empty GameStats when nothing was recorded for a beta game`() = runTest {
         val repository = StatsRepository(newDataStore(backgroundScope, "stats.preferences_pb"), newHistoryStore(backgroundScope))
 
-        assertEquals(GameStats(), repository.statsFor(GameId.BLOCKFILL).first())
+        assertEquals(GameStats(), repository.statsFor(GameId.NBACK).first())
     }
 
     @Test
     fun `recordResult increments played and solved on a win for a beta game`() = runTest {
         val repository = StatsRepository(newDataStore(backgroundScope, "stats.preferences_pb"), newHistoryStore(backgroundScope))
 
-        repository.recordResult(GameId.BLOCKFILL, Difficulty.EASY, solved = true, score = 42)
+        repository.recordResult(GameId.NBACK, Difficulty.EASY, solved = true, score = 42)
 
-        val stats = repository.statsFor(GameId.BLOCKFILL).first().forDifficulty(Difficulty.EASY)
+        val stats = repository.statsFor(GameId.NBACK).first().forDifficulty(Difficulty.EASY)
         assertEquals(1, stats.played)
         assertEquals(1, stats.solved)
         assertEquals(42, stats.bestScore)
@@ -143,11 +143,11 @@ class StatsRepositoryTest {
     @Test
     fun `recordResult on a loss increments played but resets streak without touching bestScore for a beta game`() = runTest {
         val repository = StatsRepository(newDataStore(backgroundScope, "stats.preferences_pb"), newHistoryStore(backgroundScope))
-        repository.recordResult(GameId.BLOCKFILL, Difficulty.EASY, solved = true, score = 42)
+        repository.recordResult(GameId.NBACK, Difficulty.EASY, solved = true, score = 42)
 
-        repository.recordResult(GameId.BLOCKFILL, Difficulty.EASY, solved = false, score = 0)
+        repository.recordResult(GameId.NBACK, Difficulty.EASY, solved = false, score = 0)
 
-        val stats = repository.statsFor(GameId.BLOCKFILL).first().forDifficulty(Difficulty.EASY)
+        val stats = repository.statsFor(GameId.NBACK).first().forDifficulty(Difficulty.EASY)
         assertEquals(2, stats.played)
         assertEquals(1, stats.solved)
         assertEquals(42, stats.bestScore)
@@ -158,12 +158,12 @@ class StatsRepositoryTest {
     fun `clear removes stats for one beta game only`() = runTest {
         val dataStore = newDataStore(backgroundScope, "stats.preferences_pb")
         val repository = StatsRepository(dataStore, newHistoryStore(backgroundScope))
-        repository.recordResult(GameId.BLOCKFILL, Difficulty.EASY, solved = true, score = 10)
+        repository.recordResult(GameId.NBACK, Difficulty.EASY, solved = true, score = 10)
         repository.recordResult(GameId.ARROWESCAPE, Difficulty.EASY, solved = true, score = 20)
 
-        repository.clear(GameId.BLOCKFILL)
+        repository.clear(GameId.NBACK)
 
-        assertEquals(GameStats(), repository.statsFor(GameId.BLOCKFILL).first())
+        assertEquals(GameStats(), repository.statsFor(GameId.NBACK).first())
         assertEquals(20, repository.statsFor(GameId.ARROWESCAPE).first().forDifficulty(Difficulty.EASY).bestScore)
     }
 
@@ -171,12 +171,12 @@ class StatsRepositoryTest {
     fun `clearAll removes stats for every beta game`() = runTest {
         val dataStore = newDataStore(backgroundScope, "stats.preferences_pb")
         val repository = StatsRepository(dataStore, newHistoryStore(backgroundScope))
-        repository.recordResult(GameId.BLOCKFILL, Difficulty.EASY, solved = true, score = 10)
+        repository.recordResult(GameId.NBACK, Difficulty.EASY, solved = true, score = 10)
         repository.recordResult(GameId.ARROWESCAPE, Difficulty.EASY, solved = true, score = 20)
 
         repository.clearAll()
 
-        assertEquals(GameStats(), repository.statsFor(GameId.BLOCKFILL).first())
+        assertEquals(GameStats(), repository.statsFor(GameId.NBACK).first())
         assertEquals(GameStats(), repository.statsFor(GameId.ARROWESCAPE).first())
     }
 
