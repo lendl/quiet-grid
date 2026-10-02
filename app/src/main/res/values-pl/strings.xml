@@ -87,6 +87,8 @@
     <string name="settings_puzzle_language_italian_detail">Włoski</string>
     <string name="settings_puzzle_language_polish_detail">Polski</string>
     <string name="settings_show_timer_in_play_label">Pokaż stoper podczas gry</string>
+    <string name="settings_keep_screen_on_label">Nie wygaszaj ekranu</string>
+    <string name="settings_keep_screen_on_detail">Zapobiega przyciemnianiu ekranu, gdy łamigłówka jest otwarta. N-Back zawsze utrzymuje ekran włączony.</string>
     <string name="settings_beta_games_label">Włącz gry beta</string>
     <string name="settings_beta_games_detail">Odblokowuje gry będące wciąż w fazie testów. Mogą one zawierać błędy.</string>
 

@@ -87,6 +87,8 @@
     <string name="settings_puzzle_language_italian_detail">Italien</string>
     <string name="settings_puzzle_language_polish_detail">Polonais</string>
     <string name="settings_show_timer_in_play_label">Afficher la minuterie pendant le jeu</string>
+    <string name="settings_keep_screen_on_label">Garder l\'écran allumé</string>
+    <string name="settings_keep_screen_on_detail">Empêche l\'écran de s\'assombrir pendant qu\'un puzzle est ouvert. N-Back garde toujours l\'écran allumé.</string>
     <string name="settings_beta_games_label">Activer les jeux bêta</string>
     <string name="settings_beta_games_detail">Déverrouille les jeux encore en cours de test. Ceux-ci peuvent avoir des imperfections.</string>
 

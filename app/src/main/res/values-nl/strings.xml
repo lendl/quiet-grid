@@ -83,6 +83,8 @@
     <string name="settings_puzzle_language_italian_detail">Italiaans</string>
     <string name="settings_puzzle_language_polish_detail">Pools</string>
     <string name="settings_show_timer_in_play_label">Timer tonen tijdens spelen</string>
+    <string name="settings_keep_screen_on_label">Scherm aan houden</string>
+    <string name="settings_keep_screen_on_detail">Voorkomt dat het scherm dimt terwijl een puzzel open is. N-Back houdt het scherm altijd aan.</string>
     <string name="settings_beta_games_label">Bètaspellen inschakelen</string>
     <string name="settings_beta_games_detail">Ontgrendelt spellen die nog in ontwikkeling zijn. Deze kunnen problemen bevatten.</string>
 

@@ -83,6 +83,8 @@
     <string name="settings_puzzle_language_italian_detail">Italienisch</string>
     <string name="settings_puzzle_language_polish_detail">Polnisch</string>
     <string name="settings_show_timer_in_play_label">Timer während des Spielens anzeigen</string>
+    <string name="settings_keep_screen_on_label">Bildschirm aktiv lassen</string>
+    <string name="settings_keep_screen_on_detail">Verhindert, dass der Bildschirm abdunkelt, solange ein Rätsel geöffnet ist. N-Back bleibt immer aktiv.</string>
     <string name="settings_beta_games_label">Beta-Spiele aktivieren</string>
     <string name="settings_beta_games_detail">Schaltet Spiele frei, die sich noch in der Entwicklung befinden. Diese können Fehler enthalten.</string>
 

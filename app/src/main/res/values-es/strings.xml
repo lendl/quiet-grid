@@ -83,6 +83,8 @@
     <string name="settings_puzzle_language_italian_detail">Italiano</string>
     <string name="settings_puzzle_language_polish_detail">Polaco</string>
     <string name="settings_show_timer_in_play_label">Mostrar temporizador durante el juego</string>
+    <string name="settings_keep_screen_on_label">Mantener la pantalla encendida</string>
+    <string name="settings_keep_screen_on_detail">Evita que la pantalla se atenúe mientras haya un puzzle abierto. N-Back siempre la mantiene encendida.</string>
     <string name="settings_beta_games_label">Activar juegos beta</string>
     <string name="settings_beta_games_detail">Desbloquea juegos que aún están en pruebas. Estos pueden tener problemas.</string>
 

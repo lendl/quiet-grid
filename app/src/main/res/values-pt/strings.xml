@@ -89,6 +89,8 @@
     <string name="settings_puzzle_language_polish_detail">Polonês</string>
     <string name="settings_puzzle_language_portuguese_detail">Português</string>
     <string name="settings_show_timer_in_play_label">Mostrar cronômetro durante o jogo</string>
+    <string name="settings_keep_screen_on_label">Manter a tela ligada</string>
+    <string name="settings_keep_screen_on_detail">Impede que a tela escureça enquanto um quebra-cabeça estiver aberto. O N-Back sempre mantém a tela ligada.</string>
     <string name="settings_beta_games_label">Ativar jogos beta</string>
     <string name="settings_beta_games_detail">Desbloqueia jogos que ainda estão em teste. Estes podem ter algumas arestas.</string>
 
