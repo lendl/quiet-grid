@@ -181,8 +181,8 @@
     <string name="animaldoku_quickstart_goal">Descubra onde um animal se esconde em cada linha, coluna e região.</string>
     <string name="animaldoku_quickstart_bullet_1">Dois animais não podem compartilhar linha, coluna ou região.</string>
     <string name="animaldoku_quickstart_bullet_2">Dois animais não podem se tocar, nem mesmo na diagonal.</string>
-    <string name="animaldoku_quickstart_bullet_3">Um erro custa um coração — perca os 3 e o quebra-cabeça termina.</string>
-    <string name="animaldoku_quickstart_hook">Quanto mais corações sobrarem, mais pontos você ganha.</string>
+    <string name="animaldoku_quickstart_bullet_3">Um erro custa uma vida — perca as 3 e o quebra-cabeça termina.</string>
+    <string name="animaldoku_quickstart_hook">Quanto mais vidas sobrarem, mais pontos você ganha.</string>
 
     <string name="arrowescape_quickstart_goal">Retire todas as setas do tabuleiro.</string>
     <string name="arrowescape_quickstart_bullet_1">Toque em uma seta para puxá-la na direção que ela aponta.</string>
@@ -808,7 +808,7 @@
     <string name="animaldoku_difficulty_desc_expert">As maiores grades, reservadas para raciocínio em cadeia profundo e com vários passos.</string>
     <string name="animaldoku_how_to_play_goal">Coloque um animal em cada linha, coluna e região colorida — dois animais não podem se tocar, nem mesmo na diagonal.</string>
     <string name="animaldoku_how_to_play_controls">Toque em uma célula vazia para marcá-la, toque de novo para desmarcá-la. Arraste sobre várias células para marcar ou desmarcar de uma vez. Toque duas vezes em uma célula para colocar seu animal ali.</string>
-    <string name="animaldoku_how_to_play_wrong_move">Um duplo toque errado trava a célula com um X e custa um coração. Perca os 3 corações e o quebra-cabeça termina.</string>
+    <string name="animaldoku_how_to_play_wrong_move">Um duplo toque errado trava a célula com um X e custa uma vida. Perca as 3 vidas e o quebra-cabeça termina.</string>
     <string name="animaldoku_rule_1_title">Um animal por linha e coluna</string>
     <string name="animaldoku_rule_1_body">Cada linha e cada coluna tem exatamente um animal.</string>
     <string name="animaldoku_rule_2_title">Um animal por região</string>
@@ -821,8 +821,8 @@
     <string name="animaldoku_loss_abandoned_title">Quebra-cabeça inacabado</string>
     <string name="animaldoku_loss_abandoned_body">Você escolheu parar antes de resolver este quebra-cabeça.</string>
     <string name="animaldoku_loss_rule_failure_eyebrow">Quebra-cabeça perdido</string>
-    <string name="animaldoku_loss_rule_failure_title">Sem corações</string>
-    <string name="animaldoku_loss_rule_failure_body">Três aberturas erradas custaram todos os seus corações e encerraram o quebra-cabeça.</string>
+    <string name="animaldoku_loss_rule_failure_title">Sem vidas</string>
+    <string name="animaldoku_loss_rule_failure_body">Três aberturas erradas custaram todas as suas vidas e encerraram o quebra-cabeça.</string>
     <string name="animaldoku_challenger_label">Desafiante</string>
     <string name="animaldoku_challenger_description">Resolva quantos quebra-cabeças conseguir antes que o tempo acabe.</string>
     <string name="animaldoku_challenger_solved_label">Resolvidos</string>

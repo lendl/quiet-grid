@@ -181,8 +181,8 @@
     <string name="animaldoku_quickstart_goal">Find where one animal hides in every row, column, and region.</string>
     <string name="animaldoku_quickstart_bullet_1">No two animals share a row, column, or region.</string>
     <string name="animaldoku_quickstart_bullet_2">No two animals can touch, even diagonally.</string>
-    <string name="animaldoku_quickstart_bullet_3">Wrong guess costs a heart — lose all 3 and the puzzle ends.</string>
-    <string name="animaldoku_quickstart_hook">More hearts left means more points.</string>
+    <string name="animaldoku_quickstart_bullet_3">Wrong guess costs a life — lose all 3 and the puzzle ends.</string>
+    <string name="animaldoku_quickstart_hook">More lives left means more points.</string>
 
     <string name="arrowescape_quickstart_goal">Clear every arrow from the board.</string>
     <string name="arrowescape_quickstart_bullet_1">Tap an arrow to pull it off in the direction it points.</string>
@@ -854,7 +854,7 @@
     <string name="animaldoku_difficulty_desc_expert">The largest grids, reserved for deep multi-step chain reasoning.</string>
     <string name="animaldoku_how_to_play_goal">Place one animal in every row, column, and colored region — no two animals may touch, even diagonally.</string>
     <string name="animaldoku_how_to_play_controls">Tap an empty cell to mark it, tap again to clear it. Drag across cells to mark or clear several at once. Double-tap a cell to place your animal there.</string>
-    <string name="animaldoku_how_to_play_wrong_move">A wrong double-tap locks the cell as an X and costs one heart. Lose all 3 hearts and the puzzle ends.</string>
+    <string name="animaldoku_how_to_play_wrong_move">A wrong double-tap locks the cell as an X and costs one life. Lose all 3 lives and the puzzle ends.</string>
     <string name="animaldoku_rule_1_title">One animal per row and column</string>
     <string name="animaldoku_rule_1_body">Every row and every column holds exactly one animal.</string>
     <string name="animaldoku_rule_2_title">One animal per region</string>
@@ -867,8 +867,8 @@
     <string name="animaldoku_loss_abandoned_title">Puzzle unfinished</string>
     <string name="animaldoku_loss_abandoned_body">You chose to stop before this puzzle was solved.</string>
     <string name="animaldoku_loss_rule_failure_eyebrow">Puzzle lost</string>
-    <string name="animaldoku_loss_rule_failure_title">Out of hearts</string>
-    <string name="animaldoku_loss_rule_failure_body">Three wrong opens cost you all your hearts and ended the puzzle.</string>
+    <string name="animaldoku_loss_rule_failure_title">Out of lives</string>
+    <string name="animaldoku_loss_rule_failure_body">Three wrong opens cost you all your lives and ended the puzzle.</string>
     <string name="animaldoku_challenger_label">Challenger</string>
     <string name="animaldoku_challenger_description">Solve as many puzzles as you can before the clock runs out.</string>
     <string name="animaldoku_challenger_solved_label">Solved</string>

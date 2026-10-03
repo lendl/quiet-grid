@@ -181,8 +181,8 @@
     <string name="animaldoku_quickstart_goal">Trova dove si nasconde un animale in ogni riga, colonna e regione.</string>
     <string name="animaldoku_quickstart_bullet_1">Due animali non possono condividere una riga, una colonna o una regione.</string>
     <string name="animaldoku_quickstart_bullet_2">Due animali non possono toccarsi, nemmeno in diagonale.</string>
-    <string name="animaldoku_quickstart_bullet_3">Un tentativo sbagliato costa un cuore: perdili tutti e 3 e il puzzle finisce.</string>
-    <string name="animaldoku_quickstart_hook">Più cuori ti restano, più punti ottieni.</string>
+    <string name="animaldoku_quickstart_bullet_3">Un tentativo sbagliato costa una vita: perdile tutte e 3 e il puzzle finisce.</string>
+    <string name="animaldoku_quickstart_hook">Più vite ti restano, più punti ottieni.</string>
 
     <string name="arrowescape_quickstart_goal">Togli tutte le frecce dalla griglia.</string>
     <string name="arrowescape_quickstart_bullet_1">Tocca una freccia per sfilarla nella direzione in cui punta.</string>
@@ -849,7 +849,7 @@
     <string name="animaldoku_difficulty_desc_expert">Le griglie più grandi, riservate a ragionamenti profondi in più passaggi.</string>
     <string name="animaldoku_how_to_play_goal">Metti un animale in ogni riga, colonna e regione colorata: due animali non possono toccarsi, nemmeno in diagonale.</string>
     <string name="animaldoku_how_to_play_controls">Tocca una casella vuota per segnarla, tocca di nuovo per pulirla. Trascina sulle caselle per segnarne o pulirne diverse alla volta. Tocca due volte una casella per metterci il tuo animale.</string>
-    <string name="animaldoku_how_to_play_wrong_move">Un doppio tocco sbagliato blocca la casella con una X e costa un cuore. Perdi tutti e 3 i cuori e il puzzle finisce.</string>
+    <string name="animaldoku_how_to_play_wrong_move">Un doppio tocco sbagliato blocca la casella con una X e costa una vita. Perdi tutte e 3 le vite e il puzzle finisce.</string>
     <string name="animaldoku_rule_1_title">Un animale per riga e colonna</string>
     <string name="animaldoku_rule_1_body">Ogni riga e ogni colonna contiene esattamente un animale.</string>
     <string name="animaldoku_rule_2_title">Un animale per regione</string>
@@ -862,8 +862,8 @@
     <string name="animaldoku_loss_abandoned_title">Puzzle incompleto</string>
     <string name="animaldoku_loss_abandoned_body">Hai scelto di fermarti prima di risolvere questo puzzle.</string>
     <string name="animaldoku_loss_rule_failure_eyebrow">Puzzle perso</string>
-    <string name="animaldoku_loss_rule_failure_title">Cuori esauriti</string>
-    <string name="animaldoku_loss_rule_failure_body">Tre aperture sbagliate ti sono costate tutti i cuori e hanno fatto finire il puzzle.</string>
+    <string name="animaldoku_loss_rule_failure_title">Vite esaurite</string>
+    <string name="animaldoku_loss_rule_failure_body">Tre aperture sbagliate ti sono costate tutte le vite e hanno fatto finire il puzzle.</string>
     <string name="animaldoku_challenger_label">Challenger</string>
     <string name="animaldoku_challenger_description">Risolvi più puzzle che puoi prima che scada il tempo.</string>
     <string name="animaldoku_challenger_solved_label">Risolti</string>

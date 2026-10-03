@@ -167,8 +167,8 @@
     <string name="animaldoku_quickstart_goal">Finde, wo sich in jeder Zeile, Spalte und Region ein Tier versteckt.</string>
     <string name="animaldoku_quickstart_bullet_1">Keine zwei Tiere teilen sich eine Zeile, Spalte oder Region.</string>
     <string name="animaldoku_quickstart_bullet_2">Keine zwei Tiere dürfen sich berühren, auch nicht diagonal.</string>
-    <string name="animaldoku_quickstart_bullet_3">Eine falsche Vermutung kostet ein Herz — bei 0 Herzen endet das Rätsel.</string>
-    <string name="animaldoku_quickstart_hook">Mehr verbleibende Herzen bedeuten mehr Punkte.</string>
+    <string name="animaldoku_quickstart_bullet_3">Eine falsche Vermutung kostet ein Leben — bei 0 Leben endet das Rätsel.</string>
+    <string name="animaldoku_quickstart_hook">Mehr verbleibende Leben bedeuten mehr Punkte.</string>
 
     <string name="arrowescape_quickstart_goal">Entferne jeden Pfeil vom Feld.</string>
     <string name="arrowescape_quickstart_bullet_1">Tippe auf einen Pfeil, um ihn in die Richtung zu ziehen, in die er zeigt.</string>
@@ -407,7 +407,7 @@
     <string name="takuzu_challenger_tier_label">Stufe</string>
     <string name="takuzu_challenger_result_time_up_title">Zeit abgelaufen!</string>
     <string name="takuzu_challenger_result_time_up_body">Die Zeit ist abgelaufen. So lief dein Durchlauf.</string>
-    <string name="takuzu_challenger_result_lives_exhausted_title">Keine Herzen mehr!</string>
+    <string name="takuzu_challenger_result_lives_exhausted_title">Keine Leben mehr!</string>
     <string name="takuzu_challenger_result_lives_exhausted_body">Drei Fehler haben deinen Durchlauf beendet.</string>
     <string name="takuzu_challenger_result_abandoned_title">Durchlauf beendet</string>
     <string name="takuzu_challenger_result_abandoned_body">Du hast den Durchlauf vorzeitig beendet.</string>
@@ -479,7 +479,7 @@
     <string name="nonogram_challenger_tier_label">Stufe</string>
     <string name="nonogram_challenger_result_time_up_title">Zeit abgelaufen!</string>
     <string name="nonogram_challenger_result_time_up_body">Die Zeit ist abgelaufen. So lief dein Durchlauf.</string>
-    <string name="nonogram_challenger_result_lives_exhausted_title">Keine Herzen mehr!</string>
+    <string name="nonogram_challenger_result_lives_exhausted_title">Keine Leben mehr!</string>
     <string name="nonogram_challenger_result_lives_exhausted_body">Drei Fehler haben deinen Durchlauf beendet.</string>
     <string name="nonogram_challenger_result_abandoned_title">Durchlauf beendet</string>
     <string name="nonogram_challenger_result_abandoned_body">Du hast den Durchlauf vorzeitig beendet.</string>
@@ -674,7 +674,7 @@
     <string name="sudoku_challenger_tier_label">Stufe</string>
     <string name="sudoku_challenger_result_time_up_title">Zeit abgelaufen!</string>
     <string name="sudoku_challenger_result_time_up_body">Die Zeit ist abgelaufen. So lief dein Durchlauf.</string>
-    <string name="sudoku_challenger_result_lives_exhausted_title">Keine Herzen mehr!</string>
+    <string name="sudoku_challenger_result_lives_exhausted_title">Keine Leben mehr!</string>
     <string name="sudoku_challenger_result_lives_exhausted_body">Drei Fehler haben deinen Durchlauf beendet.</string>
     <string name="sudoku_challenger_result_abandoned_title">Durchlauf beendet</string>
     <string name="sudoku_challenger_result_abandoned_body">Du hast den Durchlauf vorzeitig beendet.</string>
@@ -833,7 +833,7 @@
     <string name="animaldoku_difficulty_desc_expert">Die größten Raster, vorbehalten für tiefes, mehrstufiges Kettendenken.</string>
     <string name="animaldoku_how_to_play_goal">Platziere ein Tier in jeder Zeile, Spalte und farbigen Region — keine zwei Tiere dürfen sich berühren, auch nicht diagonal.</string>
     <string name="animaldoku_how_to_play_controls">Tippe auf eine leere Zelle, um sie zu markieren, tippe erneut, um sie zu leeren. Ziehe über mehrere Zellen, um sie auf einmal zu markieren oder zu leeren. Doppeltippe auf eine Zelle, um dein Tier dort zu platzieren.</string>
-    <string name="animaldoku_how_to_play_wrong_move">Ein falscher Doppeltipp sperrt die Zelle als X und kostet ein Herz. Verliere alle 3 Herzen und das Rätsel endet.</string>
+    <string name="animaldoku_how_to_play_wrong_move">Ein falscher Doppeltipp sperrt die Zelle als X und kostet ein Leben. Verliere alle 3 Leben und das Rätsel endet.</string>
     <string name="animaldoku_rule_1_title">Ein Tier pro Zeile und Spalte</string>
     <string name="animaldoku_rule_1_body">Jede Zeile und jede Spalte enthält genau ein Tier.</string>
     <string name="animaldoku_rule_2_title">Ein Tier pro Region</string>
@@ -846,15 +846,15 @@
     <string name="animaldoku_loss_abandoned_title">Rätsel unvollständig</string>
     <string name="animaldoku_loss_abandoned_body">Du hast dieses Rätsel beendet, bevor es gelöst war.</string>
     <string name="animaldoku_loss_rule_failure_eyebrow">Rätsel verloren</string>
-    <string name="animaldoku_loss_rule_failure_title">Keine Herzen mehr</string>
-    <string name="animaldoku_loss_rule_failure_body">Drei falsche Öffnungen haben dich alle Herzen gekostet und das Rätsel beendet.</string>
+    <string name="animaldoku_loss_rule_failure_title">Keine Leben mehr</string>
+    <string name="animaldoku_loss_rule_failure_body">Drei falsche Öffnungen haben dich alle Leben gekostet und das Rätsel beendet.</string>
     <string name="animaldoku_challenger_label">Challenger</string>
     <string name="animaldoku_challenger_description">Löse so viele Rätsel wie möglich, bevor die Zeit abläuft.</string>
     <string name="animaldoku_challenger_solved_label">Gelöst</string>
     <string name="animaldoku_challenger_tier_label">Stufe</string>
     <string name="animaldoku_challenger_result_time_up_title">Zeit abgelaufen!</string>
     <string name="animaldoku_challenger_result_time_up_body">Die Zeit ist abgelaufen. So lief dein Durchlauf.</string>
-    <string name="animaldoku_challenger_result_lives_exhausted_title">Keine Herzen mehr!</string>
+    <string name="animaldoku_challenger_result_lives_exhausted_title">Keine Leben mehr!</string>
     <string name="animaldoku_challenger_result_lives_exhausted_body">Drei falsche Öffnungen haben deinen Durchlauf beendet.</string>
     <string name="animaldoku_challenger_result_abandoned_title">Durchlauf beendet</string>
     <string name="animaldoku_challenger_result_abandoned_body">Du hast den Durchlauf vorzeitig beendet.</string>
@@ -874,7 +874,7 @@
     <string name="wordguess_challenger_tier_label">Stufe</string>
     <string name="wordguess_challenger_result_time_up_title">Zeit abgelaufen!</string>
     <string name="wordguess_challenger_result_time_up_body">Die Zeit ist abgelaufen. So lief dein Durchlauf.</string>
-    <string name="wordguess_challenger_result_lives_exhausted_title">Keine Herzen mehr!</string>
+    <string name="wordguess_challenger_result_lives_exhausted_title">Keine Leben mehr!</string>
     <string name="wordguess_challenger_result_lives_exhausted_body">Drei verpasste Wörter haben deinen Durchlauf beendet.</string>
     <string name="wordguess_challenger_result_abandoned_title">Durchlauf beendet</string>
     <string name="wordguess_challenger_result_abandoned_body">Du hast den Durchlauf vorzeitig beendet.</string>
@@ -895,7 +895,7 @@
     <string name="challenger_result_puzzle_breakdown_heading">Rätsel-Übersicht</string>
     <string name="chimp_challenger_result_time_up_title">Zeit abgelaufen!</string>
     <string name="chimp_challenger_result_time_up_body">Die Zeit ist abgelaufen. So lief dein Durchlauf.</string>
-    <string name="chimp_challenger_result_lives_exhausted_title">Keine Herzen mehr!</string>
+    <string name="chimp_challenger_result_lives_exhausted_title">Keine Leben mehr!</string>
     <string name="chimp_challenger_result_lives_exhausted_body">Drei falsche Tipps haben deinen Durchlauf beendet.</string>
     <string name="chimp_challenger_result_abandoned_title">Durchlauf beendet</string>
     <string name="chimp_challenger_result_abandoned_body">Du hast den Durchlauf vorzeitig beendet.</string>
@@ -976,7 +976,7 @@
     <string name="starbattle_challenger_tier_label">Stufe</string>
     <string name="starbattle_challenger_result_time_up_title">Zeit abgelaufen!</string>
     <string name="starbattle_challenger_result_time_up_body">Die Zeit ist abgelaufen. So lief dein Durchlauf.</string>
-    <string name="starbattle_challenger_result_hearts_exhausted_title">Keine Herzen mehr!</string>
+    <string name="starbattle_challenger_result_hearts_exhausted_title">Keine Leben mehr!</string>
     <string name="starbattle_challenger_result_hearts_exhausted_body">Drei falsche Öffnungen haben deinen Durchlauf beendet.</string>
     <string name="starbattle_challenger_result_abandoned_title">Durchlauf beendet</string>
     <string name="starbattle_challenger_result_abandoned_body">Du hast den Durchlauf vorzeitig beendet.</string>

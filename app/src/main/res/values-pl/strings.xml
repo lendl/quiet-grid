@@ -179,8 +179,8 @@
     <string name="animaldoku_quickstart_goal">Znajdź kryjówkę jednego zwierzęcia w każdym wierszu, kolumnie i obszarze.</string>
     <string name="animaldoku_quickstart_bullet_1">Żadne dwa zwierzęta nie mogą znajdować się w tym samym wierszu, kolumnie ani obszarze.</string>
     <string name="animaldoku_quickstart_bullet_2">Żadne dwa zwierzęta nie mogą się stykać, nawet po przekątnej.</string>
-    <string name="animaldoku_quickstart_bullet_3">Błędne wytypowanie kosztuje serce — utrata wszystkich 3 kończy łamigłówkę.</string>
-    <string name="animaldoku_quickstart_hook">Im więcej zachowanych serc, tym wyższy wynik.</string>
+    <string name="animaldoku_quickstart_bullet_3">Błędne wytypowanie kosztuje życie — utrata wszystkich 3 kończy łamigłówkę.</string>
+    <string name="animaldoku_quickstart_hook">Im więcej zachowanych żyć, tym wyższy wynik.</string>
 
     <string name="arrowescape_quickstart_goal">Usuń wszystkie strzałki z planszy.</string>
     <string name="arrowescape_quickstart_bullet_1">Stuknij strzałkę, aby wyciągnąć ją w kierunku, który wskazuje.</string>
@@ -834,7 +834,7 @@
     <string name="animaldoku_difficulty_desc_expert">Największe siatki, zarezerwowane dla głębokiego, wieloetapowego wnioskowania łańcuchowego.</string>
     <string name="animaldoku_how_to_play_goal">Umieść jedno zwierzę w każdym wierszu, kolumnie i kolorowym obszarze — żadne dwa zwierzęta nie mogą się stykać, nawet po przekątnej.</string>
     <string name="animaldoku_how_to_play_controls">Stuknij puste pole, aby je oznaczyć, stuknij ponownie, aby wyczyścić oznaczenie. Przeciągnij palcem po polach, aby oznaczyć lub wyczyścić kilka naraz. Stuknij pole dwukrotnie, aby umieścić tam swoje zwierzę.</string>
-    <string name="animaldoku_how_to_play_wrong_move">Błędne dwukrotne stuknięcie blokuje pole jako X i kosztuje jedno serce. Utrata wszystkich 3 serc kończy łamigłówkę.</string>
+    <string name="animaldoku_how_to_play_wrong_move">Błędne dwukrotne stuknięcie blokuje pole jako X i kosztuje jedno życie. Utrata wszystkich 3 żyć kończy łamigłówkę.</string>
     <string name="animaldoku_rule_1_title">Jedno zwierzę na wiersz i kolumnę</string>
     <string name="animaldoku_rule_1_body">Każdy wiersz i każda kolumna zawierają dokładnie jedno zwierzę.</string>
     <string name="animaldoku_rule_2_title">Jedno zwierzę na obszar</string>
@@ -847,8 +847,8 @@
     <string name="animaldoku_loss_abandoned_title">Łamigłówka nieukończona</string>
     <string name="animaldoku_loss_abandoned_body">Decyzja o zakończeniu gry przed rozwiązaniem łamigłówki.</string>
     <string name="animaldoku_loss_rule_failure_eyebrow">Przegrana</string>
-    <string name="animaldoku_loss_rule_failure_title">Koniec serc</string>
-    <string name="animaldoku_loss_rule_failure_body">Trzy błędne odkrycia kosztowały Cię utratę wszystkich serc i zakończyły łamigłówkę.</string>
+    <string name="animaldoku_loss_rule_failure_title">Koniec żyć</string>
+    <string name="animaldoku_loss_rule_failure_body">Trzy błędne odkrycia kosztowały Cię utratę wszystkich żyć i zakończyły łamigłówkę.</string>
 
     <!-- Animal Doku - Challenger Mode -->
     <string name="animaldoku_challenger_label">Pretendent</string>

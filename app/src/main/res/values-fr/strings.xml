@@ -171,8 +171,8 @@
     <string name="animaldoku_quickstart_goal">Trouve où se cache un animal dans chaque ligne, colonne et région.</string>
     <string name="animaldoku_quickstart_bullet_1">Deux animaux ne peuvent pas partager une ligne, colonne ou région.</string>
     <string name="animaldoku_quickstart_bullet_2">Deux animaux ne peuvent pas se toucher, même en diagonale.</string>
-    <string name="animaldoku_quickstart_bullet_3">Une erreur coûte un cœur — perds tes 3 cœurs et le puzzle se termine.</string>
-    <string name="animaldoku_quickstart_hook">Plus il reste de cœurs, plus tu marques de points.</string>
+    <string name="animaldoku_quickstart_bullet_3">Une erreur coûte une vie — perds tes 3 vies et le puzzle se termine.</string>
+    <string name="animaldoku_quickstart_hook">Plus il reste de vies, plus tu marques de points.</string>
 
     <string name="arrowescape_quickstart_goal">Fais sortir toutes les flèches du plateau.</string>
     <string name="arrowescape_quickstart_bullet_1">Appuie sur une flèche pour la faire sortir dans la direction qu\'elle indique.</string>
@@ -415,7 +415,7 @@
     <string name="takuzu_challenger_tier_label">Niveau</string>
     <string name="takuzu_challenger_result_time_up_title">Temps écoulé !</string>
     <string name="takuzu_challenger_result_time_up_body">Le temps est écoulé. Voici comment s\'est passée ta partie.</string>
-    <string name="takuzu_challenger_result_lives_exhausted_title">Plus de cœurs !</string>
+    <string name="takuzu_challenger_result_lives_exhausted_title">Plus de vies !</string>
     <string name="takuzu_challenger_result_lives_exhausted_body">Trois erreurs ont mis fin à ta partie.</string>
     <string name="takuzu_challenger_result_abandoned_title">Partie terminée</string>
     <string name="takuzu_challenger_result_abandoned_body">Tu as arrêté la partie avant la fin.</string>
@@ -487,7 +487,7 @@
     <string name="nonogram_challenger_tier_label">Niveau</string>
     <string name="nonogram_challenger_result_time_up_title">Temps écoulé !</string>
     <string name="nonogram_challenger_result_time_up_body">Le temps est écoulé. Voici comment s\'est passée ta partie.</string>
-    <string name="nonogram_challenger_result_lives_exhausted_title">Plus de cœurs !</string>
+    <string name="nonogram_challenger_result_lives_exhausted_title">Plus de vies !</string>
     <string name="nonogram_challenger_result_lives_exhausted_body">Trois erreurs ont mis fin à ta partie.</string>
     <string name="nonogram_challenger_result_abandoned_title">Partie terminée</string>
     <string name="nonogram_challenger_result_abandoned_body">Tu as arrêté la partie avant la fin.</string>
@@ -641,7 +641,7 @@
     <string name="sudoku_challenger_tier_label">Niveau</string>
     <string name="sudoku_challenger_result_time_up_title">Temps écoulé !</string>
     <string name="sudoku_challenger_result_time_up_body">Le temps est écoulé. Voici comment s\'est passée ta partie.</string>
-    <string name="sudoku_challenger_result_lives_exhausted_title">Plus de cœurs !</string>
+    <string name="sudoku_challenger_result_lives_exhausted_title">Plus de vies !</string>
     <string name="sudoku_challenger_result_lives_exhausted_body">Trois erreurs ont mis fin à ta partie.</string>
     <string name="sudoku_challenger_result_abandoned_title">Partie terminée</string>
     <string name="sudoku_challenger_result_abandoned_body">Tu as arrêté la partie avant la fin.</string>
@@ -800,7 +800,7 @@
     <string name="animaldoku_difficulty_desc_expert">Les plus grandes grilles, réservées à un raisonnement en chaîne profond et en plusieurs étapes.</string>
     <string name="animaldoku_how_to_play_goal">Place un animal dans chaque ligne, colonne et région colorée — deux animaux ne peuvent pas se toucher, même en diagonale.</string>
     <string name="animaldoku_how_to_play_controls">Appuie sur une case vide pour la marquer, appuie à nouveau pour l\'effacer. Fais glisser sur plusieurs cases pour les marquer ou les effacer d\'un coup. Appuie deux fois sur une case pour y placer ton animal.</string>
-    <string name="animaldoku_how_to_play_wrong_move">Un double appui incorrect verrouille la case avec un X et coûte un cœur. Perds tes 3 cœurs et le puzzle se termine.</string>
+    <string name="animaldoku_how_to_play_wrong_move">Un double appui incorrect verrouille la case avec un X et coûte une vie. Perds tes 3 vies et le puzzle se termine.</string>
     <string name="animaldoku_rule_1_title">Un animal par ligne et colonne</string>
     <string name="animaldoku_rule_1_body">Chaque ligne et chaque colonne contient exactement un animal.</string>
     <string name="animaldoku_rule_2_title">Un animal par région</string>
@@ -813,15 +813,15 @@
     <string name="animaldoku_loss_abandoned_title">Puzzle inachevé</string>
     <string name="animaldoku_loss_abandoned_body">Tu as choisi d\'arrêter avant que ce puzzle soit résolu.</string>
     <string name="animaldoku_loss_rule_failure_eyebrow">Puzzle perdu</string>
-    <string name="animaldoku_loss_rule_failure_title">Plus de cœurs</string>
-    <string name="animaldoku_loss_rule_failure_body">Trois ouvertures incorrectes t\'ont coûté tous tes cœurs et ont mis fin au puzzle.</string>
+    <string name="animaldoku_loss_rule_failure_title">Plus de vies</string>
+    <string name="animaldoku_loss_rule_failure_body">Trois ouvertures incorrectes t\'ont coûté toutes tes vies et ont mis fin au puzzle.</string>
     <string name="animaldoku_challenger_label">Challenger</string>
     <string name="animaldoku_challenger_description">Résous autant de puzzles que possible avant que le temps ne s\'écoule.</string>
     <string name="animaldoku_challenger_solved_label">Résolus</string>
     <string name="animaldoku_challenger_tier_label">Niveau</string>
     <string name="animaldoku_challenger_result_time_up_title">Temps écoulé !</string>
     <string name="animaldoku_challenger_result_time_up_body">Le temps est écoulé. Voici comment s\'est passée ta partie.</string>
-    <string name="animaldoku_challenger_result_lives_exhausted_title">Plus de cœurs !</string>
+    <string name="animaldoku_challenger_result_lives_exhausted_title">Plus de vies !</string>
     <string name="animaldoku_challenger_result_lives_exhausted_body">Trois ouvertures incorrectes ont mis fin à ta partie.</string>
     <string name="animaldoku_challenger_result_abandoned_title">Partie terminée</string>
     <string name="animaldoku_challenger_result_abandoned_body">Tu as arrêté la partie avant la fin.</string>
@@ -841,7 +841,7 @@
     <string name="wordguess_challenger_tier_label">Niveau</string>
     <string name="wordguess_challenger_result_time_up_title">Temps écoulé !</string>
     <string name="wordguess_challenger_result_time_up_body">Le temps est écoulé. Voici comment s\'est passée ta partie.</string>
-    <string name="wordguess_challenger_result_lives_exhausted_title">Plus de cœurs !</string>
+    <string name="wordguess_challenger_result_lives_exhausted_title">Plus de vies !</string>
     <string name="wordguess_challenger_result_lives_exhausted_body">Trois mots manqués ont mis fin à ta partie.</string>
     <string name="wordguess_challenger_result_abandoned_title">Partie terminée</string>
     <string name="wordguess_challenger_result_abandoned_body">Tu as arrêté la partie avant la fin.</string>
@@ -862,7 +862,7 @@
     <string name="challenger_result_puzzle_breakdown_heading">Détail des puzzles</string>
     <string name="chimp_challenger_result_time_up_title">Temps écoulé !</string>
     <string name="chimp_challenger_result_time_up_body">Le temps est écoulé. Voici comment s\'est passée ta partie.</string>
-    <string name="chimp_challenger_result_lives_exhausted_title">Plus de cœurs !</string>
+    <string name="chimp_challenger_result_lives_exhausted_title">Plus de vies !</string>
     <string name="chimp_challenger_result_lives_exhausted_body">Trois touches incorrectes ont mis fin à ta partie.</string>
     <string name="chimp_challenger_result_abandoned_title">Partie terminée</string>
     <string name="chimp_challenger_result_abandoned_body">Tu as arrêté la partie avant la fin.</string>
@@ -1006,7 +1006,7 @@
     <string name="starbattle_challenger_tier_label">Niveau</string>
     <string name="starbattle_challenger_result_time_up_title">Temps écoulé !</string>
     <string name="starbattle_challenger_result_time_up_body">Le temps est écoulé. Voici comment s\'est passée ta partie.</string>
-    <string name="starbattle_challenger_result_hearts_exhausted_title">Plus de cœurs !</string>
+    <string name="starbattle_challenger_result_hearts_exhausted_title">Plus de vies !</string>
     <string name="starbattle_challenger_result_hearts_exhausted_body">Trois ouvertures incorrectes ont mis fin à ta partie.</string>
     <string name="starbattle_challenger_result_abandoned_title">Partie terminée</string>
     <string name="starbattle_challenger_result_abandoned_body">Tu as arrêté la partie avant la fin.</string>

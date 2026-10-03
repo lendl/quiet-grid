@@ -167,8 +167,8 @@
     <string name="animaldoku_quickstart_goal">Vind waar een dier zich verstopt in elke rij, kolom en regio.</string>
     <string name="animaldoku_quickstart_bullet_1">Geen twee dieren delen een rij, kolom of regio.</string>
     <string name="animaldoku_quickstart_bullet_2">Geen twee dieren mogen elkaar raken, ook niet diagonaal.</string>
-    <string name="animaldoku_quickstart_bullet_3">Een foute gok kost een hartje — verlies alle 3 en de puzzel eindigt.</string>
-    <string name="animaldoku_quickstart_hook">Meer overgebleven hartjes betekenen meer punten.</string>
+    <string name="animaldoku_quickstart_bullet_3">Een foute gok kost een leven — verlies alle 3 en de puzzel eindigt.</string>
+    <string name="animaldoku_quickstart_hook">Meer overgebleven levens betekenen meer punten.</string>
 
     <string name="arrowescape_quickstart_goal">Verwijder elke pijl van het bord.</string>
     <string name="arrowescape_quickstart_bullet_1">Tik op een pijl om hem in de richting te trekken waarin hij wijst.</string>
@@ -732,7 +732,7 @@
     <string name="animaldoku_difficulty_desc_expert">De grootste roosters, voorbehouden aan diepgaand redeneren in meerdere stappen.</string>
     <string name="animaldoku_how_to_play_goal">Plaats één dier in elke rij, kolom en gekleurde regio — geen twee dieren mogen elkaar raken, ook niet diagonaal.</string>
     <string name="animaldoku_how_to_play_controls">Tik op een lege cel om hem te markeren, tik nogmaals om hem te wissen. Sleep over cellen om er meerdere tegelijk te markeren of wissen. Dubbeltik op een cel om je dier daar te plaatsen.</string>
-    <string name="animaldoku_how_to_play_wrong_move">Een verkeerde dubbeltik vergrendelt de cel als een X en kost een hartje. Verlies alle 3 hartjes en de puzzel eindigt.</string>
+    <string name="animaldoku_how_to_play_wrong_move">Een verkeerde dubbeltik vergrendelt de cel als een X en kost een leven. Verlies alle 3 levens en de puzzel eindigt.</string>
     <string name="animaldoku_rule_1_title">Eén dier per rij en kolom</string>
     <string name="animaldoku_rule_1_body">Elke rij en elke kolom bevat precies één dier.</string>
     <string name="animaldoku_rule_2_title">Eén dier per regio</string>
@@ -745,15 +745,15 @@
     <string name="animaldoku_loss_abandoned_title">Puzzel onvoltooid</string>
     <string name="animaldoku_loss_abandoned_body">Je hebt ervoor gekozen te stoppen voordat deze puzzel was opgelost.</string>
     <string name="animaldoku_loss_rule_failure_eyebrow">Puzzel verloren</string>
-    <string name="animaldoku_loss_rule_failure_title">Geen hartjes meer</string>
-    <string name="animaldoku_loss_rule_failure_body">Drie foute openingen kostten je al je hartjes en beëindigden de puzzel.</string>
+    <string name="animaldoku_loss_rule_failure_title">Geen levens meer</string>
+    <string name="animaldoku_loss_rule_failure_body">Drie foute openingen kostten je al je levens en beëindigden de puzzel.</string>
     <string name="animaldoku_challenger_label">Challenger</string>
     <string name="animaldoku_challenger_description">Los zoveel mogelijk puzzels op voordat de tijd om is.</string>
     <string name="animaldoku_challenger_solved_label">Opgelost</string>
     <string name="animaldoku_challenger_tier_label">Niveau</string>
     <string name="animaldoku_challenger_result_time_up_title">Tijd om!</string>
     <string name="animaldoku_challenger_result_time_up_body">De tijd is om. Zo verliep je ronde.</string>
-    <string name="animaldoku_challenger_result_lives_exhausted_title">Geen hartjes meer!</string>
+    <string name="animaldoku_challenger_result_lives_exhausted_title">Geen levens meer!</string>
     <string name="animaldoku_challenger_result_lives_exhausted_body">Drie foute openingen beëindigden je ronde.</string>
     <string name="animaldoku_challenger_result_abandoned_title">Ronde beëindigd</string>
     <string name="animaldoku_challenger_result_abandoned_body">Je hebt de ronde vroegtijdig gestopt.</string>
@@ -773,7 +773,7 @@
     <string name="wordguess_challenger_tier_label">Niveau</string>
     <string name="wordguess_challenger_result_time_up_title">Tijd om!</string>
     <string name="wordguess_challenger_result_time_up_body">De tijd is om. Zo verliep je ronde.</string>
-    <string name="wordguess_challenger_result_lives_exhausted_title">Geen hartjes meer!</string>
+    <string name="wordguess_challenger_result_lives_exhausted_title">Geen levens meer!</string>
     <string name="wordguess_challenger_result_lives_exhausted_body">Drie gemiste woorden beëindigden je ronde.</string>
     <string name="wordguess_challenger_result_abandoned_title">Ronde beëindigd</string>
     <string name="wordguess_challenger_result_abandoned_body">Je hebt de ronde vroegtijdig gestopt.</string>
@@ -794,7 +794,7 @@
     <string name="challenger_result_puzzle_breakdown_heading">Puzzeloverzicht</string>
     <string name="chimp_challenger_result_time_up_title">Tijd om!</string>
     <string name="chimp_challenger_result_time_up_body">De tijd is om. Zo verliep je ronde.</string>
-    <string name="chimp_challenger_result_lives_exhausted_title">Geen hartjes meer!</string>
+    <string name="chimp_challenger_result_lives_exhausted_title">Geen levens meer!</string>
     <string name="chimp_challenger_result_lives_exhausted_body">Drie foute tikken beëindigden je ronde.</string>
     <string name="chimp_challenger_result_abandoned_title">Ronde beëindigd</string>
     <string name="chimp_challenger_result_abandoned_body">Je hebt de ronde vroegtijdig gestopt.</string>
@@ -956,7 +956,7 @@
     <string name="nonogram_challenger_tier_label">Niveau</string>
     <string name="nonogram_challenger_result_time_up_title">Tijd om!</string>
     <string name="nonogram_challenger_result_time_up_body">De tijd is om. Zo verliep je ronde.</string>
-    <string name="nonogram_challenger_result_lives_exhausted_title">Geen hartjes meer!</string>
+    <string name="nonogram_challenger_result_lives_exhausted_title">Geen levens meer!</string>
     <string name="nonogram_challenger_result_lives_exhausted_body">Drie fouten beëindigden je ronde.</string>
     <string name="nonogram_challenger_result_abandoned_title">Ronde beëindigd</string>
     <string name="nonogram_challenger_result_abandoned_body">Je hebt de ronde vroegtijdig gestopt.</string>
@@ -977,7 +977,7 @@
     <string name="sudoku_challenger_tier_label">Niveau</string>
     <string name="sudoku_challenger_result_time_up_title">Tijd om!</string>
     <string name="sudoku_challenger_result_time_up_body">De tijd is om. Zo verliep je ronde.</string>
-    <string name="sudoku_challenger_result_lives_exhausted_title">Geen hartjes meer!</string>
+    <string name="sudoku_challenger_result_lives_exhausted_title">Geen levens meer!</string>
     <string name="sudoku_challenger_result_lives_exhausted_body">Drie fouten beëindigden je ronde.</string>
     <string name="sudoku_challenger_result_abandoned_title">Ronde beëindigd</string>
     <string name="sudoku_challenger_result_abandoned_body">Je hebt de ronde vroegtijdig gestopt.</string>
@@ -998,7 +998,7 @@
     <string name="takuzu_challenger_tier_label">Niveau</string>
     <string name="takuzu_challenger_result_time_up_title">Tijd om!</string>
     <string name="takuzu_challenger_result_time_up_body">De tijd is om. Zo verliep je ronde.</string>
-    <string name="takuzu_challenger_result_lives_exhausted_title">Geen hartjes meer!</string>
+    <string name="takuzu_challenger_result_lives_exhausted_title">Geen levens meer!</string>
     <string name="takuzu_challenger_result_lives_exhausted_body">Drie fouten beëindigden je ronde.</string>
     <string name="takuzu_challenger_result_abandoned_title">Ronde beëindigd</string>
     <string name="takuzu_challenger_result_abandoned_body">Je hebt de ronde vroegtijdig gestopt.</string>
@@ -1019,7 +1019,7 @@
     <string name="starbattle_challenger_tier_label">Niveau</string>
     <string name="starbattle_challenger_result_time_up_title">Tijd om!</string>
     <string name="starbattle_challenger_result_time_up_body">De tijd is om. Zo verliep je ronde.</string>
-    <string name="starbattle_challenger_result_hearts_exhausted_title">Geen hartjes meer!</string>
+    <string name="starbattle_challenger_result_hearts_exhausted_title">Geen levens meer!</string>
     <string name="starbattle_challenger_result_hearts_exhausted_body">Drie foute openingen beëindigden je ronde.</string>
     <string name="starbattle_challenger_result_abandoned_title">Ronde beëindigd</string>
     <string name="starbattle_challenger_result_abandoned_body">Je hebt de ronde vroegtijdig gestopt.</string>

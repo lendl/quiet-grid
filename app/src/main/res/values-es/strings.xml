@@ -167,8 +167,8 @@
     <string name="animaldoku_quickstart_goal">Encuentra dónde se esconde un animal en cada fila, columna y región.</string>
     <string name="animaldoku_quickstart_bullet_1">Dos animales no pueden compartir fila, columna ni región.</string>
     <string name="animaldoku_quickstart_bullet_2">Dos animales no pueden tocarse, ni siquiera en diagonal.</string>
-    <string name="animaldoku_quickstart_bullet_3">Un error cuesta un corazón — pierde los 3 y el puzzle termina.</string>
-    <string name="animaldoku_quickstart_hook">Más corazones significan más puntos.</string>
+    <string name="animaldoku_quickstart_bullet_3">Un error cuesta una vida — pierde las 3 y el puzzle termina.</string>
+    <string name="animaldoku_quickstart_hook">Más vidas significan más puntos.</string>
 
     <string name="arrowescape_quickstart_goal">Retira todas las flechas del tablero.</string>
     <string name="arrowescape_quickstart_bullet_1">Toca una flecha para sacarla en la dirección que señala.</string>
@@ -192,7 +192,7 @@
     <string name="starbattle_quickstart_goal">Coloca exactamente el número correcto de estrellas en cada fila, columna y región.</string>
     <string name="starbattle_quickstart_bullet_1">Toca una celda para marcarla, tócala de nuevo para borrar la marca.</string>
     <string name="starbattle_quickstart_bullet_2">Arrastra por varias celdas para marcarlas o borrarlas a la vez.</string>
-    <string name="starbattle_quickstart_bullet_3">Toca dos veces para colocar una estrella — los errores cuestan un corazón.</string>
+    <string name="starbattle_quickstart_bullet_3">Toca dos veces para colocar una estrella — los errores cuestan una vida.</string>
     <string name="starbattle_quickstart_hook">Dos estrellas no pueden tocarse, ni siquiera en diagonal.</string>
 
     <string name="tutorial_host_unavailable_title">Tutorial no disponible</string>
@@ -261,7 +261,7 @@
     <string name="logs_detail_tier_reached">Nivel alcanzado</string>
     <string name="logs_detail_ended_by">Terminado por</string>
     <string name="logs_reason_time_up">Se acabó el tiempo</string>
-    <string name="logs_reason_lives_exhausted">Sin corazones</string>
+    <string name="logs_reason_lives_exhausted">Sin vidas</string>
     <string name="logs_reason_bank_exhausted">Se acabaron los puzzles</string>
     <string name="logs_reason_abandoned">Terminado antes de tiempo</string>
     <string name="logs_reason_rule_failure">Infringió una regla</string>
@@ -751,7 +751,7 @@
     <string name="animaldoku_difficulty_desc_expert">Las cuadrículas más grandes, reservadas para un razonamiento en cadena profundo y de varios pasos.</string>
     <string name="animaldoku_how_to_play_goal">Coloca un animal en cada fila, columna y región de color — dos animales no pueden tocarse, ni siquiera en diagonal.</string>
     <string name="animaldoku_how_to_play_controls">Toca una celda vacía para marcarla, tócala de nuevo para vaciarla. Arrastra por varias celdas para marcarlas o vaciarlas a la vez. Toca dos veces una celda para colocar tu animal ahí.</string>
-    <string name="animaldoku_how_to_play_wrong_move">Un doble toque incorrecto bloquea la celda con una X y cuesta un corazón. Pierde los 3 corazones y el puzzle termina.</string>
+    <string name="animaldoku_how_to_play_wrong_move">Un doble toque incorrecto bloquea la celda con una X y cuesta una vida. Pierde las 3 vidas y el puzzle termina.</string>
     <string name="animaldoku_rule_1_title">Un animal por fila y columna</string>
     <string name="animaldoku_rule_1_body">Cada fila y cada columna contiene exactamente un animal.</string>
     <string name="animaldoku_rule_2_title">Un animal por región</string>
@@ -764,15 +764,15 @@
     <string name="animaldoku_loss_abandoned_title">Puzzle sin terminar</string>
     <string name="animaldoku_loss_abandoned_body">Elegiste detenerte antes de resolver este puzzle.</string>
     <string name="animaldoku_loss_rule_failure_eyebrow">Puzzle perdido</string>
-    <string name="animaldoku_loss_rule_failure_title">Sin corazones</string>
-    <string name="animaldoku_loss_rule_failure_body">Tres aperturas incorrectas te costaron todos los corazones y terminaron el puzzle.</string>
+    <string name="animaldoku_loss_rule_failure_title">Sin vidas</string>
+    <string name="animaldoku_loss_rule_failure_body">Tres aperturas incorrectas te costaron todas las vidas y terminaron el puzzle.</string>
     <string name="animaldoku_challenger_label">Challenger</string>
     <string name="animaldoku_challenger_description">Resuelve tantos puzzles como puedas antes de que se acabe el tiempo.</string>
     <string name="animaldoku_challenger_solved_label">Resueltos</string>
     <string name="animaldoku_challenger_tier_label">Nivel</string>
     <string name="animaldoku_challenger_result_time_up_title">¡Se acabó el tiempo!</string>
     <string name="animaldoku_challenger_result_time_up_body">Se acabó el tiempo. Así fue tu partida.</string>
-    <string name="animaldoku_challenger_result_lives_exhausted_title">¡Sin corazones!</string>
+    <string name="animaldoku_challenger_result_lives_exhausted_title">¡Sin vidas!</string>
     <string name="animaldoku_challenger_result_lives_exhausted_body">Tres aperturas incorrectas terminaron tu partida.</string>
     <string name="animaldoku_challenger_result_abandoned_title">Partida terminada</string>
     <string name="animaldoku_challenger_result_abandoned_body">Detuviste la partida antes de tiempo.</string>
@@ -792,7 +792,7 @@
     <string name="wordguess_challenger_tier_label">Nivel</string>
     <string name="wordguess_challenger_result_time_up_title">¡Se acabó el tiempo!</string>
     <string name="wordguess_challenger_result_time_up_body">Se acabó el tiempo. Así fue tu partida.</string>
-    <string name="wordguess_challenger_result_lives_exhausted_title">¡Sin corazones!</string>
+    <string name="wordguess_challenger_result_lives_exhausted_title">¡Sin vidas!</string>
     <string name="wordguess_challenger_result_lives_exhausted_body">Tres palabras falladas terminaron tu partida.</string>
     <string name="wordguess_challenger_result_abandoned_title">Partida terminada</string>
     <string name="wordguess_challenger_result_abandoned_body">Detuviste la partida antes de tiempo.</string>
@@ -813,7 +813,7 @@
     <string name="challenger_result_puzzle_breakdown_heading">Desglose de puzzles</string>
     <string name="chimp_challenger_result_time_up_title">¡Se acabó el tiempo!</string>
     <string name="chimp_challenger_result_time_up_body">Se acabó el tiempo. Así fue tu partida.</string>
-    <string name="chimp_challenger_result_lives_exhausted_title">¡Sin corazones!</string>
+    <string name="chimp_challenger_result_lives_exhausted_title">¡Sin vidas!</string>
     <string name="chimp_challenger_result_lives_exhausted_body">Tres toques incorrectos terminaron tu partida.</string>
     <string name="chimp_challenger_result_abandoned_title">Partida terminada</string>
     <string name="chimp_challenger_result_abandoned_body">Detuviste la partida antes de tiempo.</string>
@@ -834,7 +834,7 @@
     <string name="nonogram_challenger_tier_label">Nivel</string>
     <string name="nonogram_challenger_result_time_up_title">¡Se acabó el tiempo!</string>
     <string name="nonogram_challenger_result_time_up_body">Se acabó el tiempo. Así fue tu partida.</string>
-    <string name="nonogram_challenger_result_lives_exhausted_title">¡Sin corazones!</string>
+    <string name="nonogram_challenger_result_lives_exhausted_title">¡Sin vidas!</string>
     <string name="nonogram_challenger_result_lives_exhausted_body">Tres errores terminaron tu partida.</string>
     <string name="nonogram_challenger_result_abandoned_title">Partida terminada</string>
     <string name="nonogram_challenger_result_abandoned_body">Detuviste la partida antes de tiempo.</string>
@@ -855,7 +855,7 @@
     <string name="sudoku_challenger_tier_label">Nivel</string>
     <string name="sudoku_challenger_result_time_up_title">¡Se acabó el tiempo!</string>
     <string name="sudoku_challenger_result_time_up_body">Se acabó el tiempo. Así fue tu partida.</string>
-    <string name="sudoku_challenger_result_lives_exhausted_title">¡Sin corazones!</string>
+    <string name="sudoku_challenger_result_lives_exhausted_title">¡Sin vidas!</string>
     <string name="sudoku_challenger_result_lives_exhausted_body">Tres errores terminaron tu partida.</string>
     <string name="sudoku_challenger_result_abandoned_title">Partida terminada</string>
     <string name="sudoku_challenger_result_abandoned_body">Detuviste la partida antes de tiempo.</string>
@@ -876,7 +876,7 @@
     <string name="takuzu_challenger_tier_label">Nivel</string>
     <string name="takuzu_challenger_result_time_up_title">¡Se acabó el tiempo!</string>
     <string name="takuzu_challenger_result_time_up_body">Se acabó el tiempo. Así fue tu partida.</string>
-    <string name="takuzu_challenger_result_lives_exhausted_title">¡Sin corazones!</string>
+    <string name="takuzu_challenger_result_lives_exhausted_title">¡Sin vidas!</string>
     <string name="takuzu_challenger_result_lives_exhausted_body">Tres errores terminaron tu partida.</string>
     <string name="takuzu_challenger_result_abandoned_title">Partida terminada</string>
     <string name="takuzu_challenger_result_abandoned_body">Detuviste la partida antes de tiempo.</string>
@@ -897,7 +897,7 @@
     <string name="starbattle_challenger_tier_label">Nivel</string>
     <string name="starbattle_challenger_result_time_up_title">¡Se acabó el tiempo!</string>
     <string name="starbattle_challenger_result_time_up_body">Se acabó el tiempo. Así fue tu partida.</string>
-    <string name="starbattle_challenger_result_hearts_exhausted_title">¡Sin corazones!</string>
+    <string name="starbattle_challenger_result_hearts_exhausted_title">¡Sin vidas!</string>
     <string name="starbattle_challenger_result_hearts_exhausted_body">Tres aperturas incorrectas terminaron tu partida.</string>
     <string name="starbattle_challenger_result_abandoned_title">Partida terminada</string>
     <string name="starbattle_challenger_result_abandoned_body">Detuviste la partida antes de tiempo.</string>
@@ -1019,8 +1019,8 @@
     <string name="starbattle_difficulty_desc_expert">Las deducciones de dos estrellas más profundas del juego</string>
     <string name="starbattle_stars_per_group_content_description">Estrellas por fila, columna y región</string>
     <string name="starbattle_how_to_play_goal">Coloca exactamente el número correcto de estrellas en cada fila, columna y región.</string>
-    <string name="starbattle_how_to_play_controls">Toca una celda para marcarla, tócala de nuevo para borrar la marca. Arrastra por varias celdas para marcarlas o borrarlas a la vez. Toca dos veces para colocar una estrella — los errores cuestan un corazón.</string>
-    <string name="starbattle_how_to_play_wrong_move">Un doble toque incorrecto bloquea la celda como una estrella mal colocada y cuesta un corazón. Pierde los 3 corazones y el puzzle termina.</string>
+    <string name="starbattle_how_to_play_controls">Toca una celda para marcarla, tócala de nuevo para borrar la marca. Arrastra por varias celdas para marcarlas o borrarlas a la vez. Toca dos veces para colocar una estrella — los errores cuestan una vida.</string>
+    <string name="starbattle_how_to_play_wrong_move">Un doble toque incorrecto bloquea la celda como una estrella mal colocada y cuesta una vida. Pierde las 3 vidas y el puzzle termina.</string>
     <string name="starbattle_rule_1_title">Estrellas por fila</string>
     <string name="starbattle_rule_1_body">Cada fila contiene exactamente el número correcto de estrellas para el puzzle.</string>
     <string name="starbattle_rule_2_title">Estrellas por columna</string>
@@ -1033,7 +1033,7 @@
     <string name="starbattle_loss_abandoned_title">Puzzle abandonado</string>
     <string name="starbattle_loss_abandoned_body">Terminaste este puzzle antes de acabarlo.</string>
     <string name="starbattle_loss_rule_failure_eyebrow">Puzzle perdido</string>
-    <string name="starbattle_loss_rule_failure_title">Sin corazones</string>
+    <string name="starbattle_loss_rule_failure_title">Sin vidas</string>
     <string name="starbattle_loss_rule_failure_body">Demasiadas estrellas quedaron mal colocadas.</string>
 
     <!-- Analyzer -->
