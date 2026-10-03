@@ -1233,4 +1233,25 @@
     <string name="game_settings_themes_col_medium">Med</string>
     <string name="game_settings_themes_col_hard">Hard</string>
     <string name="game_settings_themes_col_expert">Exp</string>
+    <string name="game_settings_themes_words_hint">Tap a theme to see its words and suggest changes.</string>
+    <string name="theme_words_count">%1$d words</string>
+    <string name="theme_words_search">Search words</string>
+    <string name="theme_words_report_hint">Tap a word to report it as wrong or unsuitable.</string>
+    <string name="theme_words_no_results">No words match your search.</string>
+    <string name="theme_words_suggest">Suggest words</string>
+    <string name="theme_words_suggest_with_reports">Suggest changes (%1$d reported)</string>
+    <string name="theme_words_rules_title">Before you suggest</string>
+    <string name="theme_words_rule_single">Single words in %1$s, at least 3 letters, no spaces or hyphens</string>
+    <string name="theme_words_rule_common">Common words most players know that clearly fit this theme</string>
+    <string name="theme_words_rule_brands">No brand names, trademarks, or names of real people</string>
+    <string name="theme_words_rule_safe">No weapons, violence, drugs, alcohol, or adult content</string>
+    <string name="theme_words_rule_kids">Kid-friendly: nothing rude, gory, or offensive</string>
+    <string name="theme_words_input_label">New words</string>
+    <string name="theme_words_input_supporting">Separate words with commas or new lines</string>
+    <string name="theme_words_input_summary">%1$d new, %2$d already listed, %3$d not valid</string>
+    <string name="theme_words_too_many">Up to %1$d words per issue</string>
+    <string name="theme_words_reported_title">Report for removal</string>
+    <string name="theme_words_unreport">Remove %1$s from the report</string>
+    <string name="theme_words_github_note">Opens a GitHub issue in your browser. You need a free GitHub account to submit it.</string>
+    <string name="theme_words_open_issue">Open GitHub issue</string>
 </resources>

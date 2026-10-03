@@ -23,9 +23,12 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -97,6 +100,7 @@ private fun ThemeSelectionSection(gameId: GameId) {
     }
     val excludedFlow = remember(gameId, locale) { repositories.themePreferencesRepository.excludedThemes(gameId, locale) }
     val excluded by excludedFlow.collectAsState(initial = null)
+    var openThemeId by rememberSaveable(gameId) { mutableStateOf<String?>(null) }
     val currentCounts = counts ?: return
     val currentExcluded = excluded ?: return
 
@@ -145,7 +149,12 @@ private fun ThemeSelectionSection(gameId: GameId) {
                 stringResource(R.string.game_settings_themes_note),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(bottom = 8.dp),
+            )
+            Text(
+                stringResource(R.string.game_settings_themes_words_hint),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 4.dp, bottom = 8.dp),
             )
         }
         stickyHeader {
@@ -191,14 +200,18 @@ private fun ThemeSelectionSection(gameId: GameId) {
                 Modifier
                     .fillMaxWidth()
                     .heightIn(min = 48.dp)
-                    .clickable(enabled = canToggle) {
+                    .clickable { openThemeId = count.themeId },
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Checkbox(
+                    checked = checked,
+                    onCheckedChange = {
                         scope.launch {
                             repositories.themePreferencesRepository.toggleExcludedTheme(gameId, locale, count.themeId, allIds)
                         }
                     },
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Checkbox(checked = checked, onCheckedChange = null, enabled = canToggle)
+                    enabled = canToggle,
+                )
                 Row(
                     Modifier.weight(1f).alpha(if (checked) 1f else 0.5f),
                     verticalAlignment = Alignment.CenterVertically,
@@ -223,6 +236,10 @@ private fun ThemeSelectionSection(gameId: GameId) {
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
         }
+    }
+
+    openThemeId?.let { themeId ->
+        ThemeWordsSheet(gameId = gameId, themeId = themeId, locale = locale, onDismiss = { openThemeId = null })
     }
 }
 

@@ -4,12 +4,12 @@ import android.content.Context
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.themes.ThemeCount
 import com.quietgrid.app.core.themes.ThemeCountIndex
+import com.quietgrid.app.core.themes.ThemeWordIndex
 import com.quietgrid.app.core.themes.filterPoolByThemes
 import com.quietgrid.app.core.themes.themeCountsForLocale
 import com.quietgrid.engine.themeclear.ThemeClearBankEntry
 import com.quietgrid.engine.themeclear.ThemeClearDictionary
 import com.quietgrid.engine.themeclear.ThemeClearPuzzleEntry
-import com.quietgrid.engine.themeclear.parseThemeClearThemes
 import com.quietgrid.engine.themeclear.toPuzzleEntry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -21,7 +21,6 @@ private val json = Json { ignoreUnknownKeys = true }
 
 object ThemeClearPuzzleBank {
     private var puzzles: Pair<String, List<ThemeClearPuzzleEntry>>? = null
-    private var themeWords: Map<String, Map<String, List<String>>>? = null
     private val dictionaries = ConcurrentHashMap<String, ThemeClearDictionary>()
 
     private suspend fun loadPuzzles(context: Context, locale: String): List<ThemeClearPuzzleEntry> {
@@ -34,16 +33,6 @@ object ThemeClearPuzzleBank {
                 .flatMap { tier -> tier.filter { it.locale == locale }.ifEmpty { tier.filter { it.locale == "en" } } }
                 .map { it.toPuzzleEntry() }
                 .also { puzzles = locale to it }
-        }
-    }
-
-    private suspend fun loadThemeWords(context: Context): Map<String, Map<String, List<String>>> {
-        themeWords?.let { return it }
-        return withContext(Dispatchers.IO) {
-            val text = context.assets.open("themes.json").bufferedReader().use { it.readText() }
-            parseThemeClearThemes(text)
-                .mapValues { (_, themes) -> themes.associate { it.themeId to it.words } }
-                .also { themeWords = it }
         }
     }
 
@@ -68,7 +57,7 @@ object ThemeClearPuzzleBank {
     suspend fun dictionary(context: Context, locale: String, themeId: String): ThemeClearDictionary? {
         val key = "$locale:$themeId"
         dictionaries[key]?.let { return it }
-        val words = loadThemeWords(context)[locale]?.get(themeId) ?: return null
+        val words = ThemeWordIndex.all(context)[locale]?.get(themeId) ?: return null
         return withContext(Dispatchers.Default) { ThemeClearDictionary(words) }.also { dictionaries[key] = it }
     }
 }

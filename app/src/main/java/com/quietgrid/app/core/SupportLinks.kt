@@ -81,6 +81,42 @@ fun buildPuzzleReportUrl(
     ).joinToString("\n"),
 )
 
+fun buildThemeWordsIssueUrl(
+    gameKey: String,
+    themeId: String,
+    locale: String,
+    added: List<String>,
+    removed: List<String>,
+    appVersion: String,
+): String {
+    fun section(heading: String, words: List<String>): List<String> =
+        if (words.isEmpty()) emptyList() else listOf("## $heading", "") + words.map { "- $it" } + ""
+    return buildIssueUrl(
+        "[Theme words] $themeId ($locale)",
+        (
+            listOf(
+                "## Theme",
+                "",
+                "Theme: $themeId",
+                "Language: $locale",
+                "Game: $gameKey",
+                "",
+            ) +
+                section("Add", added) +
+                section("Remove", removed) +
+                listOf(
+                    "## Notes",
+                    "",
+                    "Anything else about these words (optional).",
+                    "",
+                    "## App",
+                    "",
+                    "Version: $appVersion",
+                )
+            ).joinToString("\n"),
+    )
+}
+
 fun appVersionName(context: Context): String =
     runCatching { context.packageManager.getPackageInfo(context.packageName, 0).versionName }
         .getOrNull() ?: "unknown"

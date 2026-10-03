@@ -72,4 +72,44 @@ class SupportLinksTest {
 
         assertTrue(decodedQuery(url).getValue("body").contains("Daily: 2026-10-03"))
     }
+
+    @Test
+    fun themeWordsIssueListsAdditionsAndRemovals() {
+        val url = buildThemeWordsIssueUrl(
+            gameKey = "themeclear",
+            themeId = "animals",
+            locale = "nl",
+            added = listOf("Otter", "Das"),
+            removed = listOf("Mol"),
+            appVersion = "1.7.0",
+        )
+
+        assertTrue(url.startsWith("$ISSUES_URL/new?"))
+        val query = decodedQuery(url)
+        assertEquals("[Theme words] animals (nl)", query["title"])
+        val body = query.getValue("body")
+        assertTrue(body.contains("Theme: animals"))
+        assertTrue(body.contains("Language: nl"))
+        assertTrue(body.contains("Game: themeclear"))
+        assertTrue(body.contains("## Add\n\n- Otter\n- Das"))
+        assertTrue(body.contains("## Remove\n\n- Mol"))
+        assertTrue(body.contains("## Notes"))
+        assertTrue(body.contains("Version: 1.7.0"))
+    }
+
+    @Test
+    fun themeWordsIssueOmitsEmptySections() {
+        val url = buildThemeWordsIssueUrl(
+            gameKey = "wordsearch",
+            themeId = "food",
+            locale = "en",
+            added = emptyList(),
+            removed = listOf("Gin"),
+            appVersion = "1.7.0",
+        )
+
+        val body = decodedQuery(url).getValue("body")
+        assertFalse(body.contains("## Add"))
+        assertTrue(body.contains("## Remove\n\n- Gin"))
+    }
 }
