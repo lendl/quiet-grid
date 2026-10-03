@@ -37,7 +37,7 @@ tasks.named<Test>("test") {
 dependencies {
     implementation(project(":engine"))
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
-    implementation("org.apache.lucene:lucene-analysis-common:9.11.1")
+    implementation("org.apache.lucene:lucene-analysis-common:10.5.1")
 
     testImplementation("junit:junit:4.13.2")
 }
