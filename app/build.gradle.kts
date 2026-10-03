@@ -166,14 +166,14 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.14")
     testImplementation(platform("androidx.compose:compose-bom:2026.09.00"))
     testImplementation("androidx.compose.ui:ui-test-junit4")
-    testImplementation("androidx.test.ext:junit:1.1.5")
+    testImplementation("androidx.test.ext:junit:1.3.0")
     testImplementation("io.github.takahirom.roborazzi:roborazzi:1.75.0")
     testImplementation("io.github.takahirom.roborazzi:roborazzi-compose:1.75.0")
     testImplementation("com.google.dagger:hilt-android-testing:2.60.1")
     kspTest("com.google.dagger:hilt-android-compiler:2.60.1")
 
     androidTestImplementation(platform("androidx.compose:compose-bom:2026.09.00"))
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.ext:junit:1.3.0")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
