@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -18,6 +19,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
@@ -34,6 +37,34 @@ private fun Modifier.sudokuBoxLines(cellSizePx: Float, color: androidx.compose.u
         drawLine(color, Offset(x, 0f), Offset(x, size.height), strokeWidth)
         val y = cellSizePx * i
         drawLine(color, Offset(0f, y), Offset(size.width, y), strokeWidth)
+    }
+}
+
+@Composable
+private fun SudokuCandidates(candidates: Set<Int>, cellSize: Dp, fontSize: TextUnit) {
+    val slotSize = cellSize / 3
+    val style = TextStyle(
+        fontSize = fontSize,
+        fontWeight = FontWeight.Medium,
+        color = MaterialTheme.colorScheme.onSurface,
+        textAlign = TextAlign.Center,
+    )
+    Box(Modifier.size(cellSize)) {
+        for (digit in candidates) {
+            val slot = digit - 1
+            Box(
+                modifier = Modifier
+                    .offset(x = slotSize * (slot % 3), y = slotSize * (slot / 3))
+                    .size(slotSize),
+                contentAlignment = Alignment.Center,
+            ) {
+                BasicText(
+                    text = digit.toString(),
+                    style = style,
+                    modifier = Modifier.wrapContentSize(unbounded = true),
+                )
+            }
+        }
     }
 }
 
@@ -60,10 +91,11 @@ fun SudokuGrid(
 ) {
     BoxWithConstraints(contentAlignment = Alignment.Center) {
         val cellSize = min(maxWidth / 9, maxHeight / 9)
-        val noteFontSize = (cellSize.value * 0.22f).sp
         val fontSize = (cellSize.value * 0.5f).sp
+        val density = LocalDensity.current
+        val noteFontSize = with(density) { (cellSize * 0.3f).toSp() }
 
-        val cellSizePx = with(LocalDensity.current) { cellSize.toPx() }
+        val cellSizePx = with(density) { cellSize.toPx() }
         val selectedRow = selectedCell?.first
         val selectedCol = selectedCell?.second
         val selectedBox = if (selectedRow != null && selectedCol != null) sudokuBoxIndex(selectedRow, selectedCol) else null
@@ -135,14 +167,10 @@ fun SudokuGrid(
                                 textAlign = TextAlign.Center,
                             ),
                         )
-                        notes[row][col].isNotEmpty() -> BasicText(
-                            text = (1..9).joinToString("") { if (it in notes[row][col]) it.toString() else " " }
-                                .chunked(3).joinToString("\n"),
-                            style = TextStyle(
-                                fontSize = noteFontSize,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                textAlign = TextAlign.Center,
-                            ),
+                        notes[row][col].isNotEmpty() -> SudokuCandidates(
+                            candidates = notes[row][col],
+                            cellSize = cellSize,
+                            fontSize = noteFontSize,
                         )
                         else -> Unit
                     }
