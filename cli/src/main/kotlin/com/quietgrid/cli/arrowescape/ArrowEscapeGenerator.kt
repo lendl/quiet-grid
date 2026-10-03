@@ -35,7 +35,7 @@ val ARROW_ESCAPE_SIZE_RANGE_BY_DIFFICULTY: Map<Difficulty, IntRange> = mapOf(
     Difficulty.EASY to 10..12,
     Difficulty.MEDIUM to 12..14,
     Difficulty.HARD to 14..18,
-    Difficulty.EXPERT to 18..30,
+    Difficulty.EXPERT to 18..24,
 )
 
 fun arrowEscapeSizesForDifficulty(difficulty: Difficulty): List<Int> =

@@ -16,6 +16,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,15 +39,13 @@ import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
 import com.quietgrid.engine.arrowescape.buildCellOwnerMap
 import com.quietgrid.engine.arrowescape.computeCorridor
 import com.quietgrid.engine.arrowescape.toPiece
-import kotlin.math.floor
 import kotlinx.coroutines.launch
 
-private fun offsetToCell(offset: Offset, cellSizePx: Float, rows: Int, cols: Int): Pair<Int, Int>? {
-    val col = floor(offset.x / cellSizePx).toInt()
-    val row = floor(offset.y / cellSizePx).toInt()
-    if (row !in 0 until rows || col !in 0 until cols) return null
-    return row to col
-}
+private val TAP_TOLERANCE = 12.dp
+private val MIN_DOT_RADIUS = 1.dp
+private val MIN_LINE_STROKE = 1.5.dp
+private val MIN_HEAD_LENGTH = 3.5.dp
+private val MIN_HEAD_HALF_WIDTH = 2.25.dp
 
 private fun directionVector(direction: ArrowDirection): Offset = when (direction) {
     ArrowDirection.UP -> Offset(0f, -1f)
@@ -129,7 +128,7 @@ fun ArrowEscapeGrid(
     puzzle: ArrowEscapePuzzleEntry,
     removedIndices: Set<Int>,
     selectedIndex: Int?,
-    blockedIndex: Int?,
+    lastTap: ArrowEscapeTapEvent?,
     visibleBounds: Rect?,
     onRequestPan: (Offset?) -> Unit,
     onPieceTap: (Int) -> Unit,
@@ -141,6 +140,8 @@ fun ArrowEscapeGrid(
     val bumps = remember(puzzle) { mutableStateMapOf<Int, Animatable<Float, AnimationVector1D>>() }
     val animationScope = rememberCoroutineScope()
     var previousRemoved by remember(puzzle) { mutableStateOf(removedIndices) }
+    val currentRemoved by rememberUpdatedState(removedIndices)
+    val blockedIndex = lastTap?.takeIf { !it.removed }?.pieceIndex
 
     LaunchedEffect(removedIndices) {
         val newlyRemoved = removedIndices - previousRemoved
@@ -155,13 +156,17 @@ fun ArrowEscapeGrid(
         }
     }
 
-    LaunchedEffect(blockedIndex) {
-        val index = blockedIndex ?: return@LaunchedEffect
+    LaunchedEffect(lastTap) {
+        val tap = lastTap ?: return@LaunchedEffect
+        if (tap.removed) return@LaunchedEffect
+        val index = tap.pieceIndex
         val progress = Animatable(0f)
         bumps[index] = progress
-        progress.animateTo(1f, animationSpec = tween(220))
-        progress.animateTo(0f, animationSpec = tween(320))
-        bumps.remove(index)
+        animationScope.launch {
+            progress.animateTo(1f, animationSpec = tween(220))
+            progress.animateTo(0f, animationSpec = tween(320))
+            if (bumps[index] === progress) bumps.remove(index)
+        }
     }
 
     BoxWithConstraints(Modifier.padding(20.dp), contentAlignment = Alignment.Center) {
@@ -211,15 +216,21 @@ fun ArrowEscapeGrid(
             Modifier
                 .size(cellSize * puzzle.cols, cellSize * puzzle.rows)
                 .pointerInput(puzzle, cellSizePx) {
+                    val toleranceCells = TAP_TOLERANCE.toPx() / cellSizePx
                     detectTapGestures { tapOffset ->
-                        val cell = offsetToCell(tapOffset, cellSizePx, puzzle.rows, puzzle.cols) ?: return@detectTapGestures
-                        val pieceIndex = ownerLookup[cell] ?: return@detectTapGestures
+                        val pieceIndex = resolveArrowEscapeTap(
+                            puzzle,
+                            currentRemoved,
+                            tapRow = tapOffset.y / cellSizePx,
+                            tapCol = tapOffset.x / cellSizePx,
+                            toleranceCells = toleranceCells,
+                        ) ?: return@detectTapGestures
                         onPieceTap(pieceIndex)
                     }
                 }
                 .drawWithContent {
                     drawContent()
-                    val dotRadius = cellSizePx * 0.05f
+                    val dotRadius = maxOf(cellSizePx * 0.05f, MIN_DOT_RADIUS.toPx())
                     for (row in 0 until puzzle.rows) {
                         for (col in 0 until puzzle.cols) {
                             drawCircle(
@@ -229,9 +240,9 @@ fun ArrowEscapeGrid(
                             )
                         }
                     }
-                    val lineStrokeWidth = cellSizePx * 0.07f
-                    val headLength = cellSizePx * 0.22f
-                    val headHalfWidth = cellSizePx * 0.14f
+                    val lineStrokeWidth = maxOf(cellSizePx * 0.07f, MIN_LINE_STROKE.toPx())
+                    val headLength = maxOf(cellSizePx * 0.22f, MIN_HEAD_LENGTH.toPx())
+                    val headHalfWidth = maxOf(cellSizePx * 0.14f, MIN_HEAD_HALF_WIDTH.toPx())
                     val cornerRadius = cellSizePx * 0.35f
                     val lineStroke = Stroke(width = lineStrokeWidth, cap = StrokeCap.Round, join = StrokeJoin.Round)
                     val stubLength = cellSizePx * (maxOf(puzzle.rows, puzzle.cols) + 4f)
@@ -246,7 +257,7 @@ fun ArrowEscapeGrid(
                             val corridor = computeCorridor(head.row, head.col, piece.headDirection, puzzle.rows, puzzle.cols)
                             val blockerOffset = corridor.indexOfFirst { cell ->
                                 val owner = ownerLookup[cell.row to cell.col]
-                                owner != null && owner !in removedIndices
+                                owner != null && owner != index && owner !in removedIndices
                             }
                             val travelCells = if (blockerOffset >= 0) blockerOffset else corridor.size
                             val bumpDistance = cellSizePx * travelCells * bumpProgress

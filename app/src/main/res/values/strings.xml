@@ -1023,7 +1023,8 @@
     <string name="arrowescape_difficulty_desc_expert">Long chains of arrows block each other all the way across the board.</string>
     <string name="arrowescape_how_to_play_goal">Clear every arrow from the board.</string>
     <string name="arrowescape_how_to_play_controls">Tap an arrow to pull it off the board in the direction it points. It only comes free if nothing else is in its way.</string>
-    <string name="arrowescape_how_to_play_wrong_move">If an arrow is blocked, tapping it costs one life. Its path stays highlighted so you can see what is stopping it.</string>
+    <string name="arrowescape_how_to_play_wrong_move">If an arrow is blocked, tapping it costs one life. It bumps into whatever is in its way, so you can see what is stopping it.</string>
+    <string name="arrowescape_progress_label">%1$d / %2$d</string>
     <string name="arrowescape_rule_1_title">One direction</string>
     <string name="arrowescape_rule_1_body">Every arrow can only exit in the direction its head points.</string>
     <string name="arrowescape_rule_2_title">Clear the way</string>

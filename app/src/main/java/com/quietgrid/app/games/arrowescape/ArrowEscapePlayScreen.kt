@@ -16,6 +16,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -29,6 +30,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.ui.components.CollectPuzzleResult
 import com.quietgrid.app.ui.components.ElapsedTimerText
@@ -74,6 +76,15 @@ fun ArrowEscapePlayScreen(
             GameBackButton(onBack)
             Spacer(Modifier.weight(1f))
             if (session != null) {
+                Text(
+                    stringResource(
+                        R.string.arrowescape_progress_label,
+                        session.removedIndices.size,
+                        session.puzzle.pieces.size,
+                    ),
+                    style = MaterialTheme.typography.labelLarge,
+                    modifier = Modifier.padding(end = 12.dp),
+                )
                 Row(Modifier.padding(end = 8.dp)) {
                     repeat(ARROW_ESCAPE_STARTING_LIVES) { index ->
                         Icon(
@@ -113,7 +124,7 @@ fun ArrowEscapePlayScreen(
                     puzzle = current.puzzle,
                     removedIndices = current.removedIndices,
                     selectedIndex = current.selectedIndex,
-                    blockedIndex = viewModel.lastBlockedIndex,
+                    lastTap = viewModel.lastTapEvent,
                     visibleBounds = visibleBounds,
                     onRequestPan = { panTarget = it },
                     onPieceTap = viewModel::onPieceTap,

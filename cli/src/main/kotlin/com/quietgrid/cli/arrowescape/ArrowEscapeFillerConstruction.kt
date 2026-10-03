@@ -14,6 +14,14 @@ private const val MIN_FILLER_LEN = 10
 private const val MAX_FILLER_LEN = 25
 private const val MIN_ACCEPTABLE_PIECE_LEN = 4
 private const val CANDIDATE_SAMPLE_SIZE = 60
+private const val STRAIGHT_PREFERENCE = 0.9
+
+private val OPPOSITE_DIRECTION: Map<ArrowDirection, ArrowDirection> = mapOf(
+    ArrowDirection.UP to ArrowDirection.DOWN,
+    ArrowDirection.DOWN to ArrowDirection.UP,
+    ArrowDirection.LEFT to ArrowDirection.RIGHT,
+    ArrowDirection.RIGHT to ArrowDirection.LEFT,
+)
 
 data class FillResult(val pieces: List<ArrowEscapePiece>, val emptyCellCount: Int)
 
@@ -85,21 +93,27 @@ fun fillCoverage(
         val cellsTailToHead = mutableListOf(bestCell!!)
         val inPiece = mutableSetOf(bestCell!!)
         var current = bestCell!!
+        var growthDirection = OPPOSITE_DIRECTION.getValue(bestDirection!!)
+        var isShaftStep = true
 
         while (cellsTailToHead.size < targetLen) {
-            val options = mutableListOf<Pair<Int, Int>>()
+            val options = mutableListOf<Pair<ArrowDirection, Pair<Int, Int>>>()
             for (candidateDirection in directions) {
                 val (dr, dc) = ARROW_DIRECTION_DELTA.getValue(candidateDirection)
                 val next = (current.first + dr) to (current.second + dc)
                 if (next.first !in 0 until rows || next.second !in 0 until cols) continue
                 if (next !in remaining || next in inPiece) continue
-                options.add(next)
+                options.add(candidateDirection to next)
             }
             if (options.isEmpty()) break
-            val next = options[random.nextInt(options.size)]
+            val straight = options.firstOrNull { it.first == growthDirection }
+            val keepStraight = straight != null && (isShaftStep || random.nextDouble() < STRAIGHT_PREFERENCE)
+            val (direction, next) = if (keepStraight) straight!! else options[random.nextInt(options.size)]
             cellsTailToHead.add(0, next)
             inPiece.add(next)
             current = next
+            growthDirection = direction
+            isShaftStep = false
         }
 
         if (cellsTailToHead.size < MIN_ACCEPTABLE_PIECE_LEN) {

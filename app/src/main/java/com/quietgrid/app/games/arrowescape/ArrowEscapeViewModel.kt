@@ -128,8 +128,6 @@ class ArrowEscapePlayViewModel @AssistedInject constructor(
     val elapsedSeconds get() = controller.elapsedSeconds
     val result = controller.result
 
-    var lastBlockedIndex by mutableStateOf<Int?>(null)
-        private set
     var lastTapEvent by mutableStateOf<ArrowEscapeTapEvent?>(null)
         private set
     var isComputingHint by mutableStateOf(false)
@@ -150,7 +148,6 @@ class ArrowEscapePlayViewModel @AssistedInject constructor(
         hintJob?.cancel()
         hintJob = null
         isComputingHint = false
-        lastBlockedIndex = if (attempt.removed) null else pieceIndex
         lastTapEvent = ArrowEscapeTapEvent(++tapEventSeq, pieceIndex, attempt.removed)
         val stillPlaying = attempt.session.status == ArrowEscapeStatus.PLAYING
         controller.updateSession(attempt.session, persist = stillPlaying)

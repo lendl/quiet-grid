@@ -40,7 +40,7 @@ class ArrowEscapeGeneratorTest {
     @Test
     fun `arrowEscapeSizesForDifficulty covers the documented ranges`() {
         assertEquals(listOf(10, 11, 12), arrowEscapeSizesForDifficulty(Difficulty.EASY))
-        assertEquals((18..30).toList(), arrowEscapeSizesForDifficulty(Difficulty.EXPERT))
+        assertEquals((18..24).toList(), arrowEscapeSizesForDifficulty(Difficulty.EXPERT))
     }
 
     @Test

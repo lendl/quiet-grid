@@ -30,7 +30,46 @@ private fun bottleneckOverFillerPuzzle() = ArrowEscapePuzzleEntry(
     ),
 )
 
+private fun tapPuzzle() = ArrowEscapePuzzleEntry(
+    id = "test-tap",
+    difficulty = "easy",
+    rows = 3,
+    cols = 3,
+    pieces = listOf(
+        ArrowEscapePieceData(cells = listOf(listOf(0, 0)), headDirection = "right"),
+        ArrowEscapePieceData(cells = listOf(listOf(0, 1)), headDirection = "up"),
+        ArrowEscapePieceData(cells = listOf(listOf(2, 2)), headDirection = "down"),
+    ),
+)
+
 class ArrowEscapeLogicTest {
+    @Test
+    fun `a tap inside a piece cell selects that piece`() {
+        assertEquals(0, resolveArrowEscapeTap(tapPuzzle(), emptySet(), tapRow = 0.5f, tapCol = 0.5f, toleranceCells = 0f))
+    }
+
+    @Test
+    fun `a tap on a blocked piece next to a removable piece in range selects the removable piece`() {
+        assertEquals(1, resolveArrowEscapeTap(tapPuzzle(), emptySet(), tapRow = 0.5f, tapCol = 0.9f, toleranceCells = 0.3f))
+    }
+
+    @Test
+    fun `a tap on a blocked piece with no removable piece in range keeps the blocked piece`() {
+        assertEquals(0, resolveArrowEscapeTap(tapPuzzle(), emptySet(), tapRow = 0.5f, tapCol = 0.5f, toleranceCells = 0.3f))
+    }
+
+    @Test
+    fun `a tap on an empty cell selects the nearest piece within tolerance`() {
+        assertEquals(1, resolveArrowEscapeTap(tapPuzzle(), emptySet(), tapRow = 1.5f, tapCol = 1.5f, toleranceCells = 0.6f))
+        assertNull(resolveArrowEscapeTap(tapPuzzle(), emptySet(), tapRow = 1.5f, tapCol = 1.5f, toleranceCells = 0.4f))
+    }
+
+    @Test
+    fun `a tap ignores pieces that were already removed`() {
+        assertNull(resolveArrowEscapeTap(tapPuzzle(), setOf(1), tapRow = 0.5f, tapCol = 1.5f, toleranceCells = 0f))
+        assertEquals(0, resolveArrowEscapeTap(tapPuzzle(), setOf(1), tapRow = 0.5f, tapCol = 1.5f, toleranceCells = 0.6f))
+    }
+
     @Test
     fun `a blocked attempt decrements one life, does not remove the piece, and records the selection`() {
         val session = createArrowEscapeSession(twoPiecePuzzle())

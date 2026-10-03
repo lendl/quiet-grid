@@ -1,6 +1,9 @@
 // cli/src/test/kotlin/com/quietgrid/cli/arrowescape/ArrowEscapeFillerConstructionTest.kt
 package com.quietgrid.cli.arrowescape
 
+import com.quietgrid.engine.arrowescape.ARROW_DIRECTION_DELTA
+import com.quietgrid.engine.arrowescape.ArrowEscapePiece
+import com.quietgrid.engine.arrowescape.CellCoord
 import com.quietgrid.engine.arrowescape.computeCorridor
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -17,7 +20,37 @@ private fun firstSuccessfulFill(rows: Int, cols: Int, baseOccupied: Set<Pair<Int
     error("no successful fill found within 200 seeds")
 }
 
+private fun fillerPiecesAcrossSeeds(size: Int): List<ArrowEscapePiece> = (0 until 40).mapNotNull { seed ->
+    fillCoverage(size, size, mutableSetOf(), 0.03, Random(seed))
+}.flatMap { it.pieces }
+
+private fun turnRatio(piece: ArrowEscapePiece): Double {
+    val steps = piece.cells.zipWithNext { a, b -> (b.row - a.row) to (b.col - a.col) }
+    val turns = steps.zipWithNext().count { (a, b) -> a != b }
+    return turns.toDouble() / (steps.size - 1)
+}
+
 class ArrowEscapeFillerConstructionTest {
+    @Test
+    fun `filler pieces mostly run straight instead of wiggling`() {
+        val pieces = fillerPiecesAcrossSeeds(16).filter { it.cells.size >= 3 }
+        val meanTurnRatio = pieces.map(::turnRatio).average()
+        assertTrue("mean turn ratio was $meanTurnRatio", meanTurnRatio <= 0.3)
+    }
+
+    @Test
+    fun `filler pieces enter their head straight along the head direction`() {
+        val pieces = fillerPiecesAcrossSeeds(16).filter { it.cells.size >= 2 }
+        val straightShafts = pieces.count { piece ->
+            val head = piece.cells.last()
+            val beforeHead = piece.cells[piece.cells.size - 2]
+            val (dr, dc) = ARROW_DIRECTION_DELTA.getValue(piece.headDirection)
+            beforeHead == CellCoord(head.row - dr, head.col - dc)
+        }
+        val ratio = straightShafts.toDouble() / pieces.size
+        assertTrue("straight shaft ratio was $ratio", ratio >= 0.8)
+    }
+
     @Test
     fun `fillCoverage on an empty board covers every cell within the empty-cell tolerance`() {
         val (result, _) = firstSuccessfulFill(12, 10, emptySet())

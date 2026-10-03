@@ -62,7 +62,7 @@ fun scoreArrowEscapePuzzle(pieces: List<ArrowEscapePiece>, rows: Int, cols: Int)
 
 data class ArrowEscapeScoreBoundaries(val mediumFloor: Double, val hardFloor: Double, val expertFloor: Double)
 
-val ARROW_ESCAPE_SCORE_BOUNDARIES = ArrowEscapeScoreBoundaries(mediumFloor = 0.4443, hardFloor = 0.4880, expertFloor = 0.6321)
+val ARROW_ESCAPE_SCORE_BOUNDARIES = ArrowEscapeScoreBoundaries(mediumFloor = 0.4324, hardFloor = 0.4905, expertFloor = 0.6604)
 
 fun ArrowEscapeDifficultyScore.matchesDifficulty(
     target: Difficulty,
