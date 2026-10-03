@@ -1,0 +1,7 @@
+Version 1.8.0
+
+- Wortsuche und Thema Leeren: Wortliste jedes Themas ansehen, neue Wörter vorschlagen oder falsche melden
+- Neues Menü auf dem Ergebnisbildschirm: Problem mit einem Rätsel melden oder das Spiel zu einem Mix hinzufügen
+- Sudoku-Notizen sind größer und besser lesbar
+- Challenger-Runden mit Zeitlimit pausieren jetzt, wenn du die App verlässt
+- Fehlerbehebungen und Stabilitätsverbesserungen

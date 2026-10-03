@@ -1,0 +1,7 @@
+Wersja 1.8.0
+
+- Wykreślanka i Wyczyść temat: przeglądaj listę słów każdego tematu, proponuj nowe słowa lub zgłaszaj błędne
+- Nowe menu na ekranie wyniku: zgłoś problem z łamigłówką lub dodaj grę do miksu
+- Cyfry kandydatów w Sudoku są większe i czytelniejsze
+- Rozgrywki na czas w trybie Pretendent są teraz wstrzymywane po wyjściu z aplikacji
+- Poprawki błędów i stabilności

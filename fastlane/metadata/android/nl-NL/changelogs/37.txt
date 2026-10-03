@@ -1,0 +1,7 @@
+Versie 1.8.0
+
+- Woordzoeker en Thema Wissen: bekijk de woordenlijst van elk thema, stel nieuwe woorden voor of meld foute woorden
+- Nieuw menu op het resultaatscherm: meld een probleem met een puzzel of voeg het spel toe aan een mix
+- Sudoku-notities zijn groter en beter leesbaar
+- Challenger-runs met tijdslimiet pauzeren nu als je de app verlaat
+- Bugfixes en stabiliteitsverbeteringen

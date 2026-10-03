@@ -1,0 +1,7 @@
+Versione 1.8.0
+
+- Cerca parole e Svuota il tema: consulta l'elenco di parole di ogni tema, suggerisci nuove parole o segnala quelle sbagliate
+- Nuovo menu nella schermata dei risultati: segnala un problema con un puzzle o aggiungi il gioco a un mix
+- Le note del Sudoku sono più grandi e più leggibili
+- Le partite Challenger a tempo ora vanno in pausa quando esci dall'app
+- Correzioni di bug e miglioramenti della stabilità

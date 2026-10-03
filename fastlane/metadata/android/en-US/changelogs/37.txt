@@ -1,0 +1,7 @@
+Version 1.8.0
+
+- Word Search and Theme Clear: view each theme's word list, and suggest new words or report wrong ones
+- New menu on the result screen: report a problem with a puzzle or add the game to a mix
+- Sudoku candidates are larger and easier to read
+- Timed Challenger runs now pause when you leave the app
+- Bug fixes and stability improvements

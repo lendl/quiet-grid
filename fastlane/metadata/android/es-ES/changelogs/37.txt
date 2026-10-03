@@ -1,0 +1,7 @@
+Versión 1.8.0
+
+- Sopa de letras y Despeja el Tema: consulta la lista de palabras de cada tema y sugiere palabras nuevas o reporta las incorrectas
+- Nuevo menú en la pantalla de resultados: reporta un problema con un puzzle o añade el juego a un mix
+- Las notas del Sudoku son más grandes y fáciles de leer
+- Las partidas cronometradas de Challenger ahora se pausan al salir de la app
+- Corrección de errores y mejoras de estabilidad

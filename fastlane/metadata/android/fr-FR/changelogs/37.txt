@@ -1,0 +1,7 @@
+Version 1.8.0
+
+- Mots mêlés et Efface le Thème : consultez la liste de mots de chaque thème, proposez de nouveaux mots ou signalez les mots incorrects
+- Nouveau menu sur l'écran de résultat : signalez un problème sur un puzzle ou ajoutez le jeu à un mix
+- Les notes du Sudoku sont plus grandes et plus lisibles
+- Les parties Challenger chronométrées se mettent désormais en pause quand vous quittez l'app
+- Corrections de bugs et améliorations de stabilité

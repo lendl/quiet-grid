@@ -1,0 +1,7 @@
+Versão 1.8.0
+
+- Caça-Palavras e Limpe o Tema: veja a lista de palavras de cada tema e sugira palavras novas ou reporte as erradas
+- Novo menu na tela de resultado: reporte um problema em um quebra-cabeça ou adicione o jogo a um combinado
+- As notas do Sudoku estão maiores e mais fáceis de ler
+- Partidas cronometradas do modo Desafiante agora pausam quando você sai do app
+- Correções de erros e melhorias de estabilidade
