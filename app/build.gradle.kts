@@ -162,13 +162,13 @@ dependencies {
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
-    testImplementation("io.mockk:mockk:1.13.13")
-    testImplementation("org.robolectric:robolectric:4.14")
+    testImplementation("io.mockk:mockk:1.14.11")
+    testImplementation("org.robolectric:robolectric:4.17")
     testImplementation(platform("androidx.compose:compose-bom:2026.09.00"))
     testImplementation("androidx.compose.ui:ui-test-junit4")
     testImplementation("androidx.test.ext:junit:1.3.0")
-    testImplementation("io.github.takahirom.roborazzi:roborazzi:1.75.0")
-    testImplementation("io.github.takahirom.roborazzi:roborazzi-compose:1.75.0")
+    testImplementation("io.github.takahirom.roborazzi:roborazzi:1.76.0")
+    testImplementation("io.github.takahirom.roborazzi:roborazzi-compose:1.76.0")
     testImplementation("com.google.dagger:hilt-android-testing:2.60.1")
     kspTest("com.google.dagger:hilt-android-compiler:2.60.1")
 
