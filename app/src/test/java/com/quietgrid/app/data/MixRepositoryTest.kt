@@ -1,6 +1,5 @@
 package com.quietgrid.app.data
 
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.mix.Mix
@@ -129,7 +128,7 @@ class MixRepositoryTest {
         assertNull(repository.activeMixId.first())
     }
 
-    private fun newDataStore(scope: kotlinx.coroutines.CoroutineScope) = PreferenceDataStoreFactory.create(
+    private fun newDataStore(scope: kotlinx.coroutines.CoroutineScope) = preferencesDataStoreForTest(
         scope = scope,
         produceFile = { tempFolder.newFile("mixes.preferences_pb") },
     )

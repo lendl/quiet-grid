@@ -2,6 +2,7 @@ package com.quietgrid.app.ui.components
 
 import android.content.Context
 import android.os.Build
+import android.os.VibrationAttributes
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
@@ -24,7 +25,11 @@ class HapticController internal constructor(
 
     private fun fire(effect: VibrationEffect) {
         if (!systemEnabled) return
-        vibrator.vibrate(effect)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            vibrator.vibrate(effect, VibrationAttributes.createForUsage(VibrationAttributes.USAGE_TOUCH))
+        } else {
+            vibrator.vibrate(effect)
+        }
     }
 
     private fun tickEffect(): VibrationEffect = predefinedOrFallback(VibrationEffect.EFFECT_TICK, TAP_DURATION_MS)
@@ -49,6 +54,10 @@ private fun defaultVibrator(context: Context): Vibrator =
     }
 
 private fun systemHapticsEnabled(context: Context): Boolean =
+    Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU || legacyHapticSettingEnabled(context)
+
+@Suppress("DEPRECATION")
+private fun legacyHapticSettingEnabled(context: Context): Boolean =
     Settings.System.getInt(context.contentResolver, Settings.System.HAPTIC_FEEDBACK_ENABLED, 1) != 0
 
 @Composable

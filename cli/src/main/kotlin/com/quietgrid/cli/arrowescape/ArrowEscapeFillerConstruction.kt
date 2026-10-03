@@ -90,10 +90,10 @@ fun fillCoverage(
         if (bestCell == null || bestDirection == null) break
 
         val targetLen = MIN_FILLER_LEN + random.nextInt(MAX_FILLER_LEN - MIN_FILLER_LEN + 1)
-        val cellsTailToHead = mutableListOf(bestCell!!)
-        val inPiece = mutableSetOf(bestCell!!)
-        var current = bestCell!!
-        var growthDirection = OPPOSITE_DIRECTION.getValue(bestDirection!!)
+        val cellsTailToHead = mutableListOf(bestCell)
+        val inPiece = mutableSetOf(bestCell)
+        var current: Pair<Int, Int> = bestCell
+        var growthDirection = OPPOSITE_DIRECTION.getValue(bestDirection)
         var isShaftStep = true
 
         while (cellsTailToHead.size < targetLen) {
@@ -108,7 +108,7 @@ fun fillCoverage(
             if (options.isEmpty()) break
             val straight = options.firstOrNull { it.first == growthDirection }
             val keepStraight = straight != null && (isShaftStep || random.nextDouble() < STRAIGHT_PREFERENCE)
-            val (direction, next) = if (keepStraight) straight!! else options[random.nextInt(options.size)]
+            val (direction, next) = if (keepStraight) straight else options[random.nextInt(options.size)]
             cellsTailToHead.add(0, next)
             inPiece.add(next)
             current = next

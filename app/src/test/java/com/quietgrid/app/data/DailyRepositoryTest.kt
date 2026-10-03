@@ -2,7 +2,6 @@ package com.quietgrid.app.data
 
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import kotlinx.coroutines.CoroutineScope
@@ -58,7 +57,7 @@ class DailyRepositoryTest {
         assertEquals(mapOf(GameId.SUDOKU to Difficulty.entries.toSet() - Difficulty.EXPERT), repository.subscriptions.first())
     }
 
-    private fun newDataStore(scope: CoroutineScope) = PreferenceDataStoreFactory.create(
+    private fun newDataStore(scope: CoroutineScope) = preferencesDataStoreForTest(
         scope = scope,
         produceFile = { tempFolder.newFile("daily.preferences_pb") },
     )

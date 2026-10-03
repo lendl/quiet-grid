@@ -1,6 +1,5 @@
 package com.quietgrid.app.data
 
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.edit
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
@@ -176,7 +175,7 @@ class PlayHistoryRepositoryTest {
         assertEquals(json.encodeToString(GameStats(byDifficulty = mapOf(Difficulty.EASY.key to DifficultyStats(played = 1, solved = 1, bestScore = 10, currentStreak = 1)))), dataStore.data.first()[statsKeyFor(GameId.ARROWESCAPE)])
     }
 
-    private fun newDataStore(scope: CoroutineScope) = PreferenceDataStoreFactory.create(
+    private fun newDataStore(scope: CoroutineScope) = preferencesDataStoreForTest(
         scope = scope,
         produceFile = { tempFolder.newFile("play_history.preferences_pb") },
     )

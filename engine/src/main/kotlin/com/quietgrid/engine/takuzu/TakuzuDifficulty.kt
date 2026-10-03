@@ -76,7 +76,7 @@ fun analyzeTakuzuDifficulty(givens: TakuzuGrid, solution: TakuzuGrid): TakuzuDif
         metrics.highestTipLevel = maxOf(metrics.highestTipLevel, level)
         metrics.totalMoves += 1
         if (maxOf(rowEmpties, colEmpties) >= size / 2) metrics.sparseMoveCount += 1
-        if (previousLevel != null && previousLevel!! >= 3 && level >= previousLevel!!) metrics.tipSequencePressure += 1
+        if (previousLevel != null && previousLevel >= 3 && level >= previousLevel) metrics.tipSequencePressure += 1
 
         board[move.row][move.col] = move.value
         moveHistory.add(move.technique)

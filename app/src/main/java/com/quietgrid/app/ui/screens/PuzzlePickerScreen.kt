@@ -12,8 +12,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -32,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.core.difficultyColor
 import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.games.animaldoku.AnimalDokuQuickStart
@@ -214,9 +215,10 @@ fun PuzzlePickerScreen(
             listOf(GamePageTab.PLAY, GamePageTab.RULES, GamePageTab.STATS) +
                 if (gameHasSettings(gameId)) listOf(GamePageTab.SETTINGS) else emptyList()
         }
-        TabRow(
+        SecondaryTabRow(
             selectedTabIndex = visibleTabs.indexOf(selectedTab).coerceAtLeast(0),
             containerColor = MaterialTheme.colorScheme.background,
+            contentColor = TabRowDefaults.primaryContentColor,
         ) {
             Tab(
                 selected = selectedTab == GamePageTab.PLAY,

@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.data.GameStats
 import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.ui.components.AccountIconButton

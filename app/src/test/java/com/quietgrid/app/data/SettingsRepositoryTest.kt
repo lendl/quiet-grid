@@ -1,6 +1,5 @@
 package com.quietgrid.app.data
 
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -80,7 +79,7 @@ class SettingsRepositoryTest {
         assertTrue(repository.settings.first().betaGamesEnabled)
     }
 
-    private fun newDataStore(scope: CoroutineScope) = PreferenceDataStoreFactory.create(
+    private fun newDataStore(scope: CoroutineScope) = preferencesDataStoreForTest(
         scope = scope,
         produceFile = { tempFolder.newFile("settings.preferences_pb") },
     )

@@ -1,6 +1,5 @@
 package com.quietgrid.app.data
 
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import com.quietgrid.app.core.GameId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
@@ -86,7 +85,7 @@ class ThemePreferencesRepositoryTest {
         assertEquals(setOf("space"), repository.excludedThemes(GameId.THEMECLEAR, "en").first())
     }
 
-    private fun newDataStore(scope: CoroutineScope) = PreferenceDataStoreFactory.create(
+    private fun newDataStore(scope: CoroutineScope) = preferencesDataStoreForTest(
         scope = scope,
         produceFile = { tempFolder.newFile("themes.preferences_pb") },
     )

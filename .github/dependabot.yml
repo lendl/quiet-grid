@@ -1,0 +1,38 @@
+version: 2
+updates:
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    groups:
+      androidx:
+        patterns:
+          - "androidx.*"
+      kotlin:
+        patterns:
+          - "org.jetbrains.kotlin*"
+          - "com.google.devtools.ksp*"
+      hilt:
+        patterns:
+          - "com.google.dagger*"
+      android-gradle-plugin:
+        patterns:
+          - "com.android.*"
+      test:
+        patterns:
+          - "junit*"
+          - "io.mockk*"
+          - "org.robolectric*"
+          - "io.github.takahirom.roborazzi*"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    groups:
+      actions:
+        patterns:
+          - "*"

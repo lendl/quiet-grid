@@ -37,6 +37,6 @@ fun AppTopBar(
             }
         },
         actions = { actions() },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(),
+        colors = TopAppBarDefaults.topAppBarColors(),
     )
 }

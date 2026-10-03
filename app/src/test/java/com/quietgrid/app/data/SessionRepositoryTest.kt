@@ -1,6 +1,5 @@
 package com.quietgrid.app.data
 
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.first
@@ -52,7 +51,7 @@ class SessionRepositoryTest {
         assertNull(repository.activeSession.first())
     }
 
-    private fun newDataStore(scope: kotlinx.coroutines.CoroutineScope) = PreferenceDataStoreFactory.create(
+    private fun newDataStore(scope: kotlinx.coroutines.CoroutineScope) = preferencesDataStoreForTest(
         scope = scope,
         produceFile = { tempFolder.newFile("session.preferences_pb") },
     )

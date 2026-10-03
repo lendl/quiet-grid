@@ -97,7 +97,7 @@ private fun Path.roundedPolylineTo(points: List<Offset>, cornerRadius: Float) {
         val before = curr - toCurr / distToCurr * radius
         val after = curr + toNext / distToNext * radius
         lineTo(before.x, before.y)
-        quadraticBezierTo(curr.x, curr.y, after.x, after.y)
+        quadraticTo(curr.x, curr.y, after.x, after.y)
     }
     lineTo(points.last().x, points.last().y)
 }

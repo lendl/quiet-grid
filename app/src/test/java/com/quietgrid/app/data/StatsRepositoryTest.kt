@@ -1,6 +1,5 @@
 package com.quietgrid.app.data
 
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import kotlinx.coroutines.CoroutineScope
@@ -220,7 +219,7 @@ class StatsRepositoryTest {
     private fun newHistoryStore(scope: CoroutineScope): PlayHistoryStore =
         PlayHistoryRepository(newDataStore(scope, "history.preferences_pb"), FakePlayHistoryDao())
 
-    private fun newDataStore(scope: CoroutineScope, fileName: String) = PreferenceDataStoreFactory.create(
+    private fun newDataStore(scope: CoroutineScope, fileName: String) = preferencesDataStoreForTest(
         scope = scope,
         produceFile = { tempFolder.newFile(fileName) },
     )
