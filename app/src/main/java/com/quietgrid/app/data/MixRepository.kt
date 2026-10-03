@@ -4,8 +4,10 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.mix.Mix
-import com.quietgrid.app.core.mix.MixEntry
+import com.quietgrid.app.core.mix.applyPuzzleMembership
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -49,10 +51,9 @@ class MixRepository @Inject constructor(private val dataStore: DataStore<Prefere
         }
     }
 
-    suspend fun addEntryToMix(mixId: String, entry: MixEntry) {
+    suspend fun setPuzzleMembership(gameId: GameId, difficulty: Difficulty, selectedMixIds: Set<String>) {
         dataStore.edit { prefs ->
-            val current = prefs.decodeMixes().mixes
-            val updated = current.map { if (it.id == mixId) it.copy(entries = it.entries + entry) else it }
+            val updated = applyPuzzleMembership(prefs.decodeMixes().mixes, gameId, difficulty, selectedMixIds)
             prefs[MIXES_KEY] = mixJson.encodeToString(MixesEnvelope(updated))
         }
     }

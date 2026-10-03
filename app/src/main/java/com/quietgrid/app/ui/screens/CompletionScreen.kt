@@ -50,7 +50,6 @@ import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.difficultyColor
-import com.quietgrid.app.core.mix.Mix
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.quietgrid.app.core.formatElapsed
 import com.quietgrid.app.data.RepositoriesViewModel
@@ -75,7 +74,6 @@ import com.quietgrid.app.nav.LocalSharedTransitionScope
 import com.quietgrid.app.ui.components.BadgePill
 import com.quietgrid.app.ui.components.ConfettiBurst
 import com.quietgrid.app.ui.components.OutlinedGlowButton
-import com.quietgrid.app.ui.components.AddToMixControl
 import com.quietgrid.app.ui.components.SharedElementKeys
 import com.quietgrid.app.ui.components.rememberHapticController
 import com.quietgrid.app.ui.components.systemAnimationsDisabled
@@ -102,8 +100,7 @@ fun CompletionScreen(
     isFirstSolve: Boolean,
     isNewHighScore: Boolean,
     isMixActive: Boolean,
-    eligibleMixes: List<Mix>,
-    onAddToMix: (Mix) -> Unit,
+    onAddToMix: () -> Unit,
     onPlayAgain: () -> Unit,
     onOtherDifficulty: () -> Unit,
     onTryAnotherGame: () -> Unit,
@@ -235,90 +232,103 @@ fun CompletionScreen(
     }
 
     Box(Modifier.fillMaxSize()) {
-        FlowRow(
+        Row(
             Modifier
                 .align(Alignment.TopCenter)
                 .fillMaxWidth()
-                .padding(16.dp)
-                .graphicsLayer { alpha = badgesOpacity.value },
-            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+                .padding(start = 16.dp, top = 8.dp, end = 4.dp),
+            verticalAlignment = Alignment.Top,
         ) {
-            Row(
+            FlowRow(
                 Modifier
-                    .border(1.dp, accentColor, CircleShape)
-                    .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.7f), CircleShape)
-                    .padding(horizontal = 12.dp, vertical = 6.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    .weight(1f)
+                    .padding(top = 8.dp)
+                    .graphicsLayer { alpha = badgesOpacity.value },
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Box(Modifier.size(10.dp).background(accentColor, CircleShape))
-                Text(stringResource(eyebrowRes), style = MaterialTheme.typography.labelMedium, color = accentColor)
+                Row(
+                    Modifier
+                        .border(1.dp, accentColor, CircleShape)
+                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.7f), CircleShape)
+                        .padding(horizontal = 12.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Box(Modifier.size(10.dp).background(accentColor, CircleShape))
+                    Text(stringResource(eyebrowRes), style = MaterialTheme.typography.labelMedium, color = accentColor)
+                }
+                if (streak >= 2) {
+                    BadgePill(
+                        borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
+                        textColor = MaterialTheme.colorScheme.primary,
+                        emoji = "🔥",
+                        text = stringResource(R.string.completion_streak_badge, streak),
+                    )
+                }
+                if (isFlawless) {
+                    BadgePill(
+                        borderColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f),
+                        textColor = MaterialTheme.colorScheme.tertiary,
+                        emoji = "💯",
+                        text = stringResource(R.string.completion_flawless_badge),
+                    )
+                }
+                if (gameMilestone != null) {
+                    BadgePill(
+                        borderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.35f),
+                        textColor = MaterialTheme.colorScheme.secondary,
+                        emoji = "🏅",
+                        text = stringResource(R.string.completion_milestone_game_badge, gameMilestone),
+                    )
+                }
+                if (difficultyMilestone != null) {
+                    BadgePill(
+                        borderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.35f),
+                        textColor = MaterialTheme.colorScheme.secondary,
+                        emoji = "🎯",
+                        text = stringResource(R.string.completion_milestone_difficulty_badge, difficultyMilestone, stringResource(difficultyLabelRes)),
+                    )
+                }
+                if (totalMilestone != null) {
+                    BadgePill(
+                        borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
+                        textColor = MaterialTheme.colorScheme.primary,
+                        emoji = "🌟",
+                        text = stringResource(R.string.completion_milestone_total_badge, totalMilestone),
+                    )
+                }
+                if (didBounceBack) {
+                    BadgePill(
+                        borderColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f),
+                        textColor = MaterialTheme.colorScheme.tertiary,
+                        emoji = "💪",
+                        text = stringResource(R.string.completion_bounced_back_badge),
+                    )
+                }
+                if (gamesToday >= 3) {
+                    BadgePill(
+                        borderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.35f),
+                        textColor = MaterialTheme.colorScheme.secondary,
+                        emoji = "🎲",
+                        text = stringResource(R.string.completion_variety_badge, gamesToday),
+                    )
+                }
+                if (puzzlesToday >= 5) {
+                    BadgePill(
+                        borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
+                        textColor = MaterialTheme.colorScheme.primary,
+                        emoji = "☀️",
+                        text = stringResource(R.string.completion_daily_total_badge, puzzlesToday),
+                    )
+                }
             }
-            if (streak >= 2) {
-                BadgePill(
-                    borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
-                    textColor = MaterialTheme.colorScheme.primary,
-                    emoji = "🔥",
-                    text = stringResource(R.string.completion_streak_badge, streak),
-                )
-            }
-            if (isFlawless) {
-                BadgePill(
-                    borderColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f),
-                    textColor = MaterialTheme.colorScheme.tertiary,
-                    emoji = "💯",
-                    text = stringResource(R.string.completion_flawless_badge),
-                )
-            }
-            if (gameMilestone != null) {
-                BadgePill(
-                    borderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.35f),
-                    textColor = MaterialTheme.colorScheme.secondary,
-                    emoji = "🏅",
-                    text = stringResource(R.string.completion_milestone_game_badge, gameMilestone),
-                )
-            }
-            if (difficultyMilestone != null) {
-                BadgePill(
-                    borderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.35f),
-                    textColor = MaterialTheme.colorScheme.secondary,
-                    emoji = "🎯",
-                    text = stringResource(R.string.completion_milestone_difficulty_badge, difficultyMilestone, stringResource(difficultyLabelRes)),
-                )
-            }
-            if (totalMilestone != null) {
-                BadgePill(
-                    borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
-                    textColor = MaterialTheme.colorScheme.primary,
-                    emoji = "🌟",
-                    text = stringResource(R.string.completion_milestone_total_badge, totalMilestone),
-                )
-            }
-            if (didBounceBack) {
-                BadgePill(
-                    borderColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f),
-                    textColor = MaterialTheme.colorScheme.tertiary,
-                    emoji = "💪",
-                    text = stringResource(R.string.completion_bounced_back_badge),
-                )
-            }
-            if (gamesToday >= 3) {
-                BadgePill(
-                    borderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.35f),
-                    textColor = MaterialTheme.colorScheme.secondary,
-                    emoji = "🎲",
-                    text = stringResource(R.string.completion_variety_badge, gamesToday),
-                )
-            }
-            if (puzzlesToday >= 5) {
-                BadgePill(
-                    borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
-                    textColor = MaterialTheme.colorScheme.primary,
-                    emoji = "☀️",
-                    text = stringResource(R.string.completion_daily_total_badge, puzzlesToday),
-                )
-            }
+            ResultOverflowMenu(
+                gameId = gameId,
+                difficulty = difficulty,
+                onAddToMix = onAddToMix,
+                modifier = Modifier.graphicsLayer { alpha = badgesOpacity.value },
+            )
         }
 
         Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
@@ -456,7 +466,6 @@ fun CompletionScreen(
                             TextButton(onClick = onTryAnotherGame) {
                                 Text(stringResource(R.string.completion_try_another_game), color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
-                            AddToMixControl(eligibleMixes = eligibleMixes, onAddToMix = onAddToMix)
                         }
                     }
                 }

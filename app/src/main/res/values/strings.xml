@@ -237,8 +237,9 @@
     <string name="completion_play_again">Play Again</string>
     <string name="mix_next_puzzle">Next Puzzle</string>
     <string name="mix_add_to_mix">Add to Mix</string>
-    <string name="mix_add_to_mix_sheet_title">Add to Mix</string>
-    <string name="mix_added_confirmation">Added to %1$s</string>
+    <string name="add_to_mix_new_mix">New mix</string>
+    <string name="add_to_mix_done">Done</string>
+    <string name="add_to_mix_create">Create</string>
     <string name="completion_streak_badge">%1$d puzzle streak</string>
     <string name="completion_flawless_badge">Flawless</string>
     <string name="completion_milestone_game_badge">%1$d solved</string>
@@ -255,6 +256,8 @@
     <string name="loss_other_difficulty">Other Difficulty</string>
     <string name="loss_try_another_game">Try Another Game</string>
     <string name="walk_through_solve">Walk through the solve</string>
+    <string name="report_puzzle_problem">Report a problem</string>
+    <string name="result_more_options">More options</string>
 
     <!-- stats -->
     <string name="common_all">All</string>

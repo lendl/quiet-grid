@@ -1096,8 +1096,6 @@
     <string name="logs_day_undated">Ouder</string>
     <string name="logs_day_yesterday">Gisteren</string>
     <string name="mix_add_to_mix">Toevoegen aan mix</string>
-    <string name="mix_add_to_mix_sheet_title">Toevoegen aan mix</string>
-    <string name="mix_added_confirmation">Toegevoegd aan %1$s</string>
     <string name="settings_daily_reminder">Dagelijkse herinnering</string>
     <string name="settings_daily_reminder_detail">Meld het als geabonneerde dagelijkse puzzels onafgemaakt zijn</string>
     <string name="settings_daily_reminder_ok">OK</string>

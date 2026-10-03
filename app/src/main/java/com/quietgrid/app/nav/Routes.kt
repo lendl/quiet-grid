@@ -20,6 +20,8 @@ object Routes {
     const val TRUST = "trust"
     const val ABOUT = "about"
     const val MIX_EDITOR = "mixEditor/{mixId}"
+    const val ADD_TO_MIX = "addToMix/{gameId}/{difficulty}"
+    const val ADD_TO_NEW_MIX = "addToNewMix/{gameId}/{difficulty}"
     const val ENDLESS = "endless/{gameId}/{resume}"
     const val ENDLESS_RESULT = "endlessResult/{score}/{level}/{lines}/{moves}/{isNewBest}/{previousBest}/{reason}"
 
@@ -67,4 +69,8 @@ object Routes {
     fun supportInfo(key: String) = "supportInfo/$key"
 
     fun mixEditor(mixId: String) = "mixEditor/$mixId"
+
+    fun addToMix(gameId: GameId, difficulty: Difficulty) = "addToMix/${gameId.key}/${difficulty.key}"
+
+    fun addToNewMix(gameId: GameId, difficulty: Difficulty) = "addToNewMix/${gameId.key}/${difficulty.key}"
 }

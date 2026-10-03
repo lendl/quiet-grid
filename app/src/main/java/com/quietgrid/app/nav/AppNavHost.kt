@@ -65,9 +65,6 @@ import com.quietgrid.app.core.mix.Mix
 import com.quietgrid.app.core.mix.MixMode
 import com.quietgrid.app.core.mix.drawWeighted
 import com.quietgrid.app.core.mix.nextMixName
-import com.quietgrid.app.core.mix.MixEntry
-import com.quietgrid.app.core.mix.MixEntryMode
-import com.quietgrid.app.core.mix.mixesEligibleForQuickAdd
 import com.quietgrid.app.core.mix.resolvedCandidates
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.RepositoriesViewModel
@@ -113,6 +110,8 @@ import com.quietgrid.app.ui.components.BottomNavBar
 import com.quietgrid.app.ui.components.ContinueSessionMiniBar
 import com.quietgrid.app.ui.components.pressScale
 import com.quietgrid.app.ui.screens.AccountDrawerContent
+import com.quietgrid.app.ui.screens.AddToMixScreen
+import com.quietgrid.app.ui.screens.NewMixScreen
 import com.quietgrid.app.ui.screens.AnalyzerHandoff
 import com.quietgrid.app.ui.screens.ChallengerExtras
 import com.quietgrid.app.ui.screens.ChallengerRunDetails
@@ -303,6 +302,18 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
                         },
                     )
                 }
+                currentRoute == Routes.ADD_TO_MIX -> {
+                    AppTopBar(
+                        title = stringResource(R.string.mix_add_to_mix),
+                        onBack = { navController.popBackStack() },
+                    )
+                }
+                currentRoute == Routes.ADD_TO_NEW_MIX -> {
+                    AppTopBar(
+                        title = stringResource(R.string.add_to_mix_new_mix),
+                        onBack = { navController.popBackStack() },
+                    )
+                }
                 currentRoute == Routes.SETTINGS -> {
                     AppTopBar(
                         title = stringResource(R.string.account_preferences_section),
@@ -457,6 +468,43 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
                     onDone = { navController.popBackStack() },
                     renameTrigger = mixEditorRenameTrigger,
                     deleteTrigger = mixEditorDeleteTrigger,
+                )
+            }
+
+            composable(
+                Routes.ADD_TO_MIX,
+                arguments = listOf(
+                    navArgument("gameId") { type = NavType.StringType },
+                    navArgument("difficulty") { type = NavType.StringType },
+                ),
+                enterTransition = { fadeIn(animationSpec = tween(250)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) },
+            ) { entry ->
+                val gameId = GameId.entries.firstOrNull { it.key == entry.arguments?.getString("gameId") } ?: return@composable
+                val difficulty = Difficulty.fromKey(entry.arguments?.getString("difficulty") ?: "easy")
+                AddToMixScreen(
+                    gameId = gameId,
+                    difficulty = difficulty,
+                    onDone = { navController.popBackStack() },
+                    onNewMix = { navController.navigate(Routes.addToNewMix(gameId, difficulty)) },
+                )
+            }
+
+            composable(
+                Routes.ADD_TO_NEW_MIX,
+                arguments = listOf(
+                    navArgument("gameId") { type = NavType.StringType },
+                    navArgument("difficulty") { type = NavType.StringType },
+                ),
+                enterTransition = { fadeIn(animationSpec = tween(250)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) },
+            ) { entry ->
+                val gameId = GameId.entries.firstOrNull { it.key == entry.arguments?.getString("gameId") } ?: return@composable
+                val difficulty = Difficulty.fromKey(entry.arguments?.getString("difficulty") ?: "easy")
+                NewMixScreen(
+                    gameId = gameId,
+                    difficulty = difficulty,
+                    onCreated = { navController.popBackStack(Routes.ADD_TO_MIX, inclusive = true) },
                 )
             }
 
@@ -734,9 +782,6 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
                     val resultDailyKey = entry.arguments?.getString("daily")
                     val nextDaily = rememberNextDaily(resultDailyKey, completionGameId, completionDifficulty)
                     val resultContext = LocalContext.current
-                    val completionEligibleMixes = remember(mixes, completionGameId, completionDifficulty) {
-                        mixesEligibleForQuickAdd(mixes, completionGameId, completionDifficulty)
-                    }
                     CompletionScreen(
                         gameId = completionGameId,
                         difficulty = completionDifficulty,
@@ -747,15 +792,7 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
                         isFirstSolve = entry.arguments?.getBoolean("isFirstSolve") ?: false,
                         isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
                         isMixActive = activeMix != null,
-                        eligibleMixes = completionEligibleMixes,
-                        onAddToMix = { mix ->
-                            scope.launch {
-                                repositories.mixRepository.addEntryToMix(
-                                    mix.id,
-                                    MixEntry(gameId = completionGameId.key, mode = MixEntryMode.PUZZLE, difficulty = completionDifficulty.key, weight = 1),
-                                )
-                            }
-                        },
+                        onAddToMix = { navController.navigate(Routes.addToMix(completionGameId, completionDifficulty)) },
                         onPlayAgain = {
                             playAgainOrDrawMix {
                                 navController.navigate(Routes.play(completionGameId, completionDifficulty, resume = false)) {
@@ -807,9 +844,6 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
                     val resultDailyKey = entry.arguments?.getString("daily")
                     val nextDaily = rememberNextDaily(resultDailyKey, lossGameId, lossDifficulty)
                     val resultContext = LocalContext.current
-                    val lossEligibleMixes = remember(mixes, lossGameId, lossDifficulty) {
-                        mixesEligibleForQuickAdd(mixes, lossGameId, lossDifficulty)
-                    }
                     LossScreen(
                         gameId = lossGameId,
                         difficulty = lossDifficulty,
@@ -818,15 +852,7 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
                         score = entry.arguments?.getInt("score") ?: 0,
                         bestTile = entry.arguments?.getInt("bestTile") ?: 0,
                         isMixActive = activeMix != null,
-                        eligibleMixes = lossEligibleMixes,
-                        onAddToMix = { mix ->
-                            scope.launch {
-                                repositories.mixRepository.addEntryToMix(
-                                    mix.id,
-                                    MixEntry(gameId = lossGameId.key, mode = MixEntryMode.PUZZLE, difficulty = lossDifficulty.key, weight = 1),
-                                )
-                            }
-                        },
+                        onAddToMix = { navController.navigate(Routes.addToMix(lossGameId, lossDifficulty)) },
                         onRetry = {
                             playAgainOrDrawMix {
                                 navController.navigate(Routes.play(lossGameId, lossDifficulty, resume = false)) {

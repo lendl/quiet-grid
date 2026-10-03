@@ -1122,8 +1122,6 @@
     <string name="logs_day_undated">Starsze</string>
     <string name="logs_day_yesterday">Wczoraj</string>
     <string name="mix_add_to_mix">Dodaj do miksu</string>
-    <string name="mix_add_to_mix_sheet_title">Dodaj do miksu</string>
-    <string name="mix_added_confirmation">Dodano do: %1$s</string>
     <string name="settings_daily_reminder">Codzienne przypomnienie</string>
     <string name="settings_daily_reminder_detail">Powiadom mnie, gdy subskrybowane codzienne łamigłówki są nieukończone</string>
     <string name="settings_daily_reminder_ok">OK</string>

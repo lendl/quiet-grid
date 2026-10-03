@@ -1091,8 +1091,6 @@
     <string name="logs_day_undated">Älter</string>
     <string name="logs_day_yesterday">Gestern</string>
     <string name="mix_add_to_mix">Zum Mix hinzufügen</string>
-    <string name="mix_add_to_mix_sheet_title">Zum Mix hinzufügen</string>
-    <string name="mix_added_confirmation">Zu %1$s hinzugefügt</string>
     <string name="settings_daily_reminder">Tägliche Erinnerung</string>
     <string name="settings_daily_reminder_detail">Benachrichtige mich, wenn abonnierte Tagesrätsel unvollendet sind</string>
     <string name="settings_daily_reminder_ok">OK</string>

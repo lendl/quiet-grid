@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -37,7 +38,6 @@ import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.formatElapsed
-import com.quietgrid.app.core.mix.Mix
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyLabelRes
 import com.quietgrid.app.games.arrowescape.arrowEscapeDifficultyLabelRes
 import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
@@ -56,7 +56,6 @@ import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
 import com.quietgrid.app.nav.LocalAnimatedVisibilityScope
 import com.quietgrid.app.nav.LocalSharedTransitionScope
 import com.quietgrid.app.ui.components.OutlinedGlowButton
-import com.quietgrid.app.ui.components.AddToMixControl
 import com.quietgrid.app.ui.components.SharedElementKeys
 import com.quietgrid.app.ui.components.rememberHapticController
 
@@ -70,8 +69,7 @@ fun LossScreen(
     score: Int,
     bestTile: Int,
     isMixActive: Boolean,
-    eligibleMixes: List<Mix>,
-    onAddToMix: (Mix) -> Unit,
+    onAddToMix: () -> Unit,
     onRetry: () -> Unit,
     onOtherDifficulty: () -> Unit,
     onTryAnotherGame: () -> Unit,
@@ -249,6 +247,7 @@ fun LossScreen(
                 .fillMaxWidth()
                 .graphicsLayer { alpha = pageOpacity.value },
             horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Row(
                 Modifier
@@ -261,6 +260,12 @@ fun LossScreen(
                 Box(Modifier.size(10.dp).background(errorColor, CircleShape))
                 Text(stringResource(eyebrowRes), style = MaterialTheme.typography.labelMedium, color = errorColor)
             }
+            ResultOverflowMenu(
+                gameId = gameId,
+                difficulty = difficulty,
+                onAddToMix = onAddToMix,
+                modifier = Modifier.offset(x = 12.dp),
+            )
         }
 
         Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
@@ -392,7 +397,6 @@ fun LossScreen(
                         TextButton(onClick = onTryAnotherGame) {
                             Text(stringResource(R.string.loss_try_another_game), color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
-                        AddToMixControl(eligibleMixes = eligibleMixes, onAddToMix = onAddToMix)
                     }
                 }
             }

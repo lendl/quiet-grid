@@ -1150,8 +1150,6 @@
     <string name="logs_day_undated">Mais antigos</string>
     <string name="logs_day_yesterday">Ontem</string>
     <string name="mix_add_to_mix">Adicionar ao combinado</string>
-    <string name="mix_add_to_mix_sheet_title">Adicionar ao combinado</string>
-    <string name="mix_added_confirmation">Adicionado a %1$s</string>
     <string name="settings_daily_reminder">Lembrete diário</string>
     <string name="settings_daily_reminder_detail">Avisar quando quebra-cabeças diários inscritos não estiverem terminados</string>
     <string name="settings_daily_reminder_ok">OK</string>

@@ -1,6 +1,8 @@
 package com.quietgrid.app.data
 
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.mix.Mix
 import com.quietgrid.app.core.mix.MixEntry
 import com.quietgrid.app.core.mix.MixEntryMode
@@ -92,36 +94,26 @@ class MixRepositoryTest {
     }
 
     @Test
-    fun `addEntryToMix appends the entry to the matching mix`() = runTest {
+    fun `setPuzzleMembership adds to selected mixes and removes from deselected ones`() = runTest {
         val repository = MixRepository(newDataStore(backgroundScope))
+        val wordsearchEasy = MixEntry(gameId = "wordsearch", mode = MixEntryMode.PUZZLE, difficulty = "easy", weight = 1)
+        val hadIt = sampleMix.copy(id = "mix-2", name = "Had it", entries = sampleMix.entries + wordsearchEasy)
         repository.saveMix(sampleMix)
-        val newEntry = MixEntry(gameId = "wordsearch", mode = MixEntryMode.PUZZLE, difficulty = "easy", weight = 1)
+        repository.saveMix(hadIt)
 
-        repository.addEntryToMix(sampleMix.id, newEntry)
-
-        val stored = repository.mixes.first().single()
-        assertEquals(sampleMix.entries + newEntry, stored.entries)
-    }
-
-    @Test
-    fun `addEntryToMix leaves other mixes untouched`() = runTest {
-        val repository = MixRepository(newDataStore(backgroundScope))
-        val other = sampleMix.copy(id = "mix-2", name = "Other")
-        repository.saveMix(sampleMix)
-        repository.saveMix(other)
-
-        repository.addEntryToMix(sampleMix.id, MixEntry(gameId = "wordsearch", mode = MixEntryMode.PUZZLE, difficulty = "easy", weight = 1))
+        repository.setPuzzleMembership(GameId.WORDSEARCH, Difficulty.EASY, setOf(sampleMix.id))
 
         val stored = repository.mixes.first()
-        assertEquals(other.entries, stored.first { it.id == "mix-2" }.entries)
+        assertEquals(sampleMix.entries + wordsearchEasy, stored.first { it.id == sampleMix.id }.entries)
+        assertEquals(sampleMix.entries, stored.first { it.id == "mix-2" }.entries)
     }
 
     @Test
-    fun `addEntryToMix is a no-op when mixId does not match any stored mix`() = runTest {
+    fun `setPuzzleMembership with no change leaves mixes untouched`() = runTest {
         val repository = MixRepository(newDataStore(backgroundScope))
         repository.saveMix(sampleMix)
 
-        repository.addEntryToMix("does-not-exist", MixEntry(gameId = "wordsearch", mode = MixEntryMode.PUZZLE, difficulty = "easy", weight = 1))
+        repository.setPuzzleMembership(GameId.WORDSEARCH, Difficulty.EASY, emptySet())
 
         assertEquals(listOf(sampleMix), repository.mixes.first())
     }

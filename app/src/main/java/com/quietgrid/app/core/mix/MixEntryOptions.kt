@@ -15,7 +15,21 @@ fun missingModeOptionsFor(gameId: GameId, existingEntries: List<MixEntry>): List
     return allModeOptionsFor(gameId).filterNot { it in used }
 }
 
-fun mixesEligibleForQuickAdd(mixes: List<Mix>, gameId: GameId, difficulty: Difficulty): List<Mix> =
-    mixes.filterNot { mix ->
-        mix.entries.any { it.gameId == gameId.key && it.mode == MixEntryMode.PUZZLE && it.difficulty == difficulty.key }
+private fun MixEntry.isPuzzle(gameId: GameId, difficulty: Difficulty): Boolean =
+    this.gameId == gameId.key && mode == MixEntryMode.PUZZLE && this.difficulty == difficulty.key
+
+fun mixIdsContainingPuzzle(mixes: List<Mix>, gameId: GameId, difficulty: Difficulty): Set<String> =
+    mixes.filter { mix -> mix.entries.any { it.isPuzzle(gameId, difficulty) } }.map { it.id }.toSet()
+
+fun applyPuzzleMembership(mixes: List<Mix>, gameId: GameId, difficulty: Difficulty, selectedMixIds: Set<String>): List<Mix> =
+    mixes.map { mix ->
+        val hasEntry = mix.entries.any { it.isPuzzle(gameId, difficulty) }
+        val selected = mix.id in selectedMixIds
+        when {
+            selected && !hasEntry -> mix.copy(
+                entries = mix.entries + MixEntry(gameId = gameId.key, mode = MixEntryMode.PUZZLE, difficulty = difficulty.key, weight = 1),
+            )
+            !selected && hasEntry -> mix.copy(entries = mix.entries.filterNot { it.isPuzzle(gameId, difficulty) })
+            else -> mix
+        }
     }

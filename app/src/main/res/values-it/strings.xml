@@ -237,8 +237,6 @@
     <string name="completion_play_again">Gioca ancora</string>
     <string name="mix_next_puzzle">Prossimo puzzle</string>
     <string name="mix_add_to_mix">Aggiungi al mix</string>
-    <string name="mix_add_to_mix_sheet_title">Aggiungi al mix</string>
-    <string name="mix_added_confirmation">Aggiunto a %1$s</string>
     <string name="completion_streak_badge">Serie di %1$d puzzle</string>
     <string name="completion_flawless_badge">Impeccabile</string>
     <string name="completion_milestone_game_badge">%1$d risolti</string>

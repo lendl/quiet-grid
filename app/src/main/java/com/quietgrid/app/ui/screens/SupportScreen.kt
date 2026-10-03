@@ -58,6 +58,7 @@ import com.quietgrid.app.core.PLAY_STORE_APP_URL
 import com.quietgrid.app.core.PLAY_STORE_WEB_URL
 import com.quietgrid.app.core.REPO_URL
 import com.quietgrid.app.core.SUPPORT_EMAIL
+import com.quietgrid.app.core.appVersionName
 import com.quietgrid.app.core.buildBugReportUrl
 import com.quietgrid.app.core.buildFeatureRequestUrl
 import com.quietgrid.app.data.RepositoriesViewModel
@@ -70,10 +71,7 @@ private val ABOUT_ICON_COLOR = Color(0xFFF472B6)
 @Composable
 fun SupportPageScreen() {
     val context = LocalContext.current
-    val appVersion = remember {
-        runCatching { context.packageManager.getPackageInfo(context.packageName, 0).versionName }
-            .getOrNull() ?: "unknown"
-    }
+    val appVersion = remember { appVersionName(context) }
     fun openUrl(url: String): Boolean =
         runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }.isSuccess
 

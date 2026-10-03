@@ -1,5 +1,6 @@
 package com.quietgrid.app.core
 
+import android.content.Context
 import java.net.URLEncoder
 
 const val SUPPORT_EMAIL = "quiet-grid@outlook.com"
@@ -19,7 +20,7 @@ fun buildBugReportUrl(appVersion: String): String = buildIssueUrl(
     listOf(
         "## What happened",
         "",
-        "Describe problem you ran into.",
+        "Describe the problem you ran into.",
         "",
         "## Steps to reproduce",
         "",
@@ -42,10 +43,44 @@ fun buildFeatureRequestUrl(): String = buildIssueUrl(
     listOf(
         "## What would help",
         "",
-        "Describe feature or improvement you would like to see.",
+        "Describe the feature or improvement you would like to see.",
         "",
         "## Why it would help",
         "",
-        "Share problem it would solve or what would feel better.",
+        "Share the problem it would solve or what would feel better.",
     ).joinToString("\n"),
 )
+
+fun buildPuzzleReportUrl(
+    gameKey: String,
+    difficultyKey: String,
+    puzzleId: String?,
+    dailyDate: String?,
+    result: String,
+    appVersion: String,
+    appLanguage: String,
+): String = buildIssueUrl(
+    listOfNotNull("[Puzzle]", gameKey, difficultyKey, puzzleId).joinToString(" "),
+    listOfNotNull(
+        "## What went wrong",
+        "",
+        "Describe the problem (for example: more than one solution, a correct move was rejected, a clue looks wrong).",
+        "",
+        "## Puzzle",
+        "",
+        "Game: $gameKey",
+        "Difficulty: $difficultyKey",
+        "Puzzle: ${puzzleId ?: "generated"}",
+        dailyDate?.let { "Daily: $it" },
+        "Result: $result",
+        "",
+        "## App",
+        "",
+        "Version: $appVersion",
+        "Language: $appLanguage",
+    ).joinToString("\n"),
+)
+
+fun appVersionName(context: Context): String =
+    runCatching { context.packageManager.getPackageInfo(context.packageName, 0).versionName }
+        .getOrNull() ?: "unknown"

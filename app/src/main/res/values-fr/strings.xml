@@ -1100,8 +1100,6 @@
     <string name="logs_day_undated">Plus ancien</string>
     <string name="logs_day_yesterday">Hier</string>
     <string name="mix_add_to_mix">Ajouter au mix</string>
-    <string name="mix_add_to_mix_sheet_title">Ajouter au mix</string>
-    <string name="mix_added_confirmation">Ajouté à %1$s</string>
     <string name="settings_daily_reminder">Rappel quotidien</string>
     <string name="settings_daily_reminder_detail">Me prévenir quand des puzzles quotidiens abonnés sont inachevés</string>
     <string name="settings_daily_reminder_ok">OK</string>
