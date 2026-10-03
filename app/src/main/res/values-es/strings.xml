@@ -1098,6 +1098,11 @@
     <string name="logs_day_undated">Anteriores</string>
     <string name="logs_day_yesterday">Ayer</string>
     <string name="mix_add_to_mix">Añadir al mix</string>
+    <string name="add_to_mix_new_mix">Nuevo mix</string>
+    <string name="add_to_mix_done">Listo</string>
+    <string name="add_to_mix_create">Crear</string>
+    <string name="report_puzzle_problem">Reportar un problema</string>
+    <string name="result_more_options">Más opciones</string>
     <string name="settings_daily_reminder">Recordatorio diario</string>
     <string name="settings_daily_reminder_detail">Avísame cuando los puzzles diarios suscritos estén sin terminar</string>
     <string name="settings_daily_reminder_ok">Aceptar</string>
@@ -1177,4 +1182,25 @@
     <string name="game_settings_themes_col_medium">Medio</string>
     <string name="game_settings_themes_col_hard">Difícil</string>
     <string name="game_settings_themes_col_expert">Exp.</string>
+    <string name="game_settings_themes_words_hint">Toca un tema para ver sus palabras y sugerir cambios.</string>
+    <string name="theme_words_count">%1$d palabras</string>
+    <string name="theme_words_search">Buscar palabras</string>
+    <string name="theme_words_report_hint">Toca una palabra para reportarla como incorrecta o inapropiada.</string>
+    <string name="theme_words_no_results">Ninguna palabra coincide con tu búsqueda.</string>
+    <string name="theme_words_suggest">Sugerir palabras</string>
+    <string name="theme_words_suggest_with_reports">Sugerir cambios (%1$d reportadas)</string>
+    <string name="theme_words_rules_title">Antes de sugerir</string>
+    <string name="theme_words_rule_single">Palabras sueltas en %1$s, de al menos 3 letras, sin espacios ni guiones</string>
+    <string name="theme_words_rule_common">Palabras comunes que la mayoría de los jugadores conoce y que encajan claramente en el tema</string>
+    <string name="theme_words_rule_brands">Sin nombres de marcas, marcas registradas ni nombres de personas reales</string>
+    <string name="theme_words_rule_safe">Sin armas, violencia, drogas, alcohol ni contenido para adultos</string>
+    <string name="theme_words_rule_kids">Apto para niños: nada grosero, sangriento ni ofensivo</string>
+    <string name="theme_words_input_label">Palabras nuevas</string>
+    <string name="theme_words_input_supporting">Separa las palabras con comas o saltos de línea</string>
+    <string name="theme_words_input_summary">%1$d nuevas, %2$d ya en la lista, %3$d no válidas</string>
+    <string name="theme_words_too_many">Hasta %1$d palabras por issue</string>
+    <string name="theme_words_reported_title">Reportar para eliminar</string>
+    <string name="theme_words_unreport">Quitar %1$s del reporte</string>
+    <string name="theme_words_github_note">Abre un issue de GitHub en tu navegador. Necesitas una cuenta gratuita de GitHub para enviarlo.</string>
+    <string name="theme_words_open_issue">Abrir issue de GitHub</string>
 </resources>

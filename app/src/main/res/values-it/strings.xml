@@ -237,6 +237,11 @@
     <string name="completion_play_again">Gioca ancora</string>
     <string name="mix_next_puzzle">Prossimo puzzle</string>
     <string name="mix_add_to_mix">Aggiungi al mix</string>
+    <string name="add_to_mix_new_mix">Nuovo mix</string>
+    <string name="add_to_mix_done">Fatto</string>
+    <string name="add_to_mix_create">Crea</string>
+    <string name="report_puzzle_problem">Segnala un problema</string>
+    <string name="result_more_options">Altre opzioni</string>
     <string name="completion_streak_badge">Serie di %1$d puzzle</string>
     <string name="completion_flawless_badge">Impeccabile</string>
     <string name="completion_milestone_game_badge">%1$d risolti</string>
@@ -1228,4 +1233,25 @@
     <string name="game_settings_themes_col_medium">Medio</string>
     <string name="game_settings_themes_col_hard">Diff.</string>
     <string name="game_settings_themes_col_expert">Esp.</string>
+    <string name="game_settings_themes_words_hint">Tocca un tema per vederne le parole e suggerire modifiche.</string>
+    <string name="theme_words_count">%1$d parole</string>
+    <string name="theme_words_search">Cerca parole</string>
+    <string name="theme_words_report_hint">Tocca una parola per segnalarla come errata o non adatta.</string>
+    <string name="theme_words_no_results">Nessuna parola corrisponde alla ricerca.</string>
+    <string name="theme_words_suggest">Suggerisci parole</string>
+    <string name="theme_words_suggest_with_reports">Suggerisci modifiche (%1$d segnalate)</string>
+    <string name="theme_words_rules_title">Prima di suggerire</string>
+    <string name="theme_words_rule_single">Parole singole in %1$s, di almeno 3 lettere, senza spazi né trattini</string>
+    <string name="theme_words_rule_common">Parole comuni che la maggior parte dei giocatori conosce e che si adattano chiaramente al tema</string>
+    <string name="theme_words_rule_brands">Niente nomi di marchi, marchi registrati o nomi di persone reali</string>
+    <string name="theme_words_rule_safe">Niente armi, violenza, droghe, alcol o contenuti per adulti</string>
+    <string name="theme_words_rule_kids">Adatto ai bambini: niente di volgare, cruento od offensivo</string>
+    <string name="theme_words_input_label">Nuove parole</string>
+    <string name="theme_words_input_supporting">Separa le parole con virgole o a capo</string>
+    <string name="theme_words_input_summary">%1$d nuove, %2$d già presenti, %3$d non valide</string>
+    <string name="theme_words_too_many">Al massimo %1$d parole per issue</string>
+    <string name="theme_words_reported_title">Segnala per la rimozione</string>
+    <string name="theme_words_unreport">Rimuovi %1$s dalla segnalazione</string>
+    <string name="theme_words_github_note">Apre una issue su GitHub nel browser. Per inviarla serve un account GitHub gratuito.</string>
+    <string name="theme_words_open_issue">Apri issue su GitHub</string>
 </resources>

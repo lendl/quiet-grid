@@ -1096,6 +1096,11 @@
     <string name="logs_day_undated">Ouder</string>
     <string name="logs_day_yesterday">Gisteren</string>
     <string name="mix_add_to_mix">Toevoegen aan mix</string>
+    <string name="add_to_mix_new_mix">Nieuwe mix</string>
+    <string name="add_to_mix_done">Klaar</string>
+    <string name="add_to_mix_create">Maken</string>
+    <string name="report_puzzle_problem">Probleem melden</string>
+    <string name="result_more_options">Meer opties</string>
     <string name="settings_daily_reminder">Dagelijkse herinnering</string>
     <string name="settings_daily_reminder_detail">Meld het als geabonneerde dagelijkse puzzels onafgemaakt zijn</string>
     <string name="settings_daily_reminder_ok">OK</string>
@@ -1176,4 +1181,25 @@
     <string name="game_settings_themes_col_medium">Gem.</string>
     <string name="game_settings_themes_col_hard">Moeil.</string>
     <string name="game_settings_themes_col_expert">Exp.</string>
+    <string name="game_settings_themes_words_hint">Tik op een thema om de woorden te zien en wijzigingen voor te stellen.</string>
+    <string name="theme_words_count">%1$d woorden</string>
+    <string name="theme_words_search">Woorden zoeken</string>
+    <string name="theme_words_report_hint">Tik op een woord om het als fout of ongeschikt te melden.</string>
+    <string name="theme_words_no_results">Geen woorden gevonden voor je zoekopdracht.</string>
+    <string name="theme_words_suggest">Woorden voorstellen</string>
+    <string name="theme_words_suggest_with_reports">Wijzigingen voorstellen (%1$d gemeld)</string>
+    <string name="theme_words_rules_title">Voordat je iets voorstelt</string>
+    <string name="theme_words_rule_single">Losse woorden in het %1$s, minstens 3 letters, geen spaties of streepjes</string>
+    <string name="theme_words_rule_common">Gangbare woorden die de meeste spelers kennen en die duidelijk bij dit thema passen</string>
+    <string name="theme_words_rule_brands">Geen merknamen, handelsmerken of namen van echte personen</string>
+    <string name="theme_words_rule_safe">Geen wapens, geweld, drugs, alcohol of inhoud voor volwassenen</string>
+    <string name="theme_words_rule_kids">Kindvriendelijk: niets onbeleefds, bloederigs of beledigends</string>
+    <string name="theme_words_input_label">Nieuwe woorden</string>
+    <string name="theme_words_input_supporting">Scheid woorden met komma\'s of nieuwe regels</string>
+    <string name="theme_words_input_summary">%1$d nieuw, %2$d al aanwezig, %3$d ongeldig</string>
+    <string name="theme_words_too_many">Maximaal %1$d woorden per issue</string>
+    <string name="theme_words_reported_title">Melden voor verwijdering</string>
+    <string name="theme_words_unreport">%1$s uit de melding verwijderen</string>
+    <string name="theme_words_github_note">Opent een GitHub-issue in je browser. Je hebt een gratis GitHub-account nodig om het in te dienen.</string>
+    <string name="theme_words_open_issue">GitHub-issue openen</string>
 </resources>
