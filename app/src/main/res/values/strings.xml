@@ -91,6 +91,8 @@
     <string name="settings_show_timer_in_play_label">Show timer during play</string>
     <string name="settings_keep_screen_on_label">Keep screen awake</string>
     <string name="settings_keep_screen_on_detail">Stop the screen dimming while a puzzle is open. N-Back always stays awake.</string>
+    <string name="settings_haptics_label">Vibration</string>
+    <string name="settings_haptics_detail">Short vibrations for taps, right and wrong moves, and finished puzzles.</string>
     <string name="settings_beta_games_label">Enable beta games</string>
     <string name="settings_beta_games_detail">Unlocks games that are still in testing. These may have rough edges.</string>
 

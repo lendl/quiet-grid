@@ -79,6 +79,22 @@ class SettingsRepositoryTest {
         assertTrue(repository.settings.first().betaGamesEnabled)
     }
 
+    @Test
+    fun `settings default to haptics disabled`() = runTest {
+        val repository = SettingsRepository(newDataStore(backgroundScope))
+
+        assertFalse(repository.settings.first().hapticsEnabled)
+    }
+
+    @Test
+    fun `setHapticsEnabled persists true`() = runTest {
+        val repository = SettingsRepository(newDataStore(backgroundScope))
+
+        repository.setHapticsEnabled(true)
+
+        assertTrue(repository.settings.first().hapticsEnabled)
+    }
+
     private fun newDataStore(scope: CoroutineScope) = preferencesDataStoreForTest(
         scope = scope,
         produceFile = { tempFolder.newFile("settings.preferences_pb") },

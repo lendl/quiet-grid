@@ -8,8 +8,11 @@ import android.os.Vibrator
 import android.os.VibratorManager
 import android.provider.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+
+val LocalHapticsEnabled = compositionLocalOf { false }
 
 private const val TAP_DURATION_MS = 20L
 private const val CORRECT_DURATION_MS = 35L
@@ -17,6 +20,7 @@ private const val INCORRECT_DURATION_MS = 45L
 
 class HapticController internal constructor(
     private val vibrator: Vibrator,
+    private val appEnabled: Boolean,
     private val systemEnabled: Boolean,
 ) {
     fun tapFeedback() = fire(tickEffect())
@@ -24,7 +28,7 @@ class HapticController internal constructor(
     fun incorrectFeedback() = fire(doubleClickEffect())
 
     private fun fire(effect: VibrationEffect) {
-        if (!systemEnabled) return
+        if (!appEnabled || !systemEnabled) return
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             vibrator.vibrate(effect, VibrationAttributes.createForUsage(VibrationAttributes.USAGE_TOUCH))
         } else {
@@ -63,9 +67,11 @@ private fun legacyHapticSettingEnabled(context: Context): Boolean =
 @Composable
 fun rememberHapticController(): HapticController {
     val context = LocalContext.current
-    return remember(context) {
+    val hapticsEnabled = LocalHapticsEnabled.current
+    return remember(context, hapticsEnabled) {
         HapticController(
             vibrator = defaultVibrator(context),
+            appEnabled = hapticsEnabled,
             systemEnabled = systemHapticsEnabled(context),
         )
     }

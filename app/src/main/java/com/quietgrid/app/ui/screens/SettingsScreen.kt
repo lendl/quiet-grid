@@ -268,6 +268,15 @@ fun PreferencesSection() {
 
         HorizontalDivider(Modifier.padding(vertical = 4.dp))
 
+        SettingsToggleRow(
+            label = stringResource(R.string.settings_haptics_label),
+            detail = stringResource(R.string.settings_haptics_detail),
+            checked = settings.hapticsEnabled,
+            onCheckedChange = { scope.launch { repositories.settingsRepository.setHapticsEnabled(it) } },
+        )
+
+        HorizontalDivider(Modifier.padding(vertical = 4.dp))
+
         DailyReminderSettings(settings)
 
         HorizontalDivider(Modifier.padding(vertical = 4.dp))

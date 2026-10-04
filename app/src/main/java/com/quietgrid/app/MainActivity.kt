@@ -15,6 +15,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
@@ -29,6 +30,7 @@ import com.quietgrid.app.data.ThemeMode
 import com.quietgrid.app.nav.AppNavHost
 import com.quietgrid.app.notifications.OPEN_TAB_DAILY
 import com.quietgrid.app.notifications.OPEN_TAB_EXTRA
+import com.quietgrid.app.ui.components.LocalHapticsEnabled
 import com.quietgrid.app.ui.theme.QuietGridTheme
 import com.quietgrid.app.ui.theme.ResolvedTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -108,10 +110,12 @@ class MainActivity : ComponentActivity() {
                     window.setBackgroundDrawable(ColorDrawable(windowBackground))
                     firstFrameReady = true
                 }
-                AppNavHost(
-                    openDailyTab = openDailyTab.value,
-                    onOpenDailyTabHandled = { openDailyTab.value = false },
-                )
+                CompositionLocalProvider(LocalHapticsEnabled provides settings.hapticsEnabled) {
+                    AppNavHost(
+                        openDailyTab = openDailyTab.value,
+                        onOpenDailyTabHandled = { openDailyTab.value = false },
+                    )
+                }
             }
         }
     }
