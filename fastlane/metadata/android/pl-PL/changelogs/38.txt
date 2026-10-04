@@ -1,0 +1,6 @@
+Wersja 1.8.1
+
+- Strony ucięte na małych ekranach można teraz przewijać
+- Tabela statystyk jest bardziej zwarta i mieści się na wąskich ekranach
+- Siatka w Zgadnij po liczbach mieści się teraz na ekranie
+- Poprawki błędów i stabilności

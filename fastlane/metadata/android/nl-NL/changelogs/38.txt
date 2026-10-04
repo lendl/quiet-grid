@@ -1,0 +1,6 @@
+Versie 1.8.1
+
+- Pagina's die op kleine schermen werden afgesneden, kun je nu scrollen
+- De statistiekentabel is compacter en past op smalle schermen
+- Het raster van Cijfers Raden past nu op het scherm
+- Bugfixes en stabiliteitsverbeteringen

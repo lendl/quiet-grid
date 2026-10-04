@@ -1,0 +1,6 @@
+Versione 1.8.1
+
+- Le pagine tagliate sugli schermi piccoli ora scorrono
+- La tabella delle statistiche è più compatta e si adatta agli schermi stretti
+- La griglia di Indovina con i numeri ora si adatta allo schermo
+- Correzioni di bug e miglioramenti della stabilità

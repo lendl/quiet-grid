@@ -1,0 +1,6 @@
+Version 1.8.1
+
+- Seiten, die auf kleinen Bildschirmen abgeschnitten waren, lassen sich jetzt scrollen
+- Die Statistiktabelle ist kompakter und passt auf schmale Bildschirme
+- Das Raster in Zahlenraten passt jetzt auf den Bildschirm
+- Fehlerbehebungen und Stabilitätsverbesserungen

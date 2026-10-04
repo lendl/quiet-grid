@@ -1,0 +1,6 @@
+Versão 1.8.1
+
+- Páginas que ficavam cortadas em telas pequenas agora podem ser roladas
+- A tabela de estatísticas está mais compacta e cabe em telas estreitas
+- A grade de Adivinhe por Números agora cabe na tela
+- Correções de erros e melhorias de estabilidade

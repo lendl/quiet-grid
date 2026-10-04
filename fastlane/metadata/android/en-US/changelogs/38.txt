@@ -1,0 +1,6 @@
+Version 1.8.1
+
+- Pages that were cut off on small screens now scroll
+- Stats table is more compact and fits narrow screens
+- Guess by Numbers grid now fits on the screen
+- Bug fixes and stability improvements

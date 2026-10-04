@@ -1,0 +1,6 @@
+Versión 1.8.1
+
+- Las páginas que se cortaban en pantallas pequeñas ahora se pueden desplazar
+- La tabla de estadísticas es más compacta y cabe en pantallas estrechas
+- La cuadrícula de Adivina por Números ahora cabe en la pantalla
+- Corrección de errores y mejoras de estabilidad

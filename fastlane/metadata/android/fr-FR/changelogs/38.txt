@@ -1,0 +1,6 @@
+Version 1.8.1
+
+- Les pages coupées sur les petits écrans défilent désormais
+- Le tableau des statistiques est plus compact et tient sur les écrans étroits
+- La grille de Devine par les Nombres tient désormais à l'écran
+- Corrections de bugs et améliorations de stabilité
