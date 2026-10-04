@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
@@ -116,7 +117,7 @@ private fun OverviewContent(
 ) {
     val overview = remember(statsByGame, selectedGame) { buildStatsOverview(selectedGame, statsByGame) }
 
-    Column(Modifier.fillMaxWidth()) {
+    Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
         StatsOverviewContent(overview, modifier = Modifier.padding(top = 16.dp))
 
         Text(

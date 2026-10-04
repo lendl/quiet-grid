@@ -16,7 +16,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.R
@@ -105,25 +107,10 @@ fun GuessByNumbersPlayScreen(
         }
 
         if (session != null) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-            ) {
-                if (session.status == GuessByNumbersStatus.LOST) {
-                    Text(
-                        "${stringResource(R.string.wordguess_reveal_word_label)}: ${session.targetWord.uppercase()}",
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                }
-                if (invalidFlash) {
-                    FeedbackText(
-                        text = stringResource(R.string.guessbynumbers_invalid_word_message),
-                        style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.error),
-                        isCorrect = false,
-                        isIncorrect = invalidFlash,
-                    )
-                }
-            }
+            GuessByNumbersMessageArea(
+                revealWord = session.targetWord.takeIf { session.status == GuessByNumbersStatus.LOST },
+                invalidFlash = invalidFlash,
+            )
         }
 
         if (session != null && session.status == GuessByNumbersStatus.PLAYING) {
@@ -149,4 +136,26 @@ fun GuessByNumbersPlayScreen(
             viewModel.endPuzzle()
         },
     )
+}
+
+@Composable
+internal fun GuessByNumbersMessageArea(revealWord: String?, invalidFlash: Boolean, modifier: Modifier = Modifier) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier.fillMaxWidth().padding(top = 8.dp),
+    ) {
+        if (revealWord != null) {
+            Text(
+                "${stringResource(R.string.wordguess_reveal_word_label)}: ${revealWord.uppercase()}",
+                style = MaterialTheme.typography.titleMedium,
+            )
+        }
+        FeedbackText(
+            text = stringResource(R.string.guessbynumbers_invalid_word_message),
+            style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.error),
+            isCorrect = false,
+            isIncorrect = invalidFlash,
+            modifier = if (invalidFlash) Modifier else Modifier.alpha(0f).clearAndSetSemantics {},
+        )
+    }
 }

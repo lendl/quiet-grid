@@ -2,6 +2,8 @@ package com.quietgrid.app.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -267,7 +269,7 @@ private fun GamePlayPickerTab(
     requestStartChallenger: () -> Unit,
     requestStartEndless: () -> Unit,
 ) {
-    Column(Modifier.fillMaxWidth().padding(16.dp)) {
+    Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(16.dp)) {
         Column {
             pickableDifficultiesFor(gameId).forEachIndexed { index, difficulty ->
                 val labelRes = when (gameId) {
@@ -411,7 +413,7 @@ private fun GameStatsTab(gameId: GameId) {
     val currentStats = stats ?: return
     val overview = remember(currentStats) { buildStatsOverview(gameId, mapOf(gameId to currentStats)) }
 
-    Column(Modifier.padding(16.dp)) {
+    Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(16.dp)) {
         StatsOverviewContent(overview)
 
         val challengerStatsTitleRes = when (gameId) {

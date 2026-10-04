@@ -220,7 +220,7 @@
     <string name="stats_header_subtitle">Statistieken voor dit puzzeltype</string>
     <string name="stats_solved">Opgelost</string>
     <string name="stats_streak">Streak</string>
-    <string name="stats_win_rate">Winstpercentage</string>
+    <string name="stats_win_rate">Winst %</string>
     <string name="stats_by_difficulty">Per moeilijkheid</string>
     <string name="stats_best_score">Beste score</string>
     <string name="stats_privacy">Privacy</string>

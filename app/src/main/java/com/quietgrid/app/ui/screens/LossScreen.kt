@@ -17,7 +17,9 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -270,10 +272,12 @@ fun LossScreen(
 
         Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
             Column(
-                Modifier.graphicsLayer {
-                    alpha = pageOpacity.value
-                    translationY = contentOffsetY.value
-                },
+                Modifier
+                    .graphicsLayer {
+                        alpha = pageOpacity.value
+                        translationY = contentOffsetY.value
+                    }
+                    .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 val sharedTransitionScope = LocalSharedTransitionScope.current

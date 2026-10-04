@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -23,6 +24,13 @@ import com.quietgrid.app.R
 
 private val MAX_TILE_SIZE = 40.dp
 private val TILE_GAP = 6.dp
+
+fun guessByNumbersTileSize(maxWidth: Dp, maxHeight: Dp, wordLength: Int, maxGuesses: Int, labelHeight: Dp): Dp {
+    val slotCount = wordLength + 2
+    val widthPerTile = (maxWidth - TILE_GAP * (slotCount - 1)) / slotCount
+    val heightPerTile = (maxHeight - TILE_GAP * (maxGuesses - 1)) / maxGuesses - labelHeight
+    return min(MAX_TILE_SIZE, min(widthPerTile, heightPerTile)).coerceAtLeast(0.dp)
+}
 
 @Composable
 fun GuessByNumbersLetterTile(letter: Char?, isActiveRow: Boolean, tileSize: Dp = MAX_TILE_SIZE) {
@@ -76,15 +84,14 @@ fun GuessByNumbersGrid(
 ) {
     val matchesLabel = stringResource(R.string.guessbynumbers_matches_label)
     val exactLabel = stringResource(R.string.guessbynumbers_exact_label)
-    val slotCount = wordLength + 2
+    val labelHeight = with(LocalDensity.current) { MaterialTheme.typography.labelSmall.lineHeight.toDp() }
     BoxWithConstraints(modifier) {
-        val availableWidth = maxWidth - TILE_GAP * (slotCount - 1)
-        val tileSize = min(MAX_TILE_SIZE, availableWidth / slotCount)
-        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        val tileSize = guessByNumbersTileSize(maxWidth, maxHeight, wordLength, maxGuesses, labelHeight)
+        Column(verticalArrangement = Arrangement.spacedBy(TILE_GAP)) {
             for (rowIndex in 0 until maxGuesses) {
                 val submitted = guesses.getOrNull(rowIndex)
                 val isCurrentRow = submitted == null && rowIndex == guesses.size
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(TILE_GAP)) {
                     for (colIndex in 0 until wordLength) {
                         val letter = when {
                             submitted != null -> submitted.guess.getOrNull(colIndex)
