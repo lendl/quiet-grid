@@ -12,7 +12,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.outlined.Lightbulb
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -39,6 +38,7 @@ import com.quietgrid.app.ui.components.EndPuzzleIconButton
 import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
 import com.quietgrid.app.ui.components.rememberHapticController
+import com.quietgrid.app.ui.components.LogoGridLoader
 
 @Composable
 fun ArrowEscapePlayScreen(
@@ -97,7 +97,7 @@ fun ArrowEscapePlayScreen(
                 }
                 IconButton(onClick = viewModel::onHint, enabled = !viewModel.isComputingHint) {
                     if (viewModel.isComputingHint) {
-                        CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+                        LogoGridLoader(size = 20.dp)
                     } else {
                         Icon(Icons.Outlined.Lightbulb, contentDescription = null)
                     }

@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +36,7 @@ import com.quietgrid.app.ui.components.EndPuzzleIconButton
 import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
 import com.quietgrid.app.ui.components.rememberHapticController
+import com.quietgrid.app.ui.components.LogoGridLoader
 
 @Composable
 fun TakuzuPlayScreen(
@@ -78,7 +78,7 @@ fun TakuzuPlayScreen(
             ) {
                 IconButton(onClick = { viewModel.toggleNextMoveHint() }, enabled = !viewModel.isComputingHint) {
                     if (viewModel.isComputingHint) {
-                        CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+                        LogoGridLoader(size = 20.dp)
                     } else {
                         Icon(
                             imageVector = Icons.Filled.Lightbulb,

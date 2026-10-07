@@ -24,7 +24,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -35,7 +34,6 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -106,6 +104,8 @@ import com.quietgrid.app.core.themes.themeIcon
 import com.quietgrid.app.games.wordsearch.WordSearchPlayScreen
 import com.quietgrid.app.ui.components.AppTab
 import com.quietgrid.app.ui.components.AppTopBar
+import com.quietgrid.app.ui.components.GamePageTopBar
+import com.quietgrid.app.ui.components.ReplacePuzzleSheet
 import com.quietgrid.app.ui.components.BottomNavBar
 import com.quietgrid.app.ui.components.ContinueSessionMiniBar
 import com.quietgrid.app.ui.components.pressScale
@@ -255,10 +255,11 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
                     val pickerGameId = GameId.entries.firstOrNull {
                         it.key == backStackEntry?.arguments?.getString("gameId")
                     }
-                    AppTopBar(
-                        title = pickerGameId?.let { stringResource(GameCatalog.games.first { meta -> meta.id == it }.titleRes) },
-                        onBack = { navController.popBackStack() },
-                    )
+                    if (pickerGameId != null) {
+                        GamePageTopBar(pickerGameId, onBack = { navController.popBackStack() })
+                    } else {
+                        AppTopBar(onBack = { navController.popBackStack() })
+                    }
                 }
                 currentRoute == Routes.PLAY -> Unit
                 currentRoute == Routes.COMPLETION || currentRoute == Routes.LOSS -> Unit
@@ -1258,61 +1259,38 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
     }
     }
 
+    val resumeActiveGame: () -> Unit = {
+        val activeGameId = activeGameKey?.let { key -> GameId.entries.firstOrNull { it.key == key } }
+        if (activeGameId != null) navController.navigate(resumeActiveRoute(activeGameId))
+    }
+
     val dailyRouteToStart = pendingDailyRoute
     if (dailyRouteToStart != null) {
-        AlertDialog(
-            onDismissRequest = { pendingDailyRoute = null },
-            title = { Text(stringResource(R.string.replace_dialog_title)) },
-            text = {
-                Text(
-                    stringResource(
-                        if (activeSession?.dailyDate != null) R.string.daily_replace_dialog_message else R.string.replace_dialog_message,
-                    ),
-                )
+        ReplacePuzzleSheet(
+            onContinue = {
+                pendingDailyRoute = null
+                resumeActiveGame()
             },
-            confirmButton = {
-                TextButton(onClick = {
-                    pendingDailyRoute = null
-                    navController.navigate(dailyRouteToStart)
-                }) { Text(stringResource(R.string.common_start_new_puzzle)) }
+            onStartNew = {
+                pendingDailyRoute = null
+                navController.navigate(dailyRouteToStart)
             },
-            dismissButton = {
-                TextButton(onClick = {
-                    pendingDailyRoute = null
-                    val activeGameId = activeGameKey?.let { key -> GameId.entries.firstOrNull { it.key == key } }
-                    if (activeGameId != null) navController.navigate(resumeActiveRoute(activeGameId))
-                }) { Text(stringResource(R.string.common_continue_puzzle)) }
-            },
+            onDismiss = { pendingDailyRoute = null },
         )
     }
 
     val mixToStart = pendingMixToStart
     if (mixToStart != null) {
-        AlertDialog(
-            onDismissRequest = { pendingMixToStart = null },
-            title = { Text(stringResource(R.string.replace_dialog_title)) },
-            text = {
-                Text(
-                    stringResource(
-                        if (activeSession?.dailyDate != null) R.string.daily_replace_dialog_message else R.string.replace_dialog_message,
-                    ),
-                )
+        ReplacePuzzleSheet(
+            onContinue = {
+                pendingMixToStart = null
+                resumeActiveGame()
             },
-            confirmButton = {
-                TextButton(onClick = {
-                    pendingMixToStart = null
-                    startMix(mixToStart)
-                }) { Text(stringResource(R.string.common_start_new_puzzle)) }
+            onStartNew = {
+                pendingMixToStart = null
+                startMix(mixToStart)
             },
-            dismissButton = {
-                TextButton(onClick = {
-                    pendingMixToStart = null
-                    val activeGameId = activeGameKey?.let { key -> GameId.entries.firstOrNull { it.key == key } }
-                    if (activeGameId != null) {
-                        navController.navigate(resumeActiveRoute(activeGameId))
-                    }
-                }) { Text(stringResource(R.string.common_continue_puzzle)) }
-            },
+            onDismiss = { pendingMixToStart = null },
         )
     }
 }

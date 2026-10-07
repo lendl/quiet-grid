@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +19,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.R
 import com.quietgrid.app.ui.analyzer.AnalyzerNavigationControls
 import com.quietgrid.app.ui.components.GameBackButton
+import com.quietgrid.app.ui.components.LogoGridLoader
 
 @Composable
 fun TakuzuAnalyzerScreen(snapshot: String?, onBack: () -> Unit) {
@@ -40,7 +40,7 @@ fun TakuzuAnalyzerScreen(snapshot: String?, onBack: () -> Unit) {
 
         when (val state = viewModel.state) {
             is TakuzuAnalyzerState.Loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
+                LogoGridLoader()
             }
             is TakuzuAnalyzerState.LoadFailed -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(stringResource(R.string.takuzu_analyzer_load_failed), style = MaterialTheme.typography.bodyLarge)

@@ -23,7 +23,6 @@
     <string name="common_end_puzzle">Encerrar quebra-cabeça</string>
     <string name="common_continue_puzzle">Continuar quebra-cabeça</string>
     <string name="common_start_new_puzzle">Começar novo quebra-cabeça</string>
-    <string name="replace_dialog_title">Substituir quebra-cabeça ativo?</string>
     <string name="replace_dialog_message">Você já tem um quebra-cabeça ativo. Pode continuar agora ou substituí-lo por um novo.</string>
 
     <!-- games tab -->
@@ -1065,7 +1064,6 @@
     <string name="mix_add_mode_chip_format">+ %1$s</string>
     <string name="mix_available_games_heading">Adicionar um Jogo</string>
     <string name="mix_available_games_empty">Todos os jogos já estão neste combinado.</string>
-    <string name="mix_entry_weight_label">Peso</string>
     <string name="mix_entry_remove_content_description">Remover</string>
     <string name="mix_entry_challenger_chip">Desafiante</string>
     <string name="mix_delete_button">Excluir Combinado</string>

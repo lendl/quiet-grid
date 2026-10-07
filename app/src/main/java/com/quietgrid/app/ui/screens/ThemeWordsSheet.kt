@@ -25,7 +25,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -67,6 +66,7 @@ import com.quietgrid.app.core.themes.themeLabelRes
 import kotlinx.coroutines.launch
 import java.text.Collator
 import java.util.Locale
+import com.quietgrid.app.ui.components.LogoGridLoader
 
 private enum class ThemeWordsPage { WORDS, SUGGEST }
 
@@ -92,7 +92,7 @@ fun ThemeWordsSheet(gameId: GameId, themeId: String, locale: String, onDismiss: 
             val currentWords = words
             when {
                 currentWords == null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
+                    LogoGridLoader()
                 }
                 page == ThemeWordsPage.WORDS -> ThemeWordsListPage(
                     themeId = themeId,

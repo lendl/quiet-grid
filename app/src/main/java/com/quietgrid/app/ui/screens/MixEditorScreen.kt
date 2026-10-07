@@ -1,6 +1,5 @@
 package com.quietgrid.app.ui.screens
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,22 +10,21 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -44,8 +42,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
@@ -65,14 +61,17 @@ import com.quietgrid.app.core.mix.MixEntry
 import com.quietgrid.app.core.mix.MixEntryMode
 import com.quietgrid.app.core.mix.MixEntryOption
 import com.quietgrid.app.core.mix.allModeOptionsFor
+import com.quietgrid.app.core.mix.entrySharePercent
+import com.quietgrid.app.core.mix.gameSharePercent
+import com.quietgrid.app.core.mix.stepEntryWeight
 import com.quietgrid.app.core.mix.groupEntriesByKnownGame
 import com.quietgrid.app.core.mix.missingModeOptionsFor
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.RepositoriesViewModel
 import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
 
 internal const val MIX_NAME_FIELD_TEST_TAG = "mix_name_field"
+private const val MAX_MIX_ENTRY_WEIGHT = 10
 
 @Composable
 fun MixEditorScreen(mixId: String, onDone: () -> Unit, renameTrigger: Int = 0, deleteTrigger: Int = 0) {
@@ -125,7 +124,6 @@ internal fun MixEditorContent(
     }
 
     val groupedEntries = remember(entries) { groupEntriesByKnownGame(entries) }
-    val orderedEntries = remember(groupedEntries) { groupedEntries.flatMap { it.second } }
 
     val availableGames = remember(entries, settings.betaGamesEnabled) {
         val usedGameIds = entries.map { it.gameId }.toSet()
@@ -141,15 +139,8 @@ internal fun MixEditorContent(
         expandedAvailableGameId = null
     }
 
-    fun updateWeight(gameId: String, mode: MixEntryMode, difficulty: String?, newWeight: Int) {
-        entries = entries.map {
-            if (it.gameId == gameId && it.mode == mode && it.difficulty == difficulty) it.copy(weight = newWeight) else it
-        }
-        persist(newEntries = entries)
-    }
-
-    fun removeEntry(gameId: String, mode: MixEntryMode, difficulty: String?) {
-        entries = entries.filterNot { it.gameId == gameId && it.mode == mode && it.difficulty == difficulty }
+    fun stepWeight(entry: MixEntry, delta: Int) {
+        entries = stepEntryWeight(entries, entry, delta)
         persist(newEntries = entries)
     }
 
@@ -172,14 +163,6 @@ internal fun MixEditorContent(
             )
         }
 
-        Box(Modifier.fillMaxWidth().padding(top = 20.dp), contentAlignment = Alignment.Center) {
-            MixPie(entries = orderedEntries, modifier = Modifier.size(160.dp))
-        }
-
-        if (orderedEntries.isNotEmpty()) {
-            MixPieLegend(groupedEntries = groupedEntries, modifier = Modifier.padding(top = 12.dp))
-        }
-
         if (entries.isEmpty()) {
             AvailableGamesSection(
                 availableGames = availableGames,
@@ -199,8 +182,8 @@ internal fun MixEditorContent(
                     MixGameGroup(
                         gameId = gameId,
                         entries = groupEntries,
-                        onWeightChange = ::updateWeight,
-                        onRemove = ::removeEntry,
+                        allEntries = entries,
+                        onStepWeight = ::stepWeight,
                         onAddMode = { option -> addEntry(gameId, option) },
                     )
                 }
@@ -328,20 +311,10 @@ private fun AvailableGamesSection(
 }
 
 @Composable
-private fun mixEntryColor(entry: MixEntry): Color {
-    val base = if (entry.mode == MixEntryMode.CHALLENGER) {
-        MaterialTheme.colorScheme.primary
-    } else {
-        val difficulty = Difficulty.entries.firstOrNull { it.key == entry.difficulty } ?: Difficulty.EASY
-        difficultyColor(difficulty)
-    }
-    return shadeForGame(base, entry.gameId)
-}
-
-private fun shadeForGame(base: Color, gameId: String): Color {
-    val bucket = (gameId.hashCode() and 0x7fffffff) % 5
-    val amount = (bucket - 2) * 0.08f
-    return if (amount >= 0) lerp(base, Color.Black, amount) else lerp(base, Color.White, -amount)
+private fun mixEntryColor(entry: MixEntry): Color = if (entry.mode == MixEntryMode.CHALLENGER) {
+    MaterialTheme.colorScheme.primary
+} else {
+    difficultyColor(Difficulty.entries.firstOrNull { it.key == entry.difficulty } ?: Difficulty.EASY)
 }
 
 @Composable
@@ -352,75 +325,34 @@ private fun mixEntryModeLabel(gameId: GameId, entry: MixEntry): String = if (ent
     stringResource(gameDifficultyLabelRes(gameId, difficulty))
 }
 
-@Composable
-private fun MixPie(entries: List<MixEntry>, modifier: Modifier = Modifier) {
-    val outlineColor = MaterialTheme.colorScheme.outlineVariant
-    val separatorColor = MaterialTheme.colorScheme.surface
-    val wedges = entries.map { entry -> entry.weight to mixEntryColor(entry) }
-    val totalWeight = wedges.sumOf { it.first }.coerceAtLeast(1)
-
-    Canvas(modifier) {
-        if (wedges.isEmpty()) {
-            drawArc(color = outlineColor, startAngle = 0f, sweepAngle = 360f, useCenter = true)
-            return@Canvas
-        }
-        val separatorStroke = Stroke(width = 2.dp.toPx())
-        var startAngle = -90f
-        wedges.forEach { (weight, color) ->
-            val sweep = 360f * weight / totalWeight
-            drawArc(color = color, startAngle = startAngle, sweepAngle = sweep, useCenter = true)
-            drawArc(color = separatorColor, startAngle = startAngle, sweepAngle = sweep, useCenter = true, style = separatorStroke)
-            startAngle += sweep
-        }
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun MixPieLegend(groupedEntries: List<Pair<GameId, List<MixEntry>>>, modifier: Modifier = Modifier) {
-    FlowRow(
-        modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalArrangement = Arrangement.spacedBy(6.dp),
-    ) {
-        groupedEntries.forEach { (gameId, groupEntries) ->
-            val gameTitle = stringResource(GameCatalog.games.first { it.id == gameId }.titleRes)
-            groupEntries.forEach { entry ->
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(Modifier.size(8.dp).clip(CircleShape).background(mixEntryColor(entry)))
-                    Text(
-                        "$gameTitle · ${mixEntryModeLabel(gameId, entry)}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(start = 6.dp),
-                    )
-                }
-            }
-        }
-    }
-}
-
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun MixGameGroup(
     gameId: GameId,
     entries: List<MixEntry>,
-    onWeightChange: (String, MixEntryMode, String?, Int) -> Unit,
-    onRemove: (String, MixEntryMode, String?) -> Unit,
+    allEntries: List<MixEntry>,
+    onStepWeight: (MixEntry, Int) -> Unit,
     onAddMode: (MixEntryOption) -> Unit,
 ) {
     val gameTitleRes = remember(gameId) { GameCatalog.games.first { it.id == gameId }.titleRes }
     val missingOptions = remember(gameId, entries) { missingModeOptionsFor(gameId, entries) }
 
     Column(Modifier.fillMaxWidth()) {
-        Text(stringResource(gameTitleRes), style = MaterialTheme.typography.titleMedium)
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(gameTitleRes), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+            Text(
+                stringResource(R.string.mix_share_percent, gameSharePercent(gameId.key, allEntries)),
+                style = MaterialTheme.typography.titleMedium,
+            )
+        }
 
         entries.forEach { entry ->
             MixEntryRow(
                 gameId = gameId,
                 entry = entry,
-                onWeightChange = { newWeight -> onWeightChange(entry.gameId, entry.mode, entry.difficulty, newWeight) },
-                onRemove = { onRemove(entry.gameId, entry.mode, entry.difficulty) },
+                sharePercent = entrySharePercent(entry, allEntries),
+                onDecrease = { onStepWeight(entry, -1) },
+                onIncrease = { onStepWeight(entry, 1) },
             )
         }
 
@@ -448,40 +380,60 @@ private fun MixGameGroup(
 }
 
 @Composable
-private fun MixEntryRow(gameId: GameId, entry: MixEntry, onWeightChange: (Int) -> Unit, onRemove: () -> Unit) {
+private fun MixEntryRow(
+    gameId: GameId,
+    entry: MixEntry,
+    sharePercent: Int,
+    onDecrease: () -> Unit,
+    onIncrease: () -> Unit,
+) {
     val color = mixEntryColor(entry)
     val modeLabel = mixEntryModeLabel(gameId, entry)
+    val canIncrease = entry.weight < MAX_MIX_ENTRY_WEIGHT
 
     Column(Modifier.fillMaxWidth().padding(top = 8.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Box(Modifier.size(10.dp).clip(CircleShape).background(color))
             Text(
                 modeLabel,
                 style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(start = 8.dp).weight(1f),
+                modifier = Modifier.weight(1f),
             )
-            IconButton(onClick = onRemove) {
+            Text(
+                stringResource(R.string.mix_share_percent, sharePercent),
+                style = MaterialTheme.typography.titleSmall,
+                modifier = Modifier.padding(end = 4.dp),
+            )
+            IconButton(onClick = onDecrease) {
                 Icon(
-                    Icons.Filled.Close,
-                    contentDescription = stringResource(R.string.mix_entry_remove_content_description),
+                    Icons.Filled.Remove,
+                    contentDescription = stringResource(
+                        if (entry.weight <= 1) R.string.mix_entry_remove_content_description else R.string.mix_entry_decrease_content_description,
+                    ),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+            IconButton(onClick = onIncrease, enabled = canIncrease) {
+                Icon(
+                    Icons.Filled.Add,
+                    contentDescription = stringResource(R.string.mix_entry_increase_content_description),
+                    tint = if (canIncrease) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.outline,
+                )
+            }
         }
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                stringResource(R.string.mix_entry_weight_label),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.labelSmall,
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .height(4.dp)
+                .clip(RoundedCornerShape(2.dp))
+                .background(MaterialTheme.colorScheme.surfaceContainerHighest),
+        ) {
+            Box(
+                Modifier
+                    .fillMaxWidth(sharePercent / 100f)
+                    .height(4.dp)
+                    .clip(RoundedCornerShape(2.dp))
+                    .background(color),
             )
-            Slider(
-                value = entry.weight.toFloat().coerceIn(1f, 10f),
-                onValueChange = { onWeightChange(it.roundToInt().coerceIn(1, 10)) },
-                valueRange = 1f..10f,
-                steps = 8,
-                modifier = Modifier.weight(1f).padding(horizontal = 8.dp),
-            )
-            Text(entry.weight.toString(), style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(start = 4.dp))
         }
     }
 }

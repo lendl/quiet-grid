@@ -45,21 +45,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
-import com.quietgrid.app.ui.theme.LocalIsDarkTheme
+import com.quietgrid.app.games.animaldoku.rememberAnimalDokuRegionColors
 import com.quietgrid.app.ui.theme.LocalIsPencilTheme
 import kotlin.math.floor
 
 private const val DOUBLE_TAP_WINDOW_MS = 300L
-
-private val REGION_PALETTE_LIGHT = listOf(
-    Color(0xFF56B4E9), Color(0xFF0072B2), Color(0xFF009E73), Color(0xFFCC79A7),
-    Color(0xFFE69F00), Color(0xFF882255), Color(0xFF9C7A00), Color(0xFF999999), Color(0xFFD55E00),
-)
-
-private val REGION_PALETTE_DARK = listOf(
-    Color(0xFFE69F00), Color(0xFF56B4E9), Color(0xFF009E73), Color(0xFFF0E442),
-    Color(0xFF0072B2), Color(0xFFD55E00), Color(0xFFCC79A7), Color(0xFF999999), Color(0xFF882255),
-)
 
 private fun offsetToCell(offset: Offset, cellSizePx: Float, size: Int): Pair<Int, Int>? {
     val col = floor(offset.x / cellSizePx).toInt()
@@ -78,9 +68,7 @@ fun StarBattleGrid(
     onCellDoubleTap: (Int, Int) -> Unit,
 ) {
     val isPencilTheme = LocalIsPencilTheme.current
-    val isDarkTheme = LocalIsDarkTheme.current
-    val regionPalette = if (isDarkTheme) REGION_PALETTE_DARK else REGION_PALETTE_LIGHT
-    val regionAlpha = if (isDarkTheme) 0.55f else 0.85f
+    val regionColors = rememberAnimalDokuRegionColors(regions)
 
     BoxWithConstraints(contentAlignment = Alignment.Center) {
         val cellSize = min(maxWidth / size, maxHeight / size)
@@ -168,7 +156,7 @@ fun StarBattleGrid(
                 for (col in 0 until size) {
                     val region = regions[row][col]
                     val cellState = cells[row][col]
-                    val backgroundColor = if (isPencilTheme) MaterialTheme.colorScheme.surface else regionPalette[region % regionPalette.size].copy(alpha = regionAlpha)
+                    val backgroundColor = if (isPencilTheme) MaterialTheme.colorScheme.surface else regionColors[region]
 
                     StarBattleAnimatedCell(
                         cellState = cellState,

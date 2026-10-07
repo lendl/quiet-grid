@@ -23,7 +23,6 @@
     <string name="common_end_puzzle">Zakończ łamigłówkę</string>
     <string name="common_continue_puzzle">Kontynuuj łamigłówkę</string>
     <string name="common_start_new_puzzle">Rozpocznij nową łamigłówkę</string>
-    <string name="replace_dialog_title">Zastąpić aktywną łamigłówkę?</string>
     <string name="replace_dialog_message">Masz już aktywną łamigłówkę. Możesz ją teraz kontynuować lub zastąpić nową.</string>
 
     <!-- games tab -->
@@ -1075,7 +1074,6 @@
     <string name="mix_add_mode_chip_format">+ %1$s</string>
     <string name="mix_available_games_heading">Dodaj Grę</string>
     <string name="mix_available_games_empty">Wszystkie gry są już w tym miksie.</string>
-    <string name="mix_entry_weight_label">Waga</string>
     <string name="mix_entry_remove_content_description">Usuń</string>
     <string name="mix_entry_challenger_chip">Pretendent</string>
     <string name="mix_delete_button">Usuń Miks</string>

@@ -10,15 +10,18 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.AlertDialog
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Timer
+import androidx.compose.material3.Icon
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -87,6 +90,7 @@ import com.quietgrid.app.ui.components.QuickStartContent
 import com.quietgrid.app.ui.components.StatGroup
 import com.quietgrid.app.ui.components.StatItem
 import com.quietgrid.app.ui.components.QuickStartSheet
+import com.quietgrid.app.ui.components.ReplacePuzzleSheet
 import kotlinx.coroutines.launch
 
 private enum class GamePageTab { PLAY, RULES, STATS, SETTINGS }
@@ -158,57 +162,35 @@ fun PuzzlePickerScreen(
         )
     }
 
+    val resumeActiveGame: () -> Unit = {
+        val activeGameId = activeGameKey?.let { key -> GameId.entries.firstOrNull { it.key == key } }
+        if (activeGameId != null) onResumeActiveGame(activeGameId)
+    }
     val difficultyToStart = pendingDifficulty
     if (difficultyToStart != null) {
-        AlertDialog(
-            onDismissRequest = { pendingDifficulty = null },
-            title = { Text(stringResource(R.string.replace_dialog_title)) },
-            text = {
-                Text(
-                    stringResource(
-                        if (activeSession?.dailyDate != null) R.string.daily_replace_dialog_message else R.string.replace_dialog_message,
-                    ),
-                )
+        ReplacePuzzleSheet(
+            onContinue = {
+                pendingDifficulty = null
+                resumeActiveGame()
             },
-            confirmButton = {
-                TextButton(onClick = {
-                    pendingDifficulty = null
-                    onPickDifficulty(difficultyToStart)
-                }) { Text(stringResource(R.string.common_start_new_puzzle)) }
+            onStartNew = {
+                pendingDifficulty = null
+                onPickDifficulty(difficultyToStart)
             },
-            dismissButton = {
-                TextButton(onClick = {
-                    pendingDifficulty = null
-                    val activeGameId = activeGameKey?.let { key -> GameId.entries.firstOrNull { it.key == key } }
-                    if (activeGameId != null) onResumeActiveGame(activeGameId)
-                }) { Text(stringResource(R.string.common_continue_puzzle)) }
-            },
+            onDismiss = { pendingDifficulty = null },
         )
     }
     pendingStart?.let { startMode ->
-        AlertDialog(
-            onDismissRequest = { pendingStart = null },
-            title = { Text(stringResource(R.string.replace_dialog_title)) },
-            text = {
-                Text(
-                    stringResource(
-                        if (activeSession?.dailyDate != null) R.string.daily_replace_dialog_message else R.string.replace_dialog_message,
-                    ),
-                )
+        ReplacePuzzleSheet(
+            onContinue = {
+                pendingStart = null
+                resumeActiveGame()
             },
-            confirmButton = {
-                TextButton(onClick = {
-                    pendingStart = null
-                    startMode()
-                }) { Text(stringResource(R.string.common_start_new_puzzle)) }
+            onStartNew = {
+                pendingStart = null
+                startMode()
             },
-            dismissButton = {
-                TextButton(onClick = {
-                    pendingStart = null
-                    val activeGameId = activeGameKey?.let { key -> GameId.entries.firstOrNull { it.key == key } }
-                    if (activeGameId != null) onResumeActiveGame(activeGameId)
-                }) { Text(stringResource(R.string.common_continue_puzzle)) }
-            },
+            onDismiss = { pendingStart = null },
         )
     }
 
@@ -314,12 +296,7 @@ private fun GamePlayPickerTab(
                         .padding(vertical = 18.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Box(
-                        Modifier
-                            .size(10.dp)
-                            .clip(CircleShape)
-                            .background(difficultyColor(difficulty)),
-                    )
+                    DifficultyLevelBlock(difficulty)
                     Column(Modifier.padding(start = 14.dp)) {
                         Text(stringResource(labelRes), style = MaterialTheme.typography.titleLarge)
                         Text(
@@ -371,6 +348,29 @@ private fun GamePlayPickerTab(
 }
 
 @Composable
+private fun DifficultyLevelBlock(difficulty: Difficulty) {
+    val filledCount = difficulty.ordinal + 1
+    val fillColor = difficultyColor(difficulty)
+    val emptyColor = MaterialTheme.colorScheme.surfaceContainerHighest
+    val squareShape = RoundedCornerShape(percent = 30)
+    Column(Modifier.size(22.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        repeat(2) { row ->
+            Row(Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                repeat(2) { col ->
+                    Box(
+                        Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                            .clip(squareShape)
+                            .background(if (row * 2 + col < filledCount) fillColor else emptyColor),
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
 private fun PickerModeRow(label: String, description: String, detail: String?, onClick: () -> Unit) {
     HorizontalDivider()
     Row(
@@ -380,11 +380,11 @@ private fun PickerModeRow(label: String, description: String, detail: String?, o
             .padding(vertical = 18.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(
-            Modifier
-                .size(10.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primary),
+        Icon(
+            Icons.Outlined.Timer,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(22.dp),
         )
         Column(Modifier.padding(start = 14.dp)) {
             Text(label, style = MaterialTheme.typography.titleLarge)

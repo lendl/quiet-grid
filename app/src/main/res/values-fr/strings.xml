@@ -22,7 +22,6 @@
     <string name="common_end_puzzle">Terminer le puzzle</string>
     <string name="common_continue_puzzle">Continuer le puzzle</string>
     <string name="common_start_new_puzzle">Commencer un nouveau puzzle</string>
-    <string name="replace_dialog_title">Remplacer le puzzle actif ?</string>
     <string name="replace_dialog_message">Vous avez déjà un puzzle actif. Vous pouvez le continuer maintenant ou le remplacer par un nouveau puzzle.</string>
 
     <string name="games_subtitle">Choisissez un puzzle et gardez votre partie active à portée de main.</string>
@@ -1053,7 +1052,6 @@
     <string name="mix_add_mode_chip_format">+ %1$s</string>
     <string name="mix_available_games_heading">Ajouter un Jeu</string>
     <string name="mix_available_games_empty">Tous les jeux sont déjà dans ce mix.</string>
-    <string name="mix_entry_weight_label">Poids</string>
     <string name="mix_entry_remove_content_description">Retirer</string>
     <string name="mix_entry_challenger_chip">Challenger</string>
     <string name="mix_delete_button">Supprimer le Mix</string>

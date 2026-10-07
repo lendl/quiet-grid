@@ -23,7 +23,6 @@
     <string name="common_end_puzzle">End puzzle</string>
     <string name="common_continue_puzzle">Continue Puzzle</string>
     <string name="common_start_new_puzzle">Start New Puzzle</string>
-    <string name="replace_dialog_title">Replace active puzzle?</string>
     <string name="replace_dialog_message">You already have an active puzzle. You can continue it now or replace it with a new puzzle.</string>
 
     <!-- games tab -->
@@ -34,6 +33,8 @@
     <string name="games_category_word">Word</string>
     <string name="games_category_memory">Memory</string>
     <string name="games_category_spatial">Spatial</string>
+    <string name="replace_sheet_title">Puzzle in progress</string>
+    <string name="replace_sheet_time_played">%1$s played</string>
     <string name="games_active_puzzle_waiting">Your puzzle is waiting</string>
     <string name="mix_card_entry_count">%1$d games</string>
     <string name="mix_play_button">Play</string>
@@ -1114,8 +1115,10 @@
     <string name="mix_add_mode_chip_format">+ %1$s</string>
     <string name="mix_available_games_heading">Add a Game</string>
     <string name="mix_available_games_empty">All games are already in this mix.</string>
-    <string name="mix_entry_weight_label">Weight</string>
     <string name="mix_entry_remove_content_description">Remove</string>
+    <string name="mix_entry_increase_content_description">Increase chance</string>
+    <string name="mix_entry_decrease_content_description">Decrease chance</string>
+    <string name="mix_share_percent">%1$d%%</string>
     <string name="mix_entry_challenger_chip">Challenger</string>
     <string name="mix_delete_button">Delete Mix</string>
     <string name="mix_delete_confirm_title">Delete this mix?</string>
