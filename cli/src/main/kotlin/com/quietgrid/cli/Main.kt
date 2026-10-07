@@ -6,6 +6,7 @@ import com.quietgrid.cli.arrowescape.generateArrowEscapePuzzle
 import com.quietgrid.cli.arrowescape.toEntry
 import com.quietgrid.cli.sudoku.generateSudokuPuzzle
 import com.quietgrid.cli.takuzu.generateTakuzuPuzzle
+import com.quietgrid.cli.whodidit.generateWhoDidItPuzzle
 import com.quietgrid.cli.arrowescape.arrowEscapeSizesForDifficulty
 import com.quietgrid.cli.starbattle.generateStarBattleK1PuzzleForTier
 import com.quietgrid.cli.starbattle.generateStarBattleSolution
@@ -22,8 +23,10 @@ import com.quietgrid.engine.starbattle.classifyStarBattleK2Grade
 import com.quietgrid.engine.sudoku.SudokuPuzzleEntry
 import com.quietgrid.engine.takuzu.TakuzuPuzzleEntry
 import com.quietgrid.engine.themeclear.toBankEntry
+import com.quietgrid.engine.whodidit.WhoDidItPuzzleEntry
 import com.quietgrid.engine.wordsearch.toBankEntry
 import com.quietgrid.engine.wordsearch.toPuzzleEntry
+import kotlin.random.Random
 
 data class GenerateCommand(
     val game: String,
@@ -33,6 +36,7 @@ data class GenerateCommand(
     val locale: String,
     val fillTo: Int? = null,
     val threads: Int = Runtime.getRuntime().availableProcessors(),
+    val theme: String? = null,
 )
 
 private fun requireFlag(args: Array<String>, flag: String): String {
@@ -48,7 +52,7 @@ private fun optionalFlag(args: Array<String>, flag: String, default: String): St
 
 fun parseArgs(args: Array<String>): GenerateCommand {
     require(args.isNotEmpty() && args[0] == "generate") {
-        "Usage: generate --game <id> --difficulty <d> [--count <n>] [--out <dir>] [--locale <l>] [--fill-to <n>] [--threads <n>]"
+        "Usage: generate --game <id> --difficulty <d> [--count <n>] [--out <dir>] [--locale <l>] [--fill-to <n>] [--threads <n>] [--theme <id>]"
     }
     return GenerateCommand(
         game = requireFlag(args, "--game"),
@@ -58,6 +62,7 @@ fun parseArgs(args: Array<String>): GenerateCommand {
         locale = optionalFlag(args, "--locale", "en"),
         fillTo = optionalFlag(args, "--fill-to", "").toIntOrNull(),
         threads = optionalFlag(args, "--threads", "${Runtime.getRuntime().availableProcessors()}").toInt(),
+        theme = optionalFlag(args, "--theme", "").ifEmpty { null },
     )
 }
 
@@ -342,6 +347,23 @@ fun main(args: Array<String>) {
                 .mapValues { (themeId, quota) -> quota - entries.count { it.themeId == themeId } }
                 .filterValues { it > 0 }
             if (shortfall.isNotEmpty()) println("Themes still short: $shortfall")
+        }
+        "whodidit" -> {
+            val state = GenerationState("${command.outDir}/.generation-state/whodidit.json")
+            val outFile = "${command.outDir}/whodidit_puzzles.json"
+            val startedAt = System.currentTimeMillis()
+            val entries = mutableListOf<WhoDidItPuzzleEntry>()
+            var attempts = 0
+            while (entries.size < command.count && attempts < command.count * 5) {
+                attempts++
+                val candidate = generateWhoDidItPuzzle(difficulty, command.theme, Random.Default) ?: continue
+                if (state.hasTried(candidate.id)) continue
+                state.recordTried(candidate.id, "valid")
+                entries += candidate
+            }
+            state.save()
+            appendPuzzleEntries(outFile, entries, WhoDidItPuzzleEntry.serializer()) { it.id }
+            println("Generated ${entries.size}/${command.count} whodidit puzzles at ${difficulty.key} in ${System.currentTimeMillis() - startedAt}ms into $outFile")
         }
         else -> error("Unknown or not-yet-wired game '${command.game}'.")
     }

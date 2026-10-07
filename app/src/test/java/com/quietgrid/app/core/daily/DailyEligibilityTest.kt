@@ -17,9 +17,9 @@ class DailyEligibilityTest {
     }
 
     @Test
-    fun `allowlist is the five launch games`() {
+    fun `allowlist is the launch games plus whodidit`() {
         assertEquals(
-            setOf(GameId.ANIMALDOKU, GameId.SUDOKU, GameId.TAKUZU, GameId.WORDSEARCH, GameId.WORDGUESS),
+            setOf(GameId.ANIMALDOKU, GameId.SUDOKU, GameId.TAKUZU, GameId.WORDSEARCH, GameId.WORDGUESS, GameId.WHODIDIT),
             DAILY_GAMES,
         )
     }

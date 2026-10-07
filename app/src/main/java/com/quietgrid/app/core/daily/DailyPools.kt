@@ -6,6 +6,7 @@ import com.quietgrid.app.core.GameId
 import com.quietgrid.app.games.animaldoku.AnimalDokuPuzzleBank
 import com.quietgrid.app.games.sudoku.SudokuPuzzleBank
 import com.quietgrid.app.games.takuzu.TakuzuPuzzleBank
+import com.quietgrid.app.games.whodidit.WhoDidItPuzzleBank
 import com.quietgrid.app.games.wordguess.WordGuessPuzzleBank
 import com.quietgrid.app.games.wordguess.currentWordGuessLocale
 import com.quietgrid.app.games.wordsearch.WordSearchPuzzleBank
@@ -16,6 +17,7 @@ object DailyPools {
         GameId.SUDOKU -> SudokuPuzzleBank.dailyPool(context, difficulty).size
         GameId.TAKUZU -> TakuzuPuzzleBank.dailyPool(context, difficulty).size
         GameId.ANIMALDOKU -> AnimalDokuPuzzleBank.dailyPool(context, difficulty).size
+        GameId.WHODIDIT -> WhoDidItPuzzleBank.dailyPool(context, difficulty).size
         GameId.WORDGUESS -> WordGuessPuzzleBank.dailyPool(context, currentWordGuessLocale(puzzleLanguage), difficulty).size
         GameId.WORDSEARCH -> WordSearchPuzzleBank.dailyPoolSize(context, currentWordSearchLocale(puzzleLanguage), difficulty)
         else -> 0

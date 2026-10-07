@@ -10,6 +10,7 @@ val DAILY_GAMES: Set<GameId> = setOf(
     GameId.TAKUZU,
     GameId.WORDSEARCH,
     GameId.WORDGUESS,
+    GameId.WHODIDIT,
 )
 
 fun dailyEligibleGames(): List<GameId> =

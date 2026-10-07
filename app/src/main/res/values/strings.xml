@@ -1063,6 +1063,10 @@
     <string name="starbattle_loss_abandoned_eyebrow">Puzzle ended</string>
     <string name="starbattle_loss_abandoned_title">Puzzle abandoned</string>
     <string name="starbattle_loss_abandoned_body">You ended this puzzle before it was finished.</string>
+    <string name="whodidit_loss_abandoned_eyebrow">Case ended</string>
+    <string name="whodidit_loss_abandoned_title">Case left open</string>
+    <string name="whodidit_loss_abandoned_body">You ended this case before it was solved.</string>
+    <string name="whodidit_completion_case_label">Case closed</string>
     <string name="starbattle_loss_rule_failure_eyebrow">Puzzle lost</string>
     <string name="starbattle_loss_rule_failure_title">Out of lives</string>
     <string name="starbattle_loss_rule_failure_body">Too many stars landed in the wrong place.</string>
@@ -1258,4 +1262,526 @@
     <string name="theme_words_unreport">Remove %1$s from the report</string>
     <string name="theme_words_github_note">Opens a GitHub issue in your browser. You need a free GitHub account to submit it.</string>
     <string name="theme_words_open_issue">Open GitHub issue</string>
+    <!-- whodidit -->
+    <string name="whodidit_theme_bakery_title">Bakery Mischief</string>
+    <string-array name="whodidit_theme_bakery_suspects">
+        <item>Pip</item>
+        <item>Rosa</item>
+        <item>Milo</item>
+        <item>Tilly</item>
+        <item>Otto</item>
+        <item>Nina</item>
+        <item>Bram</item>
+    </string-array>
+    <string-array name="whodidit_theme_bakery_places">
+        <item>Pantry</item>
+        <item>Courtyard</item>
+        <item>Storeroom</item>
+        <item>Rooftop</item>
+        <item>Back Room</item>
+        <item>Garden</item>
+        <item>Cold Room</item>
+    </string-array>
+    <string-array name="whodidit_theme_bakery_place_preps">
+        <item>in</item>
+        <item>in</item>
+        <item>in</item>
+        <item>on</item>
+        <item>in</item>
+        <item>in</item>
+        <item>in</item>
+    </string-array>
+    <string-array name="whodidit_theme_bakery_items">
+        <item>Flour Bin</item>
+        <item>Whisk</item>
+        <item>Apron</item>
+        <item>Cake Stand</item>
+        <item>Flour Sack</item>
+        <item>Spoon</item>
+        <item>Oven Tray</item>
+    </string-array>
+    <string-array name="whodidit_theme_bakery_motives">
+        <item>Hunger</item>
+        <item>Boredom</item>
+        <item>Pride</item>
+        <item>Spite</item>
+        <item>Jealousy</item>
+        <item>Mischief</item>
+        <item>Greed</item>
+    </string-array>
+    <string name="whodidit_theme_bakery_case1_title">The Great Cake Caper</string>
+    <string name="whodidit_theme_bakery_case1_question">Who swiped the birthday cake?</string>
+    <string name="whodidit_theme_bakery_case1_culprit">the culprit</string>
+    <string name="whodidit_theme_bakery_case1_crime_place">The cake vanished from the %2$s</string>
+    <string name="whodidit_theme_bakery_case1_crime_item">The cake was swiped using the %1$s</string>
+    <string name="whodidit_theme_bakery_case1_crime_motive">The culprit acted out of %1$s</string>
+    <string name="whodidit_theme_bakery_case1_reveal">%1$s swiped the birthday cake from the %3$s using the %4$s.</string>
+    <string name="whodidit_theme_bakery_case1_reveal_motive">%1$s swiped the birthday cake from the %3$s using the %4$s, out of %5$s.</string>
+    <string name="whodidit_theme_farm_title">Farm Mischief</string>
+    <string-array name="whodidit_theme_farm_suspects">
+        <item>Hazel</item>
+        <item>Cooper</item>
+        <item>Daisy</item>
+        <item>Walt</item>
+        <item>Mabel</item>
+        <item>Jed</item>
+        <item>Clover</item>
+    </string-array>
+    <string-array name="whodidit_theme_farm_places">
+        <item>Barn</item>
+        <item>Meadow</item>
+        <item>Silo</item>
+        <item>Orchard</item>
+        <item>Coop</item>
+        <item>Pond</item>
+        <item>Stable</item>
+    </string-array>
+    <string-array name="whodidit_theme_farm_place_preps">
+        <item>in</item>
+        <item>in</item>
+        <item>in</item>
+        <item>in</item>
+        <item>in</item>
+        <item>at</item>
+        <item>in</item>
+    </string-array>
+    <string-array name="whodidit_theme_farm_items">
+        <item>Milk Churn</item>
+        <item>Bucket</item>
+        <item>Rake</item>
+        <item>Feed Sack</item>
+        <item>Lasso</item>
+        <item>Shovel</item>
+        <item>Plank</item>
+    </string-array>
+    <string-array name="whodidit_theme_farm_motives">
+        <item>Hunger</item>
+        <item>Boredom</item>
+        <item>Mischief</item>
+        <item>Spite</item>
+        <item>Envy</item>
+        <item>Curiosity</item>
+        <item>Greed</item>
+    </string-array>
+    <string name="whodidit_theme_farm_case1_title">The Great Hen Escape</string>
+    <string name="whodidit_theme_farm_case1_question">Who let the hens out?</string>
+    <string name="whodidit_theme_farm_case1_culprit">the culprit</string>
+    <string name="whodidit_theme_farm_case1_crime_place">The hens got out while the culprit was %1$s the %2$s</string>
+    <string name="whodidit_theme_farm_case1_crime_item">The gate was opened using the %1$s</string>
+    <string name="whodidit_theme_farm_case1_crime_motive">The culprit acted out of %1$s</string>
+    <string name="whodidit_theme_farm_case1_reveal">%1$s was %2$s the %3$s and let the hens out using the %4$s.</string>
+    <string name="whodidit_theme_farm_case1_reveal_motive">%1$s was %2$s the %3$s and let the hens out using the %4$s, out of %5$s.</string>
+    <string name="whodidit_theme_castle_title">Castle Heist</string>
+    <string-array name="whodidit_theme_castle_suspects">
+        <item>Oswin</item>
+        <item>Wren</item>
+        <item>Gwen</item>
+        <item>Hobb</item>
+        <item>Edda</item>
+        <item>Torin</item>
+        <item>Maud</item>
+    </string-array>
+    <string-array name="whodidit_theme_castle_places">
+        <item>Tower</item>
+        <item>Moat</item>
+        <item>Dungeon</item>
+        <item>Courtyard</item>
+        <item>Great Hall</item>
+        <item>Garden</item>
+        <item>Armory</item>
+    </string-array>
+    <string-array name="whodidit_theme_castle_place_preps">
+        <item>in</item>
+        <item>at</item>
+        <item>in</item>
+        <item>in</item>
+        <item>in</item>
+        <item>in</item>
+        <item>in</item>
+    </string-array>
+    <string-array name="whodidit_theme_castle_items">
+        <item>Key Ring</item>
+        <item>Goblet</item>
+        <item>Tapestry</item>
+        <item>Banner</item>
+        <item>Chest</item>
+        <item>Staff</item>
+        <item>Cannonball</item>
+    </string-array>
+    <string-array name="whodidit_theme_castle_motives">
+        <item>Greed</item>
+        <item>Despair</item>
+        <item>Envy</item>
+        <item>Revenge</item>
+        <item>Pride</item>
+        <item>Fear</item>
+        <item>Ambition</item>
+    </string-array>
+    <string name="whodidit_theme_castle_case1_title">The Crown Jewels</string>
+    <string name="whodidit_theme_castle_case1_question">Who stole the crown jewels?</string>
+    <string name="whodidit_theme_castle_case1_culprit">the thief</string>
+    <string name="whodidit_theme_castle_case1_crime_place">The crown jewels were stolen from the %2$s</string>
+    <string name="whodidit_theme_castle_case1_crime_item">The thief used the %1$s</string>
+    <string name="whodidit_theme_castle_case1_crime_motive">The thief acted out of %1$s</string>
+    <string name="whodidit_theme_castle_case1_reveal">%1$s stole the crown jewels from the %3$s using the %4$s.</string>
+    <string name="whodidit_theme_castle_case1_reveal_motive">%1$s stole the crown jewels from the %3$s using the %4$s, out of %5$s.</string>
+    <string name="whodidit_theme_museum_title">Museum Heist</string>
+    <string-array name="whodidit_theme_museum_suspects">
+        <item>Ivo</item>
+        <item>Petra</item>
+        <item>Gus</item>
+        <item>Lena</item>
+        <item>Sven</item>
+        <item>Dora</item>
+        <item>Hugo</item>
+    </string-array>
+    <string-array name="whodidit_theme_museum_places">
+        <item>Atrium</item>
+        <item>Gallery</item>
+        <item>Vault</item>
+        <item>Plaza</item>
+        <item>Roof Deck</item>
+        <item>Cafe</item>
+        <item>Dock</item>
+    </string-array>
+    <string-array name="whodidit_theme_museum_place_preps">
+        <item>in</item>
+        <item>in</item>
+        <item>in</item>
+        <item>in</item>
+        <item>on</item>
+        <item>in</item>
+        <item>at</item>
+    </string-array>
+    <string-array name="whodidit_theme_museum_items">
+        <item>Statue</item>
+        <item>Mask</item>
+        <item>Scroll</item>
+        <item>Crate</item>
+        <item>Medal</item>
+        <item>Rug</item>
+        <item>Totem</item>
+    </string-array>
+    <string-array name="whodidit_theme_museum_motives">
+        <item>Vanity</item>
+        <item>Greed</item>
+        <item>Boredom</item>
+        <item>Spite</item>
+        <item>Curiosity</item>
+        <item>Envy</item>
+        <item>Jealousy</item>
+    </string-array>
+    <string name="whodidit_theme_museum_case1_title">The Vanished Painting</string>
+    <string name="whodidit_theme_museum_case1_question">Who stole the painting?</string>
+    <string name="whodidit_theme_museum_case1_culprit">the thief</string>
+    <string name="whodidit_theme_museum_case1_crime_place">The painting vanished from the %2$s</string>
+    <string name="whodidit_theme_museum_case1_crime_item">The thief used the %1$s</string>
+    <string name="whodidit_theme_museum_case1_crime_motive">The thief acted out of %1$s</string>
+    <string name="whodidit_theme_museum_case1_reveal">%1$s stole the painting from the %3$s using the %4$s.</string>
+    <string name="whodidit_theme_museum_case1_reveal_motive">%1$s stole the painting from the %3$s using the %4$s, out of %5$s.</string>
+    <string name="whodidit_theme_hotel_title">Hotel Heist</string>
+    <string-array name="whodidit_theme_hotel_suspects">
+        <item>Remy</item>
+        <item>Opal</item>
+        <item>Felix</item>
+        <item>Greta</item>
+        <item>Nico</item>
+        <item>Vera</item>
+        <item>Lars</item>
+    </string-array>
+    <string-array name="whodidit_theme_hotel_places">
+        <item>Lobby</item>
+        <item>Pool</item>
+        <item>Suite</item>
+        <item>Terrace</item>
+        <item>Laundry</item>
+        <item>Rooftop</item>
+        <item>Elevator</item>
+    </string-array>
+    <string-array name="whodidit_theme_hotel_place_preps">
+        <item>in</item>
+        <item>at</item>
+        <item>in</item>
+        <item>on</item>
+        <item>in</item>
+        <item>on</item>
+        <item>in</item>
+    </string-array>
+    <string-array name="whodidit_theme_hotel_items">
+        <item>Suitcase</item>
+        <item>Bell</item>
+        <item>Cart</item>
+        <item>Towel</item>
+        <item>Hanger</item>
+        <item>Trunk</item>
+        <item>Tray</item>
+    </string-array>
+    <string-array name="whodidit_theme_hotel_motives">
+        <item>Greed</item>
+        <item>Despair</item>
+        <item>Revenge</item>
+        <item>Boredom</item>
+        <item>Envy</item>
+        <item>Vanity</item>
+        <item>Spite</item>
+    </string-array>
+    <string name="whodidit_theme_hotel_case1_title">The Missing Necklace</string>
+    <string name="whodidit_theme_hotel_case1_question">Who stole the necklace?</string>
+    <string name="whodidit_theme_hotel_case1_culprit">the thief</string>
+    <string name="whodidit_theme_hotel_case1_crime_place">The necklace vanished from the %2$s</string>
+    <string name="whodidit_theme_hotel_case1_crime_item">The thief used the %1$s</string>
+    <string name="whodidit_theme_hotel_case1_crime_motive">The thief acted out of %1$s</string>
+    <string name="whodidit_theme_hotel_case1_reveal">%1$s stole the necklace from the %3$s using the %4$s.</string>
+    <string name="whodidit_theme_hotel_case1_reveal_motive">%1$s stole the necklace from the %3$s using the %4$s, out of %5$s.</string>
+    <string name="whodidit_theme_manor_title">Manor Mystery</string>
+    <string-array name="whodidit_theme_manor_suspects">
+        <item>Aunt Pru</item>
+        <item>Dr Quill</item>
+        <item>Lord Snoot</item>
+        <item>Dr Gloom</item>
+        <item>Lady Moth</item>
+        <item>Miss Fern</item>
+        <item>Mr Pickle</item>
+    </string-array>
+    <string-array name="whodidit_theme_manor_places">
+        <item>Attic</item>
+        <item>Crypt</item>
+        <item>Hedge Maze</item>
+        <item>Gazebo</item>
+        <item>Pantry</item>
+        <item>Stairwell</item>
+        <item>Graveyard</item>
+    </string-array>
+    <string-array name="whodidit_theme_manor_place_preps">
+        <item>in</item>
+        <item>in</item>
+        <item>in</item>
+        <item>in</item>
+        <item>in</item>
+        <item>in</item>
+        <item>in</item>
+    </string-array>
+    <string-array name="whodidit_theme_manor_items">
+        <item>Frying Pan</item>
+        <item>Teapot</item>
+        <item>Pillow</item>
+        <item>Carpet</item>
+        <item>Cane</item>
+        <item>Mallet</item>
+        <item>Dumbbell</item>
+    </string-array>
+    <string-array name="whodidit_theme_manor_motives">
+        <item>Revenge</item>
+        <item>Greed</item>
+        <item>Jealousy</item>
+        <item>Shame</item>
+        <item>Anger</item>
+        <item>Envy</item>
+        <item>Spite</item>
+    </string-array>
+    <string name="whodidit_theme_manor_case1_title">The Fall of Uncle Wobble</string>
+    <string name="whodidit_theme_manor_case1_question">Who did in Uncle Wobble?</string>
+    <string name="whodidit_theme_manor_case1_culprit">the culprit</string>
+    <string name="whodidit_theme_manor_case1_crime_place">Uncle Wobble was found %1$s the %2$s</string>
+    <string name="whodidit_theme_manor_case1_crime_item">Uncle Wobble was bonked with the %1$s</string>
+    <string name="whodidit_theme_manor_case1_crime_motive">The culprit acted out of %1$s</string>
+    <string name="whodidit_theme_manor_case1_reveal">%1$s bonked Uncle Wobble %2$s the %3$s with the %4$s.</string>
+    <string name="whodidit_theme_manor_case1_reveal_motive">%1$s bonked Uncle Wobble %2$s the %3$s with the %4$s, out of %5$s.</string>
+    <string name="whodidit_theme_train_title">Train Mystery</string>
+    <string-array name="whodidit_theme_train_suspects">
+        <item>Madame Zu</item>
+        <item>Mr Coal</item>
+        <item>Dr Steam</item>
+        <item>Miss Soot</item>
+        <item>Baron Vex</item>
+        <item>Nurse Lil</item>
+        <item>Chef Ravi</item>
+    </string-array>
+    <string-array name="whodidit_theme_train_places">
+        <item>Dining Car</item>
+        <item>Caboose</item>
+        <item>Engine</item>
+        <item>Roof</item>
+        <item>Platform</item>
+        <item>Bridge</item>
+        <item>Sleeper</item>
+    </string-array>
+    <string-array name="whodidit_theme_train_place_preps">
+        <item>in</item>
+        <item>in</item>
+        <item>in</item>
+        <item>on</item>
+        <item>on</item>
+        <item>on</item>
+        <item>in</item>
+    </string-array>
+    <string-array name="whodidit_theme_train_items">
+        <item>Shovel</item>
+        <item>Whistle</item>
+        <item>Suitcase</item>
+        <item>Blanket</item>
+        <item>Plank</item>
+        <item>Baton</item>
+        <item>Lantern</item>
+    </string-array>
+    <string-array name="whodidit_theme_train_motives">
+        <item>Revenge</item>
+        <item>Greed</item>
+        <item>Jealousy</item>
+        <item>Shame</item>
+        <item>Fear</item>
+        <item>Anger</item>
+        <item>Despair</item>
+    </string-array>
+    <string name="whodidit_theme_train_case1_title">The Last Stop of Count Crumb</string>
+    <string name="whodidit_theme_train_case1_question">Who did in Count Crumb?</string>
+    <string name="whodidit_theme_train_case1_culprit">the culprit</string>
+    <string name="whodidit_theme_train_case1_crime_place">Count Crumb was found %1$s the %2$s</string>
+    <string name="whodidit_theme_train_case1_crime_item">Count Crumb was bonked with the %1$s</string>
+    <string name="whodidit_theme_train_case1_crime_motive">The culprit acted out of %1$s</string>
+    <string name="whodidit_theme_train_case1_reveal">%1$s bonked Count Crumb %2$s the %3$s with the %4$s.</string>
+    <string name="whodidit_theme_train_case1_reveal_motive">%1$s bonked Count Crumb %2$s the %3$s with the %4$s, out of %5$s.</string>
+    <string name="whodidit_rel_place">was %1$s the %2$s</string>
+    <string name="whodidit_rel_place_not">was not %1$s the %2$s</string>
+    <string name="whodidit_rel_place_either">was either %1$s the %2$s or %3$s the %4$s</string>
+    <string name="whodidit_rel1_place">I was %1$s the %2$s</string>
+    <string name="whodidit_rel1_place_not">I was not %1$s the %2$s</string>
+    <string name="whodidit_rel1_place_either">I was either %1$s the %2$s or %3$s the %4$s</string>
+    <string name="whodidit_either_suspects_place">Either %1$s or %2$s was %3$s the %4$s</string>
+    <string name="whodidit_either_suspects_item">Either %1$s or %2$s had the %3$s</string>
+    <string name="whodidit_either_suspects_motive">Either %1$s or %2$s acted out of %3$s</string>
+    <string name="whodidit_rel_item">had the %1$s</string>
+    <string name="whodidit_rel_item_not">did not have the %1$s</string>
+    <string name="whodidit_rel_item_either">had either the %1$s or the %2$s</string>
+    <string name="whodidit_rel1_item">I had the %1$s</string>
+    <string name="whodidit_rel1_item_not">I did not have the %1$s</string>
+    <string name="whodidit_rel1_item_either">I had either the %1$s or the %2$s</string>
+    <string name="whodidit_rel_motive">acted out of %1$s</string>
+    <string name="whodidit_rel_motive_not">did not act out of %1$s</string>
+    <string name="whodidit_rel_motive_either">acted out of either %1$s or %2$s</string>
+    <string name="whodidit_rel1_motive">I acted out of %1$s</string>
+    <string name="whodidit_rel1_motive_not">I did not act out of %1$s</string>
+    <string name="whodidit_rel1_motive_either">I acted out of either %1$s or %2$s</string>
+    <string name="whodidit_subject_place">whoever was %1$s the %2$s</string>
+    <string name="whodidit_subject_item">whoever had the %1$s</string>
+    <string name="whodidit_subject_motive">whoever acted out of %1$s</string>
+    <string name="whodidit_sentence">%1$s %2$s.</string>
+    <string name="whodidit_statement">%1$s: \"%2$s.\"</string>
+    <string name="whodidit_crime_suspect">%1$s is %2$s</string>
+    <string name="whodidit_trait_suspect_tall_label">Tall</string>
+    <string name="whodidit_trait_suspect_tall_predicate">is tall</string>
+    <string name="whodidit_trait_suspect_tall_neg">is not tall</string>
+    <string name="whodidit_trait_suspect_tall_first">I am tall</string>
+    <string name="whodidit_trait_suspect_tall_first_neg">I am not tall</string>
+    <string name="whodidit_trait_suspect_short_label">Short</string>
+    <string name="whodidit_trait_suspect_short_predicate">is short</string>
+    <string name="whodidit_trait_suspect_short_neg">is not short</string>
+    <string name="whodidit_trait_suspect_short_first">I am short</string>
+    <string name="whodidit_trait_suspect_short_first_neg">I am not short</string>
+    <string name="whodidit_trait_suspect_glasses_label">Glasses</string>
+    <string name="whodidit_trait_suspect_glasses_predicate">wears glasses</string>
+    <string name="whodidit_trait_suspect_glasses_neg">does not wear glasses</string>
+    <string name="whodidit_trait_suspect_glasses_first">I wear glasses</string>
+    <string name="whodidit_trait_suspect_glasses_first_neg">I do not wear glasses</string>
+    <string name="whodidit_trait_suspect_hat_label">Hat</string>
+    <string name="whodidit_trait_suspect_hat_predicate">wears a hat</string>
+    <string name="whodidit_trait_suspect_hat_neg">does not wear a hat</string>
+    <string name="whodidit_trait_suspect_hat_first">I wear a hat</string>
+    <string name="whodidit_trait_suspect_hat_first_neg">I do not wear a hat</string>
+    <string name="whodidit_trait_suspect_scarf_label">Scarf</string>
+    <string name="whodidit_trait_suspect_scarf_predicate">wears a scarf</string>
+    <string name="whodidit_trait_suspect_scarf_neg">does not wear a scarf</string>
+    <string name="whodidit_trait_suspect_scarf_first">I wear a scarf</string>
+    <string name="whodidit_trait_suspect_scarf_first_neg">I do not wear a scarf</string>
+    <string name="whodidit_trait_place_indoor_label">Indoors</string>
+    <string name="whodidit_trait_place_indoor_predicate">was somewhere indoors</string>
+    <string name="whodidit_trait_place_indoor_neg">was not indoors</string>
+    <string name="whodidit_trait_place_indoor_first">I was somewhere indoors</string>
+    <string name="whodidit_trait_place_indoor_first_neg">I was not indoors</string>
+    <string name="whodidit_trait_place_outdoor_label">Outdoors</string>
+    <string name="whodidit_trait_place_outdoor_predicate">was somewhere outdoors</string>
+    <string name="whodidit_trait_place_outdoor_neg">was not outdoors</string>
+    <string name="whodidit_trait_place_outdoor_first">I was somewhere outdoors</string>
+    <string name="whodidit_trait_place_outdoor_first_neg">I was not outdoors</string>
+    <string name="whodidit_trait_item_wood_label">Wooden</string>
+    <string name="whodidit_trait_item_wood_predicate">had something wooden</string>
+    <string name="whodidit_trait_item_wood_neg">did not have anything wooden</string>
+    <string name="whodidit_trait_item_wood_first">I had something wooden</string>
+    <string name="whodidit_trait_item_wood_first_neg">I did not have anything wooden</string>
+    <string name="whodidit_trait_item_metal_label">Metal</string>
+    <string name="whodidit_trait_item_metal_predicate">had something metal</string>
+    <string name="whodidit_trait_item_metal_neg">did not have anything metal</string>
+    <string name="whodidit_trait_item_metal_first">I had something metal</string>
+    <string name="whodidit_trait_item_metal_first_neg">I did not have anything metal</string>
+    <string name="whodidit_trait_item_cloth_label">Cloth</string>
+    <string name="whodidit_trait_item_cloth_predicate">had something made of cloth</string>
+    <string name="whodidit_trait_item_cloth_neg">did not have anything made of cloth</string>
+    <string name="whodidit_trait_item_cloth_first">I had something made of cloth</string>
+    <string name="whodidit_trait_item_cloth_first_neg">I did not have anything made of cloth</string>
+    <string name="whodidit_trait_item_heavy_label">Heavy</string>
+    <string name="whodidit_trait_item_heavy_predicate">had something heavy</string>
+    <string name="whodidit_trait_item_heavy_neg">did not have anything heavy</string>
+    <string name="whodidit_trait_item_heavy_first">I had something heavy</string>
+    <string name="whodidit_trait_item_heavy_first_neg">I did not have anything heavy</string>
+    <string name="whodidit_trait_item_light_label">Light</string>
+    <string name="whodidit_trait_item_light_predicate">had something light</string>
+    <string name="whodidit_trait_item_light_neg">did not have anything light</string>
+    <string name="whodidit_trait_item_light_first">I had something light</string>
+    <string name="whodidit_trait_item_light_first_neg">I did not have anything light</string>
+    <string name="whodidit_category_suspect">Suspects</string>
+    <string name="whodidit_category_place">Places</string>
+    <string name="whodidit_category_item">Items</string>
+    <string name="whodidit_category_motive">Motives</string>
+    <string name="whodidit_hint_clue_direct_title">A clue settles this</string>
+    <string name="whodidit_hint_trait_direct_title">A trait settles this</string>
+    <string name="whodidit_hint_single_title">Only one match is left</string>
+    <string name="whodidit_hint_transitive_title">Follow the chain</string>
+    <string name="whodidit_hint_clue_propagation_title">Combine the clues</string>
+    <string name="whodidit_hint_incompatible_title">These two cannot match</string>
+    <string name="whodidit_hint_statement_check_title">A statement gives itself away</string>
+    <string name="whodidit_hint_liar_hypothesis_title">Suppose someone is lying</string>
+    <string name="whodidit_hint_contradiction_title">Try it and see</string>
+    <string name="whodidit_hint_body_clues">Clues: %1$s</string>
+    <string name="whodidit_hint_body_statements">Statements: %1$s</string>
+    <string name="whodidit_hint_body_grid">The grid itself holds the answer. Look closely at what is already marked.</string>
+    <string name="whodidit_hint_wrong_marks">Heads up: one of your marks doesn\'t fit.</string>
+    <string name="whodidit_hint_first">First: %1$s. %2$s</string>
+    <string name="whodidit_hint_action_yes">Mark a match (O)</string>
+    <string name="whodidit_hint_action_no">Cross out (X)</string>
+    <string name="whodidit_hint_none">No hint available right now.</string>
+    <string name="whodidit_tab_clues">Clues</string>
+    <string name="whodidit_tab_suspects">Suspects</string>
+    <string name="whodidit_tab_places">Places</string>
+    <string name="whodidit_tab_items">Items</string>
+    <string name="whodidit_tab_statements">Statements</string>
+    <string name="whodidit_not_quite">Not quite. Something on the grid is off.</string>
+    <string name="whodidit_undo">Undo</string>
+    <string name="whodidit_hint_show">Show hint</string>
+    <string name="whodidit_hint_hide">Hide hint</string>
+    <string name="whodidit_title">Who Did It?</string>
+    <string name="whodidit_tagline">Crack the case with logic</string>
+    <string name="whodidit_difficulty_easy">3 suspects</string>
+    <string name="whodidit_difficulty_medium">4 suspects</string>
+    <string name="whodidit_difficulty_hard">4 suspects + motive</string>
+    <string name="whodidit_difficulty_expert">5 suspects + liar</string>
+    <string name="whodidit_difficulty_desc_easy">Three suspects, three places, three items</string>
+    <string name="whodidit_difficulty_desc_medium">Four suspects to match with places and items</string>
+    <string name="whodidit_difficulty_desc_hard">Adds a motive for every suspect</string>
+    <string name="whodidit_difficulty_desc_expert">Five suspects, motives, and one statement is a lie</string>
+    <string name="whodidit_quickstart_goal">Use the clues to fill in the grid until every suspect is matched up. A complete grid cracks the case.</string>
+    <string name="whodidit_quickstart_bullet_1">Tap a cell to cross it out, tap again to mark a match.</string>
+    <string name="whodidit_quickstart_bullet_2">A match crosses out the rest of its row and column.</string>
+    <string name="whodidit_quickstart_bullet_3">Read the clues carefully, each one narrows the case.</string>
+    <string name="whodidit_quickstart_hook">Every case has exactly one solution.</string>
+    <string name="whodidit_how_to_play_goal">Use the clues to work out which place, item, and motive belongs to each suspect, then find the culprit.</string>
+    <string name="whodidit_how_to_play_controls">Tap an empty cell to cross it out with an X. Tap an X to mark a match with an O. Tap an O to clear it. An O crosses out the rest of its row and column.</string>
+    <string name="whodidit_how_to_play_wrong_move">On Easy and Medium a wrong O shakes back and is not placed. On Hard and Expert nothing is checked as you play, and a full board that is wrong says it is not quite right.</string>
+    <string name="whodidit_rule_1_title">One match per row and column</string>
+    <string name="whodidit_rule_1_body">Every suspect, place, item, and motive matches exactly one entry in each other category.</string>
+    <string name="whodidit_rule_2_title">Clues are always true</string>
+    <string name="whodidit_rule_2_body">Every clue in the case file holds for the real solution.</string>
+    <string name="whodidit_rule_3_title">Statements on Expert</string>
+    <string name="whodidit_rule_3_body">On Expert, suspects make statements, and exactly the culprit lies.</string>
+    <string name="whodidit_rule_4_title">Name the culprit</string>
+    <string name="whodidit_rule_4_body">The case is solved when the whole grid is matched correctly and the culprit is revealed.</string>
 </resources>

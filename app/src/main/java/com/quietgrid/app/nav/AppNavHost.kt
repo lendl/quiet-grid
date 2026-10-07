@@ -89,6 +89,8 @@ import com.quietgrid.app.games.nonogram.NonogramPlayScreen
 import com.quietgrid.app.games.starbattle.StarBattleChallengerPlayScreen
 import com.quietgrid.app.games.starbattle.StarBattleChallengerResultScreen
 import com.quietgrid.app.games.starbattle.StarBattlePlayScreen
+import com.quietgrid.app.games.whodidit.WhoDidItPlayScreen
+import com.quietgrid.app.games.whodidit.WhoDidItText
 import com.quietgrid.app.games.sudoku.SudokuChallengerPlayScreen
 import com.quietgrid.app.games.sudoku.SudokuChallengerResultScreen
 import com.quietgrid.app.games.sudoku.SudokuPlayScreen
@@ -542,6 +544,7 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
                         ) { popUpTo(Routes.TABS) { inclusive = false } }
                     }
 
+                    val whoDidItResources = LocalContext.current.resources
                     val keepAwake = settings.keepScreenOnInPlay || gameId == GameId.NBACK
                     Column(Modifier.fillMaxSize().then(if (keepAwake) Modifier.keepScreenOn() else Modifier)) {
                         if (dailyKey != null) DailyPlayBanner(dailyKey)
@@ -687,6 +690,23 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
                                     onBack = { navController.popBackStack() },
                                     onFinished = { result ->
                                         if (result.solved) {
+                                            goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
+                                        } else {
+                                            goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
+                                        }
+                                    },
+                                )
+                                GameId.WHODIDIT -> WhoDidItPlayScreen(
+                                    difficulty = difficulty,
+                                    resume = resume,
+                                    dailyDate = dailyDate,
+                                    onBack = { navController.popBackStack() },
+                                    onFinished = { result ->
+                                        val revealPuzzle = result.reveal
+                                        if (result.solved) {
+                                            if (revealPuzzle != null) {
+                                                CompletionExtras.set(CompletionHighlight.CaseSolved(WhoDidItText(whoDidItResources, revealPuzzle).reveal()))
+                                            }
                                             goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
                                         } else {
                                             goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)

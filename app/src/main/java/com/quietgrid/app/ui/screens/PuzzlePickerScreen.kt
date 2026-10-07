@@ -70,7 +70,10 @@ import com.quietgrid.app.games.nonogram.nonogramDifficultyDescriptionRes
 import com.quietgrid.app.games.nonogram.nonogramDifficultyLabelRes
 import com.quietgrid.app.games.starbattle.StarBattleQuickStart
 import com.quietgrid.app.games.starbattle.starBattleDifficultyDescriptionRes
+import com.quietgrid.app.games.whodidit.WhoDidItQuickStart
+import com.quietgrid.app.games.whodidit.whoDidItDifficultyDescriptionRes
 import com.quietgrid.app.games.starbattle.starBattleDifficultyLabelRes
+import com.quietgrid.app.games.whodidit.whoDidItDifficultyLabelRes
 import com.quietgrid.app.games.sudoku.SudokuQuickStart
 import com.quietgrid.app.games.sudoku.sudokuDifficultyDescriptionRes
 import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
@@ -108,6 +111,7 @@ private fun quickStartFor(gameId: GameId): QuickStartContent = when (gameId) {
     GameId.ARROWESCAPE -> ArrowEscapeQuickStart
     GameId.GAME_2048 -> Game2048QuickStart
     GameId.STARBATTLE -> StarBattleQuickStart
+    GameId.WHODIDIT -> WhoDidItQuickStart
     GameId.GUESSBYNUMBERS -> GuessByNumbersQuickStart
     GameId.NBACK -> NBackQuickStart
     GameId.THEMECLEAR -> ThemeClearQuickStart
@@ -266,6 +270,7 @@ private fun GamePlayPickerTab(
                     GameId.ARROWESCAPE -> arrowEscapeDifficultyLabelRes(difficulty)
                     GameId.GAME_2048 -> game2048DifficultyLabelRes(difficulty)
                     GameId.STARBATTLE -> starBattleDifficultyLabelRes(difficulty)
+                    GameId.WHODIDIT -> whoDidItDifficultyLabelRes(difficulty)
                     GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyLabelRes(difficulty)
                     GameId.NBACK -> nbackDifficultyLabelRes(difficulty)
                     GameId.THEMECLEAR -> themeClearDifficultyLabelRes(difficulty)
@@ -284,6 +289,7 @@ private fun GamePlayPickerTab(
                     GameId.ARROWESCAPE -> arrowEscapeDifficultyDescriptionRes(difficulty)
                     GameId.GAME_2048 -> game2048DifficultyDescriptionRes(difficulty)
                     GameId.STARBATTLE -> starBattleDifficultyDescriptionRes(difficulty)
+                    GameId.WHODIDIT -> whoDidItDifficultyDescriptionRes(difficulty)
                     GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyDescriptionRes(difficulty)
                     GameId.NBACK -> nbackDifficultyDescriptionRes(difficulty)
                     GameId.THEMECLEAR -> themeClearDifficultyDescriptionRes(difficulty)

@@ -43,6 +43,12 @@ class ArgsTest {
     }
 
     @Test
+    fun `parseArgs reads optional theme flag`() {
+        assertEquals("castle", parseArgs(arrayOf("generate", "--game", "whodidit", "--difficulty", "easy", "--theme", "castle")).theme)
+        assertEquals(null, parseArgs(arrayOf("generate", "--game", "whodidit", "--difficulty", "easy")).theme)
+    }
+
+    @Test
     fun `parseArgs leaves fill-to unset and uses every processor when flags are omitted`() {
         val command = parseArgs(arrayOf("generate", "--game", "wordsearch", "--difficulty", "hard"))
         assertEquals(null, command.fillTo)

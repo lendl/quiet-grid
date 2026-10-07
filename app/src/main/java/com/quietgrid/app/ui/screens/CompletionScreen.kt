@@ -70,6 +70,7 @@ import com.quietgrid.app.games.minesweeper.minesweeperDifficultyLabelRes
 import com.quietgrid.app.games.nback.nbackDifficultyLabelRes
 import com.quietgrid.app.games.nonogram.nonogramDifficultyLabelRes
 import com.quietgrid.app.games.starbattle.starBattleDifficultyLabelRes
+import com.quietgrid.app.games.whodidit.whoDidItDifficultyLabelRes
 import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
 import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
 import com.quietgrid.app.games.themeclear.themeClearDifficultyLabelRes
@@ -154,6 +155,7 @@ fun CompletionScreen(
         GameId.ARROWESCAPE -> arrowEscapeDifficultyLabelRes(difficulty)
         GameId.GAME_2048 -> game2048DifficultyLabelRes(difficulty)
         GameId.STARBATTLE -> starBattleDifficultyLabelRes(difficulty)
+        GameId.WHODIDIT -> whoDidItDifficultyLabelRes(difficulty)
         GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyLabelRes(difficulty)
         GameId.NBACK -> nbackDifficultyLabelRes(difficulty)
         GameId.THEMECLEAR -> themeClearDifficultyLabelRes(difficulty)
@@ -167,6 +169,7 @@ fun CompletionScreen(
     val picture = (highlight as? CompletionHighlight.Picture)?.solution?.takeIf { it.isNotEmpty() }
     val themeIcon = (highlight as? CompletionHighlight.ThemeIcon)?.icon
     val nbackBreakdown = highlight as? CompletionHighlight.NBackBreakdown
+    val caseSolvedText = (highlight as? CompletionHighlight.CaseSolved)?.text?.takeIf { it.isNotEmpty() }
 
     val repositories: RepositoriesViewModel = hiltViewModel()
     val stats by remember(repositories, gameId) { repositories.statsRepository.statsFor(gameId) }.collectAsState(initial = null)
@@ -428,6 +431,23 @@ fun CompletionScreen(
                     if (gameId in BEST_TILE_TRACKED_GAMES) {
                         Box(Modifier.width(1.dp).height(28.dp).background(MaterialTheme.colorScheme.outlineVariant))
                         MetaItem(stringResource(R.string.completion_best_tile), bestTile.toString())
+                    }
+                }
+
+                if (caseSolvedText != null) {
+                    Column(Modifier.padding(top = 14.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            stringResource(R.string.whodidit_completion_case_label),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Text(
+                            caseSolvedText,
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(top = 2.dp),
+                        )
                     }
                 }
 

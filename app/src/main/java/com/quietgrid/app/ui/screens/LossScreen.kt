@@ -50,6 +50,7 @@ import com.quietgrid.app.games.minesweeper.minesweeperDifficultyLabelRes
 import com.quietgrid.app.games.nback.nbackDifficultyLabelRes
 import com.quietgrid.app.games.nonogram.nonogramDifficultyLabelRes
 import com.quietgrid.app.games.starbattle.starBattleDifficultyLabelRes
+import com.quietgrid.app.games.whodidit.whoDidItDifficultyLabelRes
 import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
 import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
 import com.quietgrid.app.games.themeclear.themeClearDifficultyLabelRes
@@ -158,6 +159,11 @@ fun LossScreen(
             titleRes = R.string.starbattle_loss_rule_failure_title
             bodyRes = R.string.starbattle_loss_rule_failure_body
         }
+        gameId == GameId.WHODIDIT && reason == "abandoned" -> {
+            eyebrowRes = R.string.whodidit_loss_abandoned_eyebrow
+            titleRes = R.string.whodidit_loss_abandoned_title
+            bodyRes = R.string.whodidit_loss_abandoned_body
+        }
         gameId == GameId.ARROWESCAPE && reason == "abandoned" -> {
             eyebrowRes = R.string.arrowescape_loss_abandoned_eyebrow
             titleRes = R.string.arrowescape_loss_abandoned_title
@@ -221,6 +227,7 @@ fun LossScreen(
         GameId.ARROWESCAPE -> arrowEscapeDifficultyLabelRes(difficulty)
         GameId.GAME_2048 -> game2048DifficultyLabelRes(difficulty)
         GameId.STARBATTLE -> starBattleDifficultyLabelRes(difficulty)
+        GameId.WHODIDIT -> whoDidItDifficultyLabelRes(difficulty)
         GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyLabelRes(difficulty)
         GameId.NBACK -> nbackDifficultyLabelRes(difficulty)
         GameId.THEMECLEAR -> themeClearDifficultyLabelRes(difficulty)

@@ -19,6 +19,7 @@ enum class GameId(val key: String) {
     GUESSBYNUMBERS("guessbynumbers"),
     NBACK("nback"),
     THEMECLEAR("themeclear"),
+    WHODIDIT("whodidit"),
 }
 
 enum class GameCategory(@param:StringRes val labelRes: Int) {
@@ -53,6 +54,7 @@ object GameCatalog {
         GameMeta(GameId.GUESSBYNUMBERS, R.string.guessbynumbers_title, R.string.guessbynumbers_tagline, setOf(GameCategory.WORD, GameCategory.LOGIC)),
         GameMeta(GameId.NBACK, R.string.nback_title, R.string.nback_tagline, setOf(GameCategory.MEMORY), beta = true),
         GameMeta(GameId.THEMECLEAR, R.string.themeclear_title, R.string.themeclear_tagline, setOf(GameCategory.WORD)),
+        GameMeta(GameId.WHODIDIT, R.string.whodidit_title, R.string.whodidit_tagline, setOf(GameCategory.LOGIC), beta = true),
     )
 
     fun get(id: GameId): GameMeta = games.first { it.id == id }
