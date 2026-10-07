@@ -33,6 +33,8 @@
     <string name="games_category_word">Słowa</string>
     <string name="games_category_memory">Pamięć</string>
     <string name="games_category_spatial">Przestrzenne</string>
+    <string name="replace_sheet_title">Rozpoczęta łamigłówka</string>
+    <string name="replace_sheet_time_played">Czas gry: %1$s</string>
     <string name="games_active_puzzle_waiting">Twoja łamigłówka czeka</string>
     <string name="mix_card_entry_count">%1$d gier</string>
     <string name="mix_play_button">Graj</string>
@@ -88,6 +90,8 @@
     <string name="settings_show_timer_in_play_label">Pokaż stoper podczas gry</string>
     <string name="settings_keep_screen_on_label">Nie wygaszaj ekranu</string>
     <string name="settings_keep_screen_on_detail">Zapobiega przyciemnianiu ekranu, gdy łamigłówka jest otwarta. N-Back zawsze utrzymuje ekran włączony.</string>
+    <string name="settings_haptics_label">Wibracje</string>
+    <string name="settings_haptics_detail">Krótkie wibracje przy dotknięciach, poprawnych i błędnych ruchach oraz ukończonych łamigłówkach.</string>
     <string name="settings_beta_games_label">Włącz gry beta</string>
     <string name="settings_beta_games_detail">Odblokowuje gry będące wciąż w fazie testów. Mogą one zawierać błędy.</string>
 
@@ -332,8 +336,6 @@
     <string name="contributors_cta_body">Quiet Grid to oprogramowanie o otwartym kodzie źródłowym. Poprawki błędów, tłumaczenia i nowe pomysły na łamigłówki są mile widziane — otwórz pull request na GitHub.</string>
     <string name="help_wanted_heading">Potrzebna pomoc</string>
     <string name="help_wanted_disclaimer">Aplikacja działa offline — ta lista może być nieaktualna. Sprawdź aktualny stan na GitHubie.</string>
-    <string name="help_wanted_icons_title">Ikona dla każdej gry</string>
-    <string name="help_wanted_icons_blurb">Gry są obecnie wymienione tylko z nazwy — pomóż zaprojektować małą ikonę dla każdej gry.</string>
 
     <!-- Chimp Test -->
     <string name="chimp_title">Test szympansa</string>
@@ -1075,6 +1077,9 @@
     <string name="mix_available_games_heading">Dodaj Grę</string>
     <string name="mix_available_games_empty">Wszystkie gry są już w tym miksie.</string>
     <string name="mix_entry_remove_content_description">Usuń</string>
+    <string name="mix_entry_increase_content_description">Zwiększ szansę</string>
+    <string name="mix_entry_decrease_content_description">Zmniejsz szansę</string>
+    <string name="mix_share_percent">%1$d%%</string>
     <string name="mix_entry_challenger_chip">Pretendent</string>
     <string name="mix_delete_button">Usuń Miks</string>
     <string name="mix_delete_confirm_title">Usunąć ten miks?</string>

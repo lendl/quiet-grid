@@ -33,6 +33,8 @@
     <string name="games_category_word">Palavras</string>
     <string name="games_category_memory">Memória</string>
     <string name="games_category_spatial">Espacial</string>
+    <string name="replace_sheet_title">Quebra-cabeça em andamento</string>
+    <string name="replace_sheet_time_played">%1$s de jogo</string>
     <string name="games_active_puzzle_waiting">Seu quebra-cabeça está esperando</string>
     <string name="mix_card_entry_count">%1$d jogos</string>
     <string name="mix_play_button">Jogar</string>
@@ -90,6 +92,8 @@
     <string name="settings_show_timer_in_play_label">Mostrar cronômetro durante o jogo</string>
     <string name="settings_keep_screen_on_label">Manter a tela ligada</string>
     <string name="settings_keep_screen_on_detail">Impede que a tela escureça enquanto um quebra-cabeça estiver aberto. O N-Back sempre mantém a tela ligada.</string>
+    <string name="settings_haptics_label">Vibração</string>
+    <string name="settings_haptics_detail">Vibrações curtas ao tocar, em jogadas certas e erradas e ao concluir quebra-cabeças.</string>
     <string name="settings_beta_games_label">Ativar jogos beta</string>
     <string name="settings_beta_games_detail">Desbloqueia jogos que ainda estão em teste. Estes podem ter algumas arestas.</string>
 
@@ -340,8 +344,6 @@
     <string name="contributors_cta_body">O Quiet Grid é de código aberto. Correções de bugs, traduções e ideias para novos quebra-cabeças são todas bem-vindas — abra um pull request no GitHub.</string>
     <string name="help_wanted_heading">Precisamos de ajuda</string>
     <string name="help_wanted_disclaimer">O aplicativo funciona offline — esta lista pode estar desatualizada. Confira o GitHub para o status atual.</string>
-    <string name="help_wanted_icons_title">Ícone para cada jogo</string>
-    <string name="help_wanted_icons_blurb">Os jogos aparecem listados só com o título — ajude a criar um pequeno ícone para cada um.</string>
 
     <!-- Chimp Test -->
     <string name="chimp_title">Chimp Test</string>
@@ -1065,6 +1067,9 @@
     <string name="mix_available_games_heading">Adicionar um Jogo</string>
     <string name="mix_available_games_empty">Todos os jogos já estão neste combinado.</string>
     <string name="mix_entry_remove_content_description">Remover</string>
+    <string name="mix_entry_increase_content_description">Aumentar chance</string>
+    <string name="mix_entry_decrease_content_description">Diminuir chance</string>
+    <string name="mix_share_percent">%1$d%%</string>
     <string name="mix_entry_challenger_chip">Desafiante</string>
     <string name="mix_delete_button">Excluir Combinado</string>
     <string name="mix_delete_confirm_title">Excluir este combinado?</string>

@@ -31,6 +31,8 @@
     <string name="games_category_word">Mots</string>
     <string name="games_category_memory">Mémoire</string>
     <string name="games_category_spatial">Spatial</string>
+    <string name="replace_sheet_title">Puzzle en cours</string>
+    <string name="replace_sheet_time_played">%1$s de jeu</string>
     <string name="games_active_puzzle_waiting">Votre puzzle vous attend</string>
     <string name="mix_card_entry_count">%1$d jeux</string>
     <string name="mix_play_button">Jouer</string>
@@ -88,6 +90,8 @@
     <string name="settings_show_timer_in_play_label">Afficher la minuterie pendant le jeu</string>
     <string name="settings_keep_screen_on_label">Garder l\'écran allumé</string>
     <string name="settings_keep_screen_on_detail">Empêche l\'écran de s\'assombrir pendant qu\'un puzzle est ouvert. N-Back garde toujours l\'écran allumé.</string>
+    <string name="settings_haptics_label">Vibration</string>
+    <string name="settings_haptics_detail">Courtes vibrations au toucher, pour les coups justes ou faux et à la fin d\'un puzzle.</string>
     <string name="settings_beta_games_label">Activer les jeux bêta</string>
     <string name="settings_beta_games_detail">Déverrouille les jeux encore en cours de test. Ceux-ci peuvent avoir des imperfections.</string>
 
@@ -309,8 +313,6 @@
     <!-- Help wanted -->
     <string name="help_wanted_heading">Aide recherchée</string>
     <string name="help_wanted_disclaimer">L\'application fonctionne hors ligne — cette liste peut être obsolète. Consultez GitHub pour connaître l\'état actuel.</string>
-    <string name="help_wanted_icons_title">Icône par jeu</string>
-    <string name="help_wanted_icons_blurb">Les jeux sont listés par titre uniquement — aidez à concevoir une petite icône pour chaque jeu.</string>
 
     <string name="chimp_title">Chimp Test</string>
     <string name="chimp_short_title">Chimp</string>
@@ -1053,6 +1055,9 @@
     <string name="mix_available_games_heading">Ajouter un Jeu</string>
     <string name="mix_available_games_empty">Tous les jeux sont déjà dans ce mix.</string>
     <string name="mix_entry_remove_content_description">Retirer</string>
+    <string name="mix_entry_increase_content_description">Augmenter la probabilité</string>
+    <string name="mix_entry_decrease_content_description">Réduire la probabilité</string>
+    <string name="mix_share_percent">%1$d %%</string>
     <string name="mix_entry_challenger_chip">Challenger</string>
     <string name="mix_delete_button">Supprimer le Mix</string>
     <string name="mix_delete_confirm_title">Supprimer ce mix ?</string>

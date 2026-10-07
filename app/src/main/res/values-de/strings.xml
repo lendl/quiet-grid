@@ -30,6 +30,8 @@
     <string name="games_category_word">Wort</string>
     <string name="games_category_memory">Gedächtnis</string>
     <string name="games_category_spatial">Räumlich</string>
+    <string name="replace_sheet_title">Laufendes Rätsel</string>
+    <string name="replace_sheet_time_played">%1$s gespielt</string>
     <string name="games_active_puzzle_waiting">Dein Rätsel wartet</string>
     <string name="mix_card_entry_count">%1$d Spiele</string>
     <string name="mix_play_button">Spielen</string>
@@ -84,6 +86,8 @@
     <string name="settings_show_timer_in_play_label">Timer während des Spielens anzeigen</string>
     <string name="settings_keep_screen_on_label">Bildschirm aktiv lassen</string>
     <string name="settings_keep_screen_on_detail">Verhindert, dass der Bildschirm abdunkelt, solange ein Rätsel geöffnet ist. N-Back bleibt immer aktiv.</string>
+    <string name="settings_haptics_label">Vibration</string>
+    <string name="settings_haptics_detail">Kurze Vibrationen beim Antippen, bei richtigen und falschen Zügen und bei abgeschlossenen Rätseln.</string>
     <string name="settings_beta_games_label">Beta-Spiele aktivieren</string>
     <string name="settings_beta_games_detail">Schaltet Spiele frei, die sich noch in der Entwicklung befinden. Diese können Fehler enthalten.</string>
 
@@ -301,8 +305,6 @@
     <string name="contributors_cta_body">Quiet Grid ist Open-Source-Software. Fehlerbehebungen, Übersetzungen und neue Rätselideen sind willkommen – erstelle einen Pull Request auf GitHub.</string>
     <string name="help_wanted_heading">Hilfe gesucht</string>
     <string name="help_wanted_disclaimer">Die App funktioniert offline — diese Liste kann veraltet sein. Den aktuellen Stand findest du auf GitHub.</string>
-    <string name="help_wanted_icons_title">Symbol pro Spiel</string>
-    <string name="help_wanted_icons_blurb">Spiele werden bisher nur mit Titel angezeigt — hilf mit, für jedes Spiel ein kleines Symbol zu gestalten.</string>
 
     <string name="chimp_title">Chimp Test</string>
     <string name="chimp_short_title">Chimp</string>
@@ -1044,6 +1046,9 @@
     <string name="mix_available_games_heading">Spiel Hinzufügen</string>
     <string name="mix_available_games_empty">Alle Spiele sind bereits in diesem Mix.</string>
     <string name="mix_entry_remove_content_description">Entfernen</string>
+    <string name="mix_entry_increase_content_description">Wahrscheinlichkeit erhöhen</string>
+    <string name="mix_entry_decrease_content_description">Wahrscheinlichkeit verringern</string>
+    <string name="mix_share_percent">%1$d %%</string>
     <string name="mix_entry_challenger_chip">Challenger</string>
     <string name="mix_delete_button">Mix Löschen</string>
     <string name="mix_delete_confirm_title">Diesen Mix löschen?</string>

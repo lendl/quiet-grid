@@ -33,6 +33,8 @@
     <string name="games_category_word">Parole</string>
     <string name="games_category_memory">Memoria</string>
     <string name="games_category_spatial">Spaziali</string>
+    <string name="replace_sheet_title">Puzzle in corso</string>
+    <string name="replace_sheet_time_played">%1$s di gioco</string>
     <string name="games_active_puzzle_waiting">Il tuo puzzle ti aspetta</string>
     <string name="mix_card_entry_count">%1$d giochi</string>
     <string name="mix_play_button">Gioca</string>
@@ -90,6 +92,8 @@
     <string name="settings_show_timer_in_play_label">Mostra il timer durante il gioco</string>
     <string name="settings_keep_screen_on_label">Mantieni lo schermo acceso</string>
     <string name="settings_keep_screen_on_detail">Impedisce allo schermo di oscurarsi mentre un puzzle è aperto. N-Back resta sempre acceso.</string>
+    <string name="settings_haptics_label">Vibrazione</string>
+    <string name="settings_haptics_detail">Brevi vibrazioni per tocchi, mosse giuste e sbagliate e puzzle completati.</string>
     <string name="settings_beta_games_label">Attiva i giochi beta</string>
     <string name="settings_beta_games_detail">Sblocca i giochi ancora in fase di test. Potrebbero avere qualche imperfezione.</string>
 
@@ -386,8 +390,6 @@
     <string name="contributors_cta_body">Quiet Grid è open source. Correzioni di bug, traduzioni e nuove idee di puzzle sono tutte benvenute: apri una pull request su GitHub.</string>
     <string name="help_wanted_heading">Cerchiamo aiuto</string>
     <string name="help_wanted_disclaimer">L\'app funziona offline: questo elenco potrebbe non essere aggiornato. Controlla GitHub per lo stato attuale.</string>
-    <string name="help_wanted_icons_title">Un\'icona per ogni gioco</string>
-    <string name="help_wanted_icons_blurb">I giochi sono elencati solo per titolo: aiutaci a disegnare una piccola icona per ciascun gioco.</string>
 
     <!-- Chimp Test -->
     <string name="chimp_title">Chimp Test</string>
@@ -1111,6 +1113,9 @@
     <string name="mix_available_games_heading">Aggiungi un gioco</string>
     <string name="mix_available_games_empty">Tutti i giochi sono già in questo mix.</string>
     <string name="mix_entry_remove_content_description">Rimuovi</string>
+    <string name="mix_entry_increase_content_description">Aumenta probabilità</string>
+    <string name="mix_entry_decrease_content_description">Riduci probabilità</string>
+    <string name="mix_share_percent">%1$d%%</string>
     <string name="mix_entry_challenger_chip">Challenger</string>
     <string name="mix_delete_button">Elimina mix</string>
     <string name="mix_delete_confirm_title">Eliminare questo mix?</string>

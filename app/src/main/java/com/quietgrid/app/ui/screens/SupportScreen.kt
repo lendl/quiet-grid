@@ -146,7 +146,9 @@ fun AboutPageScreen(onOpenInfo: (String) -> Unit) {
     ) {
         SupportRow(Icons.Filled.Info, ABOUT_ICON_COLOR, stringResource(R.string.support_about_quiet_grid), "") { onOpenInfo("about") }
         SupportRow(Icons.Filled.People, ABOUT_ICON_COLOR, stringResource(R.string.support_contributors), "") { onOpenInfo("contributors") }
-        HelpWantedSection(modifier = Modifier.padding(top = 16.dp), onOpenUrl = ::openUrl)
+        if (HELP_WANTED_ITEMS.isNotEmpty()) {
+            HelpWantedSection(modifier = Modifier.padding(top = 16.dp), onOpenUrl = ::openUrl)
+        }
     }
 }
 

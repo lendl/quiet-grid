@@ -30,6 +30,8 @@
     <string name="games_category_word">Woord</string>
     <string name="games_category_memory">Geheugen</string>
     <string name="games_category_spatial">Ruimtelijk</string>
+    <string name="replace_sheet_title">Lopende puzzel</string>
+    <string name="replace_sheet_time_played">%1$s gespeeld</string>
     <string name="games_active_puzzle_waiting">Je puzzel wacht op je</string>
     <string name="mix_card_entry_count">%1$d spellen</string>
     <string name="mix_play_button">Spelen</string>
@@ -84,6 +86,8 @@
     <string name="settings_show_timer_in_play_label">Timer tonen tijdens spelen</string>
     <string name="settings_keep_screen_on_label">Scherm aan houden</string>
     <string name="settings_keep_screen_on_detail">Voorkomt dat het scherm dimt terwijl een puzzel open is. N-Back houdt het scherm altijd aan.</string>
+    <string name="settings_haptics_label">Trillen</string>
+    <string name="settings_haptics_detail">Korte trillingen bij tikken, goede en foute zetten en voltooide puzzels.</string>
     <string name="settings_beta_games_label">Bètaspellen inschakelen</string>
     <string name="settings_beta_games_detail">Ontgrendelt spellen die nog in ontwikkeling zijn. Deze kunnen problemen bevatten.</string>
 
@@ -301,8 +305,6 @@
     <string name="contributors_cta_body">Quiet Grid is opensourcesoftware. Bugfixes, vertalingen en nieuwe puzzelideeën zijn welkom — open een pull request op GitHub.</string>
     <string name="help_wanted_heading">Hulp gevraagd</string>
     <string name="help_wanted_disclaimer">De app werkt offline — deze lijst kan verouderd zijn. Bekijk GitHub voor de actuele status.</string>
-    <string name="help_wanted_icons_title">Icoon per spel</string>
-    <string name="help_wanted_icons_blurb">Spellen staan nu alleen met hun naam vermeld — help een klein icoon per spel ontwerpen.</string>
 
     <string name="chimp_title">Chimp Test</string>
     <string name="chimp_short_title">Chimp</string>
@@ -1049,6 +1051,9 @@
     <string name="mix_available_games_heading">Spel Toevoegen</string>
     <string name="mix_available_games_empty">Alle spellen zitten al in deze mix.</string>
     <string name="mix_entry_remove_content_description">Verwijderen</string>
+    <string name="mix_entry_increase_content_description">Kans verhogen</string>
+    <string name="mix_entry_decrease_content_description">Kans verlagen</string>
+    <string name="mix_share_percent">%1$d%%</string>
     <string name="mix_entry_challenger_chip">Challenger</string>
     <string name="mix_delete_button">Mix Verwijderen</string>
     <string name="mix_delete_confirm_title">Deze mix verwijderen?</string>

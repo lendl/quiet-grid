@@ -30,6 +30,8 @@
     <string name="games_category_word">Palabras</string>
     <string name="games_category_memory">Memoria</string>
     <string name="games_category_spatial">Espacial</string>
+    <string name="replace_sheet_title">Puzzle en curso</string>
+    <string name="replace_sheet_time_played">%1$s de juego</string>
     <string name="games_active_puzzle_waiting">Tu puzzle te espera</string>
     <string name="mix_card_entry_count">%1$d juegos</string>
     <string name="mix_play_button">Jugar</string>
@@ -84,6 +86,8 @@
     <string name="settings_show_timer_in_play_label">Mostrar temporizador durante el juego</string>
     <string name="settings_keep_screen_on_label">Mantener la pantalla encendida</string>
     <string name="settings_keep_screen_on_detail">Evita que la pantalla se atenúe mientras haya un puzzle abierto. N-Back siempre la mantiene encendida.</string>
+    <string name="settings_haptics_label">Vibración</string>
+    <string name="settings_haptics_detail">Vibraciones cortas al tocar, en movimientos correctos e incorrectos y al terminar un puzzle.</string>
     <string name="settings_beta_games_label">Activar juegos beta</string>
     <string name="settings_beta_games_detail">Desbloquea juegos que aún están en pruebas. Estos pueden tener problemas.</string>
 
@@ -320,8 +324,6 @@
     <string name="contributors_cta_body">Quiet Grid es de código abierto. Se agradecen correcciones de errores, traducciones e ideas para nuevos puzles: abre una pull request en GitHub.</string>
     <string name="help_wanted_heading">Se busca ayuda</string>
     <string name="help_wanted_disclaimer">La app funciona sin conexión — esta lista puede estar desactualizada. Consulta GitHub para ver el estado actual.</string>
-    <string name="help_wanted_icons_title">Icono por juego</string>
-    <string name="help_wanted_icons_blurb">Los juegos aparecen listados solo con su título — ayuda a diseñar un pequeño icono para cada uno.</string>
 
     <string name="chimp_title">Chimp Test</string>
     <string name="chimp_short_title">Chimp</string>
@@ -1051,6 +1053,9 @@
     <string name="mix_available_games_heading">Añadir Juego</string>
     <string name="mix_available_games_empty">Todos los juegos ya están en este mix.</string>
     <string name="mix_entry_remove_content_description">Quitar</string>
+    <string name="mix_entry_increase_content_description">Aumentar probabilidad</string>
+    <string name="mix_entry_decrease_content_description">Reducir probabilidad</string>
+    <string name="mix_share_percent">%1$d %%</string>
     <string name="mix_entry_challenger_chip">Challenger</string>
     <string name="mix_delete_button">Eliminar Mix</string>
     <string name="mix_delete_confirm_title">¿Eliminar este mix?</string>
