@@ -1,0 +1,8 @@
+Versione 1.9.0
+
+- Ogni gioco ha ora la sua icona, e la scheda Giochi li mostra in una griglia
+- Animal Doku e Battaglia di stelle: le regioni vicine non hanno più colori difficili da distinguere
+- I mix mostrano la quota di ogni gioco in percentuale, con pulsanti per regolarla
+- Campo minato ha un nuovo aspetto
+- La vibrazione ora è disattivata per impostazione predefinita e si può attivare nelle Impostazioni
+- Correzioni di bug e miglioramenti della stabilità

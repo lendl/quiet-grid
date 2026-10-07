@@ -1,0 +1,8 @@
+Versão 1.9.0
+
+- Cada jogo agora tem seu próprio ícone, e a aba Jogos mostra todos em uma grade
+- Animal Doku e Batalha de Estrelas: regiões vizinhas não recebem mais cores difíceis de distinguir
+- Os combinados mostram a parte de cada jogo em porcentagem, com botões para ajustar
+- Campo Minado tem um visual novo
+- A vibração agora vem desligada por padrão e pode ser ligada em Ajustes
+- Correções de erros e melhorias de estabilidade

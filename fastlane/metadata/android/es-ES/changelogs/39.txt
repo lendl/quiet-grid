@@ -1,0 +1,8 @@
+Versión 1.9.0
+
+- Cada juego tiene ahora su propio icono, y la pestaña Juegos los muestra en una cuadrícula
+- Animal Doku y Batalla de Estrellas: las regiones vecinas ya no reciben colores difíciles de distinguir
+- Los mixes muestran el porcentaje de cada juego, con botones para ajustarlo
+- Buscaminas tiene un aspecto nuevo
+- La vibración ahora está desactivada por defecto y se puede activar en Ajustes
+- Corrección de errores y mejoras de estabilidad

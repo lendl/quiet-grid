@@ -1,0 +1,8 @@
+Versie 1.9.0
+
+- Elk spel heeft nu een eigen icoon, en het tabblad Spellen toont ze in een raster
+- Animal Doku en Star Battle: aangrenzende gebieden krijgen geen kleuren meer die moeilijk uit elkaar te houden zijn
+- Mixen tonen het aandeel van elk spel als percentage, met knoppen om het aan te passen
+- Mijnenveger heeft een nieuwe look
+- Trillen staat nu standaard uit en kan worden aangezet in Instellingen
+- Bugfixes en stabiliteitsverbeteringen

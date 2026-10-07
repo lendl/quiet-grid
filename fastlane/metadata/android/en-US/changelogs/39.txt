@@ -1,0 +1,8 @@
+Version 1.9.0
+
+- Every game now has its own icon, and the Games tab shows them in a grid
+- Animal Doku and Star Battle: neighboring regions no longer get colors that are hard to tell apart
+- Mixes show each game's share as a percentage, with buttons to adjust it
+- Minesweeper has a new look
+- Vibration is now off by default and can be turned on in Settings
+- Bug fixes and stability improvements

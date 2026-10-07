@@ -1,0 +1,8 @@
+Version 1.9.0
+
+- Chaque jeu a désormais sa propre icône, et l'onglet Jeux les affiche en grille
+- Animal Doku et Star Battle : les régions voisines n'ont plus de couleurs difficiles à distinguer
+- Les mixes affichent la part de chaque jeu en pourcentage, avec des boutons pour l'ajuster
+- Le Démineur fait peau neuve
+- La vibration est désormais désactivée par défaut et peut être activée dans les Paramètres
+- Corrections de bugs et améliorations de stabilité

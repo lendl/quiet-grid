@@ -1,0 +1,8 @@
+Wersja 1.9.0
+
+- Każda gra ma teraz własną ikonę, a karta Gry pokazuje je w siatce
+- Zwierzęce Doku i Bitwa gwiazd: sąsiednie regiony nie dostają już trudnych do odróżnienia kolorów
+- Miksy pokazują udział każdej gry w procentach, z przyciskami do jego zmiany
+- Saper ma nowy wygląd
+- Wibracje są teraz domyślnie wyłączone i można je włączyć w Ustawieniach
+- Poprawki błędów i stabilności

@@ -1,0 +1,8 @@
+Version 1.9.0
+
+- Jedes Spiel hat jetzt ein eigenes Symbol, und der Spiele-Tab zeigt sie als Raster
+- Animal Doku und Star Battle: benachbarte Regionen bekommen keine schwer unterscheidbaren Farben mehr
+- Mixe zeigen den Anteil jedes Spiels in Prozent, mit Tasten zum Anpassen
+- Minesweeper hat einen neuen Look
+- Vibration ist jetzt standardmäßig aus und lässt sich in den Einstellungen einschalten
+- Fehlerbehebungen und Stabilitätsverbesserungen
