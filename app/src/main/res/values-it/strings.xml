@@ -733,16 +733,9 @@
     <string name="wordsearch_next_move_title">Trova \"%1$s\"</string>
     <string name="wordsearch_next_move_body">Parti dalla lettera evidenziata e traccia tutta la parola in una sola linea retta.</string>
     <string name="wordsearch_hidden_word_next_letter_title">Parola nascosta: %1$s</string>
-    <string name="wordsearch_hidden_word_next_letter_body">La casella evidenziata è la prossima lettera della parola nascosta, in ordine.</string>
-    <string name="wordsearch_how_to_play_goal">Trova tutte le parole dell\'elenco nascoste nella griglia, poi risolvi la parola bonus nascosta per completare il puzzle.</string>
-    <string name="wordsearch_how_to_play_controls">Tocca la prima lettera di una parola, poi l\'ultima per selezionarla. Le parole vanno in linea retta: in orizzontale, in verticale o in diagonale.</string>
     <string name="wordsearch_how_to_play_wrong_move">Le selezioni non valide vengono semplicemente ignorate: nessuna penalità per i percorsi sbagliati. Con la parola nascosta è diverso: mentre la stai indovinando, un tocco sbagliato azzera i progressi e riduce la precisione.</string>
     <string name="wordsearch_rule_1_title">Traccia linee rette</string>
     <string name="wordsearch_rule_1_body">Ogni parola dell\'elenco compare in una sola linea retta: in orizzontale, in verticale o in diagonale a seconda della difficoltà.</string>
-    <string name="wordsearch_rule_2_title">Selezioni non valide, nessuna penalità</string>
-    <string name="wordsearch_rule_2_body">Le selezioni non valide vengono ignorate, così puoi continuare a cercare senza perdere la partita.</string>
-    <string name="wordsearch_rule_3_title">Risolvi la parola nascosta</string>
-    <string name="wordsearch_rule_3_body">Le lettere della parola nascosta riempiono le caselle libere in ordine di lettura: da sinistra a destra, dall\'alto in basso. Tocca l\'icona della chiave in qualsiasi momento per iniziare a indovinarla e ottenere un bonus, oppure aspetta di trovare tutte le parole per sbloccarla automaticamente.</string>
     <string name="wordsearch_tip_1_title">Inizia dalle iniziali più rare</string>
     <string name="wordsearch_tip_1_body">Cerca prima nella griglia le iniziali poco comuni, poi espandi in tutte le direzioni consentite.</string>
     <string name="wordsearch_tip_2_title">Una linea alla volta</string>

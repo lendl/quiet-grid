@@ -132,7 +132,11 @@ fun WordSearchPlayScreen(
                 Column(Modifier.padding(12.dp)) {
                     val title = when (hint) {
                         is WSNextMoveHint.FindWord -> stringResource(R.string.wordsearch_next_move_title, hint.word)
-                        is WSNextMoveHint.FindHiddenLetter -> stringResource(R.string.wordsearch_hidden_word_next_letter_title, stringResource(themeLabelRes(hint.clue)))
+                        is WSNextMoveHint.FindHiddenLetter -> if (hint.revealedWord != null) {
+                            stringResource(R.string.wordsearch_hidden_word_next_letter_title, hint.revealedWord)
+                        } else {
+                            stringResource(R.string.wordsearch_hidden_word_theme_title, stringResource(themeLabelRes(hint.clue)))
+                        }
                     }
                     val body = when (hint) {
                         is WSNextMoveHint.FindWord -> stringResource(R.string.wordsearch_next_move_body)

@@ -687,16 +687,9 @@
     <string name="wordsearch_next_move_title">Encontre \"%1$s\"</string>
     <string name="wordsearch_next_move_body">Comece pela letra destacada e trace a palavra inteira em uma única linha reta.</string>
     <string name="wordsearch_hidden_word_next_letter_title">Palavra escondida: %1$s</string>
-    <string name="wordsearch_hidden_word_next_letter_body">A célula destacada é a próxima letra da palavra escondida, em ordem.</string>
-    <string name="wordsearch_how_to_play_goal">Encontre cada palavra listada escondida na grade e depois resolva a palavra bônus escondida para resolver o quebra-cabeça.</string>
-    <string name="wordsearch_how_to_play_controls">Toque na primeira letra de uma palavra e depois na última letra para selecionar. As palavras seguem linhas retas: horizontal, vertical ou diagonal.</string>
     <string name="wordsearch_how_to_play_wrong_move">Seleções de palavra inválidas são ignoradas silenciosamente — sem penalidade por traçar caminhos errados. Toques errados na palavra escondida são diferentes: uma vez que você começa a adivinhar a palavra escondida, um toque errado reinicia seu progresso e custa precisão.</string>
     <string name="wordsearch_rule_1_title">Trace linhas retas</string>
     <string name="wordsearch_rule_1_body">Cada palavra listada aparece em uma única linha reta: horizontal, vertical ou diagonal, dependendo da dificuldade.</string>
-    <string name="wordsearch_rule_2_title">Seleções inválidas, sem penalidades</string>
-    <string name="wordsearch_rule_2_body">Seleções inválidas são ignoradas, então você pode continuar escaneando sem perder o progresso.</string>
-    <string name="wordsearch_rule_3_title">Resolva a palavra escondida</string>
-    <string name="wordsearch_rule_3_body">As letras da palavra escondida preenchem as células vazias em ordem de leitura — da esquerda para a direita, de cima para baixo. Toque no ícone de chave a qualquer momento para começar a adivinhá-la por um bônus, ou espere até encontrar todas as palavras para desbloqueá-la automaticamente.</string>
     <string name="wordsearch_tip_1_title">Comece com primeiras letras únicas</string>
     <string name="wordsearch_tip_1_body">Encontre iniciais incomuns na grade primeiro e depois expanda em todas as direções permitidas.</string>
     <string name="wordsearch_tip_2_title">Confirme uma linha por vez</string>

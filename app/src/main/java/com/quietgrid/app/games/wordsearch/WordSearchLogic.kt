@@ -131,13 +131,23 @@ fun wsInputHiddenWordCell(session: WordSearchSession, cell: WSCellRef): WordSear
 
 sealed class WSNextMoveHint {
     data class FindWord(val word: String, val evidenceCells: List<WSCellRef>, val targetCells: List<WSCellRef>) : WSNextMoveHint()
-    data class FindHiddenLetter(val clue: String, val evidenceCells: List<WSCellRef>, val targetCells: List<WSCellRef>) : WSNextMoveHint()
+    data class FindHiddenLetter(
+        val clue: String,
+        val revealedWord: String?,
+        val evidenceCells: List<WSCellRef>,
+        val targetCells: List<WSCellRef>,
+    ) : WSNextMoveHint()
 }
+
+private fun allListedWordsFound(session: WordSearchSession): Boolean =
+    session.puzzle.words.all { it.id in session.foundWordIds }
 
 private fun nextHiddenLetterHint(session: WordSearchSession): WSNextMoveHint.FindHiddenLetter? {
     if (session.hiddenWordSolved) return null
-    val cell = session.puzzle.hiddenWord.positions.getOrNull(session.hiddenWordProgress.size) ?: return null
-    return WSNextMoveHint.FindHiddenLetter(session.puzzle.hiddenWord.clue, listOf(cell), listOf(cell))
+    val hiddenWord = session.puzzle.hiddenWord
+    val cell = hiddenWord.positions.getOrNull(session.hiddenWordProgress.size) ?: return null
+    val revealedWord = if (allListedWordsFound(session)) hiddenWord.word else null
+    return WSNextMoveHint.FindHiddenLetter(hiddenWord.clue, revealedWord, listOf(cell), listOf(cell))
 }
 
 fun wsNextMoveHint(session: WordSearchSession): WSNextMoveHint? {

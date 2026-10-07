@@ -438,6 +438,7 @@ private fun WordSearchHowToPlay() {
     RuleRow(1, R.string.wordsearch_rule_1_title, R.string.wordsearch_rule_1_body)
     RuleRow(2, R.string.wordsearch_rule_2_title, R.string.wordsearch_rule_2_body)
     RuleRow(3, R.string.wordsearch_rule_3_title, R.string.wordsearch_rule_3_body)
+    RuleRow(4, R.string.wordsearch_rule_4_title, R.string.wordsearch_rule_4_body)
 
     HorizontalDivider(Modifier.padding(vertical = 20.dp))
     Accordion(stringResource(R.string.how_to_play_tips_title)) {

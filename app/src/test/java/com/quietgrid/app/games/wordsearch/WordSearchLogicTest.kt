@@ -193,13 +193,30 @@ class WordSearchLogicTest {
     }
 
     @Test
-    fun `nextMoveHint falls back to the hidden-letter clue once every word is found`() {
+    fun `nextMoveHint reveals the hidden word once every word is found`() {
         val session = freshSession().copy(foundWordIds = listOf("cat"))
 
         val hint = wsNextMoveHint(session)
 
         assertTrue(hint is WSNextMoveHint.FindHiddenLetter)
-        assertEquals("a pet", (hint as WSNextMoveHint.FindHiddenLetter).clue)
+        hint as WSNextMoveHint.FindHiddenLetter
+        assertEquals("a pet", hint.clue)
+        assertEquals("dog", hint.revealedWord)
+        assertEquals(listOf(WSCellRef(1, 0)), hint.targetCells)
+    }
+
+    @Test
+    fun `nextMoveHint keeps revealing the hidden word after the first letters are tapped`() {
+        val session = freshSession().copy(
+            foundWordIds = listOf("cat"),
+            hiddenWordMode = true,
+            hiddenWordProgress = listOf(WSCellRef(1, 0)),
+        )
+
+        val hint = wsNextMoveHint(session) as WSNextMoveHint.FindHiddenLetter
+
+        assertEquals("dog", hint.revealedWord)
+        assertEquals(listOf(WSCellRef(1, 1)), hint.targetCells)
     }
 
     @Test
@@ -209,6 +226,15 @@ class WordSearchLogicTest {
         val hint = wsNextMoveHint(session)
 
         assertTrue(hint is WSNextMoveHint.FindHiddenLetter)
+    }
+
+    @Test
+    fun `nextMoveHint keeps the hidden word secret while listed words remain unfound`() {
+        val session = freshSession().copy(hiddenWordMode = true)
+
+        val hint = wsNextMoveHint(session) as WSNextMoveHint.FindHiddenLetter
+
+        assertNull(hint.revealedWord)
     }
 
     @Test

@@ -679,16 +679,9 @@
     <string name="wordsearch_next_move_title">Znajdź \"%1$s\"</string>
     <string name="wordsearch_next_move_body">Zacznij od podświetlonej litery i zakreśl całe słowo w jednej linii prostej.</string>
     <string name="wordsearch_hidden_word_next_letter_title">Ukryte słowo: %1$s</string>
-    <string name="wordsearch_hidden_word_next_letter_body">Podświetlone pole zawiera kolejną literę ukrytego słowa.</string>
-    <string name="wordsearch_how_to_play_goal">Znajdź na siatce wszystkie słowa z listy, a następnie odgadnij ukryte hasło bonusowe, aby rozwiązać łamigłówkę.</string>
-    <string name="wordsearch_how_to_play_controls">Stuknij pierwszą literę słowa, a następnie stuknij ostatnią literę, aby je zaznaczyć. Słowa układają się w liniach prostych: poziomo, pionowo lub po przekątnej.</string>
     <string name="wordsearch_how_to_play_wrong_move">Niepoprawne zaznaczenia słów są ignorowane — nie ma kary za zakreślenie błędnej ścieżki. Inaczej jest z ukrytym słowem: gdy zaczniesz je odgadywać, błędne stuknięcie resetuje Twój postęp i obniża dokładność.</string>
     <string name="wordsearch_rule_1_title">Zakreślaj linie proste</string>
     <string name="wordsearch_rule_1_body">Każde słowo z listy pojawia się w jednej linii prostej: poziomo, pionowo lub po przekątnej, w zależności od poziomu trudności.</string>
-    <string name="wordsearch_rule_2_title">Brak kar za błędne zaznaczenia</string>
-    <string name="wordsearch_rule_2_body">Niepoprawne próby zaznaczenia są ignorowane, więc możesz swobodnie przeszukiwać planszę bez utraty punktów.</string>
-    <string name="wordsearch_rule_3_title">Rozwiąż ukryte słowo</string>
-    <string name="wordsearch_rule_3_body">Litery ukrytego słowa wypełniają puste komórki w kolejności czytania — od lewej do prawej, od góry do dołu. Możesz stuknąć ikonę klucza w dowolnym momencie, aby zacząć je zgadywać i zdobyć bonus, lub poczekać na automatyczne odblokowanie po znalezieniu wszystkich słów.</string>
     <string name="wordsearch_tip_1_title">Zaczynaj od rzadkich pierwszych liter</string>
     <string name="wordsearch_tip_1_body">Wyszukaj najpierw nietypowe litery początkowe na siatce, a następnie sprawdzaj wokół nich wszystkie dozwolone kierunki.</string>
     <string name="wordsearch_tip_2_title">Zatwierdzaj po jednej linii</string>

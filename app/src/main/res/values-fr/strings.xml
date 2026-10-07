@@ -679,16 +679,9 @@
     <string name="wordsearch_next_move_title">Find \"%1$s\"</string>
     <string name="wordsearch_next_move_body">Start from the highlighted letter and trace the full word in one straight line.</string>
     <string name="wordsearch_hidden_word_next_letter_title">Mot caché : %1$s</string>
-    <string name="wordsearch_hidden_word_next_letter_body">La case mise en évidence est la prochaine lettre du mot caché.</string>
-    <string name="wordsearch_how_to_play_goal">Trouvez chaque mot caché dans la grille, puis résolvez le mot bonus caché pour résoudre le puzzle.</string>
-    <string name="wordsearch_how_to_play_controls">Touchez la première lettre d\'un mot, puis la dernière pour le sélectionner. Les mots suivent des lignes droites : horizontales, verticales ou diagonales.</string>
     <string name="wordsearch_how_to_play_wrong_move">Les sélections de mots invalides sont silencieusement ignorées — aucune pénalité pour tracer un mauvais chemin. Les mauvaises cases du mot caché, c\'est différent : une fois que vous devinez le mot caché, une mauvaise case réinitialise votre progression et coûte de la précision.</string>
     <string name="wordsearch_rule_1_title">Trace des lignes droites</string>
     <string name="wordsearch_rule_1_body">Chaque mot de la liste apparaît en une ligne droite : horizontale, verticale ou diagonale selon la difficulté.</string>
-    <string name="wordsearch_rule_2_title">Sélections invalides, aucune pénalité</string>
-    <string name="wordsearch_rule_2_body">Les sélections invalides sont ignorées, tu peux donc continuer à scanner sans perdre ta progression.</string>
-    <string name="wordsearch_rule_3_title">Résous le mot caché</string>
-    <string name="wordsearch_rule_3_body">Les lettres du mot caché remplissent les cases vides de gauche à droite et de haut en bas. Touchez l\'icône clé à tout moment pour commencer à le deviner pour un bonus, ou attendez d\'avoir trouvé tous les mots pour le débloquer automatiquement.</string>
     <string name="wordsearch_tip_1_title">Commence par les lettres initiales uniques</string>
     <string name="wordsearch_tip_1_body">Trouve d\'abord les initiales rares dans la grille, puis étends dans toutes les directions autorisées.</string>
     <string name="wordsearch_tip_2_title">Termine une ligne à la fois</string>

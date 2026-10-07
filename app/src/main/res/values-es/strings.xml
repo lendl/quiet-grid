@@ -630,16 +630,9 @@
     <string name="wordsearch_next_move_title">Find \"%1$s\"</string>
     <string name="wordsearch_next_move_body">Start from the highlighted letter and trace the full word in one straight line.</string>
     <string name="wordsearch_hidden_word_next_letter_title">Palabra oculta: %1$s</string>
-    <string name="wordsearch_hidden_word_next_letter_body">La casilla resaltada es la siguiente letra de la palabra oculta.</string>
-    <string name="wordsearch_how_to_play_goal">Encuentra cada palabra escondida en la cuadrícula y luego resuelve la palabra oculta de bonificación para resolver el puzzle.</string>
-    <string name="wordsearch_how_to_play_controls">Toca la primera letra de una palabra, luego toca la última letra para seleccionarla. Las palabras siguen líneas rectas: horizontales, verticales o diagonales.</string>
     <string name="wordsearch_how_to_play_wrong_move">Las selecciones de palabra no válidas se ignoran silenciosamente — no hay penalización por trazar caminos incorrectos. Las pulsaciones incorrectas en la palabra oculta son distintas: una vez que empiezas a adivinarla, una pulsación incorrecta reinicia tu progreso y cuesta precisión.</string>
     <string name="wordsearch_rule_1_title">Traza líneas rectas</string>
     <string name="wordsearch_rule_1_body">Cada palabra de la lista aparece en una línea recta: horizontal, vertical o diagonal según la dificultad.</string>
-    <string name="wordsearch_rule_2_title">Selecciones no válidas, sin penalización</string>
-    <string name="wordsearch_rule_2_body">Las selecciones no válidas se ignoran, así que puedes seguir escaneando sin perder tu progreso.</string>
-    <string name="wordsearch_rule_3_title">Resuelve la palabra oculta</string>
-    <string name="wordsearch_rule_3_body">Las letras de la palabra oculta llenan las casillas vacías de izquierda a derecha y de arriba a abajo. Toca el icono de llave en cualquier momento para empezar a adivinarla y ganar un bonus, o espera a encontrar todas las palabras para desbloquearla automáticamente.</string>
     <string name="wordsearch_tip_1_title">Empieza con iniciales únicas</string>
     <string name="wordsearch_tip_1_body">Encuentra primero iniciales poco comunes en la cuadrícula y luego expande en todas las direcciones permitidas.</string>
     <string name="wordsearch_tip_2_title">Completa una línea a la vez</string>

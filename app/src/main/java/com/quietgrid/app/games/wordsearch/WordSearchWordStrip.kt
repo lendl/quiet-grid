@@ -2,6 +2,7 @@ package com.quietgrid.app.games.wordsearch
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -19,7 +20,9 @@ import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -45,35 +48,47 @@ private fun HiddenWordToggleIcon(
 }
 
 @Composable
-private fun WordSearchWordItems(
+private fun HiddenWordPanel(
     session: WordSearchSession,
     wrongHiddenWordTap: Boolean,
+    modifier: Modifier = Modifier,
 ) {
-    if (session.hiddenWordMode) {
-        val progressText = session.puzzle.hiddenWord.word.indices.joinToString(" ") { index ->
-            val cell = session.hiddenWordProgress.getOrNull(index)
-            if (cell != null) session.puzzle.grid[cell.row][cell.col] else "_"
-        }
+    val progressText = session.puzzle.hiddenWord.word.indices.joinToString(" ") { index ->
+        val cell = session.hiddenWordProgress.getOrNull(index)
+        if (cell != null) session.puzzle.grid[cell.row][cell.col] else "_"
+    }
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(2.dp)) {
         FeedbackText(
             text = progressText,
             style = MaterialTheme.typography.titleSmall,
             isCorrect = false,
             isIncorrect = wrongHiddenWordTap,
         )
-    } else {
-        val sortedWords = session.puzzle.words.sortedBy { it.word }
-        sortedWords.forEach { word ->
-            val found = word.id in session.foundWordIds
-            Text(
-                word.word,
-                fontWeight = FontWeight.Bold,
-                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                textDecoration = if (found) TextDecoration.LineThrough else TextDecoration.None,
-                color = if (found) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
-            )
-        }
+        Text(
+            stringResource(R.string.wordsearch_hidden_word_order_prompt),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
+
+@Composable
+private fun WordSearchWordList(session: WordSearchSession) {
+    val sortedWords = session.puzzle.words.sortedBy { it.word }
+    sortedWords.forEach { word ->
+        val found = word.id in session.foundWordIds
+        Text(
+            word.word,
+            fontWeight = FontWeight.Bold,
+            fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+            textDecoration = if (found) TextDecoration.LineThrough else TextDecoration.None,
+            color = if (found) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
+        )
+    }
+}
+
+private fun Modifier.invisibleLayer(hidden: Boolean): Modifier =
+    if (hidden) alpha(0f).clearAndSetSemantics {} else this
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -96,7 +111,11 @@ fun WordSearchWordStrip(
                     .padding(top = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                WordSearchWordItems(session, wrongHiddenWordTap)
+                if (session.hiddenWordMode) {
+                    HiddenWordPanel(session, wrongHiddenWordTap)
+                } else {
+                    WordSearchWordList(session)
+                }
             }
         }
     } else {
@@ -110,12 +129,19 @@ fun WordSearchWordStrip(
                 HiddenWordToggleIcon(session, onToggleHiddenWordMode)
             }
 
-            FlowRow(
-                Modifier.weight(1f),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                WordSearchWordItems(session, wrongHiddenWordTap)
+            Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
+                FlowRow(
+                    Modifier.fillMaxWidth().invisibleLayer(session.hiddenWordMode),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    WordSearchWordList(session)
+                }
+                HiddenWordPanel(
+                    session,
+                    wrongHiddenWordTap,
+                    Modifier.fillMaxWidth().invisibleLayer(!session.hiddenWordMode),
+                )
             }
         }
     }

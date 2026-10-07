@@ -611,16 +611,9 @@
     <string name="wordsearch_next_move_title">Find \"%1$s\"</string>
     <string name="wordsearch_next_move_body">Start from the highlighted letter and trace the full word in one straight line.</string>
     <string name="wordsearch_hidden_word_next_letter_title">Verborgen woord: %1$s</string>
-    <string name="wordsearch_hidden_word_next_letter_body">De gemarkeerde cel is de volgende letter van het verborgen woord.</string>
-    <string name="wordsearch_how_to_play_goal">Vind elk woord dat verstopt zit in het raster en los daarna het verborgen bonuswoord op om de puzzel te voltooien.</string>
-    <string name="wordsearch_how_to_play_controls">Tik de eerste letter van een woord aan, tik dan de laatste letter aan om te selecteren. Woorden lopen in rechte lijnen: horizontaal, verticaal of diagonaal.</string>
     <string name="wordsearch_how_to_play_wrong_move">Ongeldige woordselecties worden stilzwijgend genegeerd — geen straf voor verkeerde paden. Verkeerde tikken op het verborgen woord zijn anders: zodra je het verborgen woord probeert te raden, zet een verkeerde tik je voortgang terug en kost het nauwkeurigheid.</string>
     <string name="wordsearch_rule_1_title">Trek rechte lijnen</string>
     <string name="wordsearch_rule_1_body">Elk woord in de lijst staat in één rechte lijn: horizontaal, verticaal of diagonaal, afhankelijk van de moeilijkheid.</string>
-    <string name="wordsearch_rule_2_title">Ongeldige selecties, geen straf</string>
-    <string name="wordsearch_rule_2_body">Ongeldige selecties worden genegeerd, dus je kunt blijven scannen zonder je voortgang te verliezen.</string>
-    <string name="wordsearch_rule_3_title">Los het verborgen woord op</string>
-    <string name="wordsearch_rule_3_body">De letters van het verborgen woord vullen de lege cellen van links naar rechts en van boven naar beneden. Tik altijd op het sleutelicoon om het te gaan raden voor een bonus, of wacht tot alle woorden gevonden zijn om het automatisch te ontgrendelen.</string>
     <string name="wordsearch_tip_1_title">Begin met unieke beginletters</string>
     <string name="wordsearch_tip_1_body">Zoek eerst ongewone beginletters in het raster en breid dan uit in alle toegestane richtingen.</string>
     <string name="wordsearch_tip_2_title">Voltooi één lijn tegelijk</string>

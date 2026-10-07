@@ -21,7 +21,11 @@ fun wordSearchDifficultyDescriptionRes(difficulty: Difficulty): Int = when (diff
 
 val WordSearchQuickStart = QuickStartContent(
     goalRes = R.string.wordsearch_quickstart_goal,
-    bulletRes = listOf(R.string.wordsearch_quickstart_bullet_1, R.string.wordsearch_quickstart_bullet_2),
+    bulletRes = listOf(
+        R.string.wordsearch_quickstart_bullet_1,
+        R.string.wordsearch_quickstart_bullet_2,
+        R.string.wordsearch_quickstart_bullet_3,
+    ),
     examples = listOf(
         QuickStartExample(R.string.wordsearch_quickstart_example_1_word, R.string.wordsearch_quickstart_example_1_hint),
     ),
