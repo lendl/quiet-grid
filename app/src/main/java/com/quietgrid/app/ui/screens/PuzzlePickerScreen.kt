@@ -68,6 +68,9 @@ import com.quietgrid.app.games.nback.nbackDifficultyLabelRes
 import com.quietgrid.app.games.nonogram.NonogramQuickStart
 import com.quietgrid.app.games.nonogram.nonogramDifficultyDescriptionRes
 import com.quietgrid.app.games.nonogram.nonogramDifficultyLabelRes
+import com.quietgrid.app.games.sequencememory.SequenceMemoryQuickStart
+import com.quietgrid.app.games.sequencememory.sequenceMemoryDifficultyDescriptionRes
+import com.quietgrid.app.games.sequencememory.sequenceMemoryDifficultyLabelRes
 import com.quietgrid.app.games.starbattle.StarBattleQuickStart
 import com.quietgrid.app.games.starbattle.starBattleDifficultyDescriptionRes
 import com.quietgrid.app.games.whodidit.WhoDidItQuickStart
@@ -115,6 +118,7 @@ private fun quickStartFor(gameId: GameId): QuickStartContent = when (gameId) {
     GameId.GUESSBYNUMBERS -> GuessByNumbersQuickStart
     GameId.NBACK -> NBackQuickStart
     GameId.THEMECLEAR -> ThemeClearQuickStart
+    GameId.SEQUENCEMEMORY -> SequenceMemoryQuickStart
 }
 
 @Composable
@@ -274,6 +278,7 @@ private fun GamePlayPickerTab(
                     GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyLabelRes(difficulty)
                     GameId.NBACK -> nbackDifficultyLabelRes(difficulty)
                     GameId.THEMECLEAR -> themeClearDifficultyLabelRes(difficulty)
+                    GameId.SEQUENCEMEMORY -> sequenceMemoryDifficultyLabelRes(difficulty)
                     else -> chimpDifficultyLabelRes(difficulty)
                 }
                 val descriptionRes = when (gameId) {
@@ -293,6 +298,7 @@ private fun GamePlayPickerTab(
                     GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyDescriptionRes(difficulty)
                     GameId.NBACK -> nbackDifficultyDescriptionRes(difficulty)
                     GameId.THEMECLEAR -> themeClearDifficultyDescriptionRes(difficulty)
+                    GameId.SEQUENCEMEMORY -> sequenceMemoryDifficultyDescriptionRes(difficulty)
                 }
                 if (index > 0) HorizontalDivider()
                 Row(

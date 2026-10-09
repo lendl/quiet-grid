@@ -82,6 +82,7 @@ import com.quietgrid.app.games.blockfill.BlockFillPlayScreen
 import com.quietgrid.app.games.chimptest.ChimpTestPlayScreen
 import com.quietgrid.app.games.game2048.Game2048PlayScreen
 import com.quietgrid.app.games.nback.NBackPlayScreen
+import com.quietgrid.app.games.sequencememory.SequenceMemoryPlayScreen
 import com.quietgrid.app.games.guessbynumbers.GuessByNumbersPlayScreen
 import com.quietgrid.app.games.minesweeper.MinesweeperPlayScreen
 import com.quietgrid.app.games.nonogram.NonogramChallengerPlayScreen
@@ -766,6 +767,18 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                             if (result.intendedWords.isNotEmpty()) {
                                                 CompletionExtras.set(CompletionHighlight.RevealWordList(result.intendedWords))
                                             }
+                                            goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
+                                        }
+                                    },
+                                )
+                                GameId.SEQUENCEMEMORY -> SequenceMemoryPlayScreen(
+                                    difficulty = difficulty,
+                                    resume = resume,
+                                    onBack = { navController.popBackStack() },
+                                    onFinished = { result ->
+                                        if (result.solved) {
+                                            goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
+                                        } else {
                                             goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
                                         }
                                     },

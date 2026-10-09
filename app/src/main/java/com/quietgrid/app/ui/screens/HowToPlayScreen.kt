@@ -70,6 +70,7 @@ fun HowToPlayScreen(gameId: GameId) {
             GameId.GUESSBYNUMBERS -> GuessByNumbersHowToPlay()
             GameId.NBACK -> NBackHowToPlay()
             GameId.THEMECLEAR -> ThemeClearHowToPlay()
+            GameId.SEQUENCEMEMORY -> SequenceMemoryHowToPlay()
         }
 
         HorizontalDivider(Modifier.padding(vertical = 20.dp))
@@ -327,6 +328,37 @@ private fun Game2048HowToPlay() {
     HorizontalDivider(Modifier.padding(vertical = 20.dp))
     Accordion(stringResource(R.string.how_to_play_scoring_title)) {
         BodyText(stringResource(R.string.game2048_how_to_play_scoring))
+    }
+}
+
+@Composable
+private fun SequenceMemoryHowToPlay() {
+    SectionHeader(Icons.Outlined.EmojiEvents, stringResource(R.string.how_to_play_goal_title))
+    BodyText(stringResource(R.string.sequencememory_how_to_play_goal))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.PanTool, stringResource(R.string.how_to_play_controls_title))
+    BodyText(stringResource(R.string.sequencememory_how_to_play_controls))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.WarningAmber, stringResource(R.string.how_to_play_wrong_move_title))
+    BodyText(stringResource(R.string.sequencememory_how_to_play_wrong_move))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.Description, stringResource(R.string.how_to_play_rules_title))
+    RuleRow(1, R.string.sequencememory_rule_1_title, R.string.sequencememory_rule_1_body)
+    RuleRow(2, R.string.sequencememory_rule_2_title, R.string.sequencememory_rule_2_body)
+    RuleRow(3, R.string.sequencememory_rule_3_title, R.string.sequencememory_rule_3_body)
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    Accordion(stringResource(R.string.how_to_play_tips_title)) {
+        TechniqueItem(R.string.sequencememory_tip_1_title, R.string.sequencememory_tip_1_body)
+        TechniqueItem(R.string.sequencememory_tip_2_title, R.string.sequencememory_tip_2_body)
+    }
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    Accordion(stringResource(R.string.how_to_play_scoring_title)) {
+        BodyText(stringResource(R.string.sequencememory_how_to_play_scoring))
     }
 }
 

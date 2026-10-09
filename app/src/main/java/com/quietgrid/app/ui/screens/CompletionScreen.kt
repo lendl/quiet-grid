@@ -69,6 +69,7 @@ import com.quietgrid.app.games.guessbynumbers.guessByNumbersDifficultyLabelRes
 import com.quietgrid.app.games.minesweeper.minesweeperDifficultyLabelRes
 import com.quietgrid.app.games.nback.nbackDifficultyLabelRes
 import com.quietgrid.app.games.nonogram.nonogramDifficultyLabelRes
+import com.quietgrid.app.games.sequencememory.sequenceMemoryDifficultyLabelRes
 import com.quietgrid.app.games.starbattle.starBattleDifficultyLabelRes
 import com.quietgrid.app.games.whodidit.whoDidItDifficultyLabelRes
 import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
@@ -159,6 +160,7 @@ fun CompletionScreen(
         GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyLabelRes(difficulty)
         GameId.NBACK -> nbackDifficultyLabelRes(difficulty)
         GameId.THEMECLEAR -> themeClearDifficultyLabelRes(difficulty)
+        GameId.SEQUENCEMEMORY -> sequenceMemoryDifficultyLabelRes(difficulty)
         else -> chimpDifficultyLabelRes(difficulty)
     }
     val accentColor = difficultyColor(difficulty)
