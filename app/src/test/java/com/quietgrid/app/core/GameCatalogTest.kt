@@ -8,6 +8,13 @@ import org.junit.Test
 class GameCatalogTest {
 
     @Test
+    fun `enabledGameIds hides beta games unless enabled`() {
+        val beta = GameCatalog.games.filter { it.beta }.map { it.id }.toSet()
+        assertTrue(GameCatalog.enabledGameIds(false).none { it in beta })
+        assertEquals(GameCatalog.games.map { it.id }.toSet(), GameCatalog.enabledGameIds(true))
+    }
+
+    @Test
     fun everyGameHasAtLeastOneCategory() {
         GameCatalog.games.forEach { meta ->
             assertTrue(

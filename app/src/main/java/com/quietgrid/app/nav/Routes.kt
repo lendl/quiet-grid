@@ -2,6 +2,8 @@ package com.quietgrid.app.nav
 
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.data.ActiveSessionSummary
+import com.quietgrid.app.data.SESSION_MODE_ENDLESS
 import com.quietgrid.app.games.blockfill.BlockFillEndlessResult
 import java.time.LocalDate
 
@@ -28,6 +30,13 @@ object Routes {
     fun picker(gameId: GameId) = "picker/${gameId.key}"
     fun play(gameId: GameId, difficulty: Difficulty, resume: Boolean, daily: LocalDate? = null) =
         "play/${gameId.key}/${difficulty.key}/$resume" + (daily?.let { "?daily=$it" } ?: "")
+
+    fun resume(summary: ActiveSessionSummary): String? {
+        val gameId = GameId.entries.firstOrNull { it.key == summary.gameId } ?: return null
+        if (summary.mode == SESSION_MODE_ENDLESS) return endless(gameId, resume = true)
+        val daily = summary.dailyDate?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
+        return play(gameId, Difficulty.EASY, resume = true, daily = daily)
+    }
 
     fun challenger(gameId: GameId) = "challenger/${gameId.key}"
 

@@ -128,6 +128,48 @@ class MixRepositoryTest {
         assertNull(repository.activeMixId.first())
     }
 
+    @Test
+    fun `setActiveMix records lastStartedMixId`() = runTest {
+        val repository = MixRepository(newDataStore(backgroundScope))
+
+        repository.setActiveMix("mix-1")
+
+        assertEquals("mix-1", repository.lastStartedMixId.first())
+    }
+
+    @Test
+    fun `clearActiveMix keeps lastStartedMixId`() = runTest {
+        val repository = MixRepository(newDataStore(backgroundScope))
+
+        repository.setActiveMix("mix-1")
+        repository.clearActiveMix()
+
+        assertEquals("mix-1", repository.lastStartedMixId.first())
+    }
+
+    @Test
+    fun `deleting the last started mix clears lastStartedMixId`() = runTest {
+        val repository = MixRepository(newDataStore(backgroundScope))
+        repository.saveMix(sampleMix)
+        repository.setActiveMix(sampleMix.id)
+
+        repository.deleteMix(sampleMix.id)
+
+        assertNull(repository.lastStartedMixId.first())
+    }
+
+    @Test
+    fun `deleting another mix keeps lastStartedMixId`() = runTest {
+        val repository = MixRepository(newDataStore(backgroundScope))
+        repository.saveMix(sampleMix)
+        repository.saveMix(sampleMix.copy(id = "mix-2"))
+        repository.setActiveMix(sampleMix.id)
+
+        repository.deleteMix("mix-2")
+
+        assertEquals(sampleMix.id, repository.lastStartedMixId.first())
+    }
+
     private fun newDataStore(scope: kotlinx.coroutines.CoroutineScope) = preferencesDataStoreForTest(
         scope = scope,
         produceFile = { tempFolder.newFile("mixes.preferences_pb") },

@@ -64,9 +64,10 @@ import com.quietgrid.app.core.mix.MixMode
 import com.quietgrid.app.core.mix.drawWeighted
 import com.quietgrid.app.core.mix.nextMixName
 import com.quietgrid.app.core.mix.resolvedCandidates
+import com.quietgrid.app.LaunchRequest
+import com.quietgrid.app.data.ActiveSessionSummary
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.RepositoriesViewModel
-import com.quietgrid.app.data.SESSION_MODE_ENDLESS
 import com.quietgrid.app.games.animaldoku.AnimalDokuChallengerPlayScreen
 import com.quietgrid.app.games.animaldoku.AnimalDokuChallengerResultScreen
 import com.quietgrid.app.games.animaldoku.AnimalDokuPlayScreen
@@ -120,6 +121,7 @@ import com.quietgrid.app.ui.screens.ChallengerRunDetails
 import com.quietgrid.app.ui.screens.CompletionExtras
 import com.quietgrid.app.ui.screens.CompletionHighlight
 import com.quietgrid.app.ui.screens.CompletionScreen
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import com.quietgrid.app.ui.screens.GamesScreen
 import com.quietgrid.app.ui.screens.LossScreen
@@ -140,7 +142,7 @@ val LocalAnimatedVisibilityScope = compositionLocalOf<AnimatedVisibilityScope?> 
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit = {}) {
+fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () -> Unit = {}) {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
@@ -163,11 +165,8 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
     }
 
     fun resumeActiveRoute(gameId: GameId): String =
-        if (activeSession?.mode == SESSION_MODE_ENDLESS) {
-            Routes.endless(gameId, resume = true)
-        } else {
-            Routes.play(gameId, Difficulty.EASY, resume = true, daily = activeSession?.dailyDate?.let { runCatching { LocalDate.parse(it) }.getOrNull() })
-        }
+        Routes.resume(ActiveSessionSummary(gameId.key, activeSession?.dailyDate, activeSession?.mode))
+            ?: Routes.play(gameId, Difficulty.EASY, resume = true)
 
     fun playNextDaily(next: Pair<GameId, Difficulty>?, dailyKey: String?) {
         val date = dailyKey?.let { runCatching { LocalDate.parse(it) }.getOrNull() } ?: return
@@ -182,13 +181,6 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
         navController.popBackStack(Routes.TABS, inclusive = false)
     }
 
-    LaunchedEffect(openDailyTab) {
-        if (openDailyTab) {
-            goToDailyTab()
-            onOpenDailyTabHandled()
-        }
-    }
-
     var pendingMixToStart by remember { mutableStateOf<Mix?>(null) }
     var pendingDailyRoute by remember { mutableStateOf<String?>(null) }
     val accountDrawerState = rememberDrawerState(DrawerValue.Closed)
@@ -197,7 +189,7 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
 
     fun goToMixDraw(mix: Mix) {
         scope.launch {
-            val enabledGameIds = GameCatalog.games.filter { !it.beta || settings.betaGamesEnabled }.map { it.id }.toSet()
+            val enabledGameIds = GameCatalog.enabledGameIds(repositories.settingsRepository.settings.first().betaGamesEnabled)
             val candidate = drawWeighted(mix.resolvedCandidates().filter { it.gameId in enabledGameIds })
             if (candidate == null) {
                 repositories.mixRepository.clearActiveMix()
@@ -221,6 +213,24 @@ fun AppNavHost(openDailyTab: Boolean = false, onOpenDailyTabHandled: () -> Unit 
     fun playAgainOrDrawMix(fallback: () -> Unit) {
         val mix = activeMix
         if (mix != null) goToMixDraw(mix) else fallback()
+    }
+
+    LaunchedEffect(launchRequest) {
+        val request = launchRequest ?: return@LaunchedEffect
+        val session = repositories.sessionRepository.activeSessionSummary.first()
+        val currentMixes = repositories.mixRepository.mixes.first()
+        val onPlayScreen = navController.currentDestination?.route in setOf(Routes.PLAY, Routes.CHALLENGER, Routes.ENDLESS)
+        onLaunchRequestHandled()
+        when (val action = launchAction(request, session, currentMixes.map { it.id }.toSet(), onPlayScreen)) {
+            LaunchAction.OpenDailyTab -> goToDailyTab()
+            LaunchAction.OpenTabs -> navController.popBackStack(Routes.TABS, inclusive = false)
+            LaunchAction.Stay -> Unit
+            is LaunchAction.Navigate -> {
+                if (action.endsMix) repositories.mixRepository.clearActiveMix()
+                navController.navigate(action.route) { popUpTo(Routes.TABS) { inclusive = false } }
+            }
+            is LaunchAction.StartMix -> currentMixes.firstOrNull { it.id == action.mixId }?.let { startMix(it) }
+        }
     }
 
     ModalNavigationDrawer(

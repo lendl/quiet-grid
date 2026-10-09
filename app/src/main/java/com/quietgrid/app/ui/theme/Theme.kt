@@ -1,6 +1,7 @@
 package com.quietgrid.app.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
@@ -13,6 +14,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import com.quietgrid.app.R
+import com.quietgrid.app.data.ThemeMode
 
 val LocalIsPencilTheme = compositionLocalOf { false }
 val LocalIsDarkTheme = compositionLocalOf { false }
@@ -268,20 +270,33 @@ private val DraculaColors = darkColorScheme(
 
 enum class ResolvedTheme { LIGHT, DARK, PENCIL, SILK, NORD, COFFEE, DRACULA }
 
+fun colorSchemeFor(theme: ResolvedTheme): ColorScheme = when (theme) {
+    ResolvedTheme.DARK -> DarkColors
+    ResolvedTheme.LIGHT -> LightColors
+    ResolvedTheme.PENCIL -> PencilColors
+    ResolvedTheme.SILK -> SilkColors
+    ResolvedTheme.NORD -> NordColors
+    ResolvedTheme.COFFEE -> CoffeeColors
+    ResolvedTheme.DRACULA -> DraculaColors
+}
+
+fun ThemeMode.fixedResolvedTheme(): ResolvedTheme? = when (this) {
+    ThemeMode.SYSTEM -> null
+    ThemeMode.LIGHT -> ResolvedTheme.LIGHT
+    ThemeMode.DARK -> ResolvedTheme.DARK
+    ThemeMode.PENCIL -> ResolvedTheme.PENCIL
+    ThemeMode.SILK -> ResolvedTheme.SILK
+    ThemeMode.NORD -> ResolvedTheme.NORD
+    ThemeMode.COFFEE -> ResolvedTheme.COFFEE
+    ThemeMode.DRACULA -> ResolvedTheme.DRACULA
+}
+
 @Composable
 fun QuietGridTheme(
     resolvedTheme: ResolvedTheme = if (isSystemInDarkTheme()) ResolvedTheme.DARK else ResolvedTheme.LIGHT,
     content: @Composable () -> Unit,
 ) {
-    val colorScheme = when (resolvedTheme) {
-        ResolvedTheme.DARK -> DarkColors
-        ResolvedTheme.LIGHT -> LightColors
-        ResolvedTheme.PENCIL -> PencilColors
-        ResolvedTheme.SILK -> SilkColors
-        ResolvedTheme.NORD -> NordColors
-        ResolvedTheme.COFFEE -> CoffeeColors
-        ResolvedTheme.DRACULA -> DraculaColors
-    }
+    val colorScheme = colorSchemeFor(resolvedTheme)
     CompositionLocalProvider(
         LocalIsPencilTheme provides (resolvedTheme == ResolvedTheme.PENCIL),
         LocalIsDarkTheme provides (resolvedTheme == ResolvedTheme.DARK),

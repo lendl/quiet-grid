@@ -6,6 +6,7 @@ import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.quietgrid.app.core.AppLocale
 import com.quietgrid.app.notifications.DailyReminderScheduler
+import com.quietgrid.app.widget.QuickPlayWidgetUpdater
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
@@ -13,6 +14,7 @@ import javax.inject.Inject
 class QuietGridApplication : Application(), Configuration.Provider {
     @Inject lateinit var workerFactory: HiltWorkerFactory
     @Inject lateinit var dailyReminderScheduler: DailyReminderScheduler
+    @Inject lateinit var quickPlayWidgetUpdater: QuickPlayWidgetUpdater
 
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder().setWorkerFactory(workerFactory).build()
@@ -24,5 +26,6 @@ class QuietGridApplication : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
         dailyReminderScheduler.start()
+        quickPlayWidgetUpdater.start()
     }
 }

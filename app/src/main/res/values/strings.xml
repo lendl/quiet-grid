@@ -1789,4 +1789,8 @@
     <string name="whodidit_rule_3_body">On Expert, suspects make statements, and exactly the culprit lies.</string>
     <string name="whodidit_rule_4_title">Name the culprit</string>
     <string name="whodidit_rule_4_body">The case is solved when the whole grid is matched correctly and the culprit is revealed.</string>
+    <string name="quick_play_widget_label">Quick Play</string>
+    <string name="quick_play_widget_description">Start a puzzle in one tap</string>
+    <string name="quick_play_continue">Continue</string>
+    <string name="quick_play_play">Play</string>
 </resources>

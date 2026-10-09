@@ -24,6 +24,7 @@ private data class MixesEnvelope(val mixes: List<Mix> = emptyList())
 private val mixJson = Json { ignoreUnknownKeys = true }
 private val MIXES_KEY = stringPreferencesKey("mixes")
 private val ACTIVE_MIX_ID_KEY = stringPreferencesKey("active_mix_id")
+private val LAST_STARTED_MIX_ID_KEY = stringPreferencesKey("last_started_mix_id")
 
 private fun decodeMixes(raw: String?): MixesEnvelope =
     raw?.let { runCatching { mixJson.decodeFromString<MixesEnvelope>(it) }.getOrNull() } ?: MixesEnvelope()
@@ -38,6 +39,8 @@ class MixRepository @Inject constructor(private val dataStore: DataStore<Prefere
         .map { decodeMixes(it).mixes }
 
     val activeMixId: Flow<String?> = dataStore.data.map { it[ACTIVE_MIX_ID_KEY] }.distinctUntilChanged()
+
+    val lastStartedMixId: Flow<String?> = dataStore.data.map { it[LAST_STARTED_MIX_ID_KEY] }.distinctUntilChanged()
 
     suspend fun saveMix(mix: Mix) {
         dataStore.edit { prefs ->
@@ -63,11 +66,15 @@ class MixRepository @Inject constructor(private val dataStore: DataStore<Prefere
             val updated = prefs.decodeMixes().mixes.filterNot { it.id == mixId }
             prefs[MIXES_KEY] = mixJson.encodeToString(MixesEnvelope(updated))
             if (prefs[ACTIVE_MIX_ID_KEY] == mixId) prefs.remove(ACTIVE_MIX_ID_KEY)
+            if (prefs[LAST_STARTED_MIX_ID_KEY] == mixId) prefs.remove(LAST_STARTED_MIX_ID_KEY)
         }
     }
 
     suspend fun setActiveMix(mixId: String) {
-        dataStore.edit { it[ACTIVE_MIX_ID_KEY] = mixId }
+        dataStore.edit {
+            it[ACTIVE_MIX_ID_KEY] = mixId
+            it[LAST_STARTED_MIX_ID_KEY] = mixId
+        }
     }
 
     suspend fun clearActiveMix() {

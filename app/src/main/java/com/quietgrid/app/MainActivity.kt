@@ -28,24 +28,24 @@ import com.quietgrid.app.core.AppLocale
 import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.data.ThemeMode
 import com.quietgrid.app.nav.AppNavHost
-import com.quietgrid.app.notifications.OPEN_TAB_DAILY
-import com.quietgrid.app.notifications.OPEN_TAB_EXTRA
 import com.quietgrid.app.ui.components.LocalHapticsEnabled
 import com.quietgrid.app.ui.theme.QuietGridTheme
 import com.quietgrid.app.ui.theme.ResolvedTheme
+import com.quietgrid.app.ui.theme.fixedResolvedTheme
+import com.quietgrid.app.widget.QuickPlayWidgetUpdater
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val openDailyTab = mutableStateOf(false)
+    @Inject lateinit var quickPlayWidgetUpdater: QuickPlayWidgetUpdater
+    private val launchRequest = mutableStateOf<LaunchRequest?>(null)
     private var firstFrameReady = false
-
-    private fun Intent?.opensDailyTab(): Boolean = this?.getStringExtra(OPEN_TAB_EXTRA) == OPEN_TAB_DAILY
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        if (intent.opensDailyTab()) openDailyTab.value = true
+        intent.toLaunchRequest()?.let { launchRequest.value = it }
     }
 
     override fun attachBaseContext(newBase: Context) {
@@ -65,7 +65,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (savedInstanceState == null && intent.opensDailyTab()) openDailyTab.value = true
+        if (savedInstanceState == null) launchRequest.value = intent.toLaunchRequest()
+        quickPlayWidgetUpdater.refresh()
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
@@ -77,16 +78,8 @@ class MainActivity : ComponentActivity() {
             val loadedSettings by repositories.settingsRepository.settings.collectAsState(initial = null)
             val settings = loadedSettings ?: return@setContent
             val systemDark = isSystemInDarkTheme()
-            val resolvedTheme = when (settings.themeMode) {
-                ThemeMode.SYSTEM -> if (systemDark) ResolvedTheme.DARK else ResolvedTheme.LIGHT
-                ThemeMode.LIGHT -> ResolvedTheme.LIGHT
-                ThemeMode.DARK -> ResolvedTheme.DARK
-                ThemeMode.PENCIL -> ResolvedTheme.PENCIL
-                ThemeMode.SILK -> ResolvedTheme.SILK
-                ThemeMode.NORD -> ResolvedTheme.NORD
-                ThemeMode.COFFEE -> ResolvedTheme.COFFEE
-                ThemeMode.DRACULA -> ResolvedTheme.DRACULA
-            }
+            val resolvedTheme = settings.themeMode.fixedResolvedTheme()
+                ?: if (systemDark) ResolvedTheme.DARK else ResolvedTheme.LIGHT
 
             LaunchedEffect(settings.themeMode) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -112,8 +105,8 @@ class MainActivity : ComponentActivity() {
                 }
                 CompositionLocalProvider(LocalHapticsEnabled provides settings.hapticsEnabled) {
                     AppNavHost(
-                        openDailyTab = openDailyTab.value,
-                        onOpenDailyTabHandled = { openDailyTab.value = false },
+                        launchRequest = launchRequest.value,
+                        onLaunchRequestHandled = { launchRequest.value = null },
                     )
                 }
             }

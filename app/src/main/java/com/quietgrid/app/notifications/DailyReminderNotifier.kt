@@ -5,19 +5,17 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import com.quietgrid.app.MainActivity
+import com.quietgrid.app.LaunchRequest
 import com.quietgrid.app.R
+import com.quietgrid.app.toIntent
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
 
-const val OPEN_TAB_EXTRA = "open_tab"
-const val OPEN_TAB_DAILY = "daily"
 private const val CHANNEL_ID = "daily_reminder"
 private const val NOTIFICATION_ID = 1001
 
@@ -32,9 +30,7 @@ object DailyReminderNotifier {
         if (!hasPermission(context)) return
         ensureChannel(context)
         val titles = games.joinToString(", ") { context.getString(GameCatalog.get(it).titleRes) }
-        val intent = Intent(context, MainActivity::class.java)
-            .putExtra(OPEN_TAB_EXTRA, OPEN_TAB_DAILY)
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        val intent = LaunchRequest.DailyTab.toIntent(context)
         val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_monochrome)

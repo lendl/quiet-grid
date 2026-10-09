@@ -58,6 +58,9 @@ object GameCatalog {
     )
 
     fun get(id: GameId): GameMeta = games.first { it.id == id }
+
+    fun enabledGameIds(betaGamesEnabled: Boolean): Set<GameId> =
+        games.filter { !it.beta || betaGamesEnabled }.map { it.id }.toSet()
 }
 
 val CHALLENGER_CAPABLE_GAMES: Set<GameId> = setOf(GameId.CHIMPTEST, GameId.WORDGUESS, GameId.ANIMALDOKU, GameId.STARBATTLE, GameId.SUDOKU, GameId.TAKUZU, GameId.NONOGRAM)
