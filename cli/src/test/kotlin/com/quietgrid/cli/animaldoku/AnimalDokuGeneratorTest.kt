@@ -58,6 +58,28 @@ class AnimalDokuGeneratorTest {
     }
 
     @Test
+    fun `growRegions with a dominant region still produces a valid grid seeded by the solution`() {
+        val solution = generateSolutionPermutation(9)
+        checkNotNull(solution)
+        val regions = growRegions(9, solution, dominantRegion = 0, dominantTurnsPerRound = 4)
+        checkNotNull(regions)
+        assertTrue(isValidAnimalDokuRegionGrid(9, regions))
+        for (row in 0 until 9) {
+            assertEquals(row, regions[row][solution[row]])
+        }
+    }
+
+    @Test
+    fun `boundaryMutationCandidates never shrinks a region to below the minimum region size`() {
+        val sizes = regionSizesOf(4, LOPSIDED_REGIONS)
+        val candidates = boundaryMutationCandidates(4, QUADRANT_SOLUTION, LOPSIDED_REGIONS, minDonorRegionSizeToPrefer = 0, minRegionSize = 5)
+        assertTrue(candidates.isNotEmpty())
+        for ((row, col, _) in candidates) {
+            assertTrue(sizes[LOPSIDED_REGIONS[row][col]] > 5)
+        }
+    }
+
+    @Test
     fun `generateAnimalDokuPuzzle produces a puzzle classified at the requested difficulty and size`() {
         val puzzle = generateAnimalDokuPuzzle(size = 5, targetDifficulty = com.quietgrid.engine.core.Difficulty.EASY, idPrefix = "ad5")
         assertNotNull(puzzle)

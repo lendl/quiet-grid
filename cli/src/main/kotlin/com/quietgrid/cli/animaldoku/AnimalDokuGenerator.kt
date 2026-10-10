@@ -2,7 +2,9 @@ package com.quietgrid.cli.animaldoku
 
 import com.quietgrid.engine.animaldoku.AnimalDokuPuzzleEntry
 import com.quietgrid.engine.animaldoku.AnimalDokuSolveResult
-import com.quietgrid.engine.animaldoku.classifyAnimalDokuDifficulty
+import com.quietgrid.engine.animaldoku.animalDokuRegionSizes
+import com.quietgrid.engine.animaldoku.classifyAnimalDokuPuzzle
+import com.quietgrid.engine.animaldoku.minAnimalDokuRegionSize
 import com.quietgrid.engine.animaldoku.solveAnimalDoku
 import com.quietgrid.engine.core.Difficulty
 import kotlin.math.abs
@@ -24,7 +26,7 @@ fun generateSolutionPermutation(size: Int, maxAttempts: Int = 500): IntArray? {
 
 private val ORTHOGONAL_DELTAS = listOf(-1 to 0, 1 to 0, 0 to -1, 0 to 1)
 
-fun growRegions(size: Int, solution: IntArray): List<List<Int>>? {
+fun growRegions(size: Int, solution: IntArray, dominantRegion: Int? = null, dominantTurnsPerRound: Int = 1): List<List<Int>>? {
     val regionOf = Array(size) { IntArray(size) { -1 } }
     val claimed = List(size) { mutableListOf<Pair<Int, Int>>() }
     for (row in 0 until size) {
@@ -38,21 +40,24 @@ fun growRegions(size: Int, solution: IntArray): List<List<Int>>? {
         val order = (0 until size).shuffled()
         var progressed = false
         for (regionId in order) {
-            if (unclaimed == 0) break
-            val candidates = mutableSetOf<Pair<Int, Int>>()
-            for ((r, c) in claimed[regionId]) {
-                for ((dr, dc) in ORTHOGONAL_DELTAS) {
-                    val nr = r + dr
-                    val nc = c + dc
-                    if (nr in 0 until size && nc in 0 until size && regionOf[nr][nc] == -1) candidates.add(nr to nc)
+            val turns = if (regionId == dominantRegion) dominantTurnsPerRound else 1
+            repeat(turns) {
+                if (unclaimed == 0) return@repeat
+                val candidates = mutableSetOf<Pair<Int, Int>>()
+                for ((r, c) in claimed[regionId]) {
+                    for ((dr, dc) in ORTHOGONAL_DELTAS) {
+                        val nr = r + dr
+                        val nc = c + dc
+                        if (nr in 0 until size && nc in 0 until size && regionOf[nr][nc] == -1) candidates.add(nr to nc)
+                    }
                 }
+                if (candidates.isEmpty()) return@repeat
+                val (cr, cc) = candidates.random()
+                regionOf[cr][cc] = regionId
+                claimed[regionId].add(cr to cc)
+                unclaimed--
+                progressed = true
             }
-            if (candidates.isEmpty()) continue
-            val (cr, cc) = candidates.random()
-            regionOf[cr][cc] = regionId
-            claimed[regionId].add(cr to cc)
-            unclaimed--
-            progressed = true
         }
         if (!progressed) return null
     }
@@ -66,15 +71,20 @@ fun repairRegionsTowardUniqueSolution(
     solution: IntArray,
     initialRegions: List<List<Int>>,
     maxRepairAttempts: Int = 50,
+    minRegionSize: Int = 1,
 ): AnimalDokuRepairedPuzzle? {
     var regions = initialRegions
+    var result = solveAnimalDoku(size, regions)
     repeat(maxRepairAttempts) {
-        val result = solveAnimalDoku(size, regions)
         if (result.solved) return AnimalDokuRepairedPuzzle(regions, result)
-        regions = mutateOneBoundaryCell(size, solution, regions) ?: return@repeat
+        val mutated = mutateOneBoundaryCell(size, solution, regions, minRegionSize = minRegionSize) ?: return@repeat
+        val mutatedResult = solveAnimalDoku(size, mutated)
+        if (mutatedResult.solved || mutatedResult.remainingCandidates <= result.remainingCandidates) {
+            regions = mutated
+            result = mutatedResult
+        }
     }
-    val finalResult = solveAnimalDoku(size, regions)
-    return if (finalResult.solved) AnimalDokuRepairedPuzzle(regions, finalResult) else null
+    return if (result.solved) AnimalDokuRepairedPuzzle(regions, result) else null
 }
 
 internal fun isConnectedWithoutCell(size: Int, regionOf: List<List<Int>>, region: Int, excluded: Pair<Int, Int>): Boolean {
@@ -106,6 +116,7 @@ internal fun boundaryMutationCandidates(
     solution: IntArray,
     regionOf: List<List<Int>>,
     minDonorRegionSizeToPrefer: Int = MIN_DONOR_REGION_SIZE_TO_PREFER,
+    minRegionSize: Int = 1,
 ): List<Triple<Int, Int, Int>> {
     val regionSizes = IntArray(size)
     for (row in 0 until size) for (col in 0 until size) regionSizes[regionOf[row][col]]++
@@ -116,6 +127,7 @@ internal fun boundaryMutationCandidates(
         for (col in 0 until size) {
             if (col == solution[row]) continue
             val currentRegion = regionOf[row][col]
+            if (regionSizes[currentRegion] <= minRegionSize) continue
             val neighborRegions = mutableListOf<Int>()
             for ((dr, dc) in ORTHOGONAL_DELTAS) {
                 val nr = row + dr
@@ -142,8 +154,9 @@ internal fun mutateOneBoundaryCell(
     solution: IntArray,
     regionOf: List<List<Int>>,
     minDonorRegionSizeToPrefer: Int = MIN_DONOR_REGION_SIZE_TO_PREFER,
+    minRegionSize: Int = 1,
 ): List<List<Int>>? {
-    val pool = boundaryMutationCandidates(size, solution, regionOf, minDonorRegionSizeToPrefer)
+    val pool = boundaryMutationCandidates(size, solution, regionOf, minDonorRegionSizeToPrefer, minRegionSize)
     if (pool.isEmpty()) return null
     val (row, col, newRegion) = pool.random()
     return regionOf.mapIndexed { r, line -> if (r != row) line else line.mapIndexed { c, v -> if (c != col) v else newRegion } }
@@ -196,6 +209,7 @@ fun forceOneSingleCellRegion(size: Int, solution: IntArray, regions: List<List<I
 }
 
 private const val REPAIR_ATTEMPTS_FOR_GENERATION = 400
+private const val EXPERT_DOMINANT_TURNS_PER_ROUND = 4
 
 internal fun defaultMaxAttemptsFor(targetDifficulty: Difficulty): Int = when (targetDifficulty) {
     Difficulty.HARD -> 50
@@ -210,9 +224,15 @@ fun generateAnimalDokuPuzzleForSolution(
     idPrefix: String,
     maxRegionAttempts: Int = defaultMaxAttemptsFor(targetDifficulty),
 ): AnimalDokuPuzzleEntry? {
+    val minRegionSize = minAnimalDokuRegionSize(targetDifficulty)
     repeat(maxRegionAttempts) {
-        val initialRegions = growRegions(size, solution) ?: return@repeat
-        val repaired = repairRegionsTowardUniqueSolution(size, solution, initialRegions, REPAIR_ATTEMPTS_FOR_GENERATION) ?: return@repeat
+        val initialRegions = if (targetDifficulty == Difficulty.EXPERT) {
+            growRegions(size, solution, dominantRegion = (0 until size).random(), dominantTurnsPerRound = EXPERT_DOMINANT_TURNS_PER_ROUND)
+        } else {
+            growRegions(size, solution)
+        } ?: return@repeat
+        if (animalDokuRegionSizes(size, initialRegions).min() < minRegionSize) return@repeat
+        val repaired = repairRegionsTowardUniqueSolution(size, solution, initialRegions, REPAIR_ATTEMPTS_FOR_GENERATION, minRegionSize) ?: return@repeat
 
         var finalRegions = repaired.regions
         var finalSolveResult = repaired.solveResult
@@ -231,7 +251,7 @@ fun generateAnimalDokuPuzzleForSolution(
             finalSolveResult = shrunkResult
         }
 
-        val difficulty = classifyAnimalDokuDifficulty(size, finalSolveResult) ?: return@repeat
+        val difficulty = classifyAnimalDokuPuzzle(size, finalRegions, finalSolveResult) ?: return@repeat
         if (difficulty != targetDifficulty) return@repeat
         return AnimalDokuPuzzleEntry(
             id = "$idPrefix-${solution.joinToString("")}-${finalRegions.joinToString("") { row -> row.joinToString("") }}",

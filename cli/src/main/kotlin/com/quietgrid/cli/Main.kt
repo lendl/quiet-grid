@@ -21,7 +21,9 @@ import com.quietgrid.engine.arrowescape.scoreArrowEscapePuzzle
 import com.quietgrid.engine.core.Difficulty
 import com.quietgrid.engine.hashi.HashiPuzzleEntry
 import com.quietgrid.engine.starbattle.StarBattlePuzzleEntry
+import com.quietgrid.engine.starbattle.STARBATTLE_K2_SIZES_BY_GRADE
 import com.quietgrid.engine.starbattle.classifyStarBattleK2Grade
+import com.quietgrid.engine.starbattle.meetsStarBattleK2RegionShape
 import com.quietgrid.engine.sudoku.SudokuPuzzleEntry
 import com.quietgrid.engine.takuzu.TakuzuPuzzleEntry
 import com.quietgrid.engine.themeclear.toBankEntry
@@ -276,10 +278,10 @@ fun main(args: Array<String>) {
                 val maxK2Attempts = command.count * 30
                 while (entries.size < k2TargetCount && k2Attempts < maxK2Attempts) {
                     k2Attempts++
-                    val size = (8..9).random()
+                    val size = STARBATTLE_K2_SIZES_BY_GRADE.getValue(difficulty.key).random()
                     val solution = generateStarBattleSolution(size, 2) ?: continue
                     val initialRegions = growStarBattleRegions(size, solution) ?: continue
-                    val repaired = repairStarBattleRegionsTowardUniqueSolution(size, 2, solution, initialRegions) ?: continue
+                    val repaired = repairStarBattleRegionsTowardUniqueSolution(size, 2, solution, initialRegions, maxRepairAttempts = 400) ?: continue
                     var grade = classifyStarBattleK2Grade(repaired.solveResult)
                     var finalRegions = repaired.regions
                     if (grade != difficulty.key && (difficulty == Difficulty.MEDIUM || difficulty == Difficulty.HARD)) {
@@ -288,6 +290,7 @@ fun main(args: Array<String>) {
                         finalRegions = softened.regions
                     }
                     if (grade != difficulty.key) continue
+                    if (!meetsStarBattleK2RegionShape(difficulty.key, size, finalRegions)) continue
                     entries += StarBattlePuzzleEntry(
                         id = "sbk2$size-${solution.joinToString("_") { it.joinToString(",") }}-${finalRegions.joinToString("") { it.joinToString("") }}",
                         size = size,

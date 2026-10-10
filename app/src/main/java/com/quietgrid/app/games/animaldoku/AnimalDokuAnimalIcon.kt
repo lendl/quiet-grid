@@ -16,8 +16,8 @@ enum class AnimalDokuAnimalPose {
     FRONT_FACING,
 }
 
-private val ANIMAL_EMOJI_PALETTE = listOf(
-    "🦊", "🦉", "🦔", "🐻", "🐰", "🐿️", "🦡", "🦌", "🐺",
+internal val ANIMAL_EMOJI_PALETTE = listOf(
+    "🦊", "🦉", "🦔", "🐻", "🐰", "🐿️", "🦡", "🦌", "🐺", "🦝",
 )
 
 @Composable

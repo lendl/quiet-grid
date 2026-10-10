@@ -7,6 +7,38 @@ import org.junit.Test
 
 class StarBattleTechniquesTest {
     @Test
+    fun `pairing confines two regions to two rows that hold only those regions`() {
+        val regions = listOf(
+            listOf(0, 0, 0, 1, 1, 1),
+            listOf(0, 0, 0, 1, 1, 1),
+            listOf(0, 2, 3, 4, 5, 1),
+            listOf(2, 2, 3, 4, 5, 5),
+            listOf(2, 3, 3, 4, 4, 5),
+            listOf(2, 3, 4, 4, 5, 5),
+        )
+        val state = StarBattleSolverState(6, 1, regions)
+        val move = findPairing(state, 2)
+        checkNotNull(move)
+        assertEquals(StarBattleTechnique.PAIRING, move.technique)
+        assertEquals(setOf(2 to 0, 2 to 5), move.cells.toSet())
+    }
+
+    @Test
+    fun `pairing does not fire when the stars still needed do not match the lines capacity`() {
+        val regions = listOf(
+            listOf(0, 0, 0, 1, 1, 1),
+            listOf(0, 0, 0, 1, 1, 1),
+            listOf(0, 2, 3, 4, 5, 1),
+            listOf(2, 2, 3, 4, 5, 5),
+            listOf(2, 3, 3, 4, 4, 5),
+            listOf(2, 3, 4, 4, 5, 5),
+        )
+        val state = StarBattleSolverState(6, 1, regions)
+        state.regionCount[0] = 1
+        assertTrue(findPairing(state, 2)?.cells?.contains(2 to 5) != true)
+    }
+
+    @Test
     fun `forced placement fires when a region's remaining equals its candidate count`() {
         val regions = listOf(
             listOf(0, 0, 1),

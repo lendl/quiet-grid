@@ -4,6 +4,8 @@ package com.quietgrid.cli.animaldoku
 import com.quietgrid.engine.animaldoku.AnimalDokuSolveResult
 import com.quietgrid.engine.animaldoku.analyzeSolveResult
 import com.quietgrid.engine.animaldoku.classifyAnimalDokuDifficulty
+import com.quietgrid.engine.animaldoku.classifyAnimalDokuPuzzle
+import com.quietgrid.engine.animaldoku.minAnimalDokuRegionSize
 import com.quietgrid.engine.animaldoku.solveAnimalDoku
 import com.quietgrid.engine.core.Difficulty
 
@@ -49,8 +51,9 @@ fun hardenTowardDifficulty(
     var bestKey = hardnessKeyOf(initialSolveResult)
     var stall = 0
 
-    while (stall < maxStallMutations && classifyAnimalDokuDifficulty(size, bestResult) != targetDifficulty) {
-        val mutated = mutateOneBoundaryCell(size, solution, bestRegions)
+    val minRegionSize = minAnimalDokuRegionSize(targetDifficulty)
+    while (stall < maxStallMutations && classifyAnimalDokuPuzzle(size, bestRegions, bestResult) != targetDifficulty) {
+        val mutated = mutateOneBoundaryCell(size, solution, bestRegions, minRegionSize = minRegionSize)
         if (mutated == null) {
             stall++
             continue

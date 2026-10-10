@@ -34,6 +34,15 @@ private fun repairedPuzzleBelowDifficultyForTest(
     throw AssertionError("Every size-$size repair attempt already classified as $exclusiveCeiling in $maxSeedAttempts seed attempts")
 }
 
+private fun chainResult(chains: Int, depth: Int, stepsBeforeFirstPlacement: Int): AnimalDokuSolveResult {
+    val steps = mutableListOf<AnimalDokuSolveStep>()
+    repeat(stepsBeforeFirstPlacement) { steps.add(AnimalDokuSolveStep(AnimalDokuTechnique.CHAIN, depth)) }
+    steps.add(AnimalDokuSolveStep(AnimalDokuTechnique.SINGLETON, 0))
+    repeat(chains - stepsBeforeFirstPlacement) { steps.add(AnimalDokuSolveStep(AnimalDokuTechnique.CHAIN, depth)) }
+    repeat(5) { steps.add(AnimalDokuSolveStep(AnimalDokuTechnique.SINGLETON, 0)) }
+    return AnimalDokuSolveResult(solved = true, steps = steps)
+}
+
 class AnimalDokuHardeningTest {
     @Test
     fun `hardnessKeyOf reflects hardest technique its repeat count and max chain depth`() {
@@ -74,11 +83,8 @@ class AnimalDokuHardeningTest {
 
     @Test
     fun `expert has no ceiling so a candidate that already classifies as expert is still acceptable`() {
-        val size = 8
-        val candidateResult = AnimalDokuSolveResult(
-            solved = true,
-            steps = listOf(AnimalDokuSolveStep(AnimalDokuTechnique.CHAIN, 4)),
-        )
+        val size = 10
+        val candidateResult = chainResult(chains = 10, depth = 6, stepsBeforeFirstPlacement = 8)
         assertEquals(Difficulty.EXPERT, classifyAnimalDokuDifficulty(size, candidateResult))
         val best = HardnessKey(hardestTechniqueOrdinal = AnimalDokuTechnique.PAIRING_3.ordinal, hardestTechniqueRepeatCount = 1, maxChainDepth = 0)
         val candidate = hardnessKeyOf(candidateResult)
@@ -87,11 +93,8 @@ class AnimalDokuHardeningTest {
 
     @Test
     fun `hard rejects a candidate that would already classify as expert`() {
-        val size = 8
-        val candidateResult = AnimalDokuSolveResult(
-            solved = true,
-            steps = listOf(AnimalDokuSolveStep(AnimalDokuTechnique.CHAIN, 4)),
-        )
+        val size = 9
+        val candidateResult = chainResult(chains = 10, depth = 6, stepsBeforeFirstPlacement = 8)
         assertEquals(Difficulty.EXPERT, classifyAnimalDokuDifficulty(size, candidateResult))
         val best = HardnessKey(hardestTechniqueOrdinal = AnimalDokuTechnique.PAIRING_3.ordinal, hardestTechniqueRepeatCount = 1, maxChainDepth = 0)
         val candidate = hardnessKeyOf(candidateResult)
@@ -101,10 +104,7 @@ class AnimalDokuHardeningTest {
     @Test
     fun `hard accepts a candidate with a shallow chain that still classifies as hard`() {
         val size = 8
-        val steps = mutableListOf(AnimalDokuSolveStep(AnimalDokuTechnique.CONFINEMENT, 0))
-        repeat(2) { steps.add(AnimalDokuSolveStep(AnimalDokuTechnique.CHAIN, 3)) }
-        repeat(7) { steps.add(AnimalDokuSolveStep(AnimalDokuTechnique.SINGLETON, 0)) }
-        val candidateResult = AnimalDokuSolveResult(solved = true, steps = steps)
+        val candidateResult = chainResult(chains = 3, depth = 3, stepsBeforeFirstPlacement = 3)
         assertEquals(Difficulty.HARD, classifyAnimalDokuDifficulty(size, candidateResult))
         val best = HardnessKey(hardestTechniqueOrdinal = AnimalDokuTechnique.PAIRING_3.ordinal, hardestTechniqueRepeatCount = 1, maxChainDepth = 0)
         val candidate = hardnessKeyOf(candidateResult)
@@ -149,11 +149,11 @@ class AnimalDokuHardeningTest {
 
     @Test
     fun `hardenTowardDifficulty for hard never lets the result classify as expert`() {
-        val (solution, repaired) = repairedPuzzleBelowDifficultyForTest(7, Difficulty.EXPERT)
+        val (solution, repaired) = repairedPuzzleBelowDifficultyForTest(9, Difficulty.EXPERT)
 
-        val hardened = hardenTowardDifficulty(7, solution, repaired.regions, repaired.solveResult, Difficulty.HARD, maxStallMutations = 800)
+        val hardened = hardenTowardDifficulty(9, solution, repaired.regions, repaired.solveResult, Difficulty.HARD, maxStallMutations = 300)
 
-        assertNotEquals(Difficulty.EXPERT, classifyAnimalDokuDifficulty(7, hardened.solveResult))
+        assertNotEquals(Difficulty.EXPERT, classifyAnimalDokuDifficulty(9, hardened.solveResult))
     }
 
     @Test

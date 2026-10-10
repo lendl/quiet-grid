@@ -89,6 +89,23 @@ class AnimalDokuTechniquesTest {
     }
 
     @Test
+    fun `findPairing K equals 2 confines two regions to two rows that hold only those regions`() {
+        val regions = listOf(
+            listOf(0, 0, 0, 1, 1, 1),
+            listOf(0, 0, 0, 1, 1, 1),
+            listOf(0, 2, 3, 4, 5, 1),
+            listOf(2, 2, 3, 4, 5, 5),
+            listOf(2, 3, 3, 4, 4, 5),
+            listOf(2, 3, 4, 4, 5, 5),
+        )
+        val state = AnimalDokuSolverState(6, regions)
+        val move = findPairing(state, 2)
+        checkNotNull(move)
+        assertEquals(AnimalDokuTechnique.PAIRING_2, move.technique)
+        assertEquals(setOf(2 to 0, 2 to 5), move.cells.toSet())
+    }
+
+    @Test
     fun `findPairing returns null when fewer than K regions are confined to K lines`() {
         val state = AnimalDokuSolverState(4, QUADRANT_REGIONS)
         assertNull(findPairing(state, 2))

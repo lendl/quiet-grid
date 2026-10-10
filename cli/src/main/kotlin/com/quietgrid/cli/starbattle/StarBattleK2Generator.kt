@@ -56,13 +56,17 @@ fun repairStarBattleRegionsTowardUniqueSolution(
     random: Random = Random.Default,
 ): StarBattleRepairedPuzzle? {
     var regions = initialRegions
+    var result = solveStarBattle(size, k, regions)
     repeat(maxRepairAttempts) {
-        val result = solveStarBattle(size, k, regions)
         if (result.solved) return StarBattleRepairedPuzzle(regions, result)
-        regions = mutateOneStarBattleBoundaryCell(size, solution, regions, random = random) ?: return@repeat
+        val mutated = mutateOneStarBattleBoundaryCell(size, solution, regions, random = random) ?: return@repeat
+        val mutatedResult = solveStarBattle(size, k, mutated)
+        if (mutatedResult.solved || mutatedResult.remainingCandidates <= result.remainingCandidates) {
+            regions = mutated
+            result = mutatedResult
+        }
     }
-    val finalResult = solveStarBattle(size, k, regions)
-    return if (finalResult.solved) StarBattleRepairedPuzzle(regions, finalResult) else null
+    return if (result.solved) StarBattleRepairedPuzzle(regions, result) else null
 }
 
 internal fun isConnectedWithoutStarBattleCell(size: Int, regionOf: List<List<Int>>, region: Int, excluded: Pair<Int, Int>): Boolean {

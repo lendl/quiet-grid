@@ -9,11 +9,13 @@ import com.quietgrid.engine.animaldoku.assignRegionColors
 internal val ANIMALDOKU_REGION_PALETTE_LIGHT = listOf(
     Color(0xFF56B4E9), Color(0xFF0072B2), Color(0xFF009E73), Color(0xFFCC79A7),
     Color(0xFFE69F00), Color(0xFF882255), Color(0xFF9C7A00), Color(0xFF999999), Color(0xFFD55E00),
+    Color(0xFF4B0092),
 )
 
 internal val ANIMALDOKU_REGION_PALETTE_DARK = listOf(
     Color(0xFFE69F00), Color(0xFF56B4E9), Color(0xFF009E73), Color(0xFFF0E442),
     Color(0xFF0072B2), Color(0xFFD55E00), Color(0xFFCC79A7), Color(0xFF999999), Color(0xFF882255),
+    Color(0xFFB2DF8A),
 )
 
 internal val ANIMALDOKU_FORBIDDEN_PAIRS_LIGHT: Set<Pair<Int, Int>> = setOf(

@@ -130,24 +130,60 @@ private fun pairingTechniqueFor(k: Int): AnimalDokuTechnique = when {
 
 fun findPairing(state: AnimalDokuSolverState, k: Int): AnimalDokuStep.Elimination? {
     val size = state.size
-    val unsolvedRegions = (0 until size).filter { !state.regionSolved[it] && state.candidatesInRegion(it).isNotEmpty() }
-    if (unsolvedRegions.size < k) return null
     val technique = pairingTechniqueFor(k)
+    val regionRows = IntArray(size)
+    val regionCols = IntArray(size)
+    val rowRegions = IntArray(size)
+    val colRegions = IntArray(size)
+    for (row in 0 until size) for (col in 0 until size) {
+        if (!state.isCandidate(row, col)) continue
+        val region = state.regionOf[row][col]
+        regionRows[region] = regionRows[region] or (1 shl row)
+        regionCols[region] = regionCols[region] or (1 shl col)
+        rowRegions[row] = rowRegions[row] or (1 shl region)
+        colRegions[col] = colRegions[col] or (1 shl region)
+    }
 
-    for (combo in unsolvedRegions.combinationsOfSize(k)) {
-        val rows = combo.flatMap { region -> state.candidatesInRegion(region).map { it.first } }.toSet()
-        if (rows.size == k) {
-            val toEliminate = rows.flatMap { row -> state.candidatesInRow(row) }
-                .filter { state.regionOf[it.first][it.second] !in combo }
+    fun candidatesWhere(predicate: (Int, Int) -> Boolean): List<Pair<Int, Int>> {
+        val cells = mutableListOf<Pair<Int, Int>>()
+        for (row in 0 until size) for (col in 0 until size) {
+            if (state.isCandidate(row, col) && predicate(row, col)) cells.add(row to col)
+        }
+        return cells
+    }
+
+    val unsolvedRegions = (0 until size).filter { regionRows[it] != 0 }
+    val regionCombos = unsolvedRegions.combinationsOfSize(k)
+    for (combo in regionCombos) {
+        val regionMask = combo.fold(0) { mask, region -> mask or (1 shl region) }
+        val rows = combo.fold(0) { mask, region -> mask or regionRows[region] }
+        if (Integer.bitCount(rows) == k) {
+            val toEliminate = candidatesWhere { row, col -> rows and (1 shl row) != 0 && regionMask and (1 shl state.regionOf[row][col]) == 0 }
+            if (toEliminate.isNotEmpty()) return AnimalDokuStep.Elimination(toEliminate, technique)
+        }
+    }
+    for (combo in regionCombos) {
+        val regionMask = combo.fold(0) { mask, region -> mask or (1 shl region) }
+        val cols = combo.fold(0) { mask, region -> mask or regionCols[region] }
+        if (Integer.bitCount(cols) == k) {
+            val toEliminate = candidatesWhere { row, col -> cols and (1 shl col) != 0 && regionMask and (1 shl state.regionOf[row][col]) == 0 }
             if (toEliminate.isNotEmpty()) return AnimalDokuStep.Elimination(toEliminate, technique)
         }
     }
 
-    for (combo in unsolvedRegions.combinationsOfSize(k)) {
-        val cols = combo.flatMap { region -> state.candidatesInRegion(region).map { it.second } }.toSet()
-        if (cols.size == k) {
-            val toEliminate = cols.flatMap { col -> state.candidatesInCol(col) }
-                .filter { state.regionOf[it.first][it.second] !in combo }
+    for (combo in (0 until size).filter { rowRegions[it] != 0 }.combinationsOfSize(k)) {
+        val rowMask = combo.fold(0) { mask, row -> mask or (1 shl row) }
+        val regions = combo.fold(0) { mask, row -> mask or rowRegions[row] }
+        if (Integer.bitCount(regions) == k) {
+            val toEliminate = candidatesWhere { row, col -> rowMask and (1 shl row) == 0 && regions and (1 shl state.regionOf[row][col]) != 0 }
+            if (toEliminate.isNotEmpty()) return AnimalDokuStep.Elimination(toEliminate, technique)
+        }
+    }
+    for (combo in (0 until size).filter { colRegions[it] != 0 }.combinationsOfSize(k)) {
+        val colMask = combo.fold(0) { mask, col -> mask or (1 shl col) }
+        val regions = combo.fold(0) { mask, col -> mask or colRegions[col] }
+        if (Integer.bitCount(regions) == k) {
+            val toEliminate = candidatesWhere { row, col -> colMask and (1 shl col) == 0 && regions and (1 shl state.regionOf[row][col]) != 0 }
             if (toEliminate.isNotEmpty()) return AnimalDokuStep.Elimination(toEliminate, technique)
         }
     }

@@ -2,9 +2,9 @@ package com.quietgrid.engine.starbattle
 
 data class StarBattleSolveStep(val technique: StarBattleTechnique, val chainDepth: Int)
 
-data class StarBattleSolveResult(val solved: Boolean, val steps: List<StarBattleSolveStep>)
+data class StarBattleSolveResult(val solved: Boolean, val steps: List<StarBattleSolveStep>, val remainingCandidates: Int = 0)
 
-fun solveStarBattle(size: Int, k: Int, regionOf: List<List<Int>>): StarBattleSolveResult {
+fun solveStarBattle(size: Int, k: Int, regionOf: List<List<Int>>, maxPairingGroup: Int = 4): StarBattleSolveResult {
     val state = StarBattleSolverState(size, k, regionOf)
     val steps = mutableListOf<StarBattleSolveStep>()
 
@@ -23,6 +23,13 @@ fun solveStarBattle(size: Int, k: Int, regionOf: List<List<Int>>): StarBattleSol
             continue
         }
 
+        val pairing = (2..maxPairingGroup).asSequence().mapNotNull { findPairing(state, it) }.firstOrNull()
+        if (pairing != null) {
+            pairing.cells.forEach { (r, c) -> state.eliminated[r][c] = true }
+            steps.add(StarBattleSolveStep(StarBattleTechnique.PAIRING, 0))
+            continue
+        }
+
         val chain = findChainContradiction(state)
         if (chain != null) {
             chain.cells.forEach { (r, c) -> state.eliminated[r][c] = true }
@@ -30,7 +37,7 @@ fun solveStarBattle(size: Int, k: Int, regionOf: List<List<Int>>): StarBattleSol
             continue
         }
 
-        return StarBattleSolveResult(solved = false, steps = steps)
+        return StarBattleSolveResult(solved = false, steps = steps, remainingCandidates = state.candidateCount())
     }
 
     return StarBattleSolveResult(solved = true, steps = steps)

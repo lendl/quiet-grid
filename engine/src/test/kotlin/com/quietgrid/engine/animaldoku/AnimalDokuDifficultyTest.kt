@@ -87,63 +87,84 @@ class AnimalDokuDifficultyTest {
         assertNull(classifyAnimalDokuDifficulty(4, result))
     }
 
-    @Test
-    fun `pairing-hardest puzzle padded into hards step window classifies as hard`() {
-        val result = AnimalDokuSolveResult(
-            solved = true,
-            steps = stepsOf(AnimalDokuTechnique.CONFINEMENT) + padded(4, AnimalDokuTechnique.PAIRING_2) + padded(4),
-        )
-        assertEquals(Difficulty.HARD, classifyAnimalDokuDifficulty(7, result))
+    private fun chainResult(chains: Int, depth: Int, stepsBeforeFirstPlacement: Int, trailingSingletons: Int = 5): AnimalDokuSolveResult {
+        val lead = padded(stepsBeforeFirstPlacement - minOf(chains, stepsBeforeFirstPlacement), AnimalDokuTechnique.CONFINEMENT) +
+            List(minOf(chains, stepsBeforeFirstPlacement)) { AnimalDokuSolveStep(AnimalDokuTechnique.CHAIN, depth) }
+        val rest = List(chains - minOf(chains, stepsBeforeFirstPlacement)) { AnimalDokuSolveStep(AnimalDokuTechnique.CHAIN, depth) }
+        return AnimalDokuSolveResult(solved = true, steps = lead + padded(1) + rest + padded(trailingSingletons))
     }
 
     @Test
-    fun `too few steps for a hard size falls short of hards step floor`() {
-        val result = AnimalDokuSolveResult(
-            solved = true,
-            steps = stepsOf(AnimalDokuTechnique.CONFINEMENT) + padded(3, AnimalDokuTechnique.PAIRING_2),
-        )
-        assertNull(classifyAnimalDokuDifficulty(7, result))
+    fun `analyzeSolveResult counts the steps before the first placement`() {
+        val profile = analyzeSolveResult(chainResult(chains = 4, depth = 3, stepsBeforeFirstPlacement = 6))
+        assertEquals(6, profile.stepsBeforeFirstPlacement)
+        assertEquals(4, profile.chainRepeats)
     }
 
     @Test
-    fun `shallow chain under both expert floors no longer overlaps expert and lands in hard`() {
+    fun `analyzeSolveResult counts every step when nothing is ever placed`() {
+        val result = AnimalDokuSolveResult(solved = true, steps = padded(3, AnimalDokuTechnique.CONFINEMENT))
+        assertEquals(3, analyzeSolveResult(result).stepsBeforeFirstPlacement)
+    }
+
+    @Test
+    fun `enough chains and a delayed first placement classify as hard at a hard size`() {
+        assertEquals(Difficulty.HARD, classifyAnimalDokuDifficulty(8, chainResult(chains = 3, depth = 3, stepsBeforeFirstPlacement = 3)))
+    }
+
+    @Test
+    fun `too few chains is not hard`() {
+        assertNull(classifyAnimalDokuDifficulty(8, chainResult(chains = 2, depth = 3, stepsBeforeFirstPlacement = 3)))
+    }
+
+    @Test
+    fun `an early first placement is not hard`() {
+        assertNull(classifyAnimalDokuDifficulty(8, chainResult(chains = 3, depth = 3, stepsBeforeFirstPlacement = 2)))
+    }
+
+    @Test
+    fun `pairing without chains no longer reaches hard`() {
         val result = AnimalDokuSolveResult(
             solved = true,
-            steps = stepsOf(AnimalDokuTechnique.CONFINEMENT) + stepsOf(AnimalDokuTechnique.CHAIN, AnimalDokuTechnique.CHAIN)
-                .map { it.copy(chainDepth = 3) } + padded(7),
+            steps = stepsOf(AnimalDokuTechnique.CONFINEMENT) + padded(4, AnimalDokuTechnique.PAIRING_2) + padded(8),
         )
+        assertNull(classifyAnimalDokuDifficulty(8, result))
+    }
+
+    @Test
+    fun `a hard grade puzzle below hards sizes is rejected`() {
+        assertNull(classifyAnimalDokuDifficulty(7, chainResult(chains = 3, depth = 3, stepsBeforeFirstPlacement = 3)))
+    }
+
+    @Test
+    fun `many deep chains and a long opening classify as expert`() {
+        val result = chainResult(chains = 10, depth = 6, stepsBeforeFirstPlacement = 8)
+        assertTrue(isExpertGradeChain(analyzeSolveResult(result)))
+        assertEquals(Difficulty.EXPERT, classifyAnimalDokuDifficulty(10, result))
+    }
+
+    @Test
+    fun `expert needs every floor so a shallow chain falls back to hard`() {
+        val result = chainResult(chains = 10, depth = 5, stepsBeforeFirstPlacement = 8)
         assertFalse(isExpertGradeChain(analyzeSolveResult(result)))
-        assertEquals(Difficulty.HARD, classifyAnimalDokuDifficulty(7, result))
+        assertEquals(Difficulty.HARD, classifyAnimalDokuDifficulty(9, result))
     }
 
     @Test
-    fun `chain depth at experts depth floor classifies as expert regardless of repeat count`() {
-        val result = AnimalDokuSolveResult(
-            solved = true,
-            steps = stepsOf(AnimalDokuTechnique.SINGLETON, AnimalDokuTechnique.CHAIN).map {
-                if (it.technique == AnimalDokuTechnique.CHAIN) it.copy(chainDepth = 4) else it
-            },
-        )
-        assertTrue(isExpertGradeChain(analyzeSolveResult(result)))
-        assertEquals(Difficulty.EXPERT, classifyAnimalDokuDifficulty(8, result))
+    fun `expert needs every floor so too few chains falls back to hard`() {
+        val result = chainResult(chains = 9, depth = 6, stepsBeforeFirstPlacement = 8)
+        assertEquals(Difficulty.HARD, classifyAnimalDokuDifficulty(9, result))
     }
 
     @Test
-    fun `chain repeated at experts repeat floor classifies as expert even with shallow depth`() {
-        val steps = mutableListOf(AnimalDokuSolveStep(AnimalDokuTechnique.SINGLETON, 0))
-        repeat(4) { steps.add(AnimalDokuSolveStep(AnimalDokuTechnique.CHAIN, 2)) }
-        val result = AnimalDokuSolveResult(solved = true, steps = steps)
-        assertTrue(isExpertGradeChain(analyzeSolveResult(result)))
-        assertEquals(Difficulty.EXPERT, classifyAnimalDokuDifficulty(8, result))
+    fun `expert needs every floor so an early placement falls back to hard`() {
+        val result = chainResult(chains = 10, depth = 6, stepsBeforeFirstPlacement = 7)
+        assertEquals(Difficulty.HARD, classifyAnimalDokuDifficulty(9, result))
     }
 
     @Test
     fun `expert-grade chain outside experts size range does not fall back to a lower tier`() {
-        val result = AnimalDokuSolveResult(
-            solved = true,
-            steps = listOf(AnimalDokuSolveStep(AnimalDokuTechnique.CHAIN, 5)),
-        )
-        assertNull(classifyAnimalDokuDifficulty(6, result))
+        assertNull(classifyAnimalDokuDifficulty(8, chainResult(chains = 10, depth = 6, stepsBeforeFirstPlacement = 8)))
     }
 
     @Test
@@ -153,33 +174,35 @@ class AnimalDokuDifficultyTest {
     }
 
     @Test
-    fun `single confinement step at a hard size falls short of the step floor`() {
-        val result = AnimalDokuSolveResult(solved = true, steps = stepsOf(AnimalDokuTechnique.CONFINEMENT))
-        assertNull(classifyAnimalDokuDifficulty(9, result))
+    fun `hard covers sizes 8 and 9 and expert covers 9 and 10`() {
+        assertEquals(listOf(8, 9), ANIMALDOKU_SIZES_BY_DIFFICULTY.getValue(Difficulty.HARD))
+        assertEquals(listOf(9, 10), ANIMALDOKU_SIZES_BY_DIFFICULTY.getValue(Difficulty.EXPERT))
+    }
+
+    private fun regionsWithSizes(size: Int, sizes: List<Int>): List<List<Int>> {
+        val flat = sizes.flatMapIndexed { region, count -> List(count) { region } }
+        return flat.chunked(size)
     }
 
     @Test
-    fun `confinement-only puzzle in hards step window below the confinement repeat floor is no longer hard`() {
-        val result = AnimalDokuSolveResult(
-            solved = true,
-            steps = padded(2, AnimalDokuTechnique.CONFINEMENT) + padded(7),
-        )
-        assertNull(classifyAnimalDokuDifficulty(7, result))
+    fun `hard rejects a region smaller than three cells`() {
+        assertFalse(meetsAnimalDokuRegionShape(Difficulty.HARD, 8, regionsWithSizes(8, listOf(2, 10, 8, 8, 8, 8, 10, 10))))
+        assertTrue(meetsAnimalDokuRegionShape(Difficulty.HARD, 8, regionsWithSizes(8, listOf(3, 9, 8, 8, 8, 8, 10, 10))))
     }
 
     @Test
-    fun `confinement-only puzzle at or above the confinement repeat floor still classifies as hard`() {
-        val result = AnimalDokuSolveResult(
-            solved = true,
-            steps = padded(5, AnimalDokuTechnique.CONFINEMENT) + padded(6),
-        )
-        assertEquals(Difficulty.HARD, classifyAnimalDokuDifficulty(7, result))
+    fun `expert needs every region at least four cells and one covering a quarter of the grid`() {
+        assertTrue(meetsAnimalDokuRegionShape(Difficulty.EXPERT, 10, regionsWithSizes(10, listOf(4, 25, 8, 8, 8, 8, 9, 10, 10, 10))))
+        assertFalse(meetsAnimalDokuRegionShape(Difficulty.EXPERT, 10, regionsWithSizes(10, listOf(3, 26, 8, 8, 8, 8, 9, 10, 10, 10))))
+        assertFalse(meetsAnimalDokuRegionShape(Difficulty.EXPERT, 10, regionsWithSizes(10, listOf(10, 10, 10, 10, 10, 10, 10, 10, 10, 10))))
     }
 
     @Test
-    fun `hard and expert now both allow size 9`() {
-        assertTrue(9 in ANIMALDOKU_SIZES_BY_DIFFICULTY.getValue(Difficulty.HARD))
-        assertTrue(9 in ANIMALDOKU_SIZES_BY_DIFFICULTY.getValue(Difficulty.EXPERT))
-        assertFalse(6 in ANIMALDOKU_SIZES_BY_DIFFICULTY.getValue(Difficulty.HARD))
+    fun `classifyAnimalDokuPuzzle drops a puzzle whose regions miss its tiers shape`() {
+        val result = chainResult(chains = 10, depth = 6, stepsBeforeFirstPlacement = 8)
+        val flat = regionsWithSizes(10, List(10) { 10 })
+        val shaped = regionsWithSizes(10, listOf(4, 25, 8, 8, 8, 8, 9, 10, 10, 10))
+        assertNull(classifyAnimalDokuPuzzle(10, flat, result))
+        assertEquals(Difficulty.EXPERT, classifyAnimalDokuPuzzle(10, shaped, result))
     }
 }

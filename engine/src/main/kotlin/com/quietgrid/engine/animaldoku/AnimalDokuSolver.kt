@@ -2,7 +2,7 @@ package com.quietgrid.engine.animaldoku
 
 data class AnimalDokuSolveStep(val technique: AnimalDokuTechnique, val chainDepth: Int)
 
-data class AnimalDokuSolveResult(val solved: Boolean, val steps: List<AnimalDokuSolveStep>)
+data class AnimalDokuSolveResult(val solved: Boolean, val steps: List<AnimalDokuSolveStep>, val remainingCandidates: Int = 0)
 
 fun solveAnimalDoku(size: Int, regionOf: List<List<Int>>, maxPairingK: Int = 4): AnimalDokuSolveResult {
     val state = AnimalDokuSolverState(size, regionOf)
@@ -37,7 +37,7 @@ fun solveAnimalDoku(size: Int, regionOf: List<List<Int>>, maxPairingK: Int = 4):
             continue
         }
 
-        return AnimalDokuSolveResult(solved = false, steps = steps)
+        return AnimalDokuSolveResult(solved = false, steps = steps, remainingCandidates = state.candidateCount())
     }
 
     return AnimalDokuSolveResult(solved = true, steps = steps)

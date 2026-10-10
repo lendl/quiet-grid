@@ -46,6 +46,12 @@ class StarBattleSolverState(val size: Int, val k: Int, val regionOf: List<List<I
         }
     }
 
+    fun candidateCount(): Int {
+        var count = 0
+        for (row in 0 until size) for (col in 0 until size) if (isCandidate(row, col)) count++
+        return count
+    }
+
     fun isSolved(): Boolean = rowCount.all { it == k }
 
     fun copy(): StarBattleSolverState {
