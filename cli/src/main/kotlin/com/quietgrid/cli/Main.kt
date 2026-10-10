@@ -8,6 +8,7 @@ import com.quietgrid.cli.sudoku.generateSudokuPuzzle
 import com.quietgrid.cli.takuzu.generateTakuzuPuzzle
 import com.quietgrid.cli.whodidit.generateWhoDidItPuzzle
 import com.quietgrid.cli.arrowescape.arrowEscapeSizesForDifficulty
+import com.quietgrid.cli.hashi.generateHashiPuzzle
 import com.quietgrid.cli.starbattle.generateStarBattleK1PuzzleForTier
 import com.quietgrid.cli.starbattle.generateStarBattleSolution
 import com.quietgrid.cli.starbattle.growStarBattleRegions
@@ -18,6 +19,7 @@ import com.quietgrid.engine.animaldoku.AnimalDokuPuzzleEntry
 import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
 import com.quietgrid.engine.arrowescape.scoreArrowEscapePuzzle
 import com.quietgrid.engine.core.Difficulty
+import com.quietgrid.engine.hashi.HashiPuzzleEntry
 import com.quietgrid.engine.starbattle.StarBattlePuzzleEntry
 import com.quietgrid.engine.starbattle.classifyStarBattleK2Grade
 import com.quietgrid.engine.sudoku.SudokuPuzzleEntry
@@ -308,6 +310,21 @@ fun main(args: Array<String>) {
             }
             appendPuzzleEntries("${command.outDir}/starbattle_puzzles.json", entries, StarBattlePuzzleEntry.serializer()) { it.id }
             println("Generated ${entries.size}/${command.count} starbattle puzzles at $difficulty into ${command.outDir}/starbattle_puzzles.json")
+        }
+        "hashi" -> {
+            val state = GenerationState("${command.outDir}/.generation-state/hashi.json")
+            val entries = mutableListOf<HashiPuzzleEntry>()
+            var attempts = 0
+            while (entries.size < command.count && attempts < command.count * 10) {
+                attempts++
+                val candidate = generateHashiPuzzle(difficulty) ?: continue
+                if (state.hasTried(candidate.id)) continue
+                state.recordTried(candidate.id, "valid")
+                entries += candidate
+            }
+            state.save()
+            appendPuzzleEntries("${command.outDir}/hashi_puzzles.json", entries, HashiPuzzleEntry.serializer()) { it.id }
+            println("Generated ${entries.size}/${command.count} hashi puzzles at $difficulty into ${command.outDir}/hashi_puzzles.json")
         }
         "themeclear" -> {
             val locale = command.locale

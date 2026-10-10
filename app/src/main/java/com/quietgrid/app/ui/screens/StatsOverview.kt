@@ -42,6 +42,7 @@ import com.quietgrid.app.ui.components.StatGroup
 import com.quietgrid.app.ui.components.StatItem
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyLabelRes
 import com.quietgrid.app.games.arrowescape.arrowEscapeDifficultyLabelRes
+import com.quietgrid.app.games.hashi.hashiDifficultyLabelRes
 import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
 import com.quietgrid.app.games.chimptest.chimpDifficultyLabelRes
 import com.quietgrid.app.games.game2048.game2048DifficultyLabelRes
@@ -76,6 +77,7 @@ fun difficultyLabelRes(gameId: GameId, difficulty: Difficulty): Int = when (game
     GameId.NBACK -> nbackDifficultyLabelRes(difficulty)
     GameId.THEMECLEAR -> themeClearDifficultyLabelRes(difficulty)
     GameId.SEQUENCEMEMORY -> sequenceMemoryDifficultyLabelRes(difficulty)
+    GameId.HASHI -> hashiDifficultyLabelRes(difficulty)
 }
 
 internal const val STATS_DIFFICULTY_TABLE_TAG = "stats-difficulty-table"

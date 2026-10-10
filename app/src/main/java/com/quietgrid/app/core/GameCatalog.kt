@@ -21,6 +21,7 @@ enum class GameId(val key: String) {
     THEMECLEAR("themeclear"),
     WHODIDIT("whodidit"),
     SEQUENCEMEMORY("sequencememory"),
+    HASHI("hashi"),
 }
 
 enum class GameCategory(@param:StringRes val labelRes: Int) {
@@ -57,6 +58,7 @@ object GameCatalog {
         GameMeta(GameId.THEMECLEAR, R.string.themeclear_title, R.string.themeclear_tagline, setOf(GameCategory.WORD)),
         GameMeta(GameId.WHODIDIT, R.string.whodidit_title, R.string.whodidit_tagline, setOf(GameCategory.LOGIC), beta = true),
         GameMeta(GameId.SEQUENCEMEMORY, R.string.sequencememory_title, R.string.sequencememory_tagline, setOf(GameCategory.MEMORY), beta = true),
+        GameMeta(GameId.HASHI, R.string.hashi_title, R.string.hashi_tagline, setOf(GameCategory.LOGIC, GameCategory.SPATIAL), beta = true),
     )
 
     fun get(id: GameId): GameMeta = games.first { it.id == id }

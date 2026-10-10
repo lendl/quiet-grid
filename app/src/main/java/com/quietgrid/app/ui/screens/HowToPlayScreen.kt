@@ -71,6 +71,7 @@ fun HowToPlayScreen(gameId: GameId) {
             GameId.NBACK -> NBackHowToPlay()
             GameId.THEMECLEAR -> ThemeClearHowToPlay()
             GameId.SEQUENCEMEMORY -> SequenceMemoryHowToPlay()
+            GameId.HASHI -> HashiHowToPlay()
         }
 
         HorizontalDivider(Modifier.padding(vertical = 20.dp))
@@ -592,6 +593,27 @@ private fun ArrowEscapeHowToPlay() {
     RuleRow(1, R.string.arrowescape_rule_1_title, R.string.arrowescape_rule_1_body)
     RuleRow(2, R.string.arrowescape_rule_2_title, R.string.arrowescape_rule_2_body)
     RuleRow(3, R.string.arrowescape_rule_3_title, R.string.arrowescape_rule_3_body)
+}
+
+@Composable
+private fun HashiHowToPlay() {
+    SectionHeader(Icons.Outlined.EmojiEvents, stringResource(R.string.how_to_play_goal_title))
+    BodyText(stringResource(R.string.hashi_how_to_play_goal))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.PanTool, stringResource(R.string.how_to_play_controls_title))
+    BodyText(stringResource(R.string.hashi_how_to_play_controls))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.WarningAmber, stringResource(R.string.how_to_play_wrong_move_title))
+    BodyText(stringResource(R.string.hashi_how_to_play_wrong_move))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.Description, stringResource(R.string.how_to_play_rules_title))
+    RuleRow(1, R.string.hashi_rule_1_title, R.string.hashi_rule_1_body)
+    RuleRow(2, R.string.hashi_rule_2_title, R.string.hashi_rule_2_body)
+    RuleRow(3, R.string.hashi_rule_3_title, R.string.hashi_rule_3_body)
+    RuleRow(4, R.string.hashi_rule_4_title, R.string.hashi_rule_4_body)
 }
 
 @Composable

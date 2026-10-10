@@ -45,6 +45,9 @@ import com.quietgrid.app.games.animaldoku.AnimalDokuQuickStart
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyDescriptionRes
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyLabelRes
 import com.quietgrid.app.games.arrowescape.ArrowEscapeQuickStart
+import com.quietgrid.app.games.hashi.HashiQuickStart
+import com.quietgrid.app.games.hashi.hashiDifficultyDescriptionRes
+import com.quietgrid.app.games.hashi.hashiDifficultyLabelRes
 import com.quietgrid.app.games.arrowescape.arrowEscapeDifficultyDescriptionRes
 import com.quietgrid.app.games.arrowescape.arrowEscapeDifficultyLabelRes
 import com.quietgrid.app.games.blockfill.BlockFillQuickStart
@@ -119,6 +122,7 @@ private fun quickStartFor(gameId: GameId): QuickStartContent = when (gameId) {
     GameId.NBACK -> NBackQuickStart
     GameId.THEMECLEAR -> ThemeClearQuickStart
     GameId.SEQUENCEMEMORY -> SequenceMemoryQuickStart
+    GameId.HASHI -> HashiQuickStart
 }
 
 @Composable
@@ -279,6 +283,7 @@ private fun GamePlayPickerTab(
                     GameId.NBACK -> nbackDifficultyLabelRes(difficulty)
                     GameId.THEMECLEAR -> themeClearDifficultyLabelRes(difficulty)
                     GameId.SEQUENCEMEMORY -> sequenceMemoryDifficultyLabelRes(difficulty)
+                    GameId.HASHI -> hashiDifficultyLabelRes(difficulty)
                     else -> chimpDifficultyLabelRes(difficulty)
                 }
                 val descriptionRes = when (gameId) {
@@ -299,6 +304,7 @@ private fun GamePlayPickerTab(
                     GameId.NBACK -> nbackDifficultyDescriptionRes(difficulty)
                     GameId.THEMECLEAR -> themeClearDifficultyDescriptionRes(difficulty)
                     GameId.SEQUENCEMEMORY -> sequenceMemoryDifficultyDescriptionRes(difficulty)
+                    GameId.HASHI -> hashiDifficultyDescriptionRes(difficulty)
                 }
                 if (index > 0) HorizontalDivider()
                 Row(
