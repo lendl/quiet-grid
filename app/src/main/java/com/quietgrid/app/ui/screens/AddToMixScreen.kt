@@ -40,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
@@ -132,8 +133,9 @@ fun NewMixScreen(gameId: GameId, difficulty: Difficulty, onCreated: () -> Unit) 
     var name by rememberSaveable { mutableStateOf("") }
     var creating by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
+    val resources = LocalContext.current.resources
     val loadedMixes = mixes ?: return
-    val defaultName = nextMixName(loadedMixes.size)
+    val defaultName = nextMixName(loadedMixes.map { it.name }) { resources.getString(R.string.mix_default_name, it) }
 
     LaunchedEffect(Unit) { focusRequester.requestFocus() }
 

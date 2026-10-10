@@ -20,7 +20,10 @@ data class Mix(
     val entries: List<MixEntry>,
 )
 
-fun nextMixName(existingMixCount: Int): String = "My Mix #${existingMixCount + 1}"
+fun nextMixName(existingNames: Collection<String>, nameForNumber: (Int) -> String): String =
+    generateSequence(existingNames.size + 1) { it + 1 }
+        .map(nameForNumber)
+        .first { it !in existingNames }
 
 fun groupEntriesByKnownGame(entries: List<MixEntry>): List<Pair<GameId, List<MixEntry>>> =
     entries.groupBy { it.gameId }

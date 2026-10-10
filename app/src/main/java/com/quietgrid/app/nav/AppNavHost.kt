@@ -159,6 +159,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
     val mixes by repositories.mixRepository.mixes.collectAsState(initial = emptyList())
     val activeMixId by repositories.mixRepository.activeMixId.collectAsState(initial = null)
     val activeMix = mixes.firstOrNull { it.id == activeMixId }
+    val resources = LocalContext.current.resources
 
     fun endMixAndGoToGames() {
         scope.launch { repositories.mixRepository.clearActiveMix() }
@@ -422,7 +423,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                     scope.launch {
                                         val newMix = Mix(
                                             id = UUID.randomUUID().toString(),
-                                            name = nextMixName(mixes.size),
+                                            name = nextMixName(mixes.map { it.name }) { resources.getString(R.string.mix_default_name, it) },
                                             entries = emptyList(),
                                         )
                                         repositories.mixRepository.saveMix(newMix)

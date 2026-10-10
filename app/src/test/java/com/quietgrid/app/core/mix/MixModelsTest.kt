@@ -6,14 +6,26 @@ import org.junit.Test
 
 class MixModelsTest {
 
+    private val defaultName: (Int) -> String = { "My Mix #$it" }
+
     @Test
     fun `nextMixName numbers from one when there are no existing mixes`() {
-        assertEquals("My Mix #1", nextMixName(existingMixCount = 0))
+        assertEquals("My Mix #1", nextMixName(emptyList(), defaultName))
     }
 
     @Test
     fun `nextMixName numbers past the current mix count`() {
-        assertEquals("My Mix #4", nextMixName(existingMixCount = 3))
+        assertEquals("My Mix #4", nextMixName(listOf("A", "B", "C"), defaultName))
+    }
+
+    @Test
+    fun `nextMixName skips a number already taken after an earlier mix was deleted`() {
+        assertEquals("My Mix #4", nextMixName(listOf("My Mix #2", "My Mix #3"), defaultName))
+    }
+
+    @Test
+    fun `nextMixName uses the localized name format`() {
+        assertEquals("Mijn mix #1", nextMixName(emptyList()) { "Mijn mix #$it" })
     }
 
     @Test

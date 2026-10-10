@@ -38,6 +38,7 @@
     <string name="mix_play_button">Jouer</string>
     <string name="mix_edit_content_description">Modifier le mix</string>
     <string name="mix_new_content_description">Nouveau mix</string>
+    <string name="mix_default_name">Mon mix #%1$d</string>
     <string name="mix_rename_content_description">Renommer le mix</string>
     <string name="mix_empty_state">Pas encore de mix. Créez-en un avec vos jeux et difficultés préférés.</string>
     <string name="game_takuzu_name">Takuzu</string>

@@ -41,6 +41,7 @@
     <string name="mix_edit_content_description">Edytuj miks</string>
     <string name="mix_empty_state">Nie masz jeszcze żadnych miksów. Stwórz jeden z ulubionych gier i poziomów trudności.</string>
     <string name="mix_new_content_description">Nowy miks</string>
+    <string name="mix_default_name">Mój miks #%1$d</string>
     <string name="game_takuzu_name">Takuzu</string>
     <string name="game_nonogram_name">Nonogram</string>
     <string name="game_minesweeper_name">Saper</string>
