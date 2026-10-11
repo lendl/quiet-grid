@@ -45,6 +45,7 @@ import kotlin.math.roundToInt
 
 private val FLOATING_PIECE_LIFT = 72.dp
 private const val FLOATING_PIECE_ALPHA = 0.9f
+private val FLOATING_PIECE_SHADOW_OFFSET = 4.dp
 private val HEADER_PROGRESS_WIDTH = 96.dp
 private val HEADER_PROGRESS_HEIGHT = 4.dp
 
@@ -188,6 +189,8 @@ fun BlockFillPlayLayout(
                 piece = floatingPiece,
                 cellSize = floatingCellSizeDp,
                 cellGap = BLOCKFILL_BOARD_TILE_GAP,
+                shadowOffset = FLOATING_PIECE_SHADOW_OFFSET,
+                alpha = floatingAlpha,
                 modifier = Modifier
                     .offset {
                         val topLeft = floatingPieceTopLeft(dragPointer.x, dragPointer.y, floatingPiece.cells, floatingCellSizePx, liftPx)
@@ -196,10 +199,7 @@ fun BlockFillPlayLayout(
                             (topLeft.y - screenOrigin.y).roundToInt(),
                         )
                     }
-                    .graphicsLayer {
-                        translationX = rejectedDropShakeX.value
-                        alpha = floatingAlpha
-                    },
+                    .graphicsLayer { translationX = rejectedDropShakeX.value },
             )
         }
     }

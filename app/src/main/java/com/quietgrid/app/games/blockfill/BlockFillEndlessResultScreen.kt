@@ -346,7 +346,7 @@ private fun MedalTiles(modifier: Modifier = Modifier) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(MEDAL_TILE_GAP)) {
         colors.chunked(2).forEach { rowColors ->
             Row(horizontalArrangement = Arrangement.spacedBy(MEDAL_TILE_GAP)) {
-                rowColors.forEach { BlockFillCell(it, MEDAL_TILE_SIZE) }
+                rowColors.forEach { BlockFillTile(it, MEDAL_TILE_SIZE) }
             }
         }
     }

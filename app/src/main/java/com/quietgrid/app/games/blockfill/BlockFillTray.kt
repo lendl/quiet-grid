@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -21,17 +22,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 
 private val TRAY_CELL_SIZE = 17.dp
-private val TRAY_CELL_GAP = 1.dp
+private val TRAY_CELL_GAP = 0.dp
+private val TRAY_SHADOW_OFFSET = 2.dp
+private val PIECE_SHADOW_BLUR = 6.dp
+private const val PIECE_SHADOW_ALPHA = 0.35f
 private val TRAY_CORNER_RADIUS = 14.dp
 private val TRAY_BORDER_WIDTH = 1.dp
 private const val DRAGGING_SLOT_ALPHA = 0.25f
@@ -118,43 +129,69 @@ fun BlockFillTray(
     }
 }
 
+private fun pieceShadowShape(cells: List<Pair<Int, Int>>, columns: Int) = GenericShape { size, _ ->
+    val pitch = size.width / columns
+    for ((row, col) in cells) {
+        addRect(Rect(pitch * col, pitch * row, pitch * (col + 1), pitch * (row + 1)))
+    }
+}
+
 @Composable
 fun BlockFillPieceGlyph(
     piece: BlockFillPiece,
     cellSize: Dp = TRAY_CELL_SIZE,
     cellGap: Dp = TRAY_CELL_GAP,
+    shadowOffset: Dp = TRAY_SHADOW_OFFSET,
+    alpha: Float = 1f,
     modifier: Modifier = Modifier,
 ) {
     val color = blockFillFamilyColor(piece.family)
+    val pitch = with(LocalDensity.current) { cellSize.roundToPx().toDp() }
     val maxRow = piece.cells.maxOf { it.first }
     val maxCol = piece.cells.maxOf { it.second }
-    val width = cellSize * (maxCol + 1)
-    val height = cellSize * (maxRow + 1)
+    val width = pitch * (maxCol + 1)
+    val height = pitch * (maxRow + 1)
     val inset = cellGap / 2
     val bridges = remember(piece.cells) { diagonalBridges(piece.cells) }
+    val shadowShape = remember(piece.cells) { pieceShadowShape(piece.cells, maxCol + 1) }
 
     Box(
         modifier
             .size(width, height)
-            .drawBehind {
-                val pitch = cellSize.toPx()
-                for ((from, to) in bridges) {
-                    drawLine(
-                        color = color.copy(alpha = DIAGONAL_BRIDGE_ALPHA),
-                        start = Offset(pitch * (from.second + 0.5f), pitch * (from.first + 0.5f)),
-                        end = Offset(pitch * (to.second + 0.5f), pitch * (to.first + 0.5f)),
-                        strokeWidth = pitch * DIAGONAL_BRIDGE_WIDTH_FRACTION,
-                        cap = StrokeCap.Round,
-                    )
-                }
-            },
+            .dropShadow(
+                shadowShape,
+                Shadow(
+                    radius = PIECE_SHADOW_BLUR,
+                    color = Color.Black,
+                    offset = DpOffset(0.dp, shadowOffset),
+                    alpha = PIECE_SHADOW_ALPHA * alpha,
+                ),
+            ),
     ) {
-        for ((row, col) in piece.cells) {
-            BlockFillCell(
-                color = color,
-                size = cellSize - cellGap,
-                modifier = Modifier.offset(x = cellSize * col + inset, y = cellSize * row + inset),
-            )
+        Box(
+            Modifier
+                .matchParentSize()
+                .graphicsLayer { this.alpha = alpha }
+                .drawBehind {
+                    val pitchPx = pitch.toPx()
+                    for ((from, to) in bridges) {
+                        drawLine(
+                            color = color.copy(alpha = DIAGONAL_BRIDGE_ALPHA),
+                            start = Offset(pitchPx * (from.second + 0.5f), pitchPx * (from.first + 0.5f)),
+                            end = Offset(pitchPx * (to.second + 0.5f), pitchPx * (to.first + 0.5f)),
+                            strokeWidth = pitchPx * DIAGONAL_BRIDGE_WIDTH_FRACTION,
+                            cap = StrokeCap.Round,
+                        )
+                    }
+                },
+        ) {
+            for ((row, col) in piece.cells) {
+                BlockFillTile(
+                    color = color,
+                    size = pitch - cellGap,
+                    modifier = Modifier.offset(x = pitch * col + inset, y = pitch * row + inset),
+                )
+            }
         }
     }
 }
