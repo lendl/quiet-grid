@@ -76,6 +76,7 @@ import com.quietgrid.app.games.whodidit.whoDidItDifficultyLabelRes
 import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
 import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
 import com.quietgrid.app.games.themeclear.themeClearDifficultyLabelRes
+import com.quietgrid.app.games.killersudoku.killerSudokuDifficultyLabelRes
 import com.quietgrid.app.games.wordguess.wordGuessDifficultyLabelRes
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
 import com.quietgrid.app.nav.LocalAnimatedVisibilityScope
@@ -163,6 +164,7 @@ fun CompletionScreen(
         GameId.THEMECLEAR -> themeClearDifficultyLabelRes(difficulty)
         GameId.SEQUENCEMEMORY -> sequenceMemoryDifficultyLabelRes(difficulty)
         GameId.HASHI -> hashiDifficultyLabelRes(difficulty)
+        GameId.KILLERSUDOKU -> killerSudokuDifficultyLabelRes(difficulty)
         else -> chimpDifficultyLabelRes(difficulty)
     }
     val accentColor = difficultyColor(difficulty)
@@ -504,8 +506,8 @@ fun CompletionScreen(
 }
 
 
-private val FLAWLESS_ELIGIBLE_GAMES = setOf(GameId.TAKUZU, GameId.SUDOKU)
-private val ACCURACY_TRACKED_GAMES = setOf(GameId.TAKUZU, GameId.SUDOKU, GameId.WORDSEARCH, GameId.NBACK)
+private val FLAWLESS_ELIGIBLE_GAMES = setOf(GameId.TAKUZU, GameId.SUDOKU, GameId.KILLERSUDOKU)
+private val ACCURACY_TRACKED_GAMES = setOf(GameId.TAKUZU, GameId.SUDOKU, GameId.KILLERSUDOKU, GameId.WORDSEARCH, GameId.NBACK)
 private val BEST_TILE_TRACKED_GAMES = setOf(GameId.GAME_2048)
 
 @Composable

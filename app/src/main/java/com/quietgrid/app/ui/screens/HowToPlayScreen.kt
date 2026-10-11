@@ -72,6 +72,7 @@ fun HowToPlayScreen(gameId: GameId) {
             GameId.THEMECLEAR -> ThemeClearHowToPlay()
             GameId.SEQUENCEMEMORY -> SequenceMemoryHowToPlay()
             GameId.HASHI -> HashiHowToPlay()
+            GameId.KILLERSUDOKU -> KillerSudokuHowToPlay()
         }
 
         HorizontalDivider(Modifier.padding(vertical = 20.dp))
@@ -450,6 +451,38 @@ private fun SudokuHowToPlay() {
     HorizontalDivider(Modifier.padding(vertical = 20.dp))
     Accordion(stringResource(R.string.how_to_play_scoring_title)) {
         BodyText(stringResource(R.string.sudoku_how_to_play_scoring))
+    }
+}
+
+@Composable
+private fun KillerSudokuHowToPlay() {
+    SectionHeader(Icons.Outlined.EmojiEvents, stringResource(R.string.how_to_play_goal_title))
+    BodyText(stringResource(R.string.killersudoku_how_to_play_goal))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.PanTool, stringResource(R.string.how_to_play_controls_title))
+    BodyText(stringResource(R.string.killersudoku_how_to_play_controls))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.WarningAmber, stringResource(R.string.how_to_play_wrong_move_title))
+    BodyText(stringResource(R.string.killersudoku_how_to_play_wrong_move))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.Description, stringResource(R.string.how_to_play_rules_title))
+    RuleRow(1, R.string.killersudoku_rule_1_title, R.string.killersudoku_rule_1_body)
+    RuleRow(2, R.string.killersudoku_rule_2_title, R.string.killersudoku_rule_2_body)
+    RuleRow(3, R.string.killersudoku_rule_3_title, R.string.killersudoku_rule_3_body)
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    Accordion(stringResource(R.string.how_to_play_techniques_title)) {
+        TechniqueItem(R.string.killersudoku_technique_1_title, R.string.killersudoku_technique_1_body)
+        TechniqueItem(R.string.killersudoku_technique_2_title, R.string.killersudoku_technique_2_body)
+        TechniqueItem(R.string.killersudoku_technique_3_title, R.string.killersudoku_technique_3_body)
+    }
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    Accordion(stringResource(R.string.how_to_play_scoring_title)) {
+        BodyText(stringResource(R.string.killersudoku_how_to_play_scoring))
     }
 }
 

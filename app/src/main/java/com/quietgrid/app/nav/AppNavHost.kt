@@ -102,6 +102,7 @@ import com.quietgrid.app.games.takuzu.TakuzuChallengerPlayScreen
 import com.quietgrid.app.games.takuzu.TakuzuChallengerResultScreen
 import com.quietgrid.app.games.takuzu.TakuzuPlayScreen
 import com.quietgrid.app.games.themeclear.ThemeClearPlayScreen
+import com.quietgrid.app.games.killersudoku.KillerSudokuPlayScreen
 import com.quietgrid.app.games.wordguess.WordGuessChallengerPlayScreen
 import com.quietgrid.app.games.wordguess.WordGuessChallengerResultScreen
 import com.quietgrid.app.games.wordguess.WordGuessPlayScreen
@@ -764,6 +765,18 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                                     avgReactionTimeMs = result.averageReactionTimeMs,
                                                 ),
                                             )
+                                            goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
+                                        } else {
+                                            goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
+                                        }
+                                    },
+                                )
+                                GameId.KILLERSUDOKU -> KillerSudokuPlayScreen(
+                                    difficulty = difficulty,
+                                    resume = resume,
+                                    onBack = { navController.popBackStack() },
+                                    onFinished = { result ->
+                                        if (result.solved) {
                                             goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
                                         } else {
                                             goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)

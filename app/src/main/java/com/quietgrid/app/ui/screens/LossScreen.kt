@@ -56,6 +56,7 @@ import com.quietgrid.app.games.whodidit.whoDidItDifficultyLabelRes
 import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
 import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
 import com.quietgrid.app.games.themeclear.themeClearDifficultyLabelRes
+import com.quietgrid.app.games.killersudoku.killerSudokuDifficultyLabelRes
 import com.quietgrid.app.games.wordguess.wordGuessDifficultyLabelRes
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
 import com.quietgrid.app.nav.LocalAnimatedVisibilityScope
@@ -201,6 +202,11 @@ fun LossScreen(
             titleRes = R.string.hashi_loss_abandoned_title
             bodyRes = R.string.hashi_loss_abandoned_body
         }
+        gameId == GameId.KILLERSUDOKU -> {
+            eyebrowRes = R.string.killersudoku_loss_abandoned_eyebrow
+            titleRes = R.string.killersudoku_loss_abandoned_title
+            bodyRes = R.string.killersudoku_loss_abandoned_body
+        }
         gameId == GameId.THEMECLEAR -> {
             eyebrowRes = R.string.themeclear_loss_abandoned_eyebrow
             titleRes = R.string.themeclear_loss_abandoned_title
@@ -250,6 +256,7 @@ fun LossScreen(
         GameId.THEMECLEAR -> themeClearDifficultyLabelRes(difficulty)
         GameId.SEQUENCEMEMORY -> sequenceMemoryDifficultyLabelRes(difficulty)
         GameId.HASHI -> hashiDifficultyLabelRes(difficulty)
+        GameId.KILLERSUDOKU -> killerSudokuDifficultyLabelRes(difficulty)
         else -> chimpDifficultyLabelRes(difficulty)
     }
     val icon = if (reason == "abandoned") "⏸" else "💥"

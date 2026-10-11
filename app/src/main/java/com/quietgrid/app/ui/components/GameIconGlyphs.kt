@@ -43,6 +43,7 @@ internal val GAME_ICON_HUES: Map<GameId, Color> = mapOf(
     GameId.WHODIDIT to Color(0xFF8A3B4E),
     GameId.SEQUENCEMEMORY to Color(0xFFCC4F8F),
     GameId.HASHI to Color(0xFF3E7C66),
+    GameId.KILLERSUDOKU to Color(0xFF5F9334),
 )
 
 internal val GAME_ICON_GLYPHS: Map<GameId, List<GlyphShape>> = mapOf(
@@ -242,5 +243,16 @@ internal val GAME_ICON_GLYPHS: Map<GameId, List<GlyphShape>> = mapOf(
         GlyphOval(5.25f, 5.25f, 3.75f, 3.75f, GlyphPaint.ACCENT),
         GlyphOval(18.75f, 5.25f, 3.75f, 3.75f, GlyphPaint.NEUTRAL),
         GlyphOval(5.25f, 18.75f, 3.75f, 3.75f, GlyphPaint.NEUTRAL),
+    ),
+    GameId.KILLERSUDOKU to listOf(
+        GlyphRect(1.5f, 1.5f, 13.5f, 6f, 1.5f, GlyphPaint.ACCENT),
+        GlyphText(8.25f, 4.7f, "12", 4.4f, GlyphPaint.CUTOUT),
+        GlyphRect(16.5f, 1.5f, 6f, 13.5f, 1.5f, GlyphPaint.NEUTRAL),
+        GlyphText(19.5f, 8.2f, "9", 4.6f, GlyphPaint.MARK),
+        GlyphRect(1.5f, 9f, 6f, 13.5f, 1.5f, GlyphPaint.NEUTRAL),
+        GlyphText(4.5f, 15.7f, "8", 4.6f, GlyphPaint.MARK),
+        GlyphRect(9f, 9f, 6f, 6f, 1.5f, GlyphPaint.EMPTY),
+        GlyphRect(9f, 16.5f, 13.5f, 6f, 1.5f, GlyphPaint.ACCENT),
+        GlyphText(15.75f, 19.7f, "3", 4.6f, GlyphPaint.CUTOUT),
     ),
 )

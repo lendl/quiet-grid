@@ -16,6 +16,7 @@ import com.quietgrid.app.games.whodidit.whoDidItDifficultyLabelRes
 import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
 import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
 import com.quietgrid.app.games.themeclear.themeClearDifficultyLabelRes
+import com.quietgrid.app.games.killersudoku.killerSudokuDifficultyLabelRes
 import com.quietgrid.app.games.wordguess.wordGuessDifficultyLabelRes
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
 
@@ -37,5 +38,6 @@ fun gameDifficultyLabelRes(gameId: GameId, difficulty: Difficulty): Int = when (
     GameId.THEMECLEAR -> themeClearDifficultyLabelRes(difficulty)
     GameId.SEQUENCEMEMORY -> sequenceMemoryDifficultyLabelRes(difficulty)
     GameId.HASHI -> hashiDifficultyLabelRes(difficulty)
+    GameId.KILLERSUDOKU -> killerSudokuDifficultyLabelRes(difficulty)
     else -> chimpDifficultyLabelRes(difficulty)
 }

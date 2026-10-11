@@ -47,7 +47,7 @@ import com.quietgrid.engine.sudoku.SudokuTechnique
 import com.quietgrid.app.ui.components.LogoGridLoader
 
 @Composable
-private fun SudokuPadButton(
+internal fun SudokuPadButton(
     active: Boolean,
     enabled: Boolean,
     onClick: () -> Unit,
@@ -264,7 +264,7 @@ fun SudokuPlayScreen(
 }
 
 @Composable
-private fun houseLabel(house: SudokuHouseRefUi): String = stringResource(
+internal fun houseLabel(house: SudokuHouseRefUi): String = stringResource(
     when (house.kind) {
         "row" -> R.string.sudoku_hint_row
         "column" -> R.string.sudoku_hint_column
@@ -274,9 +274,9 @@ private fun houseLabel(house: SudokuHouseRefUi): String = stringResource(
 )
 
 @Composable
-private fun cellLabel(row: Int, col: Int): String = stringResource(R.string.sudoku_hint_cell, row + 1, col + 1)
+internal fun cellLabel(row: Int, col: Int): String = stringResource(R.string.sudoku_hint_cell, row + 1, col + 1)
 
-private fun techniqueLabelRes(technique: SudokuTechnique): Int = when (technique) {
+internal fun techniqueLabelRes(technique: SudokuTechnique): Int = when (technique) {
     SudokuTechnique.NAKED_SINGLE -> R.string.sudoku_hint_technique_naked_single
     SudokuTechnique.HIDDEN_SINGLE -> R.string.sudoku_hint_technique_hidden_single
     SudokuTechnique.NAKED_PAIR -> R.string.sudoku_hint_technique_naked_pair

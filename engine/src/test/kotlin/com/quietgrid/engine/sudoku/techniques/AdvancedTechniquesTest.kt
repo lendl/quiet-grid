@@ -11,6 +11,7 @@ import com.quietgrid.engine.sudoku.getCellIndex
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class AdvancedTechniquesTest {
@@ -150,5 +151,18 @@ class AdvancedTechniquesTest {
         val elimination = move as SudokuCandidateEliminationMove
         assertEquals(SudokuTechnique.CHAINS, elimination.technique)
         assertEquals(listOf(Triple(5, 0, 1)), elimination.eliminations)
+    }
+
+    @Test
+    fun `ChainsTechnique does not eliminate when the chain reaches the target digit through a link instead of ending on it`() {
+        val state = blankState()
+        state.setCandidates(0, 0, 1, 2)
+        state.setCandidates(0, 3, 2, 3)
+        state.setCandidates(5, 3, 3, 1)
+        state.setCandidates(5, 7, 1, 5)
+        state.setCandidates(0, 7, 1, 6, 9)
+
+        val move = ChainsTechnique.findMove(state) as SudokuCandidateEliminationMove?
+        assertTrue(move?.eliminations.orEmpty().none { it == Triple(0, 7, 1) })
     }
 }

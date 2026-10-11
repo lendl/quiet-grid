@@ -24,7 +24,7 @@ object ChainsTechnique : SudokuTechniqueDispatcher {
                 val nextDigit = nextCell.candidates.firstOrNull { it != sharedDigit } ?: continue
                 val chainLength = path.size + 1
 
-                if (nextCell.candidates.contains(targetDigit) && path.size >= 3) {
+                if (nextDigit == targetDigit && path.size >= 3) {
                     val fullPath = path + nextCell.index
                     val eliminations = state.board.indices
                         .filter { state.board[it] == 0 && it !in fullPath }

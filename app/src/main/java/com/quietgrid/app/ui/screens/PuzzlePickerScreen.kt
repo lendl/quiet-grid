@@ -87,6 +87,9 @@ import com.quietgrid.app.games.takuzu.TakuzuQuickStart
 import com.quietgrid.app.games.takuzu.takuzuDifficultyDescriptionRes
 import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
 import com.quietgrid.app.games.themeclear.ThemeClearQuickStart
+import com.quietgrid.app.games.killersudoku.KillerSudokuQuickStart
+import com.quietgrid.app.games.killersudoku.killerSudokuDifficultyDescriptionRes
+import com.quietgrid.app.games.killersudoku.killerSudokuDifficultyLabelRes
 import com.quietgrid.app.games.themeclear.themeClearDifficultyDescriptionRes
 import com.quietgrid.app.games.themeclear.themeClearDifficultyLabelRes
 import com.quietgrid.app.games.wordguess.WordGuessQuickStart
@@ -123,6 +126,7 @@ private fun quickStartFor(gameId: GameId): QuickStartContent = when (gameId) {
     GameId.THEMECLEAR -> ThemeClearQuickStart
     GameId.SEQUENCEMEMORY -> SequenceMemoryQuickStart
     GameId.HASHI -> HashiQuickStart
+    GameId.KILLERSUDOKU -> KillerSudokuQuickStart
 }
 
 @Composable
@@ -284,6 +288,7 @@ private fun GamePlayPickerTab(
                     GameId.THEMECLEAR -> themeClearDifficultyLabelRes(difficulty)
                     GameId.SEQUENCEMEMORY -> sequenceMemoryDifficultyLabelRes(difficulty)
                     GameId.HASHI -> hashiDifficultyLabelRes(difficulty)
+                    GameId.KILLERSUDOKU -> killerSudokuDifficultyLabelRes(difficulty)
                     else -> chimpDifficultyLabelRes(difficulty)
                 }
                 val descriptionRes = when (gameId) {
@@ -305,6 +310,7 @@ private fun GamePlayPickerTab(
                     GameId.THEMECLEAR -> themeClearDifficultyDescriptionRes(difficulty)
                     GameId.SEQUENCEMEMORY -> sequenceMemoryDifficultyDescriptionRes(difficulty)
                     GameId.HASHI -> hashiDifficultyDescriptionRes(difficulty)
+                    GameId.KILLERSUDOKU -> killerSudokuDifficultyDescriptionRes(difficulty)
                 }
                 if (index > 0) HorizontalDivider()
                 Row(

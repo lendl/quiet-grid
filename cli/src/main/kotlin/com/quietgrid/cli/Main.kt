@@ -4,6 +4,7 @@ import com.quietgrid.cli.animaldoku.generateAnimalDokuPuzzleForSolution
 import com.quietgrid.cli.animaldoku.generateSolutionPermutation
 import com.quietgrid.cli.arrowescape.generateArrowEscapePuzzle
 import com.quietgrid.cli.arrowescape.toEntry
+import com.quietgrid.cli.killersudoku.generateKillerSudokuBatch
 import com.quietgrid.cli.sudoku.generateSudokuPuzzle
 import com.quietgrid.cli.takuzu.generateTakuzuPuzzle
 import com.quietgrid.cli.whodidit.generateWhoDidItPuzzle
@@ -20,6 +21,7 @@ import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
 import com.quietgrid.engine.arrowescape.scoreArrowEscapePuzzle
 import com.quietgrid.engine.core.Difficulty
 import com.quietgrid.engine.hashi.HashiPuzzleEntry
+import com.quietgrid.engine.killersudoku.KillerSudokuPuzzleEntry
 import com.quietgrid.engine.starbattle.StarBattlePuzzleEntry
 import com.quietgrid.engine.starbattle.STARBATTLE_K2_SIZES_BY_GRADE
 import com.quietgrid.engine.starbattle.classifyStarBattleK2Grade
@@ -164,6 +166,31 @@ fun main(args: Array<String>) {
             state.save()
             appendPuzzleEntries("${command.outDir}/sudoku_puzzles.json", entries, SudokuPuzzleEntry.serializer()) { it.givens.toString() }
             println("Generated ${entries.size}/${command.count} sudoku puzzles at $difficulty into ${command.outDir}/sudoku_puzzles.json")
+        }
+        "killersudoku" -> {
+            val state = GenerationState("${command.outDir}/.generation-state/killersudoku.json")
+            val outFile = "${command.outDir}/killersudoku_puzzles.json"
+            val existingIds = readPuzzleEntries(outFile, KillerSudokuPuzzleEntry.serializer()).map { it.id }.toSet()
+            val startedAt = System.currentTimeMillis()
+            val results = generateKillerSudokuBatch(difficulty, command.count, command.threads, maxAttempts = command.count * 60) {
+                it.id !in existingIds && !state.hasTried(it.id)
+            }
+            results.forEach { result ->
+                state.recordTried(result.entry.id, "valid")
+                state.recordDifficultyAudit(
+                    DifficultyAuditEntry(
+                        dedupeKey = result.entry.id,
+                        difficulty = difficulty.key,
+                        hardestTechnique = result.metrics.hardestTechnique?.name,
+                        stepCount = result.metrics.stepCount,
+                        score = result.metrics.score,
+                        generatedAt = java.time.Instant.now().toString(),
+                    ),
+                )
+            }
+            state.save()
+            appendPuzzleEntries(outFile, results.map { it.entry }, KillerSudokuPuzzleEntry.serializer()) { it.id }
+            println("Generated ${results.size}/${command.count} killersudoku puzzles at $difficulty in ${System.currentTimeMillis() - startedAt}ms into $outFile")
         }
         "wordsearch" -> {
             val locale = command.locale
