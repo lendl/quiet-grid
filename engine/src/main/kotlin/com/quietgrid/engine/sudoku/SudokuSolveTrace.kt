@@ -56,7 +56,20 @@ private fun findNextMoveInState(state: SudokuBitmaskState, allowedTechniques: Li
 
 data class SudokuSolveTrace(val solved: Boolean, val blocked: Boolean, val moves: List<SudokuCanonicalMove>)
 
-fun traceHumanSolve(board: SudokuGrid, allowedTechniques: List<SudokuTechnique> = SudokuTechnique.entries): SudokuSolveTrace {
+private val techniquesBySkillStep: Map<SudokuSkillStep, List<SudokuTechnique>> =
+    SudokuSkillStep.entries.associateWith { step -> SudokuTechnique.entries.filter { it.skillStep == step } }
+
+fun traceHumanSolve(board: SudokuGrid, allowedTechniques: List<SudokuTechnique> = SudokuTechnique.entries): SudokuSolveTrace =
+    runTrace(board) { findNextMoveInState(it, allowedTechniques) }
+
+fun traceStrictSolve(board: SudokuGrid, maxStep: SudokuSkillStep = SudokuSkillStep.CHAINS_AND_COLORING): SudokuSolveTrace =
+    runTrace(board) { state ->
+        SudokuSkillStep.entries.asSequence()
+            .filter { it <= maxStep }
+            .firstNotNullOfOrNull { step -> findNextMoveInState(state, techniquesBySkillStep.getValue(step)) }
+    }
+
+private fun runTrace(board: SudokuGrid, pickMove: (SudokuBitmaskState) -> SudokuCanonicalMove?): SudokuSolveTrace {
     val state = createBitmaskStateFromBoard(board)
     val moves = mutableListOf<SudokuCanonicalMove>()
     val seenStates = mutableSetOf<String>()
@@ -66,7 +79,7 @@ fun traceHumanSolve(board: SudokuGrid, allowedTechniques: List<SudokuTechnique> 
         if (stateKey in seenStates) return SudokuSolveTrace(solved = false, blocked = true, moves)
         seenStates.add(stateKey)
 
-        val move = findNextMoveInState(state, allowedTechniques) ?: return SudokuSolveTrace(solved = false, blocked = true, moves)
+        val move = pickMove(state) ?: return SudokuSolveTrace(solved = false, blocked = true, moves)
         applyMove(state, move)
         moves.add(move)
         if (moves.size > 512) return SudokuSolveTrace(solved = false, blocked = true, moves)

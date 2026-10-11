@@ -16,12 +16,16 @@ fun <T> readPuzzleEntries(path: String, serializer: KSerializer<T>): List<T> {
 }
 
 fun <T> appendPuzzleEntries(path: String, newEntries: List<T>, serializer: KSerializer<T>, dedupeKey: (T) -> String) {
-    val file = File(path)
     val existing = readPuzzleEntries(path, serializer)
 
     val existingKeys = existing.map(dedupeKey).toSet()
     val merged = existing + newEntries.filter { dedupeKey(it) !in existingKeys }
 
+    writePuzzleEntries(path, merged, serializer)
+}
+
+fun <T> writePuzzleEntries(path: String, entries: List<T>, serializer: KSerializer<T>) {
+    val file = File(path)
     file.parentFile?.mkdirs()
-    file.writeText(json.encodeToString(ListSerializer(serializer), merged))
+    file.writeText(json.encodeToString(ListSerializer(serializer), entries))
 }

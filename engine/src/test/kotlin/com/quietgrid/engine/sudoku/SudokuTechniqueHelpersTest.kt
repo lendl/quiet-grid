@@ -8,12 +8,6 @@ import org.junit.Test
 
 class SudokuTechniqueHelpersTest {
     @Test
-    fun `technique rank order matches declaration order`() {
-        assertTrue(compareTechniques(SudokuTechnique.NAKED_SINGLE, SudokuTechnique.CHAINS) < 0)
-        assertEquals(SudokuTechnique.CHAINS, getHardestTechnique(listOf(SudokuTechnique.NAKED_SINGLE, SudokuTechnique.CHAINS, SudokuTechnique.X_WING)))
-    }
-
-    @Test
     fun `buildCandidateEliminationMove returns null when there are no eliminations`() {
         val move = buildCandidateEliminationMove(SudokuTechnique.NAKED_PAIR, emptyList(), listOf(0, 1), null, complexity = 0)
         assertNull(move)

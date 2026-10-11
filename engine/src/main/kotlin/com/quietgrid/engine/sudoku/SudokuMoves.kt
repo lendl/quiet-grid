@@ -27,8 +27,3 @@ data class SudokuCandidateEliminationMove(
     override val evidenceCells: List<SudokuCellRef>,
     override val houses: List<SudokuHouseRef>,
 ) : SudokuCanonicalMove()
-
-fun countMoveTargets(move: SudokuCanonicalMove): Int = when (move) {
-    is SudokuPlacementMove -> 1
-    is SudokuCandidateEliminationMove -> move.eliminations.size
-}

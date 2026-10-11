@@ -119,6 +119,16 @@ fun main(args: Array<String>) {
         return
     }
 
+    if (args.getOrNull(0) == "regrade") {
+        val game = requireFlag(args, "--game")
+        val path = optionalFlag(args, "--path", "app/src/main/assets/${game}_puzzles.json")
+        when (game) {
+            "sudoku" -> com.quietgrid.cli.sudoku.runSudokuRegrade(path, write = "--write" in args)
+            else -> error("Regrade not implemented for game '$game'")
+        }
+        return
+    }
+
     val command = parseArgs(args)
     val difficulty = parseDifficulty(command.difficulty)
 

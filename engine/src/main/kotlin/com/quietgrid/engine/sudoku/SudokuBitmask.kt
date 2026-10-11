@@ -82,6 +82,20 @@ fun createBitmaskStateFromFlatBoard(flatBoard: IntArray): SudokuBitmaskState {
 
 fun createBitmaskStateFromBoard(board: SudokuGrid): SudokuBitmaskState = createBitmaskStateFromFlatBoard(flattenBoard(board))
 
+fun hasDuplicateGivens(board: SudokuGrid): Boolean {
+    val flatBoard = flattenBoard(board)
+    val houseMasks = IntArray(27)
+    for (index in 0 until 81) {
+        val value = flatBoard[index]
+        if (value == 0) continue
+        val bit = digitToBit[value]
+        val houses = intArrayOf(cellRowIndexes[index], 9 + cellColIndexes[index], 18 + cellBoxIndexes[index])
+        if (houses.any { (houseMasks[it] and bit) != 0 }) return true
+        houses.forEach { houseMasks[it] = houseMasks[it] or bit }
+    }
+    return false
+}
+
 fun cloneBitmaskState(state: SudokuBitmaskState): SudokuBitmaskState = SudokuBitmaskState(
     state.board.copyOf(), state.candidateMask.copyOf(), state.rowMask.copyOf(), state.colMask.copyOf(), state.boxMask.copyOf(), state.unresolvedCount,
 )

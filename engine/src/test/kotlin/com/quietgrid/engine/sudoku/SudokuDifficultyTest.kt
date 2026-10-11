@@ -2,7 +2,6 @@ package com.quietgrid.engine.sudoku
 
 import com.quietgrid.engine.core.Difficulty
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Test
 
@@ -19,134 +18,73 @@ class SudokuDifficultyTest {
         listOf(3, 4, 5, 2, 8, 6, 1, 7, 9),
     )
 
+    private fun grade(cells: String) = gradeSudoku(SudokuGradingFixtures.parse(cells))
+
     @Test
-    fun `a single naked-single puzzle classifies as easy`() {
-        val puzzle = solved.mapIndexed { r, row -> row.mapIndexed { c, v -> if (r == 0 && c == 0) null else v } }
-        val trace = traceHumanSolve(puzzle)
-        val metrics = collectDifficultyMetrics(trace.moves)
-        val classification = classifyDifficulty(metrics)
-        assertNotNull(classification)
-        assertEquals(Difficulty.EASY, classification!!.difficulty)
+    fun `naked singles only grades easy`() {
+        assertEquals(SudokuGrade(SudokuSkillStep.NAKED_SINGLES, 0, Difficulty.EASY), grade(SudokuGradingFixtures.S1_EASY))
     }
 
-    private fun placement(technique: SudokuTechnique, complexity: Int) =
-        SudokuPlacementMove(technique, complexity, 0, 0, 1, emptyList(), emptyList())
-
-    private fun elimination(technique: SudokuTechnique, complexity: Int, targets: Int) =
-        SudokuCandidateEliminationMove(technique, complexity, List(targets) { Triple(0, it, 1) }, emptyList(), emptyList())
+    @Test
+    fun `few-clue naked singles puzzle grades easy`() {
+        assertEquals(SudokuGrade(SudokuSkillStep.NAKED_SINGLES, 0, Difficulty.EASY), grade(SudokuGradingFixtures.S1_FROM_MEDIUM_LABEL))
+    }
 
     @Test
-    fun `collectDifficultyMetrics aggregates counts, branching stats, and per-technique maxima`() {
-        val moves = listOf(
-            placement(SudokuTechnique.NAKED_SINGLE, complexity = 0),
-            elimination(SudokuTechnique.NAKED_PAIR, complexity = 2, targets = 3),
-            elimination(SudokuTechnique.X_WING, complexity = 1, targets = 2),
-        )
+    fun `three forced hidden singles grade medium`() {
+        assertEquals(SudokuGrade(SudokuSkillStep.HIDDEN_SINGLES, 3, Difficulty.MEDIUM), grade(SudokuGradingFixtures.S2_THREE_USES))
+    }
 
-        val metrics = collectDifficultyMetrics(moves)
+    @Test
+    fun `one forced hidden single has no tier`() {
+        assertEquals(SudokuGrade(SudokuSkillStep.HIDDEN_SINGLES, 1, null), grade(SudokuGradingFixtures.S2_ONE_USE))
+    }
 
-        assertEquals(3, metrics.stepCount)
-        assertEquals(1, metrics.placementCount)
-        assertEquals(5, metrics.candidateEliminationCount)
-        assertEquals(1, metrics.advancedStepCount)
-        assertEquals(5.0 / 3.0, metrics.branchingFactor, 1e-9)
-        assertEquals(5, metrics.branchingScore)
-        assertEquals(SudokuTechnique.NAKED_SINGLE, metrics.openingTechnique)
-        assertEquals(SudokuTechnique.X_WING, metrics.hardestTechnique)
+    @Test
+    fun `two locked-candidate stuck points grade hard`() {
+        assertEquals(SudokuGrade(SudokuSkillStep.SUBSETS_AND_LOCKED_CANDIDATES, 2, Difficulty.HARD), grade(SudokuGradingFixtures.S3_TWO_STUCK_POINTS))
+    }
+
+    @Test
+    fun `many eliminations at one stuck point count once`() {
         assertEquals(
-            mapOf(SudokuTechnique.NAKED_SINGLE to 1, SudokuTechnique.NAKED_PAIR to 1, SudokuTechnique.X_WING to 1),
-            metrics.techniqueCounts,
-        )
-        assertEquals(
-            mapOf(SudokuTechnique.NAKED_SINGLE to 0, SudokuTechnique.NAKED_PAIR to 2, SudokuTechnique.X_WING to 1),
-            metrics.maxComplexityPerTechnique,
+            SudokuGrade(SudokuSkillStep.SUBSETS_AND_LOCKED_CANDIDATES, 1, null),
+            grade(SudokuGradingFixtures.S3_ONE_STUCK_POINT_MANY_ELIMINATIONS),
         )
     }
 
     @Test
-    fun `computeDifficultyScore matches the hand-computed weighted sum`() {
-        val moves = listOf(
-            placement(SudokuTechnique.NAKED_SINGLE, complexity = 0),
-            elimination(SudokuTechnique.NAKED_PAIR, complexity = 2, targets = 3),
-            elimination(SudokuTechnique.X_WING, complexity = 1, targets = 2),
-        )
-        val metrics = collectDifficultyMetrics(moves)
-
-        assertEquals(89, computeDifficultyScore(metrics))
+    fun `one fish or wing stuck point has no tier`() {
+        assertEquals(SudokuGrade(SudokuSkillStep.FISH_AND_WINGS, 1, null), grade(SudokuGradingFixtures.S4_ONE_STUCK_POINT))
     }
 
     @Test
-    fun `classifyDifficulty selects medium when the hardest technique floors at medium and rails pass`() {
-        val moves = listOf(
-            placement(SudokuTechnique.NAKED_SINGLE, complexity = 2),
-            placement(SudokuTechnique.HIDDEN_SINGLE, complexity = 2),
-            elimination(SudokuTechnique.BOX_LINE_REDUCTION, complexity = 2, targets = 2),
-        )
-        val metrics = collectDifficultyMetrics(moves)
-
-        val classification = classifyDifficulty(metrics)
-
-        assertNotNull(classification)
-        assertEquals(Difficulty.MEDIUM, classification!!.difficulty)
+    fun `two fish or wing stuck points grade expert`() {
+        assertEquals(SudokuGrade(SudokuSkillStep.FISH_AND_WINGS, 2, Difficulty.EXPERT), grade(SudokuGradingFixtures.S4_TWO_STUCK_POINTS))
     }
 
     @Test
-    fun `classifyDifficulty selects hard when the hardest technique floors at hard and rails pass`() {
-        val moves = listOf(
-            placement(SudokuTechnique.NAKED_SINGLE, complexity = 1),
-            elimination(SudokuTechnique.XY_WING, complexity = 3, targets = 2),
-        )
-        val metrics = collectDifficultyMetrics(moves)
-
-        val classification = classifyDifficulty(metrics)
-
-        assertNotNull(classification)
-        assertEquals(Difficulty.HARD, classification!!.difficulty)
+    fun `one chain stuck point grades expert`() {
+        assertEquals(SudokuGrade(SudokuSkillStep.CHAINS_AND_COLORING, 1, Difficulty.EXPERT), grade(SudokuGradingFixtures.S5_ONE_STUCK_POINT))
     }
 
     @Test
-    fun `classifyDifficulty selects expert when the hardest technique floors at expert and rails pass`() {
-        val moves = listOf(
-            placement(SudokuTechnique.NAKED_SINGLE, complexity = 1),
-            elimination(SudokuTechnique.CHAINS, complexity = 5, targets = 1),
-        )
-        val metrics = collectDifficultyMetrics(moves)
-
-        val classification = classifyDifficulty(metrics)
-
-        assertNotNull(classification)
-        assertEquals(Difficulty.EXPERT, classification!!.difficulty)
+    fun `blank grid cannot be graded`() {
+        assertNull(grade(".".repeat(81)))
     }
 
     @Test
-    fun `classifyDifficulty bumps easy up to medium when the easy step-count safety rail is violated`() {
-        val moves = List(65) { placement(SudokuTechnique.NAKED_SINGLE, complexity = 1) }
-        val metrics = collectDifficultyMetrics(moves)
-
-        val classification = classifyDifficulty(metrics)
-
-        assertNotNull(classification)
-        assertEquals(Difficulty.MEDIUM, classification!!.difficulty)
+    fun `contradictory givens cannot be graded`() {
+        assertNull(grade("11......." + ".".repeat(72)))
     }
 
     @Test
-    fun `classifyDifficulty returns null when even the expert safety rails are violated`() {
-        val moves = List(281) { elimination(SudokuTechnique.CHAINS, complexity = 1, targets = 1) }
-        val metrics = collectDifficultyMetrics(moves)
-
-        val classification = classifyDifficulty(metrics)
-
-        assertNull(classification)
+    fun `full grid grades easy with no uses`() {
+        assertEquals(SudokuGrade(SudokuSkillStep.NAKED_SINGLES, 0, Difficulty.EASY), gradeSudoku(solved))
     }
 
     @Test
-    fun `classifyDifficulty treats an empty move list as easy with a zero score`() {
-        val metrics = collectDifficultyMetrics(emptyList())
-
-        val classification = classifyDifficulty(metrics)
-
-        assertNotNull(classification)
-        assertEquals(Difficulty.EASY, classification!!.difficulty)
-        assertEquals(0, classification.score)
+    fun `grade is null when maxStep is below the required step`() {
+        assertNull(gradeSudoku(SudokuGradingFixtures.parse(SudokuGradingFixtures.S3_TWO_STUCK_POINTS), SudokuSkillStep.HIDDEN_SINGLES))
     }
 }

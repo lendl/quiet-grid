@@ -1,28 +1,18 @@
 package com.quietgrid.engine.sudoku
 
-import com.quietgrid.engine.core.Difficulty
-
 enum class SudokuTechnique {
     NAKED_SINGLE, HIDDEN_SINGLE, NAKED_PAIR, HIDDEN_PAIR, POINTING_PAIR_TRIPLE, BOX_LINE_REDUCTION,
     X_WING, SWORDFISH, XY_WING, XYZ_WING, COLORING, CHAINS,
 }
 
-val sudokuTechniqueDifficultyFloor: Map<SudokuTechnique, Difficulty> = mapOf(
-    SudokuTechnique.NAKED_SINGLE to Difficulty.EASY,
-    SudokuTechnique.HIDDEN_SINGLE to Difficulty.EASY,
-    SudokuTechnique.NAKED_PAIR to Difficulty.EASY,
-    SudokuTechnique.HIDDEN_PAIR to Difficulty.MEDIUM,
-    SudokuTechnique.POINTING_PAIR_TRIPLE to Difficulty.MEDIUM,
-    SudokuTechnique.BOX_LINE_REDUCTION to Difficulty.MEDIUM,
-    SudokuTechnique.X_WING to Difficulty.HARD,
-    SudokuTechnique.SWORDFISH to Difficulty.HARD,
-    SudokuTechnique.XY_WING to Difficulty.HARD,
-    SudokuTechnique.XYZ_WING to Difficulty.EXPERT,
-    SudokuTechnique.COLORING to Difficulty.EXPERT,
-    SudokuTechnique.CHAINS to Difficulty.EXPERT,
-)
+enum class SudokuSkillStep { NAKED_SINGLES, HIDDEN_SINGLES, SUBSETS_AND_LOCKED_CANDIDATES, FISH_AND_WINGS, CHAINS_AND_COLORING }
 
-fun compareTechniques(a: SudokuTechnique, b: SudokuTechnique): Int = a.ordinal - b.ordinal
-
-fun getHardestTechnique(techniques: List<SudokuTechnique>): SudokuTechnique? =
-    techniques.maxByOrNull { it.ordinal }
+val SudokuTechnique.skillStep: SudokuSkillStep
+    get() = when (this) {
+        SudokuTechnique.NAKED_SINGLE -> SudokuSkillStep.NAKED_SINGLES
+        SudokuTechnique.HIDDEN_SINGLE -> SudokuSkillStep.HIDDEN_SINGLES
+        SudokuTechnique.NAKED_PAIR, SudokuTechnique.HIDDEN_PAIR,
+        SudokuTechnique.POINTING_PAIR_TRIPLE, SudokuTechnique.BOX_LINE_REDUCTION -> SudokuSkillStep.SUBSETS_AND_LOCKED_CANDIDATES
+        SudokuTechnique.X_WING, SudokuTechnique.SWORDFISH, SudokuTechnique.XY_WING -> SudokuSkillStep.FISH_AND_WINGS
+        SudokuTechnique.XYZ_WING, SudokuTechnique.COLORING, SudokuTechnique.CHAINS -> SudokuSkillStep.CHAINS_AND_COLORING
+    }
