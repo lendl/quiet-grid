@@ -5,6 +5,7 @@ import com.quietgrid.cli.animaldoku.generateSolutionPermutation
 import com.quietgrid.cli.arrowescape.generateArrowEscapePuzzle
 import com.quietgrid.cli.arrowescape.toEntry
 import com.quietgrid.cli.killersudoku.generateKillerSudokuBatch
+import com.quietgrid.cli.minisudoku.generateMiniSudokuPuzzle
 import com.quietgrid.cli.sudoku.generateSudokuPuzzle
 import com.quietgrid.cli.takuzu.generateTakuzuPuzzle
 import com.quietgrid.cli.whodidit.generateWhoDidItPuzzle
@@ -124,6 +125,9 @@ fun main(args: Array<String>) {
         val path = optionalFlag(args, "--path", "app/src/main/assets/${game}_puzzles.json")
         when (game) {
             "sudoku" -> com.quietgrid.cli.sudoku.runSudokuRegrade(path, write = "--write" in args)
+            "minisudoku" -> com.quietgrid.cli.sudoku.runSudokuRegrade(path, write = "--write" in args) {
+                com.quietgrid.engine.sudoku.gradeMiniSudoku(it)
+            }
             else -> error("Regrade not implemented for game '$game'")
         }
         return
@@ -201,6 +205,19 @@ fun main(args: Array<String>) {
             state.save()
             appendPuzzleEntries(outFile, results.map { it.entry }, KillerSudokuPuzzleEntry.serializer()) { it.id }
             println("Generated ${results.size}/${command.count} killersudoku puzzles at $difficulty in ${System.currentTimeMillis() - startedAt}ms into $outFile")
+        }
+        "minisudoku" -> {
+            val state = GenerationState("${command.outDir}/.generation-state/minisudoku.json")
+            val entries = (1..command.count).mapNotNull {
+                val candidate = generateMiniSudokuPuzzle(difficulty) ?: return@mapNotNull null
+                val dedupeKey = candidate.givens.toString()
+                if (state.hasTried(dedupeKey)) return@mapNotNull null
+                state.recordTried(dedupeKey, "valid")
+                candidate
+            }
+            state.save()
+            appendPuzzleEntries("${command.outDir}/minisudoku_puzzles.json", entries, SudokuPuzzleEntry.serializer()) { it.givens.toString() }
+            println("Generated ${entries.size}/${command.count} mini sudoku puzzles at $difficulty into ${command.outDir}/minisudoku_puzzles.json")
         }
         "wordsearch" -> {
             val locale = command.locale

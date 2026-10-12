@@ -2,6 +2,7 @@
 package com.quietgrid.cli.sudoku
 
 import com.quietgrid.engine.core.Difficulty
+import com.quietgrid.engine.sudoku.SudokuLayout
 import com.quietgrid.engine.sudoku.SudokuPuzzleEntry
 import com.quietgrid.engine.sudoku.SudokuSkillStep
 import com.quietgrid.engine.sudoku.gradeSudoku
@@ -33,24 +34,26 @@ private fun createSolvedBoard(random: Random): List<List<Int>> {
 }
 
 fun countSudokuSolutions(givens: List<List<Int?>>, limit: Int): Int {
+    val layout = SudokuLayout.forSize(givens.size)
+    val size = layout.size
     val grid = givens.map { it.toMutableList() }.toMutableList()
     var count = 0
 
     fun isLegal(row: Int, col: Int, value: Int): Boolean {
-        for (i in 0 until 9) if (grid[row][i] == value || grid[i][col] == value) return false
-        val boxRow = row / 3 * 3
-        val boxCol = col / 3 * 3
-        for (r in boxRow until boxRow + 3) for (c in boxCol until boxCol + 3) if (grid[r][c] == value) return false
+        for (i in 0 until size) if (grid[row][i] == value || grid[i][col] == value) return false
+        val boxRow = row / layout.boxRows * layout.boxRows
+        val boxCol = col / layout.boxCols * layout.boxCols
+        for (r in boxRow until boxRow + layout.boxRows) for (c in boxCol until boxCol + layout.boxCols) if (grid[r][c] == value) return false
         return true
     }
 
     fun solve(pos: Int) {
         if (count >= limit) return
-        if (pos == 81) { count += 1; return }
-        val row = pos / 9
-        val col = pos % 9
+        if (pos == layout.cellCount) { count += 1; return }
+        val row = pos / size
+        val col = pos % size
         if (grid[row][col] != null) { solve(pos + 1); return }
-        for (value in 1..9) {
+        for (value in layout.digits) {
             if (isLegal(row, col, value)) {
                 grid[row][col] = value
                 solve(pos + 1)

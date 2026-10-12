@@ -10,13 +10,14 @@ object XyWingTechnique : SudokuTechniqueDispatcher {
     private data class BivalueCell(val row: Int, val col: Int, val index: Int, val candidates: List<Int>)
 
     override fun findMove(state: SudokuBitmaskState): SudokuCanonicalMove? {
+        val layout = state.layout
         val bivalueCells = state.board.indices
             .filter { state.board[it] == 0 && popcount[state.candidateMask[it]] == 2 }
-            .map { BivalueCell(it / 9, it % 9, it, getCellCandidatesByIndex(state, it)) }
+            .map { BivalueCell(layout.rowOf(it), layout.colOf(it), it, getCellCandidatesByIndex(state, it)) }
         val complexity = bivalueCells.size
 
         for (pivot in bivalueCells) {
-            val wings = bivalueCells.filter { it.index != pivot.index && arePeerIndexes(it.index, pivot.index) }
+            val wings = bivalueCells.filter { it.index != pivot.index && arePeerIndexes(it.index, pivot.index, layout) }
 
             for (leftWing in wings) {
                 for (rightWing in wings) {
@@ -34,8 +35,8 @@ object XyWingTechnique : SudokuTechniqueDispatcher {
                     val eliminations = state.board.indices
                         .filter { state.board[it] == 0 && it != pivot.index && it != leftWing.index && it != rightWing.index }
                         .filter { index ->
-                            val cell = SudokuCellRef(index / 9, index % 9)
-                            arePeerCells(cell, SudokuCellRef(leftWing.row, leftWing.col)) && arePeerCells(cell, SudokuCellRef(rightWing.row, rightWing.col))
+                            val cell = SudokuCellRef(layout.rowOf(index), layout.colOf(index))
+                            arePeerCells(cell, SudokuCellRef(leftWing.row, leftWing.col), layout) && arePeerCells(cell, SudokuCellRef(rightWing.row, rightWing.col), layout)
                         }
                         .filter { getCellCandidatesByIndex(state, it).contains(zDigit) }
                         .map { it to zDigit }
@@ -43,7 +44,7 @@ object XyWingTechnique : SudokuTechniqueDispatcher {
                     val move = buildCandidateEliminationMove(
                         SudokuTechnique.XY_WING, eliminations,
                         listOf(pivot.index, leftWing.index, rightWing.index),
-                        buildPlacementHouseRefs(pivot.row, pivot.col), complexity,
+                        buildPlacementHouseRefs(pivot.row, pivot.col, layout), complexity, layout,
                     )
                     if (move != null) return move
                 }

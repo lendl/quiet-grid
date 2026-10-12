@@ -97,6 +97,7 @@ import com.quietgrid.app.games.whodidit.WhoDidItText
 import com.quietgrid.app.games.sudoku.SudokuChallengerPlayScreen
 import com.quietgrid.app.games.sudoku.SudokuChallengerResultScreen
 import com.quietgrid.app.games.sudoku.SudokuPlayScreen
+import com.quietgrid.app.games.sudoku.SudokuVariant
 import com.quietgrid.app.games.takuzu.TakuzuAnalyzerScreen
 import com.quietgrid.app.games.takuzu.TakuzuChallengerPlayScreen
 import com.quietgrid.app.games.takuzu.TakuzuChallengerResultScreen
@@ -607,6 +608,19 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                     difficulty = difficulty,
                                     resume = resume,
                                     dailyDate = dailyDate,
+                                    onBack = { navController.popBackStack() },
+                                    onFinished = { result ->
+                                        if (result.solved) {
+                                            goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
+                                        } else {
+                                            goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
+                                        }
+                                    },
+                                )
+                                GameId.MINISUDOKU -> SudokuPlayScreen(
+                                    difficulty = difficulty,
+                                    resume = resume,
+                                    variant = SudokuVariant.MINI,
                                     onBack = { navController.popBackStack() },
                                     onFinished = { result ->
                                         if (result.solved) {

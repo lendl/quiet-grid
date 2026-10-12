@@ -34,6 +34,7 @@ internal val GAME_ICON_HUES: Map<GameId, Color> = mapOf(
     GameId.NONOGRAM to Color(0xFF4A8A47),
     GameId.STARBATTLE to Color(0xFF5653C2),
     GameId.SUDOKU to Color(0xFF8550C4),
+    GameId.MINISUDOKU to Color(0xFFAC4FA0),
     GameId.TAKUZU to Color(0xFF2A85A6),
     GameId.THEMECLEAR to Color(0xFF7D8B2A),
     GameId.WORDGUESS to Color(0xFF9C6B3A),
@@ -152,6 +153,15 @@ internal val GAME_ICON_GLYPHS: Map<GameId, List<GlyphShape>> = mapOf(
         GlyphText(4.5f, 19.7f, "8", 4.6f, GlyphPaint.MARK),
         GlyphRect(9f, 16.5f, 6f, 6f, 1.5f, GlyphPaint.EMPTY),
         GlyphRect(16.5f, 16.5f, 6f, 6f, 1.5f, GlyphPaint.EMPTY),
+    ),
+    GameId.MINISUDOKU to listOf(
+        GlyphRect(1.5f, 1.5f, 9.5f, 9.5f, 2f, GlyphPaint.EMPTY),
+        GlyphText(6.25f, 6.4f, "2", 6.5f, GlyphPaint.MARK),
+        GlyphRect(13f, 1.5f, 9.5f, 9.5f, 2f, GlyphPaint.ACCENT),
+        GlyphText(17.75f, 6.4f, "4", 6.5f, GlyphPaint.CUTOUT),
+        GlyphRect(1.5f, 13f, 9.5f, 9.5f, 2f, GlyphPaint.EMPTY),
+        GlyphRect(13f, 13f, 9.5f, 9.5f, 2f, GlyphPaint.EMPTY),
+        GlyphText(17.75f, 17.9f, "1", 6.5f, GlyphPaint.MARK),
     ),
     GameId.TAKUZU to listOf(
         GlyphRect(1.5f, 1.5f, 9.5f, 9.5f, 2f, GlyphPaint.ACCENT),

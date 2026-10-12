@@ -79,11 +79,12 @@ fun SudokuPlayScreen(
     difficulty: Difficulty,
     resume: Boolean,
     dailyDate: LocalDate? = null,
+    variant: SudokuVariant = SudokuVariant.CLASSIC,
     onBack: () -> Unit,
     onFinished: (SudokuResult) -> Unit,
 ) {
     val viewModel = hiltViewModel<SudokuPlayViewModel, SudokuPlayViewModel.Factory>(
-        creationCallback = { factory -> factory.create(difficulty, resume, dailyDate) },
+        creationCallback = { factory -> factory.create(difficulty, resume, dailyDate, variant) },
     )
     CollectPuzzleResult(viewModel.result, onFinished)
 
@@ -227,11 +228,22 @@ fun SudokuPlayScreen(
                 }
             }
 
-            Row(Modifier.fillMaxWidth().padding(top = 8.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                for (digit in 1..5) digitButton(digit)
+            val digitCount = session.board.size
+            val firstRowDigits = if (digitCount > 6) 1..(digitCount + 1) / 2 else 1..digitCount
+            if (digitCount > 6) {
+                Row(Modifier.fillMaxWidth().padding(top = 8.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    for (digit in firstRowDigits) digitButton(digit)
+                }
             }
-            Row(Modifier.fillMaxWidth().padding(top = 4.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                for (digit in 6..9) digitButton(digit)
+            Row(
+                Modifier.fillMaxWidth().padding(top = if (digitCount > 6) 4.dp else 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                if (digitCount > 6) {
+                    for (digit in (firstRowDigits.last + 1)..digitCount) digitButton(digit)
+                } else {
+                    for (digit in firstRowDigits) digitButton(digit)
+                }
                 SudokuPadButton(
                     active = false,
                     enabled = hasSelection,

@@ -26,23 +26,24 @@ import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import com.quietgrid.app.ui.components.FeedbackText
 import com.quietgrid.engine.sudoku.SudokuGrid
+import com.quietgrid.engine.sudoku.SudokuLayout
 
-private fun Modifier.sudokuBoxLines(cellSizePx: Float, color: androidx.compose.ui.graphics.Color): Modifier = drawWithContent {
+private fun Modifier.sudokuBoxLines(cellSizePx: Float, color: androidx.compose.ui.graphics.Color, layout: SudokuLayout): Modifier = drawWithContent {
     drawContent()
     val thin = 1.dp.toPx()
     val thick = 2.5.dp.toPx()
-    for (i in 0..9) {
-        val strokeWidth = if (i % 3 == 0) thick else thin
+    for (i in 0..layout.size) {
         val x = cellSizePx * i
-        drawLine(color, Offset(x, 0f), Offset(x, size.height), strokeWidth)
+        drawLine(color, Offset(x, 0f), Offset(x, size.height), if (i % layout.boxCols == 0) thick else thin)
         val y = cellSizePx * i
-        drawLine(color, Offset(0f, y), Offset(size.width, y), strokeWidth)
+        drawLine(color, Offset(0f, y), Offset(size.width, y), if (i % layout.boxRows == 0) thick else thin)
     }
 }
 
 @Composable
-private fun SudokuCandidates(candidates: Set<Int>, cellSize: Dp, fontSize: TextUnit) {
-    val slotSize = cellSize / 3
+private fun SudokuCandidates(candidates: Set<Int>, cellSize: Dp, fontSize: TextUnit, layout: SudokuLayout) {
+    val slotWidth = cellSize / layout.boxCols
+    val slotHeight = cellSize / layout.boxRows
     val style = TextStyle(
         fontSize = fontSize,
         fontWeight = FontWeight.Medium,
@@ -54,8 +55,8 @@ private fun SudokuCandidates(candidates: Set<Int>, cellSize: Dp, fontSize: TextU
             val slot = digit - 1
             Box(
                 modifier = Modifier
-                    .offset(x = slotSize * (slot % 3), y = slotSize * (slot / 3))
-                    .size(slotSize),
+                    .offset(x = slotWidth * (slot % layout.boxCols), y = slotHeight * (slot / layout.boxCols))
+                    .size(slotWidth, slotHeight),
                 contentAlignment = Alignment.Center,
             ) {
                 BasicText(
@@ -90,7 +91,8 @@ fun SudokuGrid(
     hintHighlightBoxes: Set<Int> = emptySet(),
 ) {
     BoxWithConstraints(contentAlignment = Alignment.Center) {
-        val cellSize = min(maxWidth / 9, maxHeight / 9)
+        val layout = SudokuLayout.forSize(board.size)
+        val cellSize = min(maxWidth / layout.size, maxHeight / layout.size)
         val fontSize = (cellSize.value * 0.5f).sp
         val density = LocalDensity.current
         val noteFontSize = with(density) { (cellSize * 0.3f).toSp() }
@@ -98,18 +100,18 @@ fun SudokuGrid(
         val cellSizePx = with(density) { cellSize.toPx() }
         val selectedRow = selectedCell?.first
         val selectedCol = selectedCell?.second
-        val selectedBox = if (selectedRow != null && selectedCol != null) sudokuBoxIndex(selectedRow, selectedCol) else null
+        val selectedBox = if (selectedRow != null && selectedCol != null) sudokuBoxIndex(selectedRow, selectedCol, layout) else null
         Box(
             Modifier
-                .size(cellSize * 9, cellSize * 9)
-                .sudokuBoxLines(cellSizePx, MaterialTheme.colorScheme.outlineVariant),
+                .size(cellSize * layout.size, cellSize * layout.size)
+                .sudokuBoxLines(cellSizePx, MaterialTheme.colorScheme.outlineVariant, layout),
         ) {
-        for (row in 0 until 9) {
-            for (col in 0 until 9) {
+        for (row in 0 until layout.size) {
+            for (col in 0 until layout.size) {
                 val value = board[row][col]
                 val given = givens[row][col] != null
                 val locked = given || finishedCells[row][col]
-                val box = sudokuBoxIndex(row, col)
+                val box = sudokuBoxIndex(row, col, layout)
                 val isSelected = selectedCell == row to col
                 val isPeerHighlight = !isSelected && selectedBox != null &&
                     (row == selectedRow || col == selectedCol || box == selectedBox)
@@ -171,6 +173,7 @@ fun SudokuGrid(
                             candidates = notes[row][col],
                             cellSize = cellSize,
                             fontSize = noteFontSize,
+                            layout = layout,
                         )
                         else -> Unit
                     }

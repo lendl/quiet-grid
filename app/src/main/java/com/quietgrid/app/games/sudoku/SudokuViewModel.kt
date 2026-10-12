@@ -18,6 +18,7 @@ import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
 import com.quietgrid.engine.sudoku.SudokuGrid
+import com.quietgrid.engine.sudoku.SudokuLayout
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -53,29 +54,32 @@ data class SudokuResult(
 private class SudokuPuzzleAdapter(
     private val appContext: Context,
     private val historyStore: PlayHistoryStore,
+    private val variant: SudokuVariant,
 ) : PuzzleAdapter<SudokuSession, SudokuResult> {
-    override val gameId: GameId = GameId.SUDOKU
+    override val gameId: GameId = variant.gameId
 
     override suspend fun freshSession(difficulty: Difficulty): SudokuSession? {
         val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
-        val entry = SudokuPuzzleBank.randomPuzzle(appContext, difficulty, recentIds) ?: return null
+        val entry = variant.bank.randomPuzzle(appContext, difficulty, recentIds) ?: return null
         return createSudokuSession(entry)
     }
 
     override suspend fun dailySession(difficulty: Difficulty, date: LocalDate): SudokuSession? {
-        val entry = selectDaily(SudokuPuzzleBank.dailyPool(appContext, difficulty), { it.id }, gameId.key, difficulty.key, date) ?: return null
+        val entry = selectDaily(variant.bank.dailyPool(appContext, difficulty), { it.id }, gameId.key, difficulty.key, date) ?: return null
         return createSudokuSession(entry)
     }
 
     override fun restoreSession(payload: String, elapsedSeconds: Double): SudokuSession? {
         val persisted = runCatching { json.decodeFromString<SudokuPersistedSession>(payload) }.getOrNull() ?: return null
+        val size = persisted.puzzle.givens.size
+        if (persisted.board.size != size * size) return null
         return SudokuSession(
             puzzle = persisted.puzzle,
-            board = List(9) { r -> List(9) { c -> persisted.board[r * 9 + c] } },
-            notes = List(9) { r -> List(9) { c -> persisted.notes[r * 9 + c].toSet() } },
+            board = List(size) { r -> List(size) { c -> persisted.board[r * size + c] } },
+            notes = List(size) { r -> List(size) { c -> persisted.notes[r * size + c].toSet() } },
             inputMode = persisted.inputMode,
             accuracyDrops = persisted.accuracyDrops,
-            finishedCells = List(9) { r -> List(9) { c -> persisted.finishedCells[r * 9 + c] } },
+            finishedCells = List(size) { r -> List(size) { c -> persisted.finishedCells[r * size + c] } },
             penalizedUnitKeys = persisted.penalizedUnitKeys,
             autoCandidateMode = persisted.autoCandidateMode,
         )
@@ -124,11 +128,12 @@ class SudokuPlayViewModel @AssistedInject constructor(
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
     @Assisted dailyDate: LocalDate?,
+    @Assisted variant: SudokuVariant,
 ) : ViewModel() {
 
     @AssistedFactory
     interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean, dailyDate: LocalDate?): SudokuPlayViewModel
+        fun create(requestedDifficulty: Difficulty, resume: Boolean, dailyDate: LocalDate?, variant: SudokuVariant): SudokuPlayViewModel
     }
 
     private val controller = PuzzleSessionController(
@@ -136,7 +141,7 @@ class SudokuPlayViewModel @AssistedInject constructor(
         sessionStore = sessionRepository,
         statsStore = statsRepository,
         historyStore = historyRepository,
-        adapter = SudokuPuzzleAdapter(appContext, historyRepository),
+        adapter = SudokuPuzzleAdapter(appContext, historyRepository, variant),
     )
 
     val session get() = controller.session
@@ -273,7 +278,7 @@ class SudokuPlayViewModel @AssistedInject constructor(
         val finalUpdated = if (updated.autoCandidateMode) updated.copy(notes = computeSudokuAutoNotes(updated.board)) else updated
         controller.updateSession(finalUpdated)
 
-        for (key in sudokuTouchedUnitKeys(row, col)) {
+        for (key in sudokuTouchedUnitKeys(row, col, SudokuLayout.forSize(finalUpdated.board.size))) {
             val before = getCompletedSudokuUnitState(previous.board, previous.puzzle.solution, key)
             val after = getCompletedSudokuUnitState(finalUpdated.board, previous.puzzle.solution, key)
             if (before != SudokuUnitState.INCOMPLETE || after != SudokuUnitState.INCOMPLETE) {

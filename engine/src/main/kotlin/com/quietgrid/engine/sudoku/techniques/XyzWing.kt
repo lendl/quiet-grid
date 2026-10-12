@@ -17,7 +17,7 @@ object XyzWingTechnique : SudokuTechniqueDispatcher {
         val complexity = pivotCells.size
 
         for (pivot in pivotCells) {
-            val pivotPeers = wings.filter { arePeerIndexes(it.index, pivot.index) }
+            val pivotPeers = wings.filter { arePeerIndexes(it.index, pivot.index, state.layout) }
             for (leftIndex in pivotPeers.indices) {
                 for (rightIndex in (leftIndex + 1) until pivotPeers.size) {
                     val leftWing = pivotPeers[leftIndex]
@@ -31,14 +31,14 @@ object XyzWingTechnique : SudokuTechniqueDispatcher {
                     if (commonDigits.size != 1) continue
                     val zDigit = commonDigits[0]
 
-                    val eliminations = peerIntersectionIndexes(listOf(pivot.index, leftWing.index, rightWing.index))
+                    val eliminations = peerIntersectionIndexes(listOf(pivot.index, leftWing.index, rightWing.index), state.layout)
                         .filter { it != pivot.index && it != leftWing.index && it != rightWing.index }
                         .filter { getCellCandidatesByIndex(state, it).contains(zDigit) }
                         .map { it to zDigit }
 
                     val move = buildCandidateEliminationMove(
                         SudokuTechnique.XYZ_WING, eliminations,
-                        listOf(pivot.index, leftWing.index, rightWing.index), null, complexity,
+                        listOf(pivot.index, leftWing.index, rightWing.index), null, complexity, state.layout,
                     )
                     if (move != null) return move
                 }

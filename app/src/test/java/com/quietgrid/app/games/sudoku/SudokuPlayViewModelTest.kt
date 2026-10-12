@@ -62,7 +62,7 @@ class SudokuPlayViewModelTest {
     }
 
     private fun newViewModel(sessionStore: FakeSessionStore = FakeSessionStore(), statsStore: FakeStatsStore = FakeStatsStore()) =
-        SudokuPlayViewModel(mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), Difficulty.EASY, resume = false, dailyDate = null)
+        SudokuPlayViewModel(mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), Difficulty.EASY, resume = false, dailyDate = null, variant = SudokuVariant.CLASSIC)
 
     @Test
     fun `starting fresh loads the mocked puzzle with only the blank given empty`() {

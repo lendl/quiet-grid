@@ -3,6 +3,7 @@ package com.quietgrid.app.games.sudoku
 import com.quietgrid.engine.sudoku.SudokuCandidateEliminationMove
 import com.quietgrid.engine.sudoku.SudokuGrid
 import com.quietgrid.engine.sudoku.SudokuHouseRef
+import com.quietgrid.engine.sudoku.SudokuLayout
 import com.quietgrid.engine.sudoku.SudokuPlacementMove
 import com.quietgrid.engine.sudoku.SudokuTechnique
 import com.quietgrid.engine.sudoku.findNextMove
@@ -64,49 +65,38 @@ data class SudokuEliminationHint(
     override val highlightBoxes: List<Int>,
 ) : SudokuNextMoveHint
 
-private fun cellBox(row: Int, col: Int): Int = (row / 3) * 3 + (col / 3)
-
 private fun findDuplicateConflict(board: SudokuGrid): SudokuInvalidConflict? {
-    for (row in 0 until 9) {
+    val layout = SudokuLayout.forSize(board.size)
+    for (ref in layout.allHouseRefs) {
         val byDigit = HashMap<Int, MutableList<Pair<Int, Int>>>()
-        for (col in 0 until 9) board[row][col]?.let { byDigit.getOrPut(it) { mutableListOf() }.add(row to col) }
-        val conflict = byDigit.entries.firstOrNull { it.value.size >= 2 } ?: continue
-        return SudokuInvalidConflict(SudokuHouseRefUi("row", row), conflict.key, conflict.value, listOf(row), emptyList(), emptyList())
-    }
-    for (col in 0 until 9) {
-        val byDigit = HashMap<Int, MutableList<Pair<Int, Int>>>()
-        for (row in 0 until 9) board[row][col]?.let { byDigit.getOrPut(it) { mutableListOf() }.add(row to col) }
-        val conflict = byDigit.entries.firstOrNull { it.value.size >= 2 } ?: continue
-        return SudokuInvalidConflict(SudokuHouseRefUi("column", col), conflict.key, conflict.value, emptyList(), listOf(col), emptyList())
-    }
-    for (box in 0 until 9) {
-        val rowStart = (box / 3) * 3
-        val colStart = (box % 3) * 3
-        val byDigit = HashMap<Int, MutableList<Pair<Int, Int>>>()
-        for (r in rowStart until rowStart + 3) for (c in colStart until colStart + 3) {
-            board[r][c]?.let { byDigit.getOrPut(it) { mutableListOf() }.add(r to c) }
+        for (index in ref.cells) {
+            val row = layout.rowOf(index)
+            val col = layout.colOf(index)
+            board[row][col]?.let { byDigit.getOrPut(it) { mutableListOf() }.add(row to col) }
         }
         val conflict = byDigit.entries.firstOrNull { it.value.size >= 2 } ?: continue
-        return SudokuInvalidConflict(SudokuHouseRefUi("box", box), conflict.key, conflict.value, emptyList(), emptyList(), listOf(box))
+        val house = SudokuHouseRefUi(ref.house.kind, ref.house.index)
+        return SudokuInvalidConflict(
+            house, conflict.key, conflict.value,
+            if (house.kind == "row") listOf(house.index) else emptyList(),
+            if (house.kind == "column") listOf(house.index) else emptyList(),
+            if (house.kind == "box") listOf(house.index) else emptyList(),
+        )
     }
     return null
 }
 
 private fun findDeadCellConflict(board: SudokuGrid): SudokuInvalidDeadCell? {
-    for (row in 0 until 9) {
-        for (col in 0 until 9) {
-            if (board[row][col] != null) continue
-            val used = (0 until 9).mapNotNull { board[row][it] }.toSet() +
-                (0 until 9).mapNotNull { board[it][col] }.toSet() +
-                run {
-                    val rowStart = (row / 3) * 3; val colStart = (col / 3) * 3
-                    (rowStart until rowStart + 3).flatMap { r -> (colStart until colStart + 3).mapNotNull { c -> board[r][c] } }
-                }.toSet()
-            if (used.size < 9) continue
-            val evidence = ((0 until 9).mapNotNull { c -> board[row][c]?.let { row to c } } +
-                (0 until 9).mapNotNull { r -> board[r][col]?.let { r to col } }).distinct()
-            return SudokuInvalidDeadCell(row, col, evidence, listOf(row), listOf(col), listOf(cellBox(row, col)))
-        }
+    val layout = SudokuLayout.forSize(board.size)
+    for (index in 0 until layout.cellCount) {
+        val row = layout.rowOf(index)
+        val col = layout.colOf(index)
+        if (board[row][col] != null) continue
+        val used = layout.cellPeers[index].mapNotNull { board[layout.rowOf(it)][layout.colOf(it)] }.toSet()
+        if (used.size < layout.size) continue
+        val evidence = ((0 until layout.size).mapNotNull { c -> board[row][c]?.let { row to c } } +
+            (0 until layout.size).mapNotNull { r -> board[r][col]?.let { r to col } }).distinct()
+        return SudokuInvalidDeadCell(row, col, evidence, listOf(row), listOf(col), listOf(layout.boxOf(row, col)))
     }
     return null
 }

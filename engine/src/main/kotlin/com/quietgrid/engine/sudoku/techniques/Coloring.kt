@@ -14,12 +14,13 @@ object ColoringTechnique : SudokuTechniqueDispatcher {
     }
 
     override fun findMove(state: SudokuBitmaskState): SudokuCanonicalMove? {
+        val layout = state.layout
         var best: SudokuCanonicalMove? = null
         var bestComplexity = Int.MAX_VALUE
 
-        for (digit in 1..9) {
+        for (digit in layout.digits) {
             val graph = mutableMapOf<Int, MutableSet<Int>>()
-            (rowCellIndexes + columnCellIndexes + boxCellIndexes).forEach { houseCells ->
+            (layout.rowCellIndexes + layout.columnCellIndexes + layout.boxCellIndexes).forEach { houseCells ->
                 val matches = getHouseDigitMatches(state, houseCells, digit)
                 if (matches.size == 2) addEdge(graph, matches[0], matches[1])
             }
@@ -51,12 +52,12 @@ object ColoringTechnique : SudokuTechniqueDispatcher {
                 for (color in listOf(0, 1)) {
                     val colorCells = component.filter { colors[it] == color }
                     val hasConflict = colorCells.indices.any { leftIndex ->
-                        colorCells.drop(leftIndex + 1).any { right -> cellPeers[colorCells[leftIndex]].contains(right) }
+                        colorCells.drop(leftIndex + 1).any { right -> layout.arePeers(colorCells[leftIndex], right) }
                     }
                     if (!hasConflict) continue
 
                     val move = buildCandidateEliminationMove(
-                        SudokuTechnique.COLORING, colorCells.map { it to digit }, component, collectHousesFromIndexes(component), complexity,
+                        SudokuTechnique.COLORING, colorCells.map { it to digit }, component, collectHousesFromIndexes(component, layout), complexity, layout,
                     )
                     if (move != null) { best = move; bestComplexity = complexity; break }
                 }
@@ -67,9 +68,9 @@ object ColoringTechnique : SudokuTechniqueDispatcher {
                 val eliminations = state.board.indices
                     .filter { state.board[it] == 0 && it !in component }
                     .filter { getHouseDigitMatches(state, listOf(it), digit).size == 1 }
-                    .filter { index -> colorZero.any { cellPeers[index].contains(it) } && colorOne.any { cellPeers[index].contains(it) } }
+                    .filter { index -> colorZero.any { layout.arePeers(index, it) } && colorOne.any { layout.arePeers(index, it) } }
                     .map { it to digit }
-                val move = buildCandidateEliminationMove(SudokuTechnique.COLORING, eliminations, component, collectHousesFromIndexes(component), complexity)
+                val move = buildCandidateEliminationMove(SudokuTechnique.COLORING, eliminations, component, collectHousesFromIndexes(component, layout), complexity, layout)
                 if (move != null) { best = move; bestComplexity = complexity }
             }
         }

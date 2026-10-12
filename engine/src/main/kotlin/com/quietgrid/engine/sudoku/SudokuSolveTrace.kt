@@ -30,8 +30,8 @@ private fun moveScore(move: SudokuCanonicalMove): Int = TECHNIQUE_BASE_SCORES.ge
 
 private fun applyMove(state: SudokuBitmaskState, move: SudokuCanonicalMove) {
     when (move) {
-        is SudokuPlacementMove -> placeDigit(state, getCellIndex(move.targetRow, move.targetCol), move.digit)
-        is SudokuCandidateEliminationMove -> move.eliminations.forEach { (row, col, digit) -> eliminateCandidate(state, getCellIndex(row, col), digit) }
+        is SudokuPlacementMove -> placeDigit(state, state.layout.index(move.targetRow, move.targetCol), move.digit)
+        is SudokuCandidateEliminationMove -> move.eliminations.forEach { (row, col, digit) -> eliminateCandidate(state, state.layout.index(row, col), digit) }
     }
 }
 

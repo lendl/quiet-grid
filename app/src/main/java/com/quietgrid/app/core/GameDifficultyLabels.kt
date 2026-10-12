@@ -13,6 +13,7 @@ import com.quietgrid.app.games.nonogram.nonogramDifficultyLabelRes
 import com.quietgrid.app.games.sequencememory.sequenceMemoryDifficultyLabelRes
 import com.quietgrid.app.games.starbattle.starBattleDifficultyLabelRes
 import com.quietgrid.app.games.whodidit.whoDidItDifficultyLabelRes
+import com.quietgrid.app.games.minisudoku.miniSudokuDifficultyLabelRes
 import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
 import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
 import com.quietgrid.app.games.themeclear.themeClearDifficultyLabelRes
@@ -39,5 +40,6 @@ fun gameDifficultyLabelRes(gameId: GameId, difficulty: Difficulty): Int = when (
     GameId.SEQUENCEMEMORY -> sequenceMemoryDifficultyLabelRes(difficulty)
     GameId.HASHI -> hashiDifficultyLabelRes(difficulty)
     GameId.KILLERSUDOKU -> killerSudokuDifficultyLabelRes(difficulty)
+    GameId.MINISUDOKU -> miniSudokuDifficultyLabelRes(difficulty)
     else -> chimpDifficultyLabelRes(difficulty)
 }

@@ -8,18 +8,19 @@ object HiddenPairTechnique : SudokuTechniqueDispatcher {
     override val tier = Difficulty.MEDIUM
 
     override fun findMove(state: SudokuBitmaskState): SudokuCanonicalMove? {
+        val digits = state.layout.digits
         var best: SudokuCanonicalMove? = null
         var bestComplexity = Double.MAX_VALUE
 
-        for (ref in allHouseRefs) {
+        for (ref in state.layout.allHouseRefs) {
             val complexity = ref.cells.count { state.board[it] == 0 } * 1.5
             if (complexity >= bestComplexity) continue
 
-            val digitPositions = (1..9).associateWith { digit -> getHouseDigitMatches(state, ref.cells, digit) }
+            val digitPositions = digits.associateWith { digit -> getHouseDigitMatches(state, ref.cells, digit) }
             var found = false
-            for (leftIndex in 1..9) {
+            for (leftIndex in digits) {
                 if (found) break
-                for (rightIndex in (leftIndex + 1)..9) {
+                for (rightIndex in (leftIndex + 1)..digits.last) {
                     val leftPositions = digitPositions.getValue(leftIndex)
                     val rightPositions = digitPositions.getValue(rightIndex)
                     if (leftPositions.size != 2 || rightPositions.size != 2) continue
@@ -28,7 +29,7 @@ object HiddenPairTechnique : SudokuTechniqueDispatcher {
                     val eliminations = leftPositions.flatMap { index ->
                         getCellCandidatesByIndex(state, index).filter { it != leftIndex && it != rightIndex }.map { index to it }
                     }
-                    val move = buildCandidateEliminationMove(SudokuTechnique.HIDDEN_PAIR, eliminations, leftPositions, listOf(ref.house), complexity.toInt())
+                    val move = buildCandidateEliminationMove(SudokuTechnique.HIDDEN_PAIR, eliminations, leftPositions, listOf(ref.house), complexity.toInt(), state.layout)
                     if (move != null) {
                         best = move
                         bestComplexity = complexity

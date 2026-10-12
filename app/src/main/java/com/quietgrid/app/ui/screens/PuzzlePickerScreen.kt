@@ -65,6 +65,9 @@ import com.quietgrid.app.games.guessbynumbers.guessByNumbersDifficultyLabelRes
 import com.quietgrid.app.games.minesweeper.MinesweeperQuickStart
 import com.quietgrid.app.games.minesweeper.minesweeperDifficultyDescriptionRes
 import com.quietgrid.app.games.minesweeper.minesweeperDifficultyLabelRes
+import com.quietgrid.app.games.minisudoku.MiniSudokuQuickStart
+import com.quietgrid.app.games.minisudoku.miniSudokuDifficultyDescriptionRes
+import com.quietgrid.app.games.minisudoku.miniSudokuDifficultyLabelRes
 import com.quietgrid.app.games.nback.NBackQuickStart
 import com.quietgrid.app.games.nback.nbackDifficultyDescriptionRes
 import com.quietgrid.app.games.nback.nbackDifficultyLabelRes
@@ -127,6 +130,7 @@ private fun quickStartFor(gameId: GameId): QuickStartContent = when (gameId) {
     GameId.SEQUENCEMEMORY -> SequenceMemoryQuickStart
     GameId.HASHI -> HashiQuickStart
     GameId.KILLERSUDOKU -> KillerSudokuQuickStart
+    GameId.MINISUDOKU -> MiniSudokuQuickStart
 }
 
 @Composable
@@ -289,6 +293,7 @@ private fun GamePlayPickerTab(
                     GameId.SEQUENCEMEMORY -> sequenceMemoryDifficultyLabelRes(difficulty)
                     GameId.HASHI -> hashiDifficultyLabelRes(difficulty)
                     GameId.KILLERSUDOKU -> killerSudokuDifficultyLabelRes(difficulty)
+                    GameId.MINISUDOKU -> miniSudokuDifficultyLabelRes(difficulty)
                     else -> chimpDifficultyLabelRes(difficulty)
                 }
                 val descriptionRes = when (gameId) {
@@ -311,6 +316,7 @@ private fun GamePlayPickerTab(
                     GameId.SEQUENCEMEMORY -> sequenceMemoryDifficultyDescriptionRes(difficulty)
                     GameId.HASHI -> hashiDifficultyDescriptionRes(difficulty)
                     GameId.KILLERSUDOKU -> killerSudokuDifficultyDescriptionRes(difficulty)
+                    GameId.MINISUDOKU -> miniSudokuDifficultyDescriptionRes(difficulty)
                 }
                 if (index > 0) HorizontalDivider()
                 Row(

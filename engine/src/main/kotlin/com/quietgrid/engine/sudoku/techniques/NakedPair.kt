@@ -11,7 +11,7 @@ object NakedPairTechnique : SudokuTechniqueDispatcher {
         var best: SudokuCanonicalMove? = null
         var bestComplexity = Int.MAX_VALUE
 
-        for (ref in allHouseRefs) {
+        for (ref in state.layout.allHouseRefs) {
             val complexity = ref.cells.count { state.board[it] == 0 }
             if (complexity >= bestComplexity) continue
 
@@ -27,7 +27,7 @@ object NakedPairTechnique : SudokuTechniqueDispatcher {
                 val pairDigits = getCellCandidatesByIndex(state, pairCells[0])
                 val eliminations = ref.cells.filter { it !in pairCells }
                     .flatMap { index -> pairDigits.filter { d -> getCellCandidatesByIndex(state, index).contains(d) }.map { index to it } }
-                val move = buildCandidateEliminationMove(SudokuTechnique.NAKED_PAIR, eliminations, pairCells, listOf(ref.house), complexity)
+                val move = buildCandidateEliminationMove(SudokuTechnique.NAKED_PAIR, eliminations, pairCells, listOf(ref.house), complexity, state.layout)
                 if (move != null) {
                     best = move
                     bestComplexity = complexity

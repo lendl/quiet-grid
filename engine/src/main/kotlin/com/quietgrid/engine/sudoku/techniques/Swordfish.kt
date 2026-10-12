@@ -8,11 +8,13 @@ object SwordfishTechnique : SudokuTechniqueDispatcher {
     override val tier = Difficulty.HARD
 
     override fun findMove(state: SudokuBitmaskState): SudokuCanonicalMove? {
+        val layout = state.layout
+        val size = layout.size
         var best: SudokuCanonicalMove? = null
         var bestComplexity = Int.MAX_VALUE
 
-        for (digit in 1..9) {
-            val rowCandidates = rowCellIndexes.mapIndexed { row, cells -> row to getHouseDigitMatches(state, cells, digit).map { it % 9 } }
+        for (digit in layout.digits) {
+            val rowCandidates = layout.rowCellIndexes.mapIndexed { row, cells -> row to getHouseDigitMatches(state, cells, digit).map { it % size } }
                 .filter { it.second.size in 2..3 }
             val rowComplexity = rowCandidates.size
             if (rowComplexity < bestComplexity) {
@@ -23,15 +25,15 @@ object SwordfishTechnique : SudokuTechniqueDispatcher {
                             val cols = fish.flatMap { it.second }.toSortedSet().toList()
                             if (cols.size != 3) continue
                             val eliminations = cols.flatMap { col ->
-                                columnCellIndexes[col].filter { index -> fish.none { it.first == index / 9 } }
+                                layout.columnCellIndexes[col].filter { index -> fish.none { it.first == index / size } }
                                     .filter { state.board[it] == 0 && (state.candidateMask[it] and digitToBit[digit]) != 0 }
                                     .map { it to digit }
                             }
                             val move = buildCandidateEliminationMove(
                                 SudokuTechnique.SWORDFISH, eliminations,
-                                fish.flatMap { entry -> entry.second.map { col -> entry.first * 9 + col } },
+                                fish.flatMap { entry -> entry.second.map { col -> entry.first * size + col } },
                                 fish.map { SudokuHouseRef("row", it.first) } + cols.map { SudokuHouseRef("column", it) },
-                                rowComplexity,
+                                rowComplexity, layout,
                             )
                             if (move != null) { best = move; bestComplexity = rowComplexity; break@outer }
                         }
@@ -39,7 +41,7 @@ object SwordfishTechnique : SudokuTechniqueDispatcher {
                 }
             }
 
-            val columnCandidates = columnCellIndexes.mapIndexed { col, cells -> col to getHouseDigitMatches(state, cells, digit).map { it / 9 } }
+            val columnCandidates = layout.columnCellIndexes.mapIndexed { col, cells -> col to getHouseDigitMatches(state, cells, digit).map { it / size } }
                 .filter { it.second.size in 2..3 }
             val colComplexity = columnCandidates.size
             if (colComplexity < bestComplexity) {
@@ -50,15 +52,15 @@ object SwordfishTechnique : SudokuTechniqueDispatcher {
                             val rows = fish.flatMap { it.second }.toSortedSet().toList()
                             if (rows.size != 3) continue
                             val eliminations = rows.flatMap { row ->
-                                rowCellIndexes[row].filter { index -> fish.none { it.first == index % 9 } }
+                                layout.rowCellIndexes[row].filter { index -> fish.none { it.first == index % size } }
                                     .filter { state.board[it] == 0 && (state.candidateMask[it] and digitToBit[digit]) != 0 }
                                     .map { it to digit }
                             }
                             val move = buildCandidateEliminationMove(
                                 SudokuTechnique.SWORDFISH, eliminations,
-                                fish.flatMap { entry -> entry.second.map { row -> row * 9 + entry.first } },
+                                fish.flatMap { entry -> entry.second.map { row -> row * size + entry.first } },
                                 fish.map { SudokuHouseRef("column", it.first) } + rows.map { SudokuHouseRef("row", it) },
-                                colComplexity,
+                                colComplexity, layout,
                             )
                             if (move != null) { best = move; bestComplexity = colComplexity; break@outer }
                         }

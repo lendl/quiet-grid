@@ -53,6 +53,7 @@ import com.quietgrid.app.games.nonogram.nonogramDifficultyLabelRes
 import com.quietgrid.app.games.sequencememory.sequenceMemoryDifficultyLabelRes
 import com.quietgrid.app.games.starbattle.starBattleDifficultyLabelRes
 import com.quietgrid.app.games.whodidit.whoDidItDifficultyLabelRes
+import com.quietgrid.app.games.minisudoku.miniSudokuDifficultyLabelRes
 import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
 import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
 import com.quietgrid.app.games.themeclear.themeClearDifficultyLabelRes
@@ -116,6 +117,11 @@ fun LossScreen(
             eyebrowRes = R.string.sudoku_loss_abandoned_eyebrow
             titleRes = R.string.sudoku_loss_abandoned_title
             bodyRes = R.string.sudoku_loss_abandoned_body
+        }
+        gameId == GameId.MINISUDOKU -> {
+            eyebrowRes = R.string.sudoku_loss_abandoned_eyebrow
+            titleRes = R.string.minisudoku_loss_abandoned_title
+            bodyRes = R.string.minisudoku_loss_abandoned_body
         }
         gameId == GameId.WORDSEARCH -> {
             eyebrowRes = R.string.wordsearch_loss_abandoned_eyebrow
@@ -257,6 +263,7 @@ fun LossScreen(
         GameId.SEQUENCEMEMORY -> sequenceMemoryDifficultyLabelRes(difficulty)
         GameId.HASHI -> hashiDifficultyLabelRes(difficulty)
         GameId.KILLERSUDOKU -> killerSudokuDifficultyLabelRes(difficulty)
+        GameId.MINISUDOKU -> miniSudokuDifficultyLabelRes(difficulty)
         else -> chimpDifficultyLabelRes(difficulty)
     }
     val icon = if (reason == "abandoned") "⏸" else "💥"

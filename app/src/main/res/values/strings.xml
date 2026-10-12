@@ -712,6 +712,19 @@
     <string name="sudoku_loss_abandoned_eyebrow">Puzzle ended</string>
     <string name="sudoku_loss_abandoned_title">Sudoku session ended</string>
     <string name="sudoku_loss_abandoned_body">You ended this Sudoku session before solving the grid.</string>
+    <string name="minisudoku_title">Mini Sudoku</string>
+    <string name="minisudoku_tagline">Small Sudoku grids: 4×4 to warm up, 6×6 when you want more.</string>
+    <string name="minisudoku_difficulty_desc_easy">4×4 grid with 2×2 boxes, digits 1-4.</string>
+    <string name="minisudoku_difficulty_desc_medium">6×6 grid where each step has a cell with only one digit left.</string>
+    <string name="minisudoku_difficulty_desc_hard">6×6 grid where you scan for the only spot a digit fits.</string>
+    <string name="minisudoku_difficulty_desc_expert">6×6 grid that needs notes and advanced logic to crack.</string>
+    <string name="minisudoku_quickstart_goal">Fill every cell with 1-4 on 4×4, or 1-6 on 6×6.</string>
+    <string name="minisudoku_quickstart_bullet_1">Each row, column and box has every digit once.</string>
+    <string name="minisudoku_quickstart_bullet_2">Boxes are 2×2 on 4×4 grids and 2×3 on 6×6 grids.</string>
+    <string name="minisudoku_quickstart_hook">A quick Sudoku for when a full grid is too much.</string>
+    <string name="minisudoku_how_to_play_goal">Place each digit exactly once in every row, column, and box. Easy uses a 4×4 grid with digits 1-4 and 2×2 boxes. Medium, Hard and Expert use a 6×6 grid with digits 1-6 and 2×3 boxes.</string>
+    <string name="minisudoku_loss_abandoned_title">Puzzle unfinished</string>
+    <string name="minisudoku_loss_abandoned_body">You ended this puzzle before it was solved.</string>
 
     <!-- Word Search (puzzle bank is English-only in the source app; other locales fall back here) -->
     <string name="wordsearch_title">Word Search</string>

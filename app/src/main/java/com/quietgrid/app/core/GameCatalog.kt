@@ -23,6 +23,7 @@ enum class GameId(val key: String) {
     SEQUENCEMEMORY("sequencememory"),
     HASHI("hashi"),
     KILLERSUDOKU("killersudoku"),
+    MINISUDOKU("minisudoku"),
 }
 
 enum class GameCategory(@param:StringRes val labelRes: Int) {
@@ -47,6 +48,7 @@ object GameCatalog {
         GameMeta(GameId.NONOGRAM, R.string.game_nonogram_name, R.string.nonogram_tagline, setOf(GameCategory.LOGIC)),
         GameMeta(GameId.MINESWEEPER, R.string.minesweeper_title, R.string.minesweeper_tagline, setOf(GameCategory.LOGIC)),
         GameMeta(GameId.SUDOKU, R.string.sudoku_title, R.string.sudoku_tagline, setOf(GameCategory.LOGIC)),
+        GameMeta(GameId.MINISUDOKU, R.string.minisudoku_title, R.string.minisudoku_tagline, setOf(GameCategory.LOGIC), beta = true),
         GameMeta(GameId.WORDSEARCH, R.string.wordsearch_title, R.string.wordsearch_tagline, setOf(GameCategory.WORD)),
         GameMeta(GameId.BLOCKFILL, R.string.blockfill_title, R.string.blockfill_tagline, setOf(GameCategory.SPATIAL)),
         GameMeta(GameId.WORDGUESS, R.string.wordguess_title, R.string.wordguess_tagline, setOf(GameCategory.WORD)),

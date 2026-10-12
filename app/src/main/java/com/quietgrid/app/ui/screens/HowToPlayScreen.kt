@@ -73,6 +73,7 @@ fun HowToPlayScreen(gameId: GameId) {
             GameId.SEQUENCEMEMORY -> SequenceMemoryHowToPlay()
             GameId.HASHI -> HashiHowToPlay()
             GameId.KILLERSUDOKU -> KillerSudokuHowToPlay()
+            GameId.MINISUDOKU -> SudokuHowToPlay(goalRes = R.string.minisudoku_how_to_play_goal)
         }
 
         HorizontalDivider(Modifier.padding(vertical = 20.dp))
@@ -417,9 +418,9 @@ private fun ThemeClearHowToPlay() {
 }
 
 @Composable
-private fun SudokuHowToPlay() {
+private fun SudokuHowToPlay(goalRes: Int = R.string.sudoku_how_to_play_goal) {
     SectionHeader(Icons.Outlined.EmojiEvents, stringResource(R.string.how_to_play_goal_title))
-    BodyText(stringResource(R.string.sudoku_how_to_play_goal))
+    BodyText(stringResource(goalRes))
 
     HorizontalDivider(Modifier.padding(vertical = 20.dp))
     SectionHeader(Icons.Outlined.PanTool, stringResource(R.string.how_to_play_controls_title))

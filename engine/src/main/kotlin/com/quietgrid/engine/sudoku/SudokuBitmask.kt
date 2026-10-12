@@ -8,31 +8,20 @@ val popcount: IntArray = IntArray(512) { mask -> Integer.bitCount(mask) }
 
 val bitToDigit: IntArray = IntArray(512) { mask -> if (popcount[mask] == 1) (31 - Integer.numberOfLeadingZeros(mask)) + 1 else 0 }
 
-fun getCellIndex(row: Int, col: Int): Int = row * SUDOKU_SIZE + col
-fun getCellRow(index: Int): Int = index / SUDOKU_SIZE
-fun getCellCol(index: Int): Int = index % SUDOKU_SIZE
-fun getCellBox(row: Int, col: Int): Int = (row / SUDOKU_BOX_SIZE) * SUDOKU_BOX_SIZE + col / SUDOKU_BOX_SIZE
+fun getCellIndex(row: Int, col: Int): Int = SudokuLayout.CLASSIC.index(row, col)
+fun getCellRow(index: Int): Int = SudokuLayout.CLASSIC.rowOf(index)
+fun getCellCol(index: Int): Int = SudokuLayout.CLASSIC.colOf(index)
+fun getCellBox(row: Int, col: Int): Int = SudokuLayout.CLASSIC.boxOf(row, col)
 
-val rowCellIndexes: List<List<Int>> = (0 until SUDOKU_SIZE).map { row -> (0 until SUDOKU_SIZE).map { col -> getCellIndex(row, col) } }
-val columnCellIndexes: List<List<Int>> = (0 until SUDOKU_SIZE).map { col -> (0 until SUDOKU_SIZE).map { row -> getCellIndex(row, col) } }
-val boxCellIndexes: List<List<Int>> = (0 until SUDOKU_SIZE).map { box ->
-    val rowStart = (box / SUDOKU_BOX_SIZE) * SUDOKU_BOX_SIZE
-    val colStart = (box % SUDOKU_BOX_SIZE) * SUDOKU_BOX_SIZE
-    (0 until SUDOKU_SIZE).map { offset -> getCellIndex(rowStart + offset / SUDOKU_BOX_SIZE, colStart + offset % SUDOKU_BOX_SIZE) }
-}
+val rowCellIndexes: List<List<Int>> get() = SudokuLayout.CLASSIC.rowCellIndexes
+val columnCellIndexes: List<List<Int>> get() = SudokuLayout.CLASSIC.columnCellIndexes
+val boxCellIndexes: List<List<Int>> get() = SudokuLayout.CLASSIC.boxCellIndexes
 
-val cellRowIndexes: List<Int> = (0 until SUDOKU_SIZE * SUDOKU_SIZE).map { getCellRow(it) }
-val cellColIndexes: List<Int> = (0 until SUDOKU_SIZE * SUDOKU_SIZE).map { getCellCol(it) }
-val cellBoxIndexes: List<Int> = (0 until SUDOKU_SIZE * SUDOKU_SIZE).map { getCellBox(cellRowIndexes[it], cellColIndexes[it]) }
+val cellRowIndexes: List<Int> get() = SudokuLayout.CLASSIC.cellRowIndexes
+val cellColIndexes: List<Int> get() = SudokuLayout.CLASSIC.cellColIndexes
+val cellBoxIndexes: List<Int> get() = SudokuLayout.CLASSIC.cellBoxIndexes
 
-val cellPeers: List<List<Int>> = (0 until SUDOKU_SIZE * SUDOKU_SIZE).map { index ->
-    val peers = sortedSetOf<Int>()
-    rowCellIndexes[cellRowIndexes[index]].forEach { peers.add(it) }
-    columnCellIndexes[cellColIndexes[index]].forEach { peers.add(it) }
-    boxCellIndexes[cellBoxIndexes[index]].forEach { peers.add(it) }
-    peers.remove(index)
-    peers.toList()
-}
+val cellPeers: List<List<Int>> get() = SudokuLayout.CLASSIC.cellPeers
 
 class SudokuBitmaskState(
     val board: IntArray,
@@ -41,24 +30,29 @@ class SudokuBitmaskState(
     val colMask: IntArray,
     val boxMask: IntArray,
     var unresolvedCount: Int,
+    val layout: SudokuLayout = SudokuLayout.CLASSIC,
 )
 
-fun flattenBoard(board: SudokuGrid): IntArray = IntArray(81) { index -> board[cellRowIndexes[index]][cellColIndexes[index]] ?: 0 }
+fun flattenBoard(board: SudokuGrid): IntArray {
+    val layout = SudokuLayout.forSize(board.size)
+    return IntArray(layout.cellCount) { index -> board[layout.rowOf(index)][layout.colOf(index)] ?: 0 }
+}
 
-fun createBitmaskStateFromFlatBoard(flatBoard: IntArray): SudokuBitmaskState {
+fun createBitmaskStateFromFlatBoard(flatBoard: IntArray, layout: SudokuLayout = SudokuLayout.CLASSIC): SudokuBitmaskState {
     val boardCopy = flatBoard.copyOf()
-    val candidateMask = IntArray(81)
-    val rowMask = IntArray(9)
-    val colMask = IntArray(9)
-    val boxMask = IntArray(9)
+    val candidateMask = IntArray(layout.cellCount)
+    val rowMask = IntArray(layout.size)
+    val colMask = IntArray(layout.size)
+    val boxMask = IntArray(layout.size)
 
-    for (index in 0 until 81) {
+    for (index in 0 until layout.cellCount) {
         val value = boardCopy[index]
         if (value == 0) continue
+        check(value in layout.digits) { "Invalid sudoku board: digit $value is out of range." }
         val bit = digitToBit[value]
-        val row = cellRowIndexes[index]
-        val col = cellColIndexes[index]
-        val box = cellBoxIndexes[index]
+        val row = layout.cellRowIndexes[index]
+        val col = layout.cellColIndexes[index]
+        val box = layout.cellBoxIndexes[index]
         check((rowMask[row] and bit) == 0 && (colMask[col] and bit) == 0 && (boxMask[box] and bit) == 0) {
             "Invalid sudoku board: duplicate digit $value at row ${row + 1}, col ${col + 1}."
         }
@@ -68,28 +62,34 @@ fun createBitmaskStateFromFlatBoard(flatBoard: IntArray): SudokuBitmaskState {
     }
 
     var unresolvedCount = 0
-    for (index in 0 until 81) {
+    for (index in 0 until layout.cellCount) {
         if (boardCopy[index] != 0) continue
-        val row = cellRowIndexes[index]
-        val col = cellColIndexes[index]
-        val box = cellBoxIndexes[index]
-        candidateMask[index] = FULL_MASK and (rowMask[row] or colMask[col] or boxMask[box]).inv()
+        val row = layout.cellRowIndexes[index]
+        val col = layout.cellColIndexes[index]
+        val box = layout.cellBoxIndexes[index]
+        candidateMask[index] = layout.fullMask and (rowMask[row] or colMask[col] or boxMask[box]).inv()
         unresolvedCount += 1
     }
 
-    return SudokuBitmaskState(boardCopy, candidateMask, rowMask, colMask, boxMask, unresolvedCount)
+    return SudokuBitmaskState(boardCopy, candidateMask, rowMask, colMask, boxMask, unresolvedCount, layout)
 }
 
-fun createBitmaskStateFromBoard(board: SudokuGrid): SudokuBitmaskState = createBitmaskStateFromFlatBoard(flattenBoard(board))
+fun createBitmaskStateFromBoard(board: SudokuGrid): SudokuBitmaskState =
+    createBitmaskStateFromFlatBoard(flattenBoard(board), SudokuLayout.forSize(board.size))
 
 fun hasDuplicateGivens(board: SudokuGrid): Boolean {
+    val layout = SudokuLayout.forSize(board.size)
     val flatBoard = flattenBoard(board)
-    val houseMasks = IntArray(27)
-    for (index in 0 until 81) {
+    val houseMasks = IntArray(layout.size * 3)
+    for (index in 0 until layout.cellCount) {
         val value = flatBoard[index]
         if (value == 0) continue
         val bit = digitToBit[value]
-        val houses = intArrayOf(cellRowIndexes[index], 9 + cellColIndexes[index], 18 + cellBoxIndexes[index])
+        val houses = intArrayOf(
+            layout.cellRowIndexes[index],
+            layout.size + layout.cellColIndexes[index],
+            layout.size * 2 + layout.cellBoxIndexes[index],
+        )
         if (houses.any { (houseMasks[it] and bit) != 0 }) return true
         houses.forEach { houseMasks[it] = houseMasks[it] or bit }
     }
@@ -97,7 +97,7 @@ fun hasDuplicateGivens(board: SudokuGrid): Boolean {
 }
 
 fun cloneBitmaskState(state: SudokuBitmaskState): SudokuBitmaskState = SudokuBitmaskState(
-    state.board.copyOf(), state.candidateMask.copyOf(), state.rowMask.copyOf(), state.colMask.copyOf(), state.boxMask.copyOf(), state.unresolvedCount,
+    state.board.copyOf(), state.candidateMask.copyOf(), state.rowMask.copyOf(), state.colMask.copyOf(), state.boxMask.copyOf(), state.unresolvedCount, state.layout,
 )
 
 fun encodeBitmaskState(state: SudokuBitmaskState): String =
@@ -113,10 +113,11 @@ fun placeDigit(state: SudokuBitmaskState, index: Int, digit: Int) {
     if (current == digit) return
     check(current == 0) { "Cannot place digit $digit into filled sudoku cell $index." }
 
+    val layout = state.layout
     val bit = digitToBit[digit]
-    val row = cellRowIndexes[index]
-    val col = cellColIndexes[index]
-    val box = cellBoxIndexes[index]
+    val row = layout.cellRowIndexes[index]
+    val col = layout.cellColIndexes[index]
+    val box = layout.cellBoxIndexes[index]
     check((state.rowMask[row] and bit) == 0 && (state.colMask[col] and bit) == 0 && (state.boxMask[box] and bit) == 0) {
         "Cannot place conflicting digit $digit at row ${row + 1}, col ${col + 1}."
     }
@@ -128,7 +129,7 @@ fun placeDigit(state: SudokuBitmaskState, index: Int, digit: Int) {
     state.boxMask[box] = state.boxMask[box] or bit
     state.unresolvedCount -= 1
 
-    cellPeers[index].forEach { peerIndex ->
+    layout.cellPeers[index].forEach { peerIndex ->
         if (state.board[peerIndex] == 0) state.candidateMask[peerIndex] = state.candidateMask[peerIndex] and bit.inv()
     }
 }

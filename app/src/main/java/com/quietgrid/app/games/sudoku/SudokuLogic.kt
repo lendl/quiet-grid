@@ -2,6 +2,7 @@ package com.quietgrid.app.games.sudoku
 
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.engine.sudoku.SudokuGrid
+import com.quietgrid.engine.sudoku.SudokuLayout
 import com.quietgrid.engine.sudoku.SudokuPuzzleEntry
 import com.quietgrid.engine.sudoku.createBitmaskStateFromBoard
 import com.quietgrid.engine.sudoku.getCellCandidates
@@ -32,10 +33,10 @@ fun sudokuAccuracyPct(accuracyDrops: Int): Int = max(0, 100 - accuracyDrops * AC
 fun createSudokuSession(entry: SudokuPuzzleEntry): SudokuSession = SudokuSession(
     puzzle = entry,
     board = entry.givens,
-    notes = List(9) { List(9) { emptySet() } },
+    notes = List(entry.givens.size) { List(entry.givens.size) { emptySet() } },
     inputMode = SudokuInputMode.DIGIT,
     accuracyDrops = 0,
-    finishedCells = List(9) { List(9) { false } },
+    finishedCells = List(entry.givens.size) { List(entry.givens.size) { false } },
     penalizedUnitKeys = emptyList(),
 )
 
@@ -61,9 +62,10 @@ fun applySudokuClearCell(session: SudokuSession, row: Int, col: Int): SudokuSess
 }
 
 fun computeSudokuAutoNotes(board: SudokuGrid): List<List<Set<Int>>> {
+    val size = board.size
     val state = runCatching { createBitmaskStateFromBoard(board) }.getOrNull()
-        ?: return List(9) { List(9) { emptySet() } }
-    return List(9) { row -> List(9) { col -> if (board[row][col] != null) emptySet() else getCellCandidates(state, row, col).toSet() } }
+        ?: return List(size) { List(size) { emptySet() } }
+    return List(size) { row -> List(size) { col -> if (board[row][col] != null) emptySet() else getCellCandidates(state, row, col).toSet() } }
 }
 
 fun applySudokuToggleNote(session: SudokuSession, row: Int, col: Int, digit: Int): SudokuSession? {
@@ -94,19 +96,11 @@ private fun mergeFinishedCells(
     givens: List<List<Int?>>,
     correctUnitKeys: List<SudokuUnitKey>,
 ): List<List<Boolean>> {
+    val layout = SudokuLayout.forSize(board.size)
     val next = current.map { it.toMutableList() }.toMutableList()
     for (unitKey in correctUnitKeys) {
-        val index = unitKey.substring(1).toInt()
-        when (unitKey[0]) {
-            'r' -> for (c in 0 until 9) if (givens[index][c] == null && board[index][c] != null) next[index][c] = true
-            'c' -> for (r in 0 until 9) if (givens[r][index] == null && board[r][index] != null) next[r][index] = true
-            else -> {
-                val rowStart = (index / 3) * 3
-                val colStart = (index % 3) * 3
-                for (r in rowStart until rowStart + 3) for (c in colStart until colStart + 3) {
-                    if (givens[r][c] == null && board[r][c] != null) next[r][c] = true
-                }
-            }
+        for ((r, c) in sudokuUnitCells(unitKey, layout)) {
+            if (givens[r][c] == null && board[r][c] != null) next[r][c] = true
         }
     }
     return next

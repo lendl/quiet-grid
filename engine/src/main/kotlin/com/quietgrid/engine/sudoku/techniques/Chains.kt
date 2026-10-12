@@ -12,13 +12,14 @@ object ChainsTechnique : SudokuTechniqueDispatcher {
     private data class Cell(val index: Int, val candidates: List<Int>)
 
     override fun findMove(state: SudokuBitmaskState): SudokuCanonicalMove? {
+        val layout = state.layout
         val bivalueCells = state.board.indices.filter { state.board[it] == 0 && popcount[state.candidateMask[it]] == 2 }
             .map { Cell(it, getCellCandidatesByIndex(state, it)) }
 
         fun search(startIndex: Int, currentIndex: Int, targetDigit: Int, sharedDigit: Int, path: List<Int>): SudokuCanonicalMove? {
             if (path.size >= MAX_CHAIN_LENGTH) return null
 
-            val nextMoves = bivalueCells.filter { it.index !in path && arePeerIndexes(it.index, currentIndex) && it.candidates.contains(sharedDigit) }
+            val nextMoves = bivalueCells.filter { it.index !in path && arePeerIndexes(it.index, currentIndex, layout) && it.candidates.contains(sharedDigit) }
 
             for (nextCell in nextMoves) {
                 val nextDigit = nextCell.candidates.firstOrNull { it != sharedDigit } ?: continue
@@ -28,10 +29,10 @@ object ChainsTechnique : SudokuTechniqueDispatcher {
                     val fullPath = path + nextCell.index
                     val eliminations = state.board.indices
                         .filter { state.board[it] == 0 && it !in fullPath }
-                        .filter { arePeerIndexes(it, startIndex) && arePeerIndexes(it, nextCell.index) }
+                        .filter { arePeerIndexes(it, startIndex, layout) && arePeerIndexes(it, nextCell.index, layout) }
                         .filter { getCellCandidatesByIndex(state, it).contains(targetDigit) }
                         .map { it to targetDigit }
-                    val move = buildCandidateEliminationMove(SudokuTechnique.CHAINS, eliminations, fullPath, null, chainLength)
+                    val move = buildCandidateEliminationMove(SudokuTechnique.CHAINS, eliminations, fullPath, null, chainLength, layout)
                     if (move != null) return move
                 }
 

@@ -10,13 +10,13 @@ import kotlinx.serialization.json.Json
 
 private val json = Json { ignoreUnknownKeys = true }
 
-object SudokuPuzzleBank {
+open class SudokuEntryBank(private val assetName: String) {
     private var cache: Map<String, List<SudokuPuzzleEntry>>? = null
 
     private suspend fun load(context: Context): Map<String, List<SudokuPuzzleEntry>> {
         cache?.let { return it }
         return withContext(Dispatchers.IO) {
-            val text = context.assets.open("sudoku_puzzles.json").bufferedReader().use { it.readText() }
+            val text = context.assets.open(assetName).bufferedReader().use { it.readText() }
             val entries = json.decodeFromString<List<SudokuPuzzleEntry>>(text)
             val grouped = entries.groupBy { it.difficulty }
             cache = grouped
@@ -34,3 +34,5 @@ object SudokuPuzzleBank {
         return candidates.ifEmpty { pool }.random()
     }
 }
+
+object SudokuPuzzleBank : SudokuEntryBank("sudoku_puzzles.json")
