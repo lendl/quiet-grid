@@ -1,0 +1,9 @@
+Versione 1.10.0
+
+- Nuovi giochi: Killer Sudoku, Mini Sudoku e Memoria di sequenze
+- Widget Partita veloce: continua o inizia un puzzle dalla schermata Home
+- Aggiungi una stella ai giochi preferiti per tenerli in cima
+- Cerca parole: regole e suggerimenti più chiari per la parola nascosta
+- Animal Doku e Battaglia di stelle: puzzle più duri in Difficile ed Esperto
+- Blocchi più spessi in Block Fill
+- Correzioni di bug e miglioramenti della stabilità

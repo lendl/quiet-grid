@@ -1,0 +1,9 @@
+Version 1.10.0
+
+- New games: Killer Sudoku, Mini Sudoku and Sequence Memory
+- Quick Play widget: continue or start a puzzle from your home screen
+- Star favorite games to keep them first
+- Word Search: clearer hidden word rules and hints
+- Harder Hard and Expert puzzles in Animal Doku and Star Battle
+- Chunkier Block Fill blocks
+- Bug fixes and stability improvements

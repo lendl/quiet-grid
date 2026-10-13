@@ -1,0 +1,9 @@
+Versión 1.10.0
+
+- Juegos nuevos: Killer Sudoku, Mini Sudoku y Memoria de Secuencias
+- Widget Juego rápido: continúa o empieza un puzzle desde la pantalla de inicio
+- Marca tus juegos favoritos con una estrella para tenerlos primero
+- Sopa de Letras: reglas y pistas más claras para la palabra oculta
+- Animal Doku y Batalla de Estrellas: puzzles más difíciles en Difícil y Experto
+- Bloques más gruesos en Block Fill
+- Corrección de errores y mejoras de estabilidad

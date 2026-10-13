@@ -1,0 +1,9 @@
+Version 1.10.0
+
+- Neue Spiele: Killer Sudoku, Mini Sudoku und Sequenzgedächtnis
+- Schnellspiel-Widget: Rätsel vom Startbildschirm aus fortsetzen oder neu starten
+- Markiere Lieblingsspiele mit einem Stern, damit sie zuerst erscheinen
+- Wortsuche: klarere Regeln und Hinweise zum versteckten Wort
+- Animal Doku und Star Battle: schwerere Rätsel in Schwer und Experte
+- Kräftigere Blöcke in Block Fill
+- Fehlerbehebungen und Stabilitätsverbesserungen

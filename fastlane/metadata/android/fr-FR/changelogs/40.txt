@@ -1,0 +1,9 @@
+Version 1.10.0
+
+- Nouveaux jeux : Killer Sudoku, Mini Sudoku et Mémoire de Séquences
+- Widget Partie rapide : reprendre ou lancer un puzzle depuis l'écran d'accueil
+- Les jeux favoris marqués d'une étoile restent en tête de liste
+- Mots mêlés : règles et indices plus clairs pour le mot caché
+- Animal Doku et Star Battle : puzzles Difficile et Expert plus corsés
+- Blocs plus épais dans Block Fill
+- Corrections de bugs et améliorations de stabilité

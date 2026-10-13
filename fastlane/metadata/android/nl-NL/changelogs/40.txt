@@ -1,0 +1,9 @@
+Versie 1.10.0
+
+- Nieuwe spellen: Killer Sudoku, Mini Sudoku en Reeks Onthouden
+- Snel spelen-widget: ga verder of start een puzzel vanaf je startscherm
+- Geef je favoriete spellen een ster zodat ze bovenaan staan
+- Woordzoeker: duidelijkere regels en hints voor het verborgen woord
+- Animal Doku en Star Battle: moeilijkere puzzels in Moeilijk en Expert
+- Dikkere blokken in Block Fill
+- Bugfixes en stabiliteitsverbeteringen

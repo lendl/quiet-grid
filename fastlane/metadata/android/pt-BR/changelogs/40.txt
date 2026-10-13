@@ -1,0 +1,9 @@
+Versão 1.10.0
+
+- Jogos novos: Killer Sudoku, Mini Sudoku e Memória de Sequências
+- Widget Jogo rápido: continue ou comece um quebra-cabeça na tela inicial
+- Marque seus jogos favoritos com uma estrela para mantê-los no topo
+- Caça-Palavras: regras e dicas mais claras para a palavra escondida
+- Animal Doku e Batalha de Estrelas: quebra-cabeças mais difíceis em Difícil e Especialista
+- Blocos mais grossos no Block Fill
+- Correções de erros e melhorias de estabilidade

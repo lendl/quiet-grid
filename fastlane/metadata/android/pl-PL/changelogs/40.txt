@@ -1,0 +1,9 @@
+Wersja 1.10.0
+
+- Nowe gry: Killer Sudoku, Mini Sudoku i Pamięć sekwencji
+- Widżet Szybka gra: kontynuuj lub zacznij łamigłówkę z ekranu głównego
+- Oznacz ulubione gry gwiazdką, aby były na początku listy
+- Wykreślanka: jaśniejsze zasady i podpowiedzi dla ukrytego słowa
+- Zwierzęce Doku i Bitwa gwiazd: trudniejsze łamigłówki na poziomach Trudny i Ekspert
+- Układanka z klocków: grubsze klocki
+- Poprawki błędów i stabilności
