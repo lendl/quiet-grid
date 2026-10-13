@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -43,16 +44,22 @@ private fun Modifier.killerBoardLines(
     cageOfCell: IntArray,
     labelCells: Set<Int>,
     gridColor: Color,
+    houseColor: Color,
     cageColor: Color,
 ): Modifier = drawWithContent {
     drawContent()
     val thin = 1.dp.toPx()
     val thick = 2.5.dp.toPx()
     for (i in 0..9) {
-        val strokeWidth = if (i % 3 == 0) thick else thin
+        if (i % 3 == 0) continue
         val offset = cellSizePx * i
-        drawLine(gridColor, Offset(offset, 0f), Offset(offset, size.height), strokeWidth)
-        drawLine(gridColor, Offset(0f, offset), Offset(size.width, offset), strokeWidth)
+        drawLine(gridColor, Offset(offset, 0f), Offset(offset, size.height), thin)
+        drawLine(gridColor, Offset(0f, offset), Offset(size.width, offset), thin)
+    }
+    for (i in 0..9 step 3) {
+        val offset = cellSizePx * i
+        drawLine(houseColor, Offset(offset, 0f), Offset(offset, size.height), thick, StrokeCap.Square)
+        drawLine(houseColor, Offset(0f, offset), Offset(size.width, offset), thick, StrokeCap.Square)
     }
 
     val inset = cellSizePx * CAGE_INSET
@@ -174,6 +181,7 @@ fun KillerSudokuGrid(
                     cageOfCell = layout.cageOfCell,
                     labelCells = labelCells.keys,
                     gridColor = MaterialTheme.colorScheme.outlineVariant,
+                    houseColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     cageColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 ),
         ) {

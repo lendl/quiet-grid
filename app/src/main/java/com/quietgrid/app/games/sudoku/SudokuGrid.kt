@@ -15,6 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -28,15 +30,24 @@ import com.quietgrid.app.ui.components.FeedbackText
 import com.quietgrid.engine.sudoku.SudokuGrid
 import com.quietgrid.engine.sudoku.SudokuLayout
 
-private fun Modifier.sudokuBoxLines(cellSizePx: Float, color: androidx.compose.ui.graphics.Color, layout: SudokuLayout): Modifier = drawWithContent {
+private fun Modifier.sudokuBoxLines(
+    cellSizePx: Float,
+    cellLineColor: Color,
+    houseLineColor: Color,
+    layout: SudokuLayout,
+): Modifier = drawWithContent {
     drawContent()
     val thin = 1.dp.toPx()
     val thick = 2.5.dp.toPx()
     for (i in 0..layout.size) {
-        val x = cellSizePx * i
-        drawLine(color, Offset(x, 0f), Offset(x, size.height), if (i % layout.boxCols == 0) thick else thin)
-        val y = cellSizePx * i
-        drawLine(color, Offset(0f, y), Offset(size.width, y), if (i % layout.boxRows == 0) thick else thin)
+        val offset = cellSizePx * i
+        if (i % layout.boxCols != 0) drawLine(cellLineColor, Offset(offset, 0f), Offset(offset, size.height), thin)
+        if (i % layout.boxRows != 0) drawLine(cellLineColor, Offset(0f, offset), Offset(size.width, offset), thin)
+    }
+    for (i in 0..layout.size) {
+        val offset = cellSizePx * i
+        if (i % layout.boxCols == 0) drawLine(houseLineColor, Offset(offset, 0f), Offset(offset, size.height), thick, StrokeCap.Square)
+        if (i % layout.boxRows == 0) drawLine(houseLineColor, Offset(0f, offset), Offset(size.width, offset), thick, StrokeCap.Square)
     }
 }
 
@@ -104,7 +115,12 @@ fun SudokuGrid(
         Box(
             Modifier
                 .size(cellSize * layout.size, cellSize * layout.size)
-                .sudokuBoxLines(cellSizePx, MaterialTheme.colorScheme.outlineVariant, layout),
+                .sudokuBoxLines(
+                    cellSizePx = cellSizePx,
+                    cellLineColor = MaterialTheme.colorScheme.outlineVariant,
+                    houseLineColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    layout = layout,
+                ),
         ) {
         for (row in 0 until layout.size) {
             for (col in 0 until layout.size) {
