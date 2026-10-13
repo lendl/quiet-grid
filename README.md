@@ -60,13 +60,13 @@
 - **2048** — Merge tiles to reach 2048.
 - **Block Fill** — Drag pieces onto the board and clear full lines. Includes an Endless mode.
 
-In beta, enable in Settings: Arrow Escape, N-Back.
+In beta, enable in Settings: Arrow Escape, N-Back, Who Did It?, Hashi.
 
 ### Also
 
 - Daily puzzle with reminders; puzzle mixes; four difficulty levels
 - Seven themes incl. colorblind-friendly Pencil; optional timer
-- Languages: English, Dutch, German, French, Spanish, Portuguese, Polish
+- Languages: English, Dutch, German, French, Spanish, Portuguese, Polish, Italian
 
 ## Privacy
 
