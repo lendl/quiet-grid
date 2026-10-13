@@ -15,6 +15,8 @@ Scegli quali giochi ti danno un nuovo puzzle ogni giorno, in ogni difficoltà. C
 <p><b>PUZZLE DI LOGICA</b></p>
 <ul>
 <li><b>Sudoku</b> — Inserisci le cifre da 1 a 9 in modo che ogni riga, colonna e riquadro 3×3 contenga ogni cifra una sola volta.</li>
+<li><b>Killer Sudoku</b> — Nessuna cifra iniziale: le somme di ogni gabbia tratteggiata ti dicono cosa va dove.</li>
+<li><b>Mini Sudoku</b> — Sudoku veloci 4×4 e 6×6 per una breve pausa.</li>
 <li><b>Takuzu (Binairo)</b> — Riempi la griglia con 0 e 1. Stesso numero di ciascuno, mai tre di fila, nessuna riga identica.</li>
 <li><b>Nonogram (Hanjie)</b> — Svela un'immagine nascosta con gli indizi numerici di ogni riga e colonna.</li>
 <li><b>Campo minato</b> — Scopri tutte le caselle sicure senza colpire una mina.</li>
@@ -33,6 +35,7 @@ Scegli quali giochi ti danno un nuovo puzzle ogni giorno, in ogni difficoltà. C
 <p><b>MEMORIA, NUMERI E BLOCCHI</b></p>
 <ul>
 <li><b>Chimp Test</b> — Tocca i numeri in ordine prima che scompaiano.</li>
+<li><b>Memoria di sequenze</b> — Guarda le caselle illuminarsi, poi ripeti la sequenza che si allunga.</li>
 <li><b>2048</b> — Fai scorrere e unisci le tessere fino a raggiungere 2048.</li>
 <li><b>Block Fill</b> — Trascina i pezzi sulla griglia e libera righe e colonne complete. Con modalità infinita.</li>
 </ul>

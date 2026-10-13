@@ -15,6 +15,8 @@ Wähle, welche Spiele dir jeden Tag ein neues Rätsel geben, in jeder Schwierigk
 <p><b>LOGIKRÄTSEL</b></p>
 <ul>
 <li><b>Sudoku</b> — Setze die Ziffern 1–9 so, dass jede Zeile, jede Spalte und jeder 3×3-Block jede Ziffer genau einmal enthält.</li>
+<li><b>Killer Sudoku</b> — Keine vorgegebenen Ziffern: Die Summen in den gestrichelten Käfigen zeigen, was wohin gehört.</li>
+<li><b>Mini Sudoku</b> — Schnelle 4×4- und 6×6-Sudokus für eine kurze Pause.</li>
 <li><b>Takuzu (Binairo)</b> — Fülle das Raster mit Nullen und Einsen. Gleich viele von beiden, nie drei in Folge, keine identischen Zeilen.</li>
 <li><b>Nonogramm (Hanjie)</b> — Decke mit den Zahlenhinweisen an jeder Zeile und Spalte ein verborgenes Bild auf.</li>
 <li><b>Minesweeper</b> — Decke alle sicheren Felder auf, ohne eine Mine zu treffen.</li>
@@ -33,6 +35,7 @@ Wähle, welche Spiele dir jeden Tag ein neues Rätsel geben, in jeder Schwierigk
 <p><b>GEDÄCHTNIS, ZAHLEN UND BLÖCKE</b></p>
 <ul>
 <li><b>Chimp Test</b> — Tippe die Zahlen der Reihe nach an, bevor sie verschwinden.</li>
+<li><b>Sequenzgedächtnis</b> — Sieh zu, wie die Felder aufleuchten, und tippe die wachsende Folge nach.</li>
 <li><b>2048</b> — Schiebe und verbinde Kacheln, bis du 2048 erreichst.</li>
 <li><b>Block Fill</b> — Ziehe Teile aufs Feld und räume volle Reihen und Spalten. Mit Endlos-Modus.</li>
 </ul>

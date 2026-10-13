@@ -15,6 +15,8 @@ Escolha quais jogos oferecem um quebra-cabeça novo todo dia, em cada dificuldad
 <p><b>QUEBRA-CABEÇAS DE LÓGICA</b></p>
 <ul>
 <li><b>Sudoku</b> — Coloque os dígitos de 1 a 9 para que cada linha, coluna e bloco 3×3 tenha cada dígito uma única vez.</li>
+<li><b>Killer Sudoku</b> — Sem dígitos iniciais: as somas de cada gaiola tracejada mostram o que vai onde.</li>
+<li><b>Mini Sudoku</b> — Sudokus rápidos de 4×4 e 6×6 para uma pausa curta.</li>
 <li><b>Takuzu (Binairo)</b> — Preencha a grade com 0 e 1. A mesma quantidade de cada, nunca três seguidos, nenhuma linha idêntica.</li>
 <li><b>Nonograma (Hanjie)</b> — Revele uma imagem escondida usando as pistas numéricas de cada linha e coluna.</li>
 <li><b>Campo Minado</b> — Descubra todas as casas seguras sem acertar uma mina.</li>
@@ -33,6 +35,7 @@ Escolha quais jogos oferecem um quebra-cabeça novo todo dia, em cada dificuldad
 <p><b>MEMÓRIA, NÚMEROS E BLOCOS</b></p>
 <ul>
 <li><b>Chimp Test</b> — Toque nos números em ordem antes que desapareçam.</li>
+<li><b>Memória de Sequências</b> — Veja os quadrados acenderem e repita a sequência, que cresce a cada rodada.</li>
 <li><b>2048</b> — Deslize e junte peças até chegar a 2048.</li>
 <li><b>Block Fill</b> — Arraste peças para o tabuleiro e limpe linhas e colunas inteiras. Inclui modo infinito.</li>
 </ul>

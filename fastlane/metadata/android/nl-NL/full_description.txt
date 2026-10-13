@@ -15,6 +15,8 @@ Kies zelf welke spellen je elke dag een nieuwe puzzel geven, in elke moeilijkhei
 <p><b>LOGICAPUZZELS</b></p>
 <ul>
 <li><b>Sudoku</b> — Plaats de cijfers 1–9 zodat elke rij, kolom en elk 3×3-blok elk cijfer precies één keer bevat.</li>
+<li><b>Killer Sudoku</b> — Geen startcijfers: de sommen in de gestippelde kooien vertellen wat waar hoort.</li>
+<li><b>Mini Sudoku</b> — Snelle 4×4- en 6×6-sudoku's voor een korte pauze.</li>
 <li><b>Takuzu (Binairo)</b> — Vul het raster met nullen en enen. Evenveel van elk, nooit drie op een rij, geen gelijke rijen.</li>
 <li><b>Nonogram (Hanjie)</b> — Onthul een verborgen afbeelding met de cijferhints bij elke rij en kolom.</li>
 <li><b>Mijnenveger</b> — Open elk veilig vakje zonder een mijn te raken.</li>
@@ -33,6 +35,7 @@ Kies zelf welke spellen je elke dag een nieuwe puzzel geven, in elke moeilijkhei
 <p><b>GEHEUGEN, GETALLEN EN BLOKKEN</b></p>
 <ul>
 <li><b>Chimp Test</b> — Tik de cijfers op volgorde aan voordat ze verdwijnen.</li>
+<li><b>Reeks Onthouden</b> — Kijk hoe de vakjes oplichten en tik de groeiende reeks na.</li>
 <li><b>2048</b> — Schuif en voeg tegels samen tot je 2048 bereikt.</li>
 <li><b>Block Fill</b> — Sleep stukken op het bord en maak volle rijen en kolommen leeg. Met eindeloze modus.</li>
 </ul>

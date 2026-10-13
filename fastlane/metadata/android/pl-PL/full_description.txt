@@ -15,6 +15,8 @@ Wybierz, które gry mają codziennie dawać Ci nową łamigłówkę, na każdym 
 <p><b>ŁAMIGŁÓWKI LOGICZNE</b></p>
 <ul>
 <li><b>Sudoku</b> — Wpisz cyfry 1–9 tak, aby każdy wiersz, kolumna i blok 3×3 zawierały każdą cyfrę dokładnie raz.</li>
+<li><b>Killer Sudoku</b> — Bez cyfr startowych: sumy w przerywanych klatkach podpowiadają, co gdzie wpisać.</li>
+<li><b>Mini Sudoku</b> — Szybkie sudoku 4×4 i 6×6 na krótką przerwę.</li>
 <li><b>Takuzu (Binairo)</b> — Wypełnij siatkę zerami i jedynkami. Tyle samo jednych i drugich, nigdy trzy z rzędu, żadnych identycznych wierszy.</li>
 <li><b>Nonogram (Hanjie)</b> — Odkryj ukryty obrazek dzięki wskazówkom liczbowym przy każdym wierszu i kolumnie.</li>
 <li><b>Saper</b> — Odkryj wszystkie bezpieczne pola, nie trafiając na minę.</li>
@@ -33,6 +35,7 @@ Wybierz, które gry mają codziennie dawać Ci nową łamigłówkę, na każdym 
 <p><b>PAMIĘĆ, LICZBY I KLOCKI</b></p>
 <ul>
 <li><b>Test szympansa</b> — Stukaj liczby po kolei, zanim znikną.</li>
+<li><b>Pamięć sekwencji</b> — Patrz, jak pola się podświetlają, i powtórz coraz dłuższą sekwencję.</li>
 <li><b>2048</b> — Przesuwaj i łącz kafelki, aż osiągniesz 2048.</li>
 <li><b>Układanka z klocków</b> — Przeciągaj klocki na planszę i oczyszczaj pełne wiersze i kolumny. Z trybem bez końca.</li>
 </ul>

@@ -35,6 +35,8 @@
 ### Logic
 
 - **Sudoku** — Place digits 1 through 9 so every row, column, and box stays valid.
+- **Killer Sudoku** — Sudoku with no givens, only cage sums to guide you.
+- **Mini Sudoku** — Small Sudoku grids: 4×4 to warm up, 6×6 when you want more.
 - **Takuzu** — Fill grid with 0s and 1s using logic.
 - **Nonogram** — Fill cells to match the row and column clues.
 - **Minesweeper** — Clear grid without opening mine.
@@ -51,13 +53,14 @@
 ### Memory
 
 - **Chimp Test** — Tap the numbers in order before they disappear.
+- **Sequence Memory** — Watch the pads light up, then repeat the sequence.
 
 ### Spatial
 
 - **2048** — Merge tiles to reach 2048.
 - **Block Fill** — Drag pieces onto the board and clear full lines. Includes an Endless mode.
 
-In beta, enable in Settings: Arrow Escape, N-Back, Sequence Memory, Killer Sudoku, Mini Sudoku.
+In beta, enable in Settings: Arrow Escape, N-Back.
 
 ### Also
 

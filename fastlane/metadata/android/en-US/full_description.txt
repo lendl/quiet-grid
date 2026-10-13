@@ -15,6 +15,8 @@ Choose which games give you a new puzzle every day, in every difficulty. Share y
 <p><b>LOGIC PUZZLES</b></p>
 <ul>
 <li><b>Sudoku</b> — Place digits 1–9 so every row, column and 3×3 box contains each digit once.</li>
+<li><b>Killer Sudoku</b> — No starting digits: the sums in each dashed cage tell you what goes where.</li>
+<li><b>Mini Sudoku</b> — Quick 4×4 and 6×6 Sudoku for a short break.</li>
 <li><b>Takuzu (Binairo)</b> — Fill the grid with 0s and 1s. Equal counts, no three in a row, no identical rows.</li>
 <li><b>Nonogram (Hanjie)</b> — Reveal a hidden picture using the number clues on each row and column.</li>
 <li><b>Minesweeper</b> — Uncover every safe cell without hitting a mine.</li>
@@ -33,6 +35,7 @@ Choose which games give you a new puzzle every day, in every difficulty. Share y
 <p><b>MEMORY, NUMBERS AND BLOCKS</b></p>
 <ul>
 <li><b>Chimp Test</b> — Tap the numbers in order before they disappear.</li>
+<li><b>Sequence Memory</b> — Watch the pads light up, then tap the growing sequence back.</li>
 <li><b>2048</b> — Slide and merge tiles to reach 2048.</li>
 <li><b>Block Fill</b> — Drag pieces onto the board and clear full rows and columns. Includes an Endless mode.</li>
 </ul>
