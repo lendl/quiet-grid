@@ -71,6 +71,13 @@ class LaunchActionTest {
     }
 
     @Test
+    fun `open games goes to the games tab even with a session or on a play screen`() {
+        assertEquals(LaunchAction.OpenGamesTab, launchAction(LaunchRequest.OpenGames, null, emptySet(), false))
+        assertEquals(LaunchAction.OpenGamesTab, launchAction(LaunchRequest.OpenGames, session, emptySet(), false))
+        assertEquals(LaunchAction.OpenGamesTab, launchAction(LaunchRequest.OpenGames, session, emptySet(), onPlayScreen = true))
+    }
+
+    @Test
     fun `any widget request while on a play screen stays`() {
         listOf(LaunchRequest.Resume, LaunchRequest.StartMix("mix-1"), LaunchRequest.StartGame(GameId.SUDOKU, Difficulty.EASY))
             .forEach { assertEquals(LaunchAction.Stay, launchAction(it, session, setOf("mix-1"), onPlayScreen = true)) }

@@ -244,6 +244,7 @@ class PuzzleSessionController<TSession, TResult>(
             payload = adapter.encode(current),
             dailyDate = dailyDate?.toString(),
             dailyTier = dailyDate?.let { difficulty.key },
+            difficulty = difficulty.key,
         )
     }
 

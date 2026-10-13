@@ -21,6 +21,7 @@ class LaunchRequestTest {
         listOf(
             LaunchRequest.DailyTab,
             LaunchRequest.Resume,
+            LaunchRequest.OpenGames,
             LaunchRequest.StartMix("mix-1"),
             LaunchRequest.StartGame(GameId.SUDOKU, Difficulty.HARD),
         ).forEach { assertEquals(it, it.toIntent(context).toLaunchRequest()) }

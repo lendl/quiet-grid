@@ -33,6 +33,20 @@ class SessionRepositoryTest {
     }
 
     @Test
+    fun `summary takes the difficulty, falling back to the daily tier`() = runTest {
+        val repository = SessionRepository(newDataStore(backgroundScope))
+
+        repository.save(ActiveSessionEnvelope(gameId = "sudoku", elapsedSeconds = 1.0, payload = "p", difficulty = "medium"))
+        assertEquals("medium", repository.activeSessionSummary.first()?.difficulty)
+
+        repository.save(ActiveSessionEnvelope("sudoku", 1.0, "p", dailyDate = "2026-10-13", dailyTier = "expert"))
+        assertEquals("expert", repository.activeSessionSummary.first()?.difficulty)
+
+        repository.save(ActiveSessionEnvelope(gameId = "sudoku", elapsedSeconds = 1.0, payload = "p"))
+        assertNull(repository.activeSessionSummary.first()?.difficulty)
+    }
+
+    @Test
     fun `clear removes the persisted envelope`() = runTest {
         val repository = SessionRepository(newDataStore(backgroundScope))
         repository.save(ActiveSessionEnvelope(gameId = "sudoku", elapsedSeconds = 12.0, payload = "abc"))

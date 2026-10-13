@@ -19,7 +19,7 @@ private val StandardDifficultyColors = mapOf(
 )
 
 @Composable
-fun difficultyColor(difficulty: Difficulty): Color {
-    val isPencil = LocalIsPencilTheme.current
-    return (if (isPencil) PencilDifficultyColors else StandardDifficultyColors).getValue(difficulty)
-}
+fun difficultyColor(difficulty: Difficulty): Color = difficultyColor(difficulty, LocalIsPencilTheme.current)
+
+fun difficultyColor(difficulty: Difficulty, isPencilTheme: Boolean): Color =
+    (if (isPencilTheme) PencilDifficultyColors else StandardDifficultyColors).getValue(difficulty)

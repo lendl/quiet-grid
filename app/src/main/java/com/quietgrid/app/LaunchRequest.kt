@@ -13,12 +13,14 @@ private const val LAUNCH_MIX_ID_EXTRA = "launch_mix_id"
 private const val LAUNCH_GAME_ID_EXTRA = "launch_game_id"
 private const val LAUNCH_DIFFICULTY_EXTRA = "launch_difficulty"
 private const val ACTION_RESUME = "resume"
+private const val ACTION_GAMES = "games"
 private const val ACTION_MIX = "mix"
 private const val ACTION_GAME = "game"
 
 sealed interface LaunchRequest {
     data object DailyTab : LaunchRequest
     data object Resume : LaunchRequest
+    data object OpenGames : LaunchRequest
     data class StartMix(val mixId: String) : LaunchRequest
     data class StartGame(val gameId: GameId, val difficulty: Difficulty) : LaunchRequest
 }
@@ -34,6 +36,10 @@ fun LaunchRequest.toIntent(context: Context): Intent {
         LaunchRequest.Resume -> {
             intent.putExtra(LAUNCH_ACTION_EXTRA, ACTION_RESUME)
             ACTION_RESUME
+        }
+        LaunchRequest.OpenGames -> {
+            intent.putExtra(LAUNCH_ACTION_EXTRA, ACTION_GAMES)
+            ACTION_GAMES
         }
         is LaunchRequest.StartMix -> {
             intent.putExtra(LAUNCH_ACTION_EXTRA, ACTION_MIX).putExtra(LAUNCH_MIX_ID_EXTRA, mixId)
@@ -54,6 +60,7 @@ fun Intent?.toLaunchRequest(): LaunchRequest? {
     if (getStringExtra(OPEN_TAB_EXTRA) == OPEN_TAB_DAILY) return LaunchRequest.DailyTab
     return when (getStringExtra(LAUNCH_ACTION_EXTRA)) {
         ACTION_RESUME -> LaunchRequest.Resume
+        ACTION_GAMES -> LaunchRequest.OpenGames
         ACTION_MIX -> getStringExtra(LAUNCH_MIX_ID_EXTRA)?.let { LaunchRequest.StartMix(it) }
         ACTION_GAME -> {
             val gameId = GameId.entries.firstOrNull { it.key == getStringExtra(LAUNCH_GAME_ID_EXTRA) } ?: return null

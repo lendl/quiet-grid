@@ -1807,6 +1807,7 @@
     <string name="quick_play_widget_description">Start a puzzle in one tap</string>
     <string name="quick_play_continue">Continue</string>
     <string name="quick_play_play">Play</string>
+    <string name="quick_play_new_puzzle">New puzzle</string>
     <string name="sequencememory_title">Sequence Memory</string>
     <string name="sequencememory_tagline">Watch the pads light up, then repeat the sequence.</string>
     <string name="sequencememory_difficulty_easy">Easy</string>

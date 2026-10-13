@@ -10,8 +10,8 @@ import com.quietgrid.app.data.PlayRecord
 import com.quietgrid.app.nav.Routes
 
 sealed interface QuickPlayState {
-    data object Continue : QuickPlayState
-    data class PlayMix(val mixId: String) : QuickPlayState
+    data class Continue(val gameId: GameId, val difficulty: Difficulty?) : QuickPlayState
+    data class PlayMix(val mixId: String, val name: String, val gameIds: List<GameId>) : QuickPlayState
     data class Games(val games: List<QuickPlayGame>) : QuickPlayState
 }
 
@@ -20,6 +20,7 @@ data class QuickPlayGame(val gameId: GameId, val difficulty: Difficulty)
 val QUICK_PLAY_DEFAULT_GAMES: List<GameId> = listOf(GameId.SUDOKU, GameId.WORDSEARCH, GameId.MINESWEEPER)
 
 private const val QUICK_PLAY_GAME_COUNT = 3
+private const val QUICK_PLAY_MIX_ICON_COUNT = 3
 
 private val playCountThenRecency = compareByDescending<List<PlayRecord>> { it.size }
     .thenByDescending { records -> records.maxOf { it.timestampMillis } }
@@ -31,13 +32,27 @@ fun quickPlayState(
     history: List<PlayRecord>,
     betaGamesEnabled: Boolean,
 ): QuickPlayState {
-    if (activeSession?.let { Routes.resume(it) } != null) return QuickPlayState.Continue
+    val continueGame = activeSession
+        ?.takeIf { Routes.resume(it) != null }
+        ?.let { session -> GameId.entries.firstOrNull { it.key == session.gameId } }
+    if (continueGame != null) {
+        return QuickPlayState.Continue(continueGame, Difficulty.entries.firstOrNull { it.key == activeSession.difficulty })
+    }
     val enabled = GameCatalog.enabledGameIds(betaGamesEnabled)
     val playableMix = (mixes.filter { it.id == lastStartedMixId } + mixes)
         .firstOrNull { mix -> mix.resolvedCandidates().any { it.gameId in enabled } }
-    if (playableMix != null) return QuickPlayState.PlayMix(playableMix.id)
+    if (playableMix != null) return QuickPlayState.PlayMix(playableMix.id, playableMix.name, mixGames(playableMix, enabled))
     return QuickPlayState.Games(rankedGames(history, enabled))
 }
+
+private fun mixGames(mix: Mix, enabled: Set<GameId>): List<GameId> =
+    mix.resolvedCandidates()
+        .filter { it.gameId in enabled }
+        .groupBy { it.gameId }
+        .entries
+        .sortedByDescending { (_, candidates) -> candidates.sumOf { it.weight } }
+        .map { it.key }
+        .take(QUICK_PLAY_MIX_ICON_COUNT)
 
 private fun rankedGames(history: List<PlayRecord>, enabled: Set<GameId>): List<QuickPlayGame> {
     val ranked = history

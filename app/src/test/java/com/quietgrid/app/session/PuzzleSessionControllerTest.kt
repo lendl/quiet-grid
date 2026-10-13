@@ -307,6 +307,22 @@ class PuzzleSessionControllerTest {
     }
 
     @Test
+    fun `saved envelope carries the puzzle difficulty`() = runTest {
+        val sessionStore = FakeSessionStore()
+        val controller = PuzzleSessionController(
+            backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
+            isAppForeground = { true },
+        )
+
+        controller.start(Difficulty.HARD, resume = false)
+        advanceTimeBy(15_001)
+
+        val envelope = sessionStore.activeSession.first()
+        assertEquals("hard", envelope?.difficulty)
+        assertEquals(null, envelope?.dailyTier)
+    }
+
+    @Test
     fun `going to the background saves the session once`() = runTest {
         val sessionStore = FakeSessionStore()
         var foreground = true

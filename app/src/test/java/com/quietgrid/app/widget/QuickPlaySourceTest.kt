@@ -1,5 +1,7 @@
 package com.quietgrid.app.widget
 
+import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.mix.Mix
 import com.quietgrid.app.core.mix.MixEntry
 import com.quietgrid.app.core.mix.MixEntryMode
@@ -49,8 +51,8 @@ class QuickPlaySourceTest {
     fun `saving a session switches to Continue and clearing it switches back`() = runTest {
         val fixture = fixture()
 
-        fixture.sessionRepository.save(ActiveSessionEnvelope(gameId = "sudoku", elapsedSeconds = 10.0, payload = "{}"))
-        assertEquals(QuickPlayState.Continue, fixture.source().render.first().state)
+        fixture.sessionRepository.save(ActiveSessionEnvelope(gameId = "sudoku", elapsedSeconds = 10.0, payload = "{}", difficulty = "medium"))
+        assertEquals(QuickPlayState.Continue(GameId.SUDOKU, Difficulty.MEDIUM), fixture.source().render.first().state)
 
         fixture.sessionRepository.clear()
         assertTrue(fixture.source().render.first().state is QuickPlayState.Games)
@@ -63,7 +65,7 @@ class QuickPlaySourceTest {
         fixture.mixRepository.saveMix(Mix("mix-1", "Evenings", listOf(MixEntry("sudoku", MixEntryMode.PUZZLE, "easy", 1))))
         fixture.mixRepository.setActiveMix("mix-1")
 
-        assertEquals(QuickPlayState.PlayMix("mix-1"), fixture.source().render.first().state)
+        assertEquals(QuickPlayState.PlayMix("mix-1", "Evenings", listOf(GameId.SUDOKU)), fixture.source().render.first().state)
     }
 
     @Test

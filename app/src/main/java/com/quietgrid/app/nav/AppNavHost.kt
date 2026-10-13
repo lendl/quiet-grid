@@ -228,6 +228,10 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
         onLaunchRequestHandled()
         when (val action = launchAction(request, session, currentMixes.map { it.id }.toSet(), onPlayScreen)) {
             LaunchAction.OpenDailyTab -> goToDailyTab()
+            LaunchAction.OpenGamesTab -> {
+                selectedTab = AppTab.GAMES
+                navController.popBackStack(Routes.TABS, inclusive = false)
+            }
             LaunchAction.OpenTabs -> navController.popBackStack(Routes.TABS, inclusive = false)
             LaunchAction.Stay -> Unit
             is LaunchAction.Navigate -> {

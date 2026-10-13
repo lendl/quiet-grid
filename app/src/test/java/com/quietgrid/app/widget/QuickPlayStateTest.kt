@@ -31,17 +31,34 @@ class QuickPlayStateTest {
         isChallenger = isChallenger,
     )
 
-    private fun mix(id: String, vararg games: String) = Mix(id, id, games.map { MixEntry(it, MixEntryMode.PUZZLE, "easy", 1) })
+    private fun mix(id: String, vararg games: String) = Mix(id, "Mix $id", games.map { MixEntry(it, MixEntryMode.PUZZLE, "easy", 1) })
+
+    private fun playMix(id: String, vararg games: GameId) = QuickPlayState.PlayMix(id, "Mix $id", games.toList())
 
     private fun games(vararg pairs: Pair<GameId, Difficulty>) = QuickPlayState.Games(pairs.map { QuickPlayGame(it.first, it.second) })
 
     private val defaults = games(SUDOKU to EASY, WORDSEARCH to EASY, MINESWEEPER to EASY)
 
     @Test
-    fun `active session shows Continue even when mixes and history exist`() {
+    fun `active session shows Continue with its game and difficulty even when mixes and history exist`() {
         assertEquals(
-            QuickPlayState.Continue,
-            quickPlayState(ActiveSessionSummary("sudoku", null), listOf(mix("a", "takuzu")), "a", listOf(record("takuzu", "easy", 1)), false),
+            QuickPlayState.Continue(SUDOKU, HARD),
+            quickPlayState(
+                ActiveSessionSummary("sudoku", null, difficulty = "hard"),
+                listOf(mix("a", "takuzu")),
+                "a",
+                listOf(record("takuzu", "easy", 1)),
+                false,
+            ),
+        )
+    }
+
+    @Test
+    fun `active session without a known difficulty shows Continue without one`() {
+        assertEquals(QuickPlayState.Continue(SUDOKU, null), quickPlayState(ActiveSessionSummary("sudoku", null), emptyList(), null, emptyList(), false))
+        assertEquals(
+            QuickPlayState.Continue(SUDOKU, null),
+            quickPlayState(ActiveSessionSummary("sudoku", null, difficulty = "endless"), emptyList(), null, emptyList(), false),
         )
     }
 
@@ -52,19 +69,35 @@ class QuickPlayStateTest {
 
     @Test
     fun `last started mix wins over earlier mixes`() {
-        assertEquals(QuickPlayState.PlayMix("b"), quickPlayState(null, listOf(mix("a", "sudoku"), mix("b", "takuzu")), "b", emptyList(), false))
+        assertEquals(playMix("b", TAKUZU), quickPlayState(null, listOf(mix("a", "sudoku"), mix("b", "takuzu")), "b", emptyList(), false))
     }
 
     @Test
     fun `missing last started mix falls back to first playable mix`() {
-        assertEquals(QuickPlayState.PlayMix("a"), quickPlayState(null, listOf(mix("a", "sudoku"), mix("b", "takuzu")), "gone", emptyList(), false))
+        assertEquals(playMix("a", SUDOKU), quickPlayState(null, listOf(mix("a", "sudoku"), mix("b", "takuzu")), "gone", emptyList(), false))
     }
 
     @Test
     fun `mix with only beta games is skipped while beta is off`() {
         val mixes = listOf(mix("beta", "nback"), mix("b", "takuzu"))
-        assertEquals(QuickPlayState.PlayMix("b"), quickPlayState(null, mixes, "beta", emptyList(), false))
-        assertEquals(QuickPlayState.PlayMix("beta"), quickPlayState(null, mixes, "beta", emptyList(), true))
+        assertEquals(playMix("b", TAKUZU), quickPlayState(null, mixes, "beta", emptyList(), false))
+        assertEquals(playMix("beta", NBACK), quickPlayState(null, mixes, "beta", emptyList(), true))
+    }
+
+    @Test
+    fun `mix games are its enabled games, heaviest first, at most three`() {
+        val entries = listOf(
+            MixEntry("sudoku", MixEntryMode.PUZZLE, "easy", 1),
+            MixEntry("nback", MixEntryMode.PUZZLE, "easy", 9),
+            MixEntry("takuzu", MixEntryMode.PUZZLE, "easy", 3),
+            MixEntry("sudoku", MixEntryMode.PUZZLE, "hard", 4),
+            MixEntry("nonogram", MixEntryMode.PUZZLE, "easy", 2),
+            MixEntry("wordsearch", MixEntryMode.PUZZLE, "easy", 1),
+        )
+        assertEquals(
+            QuickPlayState.PlayMix("m", "Morning", listOf(SUDOKU, TAKUZU, NONOGRAM)),
+            quickPlayState(null, listOf(Mix("m", "Morning", entries)), "m", emptyList(), false),
+        )
     }
 
     @Test

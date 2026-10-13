@@ -41,7 +41,7 @@ fun ChunkyPressButton(
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     val pressOffset by animateDpAsState(if (isPressed) pressDepth else 0.dp, label = "chunkyPressOffset")
-    val shadowColor = remember(containerColor) { darken(containerColor, 0.72f) }
+    val shadowColor = remember(containerColor) { chunkyEdgeColor(containerColor) }
 
     Box(modifier.height(height + pressDepth)) {
         Box(
@@ -74,6 +74,8 @@ fun ChunkyPressButton(
         }
     }
 }
+
+fun chunkyEdgeColor(containerColor: Color): Color = darken(containerColor, 0.72f)
 
 private fun darken(color: Color, factor: Float): Color = Color(
     red = color.red * factor,
