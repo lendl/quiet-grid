@@ -19,7 +19,6 @@ import com.quietgrid.cli.starbattle.softenStarBattleTowardGrade
 import com.quietgrid.engine.animaldoku.ANIMALDOKU_SIZES_BY_DIFFICULTY
 import com.quietgrid.engine.animaldoku.AnimalDokuPuzzleEntry
 import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
-import com.quietgrid.engine.arrowescape.scoreArrowEscapePuzzle
 import com.quietgrid.engine.core.Difficulty
 import com.quietgrid.engine.hashi.HashiPuzzleEntry
 import com.quietgrid.engine.killersudoku.KillerSudokuPuzzleEntry
@@ -306,8 +305,8 @@ fun main(args: Array<String>) {
                 val generated = generateArrowEscapePuzzle(size, size, difficulty) ?: continue
                 if (state.hasTried(generated.dedupeKey)) continue
                 state.recordTried(generated.dedupeKey, "valid")
-                val score = scoreArrowEscapePuzzle(generated.pieces, generated.rows, generated.cols)
-                println("arrowescape audit: difficulty=$difficulty bottleneckScore=${"%.2f".format(score.bottleneckScore)} needleScore=${"%.2f".format(score.needleScore)} normalizedScore=${"%.2f".format(score.normalizedScore)}")
+                val profile = generated.profile
+                println("arrowescape audit: difficulty=$difficulty pieces=${profile.pieceCount} rounds=${profile.rounds} freeShare=${"%.2f".format(profile.freeShare)} borderExitShare=${"%.2f".format(profile.borderExitShare)}")
                 entries += toEntry("ae$size-${entries.size}-${System.nanoTime()}", generated)
             }
             state.save()

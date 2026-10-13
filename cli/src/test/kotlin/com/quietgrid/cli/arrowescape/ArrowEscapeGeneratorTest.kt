@@ -2,8 +2,8 @@
 package com.quietgrid.cli.arrowescape
 
 import com.quietgrid.engine.arrowescape.ArrowEscapeSolveTier
-import com.quietgrid.engine.arrowescape.matchesDifficulty
-import com.quietgrid.engine.arrowescape.scoreArrowEscapePuzzle
+import com.quietgrid.engine.arrowescape.classifyArrowEscapeDifficulty
+import com.quietgrid.engine.arrowescape.profileArrowEscapePuzzle
 import com.quietgrid.engine.arrowescape.solveArrowEscape
 import com.quietgrid.engine.core.Difficulty
 import org.junit.Assert.assertEquals
@@ -14,7 +14,7 @@ import kotlin.random.Random
 
 private fun firstSuccessfulFill(rows: Int, cols: Int, startSeed: Int) = generateSequence(startSeed) { it + 1000 }
     .take(200)
-    .firstNotNullOf { seed -> fillCoverage(rows, cols, mutableSetOf(), 0.03, Random(seed)) }
+    .firstNotNullOf { seed -> fillCoverage(rows, cols, ARROW_ESCAPE_FILL_PARAMS_BY_DIFFICULTY.getValue(Difficulty.HARD), 0.03, Random(seed)) }
 
 private fun firstSuccessfulGeneration(rows: Int, cols: Int, difficulty: Difficulty, startSeed: Int) = generateSequence(startSeed) { it + 1000 }
     .take(200)
@@ -61,10 +61,22 @@ class ArrowEscapeGeneratorTest {
     }
 
     @Test
-    fun `generateArrowEscapePuzzle produces a puzzle whose score matches the target difficulty under the v2 model`() {
-        val result = firstSuccessfulGeneration(16, 16, Difficulty.HARD, 1)
-        val score = scoreArrowEscapePuzzle(result.pieces, result.rows, result.cols)
-        assertTrue(score.matchesDifficulty(Difficulty.HARD))
+    fun `every tier generates at its smallest and largest board size and grades at that tier`() {
+        Difficulty.entries.forEach { difficulty ->
+            val sizes = arrowEscapeSizesForDifficulty(difficulty)
+            listOf(sizes.first(), sizes.last()).forEach { size ->
+                val generated = firstSuccessfulGeneration(size, size, difficulty, startSeed = size * 10 + difficulty.ordinal)
+                assertEquals("$difficulty $size", difficulty, classifyArrowEscapeDifficulty(profileArrowEscapePuzzle(generated.pieces, size, size)))
+                assertEquals(generated.profile, profileArrowEscapePuzzle(generated.pieces, size, size))
+            }
+        }
+    }
+
+    @Test
+    fun `expert puzzles are mostly blocked at the start`() {
+        val generated = firstSuccessfulGeneration(20, 20, Difficulty.EXPERT, 7)
+        assertTrue(generated.profile.borderExitShare <= 0.15)
+        assertTrue(generated.profile.meanBlockers >= 2.0)
     }
 
     @Test

@@ -1,13 +1,13 @@
 // cli/src/main/kotlin/com/quietgrid/cli/arrowescape/ArrowEscapeGenerator.kt
 package com.quietgrid.cli.arrowescape
 
+import com.quietgrid.engine.arrowescape.ArrowEscapeDifficultyProfile
 import com.quietgrid.engine.arrowescape.ArrowEscapePiece
 import com.quietgrid.engine.arrowescape.ArrowEscapePieceData
 import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
-import com.quietgrid.engine.arrowescape.chainLengthForDifficulty
+import com.quietgrid.engine.arrowescape.classifyArrowEscapeDifficulty
 import com.quietgrid.engine.arrowescape.key
-import com.quietgrid.engine.arrowescape.matchesDifficulty
-import com.quietgrid.engine.arrowescape.scoreArrowEscapePuzzle
+import com.quietgrid.engine.arrowescape.profileArrowEscapePuzzle
 import com.quietgrid.engine.arrowescape.solveArrowEscape
 import com.quietgrid.engine.core.Difficulty
 import kotlin.random.Random
@@ -21,6 +21,7 @@ data class ArrowEscapeGeneratedPuzzle(
     val difficulty: Difficulty,
     val pieces: List<ArrowEscapePiece>,
     val dedupeKey: String,
+    val profile: ArrowEscapeDifficultyProfile,
 )
 
 fun buildPuzzleFingerprint(pieces: List<ArrowEscapePiece>): String {
@@ -38,6 +39,13 @@ val ARROW_ESCAPE_SIZE_RANGE_BY_DIFFICULTY: Map<Difficulty, IntRange> = mapOf(
     Difficulty.EXPERT to 18..24,
 )
 
+val ARROW_ESCAPE_FILL_PARAMS_BY_DIFFICULTY: Map<Difficulty, ArrowEscapeFillParams> = mapOf(
+    Difficulty.EASY to ArrowEscapeFillParams(borderExitRate = 1.0, depthGreed = 0.0),
+    Difficulty.MEDIUM to ArrowEscapeFillParams(borderExitRate = 0.3, depthGreed = 0.0),
+    Difficulty.HARD to ArrowEscapeFillParams(borderExitRate = 0.1, depthGreed = 0.2),
+    Difficulty.EXPERT to ArrowEscapeFillParams(borderExitRate = 0.05, depthGreed = 0.7),
+)
+
 fun arrowEscapeSizesForDifficulty(difficulty: Difficulty): List<Int> =
     ARROW_ESCAPE_SIZE_RANGE_BY_DIFFICULTY.getValue(difficulty).toList()
 
@@ -47,22 +55,14 @@ fun generateArrowEscapePuzzle(
     targetDifficulty: Difficulty,
     random: Random = Random.Default,
 ): ArrowEscapeGeneratedPuzzle? {
+    val params = ARROW_ESCAPE_FILL_PARAMS_BY_DIFFICULTY.getValue(targetDifficulty)
     repeat(MAX_GENERATE_ATTEMPTS) {
-        val occupied = mutableSetOf<Pair<Int, Int>>()
-        val chainLength = chainLengthForDifficulty(targetDifficulty)
-        val chain = placeChain(rows, cols, chainLength, occupied, random) ?: return@repeat
-        chain.forEach { piece -> piece.cells.forEach { occupied.add(it.row to it.col) } }
-
-        val fillResult = fillCoverage(rows, cols, occupied, ARROW_ESCAPE_EMPTY_CELL_TOLERANCE, random) ?: return@repeat
-
-        val allPieces = chain + fillResult.pieces
-        if (!solveArrowEscape(allPieces, rows, cols).solvable) return@repeat
-        val initialScore = scoreArrowEscapePuzzle(allPieces, rows, cols)
-        if (!initialScore.matchesDifficulty(targetDifficulty)) return@repeat
-        val confirmationScores = List(2) { scoreArrowEscapePuzzle(allPieces, rows, cols) }
-        if (confirmationScores.any { !it.matchesDifficulty(targetDifficulty) }) return@repeat
-
-        return ArrowEscapeGeneratedPuzzle(rows, cols, targetDifficulty, allPieces, buildPuzzleFingerprint(allPieces))
+        val fillResult = fillCoverage(rows, cols, params, ARROW_ESCAPE_EMPTY_CELL_TOLERANCE, random) ?: return@repeat
+        val pieces = fillResult.pieces
+        if (!solveArrowEscape(pieces, rows, cols).solvable) return@repeat
+        val profile = profileArrowEscapePuzzle(pieces, rows, cols)
+        if (classifyArrowEscapeDifficulty(profile) != targetDifficulty) return@repeat
+        return ArrowEscapeGeneratedPuzzle(rows, cols, targetDifficulty, pieces, buildPuzzleFingerprint(pieces), profile)
     }
     return null
 }

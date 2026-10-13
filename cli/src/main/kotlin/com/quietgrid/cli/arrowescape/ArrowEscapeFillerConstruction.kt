@@ -6,15 +6,14 @@ import com.quietgrid.engine.arrowescape.ArrowDirection
 import com.quietgrid.engine.arrowescape.ArrowEscapePiece
 import com.quietgrid.engine.arrowescape.CellCoord
 import com.quietgrid.engine.arrowescape.computeCorridor
-import kotlin.math.abs
 import kotlin.math.ceil
+import kotlin.math.floor
 import kotlin.random.Random
 
-private const val MIN_FILLER_LEN = 10
-private const val MAX_FILLER_LEN = 25
-private const val MIN_ACCEPTABLE_PIECE_LEN = 4
-private const val CANDIDATE_SAMPLE_SIZE = 60
 private const val STRAIGHT_PREFERENCE = 0.9
+private const val MIN_TARGET_LEN = 3
+private const val MAX_TARGET_LEN = 45
+private const val DEEP_FILL_SAMPLE_SIZE = 200
 
 private val OPPOSITE_DIRECTION: Map<ArrowDirection, ArrowDirection> = mapOf(
     ArrowDirection.UP to ArrowDirection.DOWN,
@@ -25,109 +24,113 @@ private val OPPOSITE_DIRECTION: Map<ArrowDirection, ArrowDirection> = mapOf(
 
 data class FillResult(val pieces: List<ArrowEscapePiece>, val emptyCellCount: Int)
 
-private fun isAdjacent(a: Pair<Int, Int>, b: Pair<Int, Int>): Boolean {
-    val dr = abs(a.first - b.first)
-    val dc = abs(a.second - b.second)
-    return (dr == 1 && dc == 0) || (dr == 0 && dc == 1)
-}
+data class ArrowEscapeFillParams(val borderExitRate: Double, val depthGreed: Double)
 
-private fun tryMergeOrphanIntoExistingPiece(pieces: MutableList<ArrowEscapePiece>, orphan: List<Pair<Int, Int>>): Boolean {
-    for (index in pieces.indices) {
-        val piece = pieces[index]
-        val tail = piece.cells.first().row to piece.cells.first().col
-        val newCells = when {
-            isAdjacent(orphan.last(), tail) -> orphan.map { CellCoord(it.first, it.second) } + piece.cells
-            isAdjacent(orphan.first(), tail) -> orphan.reversed().map { CellCoord(it.first, it.second) } + piece.cells
-            else -> null
-        }
-        if (newCells != null) {
-            pieces[index] = piece.copy(cells = newCells)
-            return true
-        }
-    }
-    return false
-}
+private data class DeepFillCandidate(
+    val cell: Pair<Int, Int>,
+    val direction: ArrowDirection,
+    val depth: Int,
+    val corridorLength: Int,
+)
 
 fun fillCoverage(
     rows: Int,
     cols: Int,
-    occupied: MutableSet<Pair<Int, Int>>,
+    params: ArrowEscapeFillParams,
     maxEmptyRatio: Double,
     random: Random = Random.Default,
 ): FillResult? {
-    val totalCells = rows * cols
     val remaining = mutableSetOf<Pair<Int, Int>>()
-    for (r in 0 until rows) for (c in 0 until cols) if ((r to c) !in occupied) remaining.add(r to c)
-
+    for (r in 0 until rows) for (c in 0 until cols) remaining.add(r to c)
+    val owner = mutableMapOf<Pair<Int, Int>, Int>()
+    val depths = mutableListOf<Int>()
     val pieces = mutableListOf<ArrowEscapePiece>()
-    val directions = ArrowDirection.entries
-    var permanentlyUncovered = 0
 
     while (remaining.isNotEmpty()) {
-        val remainingList = remaining.toList()
-        val startIdx = random.nextInt(remainingList.size)
-        var bestCell: Pair<Int, Int>? = null
-        var bestDirection: ArrowDirection? = null
-        var bestCorridorLength = Int.MAX_VALUE
-        var examined = 0
-
-        for (off in remainingList.indices) {
-            if (examined >= CANDIDATE_SAMPLE_SIZE) break
-            val cellPair = remainingList[(startIdx + off) % remainingList.size]
-            for (direction in directions) {
-                val corridor = computeCorridor(cellPair.first, cellPair.second, direction, rows, cols)
-                if (corridor.all { (it.row to it.col) !in remaining }) {
-                    examined += 1
-                    if (corridor.size < bestCorridorLength) {
-                        bestCell = cellPair
-                        bestDirection = direction
-                        bestCorridorLength = corridor.size
-                    }
-                }
-            }
-        }
-
-        if (bestCell == null || bestDirection == null) break
-
-        val targetLen = MIN_FILLER_LEN + random.nextInt(MAX_FILLER_LEN - MIN_FILLER_LEN + 1)
-        val cellsTailToHead = mutableListOf(bestCell)
-        val inPiece = mutableSetOf(bestCell)
-        var current: Pair<Int, Int> = bestCell
-        var growthDirection = OPPOSITE_DIRECTION.getValue(bestDirection)
-        var isShaftStep = true
-
-        while (cellsTailToHead.size < targetLen) {
-            val options = mutableListOf<Pair<ArrowDirection, Pair<Int, Int>>>()
-            for (candidateDirection in directions) {
-                val (dr, dc) = ARROW_DIRECTION_DELTA.getValue(candidateDirection)
-                val next = (current.first + dr) to (current.second + dc)
-                if (next.first !in 0 until rows || next.second !in 0 until cols) continue
-                if (next !in remaining || next in inPiece) continue
-                options.add(candidateDirection to next)
-            }
-            if (options.isEmpty()) break
-            val straight = options.firstOrNull { it.first == growthDirection }
-            val keepStraight = straight != null && (isShaftStep || random.nextDouble() < STRAIGHT_PREFERENCE)
-            val (direction, next) = if (keepStraight) straight else options[random.nextInt(options.size)]
-            cellsTailToHead.add(0, next)
-            inPiece.add(next)
-            current = next
-            growthDirection = direction
-            isShaftStep = false
-        }
-
-        if (cellsTailToHead.size < MIN_ACCEPTABLE_PIECE_LEN) {
-            val merged = tryMergeOrphanIntoExistingPiece(pieces, cellsTailToHead)
-            if (!merged) permanentlyUncovered += cellsTailToHead.size
-            cellsTailToHead.forEach { remaining.remove(it); occupied.add(it) }
+        val candidates = sampleDeepFillCandidates(rows, cols, remaining, owner, depths, random)
+        if (candidates.isEmpty()) break
+        val inner = candidates.filter { it.corridorLength > 0 }
+        val pool = if (inner.isNotEmpty() && random.nextDouble() >= params.borderExitRate) inner else candidates
+        val chosen = if (random.nextDouble() < params.depthGreed) {
+            pool.maxWith(compareBy<DeepFillCandidate> { it.depth }.thenByDescending { it.corridorLength })
         } else {
-            cellsTailToHead.forEach { remaining.remove(it); occupied.add(it) }
-            pieces.add(ArrowEscapePiece(cells = cellsTailToHead.map { CellCoord(it.first, it.second) }, headDirection = bestDirection))
+            pool[random.nextInt(pool.size)]
         }
+        val u = random.nextDouble()
+        val targetLen = MIN_TARGET_LEN + floor((MAX_TARGET_LEN - MIN_TARGET_LEN + 1) * u * u).toInt()
+        val cells = growTowardTail(rows, cols, chosen.cell, chosen.direction, targetLen, remaining, random)
+        val pieceIndex = pieces.size
+        cells.forEach {
+            remaining.remove(it)
+            owner[it] = pieceIndex
+        }
+        depths.add(chosen.depth)
+        pieces.add(ArrowEscapePiece(cells = cells.map { CellCoord(it.first, it.second) }, headDirection = chosen.direction))
     }
 
-    val emptyCellCount = remaining.size + permanentlyUncovered
-    if (emptyCellCount > ceil(totalCells * maxEmptyRatio).toInt()) return null
-
+    val emptyCellCount = remaining.size
+    if (emptyCellCount > ceil(rows * cols * maxEmptyRatio).toInt()) return null
     return FillResult(pieces, emptyCellCount)
+}
+
+private fun sampleDeepFillCandidates(
+    rows: Int,
+    cols: Int,
+    remaining: Set<Pair<Int, Int>>,
+    owner: Map<Pair<Int, Int>, Int>,
+    depths: List<Int>,
+    random: Random,
+): List<DeepFillCandidate> {
+    val remainingList = remaining.toList()
+    val startIdx = random.nextInt(remainingList.size)
+    val candidates = mutableListOf<DeepFillCandidate>()
+    for (off in remainingList.indices) {
+        if (candidates.size >= DEEP_FILL_SAMPLE_SIZE) break
+        val cell = remainingList[(startIdx + off) % remainingList.size]
+        for (direction in ArrowDirection.entries) {
+            val (dr, dc) = ARROW_DIRECTION_DELTA.getValue(direction)
+            val neck = (cell.first - dr) to (cell.second - dc)
+            if (neck !in remaining) continue
+            val corridor = computeCorridor(cell.first, cell.second, direction, rows, cols)
+            if (corridor.any { (it.row to it.col) in remaining }) continue
+            val depth = corridor.maxOfOrNull { depths[owner.getValue(it.row to it.col)] + 1 } ?: 0
+            candidates.add(DeepFillCandidate(cell, direction, depth, corridor.size))
+        }
+    }
+    return candidates
+}
+
+private fun growTowardTail(
+    rows: Int,
+    cols: Int,
+    head: Pair<Int, Int>,
+    headDirection: ArrowDirection,
+    targetLen: Int,
+    remaining: Set<Pair<Int, Int>>,
+    random: Random,
+): List<Pair<Int, Int>> {
+    val cellsTailToHead = mutableListOf(head)
+    val inPiece = mutableSetOf(head)
+    var current = head
+    var growthDirection = OPPOSITE_DIRECTION.getValue(headDirection)
+    var isShaftStep = true
+    while (cellsTailToHead.size < targetLen) {
+        val options = ArrowDirection.entries.mapNotNull { candidateDirection ->
+            val (dr, dc) = ARROW_DIRECTION_DELTA.getValue(candidateDirection)
+            val next = (current.first + dr) to (current.second + dc)
+            if (next.first !in 0 until rows || next.second !in 0 until cols) return@mapNotNull null
+            if (next !in remaining || next in inPiece) return@mapNotNull null
+            candidateDirection to next
+        }
+        if (options.isEmpty()) break
+        val straight = options.firstOrNull { it.first == growthDirection }
+        val keepStraight = straight != null && (isShaftStep || random.nextDouble() < STRAIGHT_PREFERENCE)
+        val (direction, next) = if (keepStraight) straight else options[random.nextInt(options.size)]
+        cellsTailToHead.add(0, next)
+        inPiece.add(next)
+        current = next
+        growthDirection = direction
+        isShaftStep = false
+    }
+    return cellsTailToHead
 }
