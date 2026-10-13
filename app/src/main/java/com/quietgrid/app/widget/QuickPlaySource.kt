@@ -28,7 +28,7 @@ class QuickPlaySource @Inject constructor(
         settingsRepository.settings,
     ) { session, mixes, lastStartedMixId, history, settings ->
         QuickPlayRender(
-            state = quickPlayState(session, mixes, lastStartedMixId, history, settings.betaGamesEnabled),
+            state = quickPlayState(session, mixes, lastStartedMixId, history, settings.betaGamesEnabled, settings.favoriteGameIds),
             themeMode = settings.themeMode,
         )
     }.distinctUntilChanged()

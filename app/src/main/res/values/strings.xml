@@ -33,6 +33,8 @@
     <string name="games_category_word">Word</string>
     <string name="games_category_memory">Memory</string>
     <string name="games_category_spatial">Spatial</string>
+    <string name="games_badge_new">New</string>
+    <string name="games_favorite">Favorite</string>
     <string name="replace_sheet_title">Puzzle in progress</string>
     <string name="replace_sheet_time_played">%1$s played</string>
     <string name="games_active_puzzle_waiting">Your puzzle is waiting</string>

@@ -9,9 +9,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -28,7 +31,7 @@ import com.quietgrid.app.core.GameId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GamePageTopBar(gameId: GameId, onBack: () -> Unit) {
+fun GamePageTopBar(gameId: GameId, isFavorite: Boolean, onFavoriteChange: (Boolean) -> Unit, onBack: () -> Unit) {
     val meta = GameCatalog.get(gameId)
     Surface(color = MaterialTheme.colorScheme.surface) {
         Row(
@@ -36,7 +39,7 @@ fun GamePageTopBar(gameId: GameId, onBack: () -> Unit) {
                 .fillMaxWidth()
                 .windowInsetsPadding(TopAppBarDefaults.windowInsets)
                 .heightIn(min = 64.dp)
-                .padding(start = 4.dp, end = 16.dp, top = 8.dp, bottom = 8.dp),
+                .padding(start = 4.dp, end = 4.dp, top = 8.dp, bottom = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             val interactionSource = remember { MutableInteractionSource() }
@@ -55,6 +58,22 @@ fun GamePageTopBar(gameId: GameId, onBack: () -> Unit) {
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 2.dp),
+                )
+            }
+            val favoriteInteractionSource = remember { MutableInteractionSource() }
+            IconToggleButton(
+                checked = isFavorite,
+                onCheckedChange = onFavoriteChange,
+                interactionSource = favoriteInteractionSource,
+                modifier = Modifier
+                    .align(Alignment.Top)
+                    .padding(start = 4.dp)
+                    .pressScale(favoriteInteractionSource),
+            ) {
+                Icon(
+                    if (isFavorite) Icons.Filled.Star else Icons.Filled.StarBorder,
+                    contentDescription = stringResource(R.string.games_favorite),
+                    tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }

@@ -25,6 +25,8 @@ data class AppSettings(
     val betaGamesEnabled: Boolean = false,
     val puzzleLanguage: String = "",
     val quickStartSeenGameIds: Set<String> = emptySet(),
+    val favoriteGameIds: Set<String> = emptySet(),
+    val newBadgeSeenGameIds: Set<String> = emptySet(),
     val dailyReminderEnabled: Boolean = true,
     val dailyReminderTime: LocalTime = LocalTime.of(9, 0),
     val dailyReminderPermissionAsked: Boolean = false,
@@ -40,6 +42,8 @@ class SettingsRepository @Inject constructor(private val dataStore: DataStore<Pr
         val BETA_GAMES_ENABLED = booleanPreferencesKey("beta_games_enabled")
         val PUZZLE_LANGUAGE = stringPreferencesKey("puzzle_language")
         val QUICK_START_SEEN = stringSetPreferencesKey("quick_start_seen_game_ids")
+        val FAVORITE_GAMES = stringSetPreferencesKey("favorite_game_ids")
+        val NEW_BADGE_SEEN = stringSetPreferencesKey("new_badge_seen_game_ids")
         val DAILY_REMINDER_ENABLED = booleanPreferencesKey("daily_reminder_enabled")
         val DAILY_REMINDER_MINUTE_OF_DAY = intPreferencesKey("daily_reminder_minute_of_day")
         val DAILY_REMINDER_PERMISSION_ASKED = booleanPreferencesKey("daily_reminder_permission_asked")
@@ -55,6 +59,8 @@ class SettingsRepository @Inject constructor(private val dataStore: DataStore<Pr
             betaGamesEnabled = prefs[Keys.BETA_GAMES_ENABLED] ?: false,
             puzzleLanguage = prefs[Keys.PUZZLE_LANGUAGE] ?: "",
             quickStartSeenGameIds = prefs[Keys.QUICK_START_SEEN] ?: emptySet(),
+            favoriteGameIds = prefs[Keys.FAVORITE_GAMES] ?: emptySet(),
+            newBadgeSeenGameIds = prefs[Keys.NEW_BADGE_SEEN] ?: emptySet(),
             dailyReminderEnabled = prefs[Keys.DAILY_REMINDER_ENABLED] ?: true,
             dailyReminderTime = (prefs[Keys.DAILY_REMINDER_MINUTE_OF_DAY] ?: 540).let { LocalTime.of(it / 60, it % 60) },
             dailyReminderPermissionAsked = prefs[Keys.DAILY_REMINDER_PERMISSION_ASKED] ?: false,
@@ -87,6 +93,17 @@ class SettingsRepository @Inject constructor(private val dataStore: DataStore<Pr
 
     suspend fun markQuickStartSeen(gameId: GameId) {
         dataStore.edit { it[Keys.QUICK_START_SEEN] = (it[Keys.QUICK_START_SEEN] ?: emptySet()) + gameId.key }
+    }
+
+    suspend fun setFavorite(gameId: GameId, favorite: Boolean) {
+        dataStore.edit {
+            val current = it[Keys.FAVORITE_GAMES] ?: emptySet()
+            it[Keys.FAVORITE_GAMES] = if (favorite) current + gameId.key else current - gameId.key
+        }
+    }
+
+    suspend fun markNewBadgeSeen(gameId: GameId) {
+        dataStore.edit { it[Keys.NEW_BADGE_SEEN] = (it[Keys.NEW_BADGE_SEEN] ?: emptySet()) + gameId.key }
     }
 
     suspend fun setDailyReminderEnabled(enabled: Boolean) {

@@ -39,6 +39,7 @@ data class GameMeta(
     @param:StringRes val taglineRes: Int,
     val categories: Set<GameCategory>,
     val beta: Boolean = false,
+    val isNew: Boolean = false,
 )
 
 object GameCatalog {
@@ -48,7 +49,7 @@ object GameCatalog {
         GameMeta(GameId.NONOGRAM, R.string.game_nonogram_name, R.string.nonogram_tagline, setOf(GameCategory.LOGIC)),
         GameMeta(GameId.MINESWEEPER, R.string.minesweeper_title, R.string.minesweeper_tagline, setOf(GameCategory.LOGIC)),
         GameMeta(GameId.SUDOKU, R.string.sudoku_title, R.string.sudoku_tagline, setOf(GameCategory.LOGIC)),
-        GameMeta(GameId.MINISUDOKU, R.string.minisudoku_title, R.string.minisudoku_tagline, setOf(GameCategory.LOGIC)),
+        GameMeta(GameId.MINISUDOKU, R.string.minisudoku_title, R.string.minisudoku_tagline, setOf(GameCategory.LOGIC), isNew = true),
         GameMeta(GameId.WORDSEARCH, R.string.wordsearch_title, R.string.wordsearch_tagline, setOf(GameCategory.WORD)),
         GameMeta(GameId.BLOCKFILL, R.string.blockfill_title, R.string.blockfill_tagline, setOf(GameCategory.SPATIAL)),
         GameMeta(GameId.WORDGUESS, R.string.wordguess_title, R.string.wordguess_tagline, setOf(GameCategory.WORD)),
@@ -60,9 +61,9 @@ object GameCatalog {
         GameMeta(GameId.NBACK, R.string.nback_title, R.string.nback_tagline, setOf(GameCategory.MEMORY), beta = true),
         GameMeta(GameId.THEMECLEAR, R.string.themeclear_title, R.string.themeclear_tagline, setOf(GameCategory.WORD)),
         GameMeta(GameId.WHODIDIT, R.string.whodidit_title, R.string.whodidit_tagline, setOf(GameCategory.LOGIC), beta = true),
-        GameMeta(GameId.SEQUENCEMEMORY, R.string.sequencememory_title, R.string.sequencememory_tagline, setOf(GameCategory.MEMORY)),
+        GameMeta(GameId.SEQUENCEMEMORY, R.string.sequencememory_title, R.string.sequencememory_tagline, setOf(GameCategory.MEMORY), isNew = true),
         GameMeta(GameId.HASHI, R.string.hashi_title, R.string.hashi_tagline, setOf(GameCategory.LOGIC, GameCategory.SPATIAL), beta = true),
-        GameMeta(GameId.KILLERSUDOKU, R.string.killersudoku_title, R.string.killersudoku_tagline, setOf(GameCategory.LOGIC)),
+        GameMeta(GameId.KILLERSUDOKU, R.string.killersudoku_title, R.string.killersudoku_tagline, setOf(GameCategory.LOGIC), isNew = true),
     )
 
     fun get(id: GameId): GameMeta = games.first { it.id == id }

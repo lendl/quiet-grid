@@ -31,6 +31,7 @@ fun quickPlayState(
     lastStartedMixId: String?,
     history: List<PlayRecord>,
     betaGamesEnabled: Boolean,
+    favoriteGameIds: Set<String> = emptySet(),
 ): QuickPlayState {
     val continueGame = activeSession
         ?.takeIf { Routes.resume(it) != null }
@@ -42,7 +43,7 @@ fun quickPlayState(
     val playableMix = (mixes.filter { it.id == lastStartedMixId } + mixes)
         .firstOrNull { mix -> mix.resolvedCandidates().any { it.gameId in enabled } }
     if (playableMix != null) return QuickPlayState.PlayMix(playableMix.id, playableMix.name, mixGames(playableMix, enabled))
-    return QuickPlayState.Games(rankedGames(history, enabled))
+    return QuickPlayState.Games(rankedGames(history, enabled, favoriteGameIds))
 }
 
 private fun mixGames(mix: Mix, enabled: Set<GameId>): List<GameId> =
@@ -54,7 +55,7 @@ private fun mixGames(mix: Mix, enabled: Set<GameId>): List<GameId> =
         .map { it.key }
         .take(QUICK_PLAY_MIX_ICON_COUNT)
 
-private fun rankedGames(history: List<PlayRecord>, enabled: Set<GameId>): List<QuickPlayGame> {
+private fun rankedGames(history: List<PlayRecord>, enabled: Set<GameId>, favoriteGameIds: Set<String>): List<QuickPlayGame> {
     val ranked = history
         .asSequence()
         .filter { !it.isChallenger }
@@ -63,13 +64,17 @@ private fun rankedGames(history: List<PlayRecord>, enabled: Set<GameId>): List<Q
         .groupBy { it.gameId }
         .values
         .sortedWith(playCountThenRecency)
-        .take(QUICK_PLAY_GAME_COUNT)
         .map { records ->
             val difficultyKey = records.groupBy { it.difficulty }.values.sortedWith(playCountThenRecency).first().first().difficulty
             QuickPlayGame(GameId.entries.first { it.key == records.first().gameId }, Difficulty.fromKey(difficultyKey))
         }
-    val fill = QUICK_PLAY_DEFAULT_GAMES
-        .filter { default -> ranked.none { it.gameId == default } }
+    val (rankedFavorites, rankedOthers) = ranked.partition { it.gameId.key in favoriteGameIds }
+    val catalogFavorites = GameCatalog.games
+        .map { it.id }
+        .filter { it in enabled && it.key in favoriteGameIds }
         .map { QuickPlayGame(it, Difficulty.EASY) }
-    return (ranked + fill).take(QUICK_PLAY_GAME_COUNT)
+    val fill = QUICK_PLAY_DEFAULT_GAMES.map { QuickPlayGame(it, Difficulty.EASY) }
+    return (rankedFavorites + catalogFavorites + rankedOthers + fill)
+        .distinctBy { it.gameId }
+        .take(QUICK_PLAY_GAME_COUNT)
 }

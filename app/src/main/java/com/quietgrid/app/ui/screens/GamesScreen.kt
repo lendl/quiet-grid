@@ -1,21 +1,29 @@
 package com.quietgrid.app.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -51,20 +59,24 @@ fun GamesScreen(
     onOpenAccount: () -> Unit,
 ) {
     val repositories: RepositoriesViewModel = hiltViewModel()
-    val settings by repositories.settingsRepository.settings.collectAsState(initial = AppSettings())
+    val loadedSettings by repositories.settingsRepository.settings.collectAsState(initial = null)
+    val settings = loadedSettings ?: AppSettings()
 
     var selectedCategory by remember { mutableStateOf<GameCategory?>(null) }
 
-    @Composable
-    fun sortedBy(list: List<GameMeta>) = list
-        .filter { selectedCategory == null || selectedCategory in it.categories }
-        .map { it to stringResource(it.titleRes) }
-        .sortedBy { it.second }
-        .map { it.first }
+    val titles = GameCatalog.games.associate { it.id to stringResource(it.titleRes) }
 
-    val readyGames = sortedBy(GameCatalog.games.filter { !it.beta })
-    val betaGames = sortedBy(GameCatalog.games.filter { it.beta })
+    fun sortedBy(list: List<GameMeta>) = gamesInGridOrder(
+        list.filter { selectedCategory == null || selectedCategory in it.categories },
+        titles,
+        settings.favoriteGameIds,
+    )
+
+    val readyGames = if (loadedSettings == null) emptyList() else sortedBy(GameCatalog.games.filter { !it.beta })
+    val betaGames = if (loadedSettings == null) emptyList() else sortedBy(GameCatalog.games.filter { it.beta })
     val betaGamesEnabled = settings.betaGamesEnabled
+    val isFavorite = { meta: GameMeta -> meta.id.key in settings.favoriteGameIds }
+    val isNew = { meta: GameMeta -> meta.isNew && meta.id.key !in settings.newBadgeSeenGameIds }
 
     Column(Modifier.fillMaxWidth().padding(16.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -99,7 +111,7 @@ fun GamesScreen(
                 verticalArrangement = Arrangement.spacedBy(layout.spacing + 4.dp),
             ) {
                 items(readyGames, key = { it.id.key }) { meta ->
-                    GameTile(meta, layout, enabled = true, onClick = { onOpenGame(meta.id) })
+                    GameTile(meta, layout, enabled = true, isFavorite = isFavorite(meta), isNew = isNew(meta), onClick = { onOpenGame(meta.id) })
                 }
 
                 if (betaGames.isNotEmpty()) {
@@ -121,7 +133,7 @@ fun GamesScreen(
                         }
                     }
                     items(betaGames, key = { it.id.key }) { meta ->
-                        GameTile(meta, layout, enabled = betaGamesEnabled, onClick = { onOpenGame(meta.id) })
+                        GameTile(meta, layout, enabled = betaGamesEnabled, isFavorite = isFavorite(meta), isNew = isNew(meta), onClick = { onOpenGame(meta.id) })
                     }
                 }
             }
@@ -129,20 +141,38 @@ fun GamesScreen(
     }
 }
 
+internal fun gamesInGridOrder(games: List<GameMeta>, titles: Map<GameId, String>, favoriteGameIds: Set<String>): List<GameMeta> =
+    games.sortedWith(compareByDescending<GameMeta> { it.id.key in favoriteGameIds }.thenBy { titles[it.id].orEmpty() })
+
+private val BADGE_RING = 2.dp
+private val NEW_BADGE_OVERHANG_X = 10.dp
+private val NEW_BADGE_OVERHANG_Y = 7.dp
+private val FAVORITE_BADGE_SIZE = 28.dp
+private val FAVORITE_BADGE_OVERHANG = 7.dp
+
 @Composable
-private fun GameTile(meta: GameMeta, layout: GamesGridLayout, enabled: Boolean, onClick: () -> Unit) {
+private fun GameTile(meta: GameMeta, layout: GamesGridLayout, enabled: Boolean, isFavorite: Boolean, isNew: Boolean, onClick: () -> Unit) {
     Column(
         Modifier
             .fillMaxWidth()
             .alpha(if (enabled) 1f else 0.5f)
             .clip(RoundedCornerShape(12.dp))
             .clickable(enabled = enabled, onClick = onClick)
-            .padding(vertical = 4.dp),
+            .padding(top = 4.dp + NEW_BADGE_OVERHANG_Y, bottom = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(7.dp),
     ) {
         BoxWithConstraints(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-            GameIcon(meta.id, size = min(maxWidth, layout.maxIconSize))
+            val iconSize = min(maxWidth - NEW_BADGE_OVERHANG_X * 2, layout.maxIconSize)
+            Box {
+                GameIcon(meta.id, size = iconSize)
+                if (isNew) {
+                    NewBadge(Modifier.align(Alignment.TopEnd).offset(x = NEW_BADGE_OVERHANG_X, y = -NEW_BADGE_OVERHANG_Y))
+                }
+                if (isFavorite) {
+                    FavoriteBadge(Modifier.align(Alignment.BottomStart).offset(x = -FAVORITE_BADGE_OVERHANG, y = FAVORITE_BADGE_OVERHANG))
+                }
+            }
         }
         Text(
             stringResource(meta.titleRes),
@@ -152,6 +182,40 @@ private fun GameTile(meta: GameMeta, layout: GamesGridLayout, enabled: Boolean, 
             minLines = 2,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
+@Composable
+private fun NewBadge(modifier: Modifier = Modifier) {
+    Text(
+        stringResource(R.string.games_badge_new),
+        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.ExtraBold),
+        color = MaterialTheme.colorScheme.onPrimary,
+        maxLines = 1,
+        modifier = modifier
+            .background(MaterialTheme.colorScheme.background, CircleShape)
+            .padding(BADGE_RING)
+            .background(MaterialTheme.colorScheme.primary, CircleShape)
+            .padding(horizontal = 7.dp, vertical = 1.dp),
+    )
+}
+
+@Composable
+private fun FavoriteBadge(modifier: Modifier = Modifier) {
+    Box(
+        modifier
+            .size(FAVORITE_BADGE_SIZE)
+            .background(MaterialTheme.colorScheme.background, CircleShape)
+            .padding(BADGE_RING)
+            .background(MaterialTheme.colorScheme.surface, CircleShape),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            Icons.Filled.Star,
+            contentDescription = stringResource(R.string.games_favorite),
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(16.dp),
         )
     }
 }

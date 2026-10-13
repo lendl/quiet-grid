@@ -37,6 +37,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.core.difficultyColor
@@ -165,6 +166,11 @@ fun PuzzlePickerScreen(
     LaunchedEffect(gameId, settings) {
         val seen = settings?.quickStartSeenGameIds ?: return@LaunchedEffect
         if (gameId.key !in seen) showQuickStart = true
+    }
+
+    LaunchedEffect(gameId, settings) {
+        val newBadgeSeen = settings?.newBadgeSeenGameIds ?: return@LaunchedEffect
+        if (GameCatalog.get(gameId).isNew && gameId.key !in newBadgeSeen) repositories.settingsRepository.markNewBadgeSeen(gameId)
     }
 
     if (showQuickStart) {

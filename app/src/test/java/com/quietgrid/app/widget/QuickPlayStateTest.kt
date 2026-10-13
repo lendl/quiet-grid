@@ -8,6 +8,7 @@ import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.GameId.MINESWEEPER
 import com.quietgrid.app.core.GameId.NBACK
 import com.quietgrid.app.core.GameId.NONOGRAM
+import com.quietgrid.app.core.GameId.STARBATTLE
 import com.quietgrid.app.core.GameId.SUDOKU
 import com.quietgrid.app.core.GameId.TAKUZU
 import com.quietgrid.app.core.GameId.WORDSEARCH
@@ -148,5 +149,40 @@ class QuickPlayStateTest {
     @Test
     fun `no history and no mix gives the three defaults at easy`() {
         assertEquals(defaults, quickPlayState(null, emptyList(), null, emptyList(), false))
+    }
+
+    @Test
+    fun `favorites come before more played games, ranked among themselves by play count`() {
+        val history = List(5) { record("sudoku", "easy", it.toLong()) } +
+            List(2) { record("takuzu", "hard", 10 + it.toLong()) } +
+            record("nonogram", "medium", 20)
+        assertEquals(
+            games(TAKUZU to HARD, NONOGRAM to MEDIUM, SUDOKU to EASY),
+            quickPlayState(null, emptyList(), null, history, false, setOf("nonogram", "takuzu")),
+        )
+    }
+
+    @Test
+    fun `unplayed favorites come at easy before played games`() {
+        val history = List(3) { record("sudoku", "hard", it.toLong()) }
+        assertEquals(
+            games(STARBATTLE to EASY, SUDOKU to HARD, WORDSEARCH to EASY),
+            quickPlayState(null, emptyList(), null, history, false, setOf("starbattle")),
+        )
+    }
+
+    @Test
+    fun `beta favorites count only when beta is enabled`() {
+        assertEquals(defaults, quickPlayState(null, emptyList(), null, emptyList(), false, setOf("nback")))
+        assertEquals(games(NBACK to EASY, SUDOKU to EASY, WORDSEARCH to EASY), quickPlayState(null, emptyList(), null, emptyList(), true, setOf("nback")))
+    }
+
+    @Test
+    fun `favorites do not replace Continue or a playable mix`() {
+        assertEquals(
+            QuickPlayState.Continue(SUDOKU, null),
+            quickPlayState(ActiveSessionSummary("sudoku", null), emptyList(), null, emptyList(), false, setOf("takuzu")),
+        )
+        assertEquals(playMix("a", NONOGRAM), quickPlayState(null, listOf(mix("a", "nonogram")), "a", emptyList(), false, setOf("takuzu")))
     }
 }

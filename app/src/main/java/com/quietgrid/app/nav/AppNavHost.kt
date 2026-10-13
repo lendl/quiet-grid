@@ -277,7 +277,12 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                         it.key == backStackEntry?.arguments?.getString("gameId")
                     }
                     if (pickerGameId != null) {
-                        GamePageTopBar(pickerGameId, onBack = { navController.popBackStack() })
+                        GamePageTopBar(
+                            pickerGameId,
+                            isFavorite = pickerGameId.key in settings.favoriteGameIds,
+                            onFavoriteChange = { favorite -> scope.launch { repositories.settingsRepository.setFavorite(pickerGameId, favorite) } },
+                            onBack = { navController.popBackStack() },
+                        )
                     } else {
                         AppTopBar(onBack = { navController.popBackStack() })
                     }
