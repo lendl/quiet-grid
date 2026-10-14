@@ -1,6 +1,8 @@
 // app/src/main/java/com/quietgrid/app/games/arrowescape/ArrowEscapePlayScreen.kt
 package com.quietgrid.app.games.arrowescape
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -39,6 +42,7 @@ import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
 import com.quietgrid.app.ui.components.rememberHapticController
 import com.quietgrid.app.ui.components.LogoGridLoader
+import kotlinx.coroutines.delay
 
 @Composable
 fun ArrowEscapePlayScreen(
@@ -71,6 +75,29 @@ fun ArrowEscapePlayScreen(
         }
     }
 
+    val lives = session?.lives
+    var previousLives by remember { mutableStateOf<Int?>(null) }
+    var lostHeart by remember { mutableStateOf<Int?>(null) }
+    var lostHeartFilled by remember { mutableStateOf(false) }
+    val lostHeartScale = remember { Animatable(1f) }
+    LaunchedEffect(lives) {
+        val before = previousLives
+        previousLives = lives
+        if (lives == null || before == null || lives >= before) {
+            lostHeartFilled = false
+            lostHeartScale.snapTo(1f)
+            return@LaunchedEffect
+        }
+        lostHeart = lives
+        lostHeartFilled = true
+        lostHeartScale.snapTo(1f)
+        delay(200)
+        lostHeartScale.animateTo(1.45f, animationSpec = tween(135))
+        lostHeartScale.animateTo(0.8f, animationSpec = tween(315))
+        lostHeartFilled = false
+        lostHeartScale.animateTo(1f, animationSpec = tween(150))
+    }
+
     Column(Modifier.fillMaxSize().padding(16.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             GameBackButton(onBack)
@@ -87,11 +114,19 @@ fun ArrowEscapePlayScreen(
                 )
                 Row(Modifier.padding(end = 8.dp)) {
                     repeat(ARROW_ESCAPE_STARTING_LIVES) { index ->
+                        val isLostHeart = index == lostHeart
+                        val filled = index < session.lives || (isLostHeart && lostHeartFilled)
                         Icon(
-                            if (index < session.lives) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                            if (filled) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.padding(end = 4.dp),
+                            modifier = Modifier
+                                .padding(end = 4.dp)
+                                .graphicsLayer {
+                                    val scale = if (isLostHeart) lostHeartScale.value else 1f
+                                    scaleX = scale
+                                    scaleY = scale
+                                },
                         )
                     }
                 }
