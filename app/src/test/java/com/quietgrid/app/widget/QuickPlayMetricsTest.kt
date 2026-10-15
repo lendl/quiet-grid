@@ -27,12 +27,19 @@ class QuickPlayMetricsTest {
     }
 
     @Test
-    fun `continue split gives the button two thirds`() {
-        val split = quickPlaySplit(defaultContent)
-        assertFalse(split.vertical)
-        assertEquals(320f * 2 / 3, split.main.width.value, 0.01f)
-        assertEquals(320f / 3, split.side.width.value, 0.01f)
-        assertTrue(quickPlaySplit(DpSize(152.dp, 328.dp)).vertical)
+    fun `continue strip takes about a quarter of the height within bounds`() {
+        assertEquals(152f * 0.26f, quickPlayStripHeight(152.dp).value, 0.01f)
+        assertEquals(32f, quickPlayStripHeight(94.dp).value, 0.01f)
+        assertEquals(44f, quickPlayStripHeight(400.dp).value, 0.01f)
+    }
+
+    @Test
+    fun `continue strip parts scale with its height`() {
+        val metrics = quickPlayStripMetrics(40.dp)
+        assertEquals(26f, metrics.circleSize.value, 0.01f)
+        assertEquals(22f, metrics.iconSize.value, 0.01f)
+        assertEquals(14f, metrics.labelSize.value, 0.01f)
+        assertEquals(12f, quickPlayStripMetrics(32.dp).labelSize.value, 0.01f)
     }
 
     @Test
@@ -58,16 +65,16 @@ class QuickPlayMetricsTest {
     }
 
     @Test
-    fun `continue button at default size lays out in a row`() {
-        val metrics = quickPlayButtonMetrics(DpSize(213.dp, 147.dp), CONTINUE_TITLE_FRACTION)
+    fun `mix button at default size lays out in a row`() {
+        val metrics = quickPlayButtonMetrics(DpSize(300.dp, 147.dp), MIX_TITLE_FRACTION)
         assertTrue(metrics.horizontal)
-        assertEquals(213f * 0.6f * CONTINUE_TITLE_FRACTION, metrics.titleSize.value, 0.01f)
-        assertEquals(13f, metrics.labelSize.value, 0.1f)
+        assertEquals(147f * MIX_TITLE_FRACTION, metrics.titleSize.value, 0.01f)
+        assertEquals(147f * MIX_TITLE_FRACTION * 0.6f, metrics.labelSize.value, 0.01f)
     }
 
     @Test
     fun `narrow button lays out in a column and title is capped`() {
-        assertFalse(quickPlayButtonMetrics(DpSize(150.dp, 300.dp), CONTINUE_TITLE_FRACTION).horizontal)
+        assertFalse(quickPlayButtonMetrics(DpSize(150.dp, 300.dp), MIX_TITLE_FRACTION).horizontal)
         assertEquals(40f, quickPlayButtonMetrics(DpSize(2000.dp, 1000.dp), MIX_TITLE_FRACTION).titleSize.value, 0.01f)
     }
 }

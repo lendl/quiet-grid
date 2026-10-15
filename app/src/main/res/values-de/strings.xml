@@ -1211,7 +1211,6 @@
     <string name="quick_play_widget_description">Starte ein Rätsel mit einem Tipp</string>
     <string name="quick_play_continue">Weiter</string>
     <string name="quick_play_play">Spielen</string>
-    <string name="quick_play_new_puzzle">Neues Rätsel</string>
     <string name="minisudoku_title">Mini Sudoku</string>
     <string name="minisudoku_tagline">Kleine Sudoku-Raster: 4×4 zum Aufwärmen, 6×6, wenn du mehr willst.</string>
     <string name="minisudoku_difficulty_desc_easy">4×4-Raster mit 2×2-Boxen, Ziffern 1-4.</string>

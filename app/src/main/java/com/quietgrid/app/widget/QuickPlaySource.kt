@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import javax.inject.Inject
 import javax.inject.Singleton
 
-data class QuickPlayRender(val state: QuickPlayState, val themeMode: ThemeMode)
+data class QuickPlayRender(val quickPlay: QuickPlayState, val mix: MixWidgetState, val themeMode: ThemeMode)
 
 @Singleton
 class QuickPlaySource @Inject constructor(
@@ -28,7 +28,8 @@ class QuickPlaySource @Inject constructor(
         settingsRepository.settings,
     ) { session, mixes, lastStartedMixId, history, settings ->
         QuickPlayRender(
-            state = quickPlayState(session, mixes, lastStartedMixId, history, settings.betaGamesEnabled, settings.favoriteGameIds),
+            quickPlay = quickPlayState(session, history, settings.betaGamesEnabled, settings.favoriteGameIds),
+            mix = mixWidgetState(session, mixes, lastStartedMixId, settings.betaGamesEnabled),
             themeMode = settings.themeMode,
         )
     }.distinctUntilChanged()

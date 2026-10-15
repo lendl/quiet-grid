@@ -1217,7 +1217,6 @@
     <string name="quick_play_widget_description">Start een puzzel met één tik</string>
     <string name="quick_play_continue">Doorgaan</string>
     <string name="quick_play_play">Spelen</string>
-    <string name="quick_play_new_puzzle">Nieuwe puzzel</string>
     <string name="minisudoku_title">Mini Sudoku</string>
     <string name="minisudoku_tagline">Kleine sudoku\'s: 4×4 om op te warmen, 6×6 als je meer wilt.</string>
     <string name="minisudoku_difficulty_desc_easy">4×4-raster met 2×2-boxen, cijfers 1-4.</string>

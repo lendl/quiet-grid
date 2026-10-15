@@ -5,7 +5,7 @@ import com.quietgrid.app.data.ActiveSessionSummary
 
 sealed interface LaunchAction {
     data object OpenDailyTab : LaunchAction
-    data object OpenGamesTab : LaunchAction
+    data object OpenMixesTab : LaunchAction
     data object OpenTabs : LaunchAction
     data object Stay : LaunchAction
     data class Navigate(val route: String, val endsMix: Boolean) : LaunchAction
@@ -17,15 +17,14 @@ fun launchAction(
     activeSession: ActiveSessionSummary?,
     existingMixIds: Set<String>,
     onPlayScreen: Boolean,
-): LaunchAction {
-    if (request == LaunchRequest.DailyTab) return LaunchAction.OpenDailyTab
-    if (request == LaunchRequest.OpenGames) return LaunchAction.OpenGamesTab
-    if (onPlayScreen) return LaunchAction.Stay
-    val resumeRoute = activeSession?.let { Routes.resume(it) }
-    if (resumeRoute != null) return LaunchAction.Navigate(resumeRoute, endsMix = false)
-    return when (request) {
-        LaunchRequest.DailyTab, LaunchRequest.OpenGames, LaunchRequest.Resume -> LaunchAction.OpenTabs
-        is LaunchRequest.StartGame -> LaunchAction.Navigate(Routes.play(request.gameId, request.difficulty, resume = false), endsMix = true)
-        is LaunchRequest.StartMix -> if (request.mixId in existingMixIds) LaunchAction.StartMix(request.mixId) else LaunchAction.OpenTabs
+): LaunchAction = when (request) {
+    LaunchRequest.DailyTab -> LaunchAction.OpenDailyTab
+    LaunchRequest.OpenMixes -> LaunchAction.OpenMixesTab
+    LaunchRequest.Resume -> if (onPlayScreen) {
+        LaunchAction.Stay
+    } else {
+        activeSession?.let { Routes.resume(it) }?.let { LaunchAction.Navigate(it, endsMix = false) } ?: LaunchAction.OpenTabs
     }
+    is LaunchRequest.StartGame -> LaunchAction.Navigate(Routes.play(request.gameId, request.difficulty, resume = false), endsMix = true)
+    is LaunchRequest.StartMix -> if (request.mixId in existingMixIds) LaunchAction.StartMix(request.mixId) else LaunchAction.OpenTabs
 }

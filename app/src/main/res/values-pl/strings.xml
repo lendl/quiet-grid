@@ -1242,7 +1242,6 @@
     <string name="quick_play_widget_description">Rozpocznij łamigłówkę jednym stuknięciem</string>
     <string name="quick_play_continue">Kontynuuj</string>
     <string name="quick_play_play">Graj</string>
-    <string name="quick_play_new_puzzle">Nowa łamigłówka</string>
     <string name="minisudoku_title">Mini Sudoku</string>
     <string name="minisudoku_tagline">Małe plansze Sudoku: 4×4 na rozgrzewkę, 6×6, gdy chcesz więcej.</string>
     <string name="minisudoku_difficulty_desc_easy">Plansza 4×4 z obszarami 2×2, cyfry 1-4.</string>

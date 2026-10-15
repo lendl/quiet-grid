@@ -29,32 +29,25 @@ class LaunchActionTest {
     }
 
     @Test
-    fun `start game without a session starts it and ends any mix`() {
-        assertEquals(
-            LaunchAction.Navigate("play/takuzu/medium/false", endsMix = true),
-            launchAction(LaunchRequest.StartGame(GameId.TAKUZU, Difficulty.MEDIUM), null, emptySet(), false),
-        )
+    fun `resume while on a play screen stays`() {
+        assertEquals(LaunchAction.Stay, launchAction(LaunchRequest.Resume, session, emptySet(), onPlayScreen = true))
     }
 
     @Test
-    fun `start game while a session exists resumes it`() {
-        assertEquals(
-            LaunchAction.Navigate("play/sudoku/easy/true", endsMix = false),
-            launchAction(LaunchRequest.StartGame(GameId.TAKUZU, Difficulty.MEDIUM), session, emptySet(), false),
-        )
+    fun `start game starts a new puzzle and ends any mix, with or without a session or play screen`() {
+        val expected = LaunchAction.Navigate("play/takuzu/medium/false", endsMix = true)
+        val request = LaunchRequest.StartGame(GameId.TAKUZU, Difficulty.MEDIUM)
+        assertEquals(expected, launchAction(request, null, emptySet(), false))
+        assertEquals(expected, launchAction(request, session, emptySet(), false))
+        assertEquals(expected, launchAction(request, session, emptySet(), onPlayScreen = true))
     }
 
     @Test
-    fun `start mix without a session starts that mix`() {
-        assertEquals(LaunchAction.StartMix("mix-1"), launchAction(LaunchRequest.StartMix("mix-1"), null, setOf("mix-1"), false))
-    }
-
-    @Test
-    fun `start mix while a session exists resumes it`() {
-        assertEquals(
-            LaunchAction.Navigate("play/sudoku/easy/true", endsMix = false),
-            launchAction(LaunchRequest.StartMix("mix-1"), session, setOf("mix-1"), false),
-        )
+    fun `start mix starts that mix, with or without a session or play screen`() {
+        val request = LaunchRequest.StartMix("mix-1")
+        assertEquals(LaunchAction.StartMix("mix-1"), launchAction(request, null, setOf("mix-1"), false))
+        assertEquals(LaunchAction.StartMix("mix-1"), launchAction(request, session, setOf("mix-1"), false))
+        assertEquals(LaunchAction.StartMix("mix-1"), launchAction(request, session, setOf("mix-1"), onPlayScreen = true))
     }
 
     @Test
@@ -71,15 +64,9 @@ class LaunchActionTest {
     }
 
     @Test
-    fun `open games goes to the games tab even with a session or on a play screen`() {
-        assertEquals(LaunchAction.OpenGamesTab, launchAction(LaunchRequest.OpenGames, null, emptySet(), false))
-        assertEquals(LaunchAction.OpenGamesTab, launchAction(LaunchRequest.OpenGames, session, emptySet(), false))
-        assertEquals(LaunchAction.OpenGamesTab, launchAction(LaunchRequest.OpenGames, session, emptySet(), onPlayScreen = true))
-    }
-
-    @Test
-    fun `any widget request while on a play screen stays`() {
-        listOf(LaunchRequest.Resume, LaunchRequest.StartMix("mix-1"), LaunchRequest.StartGame(GameId.SUDOKU, Difficulty.EASY))
-            .forEach { assertEquals(LaunchAction.Stay, launchAction(it, session, setOf("mix-1"), onPlayScreen = true)) }
+    fun `open mixes goes to the mixes tab even with a session or on a play screen`() {
+        assertEquals(LaunchAction.OpenMixesTab, launchAction(LaunchRequest.OpenMixes, null, emptySet(), false))
+        assertEquals(LaunchAction.OpenMixesTab, launchAction(LaunchRequest.OpenMixes, session, emptySet(), false))
+        assertEquals(LaunchAction.OpenMixesTab, launchAction(LaunchRequest.OpenMixes, session, emptySet(), onPlayScreen = true))
     }
 }

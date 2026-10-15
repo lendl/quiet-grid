@@ -1268,7 +1268,6 @@
     <string name="quick_play_widget_description">Comece um quebra-cabeça com um toque</string>
     <string name="quick_play_continue">Continuar</string>
     <string name="quick_play_play">Jogar</string>
-    <string name="quick_play_new_puzzle">Novo quebra-cabeça</string>
     <string name="minisudoku_title">Mini Sudoku</string>
     <string name="minisudoku_tagline">Grades pequenas de Sudoku: 4×4 para aquecer, 6×6 quando quiser mais.</string>
     <string name="minisudoku_difficulty_desc_easy">Grade 4×4 com quadrantes 2×2, números de 1 a 4.</string>

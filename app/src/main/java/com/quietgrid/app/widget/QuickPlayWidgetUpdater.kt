@@ -19,11 +19,16 @@ class QuickPlayWidgetUpdater @Inject constructor(
 
     fun start() {
         scope.launch {
-            source.render.collect { QuickPlayWidget().updateAll(context) }
+            source.render.collect { updateWidgets() }
         }
     }
 
     fun refresh() {
-        scope.launch { QuickPlayWidget().updateAll(context) }
+        scope.launch { updateWidgets() }
+    }
+
+    private suspend fun updateWidgets() {
+        QuickPlayWidget().updateAll(context)
+        MixWidget().updateAll(context)
     }
 }

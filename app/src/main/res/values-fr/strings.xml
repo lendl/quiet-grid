@@ -1220,7 +1220,6 @@
     <string name="quick_play_widget_description">Lance un puzzle d\'un simple appui</string>
     <string name="quick_play_continue">Continuer</string>
     <string name="quick_play_play">Jouer</string>
-    <string name="quick_play_new_puzzle">Nouveau puzzle</string>
     <string name="minisudoku_title">Mini Sudoku</string>
     <string name="minisudoku_tagline">De petites grilles de Sudoku : 4×4 pour s\'échauffer, 6×6 quand tu en veux plus.</string>
     <string name="minisudoku_difficulty_desc_easy">Grille 4×4 avec des boîtes 2×2, chiffres de 1 à 4.</string>

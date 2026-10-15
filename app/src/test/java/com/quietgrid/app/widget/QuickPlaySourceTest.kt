@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.Assert.assertNull
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -40,32 +40,40 @@ class QuickPlaySourceTest {
     }
 
     @Test
-    fun `first render with nothing stored is default games in system theme`() = runTest {
+    fun `first render with nothing stored is default games, no mix, in system theme`() = runTest {
         val render = fixture().source().render.first()
 
         assertEquals(ThemeMode.SYSTEM, render.themeMode)
-        assertEquals(QUICK_PLAY_DEFAULT_GAMES, (render.state as QuickPlayState.Games).games.map { it.gameId })
+        assertEquals(QUICK_PLAY_DEFAULT_GAMES, render.quickPlay.games.map { it.gameId })
+        assertNull(render.quickPlay.continueGame)
+        assertEquals(MixWidgetState(null, null), render.mix)
     }
 
     @Test
-    fun `saving a session switches to Continue and clearing it switches back`() = runTest {
+    fun `saving a session adds Continue to both widgets and clearing it removes it`() = runTest {
         val fixture = fixture()
 
         fixture.sessionRepository.save(ActiveSessionEnvelope(gameId = "sudoku", elapsedSeconds = 10.0, payload = "{}", difficulty = "medium"))
-        assertEquals(QuickPlayState.Continue(GameId.SUDOKU, Difficulty.MEDIUM), fixture.source().render.first().state)
+        val saved = fixture.source().render.first()
+        assertEquals(QuickPlayContinue(GameId.SUDOKU, Difficulty.MEDIUM), saved.quickPlay.continueGame)
+        assertEquals(QuickPlayContinue(GameId.SUDOKU, Difficulty.MEDIUM), saved.mix.continueGame)
 
         fixture.sessionRepository.clear()
-        assertTrue(fixture.source().render.first().state is QuickPlayState.Games)
+        val cleared = fixture.source().render.first()
+        assertNull(cleared.quickPlay.continueGame)
+        assertNull(cleared.mix.continueGame)
     }
 
     @Test
-    fun `started mix shows PlayMix`() = runTest {
+    fun `started mix shows on the mix widget only`() = runTest {
         val fixture = fixture()
 
         fixture.mixRepository.saveMix(Mix("mix-1", "Evenings", listOf(MixEntry("sudoku", MixEntryMode.PUZZLE, "easy", 1))))
         fixture.mixRepository.setActiveMix("mix-1")
 
-        assertEquals(QuickPlayState.PlayMix("mix-1", "Evenings", listOf(GameId.SUDOKU)), fixture.source().render.first().state)
+        val render = fixture.source().render.first()
+        assertEquals(QuickPlayMix("mix-1", "Evenings", listOf(GameId.SUDOKU)), render.mix.mix)
+        assertEquals(QUICK_PLAY_DEFAULT_GAMES, render.quickPlay.games.map { it.gameId })
     }
 
     @Test

@@ -220,16 +220,14 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
         if (mix != null) goToMixDraw(mix) else fallback()
     }
 
-    LaunchedEffect(launchRequest) {
-        val request = launchRequest ?: return@LaunchedEffect
+    LaunchRequestEffect(launchRequest, onLaunchRequestHandled) { request ->
         val session = repositories.sessionRepository.activeSessionSummary.first()
         val currentMixes = repositories.mixRepository.mixes.first()
         val onPlayScreen = navController.currentDestination?.route in setOf(Routes.PLAY, Routes.CHALLENGER, Routes.ENDLESS)
-        onLaunchRequestHandled()
         when (val action = launchAction(request, session, currentMixes.map { it.id }.toSet(), onPlayScreen)) {
             LaunchAction.OpenDailyTab -> goToDailyTab()
-            LaunchAction.OpenGamesTab -> {
-                selectedTab = AppTab.GAMES
+            LaunchAction.OpenMixesTab -> {
+                selectedTab = AppTab.MIXES
                 navController.popBackStack(Routes.TABS, inclusive = false)
             }
             LaunchAction.OpenTabs -> navController.popBackStack(Routes.TABS, inclusive = false)
