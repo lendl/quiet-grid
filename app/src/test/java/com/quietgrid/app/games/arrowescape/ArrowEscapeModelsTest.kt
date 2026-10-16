@@ -2,6 +2,8 @@ package com.quietgrid.app.games.arrowescape
 
 import com.quietgrid.engine.arrowescape.ArrowEscapePieceData
 import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -26,5 +28,12 @@ class ArrowEscapeModelsTest {
         assertEquals(ArrowEscapeStatus.PLAYING, session.status)
         assertTrue(session.removedIndices.isEmpty())
         assertNull(session.selectedIndex)
+        assertEquals(0, session.hintsUsed)
+    }
+
+    @Test
+    fun `a saved session from before hint counting decodes with zero hints`() {
+        val legacy = """{"puzzle":{"id":"test","difficulty":"easy","rows":2,"cols":1,"pieces":[]},"removedIndices":[],"lives":3,"selectedIndex":null,"status":"PLAYING"}"""
+        assertEquals(0, Json.decodeFromString<ArrowEscapePersistedSession>(legacy).hintsUsed)
     }
 }

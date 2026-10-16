@@ -75,6 +75,17 @@ class ArrowEscapeSolverTest {
     }
 
     @Test
+    fun `a puzzle with an arrow pointing into its own body is unsolvable`() {
+        val pieces = listOf(
+            ArrowEscapePiece(
+                cells = listOf(CellCoord(3, 1), CellCoord(2, 1), CellCoord(2, 0), CellCoord(1, 0), CellCoord(0, 0), CellCoord(0, 1), CellCoord(1, 1)),
+                headDirection = ArrowDirection.DOWN,
+            ),
+        )
+        assertFalse(solveArrowEscape(pieces, rows = 4, cols = 2).solvable)
+    }
+
+    @Test
     fun `alreadyRemoved pieces are excluded from the graph and never re-picked`() {
         val pieces = listOf(
             ArrowEscapePiece(cells = listOf(CellCoord(0, 0)), headDirection = ArrowDirection.LEFT),

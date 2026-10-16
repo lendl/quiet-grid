@@ -21,12 +21,13 @@ fun profileArrowEscapePuzzle(
     cols: Int,
     runs: Int = 100,
     random: Random = Random(0),
+    activeCells: Set<CellCoord>? = null,
 ): ArrowEscapeDifficultyProfile {
     val graph = buildDependencyGraph(pieces, rows, cols)
     val blockerCounts = graph.dependsOn.map { it.size }.filter { it > 0 }
     val borderExits = pieces.count { piece ->
         val head = piece.cells.last()
-        computeCorridor(head.row, head.col, piece.headDirection, rows, cols).isEmpty()
+        computeCorridor(head.row, head.col, piece.headDirection, rows, cols).none { activeCells == null || it in activeCells }
     }
     return ArrowEscapeDifficultyProfile(
         pieceCount = pieces.size,

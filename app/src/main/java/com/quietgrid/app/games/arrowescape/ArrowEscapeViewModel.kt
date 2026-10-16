@@ -29,9 +29,6 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 private val json = Json { ignoreUnknownKeys = true }
-private const val ARROW_ESCAPE_BASE_SCORE = 50_000
-private const val ARROW_ESCAPE_TIME_PENALTY_PER_SECOND = 100
-private const val ARROW_ESCAPE_MIN_SCORE = 0
 
 data class ArrowEscapeResult(
     val difficulty: Difficulty,
@@ -44,9 +41,6 @@ data class ArrowEscapeResult(
 )
 
 data class ArrowEscapeTapEvent(val id: Int, val pieceIndex: Int, val removed: Boolean)
-
-private fun arrowEscapeScore(elapsedSeconds: Int): Int =
-    maxOf(ARROW_ESCAPE_MIN_SCORE, ARROW_ESCAPE_BASE_SCORE - elapsedSeconds * ARROW_ESCAPE_TIME_PENALTY_PER_SECOND)
 
 private class ArrowEscapePuzzleAdapter(
     private val appContext: android.content.Context,
@@ -69,6 +63,7 @@ private class ArrowEscapePuzzleAdapter(
             lives = persisted.lives,
             selectedIndex = persisted.selectedIndex,
             status = ArrowEscapeStatus.valueOf(persisted.status),
+            hintsUsed = persisted.hintsUsed,
         )
     }.getOrNull()
 
@@ -83,12 +78,19 @@ private class ArrowEscapePuzzleAdapter(
             lives = session.lives,
             selectedIndex = session.selectedIndex,
             status = session.status.name,
+            hintsUsed = session.hintsUsed,
         ),
     )
 
     override fun puzzleIdOf(session: ArrowEscapeSession): String? = session.puzzle.id
 
-    override fun scoreOnWin(session: ArrowEscapeSession, difficulty: Difficulty, elapsedSeconds: Int): Int = arrowEscapeScore(elapsedSeconds)
+    override fun scoreOnWin(session: ArrowEscapeSession, difficulty: Difficulty, elapsedSeconds: Int): Int = arrowEscapeScore(
+        difficulty = difficulty,
+        arrowCount = session.puzzle.pieces.size,
+        elapsedSeconds = elapsedSeconds,
+        mistakes = ARROW_ESCAPE_STARTING_LIVES - session.lives,
+        hintsUsed = session.hintsUsed,
+    )
 
     override fun buildResult(session: ArrowEscapeSession?, outcome: PuzzleOutcome): ArrowEscapeResult = ArrowEscapeResult(
         difficulty = outcome.difficulty,
@@ -165,7 +167,7 @@ class ArrowEscapePlayViewModel @AssistedInject constructor(
         hintJob = viewModelScope.launch {
             val next = withContext(hintDispatcher) { applyArrowEscapeHint(current) }
             isComputingHint = false
-            if (next != null && !controller.isFinalized && session == current) controller.updateSession(next, persist = false)
+            if (next != null && !controller.isFinalized && session == current) controller.updateSession(next, persist = next.hintsUsed != current.hintsUsed)
         }
     }
 

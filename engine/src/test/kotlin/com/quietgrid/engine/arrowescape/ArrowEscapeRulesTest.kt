@@ -31,6 +31,17 @@ class ArrowEscapeRulesTest {
     }
 
     @Test
+    fun `an arrow pointing into its own body is never removable`() {
+        val hook = listOf(
+            ArrowEscapePiece(
+                cells = listOf(CellCoord(3, 1), CellCoord(2, 1), CellCoord(2, 0), CellCoord(1, 0), CellCoord(0, 0), CellCoord(0, 1), CellCoord(1, 1)),
+                headDirection = ArrowDirection.DOWN,
+            ),
+        )
+        assertFalse(isPieceRemovable(0, hook, removedIndices = emptySet(), ownerLookup = buildCellOwnerMap(hook), rows = 4, cols = 2))
+    }
+
+    @Test
     fun `findNextRemovablePiece returns the first removable index and null when none exist`() {
         assertEquals(1, findNextRemovablePiece(pieces, removedIndices = emptySet(), rows = 2, cols = 1))
         assertNull(findNextRemovablePiece(pieces, removedIndices = setOf(0, 1), rows = 2, cols = 1))

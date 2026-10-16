@@ -13,7 +13,7 @@ Quiet Grid is a native Android app (Kotlin, Jetpack Compose). The repo root is t
 ## Shared puzzle engine
 
 - `engine/` — pure Kotlin/JVM module (no Android deps) holding canonical puzzle rules, solving techniques, and difficulty scoring for sudoku, takuzu, nonogram, and wordsearch. `app/` depends on it for live hints/validation; `cli/` depends on it for offline generation. See `docs/superpowers/specs/2026-07-24-shared-puzzle-engine-design.md`.
-- `cli/` — offline puzzle generator (`./gradlew :cli:run --args="generate --game <sudoku|takuzu|nonogram|wordsearch> --difficulty <easy|medium|hard|expert> --count <n> --out app/src/main/assets"`). Writes/merges generated puzzles directly into the committed `*_puzzles.json` asset files `*PuzzleBank.kt` already loads — never ships in the APK, never runs on-device.
+- `cli/` — offline puzzle generator (`./gradlew :cli:run --args="generate --game <sudoku|takuzu|nonogram|wordsearch> --difficulty <easy|medium|hard|expert> --count <n> --out app/src/main/assets"`). Arrow Escape also takes `--shape <id|all>` to build silhouette boards from `cli/src/main/resources/arrowescape_silhouettes.json` (shape authoring rules: `docs/arrowescape-silhouette-guidelines.md`). Writes/merges generated puzzles directly into the committed `*_puzzles.json` asset files `*PuzzleBank.kt` already loads — never ships in the APK, never runs on-device.
 - Fast unit tests for rules/techniques/generators: `./gradlew :engine:test :cli:test` (plain JVM, no emulator needed).
 - New games' move-finding, solving-technique, and validity logic belongs in `:engine` first
   (`engine/src/main/kotlin/com/quietgrid/engine/<game>/`), with the `:app` layer delegating to it

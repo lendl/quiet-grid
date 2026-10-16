@@ -44,6 +44,7 @@ import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
 import com.quietgrid.engine.arrowescape.CellCoord
 import com.quietgrid.engine.arrowescape.buildCellOwnerMap
 import com.quietgrid.engine.arrowescape.computeCorridor
+import com.quietgrid.engine.arrowescape.isActiveCell
 import com.quietgrid.engine.arrowescape.toPiece
 import kotlin.math.PI
 import kotlin.math.exp
@@ -323,6 +324,7 @@ fun ArrowEscapeGrid(
                     val dotRadius = maxOf(cellSizePx * 0.05f, MIN_DOT_RADIUS.toPx())
                     for (row in 0 until puzzle.rows) {
                         for (col in 0 until puzzle.cols) {
+                            if (!puzzle.isActiveCell(row, col)) continue
                             drawCircle(
                                 dotColor,
                                 radius = dotRadius,

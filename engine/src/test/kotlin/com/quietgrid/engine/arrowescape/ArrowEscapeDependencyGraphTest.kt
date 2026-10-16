@@ -18,13 +18,24 @@ class ArrowEscapeDependencyGraphTest {
     }
 
     @Test
-    fun `no piece ever depends on itself`() {
+    fun `a piece whose own body is behind its head does not depend on itself`() {
         val pieces = listOf(
             ArrowEscapePiece(cells = listOf(CellCoord(0, 0), CellCoord(0, 1)), headDirection = ArrowDirection.RIGHT),
             ArrowEscapePiece(cells = listOf(CellCoord(1, 0)), headDirection = ArrowDirection.RIGHT),
         )
         val graph = buildDependencyGraph(pieces, rows = 2, cols = 2)
         graph.dependsOn.forEachIndexed { index, deps -> assertTrue(index !in deps) }
+    }
+
+    @Test
+    fun `an arrow pointing into its own body depends on itself`() {
+        val hook = listOf(
+            ArrowEscapePiece(
+                cells = listOf(CellCoord(3, 1), CellCoord(2, 1), CellCoord(2, 0), CellCoord(1, 0), CellCoord(0, 0), CellCoord(0, 1), CellCoord(1, 1)),
+                headDirection = ArrowDirection.DOWN,
+            ),
+        )
+        assertEquals(listOf(0), buildDependencyGraph(hook, rows = 4, cols = 2).dependsOn[0])
     }
 
     @Test

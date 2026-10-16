@@ -3,6 +3,8 @@ package com.quietgrid.cli
 import com.quietgrid.cli.animaldoku.generateAnimalDokuPuzzleForSolution
 import com.quietgrid.cli.animaldoku.generateSolutionPermutation
 import com.quietgrid.cli.arrowescape.generateArrowEscapePuzzle
+import com.quietgrid.cli.arrowescape.generateArrowEscapeSilhouettePuzzle
+import com.quietgrid.cli.arrowescape.loadArrowEscapeSilhouettes
 import com.quietgrid.cli.arrowescape.toEntry
 import com.quietgrid.cli.killersudoku.generateKillerSudokuBatch
 import com.quietgrid.cli.minisudoku.generateMiniSudokuPuzzle
@@ -43,6 +45,7 @@ data class GenerateCommand(
     val fillTo: Int? = null,
     val threads: Int = Runtime.getRuntime().availableProcessors(),
     val theme: String? = null,
+    val shape: String? = null,
 )
 
 private fun requireFlag(args: Array<String>, flag: String): String {
@@ -58,7 +61,7 @@ private fun optionalFlag(args: Array<String>, flag: String, default: String): St
 
 fun parseArgs(args: Array<String>): GenerateCommand {
     require(args.isNotEmpty() && args[0] == "generate") {
-        "Usage: generate --game <id> --difficulty <d> [--count <n>] [--out <dir>] [--locale <l>] [--fill-to <n>] [--threads <n>] [--theme <id>]"
+        "Usage: generate --game <id> --difficulty <d> [--count <n>] [--out <dir>] [--locale <l>] [--fill-to <n>] [--threads <n>] [--theme <id>] [--shape <id|all>]"
     }
     return GenerateCommand(
         game = requireFlag(args, "--game"),
@@ -69,6 +72,7 @@ fun parseArgs(args: Array<String>): GenerateCommand {
         fillTo = optionalFlag(args, "--fill-to", "").toIntOrNull(),
         threads = optionalFlag(args, "--threads", "${Runtime.getRuntime().availableProcessors()}").toInt(),
         theme = optionalFlag(args, "--theme", "").ifEmpty { null },
+        shape = optionalFlag(args, "--shape", "").ifEmpty { null },
     )
 }
 
@@ -295,19 +299,31 @@ fun main(args: Array<String>) {
         }
         "arrowescape" -> {
             val sizes = arrowEscapeSizesForDifficulty(difficulty)
+            val silhouettes = command.shape?.let { shape ->
+                val all = loadArrowEscapeSilhouettes()
+                if (shape == "all") all else all.filter { it.id == shape }.ifEmpty {
+                    error("Unknown arrowescape shape '$shape'. Expected one of: all, ${all.joinToString { it.id }}")
+                }
+            }
             val state = GenerationState("${command.outDir}/.generation-state/arrowescape.json")
             val maxTotalAttempts = command.count * 30
             val entries = mutableListOf<ArrowEscapePuzzleEntry>()
             var attempts = 0
             while (entries.size < command.count && attempts < maxTotalAttempts) {
                 attempts++
-                val size = sizes.random()
-                val generated = generateArrowEscapePuzzle(size, size, difficulty) ?: continue
+                val silhouette = silhouettes?.random()
+                val generated = if (silhouette != null) {
+                    generateArrowEscapeSilhouettePuzzle(silhouette, difficulty) ?: continue
+                } else {
+                    val size = sizes.random()
+                    generateArrowEscapePuzzle(size, size, difficulty) ?: continue
+                }
                 if (state.hasTried(generated.dedupeKey)) continue
                 state.recordTried(generated.dedupeKey, "valid")
                 val profile = generated.profile
                 println("arrowescape audit: difficulty=$difficulty pieces=${profile.pieceCount} rounds=${profile.rounds} freeShare=${"%.2f".format(profile.freeShare)} borderExitShare=${"%.2f".format(profile.borderExitShare)}")
-                entries += toEntry("ae$size-${entries.size}-${System.nanoTime()}", generated)
+                val idPrefix = generated.shape?.let { "ae-$it-${generated.rows}x${generated.cols}" } ?: "ae${generated.rows}"
+                entries += toEntry("$idPrefix-${entries.size}-${System.nanoTime()}", generated)
             }
             state.save()
             appendPuzzleEntries("${command.outDir}/arrowescape_puzzles.json", entries, ArrowEscapePuzzleEntry.serializer()) { it.id }

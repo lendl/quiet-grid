@@ -1,5 +1,6 @@
 package com.quietgrid.app.games.arrowescape
 
+import com.quietgrid.app.core.Difficulty
 import com.quietgrid.engine.arrowescape.ArrowEscapePieceData
 import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
 import org.junit.Assert.assertEquals
@@ -120,5 +121,50 @@ class ArrowEscapeLogicTest {
         val session = createArrowEscapeSession(bottleneckOverFillerPuzzle())
         val hinted = applyArrowEscapeHint(session)!!
         assertEquals(1, hinted.selectedIndex)
+    }
+
+    @Test
+    fun `a hint counts once per newly hinted arrow`() {
+        val first = applyArrowEscapeHint(createArrowEscapeSession(twoPiecePuzzle()))!!
+        assertEquals(1, first.hintsUsed)
+        assertEquals(1, applyArrowEscapeHint(first)!!.hintsUsed)
+        val afterRemoval = applyArrowEscapeAttempt(first, pieceIndex = 1)!!.session
+        assertEquals(2, applyArrowEscapeHint(afterRemoval)!!.hintsUsed)
+    }
+
+    @Test
+    fun `a clean solve within par scores the maximum on any board size`() {
+        assertEquals(50_000, arrowEscapeScore(Difficulty.EASY, arrowCount = 15, elapsedSeconds = 20, mistakes = 0, hintsUsed = 0))
+        assertEquals(50_000, arrowEscapeScore(Difficulty.EASY, arrowCount = 120, elapsedSeconds = 150, mistakes = 0, hintsUsed = 0))
+    }
+
+    @Test
+    fun `the same pace per arrow scores the same on small and large boards`() {
+        val small = arrowEscapeScore(Difficulty.MEDIUM, arrowCount = 15, elapsedSeconds = 60, mistakes = 0, hintsUsed = 0)
+        val large = arrowEscapeScore(Difficulty.MEDIUM, arrowCount = 120, elapsedSeconds = 480, mistakes = 0, hintsUsed = 0)
+        assertEquals(large, small)
+        assertEquals(35_000, small)
+    }
+
+    @Test
+    fun `a mistake costs more on a board with fewer arrows`() {
+        val small = arrowEscapeScore(Difficulty.EASY, arrowCount = 15, elapsedSeconds = 10, mistakes = 1, hintsUsed = 0)
+        val large = arrowEscapeScore(Difficulty.EASY, arrowCount = 120, elapsedSeconds = 10, mistakes = 1, hintsUsed = 0)
+        assertEquals(46_667, small)
+        assertEquals(49_583, large)
+    }
+
+    @Test
+    fun `a hint costs more on a board with fewer arrows`() {
+        val small = arrowEscapeScore(Difficulty.EASY, arrowCount = 15, elapsedSeconds = 10, mistakes = 0, hintsUsed = 1)
+        val large = arrowEscapeScore(Difficulty.EASY, arrowCount = 120, elapsedSeconds = 10, mistakes = 0, hintsUsed = 1)
+        assertEquals(49_000, small)
+        assertEquals(49_875, large)
+    }
+
+    @Test
+    fun `heavy mistakes and hints bottom out their share without going negative`() {
+        val score = arrowEscapeScore(Difficulty.EXPERT, arrowCount = 2, elapsedSeconds = 6, mistakes = 2, hintsUsed = 5)
+        assertEquals(30_000, score)
     }
 }

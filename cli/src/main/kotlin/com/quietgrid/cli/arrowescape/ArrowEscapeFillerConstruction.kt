@@ -30,7 +30,7 @@ private data class DeepFillCandidate(
     val cell: Pair<Int, Int>,
     val direction: ArrowDirection,
     val depth: Int,
-    val corridorLength: Int,
+    val activeCorridorLength: Int,
 )
 
 fun fillCoverage(
@@ -39,20 +39,21 @@ fun fillCoverage(
     params: ArrowEscapeFillParams,
     maxEmptyRatio: Double,
     random: Random = Random.Default,
+    activeCells: Set<Pair<Int, Int>>? = null,
 ): FillResult? {
-    val remaining = mutableSetOf<Pair<Int, Int>>()
-    for (r in 0 until rows) for (c in 0 until cols) remaining.add(r to c)
+    val active = activeCells ?: buildSet { for (r in 0 until rows) for (c in 0 until cols) add(r to c) }
+    val remaining = active.toMutableSet()
     val owner = mutableMapOf<Pair<Int, Int>, Int>()
     val depths = mutableListOf<Int>()
     val pieces = mutableListOf<ArrowEscapePiece>()
 
     while (remaining.isNotEmpty()) {
-        val candidates = sampleDeepFillCandidates(rows, cols, remaining, owner, depths, random)
+        val candidates = sampleDeepFillCandidates(rows, cols, active, remaining, owner, depths, random)
         if (candidates.isEmpty()) break
-        val inner = candidates.filter { it.corridorLength > 0 }
+        val inner = candidates.filter { it.activeCorridorLength > 0 }
         val pool = if (inner.isNotEmpty() && random.nextDouble() >= params.borderExitRate) inner else candidates
         val chosen = if (random.nextDouble() < params.depthGreed) {
-            pool.maxWith(compareBy<DeepFillCandidate> { it.depth }.thenByDescending { it.corridorLength })
+            pool.maxWith(compareBy<DeepFillCandidate> { it.depth }.thenByDescending { it.activeCorridorLength })
         } else {
             pool[random.nextInt(pool.size)]
         }
@@ -68,14 +69,63 @@ fun fillCoverage(
         pieces.add(ArrowEscapePiece(cells = cells.map { CellCoord(it.first, it.second) }, headDirection = chosen.direction))
     }
 
+    if (activeCells != null) absorbLeftovers(rows, cols, pieces, remaining, owner)
+
     val emptyCellCount = remaining.size
-    if (emptyCellCount > ceil(rows * cols * maxEmptyRatio).toInt()) return null
+    if (emptyCellCount > ceil(active.size * maxEmptyRatio).toInt()) return null
     return FillResult(pieces, emptyCellCount)
 }
+
+private fun absorbLeftovers(
+    rows: Int,
+    cols: Int,
+    pieces: MutableList<ArrowEscapePiece>,
+    remaining: MutableSet<Pair<Int, Int>>,
+    owner: MutableMap<Pair<Int, Int>, Int>,
+) {
+    var changed = true
+    while (changed) {
+        changed = false
+        for (cell in remaining.sortedWith(compareBy({ it.first }, { it.second }))) {
+            val coord = CellCoord(cell.first, cell.second)
+            val tailIndex = neighborsOf(cell).firstNotNullOfOrNull { neighbor ->
+                owner[neighbor]?.takeIf { pieces[it].cells.first() == CellCoord(neighbor.first, neighbor.second) }
+            }
+            if (tailIndex != null) {
+                val piece = pieces[tailIndex]
+                pieces[tailIndex] = piece.copy(cells = listOf(coord) + piece.cells)
+                owner[cell] = tailIndex
+            } else {
+                val headExtension = ArrowDirection.entries.firstNotNullOfOrNull { direction ->
+                    val (dr, dc) = ARROW_DIRECTION_DELTA.getValue(direction)
+                    val neck = (cell.first - dr) to (cell.second - dc)
+                    val pieceIndex = owner[neck] ?: return@firstNotNullOfOrNull null
+                    if (pieces[pieceIndex].cells.last() != CellCoord(neck.first, neck.second)) return@firstNotNullOfOrNull null
+                    val corridor = computeCorridor(cell.first, cell.second, direction, rows, cols)
+                    val clear = corridor.all { next ->
+                        val key = next.row to next.col
+                        key !in remaining && (owner[key]?.let { it < pieceIndex } ?: true)
+                    }
+                    if (clear) pieceIndex to direction else null
+                } ?: continue
+                val (pieceIndex, direction) = headExtension
+                val piece = pieces[pieceIndex]
+                pieces[pieceIndex] = ArrowEscapePiece(cells = piece.cells + coord, headDirection = direction)
+                owner[cell] = pieceIndex
+            }
+            remaining.remove(cell)
+            changed = true
+        }
+    }
+}
+
+private fun neighborsOf(cell: Pair<Int, Int>): List<Pair<Int, Int>> =
+    ARROW_DIRECTION_DELTA.values.map { (dr, dc) -> (cell.first + dr) to (cell.second + dc) }
 
 private fun sampleDeepFillCandidates(
     rows: Int,
     cols: Int,
+    active: Set<Pair<Int, Int>>,
     remaining: Set<Pair<Int, Int>>,
     owner: Map<Pair<Int, Int>, Int>,
     depths: List<Int>,
@@ -93,8 +143,8 @@ private fun sampleDeepFillCandidates(
             if (neck !in remaining) continue
             val corridor = computeCorridor(cell.first, cell.second, direction, rows, cols)
             if (corridor.any { (it.row to it.col) in remaining }) continue
-            val depth = corridor.maxOfOrNull { depths[owner.getValue(it.row to it.col)] + 1 } ?: 0
-            candidates.add(DeepFillCandidate(cell, direction, depth, corridor.size))
+            val depth = corridor.mapNotNull { owner[it.row to it.col] }.maxOfOrNull { depths[it] + 1 } ?: 0
+            candidates.add(DeepFillCandidate(cell, direction, depth, corridor.count { (it.row to it.col) in active }))
         }
     }
     return candidates

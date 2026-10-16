@@ -14,7 +14,7 @@ fun isPieceRemovable(
     val corridor = computeCorridor(head.row, head.col, piece.headDirection, rows, cols)
     return corridor.all { cell ->
         val ownerIndex = ownerLookup[cell.row to cell.col]
-        ownerIndex == null || ownerIndex == pieceIndex || ownerIndex in removedIndices
+        ownerIndex == null || ownerIndex in removedIndices
     }
 }
 

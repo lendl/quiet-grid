@@ -22,7 +22,18 @@ data class ArrowEscapePuzzleEntry(
     val rows: Int,
     val cols: Int,
     val pieces: List<ArrowEscapePieceData>,
+    val shape: String? = null,
+    val mask: List<String>? = null,
 )
+
+const val ARROW_ESCAPE_MASK_ACTIVE = '#'
+const val ARROW_ESCAPE_MASK_VOID = '.'
+
+fun ArrowEscapePuzzleEntry.isActiveCell(row: Int, col: Int): Boolean {
+    if (row !in 0 until rows || col !in 0 until cols) return false
+    val maskRows = mask ?: return true
+    return maskRows.getOrNull(row)?.getOrNull(col) == ARROW_ESCAPE_MASK_ACTIVE
+}
 
 fun ArrowEscapePieceData.toPiece(): ArrowEscapePiece = ArrowEscapePiece(
     cells = cells.map { CellCoord(it[0], it[1]) },
