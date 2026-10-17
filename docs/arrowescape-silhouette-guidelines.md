@@ -112,7 +112,11 @@ If the cap stops the growth before the target, the board stays smaller than its 
 
 ## Shapes that work and shapes that don't
 
-Good candidates are chunky objects that read by outline: house, tree, pine, apple, pear, owl, penguin, bear head, chess rook, chess pawn, crown, bell, lightbulb, teacup, hot-air balloon, padlock, hourglass, pumpkin, ghost.
+Good candidates are chunky objects that read by outline. The bank already uses house, tree, pine, apple, pear, owl, bear, rook, pawn, crown, bell, mug, hot-air balloon, padlock, hourglass, acorn, cactus, gift, duck, ghost and ice cream. Open candidates include penguin, tent, boot, strawberry and milk bottle.
+
+A new shape must also look different from every shape already in the file. Compare the previews side by side at `minRows` and at 26 rows:
+- A pumpkin was dropped because its lobes don't show in the outline, so it reads as `apple`.
+- A lightbulb was dropped because a round top on a narrow base reads as `balloon` or `icecream`.
 
 Avoid these:
 
