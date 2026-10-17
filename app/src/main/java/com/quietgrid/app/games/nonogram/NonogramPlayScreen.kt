@@ -1,41 +1,22 @@
 package com.quietgrid.app.games.nonogram
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lightbulb
-import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.core.GameId
 import com.quietgrid.app.ui.components.CollectPuzzleResult
-import com.quietgrid.app.ui.components.ElapsedTimerText
-import com.quietgrid.app.ui.components.EndPuzzleDialog
-import com.quietgrid.app.ui.components.EndPuzzleIconButton
-import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
 import com.quietgrid.app.ui.components.rememberHapticController
-import com.quietgrid.app.ui.components.LogoGridLoader
+import com.quietgrid.app.ui.play.GamePlayScaffold
+import com.quietgrid.app.ui.play.PlayHintAction
+import com.quietgrid.app.ui.play.PlayHintMessage
+import com.quietgrid.app.ui.play.PlayTimer
 
 @Composable
 fun NonogramPlayScreen(
@@ -49,86 +30,48 @@ fun NonogramPlayScreen(
     )
     CollectPuzzleResult(viewModel.result, onFinished)
 
-    var showEndDialog by remember { mutableStateOf(false) }
     val session = viewModel.session
     val haptics = rememberHapticController()
 
-    Column(Modifier.fillMaxSize().padding(16.dp)) {
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            GameBackButton(onBack)
-            Row(
-                Modifier.weight(1f),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                IconButton(onClick = { viewModel.toggleNextMoveHint() }, enabled = !viewModel.isComputingHint) {
-                    if (viewModel.isComputingHint) {
-                        LogoGridLoader(size = 20.dp)
-                    } else {
-                        Icon(
-                            imageVector = Icons.Filled.Lightbulb,
-                            contentDescription = stringResource(
-                                if (viewModel.nextMoveHintActive) R.string.nonogram_hint_hide else R.string.nonogram_hint_show,
-                            ),
-                            tint = if (viewModel.nextMoveHintActive) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant,
+    val hint = viewModel.nextMoveHint
+    val hintActive = viewModel.nextMoveHintActive && !viewModel.isComputingHint
+    GamePlayScaffold(
+        gameId = GameId.NONOGRAM,
+        timer = PlayTimer.Elapsed(viewModel.elapsedSeconds.toInt()),
+        onBack = onBack,
+        onEndPuzzle = { viewModel.endPuzzle() },
+        difficulty = session?.let { Difficulty.fromKey(it.puzzle.difficulty) },
+        hint = PlayHintAction(
+            active = hintActive,
+            busy = viewModel.isComputingHint,
+            contentDescription = stringResource(if (hintActive) R.string.nonogram_hint_hide else R.string.nonogram_hint_show),
+            onClick = { viewModel.toggleNextMoveHint() },
+        ),
+        hintMessage = if (hintActive && hint != null) {
+            val (title, body) = resolveNonogramHintText(hint)
+            PlayHintMessage(title, body)
+        } else {
+            null
+        },
+        dockHeight = ::nonogramDockHeight,
+        dock = { sizeClass ->
+            NonogramModeDock(sizeClass, viewModel.inputMode) { viewModel.inputMode = it }
+        },
+        board = {
+            PuzzleBoardContainer(visible = session != null, playFresh = !resume, zoomable = false) {
+                if (session != null) {
+                    Box(Modifier.padding(12.dp)) {
+                        NonogramBoard(
+                            puzzle = session.puzzle,
+                            board = session.board,
+                            onTap = { row, col -> haptics.tapFeedback(); viewModel.onCellTap(row, col) },
+                            onDragPaint = { cells -> haptics.tapFeedback(); viewModel.onDragPaint(cells) },
+                            hintEvidenceCells = hint?.evidenceCells?.toSet() ?: emptySet(),
+                            hintTargetCells = hint?.targetCells?.associate { (r, c, v) -> (r to c) to v } ?: emptyMap(),
                         )
                     }
                 }
-                EndPuzzleIconButton(onClick = { showEndDialog = true })
             }
-        }
-
-        ElapsedTimerText(
-            viewModel.elapsedSeconds.toInt(),
-            modifier = Modifier.padding(top = 4.dp, bottom = 12.dp),
-        )
-
-        val hint = viewModel.nextMoveHint
-        if (viewModel.nextMoveHintActive && hint != null) {
-            val (hintTitle, hintBody) = resolveNonogramHintText(hint)
-            Card(Modifier.fillMaxWidth().padding(bottom = 12.dp)) {
-                Column(Modifier.padding(12.dp)) {
-                    Text(hintTitle, style = MaterialTheme.typography.titleSmall)
-                    Text(hintBody, style = MaterialTheme.typography.bodySmall)
-                }
-            }
-        }
-
-        PuzzleBoardContainer(visible = session != null, playFresh = !resume, zoomable = false) {
-            if (session != null) {
-                Box(Modifier.padding(12.dp)) {
-                    NonogramBoard(
-                        puzzle = session.puzzle,
-                        board = session.board,
-                        onTap = { row, col -> haptics.tapFeedback(); viewModel.onCellTap(row, col) },
-                        onDragPaint = { cells -> haptics.tapFeedback(); viewModel.onDragPaint(cells) },
-                        hintEvidenceCells = hint?.evidenceCells?.toSet() ?: emptySet(),
-                        hintTargetCells = hint?.targetCells?.associate { (r, c, v) -> (r to c) to v } ?: emptyMap(),
-                    )
-                }
-            }
-        }
-
-        Row(
-            Modifier.fillMaxWidth().padding(top = 12.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(stringResource(R.string.nonogram_input_mode_fill), modifier = Modifier.padding(end = 8.dp))
-            Switch(
-                checked = viewModel.inputMode == NonogramInputMode.CROSS,
-                onCheckedChange = { viewModel.inputMode = if (it) NonogramInputMode.CROSS else NonogramInputMode.FILL },
-            )
-            Text(stringResource(R.string.nonogram_input_mode_cross), modifier = Modifier.padding(start = 8.dp))
-        }
-    }
-
-    EndPuzzleDialog(
-        visible = showEndDialog,
-        onDismiss = { showEndDialog = false },
-        onConfirm = {
-            showEndDialog = false
-            viewModel.endPuzzle()
         },
     )
 }

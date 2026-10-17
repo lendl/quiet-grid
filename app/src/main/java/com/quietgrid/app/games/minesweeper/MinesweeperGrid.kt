@@ -141,7 +141,7 @@ fun MinesweeperGrid(
 }
 
 @Composable
-private fun MinesweeperFlagGlyph(poleColor: Color, bannerColor: Color) {
+internal fun MinesweeperFlagGlyph(poleColor: Color, bannerColor: Color) {
     Canvas(Modifier.fillMaxSize().padding(3.dp)) {
         val u = size.minDimension / 24f
         drawRoundRect(

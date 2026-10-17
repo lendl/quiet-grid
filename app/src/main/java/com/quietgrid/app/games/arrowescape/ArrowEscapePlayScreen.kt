@@ -3,28 +3,20 @@ package com.quietgrid.app.games.arrowescape
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.outlined.Lightbulb
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -34,14 +26,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.core.GameId
 import com.quietgrid.app.ui.components.CollectPuzzleResult
-import com.quietgrid.app.ui.components.ElapsedTimerText
-import com.quietgrid.app.ui.components.EndPuzzleDialog
-import com.quietgrid.app.ui.components.EndPuzzleIconButton
-import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
 import com.quietgrid.app.ui.components.rememberHapticController
-import com.quietgrid.app.ui.components.LogoGridLoader
+import com.quietgrid.app.ui.play.GamePlayScaffold
+import com.quietgrid.app.ui.play.InfoItem
+import com.quietgrid.app.ui.play.PlayHintAction
+import com.quietgrid.app.ui.play.PlayTimer
 import kotlinx.coroutines.delay
 
 @Composable
@@ -56,7 +48,6 @@ fun ArrowEscapePlayScreen(
     )
     CollectPuzzleResult(viewModel.result, onFinished)
 
-    var showEndDialog by remember { mutableStateOf(false) }
     var visibleBounds by remember { mutableStateOf<Rect?>(null) }
     var panTarget by remember { mutableStateOf<Offset?>(null) }
     val session = viewModel.session
@@ -98,82 +89,66 @@ fun ArrowEscapePlayScreen(
         lostHeartScale.animateTo(1f, animationSpec = tween(150))
     }
 
-    Column(Modifier.fillMaxSize().padding(16.dp)) {
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            GameBackButton(onBack)
-            Spacer(Modifier.weight(1f))
-            if (session != null) {
-                Text(
-                    stringResource(
-                        R.string.arrowescape_progress_label,
-                        session.removedIndices.size,
-                        session.puzzle.pieces.size,
-                    ),
-                    style = MaterialTheme.typography.labelLarge,
-                    modifier = Modifier.padding(end = 12.dp),
-                )
-                Row(Modifier.padding(end = 8.dp)) {
-                    repeat(ARROW_ESCAPE_STARTING_LIVES) { index ->
-                        val isLostHeart = index == lostHeart
-                        val filled = index < session.lives || (isLostHeart && lostHeartFilled)
-                        Icon(
-                            if (filled) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.error,
-                            modifier = Modifier
-                                .padding(end = 4.dp)
-                                .graphicsLayer {
-                                    val scale = if (isLostHeart) lostHeartScale.value else 1f
-                                    scaleX = scale
-                                    scaleY = scale
-                                },
-                        )
+    GamePlayScaffold(
+        gameId = GameId.ARROWESCAPE,
+        timer = PlayTimer.Elapsed(viewModel.elapsedSeconds.toInt()),
+        onBack = onBack,
+        onEndPuzzle = { viewModel.endPuzzle() },
+        difficulty = session?.let { Difficulty.fromKey(it.puzzle.difficulty) },
+        hint = PlayHintAction(
+            active = false,
+            busy = viewModel.isComputingHint,
+            contentDescription = stringResource(R.string.arrowescape_hint_content_description),
+            onClick = viewModel::onHint,
+        ),
+        info = if (session == null) {
+            emptyList()
+        } else {
+            listOf(
+                InfoItem.Label(stringResource(R.string.arrowescape_arrows_cleared, session.removedIndices.size, session.puzzle.pieces.size)),
+                InfoItem.Custom {
+                    Row(horizontalArrangement = Arrangement.spacedBy(3.dp)) {
+                        repeat(ARROW_ESCAPE_STARTING_LIVES) { index ->
+                            val isLostHeart = index == lostHeart
+                            val filled = index < session.lives || (isLostHeart && lostHeartFilled)
+                            Icon(
+                                if (filled) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                                contentDescription = null,
+                                tint = LocalContentColor.current,
+                                modifier = Modifier
+                                    .size(16.dp)
+                                    .graphicsLayer {
+                                        val scale = if (isLostHeart) lostHeartScale.value else 1f
+                                        scaleX = scale
+                                        scaleY = scale
+                                    },
+                            )
+                        }
                     }
-                }
-                IconButton(onClick = viewModel::onHint, enabled = !viewModel.isComputingHint) {
-                    if (viewModel.isComputingHint) {
-                        LogoGridLoader(size = 20.dp)
-                    } else {
-                        Icon(Icons.Outlined.Lightbulb, contentDescription = null)
-                    }
+                },
+            )
+        },
+        board = {
+            PuzzleBoardContainer(
+                visible = session != null,
+                playFresh = !resume,
+                zoomable = true,
+                flashTrigger = flashTrigger,
+                panTarget = panTarget,
+                onVisibleBoundsChange = { visibleBounds = it },
+            ) {
+                session?.let { current ->
+                    ArrowEscapeGrid(
+                        puzzle = current.puzzle,
+                        removedIndices = current.removedIndices,
+                        selectedIndex = current.selectedIndex,
+                        lastTap = viewModel.lastTapEvent,
+                        visibleBounds = visibleBounds,
+                        onRequestPan = { panTarget = it },
+                        onPieceTap = viewModel::onPieceTap,
+                    )
                 }
             }
-            EndPuzzleIconButton(onClick = { showEndDialog = true })
-        }
-
-        ElapsedTimerText(
-            viewModel.elapsedSeconds.toInt(),
-            modifier = Modifier.padding(top = 4.dp, bottom = 12.dp),
-        )
-
-        PuzzleBoardContainer(
-            visible = session != null,
-            playFresh = !resume,
-            zoomable = true,
-            flashTrigger = flashTrigger,
-            panTarget = panTarget,
-            onVisibleBoundsChange = { visibleBounds = it },
-        ) {
-            session?.let { current ->
-                ArrowEscapeGrid(
-                    puzzle = current.puzzle,
-                    removedIndices = current.removedIndices,
-                    selectedIndex = current.selectedIndex,
-                    lastTap = viewModel.lastTapEvent,
-                    visibleBounds = visibleBounds,
-                    onRequestPan = { panTarget = it },
-                    onPieceTap = viewModel::onPieceTap,
-                )
-            }
-        }
-    }
-
-    EndPuzzleDialog(
-        visible = showEndDialog,
-        onDismiss = { showEndDialog = false },
-        onConfirm = {
-            showEndDialog = false
-            viewModel.endPuzzle()
         },
     )
 }

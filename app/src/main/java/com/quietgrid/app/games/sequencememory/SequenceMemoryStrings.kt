@@ -2,6 +2,7 @@ package com.quietgrid.app.games.sequencememory
 
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.ui.components.QuickRule
 import com.quietgrid.app.ui.components.QuickStartContent
 
 fun sequenceMemoryDifficultyLabelRes(difficulty: Difficulty): Int = when (difficulty) {
@@ -26,4 +27,9 @@ val SequenceMemoryQuickStart = QuickStartContent(
         R.string.sequencememory_quickstart_bullet_3,
     ),
     hookRes = R.string.sequencememory_quickstart_hook,
+    rules = listOf(
+        QuickRule(R.string.sequencememory_rule_1_title) { SequenceWatchPicture() },
+        QuickRule(R.string.sequencememory_rule_2_title) { SequenceRepeatPicture() },
+        QuickRule(R.string.sequencememory_rule_3_title) { SequenceGrowPicture() },
+    ),
 )

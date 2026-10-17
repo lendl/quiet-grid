@@ -1,40 +1,23 @@
 package com.quietgrid.app.games.minesweeper
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lightbulb
-import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.core.GameId
 import com.quietgrid.app.ui.components.CollectPuzzleResult
-import com.quietgrid.app.ui.components.ElapsedTimerText
-import com.quietgrid.app.ui.components.EndPuzzleDialog
-import com.quietgrid.app.ui.components.EndPuzzleIconButton
-import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
 import com.quietgrid.app.ui.components.rememberHapticController
-import com.quietgrid.app.ui.components.LogoGridLoader
+import com.quietgrid.app.ui.play.GamePlayScaffold
+import com.quietgrid.app.ui.play.InfoItem
+import com.quietgrid.app.ui.play.PlayHintAction
+import com.quietgrid.app.ui.play.PlayHintMessage
+import com.quietgrid.app.ui.play.PlayTimer
 
 @Composable
 fun MinesweeperPlayScreen(
@@ -48,79 +31,46 @@ fun MinesweeperPlayScreen(
     )
     CollectPuzzleResult(viewModel.result, onFinished)
 
-    var showEndDialog by remember { mutableStateOf(false) }
     val session = viewModel.session
     val haptics = rememberHapticController()
 
-    Column(Modifier.fillMaxSize().padding(16.dp)) {
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            GameBackButton(onBack)
-            Row(
-                Modifier.weight(1f),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
+    val hint = viewModel.nextMoveHint
+    GamePlayScaffold(
+        gameId = GameId.MINESWEEPER,
+        timer = PlayTimer.Elapsed(viewModel.elapsedSeconds.toInt()),
+        onBack = onBack,
+        onEndPuzzle = { viewModel.endPuzzle() },
+        difficulty = session?.let { Difficulty.fromKey(it.puzzle.difficulty) },
+        hint = PlayHintAction(
+            active = hint != null,
+            busy = viewModel.isComputingHint,
+            contentDescription = stringResource(if (hint != null) R.string.minesweeper_hint_hide else R.string.minesweeper_hint_show),
+            onClick = { viewModel.toggleNextMoveHint() },
+        ),
+        hintMessage = hint?.let { current ->
+            val (title, body) = resolveMinesweeperHintText(current)
+            PlayHintMessage(title, body)
+        },
+        info = if (session == null) {
+            emptyList()
+        } else {
+            val minesLeft = maxOf(0, session.board.mines - countFlaggedMinesweeperCells(session.board))
+            listOf(InfoItem.Label(stringResource(R.string.minesweeper_mines_left_count, minesLeft), emphasized = true))
+        },
+        board = {
+            PuzzleBoardContainer(visible = session != null, playFresh = !resume) {
                 if (session != null) {
-                    val minesLeft = maxOf(0, session.board.mines - countFlaggedMinesweeperCells(session.board))
-                    Column {
-                        Text(stringResource(R.string.minesweeper_mines_left_label), style = MaterialTheme.typography.labelSmall)
-                        Text(minesLeft.toString(), style = MaterialTheme.typography.titleMedium)
-                    }
-                }
-                IconButton(onClick = { viewModel.toggleNextMoveHint() }, enabled = !viewModel.isComputingHint) {
-                    if (viewModel.isComputingHint) {
-                        LogoGridLoader(size = 20.dp)
-                    } else {
-                        Icon(
-                            imageVector = Icons.Filled.Lightbulb,
-                            contentDescription = stringResource(
-                                if (viewModel.nextMoveHint != null) R.string.minesweeper_hint_hide else R.string.minesweeper_hint_show,
-                            ),
-                            tint = if (viewModel.nextMoveHint != null) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    Box(Modifier.padding(8.dp)) {
+                        MinesweeperGrid(
+                            board = session.board,
+                            onReveal = { row, col -> haptics.tapFeedback(); viewModel.onReveal(row, col) },
+                            onToggleFlag = { row, col -> haptics.tapFeedback(); viewModel.onToggleFlag(row, col) },
+                            hintEvidenceCells = hint?.evidenceCells?.toSet() ?: emptySet(),
+                            hintTargetCells = hint?.targetCells?.toSet() ?: emptySet(),
                         )
                     }
                 }
-                EndPuzzleIconButton(onClick = { showEndDialog = true })
             }
-        }
-
-        ElapsedTimerText(
-            viewModel.elapsedSeconds.toInt(),
-            modifier = Modifier.padding(top = 4.dp, bottom = 12.dp),
-        )
-
-        val hint = viewModel.nextMoveHint
-        if (hint != null) {
-            val (hintTitle, hintBody) = resolveMinesweeperHintText(hint)
-            Card(Modifier.fillMaxWidth().padding(bottom = 12.dp)) {
-                Column(Modifier.padding(12.dp)) {
-                    Text(hintTitle, style = MaterialTheme.typography.titleSmall)
-                    Text(hintBody, style = MaterialTheme.typography.bodySmall)
-                }
-            }
-        }
-
-        PuzzleBoardContainer(visible = session != null, playFresh = !resume) {
-            if (session != null) {
-                Box(Modifier.padding(8.dp)) {
-                    MinesweeperGrid(
-                        board = session.board,
-                        onReveal = { row, col -> haptics.tapFeedback(); viewModel.onReveal(row, col) },
-                        onToggleFlag = { row, col -> haptics.tapFeedback(); viewModel.onToggleFlag(row, col) },
-                        hintEvidenceCells = hint?.evidenceCells?.toSet() ?: emptySet(),
-                        hintTargetCells = hint?.targetCells?.toSet() ?: emptySet(),
-                    )
-                }
-            }
-        }
-    }
-
-    EndPuzzleDialog(
-        visible = showEndDialog,
-        onDismiss = { showEndDialog = false },
-        onConfirm = {
-            showEndDialog = false
-            viewModel.endPuzzle()
         },
     )
 }

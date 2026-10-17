@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
+import com.quietgrid.app.ui.components.QuickRule
 import com.quietgrid.app.ui.components.QuickStartContent
 import com.quietgrid.app.ui.components.QuickStartExample
 import com.quietgrid.engine.wordguess.LetterState
@@ -39,4 +40,9 @@ val WordGuessQuickStart = QuickStartContent(
         ),
     ),
     hookRes = R.string.wordguess_quickstart_hook,
+    rules = listOf(
+        QuickRule(R.string.wordguess_quickrule_correct) { WordGuessQuickRulePicture("ART", 1, LetterState.CORRECT) },
+        QuickRule(R.string.wordguess_quickrule_present) { WordGuessQuickRulePicture("LIT", 1, LetterState.PRESENT) },
+        QuickRule(R.string.wordguess_quickrule_absent) { WordGuessQuickRulePicture("BRO", 0, LetterState.ABSENT) },
+    ),
 )

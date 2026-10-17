@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
@@ -156,6 +157,34 @@ fun ColumnScope.PuzzleBoardContainer(
         flashTrigger = flashTrigger,
         showFrame = showFrame,
         modifier = Modifier.weight(1f).fillMaxWidth(),
+        content = content,
+    )
+}
+
+@Composable
+fun BoxScope.PuzzleBoardContainer(
+    visible: Boolean,
+    playFresh: Boolean,
+    flashTrigger: Int = 0,
+    zoomable: Boolean = true,
+    showFrame: Boolean = true,
+    onZoomChange: (Boolean) -> Unit = {},
+    resetTrigger: Int = 0,
+    panTarget: Offset? = null,
+    onVisibleBoundsChange: (Rect) -> Unit = {},
+    content: @Composable () -> Unit,
+) {
+    PuzzleBoardContainerBox(
+        visible = visible,
+        playFresh = playFresh,
+        zoomable = zoomable,
+        onZoomChange = onZoomChange,
+        resetTrigger = resetTrigger,
+        panTarget = panTarget,
+        onVisibleBoundsChange = onVisibleBoundsChange,
+        flashTrigger = flashTrigger,
+        showFrame = showFrame,
+        modifier = Modifier.fillMaxSize(),
         content = content,
     )
 }

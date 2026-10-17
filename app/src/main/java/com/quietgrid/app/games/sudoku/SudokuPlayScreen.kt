@@ -1,34 +1,13 @@
 package com.quietgrid.app.games.sudoku
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Undo
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Lightbulb
-import androidx.compose.material3.Card
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -37,42 +16,13 @@ import com.quietgrid.app.R
 import java.time.LocalDate
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.ui.components.CollectPuzzleResult
-import com.quietgrid.app.ui.components.ElapsedTimerText
-import com.quietgrid.app.ui.components.EndPuzzleDialog
-import com.quietgrid.app.ui.components.EndPuzzleIconButton
-import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
 import com.quietgrid.app.ui.components.rememberHapticController
+import com.quietgrid.app.ui.play.GamePlayScaffold
+import com.quietgrid.app.ui.play.PlayHintAction
+import com.quietgrid.app.ui.play.PlayHintMessage
+import com.quietgrid.app.ui.play.PlayTimer
 import com.quietgrid.engine.sudoku.SudokuTechnique
-import com.quietgrid.app.ui.components.LogoGridLoader
-
-@Composable
-internal fun SudokuPadButton(
-    active: Boolean,
-    enabled: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
-) {
-    val contentColor = when {
-        active -> MaterialTheme.colorScheme.onPrimary
-        enabled -> MaterialTheme.colorScheme.onSurface
-        else -> MaterialTheme.colorScheme.onSurfaceVariant
-    }
-    Surface(
-        onClick = onClick,
-        enabled = enabled,
-        modifier = modifier,
-        shape = RoundedCornerShape(8.dp),
-        color = if (active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
-        contentColor = contentColor,
-        border = if (active) null else BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-    ) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            content()
-        }
-    }
-}
 
 @Composable
 fun SudokuPlayScreen(
@@ -88,7 +38,6 @@ fun SudokuPlayScreen(
     )
     CollectPuzzleResult(viewModel.result, onFinished)
 
-    var showEndDialog by remember { mutableStateOf(false) }
     val session = viewModel.session
 
     val haptics = rememberHapticController()
@@ -105,174 +54,82 @@ fun SudokuPlayScreen(
         }
     }
 
-    Column(Modifier.fillMaxSize().padding(16.dp)) {
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            GameBackButton(onBack)
-            Row(
-                Modifier.weight(1f),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
+    val hint = viewModel.nextMoveHint
+    val hintActive = viewModel.nextMoveHintActive && !viewModel.isComputingHint
+    GamePlayScaffold(
+        gameId = variant.gameId,
+        timer = PlayTimer.Elapsed(viewModel.elapsedSeconds.toInt()),
+        onBack = onBack,
+        onEndPuzzle = { viewModel.endPuzzle() },
+        difficulty = session?.let { Difficulty.fromKey(it.puzzle.difficulty) },
+        hint = PlayHintAction(
+            active = hintActive,
+            busy = viewModel.isComputingHint,
+            contentDescription = stringResource(if (hintActive) R.string.sudoku_hint_hide else R.string.sudoku_hint_show),
+            onClick = { viewModel.toggleNextMoveHint() },
+        ),
+        hintMessage = if (hintActive) sudokuHintMessage(hint) else null,
+        dockHeight = ::sudokuDockHeight,
+        dock = { sizeClass ->
+            if (session != null) {
+                SudokuDock(
+                    sizeClass,
+                    sudokuDockModel(
+                        session = session,
+                        selectedCell = viewModel.selectedCell,
+                        canUndo = viewModel.canUndo,
+                        onDigit = viewModel::onPressDigit,
+                        onClear = viewModel::onClearCell,
+                        onToggleNoteMode = viewModel::onToggleNoteMode,
+                        onToggleAutoCandidateMode = viewModel::onToggleAutoCandidateMode,
+                        onUndo = viewModel::onUndo,
+                    ),
+                )
+            }
+        },
+        board = {
+            PuzzleBoardContainer(
+                visible = session != null,
+                playFresh = !resume,
+                flashTrigger = flashTrigger,
             ) {
-                IconButton(onClick = { viewModel.toggleNextMoveHint() }, enabled = !viewModel.isComputingHint) {
-                    if (viewModel.isComputingHint) {
-                        LogoGridLoader(size = 20.dp)
-                    } else {
-                        Icon(
-                            imageVector = Icons.Filled.Lightbulb,
-                            contentDescription = stringResource(
-                                if (viewModel.nextMoveHintActive) R.string.sudoku_hint_hide else R.string.sudoku_hint_show,
-                            ),
-                            tint = if (viewModel.nextMoveHintActive) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant,
+                if (session != null) {
+                    Box(Modifier.padding(8.dp)) {
+                        SudokuGrid(
+                            board = session.board,
+                            givens = session.puzzle.givens,
+                            notes = session.notes,
+                            finishedCells = session.finishedCells,
+                            selectedCell = viewModel.selectedCell,
+                            feedbackCorrectRows = viewModel.feedbackCorrectRows,
+                            feedbackCorrectCols = viewModel.feedbackCorrectCols,
+                            feedbackCorrectBoxes = viewModel.feedbackCorrectBoxes,
+                            feedbackIncorrectRows = viewModel.feedbackIncorrectRows,
+                            feedbackIncorrectCols = viewModel.feedbackIncorrectCols,
+                            feedbackIncorrectBoxes = viewModel.feedbackIncorrectBoxes,
+                            onCellPress = viewModel::onCellPress,
+                            hintEvidenceCells = hint?.evidenceCells?.toSet() ?: emptySet(),
+                            hintTargetCells = hint?.targetCells?.toSet() ?: emptySet(),
+                            hintPlacementTarget = (hint as? SudokuPlacementHint)?.let { Triple(it.row, it.col, it.digit) },
+                            hintHighlightRows = hint?.highlightRows?.toSet() ?: emptySet(),
+                            hintHighlightCols = hint?.highlightCols?.toSet() ?: emptySet(),
+                            hintHighlightBoxes = hint?.highlightBoxes?.toSet() ?: emptySet(),
                         )
                     }
                 }
-                EndPuzzleIconButton(onClick = { showEndDialog = true })
             }
-        }
-
-        ElapsedTimerText(
-            viewModel.elapsedSeconds.toInt(),
-            modifier = Modifier.padding(top = 4.dp, bottom = 12.dp),
-        )
-
-        val hint = viewModel.nextMoveHint
-        if (viewModel.nextMoveHintActive) {
-            Card(Modifier.fillMaxWidth().padding(bottom = 12.dp)) {
-                Column(Modifier.padding(12.dp)) {
-                    val (hintTitle, hintBody) = if (hint != null) {
-                        resolveSudokuHintText(hint)
-                    } else {
-                        stringResource(R.string.sudoku_hint_unsupported_title) to stringResource(R.string.sudoku_hint_unsupported_body)
-                    }
-                    Text(hintTitle, style = MaterialTheme.typography.titleSmall)
-                    Text(hintBody, style = MaterialTheme.typography.bodySmall)
-                }
-            }
-        }
-
-        PuzzleBoardContainer(
-            visible = session != null,
-            playFresh = !resume,
-            flashTrigger = flashTrigger,
-        ) {
-            if (session != null) {
-                Box(Modifier.padding(8.dp)) {
-                    SudokuGrid(
-                        board = session.board,
-                        givens = session.puzzle.givens,
-                        notes = session.notes,
-                        finishedCells = session.finishedCells,
-                        selectedCell = viewModel.selectedCell,
-                        feedbackCorrectRows = viewModel.feedbackCorrectRows,
-                        feedbackCorrectCols = viewModel.feedbackCorrectCols,
-                        feedbackCorrectBoxes = viewModel.feedbackCorrectBoxes,
-                        feedbackIncorrectRows = viewModel.feedbackIncorrectRows,
-                        feedbackIncorrectCols = viewModel.feedbackIncorrectCols,
-                        feedbackIncorrectBoxes = viewModel.feedbackIncorrectBoxes,
-                        onCellPress = viewModel::onCellPress,
-                        hintEvidenceCells = hint?.evidenceCells?.toSet() ?: emptySet(),
-                        hintTargetCells = hint?.targetCells?.toSet() ?: emptySet(),
-                        hintPlacementTarget = (hint as? SudokuPlacementHint)?.let { Triple(it.row, it.col, it.digit) },
-                        hintHighlightRows = hint?.highlightRows?.toSet() ?: emptySet(),
-                        hintHighlightCols = hint?.highlightCols?.toSet() ?: emptySet(),
-                        hintHighlightBoxes = hint?.highlightBoxes?.toSet() ?: emptySet(),
-                    )
-                }
-            }
-        }
-
-        if (session != null) {
-            val noteMode = session.inputMode == SudokuInputMode.NOTES
-            val hasSelection = viewModel.selectedCell != null
-            val (selRow, selCol) = viewModel.selectedCell ?: (-1 to -1)
-            val selectedValue = if (hasSelection) session.board[selRow][selCol] else null
-
-            @Composable
-            fun digitButton(digit: Int) {
-                val active = if (noteMode) digit in session.notes.getOrElse(selRow) { emptyList() }.getOrElse(selCol) { emptySet() } else selectedValue == digit
-                val digitsDisabled = !hasSelection || (noteMode && selectedValue != null)
-                SudokuPadButton(
-                    active = active,
-                    enabled = !digitsDisabled,
-                    onClick = { viewModel.onPressDigit(digit) },
-                    modifier = Modifier.weight(1f).height(52.dp),
-                ) {
-                    Text(digit.toString(), style = MaterialTheme.typography.titleMedium)
-                }
-            }
-
-            Row(Modifier.fillMaxWidth().padding(top = 12.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                SudokuPadButton(
-                    active = !noteMode,
-                    enabled = true,
-                    onClick = { if (noteMode) viewModel.onToggleNoteMode() },
-                    modifier = Modifier.weight(2f).height(44.dp),
-                ) {
-                    Text(stringResource(R.string.sudoku_normal_mode_label), style = MaterialTheme.typography.labelLarge)
-                }
-                SudokuPadButton(
-                    active = noteMode,
-                    enabled = !session.autoCandidateMode,
-                    onClick = { if (!noteMode) viewModel.onToggleNoteMode() },
-                    modifier = Modifier.weight(2f).height(44.dp),
-                ) {
-                    Text(stringResource(R.string.sudoku_candidate_mode_label), style = MaterialTheme.typography.labelLarge)
-                }
-                SudokuPadButton(
-                    active = false,
-                    enabled = viewModel.canUndo,
-                    onClick = viewModel::onUndo,
-                    modifier = Modifier.weight(1.5f).height(44.dp),
-                ) {
-                    Icon(Icons.AutoMirrored.Filled.Undo, contentDescription = stringResource(R.string.sudoku_undo))
-                }
-            }
-
-            val digitCount = session.board.size
-            val firstRowDigits = if (digitCount > 6) 1..(digitCount + 1) / 2 else 1..digitCount
-            if (digitCount > 6) {
-                Row(Modifier.fillMaxWidth().padding(top = 8.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                    for (digit in firstRowDigits) digitButton(digit)
-                }
-            }
-            Row(
-                Modifier.fillMaxWidth().padding(top = if (digitCount > 6) 4.dp else 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                if (digitCount > 6) {
-                    for (digit in (firstRowDigits.last + 1)..digitCount) digitButton(digit)
-                } else {
-                    for (digit in firstRowDigits) digitButton(digit)
-                }
-                SudokuPadButton(
-                    active = false,
-                    enabled = hasSelection,
-                    onClick = viewModel::onClearCell,
-                    modifier = Modifier.weight(1f).height(52.dp),
-                ) {
-                    Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.sudoku_clear_cell))
-                }
-            }
-
-            Row(
-                Modifier.fillMaxWidth().padding(top = 8.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Checkbox(checked = session.autoCandidateMode, onCheckedChange = { viewModel.onToggleAutoCandidateMode() })
-                Text(stringResource(R.string.sudoku_auto_candidate_mode_label), style = MaterialTheme.typography.bodyMedium)
-            }
-        }
-    }
-
-    EndPuzzleDialog(
-        visible = showEndDialog,
-        onDismiss = { showEndDialog = false },
-        onConfirm = {
-            showEndDialog = false
-            viewModel.endPuzzle()
         },
     )
+}
+
+@Composable
+private fun sudokuHintMessage(hint: SudokuNextMoveHint?): PlayHintMessage {
+    val (title, body) = if (hint != null) {
+        resolveSudokuHintText(hint)
+    } else {
+        stringResource(R.string.sudoku_hint_unsupported_title) to stringResource(R.string.sudoku_hint_unsupported_body)
+    }
+    return PlayHintMessage(title, body)
 }
 
 @Composable

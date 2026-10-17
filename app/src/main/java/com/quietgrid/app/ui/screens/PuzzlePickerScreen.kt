@@ -42,67 +42,47 @@ import com.quietgrid.app.core.GameId
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.core.difficultyColor
 import com.quietgrid.app.data.RepositoriesViewModel
-import com.quietgrid.app.games.animaldoku.AnimalDokuQuickStart
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyDescriptionRes
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyLabelRes
-import com.quietgrid.app.games.arrowescape.ArrowEscapeQuickStart
-import com.quietgrid.app.games.hashi.HashiQuickStart
 import com.quietgrid.app.games.hashi.hashiDifficultyDescriptionRes
 import com.quietgrid.app.games.hashi.hashiDifficultyLabelRes
 import com.quietgrid.app.games.arrowescape.arrowEscapeDifficultyDescriptionRes
 import com.quietgrid.app.games.arrowescape.arrowEscapeDifficultyLabelRes
-import com.quietgrid.app.games.blockfill.BlockFillQuickStart
 import com.quietgrid.app.games.blockfill.blockFillDifficultyDescriptionRes
 import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
-import com.quietgrid.app.games.chimptest.ChimpTestQuickStart
 import com.quietgrid.app.games.chimptest.chimpDifficultyDescriptionRes
 import com.quietgrid.app.games.chimptest.chimpDifficultyLabelRes
-import com.quietgrid.app.games.game2048.Game2048QuickStart
 import com.quietgrid.app.games.game2048.game2048DifficultyDescriptionRes
 import com.quietgrid.app.games.game2048.game2048DifficultyLabelRes
-import com.quietgrid.app.games.guessbynumbers.GuessByNumbersQuickStart
 import com.quietgrid.app.games.guessbynumbers.guessByNumbersDifficultyDescriptionRes
 import com.quietgrid.app.games.guessbynumbers.guessByNumbersDifficultyLabelRes
-import com.quietgrid.app.games.minesweeper.MinesweeperQuickStart
 import com.quietgrid.app.games.minesweeper.minesweeperDifficultyDescriptionRes
 import com.quietgrid.app.games.minesweeper.minesweeperDifficultyLabelRes
-import com.quietgrid.app.games.minisudoku.MiniSudokuQuickStart
 import com.quietgrid.app.games.minisudoku.miniSudokuDifficultyDescriptionRes
 import com.quietgrid.app.games.minisudoku.miniSudokuDifficultyLabelRes
-import com.quietgrid.app.games.nback.NBackQuickStart
 import com.quietgrid.app.games.nback.nbackDifficultyDescriptionRes
 import com.quietgrid.app.games.nback.nbackDifficultyLabelRes
-import com.quietgrid.app.games.nonogram.NonogramQuickStart
 import com.quietgrid.app.games.nonogram.nonogramDifficultyDescriptionRes
 import com.quietgrid.app.games.nonogram.nonogramDifficultyLabelRes
-import com.quietgrid.app.games.sequencememory.SequenceMemoryQuickStart
 import com.quietgrid.app.games.sequencememory.sequenceMemoryDifficultyDescriptionRes
 import com.quietgrid.app.games.sequencememory.sequenceMemoryDifficultyLabelRes
-import com.quietgrid.app.games.starbattle.StarBattleQuickStart
 import com.quietgrid.app.games.starbattle.starBattleDifficultyDescriptionRes
-import com.quietgrid.app.games.whodidit.WhoDidItQuickStart
 import com.quietgrid.app.games.whodidit.whoDidItDifficultyDescriptionRes
 import com.quietgrid.app.games.starbattle.starBattleDifficultyLabelRes
 import com.quietgrid.app.games.whodidit.whoDidItDifficultyLabelRes
-import com.quietgrid.app.games.sudoku.SudokuQuickStart
 import com.quietgrid.app.games.sudoku.sudokuDifficultyDescriptionRes
 import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
-import com.quietgrid.app.games.takuzu.TakuzuQuickStart
 import com.quietgrid.app.games.takuzu.takuzuDifficultyDescriptionRes
 import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
-import com.quietgrid.app.games.themeclear.ThemeClearQuickStart
-import com.quietgrid.app.games.killersudoku.KillerSudokuQuickStart
 import com.quietgrid.app.games.killersudoku.killerSudokuDifficultyDescriptionRes
 import com.quietgrid.app.games.killersudoku.killerSudokuDifficultyLabelRes
 import com.quietgrid.app.games.themeclear.themeClearDifficultyDescriptionRes
 import com.quietgrid.app.games.themeclear.themeClearDifficultyLabelRes
-import com.quietgrid.app.games.wordguess.WordGuessQuickStart
 import com.quietgrid.app.games.wordguess.wordGuessDifficultyDescriptionRes
 import com.quietgrid.app.games.wordguess.wordGuessDifficultyLabelRes
-import com.quietgrid.app.games.wordsearch.WordSearchQuickStart
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyDescriptionRes
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
-import com.quietgrid.app.ui.components.QuickStartContent
+import com.quietgrid.app.ui.components.quickStartFor
 import com.quietgrid.app.ui.components.StatGroup
 import com.quietgrid.app.ui.components.StatItem
 import com.quietgrid.app.ui.components.QuickStartSheet
@@ -110,29 +90,6 @@ import com.quietgrid.app.ui.components.ReplacePuzzleSheet
 import kotlinx.coroutines.launch
 
 private enum class GamePageTab { PLAY, RULES, STATS, SETTINGS }
-
-private fun quickStartFor(gameId: GameId): QuickStartContent = when (gameId) {
-    GameId.CHIMPTEST -> ChimpTestQuickStart
-    GameId.TAKUZU -> TakuzuQuickStart
-    GameId.NONOGRAM -> NonogramQuickStart
-    GameId.MINESWEEPER -> MinesweeperQuickStart
-    GameId.SUDOKU -> SudokuQuickStart
-    GameId.WORDSEARCH -> WordSearchQuickStart
-    GameId.BLOCKFILL -> BlockFillQuickStart
-    GameId.WORDGUESS -> WordGuessQuickStart
-    GameId.ANIMALDOKU -> AnimalDokuQuickStart
-    GameId.ARROWESCAPE -> ArrowEscapeQuickStart
-    GameId.GAME_2048 -> Game2048QuickStart
-    GameId.STARBATTLE -> StarBattleQuickStart
-    GameId.WHODIDIT -> WhoDidItQuickStart
-    GameId.GUESSBYNUMBERS -> GuessByNumbersQuickStart
-    GameId.NBACK -> NBackQuickStart
-    GameId.THEMECLEAR -> ThemeClearQuickStart
-    GameId.SEQUENCEMEMORY -> SequenceMemoryQuickStart
-    GameId.HASHI -> HashiQuickStart
-    GameId.KILLERSUDOKU -> KillerSudokuQuickStart
-    GameId.MINISUDOKU -> MiniSudokuQuickStart
-}
 
 @Composable
 fun PuzzlePickerScreen(

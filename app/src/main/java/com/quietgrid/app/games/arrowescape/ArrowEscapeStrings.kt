@@ -3,6 +3,7 @@ package com.quietgrid.app.games.arrowescape
 
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.ui.components.QuickRule
 import com.quietgrid.app.ui.components.QuickStartContent
 
 fun arrowEscapeDifficultyLabelRes(difficulty: Difficulty): Int = when (difficulty) {
@@ -27,4 +28,9 @@ val ArrowEscapeQuickStart = QuickStartContent(
         R.string.arrowescape_quickstart_bullet_3,
     ),
     hookRes = R.string.arrowescape_quickstart_hook,
+    rules = listOf(
+        QuickRule(R.string.arrowescape_rule_1_title) { ArrowEscapeOneDirectionPicture() },
+        QuickRule(R.string.arrowescape_rule_2_title) { ArrowEscapeClearWayPicture() },
+        QuickRule(R.string.arrowescape_rule_3_title) { ArrowEscapeLivesPicture() },
+    ),
 )

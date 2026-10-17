@@ -1,39 +1,24 @@
 package com.quietgrid.app.games.wordguess
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.keyframes
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.R
-import com.quietgrid.app.core.formatElapsed
+import com.quietgrid.app.core.GameId
 import com.quietgrid.app.session.ChallengerResult
-import com.quietgrid.app.ui.components.ChallengerHeartIcon
 import com.quietgrid.app.ui.components.CollectPuzzleResult
-import com.quietgrid.app.ui.components.EndPuzzleDialog
-import com.quietgrid.app.ui.components.EndPuzzleIconButton
-import com.quietgrid.app.ui.components.FeedbackText
-import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
 import com.quietgrid.app.ui.components.rememberHapticController
+import com.quietgrid.app.ui.play.GamePlayScaffold
+import com.quietgrid.app.ui.play.InfoItem
+import com.quietgrid.app.ui.play.PlayTimer
+import com.quietgrid.app.ui.play.heartsInfo
 import com.quietgrid.engine.wordguess.foldWordGuessKeyboardState
 import kotlinx.coroutines.delay
 
@@ -47,7 +32,6 @@ fun WordGuessChallengerPlayScreen(
 
     BackHandler { viewModel.endRun() }
 
-    var showEndDialog by remember { mutableStateOf(false) }
     var currentInput by remember { mutableStateOf("") }
     var invalidFlash by remember { mutableStateOf(false) }
     val session = viewModel.session
@@ -81,124 +65,68 @@ fun WordGuessChallengerPlayScreen(
         currentInput = ""
     }
 
-    Column(Modifier.fillMaxSize().padding(16.dp)) {
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            GameBackButton(onBack = viewModel::endRun)
-            Text(
-                stringResource(R.string.wordguess_challenger_label),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(start = 12.dp).weight(1f),
-            )
-            if (session != null) {
-                Row(Modifier.padding(end = 8.dp)) {
-                    repeat(WORDGUESS_CHALLENGER_STARTING_LIVES) { index ->
-                        ChallengerHeartIcon(
-                            filled = index < session.livesRemaining,
-                            modifier = Modifier.padding(end = 4.dp),
-                        )
-                    }
-                }
-            }
-            EndPuzzleIconButton(onClick = { showEndDialog = true })
-        }
-
-        if (session != null) {
-            Row(Modifier.fillMaxWidth().padding(top = 4.dp, bottom = 12.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(
-                    "${stringResource(R.string.wordguess_challenger_tier_label)}: ${stringResource(wordGuessDifficultyLabelRes(session.tier))}",
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                Text(
-                    "${stringResource(R.string.wordguess_challenger_solved_label)}: ${session.puzzlesSolved}",
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                val secondsInt = maxOf(0, session.secondsRemaining.toInt())
-                val lowTime = session.secondsRemaining <= 10
-                val timePulse = remember { Animatable(1f) }
-                LaunchedEffect(secondsInt) {
-                    if (lowTime && secondsInt > 0) {
-                        timePulse.snapTo(1f)
-                        timePulse.animateTo(
-                            targetValue = 1f,
-                            animationSpec = keyframes {
-                                durationMillis = 300
-                                1f at 0
-                                1.35f at 120
-                                1f at 300
-                            },
-                        )
-                    }
-                }
-                Text(
-                    formatElapsed(secondsInt),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = if (lowTime) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.graphicsLayer(scaleX = timePulse.value, scaleY = timePulse.value),
-                )
-            }
-        }
-
-        PuzzleBoardContainer(
-            visible = session != null,
-            playFresh = true,
-            zoomable = false,
-            showFrame = false,
-            flashTrigger = flashTrigger,
-        ) {
-            session?.let { current ->
-                WordGuessGrid(
-                    wordLength = current.puzzleSession.wordLength,
-                    maxGuesses = WORD_GUESS_MAX_GUESSES,
-                    guesses = current.puzzleSession.guesses,
-                    currentInput = currentInput,
-                )
-            }
-        }
-
-        if (session != null) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-            ) {
-                if (session.puzzleSession.status == WordGuessStatus.LOST) {
-                    Text(
-                        "${stringResource(R.string.wordguess_reveal_word_label)}: ${session.puzzleSession.targetWord.uppercase()}",
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                }
-                if (invalidFlash) {
-                    FeedbackText(
-                        text = stringResource(R.string.wordguess_invalid_word_message),
-                        style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.error),
-                        isCorrect = false,
-                        isIncorrect = invalidFlash,
-                    )
-                }
-            }
-        }
-
-        if (session != null && session.puzzleSession.status == WordGuessStatus.PLAYING) {
-            val keyboardState = foldWordGuessKeyboardState(session.puzzleSession.guesses.map { it.guess to it.feedback })
-            WordGuessKeyboard(
-                keyboardState = keyboardState,
-                onLetter = { ch -> if (currentInput.length < session.puzzleSession.wordLength) currentInput += ch },
-                onBackspace = { currentInput = currentInput.dropLast(1) },
-                onEnter = {
-                    if (currentInput.length == session.puzzleSession.wordLength) {
-                        viewModel.onSubmitGuess(currentInput) { invalidFlash = true; haptics.incorrectFeedback() }
-                    }
-                },
-            )
-        }
+    val info = if (session == null) {
+        emptyList()
+    } else {
+        listOf(
+            heartsInfo(session.livesRemaining, WORDGUESS_CHALLENGER_STARTING_LIVES, viewModel.puzzleLostTrigger),
+            InfoItem.Label("${stringResource(R.string.wordguess_challenger_tier_label)}: ${stringResource(wordGuessDifficultyLabelRes(session.tier))}"),
+            InfoItem.Label("${stringResource(R.string.wordguess_challenger_solved_label)}: ${session.puzzlesSolved}"),
+        )
     }
 
-    EndPuzzleDialog(
-        visible = showEndDialog,
-        onDismiss = { showEndDialog = false },
-        onConfirm = {
-            showEndDialog = false
-            viewModel.endRun()
+    GamePlayScaffold(
+        gameId = GameId.WORDGUESS,
+        timer = session?.let { PlayTimer.Countdown(it.secondsRemaining.toInt()) },
+        onBack = viewModel::endRun,
+        onEndPuzzle = viewModel::endRun,
+        info = info,
+        boardAspectRatio = (session?.puzzleSession?.wordLength ?: 5).toFloat() / WORD_GUESS_MAX_GUESSES,
+        wideDock = true,
+        phonePortraitOnly = true,
+        dockHeight = ::wordGuessDockHeight,
+        dock = {
+            if (session != null) {
+                val puzzle = session.puzzleSession
+                WordGuessDock(
+                    revealedWord = if (puzzle.status == WordGuessStatus.LOST) puzzle.targetWord else null,
+                    invalidFlash = invalidFlash,
+                    keyboard = if (puzzle.status == WordGuessStatus.PLAYING) {
+                        {
+                            WordGuessKeyboard(
+                                keyboardState = foldWordGuessKeyboardState(puzzle.guesses.map { it.guess to it.feedback }),
+                                onLetter = { ch -> if (currentInput.length < puzzle.wordLength) currentInput += ch },
+                                onBackspace = { currentInput = currentInput.dropLast(1) },
+                                onEnter = {
+                                    if (currentInput.length == puzzle.wordLength) {
+                                        viewModel.onSubmitGuess(currentInput) { invalidFlash = true; haptics.incorrectFeedback() }
+                                    }
+                                },
+                            )
+                        }
+                    } else {
+                        null
+                    },
+                )
+            }
+        },
+        board = {
+            PuzzleBoardContainer(
+                visible = session != null,
+                playFresh = true,
+                zoomable = false,
+                showFrame = false,
+                flashTrigger = flashTrigger,
+            ) {
+                session?.let { current ->
+                    WordGuessGrid(
+                        wordLength = current.puzzleSession.wordLength,
+                        maxGuesses = WORD_GUESS_MAX_GUESSES,
+                        guesses = current.puzzleSession.guesses,
+                        currentInput = currentInput,
+                    )
+                }
+            }
         },
     )
 }
-

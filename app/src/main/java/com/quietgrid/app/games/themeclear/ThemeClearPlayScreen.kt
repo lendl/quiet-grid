@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,7 +16,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -41,15 +39,16 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.themes.themeLabelRes
 import com.quietgrid.app.ui.components.CollectPuzzleResult
-import com.quietgrid.app.ui.components.ElapsedTimerText
-import com.quietgrid.app.ui.components.EndPuzzleDialog
-import com.quietgrid.app.ui.components.EndPuzzleIconButton
-import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
-import com.quietgrid.app.ui.components.PuzzleLanguageFlag
 import com.quietgrid.app.ui.components.rememberHapticController
+import com.quietgrid.app.ui.play.GamePlayScaffold
+import com.quietgrid.app.ui.play.InfoItem
+import com.quietgrid.app.ui.play.PlayHintAction
+import com.quietgrid.app.ui.play.PlayTimer
+import com.quietgrid.app.ui.play.puzzleLanguageInfo
 import com.quietgrid.engine.themeclear.ThemeClearSelectionState
 
 private val SELECTION_ROW_HEIGHT: Dp = 40.dp
@@ -67,7 +66,6 @@ fun ThemeClearPlayScreen(
     )
     CollectPuzzleResult(viewModel.result, onFinished)
 
-    var showEndDialog by remember { mutableStateOf(false) }
     val session = viewModel.session
     val haptics = rememberHapticController()
     val colors = MaterialTheme.colorScheme
@@ -79,68 +77,68 @@ fun ThemeClearPlayScreen(
         if (session != null) viewModel.refreshDeadEnd()
     }
 
-    Column(Modifier.fillMaxSize().padding(16.dp)) {
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            GameBackButton(onBack)
-            Spacer(Modifier.weight(1f))
-            IconButton(onClick = viewModel::onHint, enabled = !viewModel.isDeadEnd) {
-                Icon(
-                    imageVector = Icons.Filled.Lightbulb,
-                    contentDescription = stringResource(
-                        if (viewModel.hintTileIds.isEmpty()) R.string.themeclear_hint_show else R.string.themeclear_hint_hide,
-                    ),
-                    tint = if (viewModel.hintTileIds.isNotEmpty()) colors.tertiary else colors.onSurfaceVariant,
-                )
-            }
-            IconButton(onClick = viewModel::onShuffle) {
-                Icon(
-                    imageVector = Icons.Filled.Shuffle,
-                    contentDescription = stringResource(R.string.themeclear_shuffle),
-                    tint = colors.onSurfaceVariant,
-                )
-            }
-            if (session != null) {
-                PuzzleLanguageFlag(session.puzzle.locale)
-            }
-            EndPuzzleIconButton(onClick = { showEndDialog = true })
-        }
-
-        if (session != null) {
-            Text(
-                stringResource(themeLabelRes(session.puzzle.themeId)),
-                style = MaterialTheme.typography.titleMedium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
+    val hintActive = viewModel.hintTileIds.isNotEmpty()
+    GamePlayScaffold(
+        gameId = GameId.THEMECLEAR,
+        timer = PlayTimer.Elapsed(viewModel.elapsedSeconds.toInt()),
+        onBack = onBack,
+        onEndPuzzle = { viewModel.endPuzzle() },
+        difficulty = session?.let { Difficulty.fromKey(it.puzzle.difficulty) },
+        hint = PlayHintAction(
+            active = hintActive,
+            busy = false,
+            contentDescription = stringResource(if (hintActive) R.string.themeclear_hint_hide else R.string.themeclear_hint_show),
+            onClick = viewModel::onHint,
+            enabled = !viewModel.isDeadEnd,
+        ),
+        info = if (session == null) {
+            emptyList()
+        } else {
+            listOfNotNull(
+                InfoItem.Label(stringResource(themeLabelRes(session.puzzle.themeId)), emphasized = true),
+                puzzleLanguageInfo(session.puzzle.locale),
             )
-        }
-
-        ElapsedTimerText(
-            viewModel.elapsedSeconds.toInt(),
-            modifier = Modifier.padding(top = 4.dp, bottom = 12.dp),
-        )
-
-        PuzzleBoardContainer(visible = session != null, playFresh = !resume) {
+        },
+        dockHeight = { THEME_CLEAR_DOCK_HEIGHT },
+        dock = {
             if (session != null) {
-                Box(Modifier.padding(8.dp)) {
-                    ThemeClearGrid(
-                        session = session,
-                        hintTileIds = viewModel.hintTileIds,
-                        onTileTap = viewModel::onTileTap,
-                    )
+                ThemeClearDock(session, viewModel)
+            }
+        },
+        board = {
+            PuzzleBoardContainer(visible = session != null, playFresh = !resume) {
+                if (session != null) {
+                    Box(Modifier.padding(8.dp)) {
+                        ThemeClearGrid(
+                            session = session,
+                            hintTileIds = viewModel.hintTileIds,
+                            onTileTap = viewModel::onTileTap,
+                        )
+                    }
                 }
             }
-        }
+        },
+    )
+}
 
-        if (session != null) {
+private val THEME_CLEAR_DOCK_HEIGHT: Dp = SELECTION_ROW_HEIGHT + FOUND_WORD_ROW_HEIGHT + 20.dp
+
+@Composable
+private fun ThemeClearDock(session: ThemeClearSession, viewModel: ThemeClearPlayViewModel) {
+    val colors = MaterialTheme.colorScheme
+    Column(Modifier.fillMaxWidth()) {
+        run {
             val word = tcSelectedWord(session)
             val state = viewModel.selectionState
-            Box(
+            Row(
                 Modifier
                     .fillMaxWidth()
-                    .padding(top = 12.dp)
+                    .padding(top = 4.dp)
                     .height(SELECTION_ROW_HEIGHT),
-                contentAlignment = Alignment.Center,
+                verticalAlignment = Alignment.CenterVertically,
             ) {
+                Spacer(Modifier.size(SELECTION_ROW_HEIGHT))
+                Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                 if (word.isEmpty() && viewModel.isDeadEnd) {
                     Text(
                         stringResource(R.string.themeclear_dead_end),
@@ -166,6 +164,14 @@ fun ThemeClearPlayScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable(enabled = word.isNotEmpty(), onClick = viewModel::onSelectionTextTap),
+                    )
+                }
+                }
+                IconButton(onClick = viewModel::onShuffle, modifier = Modifier.size(SELECTION_ROW_HEIGHT)) {
+                    Icon(
+                        imageVector = Icons.Filled.Shuffle,
+                        contentDescription = stringResource(R.string.themeclear_shuffle),
+                        tint = colors.onSurfaceVariant,
                     )
                 }
             }
@@ -206,13 +212,4 @@ fun ThemeClearPlayScreen(
             }
         }
     }
-
-    EndPuzzleDialog(
-        visible = showEndDialog,
-        onDismiss = { showEndDialog = false },
-        onConfirm = {
-            showEndDialog = false
-            viewModel.endPuzzle()
-        },
-    )
 }

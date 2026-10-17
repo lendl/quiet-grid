@@ -2,6 +2,7 @@ package com.quietgrid.app.games.game2048
 
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.ui.components.QuickRule
 import com.quietgrid.app.ui.components.QuickStartContent
 
 fun game2048DifficultyLabelRes(difficulty: Difficulty): Int = when (difficulty) {
@@ -26,4 +27,9 @@ val Game2048QuickStart = QuickStartContent(
         R.string.game2048_quickstart_bullet_3,
     ),
     hookRes = R.string.game2048_quickstart_hook,
+    rules = listOf(
+        QuickRule(R.string.game2048_rule_1_title) { Game2048SlidePicture() },
+        QuickRule(R.string.game2048_rule_2_title) { Game2048MergePicture() },
+        QuickRule(R.string.game2048_rule_3_title) { Game2048OneMergePicture() },
+    ),
 )

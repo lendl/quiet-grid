@@ -11,10 +11,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 
 @Composable
-fun ChallengerHeartIcon(filled: Boolean, modifier: Modifier = Modifier, shakeTrigger: Int = 0) {
+fun ChallengerHeartIcon(
+    filled: Boolean,
+    modifier: Modifier = Modifier,
+    shakeTrigger: Int = 0,
+    tint: Color = MaterialTheme.colorScheme.error,
+) {
     val shakeX = remember { Animatable(0f) }
     LaunchedEffect(shakeTrigger) {
         if (shakeTrigger > 0) {
@@ -36,7 +42,7 @@ fun ChallengerHeartIcon(filled: Boolean, modifier: Modifier = Modifier, shakeTri
     Icon(
         if (filled) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
         contentDescription = null,
-        tint = MaterialTheme.colorScheme.error,
+        tint = tint,
         modifier = modifier.graphicsLayer(translationX = shakeX.value),
     )
 }

@@ -2,6 +2,7 @@ package com.quietgrid.app.games.nonogram
 
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.ui.components.QuickRule
 import com.quietgrid.app.ui.components.QuickStartContent
 
 fun nonogramDifficultyLabelRes(difficulty: Difficulty): Int = when (difficulty) {
@@ -26,4 +27,9 @@ val NonogramQuickStart = QuickStartContent(
         R.string.nonogram_quickstart_bullet_3,
     ),
     hookRes = R.string.nonogram_quickstart_hook,
+    rules = listOf(
+        QuickRule(R.string.nonogram_rule_1_title) { NonogramCluePicture(clue = "3 1", cells = "###.#") },
+        QuickRule(R.string.nonogram_rule_2_title) { NonogramCluePicture(clue = "4", cells = ".###.") },
+        QuickRule(R.string.nonogram_rule_3_title) { NonogramCluePicture(clue = "2", cells = "##xxx") },
+    ),
 )

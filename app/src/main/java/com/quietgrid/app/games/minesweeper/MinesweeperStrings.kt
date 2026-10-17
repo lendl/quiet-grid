@@ -2,6 +2,7 @@ package com.quietgrid.app.games.minesweeper
 
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.ui.components.QuickRule
 import com.quietgrid.app.ui.components.QuickStartContent
 
 fun minesweeperDifficultyLabelRes(difficulty: Difficulty): Int = when (difficulty) {
@@ -26,4 +27,9 @@ val MinesweeperQuickStart = QuickStartContent(
         R.string.minesweeper_quickstart_bullet_3,
     ),
     hookRes = R.string.minesweeper_quickstart_hook,
+    rules = listOf(
+        QuickRule(R.string.minesweeper_rule_1_title) { MinesweeperRevealPicture() },
+        QuickRule(R.string.minesweeper_rule_2_title) { MinesweeperNumbersPicture() },
+        QuickRule(R.string.minesweeper_rule_3_title) { MinesweeperFlagPicture() },
+    ),
 )

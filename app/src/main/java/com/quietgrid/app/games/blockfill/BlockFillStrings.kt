@@ -2,6 +2,7 @@ package com.quietgrid.app.games.blockfill
 
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.ui.components.QuickRule
 import com.quietgrid.app.ui.components.QuickStartContent
 
 fun blockFillDifficultyLabelRes(difficulty: Difficulty): Int = when (difficulty) {
@@ -26,4 +27,9 @@ val BlockFillQuickStart = QuickStartContent(
         R.string.blockfill_quickstart_bullet_3,
     ),
     hookRes = R.string.blockfill_quickstart_hook,
+    rules = listOf(
+        QuickRule(R.string.blockfill_rule_1_title) { BlockFillLinePicture(rows = 1, family = BlockFillShapeFamily.STRAIGHT5) },
+        QuickRule(R.string.blockfill_rule_2_title) { BlockFillPlanAheadPicture() },
+        QuickRule(R.string.blockfill_rule_3_title) { BlockFillLinePicture(rows = 2, family = BlockFillShapeFamily.RECTANGLE, trailing = "×2") },
+    ),
 )

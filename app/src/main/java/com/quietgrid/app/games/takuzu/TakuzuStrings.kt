@@ -2,6 +2,7 @@ package com.quietgrid.app.games.takuzu
 
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.ui.components.QuickRule
 import com.quietgrid.app.ui.components.QuickStartContent
 
 fun takuzuDifficultyLabelRes(difficulty: Difficulty): Int = when (difficulty) {
@@ -26,4 +27,9 @@ val TakuzuQuickStart = QuickStartContent(
         R.string.takuzu_quickstart_bullet_3,
     ),
     hookRes = R.string.takuzu_quickstart_hook,
+    rules = listOf(
+        QuickRule(R.string.takuzu_rule_1_title) { TakuzuNoThreeInARowPicture() },
+        QuickRule(R.string.takuzu_rule_2_title) { TakuzuEqualHalvesPicture() },
+        QuickRule(R.string.takuzu_rule_3_title) { TakuzuUniqueLinesPicture() },
+    ),
 )

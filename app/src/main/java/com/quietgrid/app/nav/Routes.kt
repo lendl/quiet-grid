@@ -10,6 +10,7 @@ import java.time.LocalDate
 object Routes {
     const val TABS = "tabs"
     const val PICKER = "picker/{gameId}"
+    const val RULES = "rules/{gameId}"
     const val PLAY = "play/{gameId}/{difficulty}/{resume}?daily={daily}"
     const val CHALLENGER = "challenger/{gameId}"
     const val CHALLENGER_RESULT = "challengerResult/{gameId}/{puzzlesSolved}/{tier}/{score}/{isNewHighScore}/{reason}/{previousBest}/{fastestSolveSeconds}"
@@ -28,6 +29,8 @@ object Routes {
     const val ENDLESS_RESULT = "endlessResult/{score}/{level}/{lines}/{moves}/{isNewBest}/{previousBest}/{reason}"
 
     fun picker(gameId: GameId) = "picker/${gameId.key}"
+
+    fun rules(gameId: GameId) = "rules/${gameId.key}"
     fun play(gameId: GameId, difficulty: Difficulty, resume: Boolean, daily: LocalDate? = null) =
         "play/${gameId.key}/${difficulty.key}/$resume" + (daily?.let { "?daily=$it" } ?: "")
 

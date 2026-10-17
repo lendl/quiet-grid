@@ -1,22 +1,16 @@
 package com.quietgrid.app.games.whodidit
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Undo
-import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,18 +29,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.core.GameId
 import com.quietgrid.app.ui.components.CollectPuzzleResult
-import com.quietgrid.app.ui.components.ElapsedTimerText
-import com.quietgrid.app.ui.components.EndPuzzleDialog
-import com.quietgrid.app.ui.components.EndPuzzleIconButton
-import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
 import com.quietgrid.app.ui.components.rememberHapticController
+import com.quietgrid.app.ui.play.GamePlayScaffold
+import com.quietgrid.app.ui.play.InfoItem
+import com.quietgrid.app.ui.play.PlayHintAction
+import com.quietgrid.app.ui.play.PlayHintMessage
+import com.quietgrid.app.ui.play.PlaySizeClass
+import com.quietgrid.app.ui.play.PlayTimer
 import com.quietgrid.engine.whodidit.WhoDidItPuzzleEntry
 import com.quietgrid.engine.whodidit.WhoDidItRef
 import java.time.LocalDate
@@ -72,7 +70,6 @@ fun WhoDidItPlayScreen(
     )
     CollectPuzzleResult(viewModel.result, onFinished)
 
-    var showEndDialog by remember { mutableStateOf(false) }
     val session = viewModel.session
     val haptics = rememberHapticController()
     LaunchedEffect(viewModel.wrongPickEvent) {
@@ -89,123 +86,84 @@ fun WhoDidItPlayScreen(
         if (categoryCount == null) emptyMap() else whoDidItHintCells(categoryCount, hint?.step)
     }
 
-    Column(Modifier.fillMaxSize().padding(16.dp)) {
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            GameBackButton(onBack)
-            Spacer(Modifier.weight(1f))
-            IconButton(onClick = viewModel::toggleHint, enabled = !viewModel.isComputingHint) {
-                if (viewModel.isComputingHint) {
-                    CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
-                } else {
-                    Icon(
-                        imageVector = Icons.Filled.Lightbulb,
-                        contentDescription = stringResource(
-                            if (hint != null) R.string.whodidit_hint_hide else R.string.whodidit_hint_show,
-                        ),
-                        tint = if (hint != null) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant,
+    GamePlayScaffold(
+        gameId = GameId.WHODIDIT,
+        timer = PlayTimer.Elapsed(viewModel.elapsedSeconds.toInt()),
+        onBack = onBack,
+        onEndPuzzle = { viewModel.endPuzzle() },
+        difficulty = session?.let { Difficulty.fromKey(it.puzzle.difficulty) },
+        hint = PlayHintAction(
+            active = hint != null,
+            busy = viewModel.isComputingHint,
+            contentDescription = stringResource(if (hint != null) R.string.whodidit_hint_hide else R.string.whodidit_hint_show),
+            onClick = viewModel::toggleHint,
+        ),
+        hintMessage = hint?.let { current -> whoDidItHintMessage(current, text) },
+        info = if (text == null) emptyList() else listOf(InfoItem.Label(text.caseTitle(), emphasized = true)),
+        wideDock = true,
+        dockHeight = ::whoDidItDockHeight,
+        dock = {
+            if (session != null && text != null) {
+                Row(Modifier.fillMaxWidth().height(WHO_DID_IT_MESSAGE_HEIGHT), verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        if (viewModel.showNotQuite) stringResource(R.string.whodidit_not_quite) else "",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f),
                     )
-                }
-            }
-            IconButton(onClick = viewModel::onUndo) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.Undo,
-                    contentDescription = stringResource(R.string.whodidit_undo),
-                )
-            }
-            EndPuzzleIconButton(onClick = { showEndDialog = true })
-        }
-
-        ElapsedTimerText(
-            viewModel.elapsedSeconds.toInt(),
-            modifier = Modifier.padding(top = 4.dp, bottom = 8.dp),
-        )
-
-        if (hint != null) {
-            Card(Modifier.fillMaxWidth().padding(bottom = 8.dp)) {
-                Column(Modifier.padding(12.dp)) {
-                    val step = hint.step
-                    if (step == null || text == null) {
-                        Text(stringResource(R.string.whodidit_hint_none), style = MaterialTheme.typography.bodySmall)
-                    } else {
-                        hint.lead?.let { lead ->
-                            Text(
-                                text.hintLead(lead),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(bottom = 4.dp),
-                            )
-                        }
-                        Text(text.hintTitle(step), style = MaterialTheme.typography.titleSmall)
-                        Text(text.hintBody(step), style = MaterialTheme.typography.bodySmall)
-                        text.hintAction(step)?.let { action ->
-                            Text(action, style = MaterialTheme.typography.labelLarge, modifier = Modifier.padding(top = 2.dp))
-                        }
-                        if (hint.hasWrongMarks) {
-                            Text(
-                                stringResource(R.string.whodidit_hint_wrong_marks),
-                                style = MaterialTheme.typography.bodySmall,
-                                modifier = Modifier.padding(top = 4.dp),
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        if (text != null) {
-            Card(Modifier.fillMaxWidth().padding(bottom = 8.dp)) {
-                Column(Modifier.padding(12.dp)) {
-                    Text(text.caseTitle(), style = MaterialTheme.typography.titleSmall)
-                    Text(text.caseQuestion(), style = MaterialTheme.typography.bodySmall)
-                }
-            }
-        }
-
-        BoxWithConstraints(Modifier.weight(1f).fillMaxWidth()) {
-            val panelHeight = whoDidItPanelHeight(maxHeight)
-            Column(Modifier.fillMaxSize()) {
-                PuzzleBoardContainer(
-                    visible = session != null && text != null,
-                    playFresh = !resume,
-                    zoomable = true,
-                ) {
-                    if (session != null && text != null) {
-                        WhoDidItGrid(
-                            puzzle = session.puzzle,
-                            blocks = session.blocks,
-                            text = text,
-                            hintCells = hintCells,
-                            wrongPickEvent = viewModel.wrongPickEvent,
-                            onCellTap = viewModel::onCellTap,
+                    IconButton(onClick = viewModel::onUndo) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Undo,
+                            contentDescription = stringResource(R.string.whodidit_undo),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }
-
-                if (viewModel.showNotQuite) {
-                    Text(
-                        stringResource(R.string.whodidit_not_quite),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 8.dp),
+                WhoDidItInfoPanel(puzzle = session.puzzle, text = text, modifier = Modifier.weight(1f))
+            }
+        },
+        board = {
+            PuzzleBoardContainer(
+                visible = session != null && text != null,
+                playFresh = !resume,
+                zoomable = true,
+            ) {
+                if (session != null && text != null) {
+                    WhoDidItGrid(
+                        puzzle = session.puzzle,
+                        blocks = session.blocks,
+                        text = text,
+                        hintCells = hintCells,
+                        wrongPickEvent = viewModel.wrongPickEvent,
+                        onCellTap = viewModel::onCellTap,
                     )
                 }
-
-                if (session != null && text != null) {
-                    Spacer(Modifier.height(8.dp))
-                    WhoDidItInfoPanel(puzzle = session.puzzle, text = text, modifier = Modifier.height(panelHeight))
-                }
             }
-        }
-    }
-
-    EndPuzzleDialog(
-        visible = showEndDialog,
-        onDismiss = { showEndDialog = false },
-        onConfirm = {
-            showEndDialog = false
-            viewModel.endPuzzle()
         },
     )
+}
+
+private val WHO_DID_IT_MESSAGE_HEIGHT = 40.dp
+
+private fun whoDidItDockHeight(sizeClass: PlaySizeClass): Dp = WHO_DID_IT_MESSAGE_HEIGHT + when (sizeClass) {
+    PlaySizeClass.Compact -> PANEL_MIN_HEIGHT + 30.dp
+    PlaySizeClass.TabletPortrait -> 320.dp
+    else -> PANEL_MAX_HEIGHT
+}
+
+@Composable
+private fun whoDidItHintMessage(hint: WhoDidItHint, text: WhoDidItText?): PlayHintMessage {
+    val step = hint.step
+    if (step == null || text == null) return PlayHintMessage(stringResource(R.string.whodidit_hint_none), "")
+    val body = buildList {
+        hint.lead?.let { add(text.hintLead(it)) }
+        add(text.hintBody(step))
+        text.hintAction(step)?.let { add(it) }
+        if (hint.hasWrongMarks) add(stringResource(R.string.whodidit_hint_wrong_marks))
+    }.joinToString("\n")
+    return PlayHintMessage(text.hintTitle(step), body)
 }
 
 private enum class InfoTab(val labelRes: Int) {
@@ -238,8 +196,11 @@ private fun WhoDidItInfoPanel(puzzle: WhoDidItPuzzleEntry, text: WhoDidItText, m
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             when (tabs[selected.coerceIn(0, tabs.lastIndex)]) {
-                InfoTab.CLUES -> puzzle.clues.indices.forEach { index ->
-                    Text("${index + 1}. ${text.clue(index)}", style = MaterialTheme.typography.bodyMedium)
+                InfoTab.CLUES -> {
+                    Text(text.caseQuestion(), style = MaterialTheme.typography.titleSmall)
+                    puzzle.clues.indices.forEach { index ->
+                        Text("${index + 1}. ${text.clue(index)}", style = MaterialTheme.typography.bodyMedium)
+                    }
                 }
                 InfoTab.SUSPECTS -> EntryCards(puzzle, text, 0)
                 InfoTab.PLACES -> EntryCards(puzzle, text, 1)

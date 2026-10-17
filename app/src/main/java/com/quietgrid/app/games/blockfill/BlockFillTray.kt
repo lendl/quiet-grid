@@ -7,6 +7,7 @@ import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.drag
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -70,25 +71,22 @@ fun BlockFillTray(
     onDragCancel: () -> Unit,
     modifier: Modifier = Modifier,
     onSlotMeasured: (pieceIndex: Int, coordinates: LayoutCoordinates) -> Unit = { _, _ -> },
+    cellSize: Dp = TRAY_CELL_SIZE,
+    vertical: Boolean = false,
 ) {
     val trayShape = RoundedCornerShape(TRAY_CORNER_RADIUS)
     val isDark = blockFillIsDarkSurface()
-    Row(
-        modifier
-            .fillMaxWidth()
-            .padding(top = 12.dp)
-            .clip(trayShape)
-            .background(MaterialTheme.colorScheme.surface)
-            .then(if (isDark) Modifier else Modifier.border(TRAY_BORDER_WIDTH, MaterialTheme.colorScheme.outlineVariant, trayShape))
-            .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
+    val containerModifier = modifier
+        .clip(trayShape)
+        .background(MaterialTheme.colorScheme.surface)
+        .then(if (isDark) Modifier else Modifier.border(TRAY_BORDER_WIDTH, MaterialTheme.colorScheme.outlineVariant, trayShape))
+        .padding(8.dp)
+    val slots: @Composable () -> Unit = {
         tray.forEachIndexed { index, piece ->
             val placeable = piece != null && placeablePieces.getOrElse(index) { true }
             Box(
                 Modifier
-                    .size(TRAY_CELL_SIZE * 5)
+                    .size(cellSize * 5)
                     .alpha(
                         when {
                             draggingPieceIndex == index -> DRAGGING_SLOT_ALPHA
@@ -122,10 +120,23 @@ fun BlockFillTray(
                 contentAlignment = Alignment.Center,
             ) {
                 if (piece != null) {
-                    BlockFillPieceGlyph(piece = piece)
+                    BlockFillPieceGlyph(piece = piece, cellSize = cellSize)
                 }
             }
         }
+    }
+    if (vertical) {
+        Column(
+            containerModifier,
+            verticalArrangement = Arrangement.SpaceEvenly,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) { slots() }
+    } else {
+        Row(
+            containerModifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically,
+        ) { slots() }
     }
 }
 

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,25 +36,51 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
+import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.core.GameId
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
+import com.quietgrid.app.ui.play.DockRole
+import com.quietgrid.app.ui.play.GamePlayScaffold
+import com.quietgrid.app.ui.play.InfoItem
+import com.quietgrid.app.ui.play.PlaySizeClass
+import com.quietgrid.app.ui.play.PlayTimer
+import com.quietgrid.app.ui.play.isUpright
 import kotlin.math.roundToInt
 
 private val FLOATING_PIECE_LIFT = 72.dp
 private const val FLOATING_PIECE_ALPHA = 0.9f
 private val FLOATING_PIECE_SHADOW_OFFSET = 4.dp
-private val HEADER_PROGRESS_WIDTH = 96.dp
-private val HEADER_PROGRESS_HEIGHT = 4.dp
+private val STRIP_PROGRESS_WIDTH = 72.dp
+private val STRIP_PROGRESS_HEIGHT = 4.dp
+private val TRAY_TOP_PADDING = 8.dp
+private val TRAY_INNER_PADDING = 16.dp
+
+private fun blockFillTrayCellSize(sizeClass: PlaySizeClass): Dp = when (sizeClass) {
+    PlaySizeClass.Compact -> 20.dp
+    PlaySizeClass.Medium -> 23.dp
+    PlaySizeClass.PhoneLandscape -> 18.dp
+    PlaySizeClass.TabletLandscape, PlaySizeClass.TabletPortrait -> 32.dp
+}
+
+private fun blockFillDockHeight(sizeClass: PlaySizeClass): Dp =
+    TRAY_TOP_PADDING + TRAY_INNER_PADDING + blockFillTrayCellSize(sizeClass) * 5
 
 @Composable
 fun BlockFillPlayLayout(
+    gameId: GameId,
     board: BlockFillBoard?,
     tray: List<BlockFillPiece?>?,
     playFresh: Boolean,
     onPlacePiece: (pieceIndex: Int, anchorRow: Int, anchorCol: Int) -> Boolean,
-    header: @Composable RowScope.() -> Unit,
+    timer: PlayTimer?,
+    onBack: () -> Unit,
+    onEndPuzzle: () -> Unit,
+    info: List<InfoItem>,
+    difficulty: Difficulty? = null,
 ) {
     var boardCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
     var slotCoordinates by remember { mutableStateOf(mapOf<Int, LayoutCoordinates>()) }
@@ -127,56 +152,65 @@ fun BlockFillPlayLayout(
     val currentOnPlacePiece = rememberUpdatedState(onPlacePiece)
 
     Box(Modifier.fillMaxSize().onGloballyPositioned { coordinates -> screenCoordinates = coordinates }) {
-        Column(Modifier.fillMaxSize().padding(16.dp)) {
-            Row(
-                Modifier.fillMaxWidth().padding(bottom = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                content = header,
-            )
-
-            PuzzleBoardContainer(
-                visible = board != null,
-                playFresh = playFresh,
-                zoomable = false,
-                showFrame = false,
-            ) {
-                if (board != null) {
-                    BlockFillGrid(
-                        board = board,
-                        dragPreview = dragPreview,
-                        onBoardMeasured = { coordinates -> boardCoordinates = coordinates },
+        GamePlayScaffold(
+            gameId = gameId,
+            timer = timer,
+            onBack = onBack,
+            onEndPuzzle = onEndPuzzle,
+            difficulty = difficulty,
+            info = info,
+            dockRole = DockRole.DragSource,
+            dockHeight = ::blockFillDockHeight,
+            dock = { sizeClass ->
+                if (tray != null) {
+                    val vertical = !sizeClass.isUpright
+                    BlockFillTray(
+                        tray = tray,
+                        placeablePieces = placeablePieces,
+                        draggingPieceIndex = draggingPieceIndex,
+                        cellSize = blockFillTrayCellSize(sizeClass),
+                        vertical = vertical,
+                        modifier = if (vertical) Modifier.fillMaxSize() else Modifier.padding(top = TRAY_TOP_PADDING),
+                        onSlotMeasured = { pieceIndex, coordinates ->
+                            slotCoordinates = slotCoordinates + (pieceIndex to coordinates)
+                        },
+                        onDragStart = { pieceIndex, startPosition ->
+                            draggingPieceIndex = pieceIndex
+                            val slotOrigin = slotCoordinates[pieceIndex]?.positionInRoot() ?: Offset.Zero
+                            dragPointer = slotOrigin + startPosition
+                        },
+                        onDragCancel = { draggingPieceIndex = null },
+                        onDrag = { dragAmount -> dragPointer += dragAmount },
+                        onDragEnd = {
+                            val pieceIndex = draggingPieceIndex
+                            val anchor = currentDragPreview.value?.anchor
+                            when {
+                                pieceIndex != null && anchor != null && currentOnPlacePiece.value(pieceIndex, anchor.row, anchor.col) ->
+                                    draggingPieceIndex = null
+                                pieceIndex != null -> rejectedDropTrigger++
+                                else -> draggingPieceIndex = null
+                            }
+                        },
                     )
                 }
-            }
-
-            if (tray != null) {
-                BlockFillTray(
-                    tray = tray,
-                    placeablePieces = placeablePieces,
-                    draggingPieceIndex = draggingPieceIndex,
-                    onSlotMeasured = { pieceIndex, coordinates ->
-                        slotCoordinates = slotCoordinates + (pieceIndex to coordinates)
-                    },
-                    onDragStart = { pieceIndex, startPosition ->
-                        draggingPieceIndex = pieceIndex
-                        val slotOrigin = slotCoordinates[pieceIndex]?.positionInRoot() ?: Offset.Zero
-                        dragPointer = slotOrigin + startPosition
-                    },
-                    onDragCancel = { draggingPieceIndex = null },
-                    onDrag = { dragAmount -> dragPointer += dragAmount },
-                    onDragEnd = {
-                        val pieceIndex = draggingPieceIndex
-                        val anchor = currentDragPreview.value?.anchor
-                        when {
-                            pieceIndex != null && anchor != null && currentOnPlacePiece.value(pieceIndex, anchor.row, anchor.col) ->
-                                draggingPieceIndex = null
-                            pieceIndex != null -> rejectedDropTrigger++
-                            else -> draggingPieceIndex = null
-                        }
-                    },
-                )
-            }
-        }
+            },
+            board = {
+                PuzzleBoardContainer(
+                    visible = board != null,
+                    playFresh = playFresh,
+                    zoomable = false,
+                    showFrame = false,
+                ) {
+                    if (board != null) {
+                        BlockFillGrid(
+                            board = board,
+                            dragPreview = dragPreview,
+                            onBoardMeasured = { coordinates -> boardCoordinates = coordinates },
+                        )
+                    }
+                }
+            },
+        )
 
         val floatingPiece = tray?.getOrNull(draggingPieceIndex ?: -1)
         val screenOrigin = screenCoordinates?.positionInRoot()
@@ -206,34 +240,31 @@ fun BlockFillPlayLayout(
 }
 
 @Composable
-internal fun BlockFillScoreRow(score: Int, multiplier: Int, showMultiplier: Boolean, trailing: @Composable () -> Unit = {}) {
+internal fun BlockFillScoreText(score: Int) {
     val scoreLabel = stringResource(R.string.blockfill_score_label)
-    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            score.toString(),
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.semantics { contentDescription = "$scoreLabel $score" },
-        )
-        if (showMultiplier) {
-            Text(
-                stringResource(R.string.blockfill_multiplier_value, multiplier),
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-            )
-        }
-        trailing()
-    }
+    Text(
+        score.toString(),
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.onSurface,
+        modifier = Modifier.semantics { contentDescription = "$scoreLabel $score" },
+    )
 }
 
 @Composable
-internal fun BlockFillHeaderProgress(progress: Float) {
-    val trackShape = RoundedCornerShape(HEADER_PROGRESS_HEIGHT / 2)
+internal fun BlockFillMultiplierText(multiplier: Int) {
+    Text(
+        stringResource(R.string.blockfill_multiplier_value, multiplier),
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.primary,
+    )
+}
+
+@Composable
+internal fun BlockFillStripProgress(progress: Float) {
+    val trackShape = RoundedCornerShape(STRIP_PROGRESS_HEIGHT / 2)
     Box(
         Modifier
-            .padding(vertical = 4.dp)
-            .size(HEADER_PROGRESS_WIDTH, HEADER_PROGRESS_HEIGHT)
+            .size(STRIP_PROGRESS_WIDTH, STRIP_PROGRESS_HEIGHT)
             .clip(trackShape)
             .background(MaterialTheme.colorScheme.surfaceContainerHighest),
     ) {
@@ -245,4 +276,32 @@ internal fun BlockFillHeaderProgress(progress: Float) {
                 .background(MaterialTheme.colorScheme.primary),
         )
     }
+}
+
+@Composable
+internal fun BlockFillStripRow(content: @Composable () -> Unit) {
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) { content() }
+}
+
+@Composable
+internal fun BlockFillLinePicture(rows: Int, family: BlockFillShapeFamily, trailing: String? = null) {
+    val color = blockFillFamilyColor(family)
+    Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
+        Column {
+            repeat(rows) {
+                Row { repeat(5) { BlockFillTile(color = color, size = 10.dp) } }
+            }
+        }
+        if (trailing != null) {
+            Text(trailing, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelMedium)
+        }
+    }
+}
+
+@Composable
+internal fun BlockFillPlanAheadPicture() {
+    BlockFillPieceGlyph(
+        piece = BlockFillPiece(shapeId = "quick-rule", family = BlockFillShapeFamily.LJ, cells = listOf(0 to 0, 1 to 0, 2 to 0, 2 to 1)),
+        cellSize = 10.dp,
+    )
 }

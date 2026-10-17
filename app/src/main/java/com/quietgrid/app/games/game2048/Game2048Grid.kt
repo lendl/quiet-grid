@@ -65,10 +65,10 @@ private val PENCIL_TILE_COLORS = mapOf(
 private val EMPTY_CELL_COLOR = Color(0xFFCDC1B4)
 private val EMPTY_CELL_COLOR_PENCIL = Color(0xFFD8D8D8)
 
-private fun tileColor(value: Int, pencil: Boolean): Color =
+internal fun tileColor(value: Int, pencil: Boolean): Color =
     (if (pencil) PENCIL_TILE_COLORS else TILE_COLORS)[value] ?: (if (pencil) Color(0xFF000000) else Color(0xFF3C3A32))
 
-private fun tileTextColor(value: Int, pencil: Boolean): Color = when {
+internal fun tileTextColor(value: Int, pencil: Boolean): Color = when {
     !pencil && value <= 4 -> Color(0xFF776E65)
     pencil && value <= 8 -> Color.Black
     else -> Color.White

@@ -31,11 +31,17 @@ data class QuickStartExample(
     val visual: (@Composable () -> Unit)? = null,
 )
 
+data class QuickRule(
+    @param:StringRes val titleRes: Int,
+    val visual: @Composable () -> Unit,
+)
+
 data class QuickStartContent(
     @param:StringRes val goalRes: Int,
     val bulletRes: List<Int>,
     val examples: List<QuickStartExample> = emptyList(),
     @param:StringRes val hookRes: Int,
+    val rules: List<QuickRule> = emptyList(),
 )
 
 @OptIn(ExperimentalMaterial3Api::class)

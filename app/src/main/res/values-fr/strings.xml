@@ -519,7 +519,6 @@
     <string name="minesweeper_difficulty_desc_hard">Des espaces plus serrés qui récompensent un marquage soigneux et un suivi des indices.</string>
     <string name="minesweeper_difficulty_desc_expert">Des champs de mines denses avec très peu d\'espace dès le départ.</string>
     <string name="minesweeper_size_label">Taille</string>
-    <string name="minesweeper_mines_left_label">Mines</string>
     <string name="minesweeper_how_to_play_goal">Révèle chaque case sûre sans ouvrir de mine.</string>
     <string name="minesweeper_how_to_play_controls">Appuie pour révéler une case. Appuie longuement pour placer ou retirer un drapeau.</string>
     <string name="minesweeper_how_to_play_wrong_move">Ouvrir une mine termine le puzzle immédiatement.</string>
@@ -586,7 +585,6 @@
     <string name="sudoku_candidate_mode_label">Notes</string>
     <string name="sudoku_undo">Annuler</string>
     <string name="sudoku_clear_cell">Effacer la cellule</string>
-    <string name="sudoku_auto_candidate_mode_label">Notes automatiques</string>
     <string name="sudoku_hint_show">Show next move hint</string>
     <string name="sudoku_hint_hide">Hide next move hint</string>
     <string name="sudoku_hint_row">ligne %1$d</string>
@@ -673,7 +671,6 @@
     <string name="wordsearch_difficulty_desc_hard">Toutes les directions, y compris à l\'envers, avec des chevauchements plus denses.</string>
     <string name="wordsearch_difficulty_desc_expert">Plus grandes grilles avec des mots dans toutes les directions et un chevauchement important.</string>
     <string name="wordsearch_size_label">Taille</string>
-    <string name="wordsearch_theme_label">Thème</string>
     <string name="wordsearch_hidden_word_solved_title">Mot caché trouvé !</string>
     <string name="wordsearch_hidden_word_enter_mode">Résoudre le mot caché</string>
     <string name="wordsearch_hidden_word_exit_mode">Quitter le mode mot caché</string>
@@ -923,7 +920,6 @@
     <string name="game2048_difficulty_desc_medium">Plateau classique 4x4, la disposition originale de 2048.</string>
     <string name="game2048_difficulty_desc_hard">Même plateau 4x4, mais avec plus de tuiles 4 gênantes.</string>
     <string name="game2048_difficulty_desc_expert">Minuscule plateau 3x3 — l\'objectif ici est 1024, la tuile la plus haute que cette taille puisse contenir.</string>
-    <string name="game2048_score_label">Score</string>
     <string name="game2048_how_to_play_goal">Fusionne des tuiles identiques jusqu\'à ce que l\'une d\'elles atteigne 2048.</string>
     <string name="game2048_how_to_play_controls">Glisse vers le haut, le bas, la gauche ou la droite pour faire glisser toutes les tuiles dans cette direction.</string>
     <string name="game2048_rule_1_title">Fais glisser toutes les tuiles</string>
@@ -1008,7 +1004,6 @@
     <string name="starbattle_loss_rule_failure_eyebrow">Puzzle perdu</string>
     <string name="starbattle_loss_rule_failure_title">Plus de vies</string>
     <string name="starbattle_loss_rule_failure_body">Trop d\'étoiles ont atterri au mauvais endroit.</string>
-    <string name="starbattle_stars_per_group_content_description">Étoiles par ligne, colonne et région</string>
     <string name="starbattle_challenger_label">Challenger</string>
     <string name="starbattle_challenger_description">Résous autant de puzzles que possible avant que le temps ne s\'écoule.</string>
     <string name="starbattle_challenger_solved_label">Résolus</string>

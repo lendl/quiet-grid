@@ -2,6 +2,7 @@ package com.quietgrid.app.games.wordsearch
 
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.ui.components.QuickRule
 import com.quietgrid.app.ui.components.QuickStartContent
 import com.quietgrid.app.ui.components.QuickStartExample
 
@@ -30,4 +31,9 @@ val WordSearchQuickStart = QuickStartContent(
         QuickStartExample(R.string.wordsearch_quickstart_example_1_word, R.string.wordsearch_quickstart_example_1_hint),
     ),
     hookRes = R.string.wordsearch_quickstart_hook,
+    rules = listOf(
+        QuickRule(R.string.wordsearch_rule_1_title) { WordSearchStraightLinePicture() },
+        QuickRule(R.string.wordsearch_rule_2_title) { WordSearchLeftoverPicture() },
+        QuickRule(R.string.wordsearch_rule_3_title) { WordSearchReadingOrderPicture() },
+    ),
 )

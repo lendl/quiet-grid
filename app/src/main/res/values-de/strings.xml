@@ -511,7 +511,6 @@
     <string name="minesweeper_difficulty_desc_hard">Engere Bereiche, die sorgfältiges Markieren und Verfolgen von Hinweisen belohnen.</string>
     <string name="minesweeper_difficulty_desc_expert">Dichte Minenfelder mit von Anfang an sehr wenig Spielraum.</string>
     <string name="minesweeper_size_label">Größe</string>
-    <string name="minesweeper_mines_left_label">Minen</string>
     <string name="minesweeper_how_to_play_goal">Decke jedes sichere Feld auf, ohne eine Mine zu öffnen.</string>
     <string name="minesweeper_how_to_play_controls">Tippe zum Aufdecken eines Feldes. Halte gedrückt, um eine Flagge zu setzen oder zu entfernen.</string>
     <string name="minesweeper_how_to_play_wrong_move">Eine Mine öffnen beendet das Rätsel sofort.</string>
@@ -573,7 +572,6 @@
     <string name="game2048_difficulty_desc_medium">Klassisches 4x4-Feld, das ursprüngliche 2048-Layout.</string>
     <string name="game2048_difficulty_desc_hard">Das gleiche 4x4-Feld, aber mit mehr unpraktischen 4er-Kacheln.</string>
     <string name="game2048_difficulty_desc_expert">Winziges 3x3-Feld – hier ist das Ziel 1024, die höchste Kachel, die bei dieser Größe möglich ist.</string>
-    <string name="game2048_score_label">Punkte</string>
     <string name="game2048_how_to_play_goal">Verschmelze gleiche Kacheln, bis eine davon 2048 erreicht.</string>
     <string name="game2048_how_to_play_controls">Wische nach oben, unten, links oder rechts, um alle Kacheln in diese Richtung zu schieben.</string>
     <string name="game2048_rule_1_title">Alle Kacheln verschieben</string>
@@ -619,7 +617,6 @@
     <string name="sudoku_candidate_mode_label">Notizen</string>
     <string name="sudoku_undo">Rückgängig</string>
     <string name="sudoku_clear_cell">Zelle leeren</string>
-    <string name="sudoku_auto_candidate_mode_label">Automatische Notizen</string>
     <string name="sudoku_hint_show">Show next move hint</string>
     <string name="sudoku_hint_hide">Hide next move hint</string>
     <string name="sudoku_hint_row">Zeile %1$d</string>
@@ -706,7 +703,6 @@
     <string name="wordsearch_difficulty_desc_hard">Alle Richtungen einschließlich rückwärts mit dichterer Überlappung.</string>
     <string name="wordsearch_difficulty_desc_expert">Größte Raster mit Wörtern in allen Richtungen und starker Überlappung.</string>
     <string name="wordsearch_size_label">Größe</string>
-    <string name="wordsearch_theme_label">Thema</string>
     <string name="wordsearch_hidden_word_solved_title">Verstecktes Wort gefunden!</string>
     <string name="wordsearch_hidden_word_enter_mode">Verstecktes Wort lösen</string>
     <string name="wordsearch_hidden_word_exit_mode">Modus für verstecktes Wort verlassen</string>
@@ -978,7 +974,6 @@
     <string name="starbattle_quickstart_bullet_2">Ziehe über mehrere Zellen, um sie auf einmal zu markieren oder zu leeren.</string>
     <string name="starbattle_quickstart_bullet_3">Doppeltippe, um einen Stern zu platzieren — falsche Vermutungen kosten ein Leben.</string>
     <string name="starbattle_quickstart_hook">Keine zwei Sterne dürfen sich berühren, auch nicht diagonal.</string>
-    <string name="starbattle_stars_per_group_content_description">Sterne pro Zeile, Spalte und Region</string>
     <string name="starbattle_challenger_label">Challenger</string>
     <string name="starbattle_challenger_description">Löse so viele Rätsel wie möglich, bevor die Zeit abläuft.</string>
     <string name="starbattle_challenger_solved_label">Gelöst</string>

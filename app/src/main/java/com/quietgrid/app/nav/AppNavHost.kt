@@ -5,7 +5,6 @@ import com.quietgrid.app.ui.screens.DailyViewModel
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.platform.LocalContext
-import com.quietgrid.app.ui.components.DailyPlayBanner
 import com.quietgrid.app.core.daily.nextUnplayedDaily
 import com.quietgrid.app.core.daily.shareDailyResult
 import java.time.LocalDate
@@ -139,6 +138,10 @@ import com.quietgrid.app.ui.screens.SupportInfoScreen
 import com.quietgrid.app.ui.screens.SupportPageScreen
 import com.quietgrid.app.ui.screens.TrustPageScreen
 import com.quietgrid.app.ui.screens.supportInfoTitleRes
+import com.quietgrid.app.ui.play.LocalOpenGameRules
+import com.quietgrid.app.ui.play.LocalPlayContext
+import com.quietgrid.app.ui.play.PlayContext
+import com.quietgrid.app.ui.screens.HowToPlayScreen
 import java.util.UUID
 
 val LocalSharedTransitionScope = compositionLocalOf<SharedTransitionScope?> { null }
@@ -286,6 +289,10 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                     }
                 }
                 currentRoute == Routes.PLAY -> Unit
+                currentRoute == Routes.RULES -> AppTopBar(
+                    title = stringResource(R.string.common_rules),
+                    onBack = { navController.popBackStack() },
+                )
                 currentRoute == Routes.COMPLETION || currentRoute == Routes.LOSS -> Unit
                 currentRoute == Routes.CHALLENGER || currentRoute == Routes.CHALLENGER_RESULT -> Unit
                 currentRoute == Routes.ENDLESS || currentRoute == Routes.ENDLESS_RESULT -> Unit
@@ -395,8 +402,18 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
             }
         },
     ) { padding ->
+        CompositionLocalProvider(LocalOpenGameRules provides { gameId -> navController.navigate(Routes.rules(gameId)) }) {
         SharedTransitionLayout {
             NavHost(navController = navController, startDestination = Routes.TABS, modifier = Modifier.padding(padding)) {
+            composable(
+                Routes.RULES,
+                arguments = listOf(navArgument("gameId") { type = NavType.StringType }),
+                enterTransition = { fadeIn(animationSpec = tween(250)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) },
+            ) { entry ->
+                val rulesGameId = GameId.entries.firstOrNull { it.key == entry.arguments?.getString("gameId") }
+                if (rulesGameId != null) HowToPlayScreen(rulesGameId)
+            }
             composable(
                 Routes.TABS,
                 enterTransition = { fadeIn(animationSpec = tween(250)) },
@@ -547,6 +564,10 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                 CompositionLocalProvider(
                     LocalSharedTransitionScope provides this@SharedTransitionLayout,
                     LocalAnimatedVisibilityScope provides this,
+                    LocalPlayContext provides PlayContext(
+                        dailyKey = entry.arguments?.getString("daily"),
+                        fromMix = activeMix != null,
+                    ),
                 ) {
                     val difficulty = Difficulty.fromKey(entry.arguments?.getString("difficulty") ?: "easy")
                     val resume = entry.arguments?.getBoolean("resume") ?: false
@@ -569,7 +590,6 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                     val whoDidItResources = LocalContext.current.resources
                     val keepAwake = settings.keepScreenOnInPlay || gameId == GameId.NBACK
                     Column(Modifier.fillMaxSize().then(if (keepAwake) Modifier.keepScreenOn() else Modifier)) {
-                        if (dailyKey != null) DailyPlayBanner(dailyKey)
                         Box(Modifier.weight(1f)) {
                             when (gameId) {
                                 GameId.TAKUZU -> TakuzuPlayScreen(
@@ -1346,6 +1366,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                 AboutPageScreen(onOpenInfo = { key -> navController.navigate(Routes.supportInfo(key)) })
             }
             }
+        }
         }
     }
     }

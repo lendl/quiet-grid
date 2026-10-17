@@ -1,6 +1,5 @@
 package com.quietgrid.app.ui.screens
 
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
@@ -11,6 +10,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -21,14 +21,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -48,8 +46,12 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.quietgrid.app.R
@@ -80,12 +82,9 @@ import com.quietgrid.app.games.themeclear.themeClearDifficultyLabelRes
 import com.quietgrid.app.games.killersudoku.killerSudokuDifficultyLabelRes
 import com.quietgrid.app.games.wordguess.wordGuessDifficultyLabelRes
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
-import com.quietgrid.app.nav.LocalAnimatedVisibilityScope
-import com.quietgrid.app.nav.LocalSharedTransitionScope
 import com.quietgrid.app.ui.components.BadgePill
 import com.quietgrid.app.ui.components.ConfettiBurst
 import com.quietgrid.app.ui.components.OutlinedGlowButton
-import com.quietgrid.app.ui.components.SharedElementKeys
 import com.quietgrid.app.ui.components.rememberHapticController
 import com.quietgrid.app.ui.components.systemAnimationsDisabled
 import kotlinx.coroutines.delay
@@ -99,7 +98,7 @@ private fun pickCelebrationIcon(score: Int, accuracyPct: Int, variantSeed: Int):
     return CELEBRATION_ICONS[seed % CELEBRATION_ICONS.size]
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CompletionScreen(
     gameId: GameId,
@@ -202,7 +201,6 @@ fun CompletionScreen(
 
     val context = LocalContext.current
     val reduceMotion = remember { systemAnimationsDisabled(context) }
-    val isDarkTheme = LocalIsDarkTheme.current
 
     val pageOpacity = remember { Animatable(if (reduceMotion) 1f else 0f) }
     val contentOffsetY = remember { Animatable(if (reduceMotion) 0f else 24f) }
@@ -248,7 +246,32 @@ fun CompletionScreen(
         }
     }
 
-    Box(Modifier.fillMaxSize()) {
+    val links = if (dailyDate != null) {
+        dailyResultLinks(hasNextDaily, onShareDaily, onBackToDaily, onTryAnotherGame)
+    } else {
+        buildList {
+            if (!isMixActive) add(ResultLink(R.string.completion_other_difficulty, onOtherDifficulty))
+            add(ResultLink(R.string.completion_try_another_game, onTryAnotherGame))
+        }
+    }
+    val primaryAction: @Composable () -> Unit = {
+        if (dailyDate != null) {
+            DailyResultPrimaryButton(hasNextDaily, onPlayNextDaily, onShareDaily)
+        } else {
+            OutlinedGlowButton(onClick = onPlayAgain) {
+                Text(
+                    stringResource(mixAwarePrimaryLabel(isMixActive, R.string.completion_play_again)),
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+        }
+    }
+    val heroScale = { pictureScale.value }
+    val heroSymbol = themeIcon ?: icon
+    val scoreDescription = "${stringResource(R.string.completion_score)} $score"
+
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+        val sideways = isSidewaysPhoneResult(maxWidth, maxHeight)
         PinnedHeaderScrollLayout(
             header = {
                 Row(
@@ -354,155 +377,206 @@ fun CompletionScreen(
                 translationY = contentOffsetY.value
             },
         ) {
-            Box(Modifier.fillMaxWidth().height(150.dp), contentAlignment = Alignment.Center) {
-                if (isDarkTheme) {
-                    Box(
-                        Modifier
-                            .size(180.dp)
-                            .graphicsLayer { scaleX = pictureScale.value; scaleY = pictureScale.value }
-                            .background(
-                                Brush.radialGradient(
-                                    colors = listOf(MaterialTheme.colorScheme.primary.copy(alpha = 0.35f), Color.Transparent),
-                                ),
-                                CircleShape,
-                            ),
-                    )
-                }
-                if (picture != null) {
-                    NonogramMiniPicture(
-                        solution = picture,
-                        fillColor = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .size(130.dp)
-                            .graphicsLayer { scaleX = pictureScale.value; scaleY = pictureScale.value },
-                    )
-                } else {
-                    val sharedTransitionScope = LocalSharedTransitionScope.current
-                    val animatedVisibilityScope = LocalAnimatedVisibilityScope.current
-                    val sharedModifier = if (sharedTransitionScope != null && animatedVisibilityScope != null) {
-                        with(sharedTransitionScope) {
-                            Modifier.sharedBounds(
-                                sharedContentState = rememberSharedContentState(key = SharedElementKeys.gameIdentity(gameId)),
-                                animatedVisibilityScope = animatedVisibilityScope,
-                            )
-                        }
-                    } else {
-                        Modifier
-                    }
-                    Box(
-                        sharedModifier
-                            .size(96.dp)
-                            .graphicsLayer { scaleX = pictureScale.value; scaleY = pictureScale.value }
-                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f), CircleShape)
-                            .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f), CircleShape),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Text(themeIcon ?: icon, fontSize = 40.sp)
-                    }
-                }
-            }
-
-            Text(stringResource(titleRes), style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center, modifier = Modifier.padding(top = 4.dp))
-            Text(
-                stringResource(bodyRes),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = 6.dp),
-            )
-            Text(
-                stringResource(difficultyLabelRes),
-                style = MaterialTheme.typography.labelLarge,
-                color = accentColor,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = 8.dp),
-            )
-
-            Column(Modifier.padding(top = 20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    stringResource(R.string.completion_score),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                CountUpScore(score = score, progress = { scoreProgress.value })
-
+            if (sideways) {
                 Row(
-                    Modifier.padding(top = 14.dp),
-                    horizontalArrangement = Arrangement.spacedBy(18.dp),
                     verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(20.dp),
                 ) {
-                    MetaItem(stringResource(R.string.completion_elapsed_time), formatElapsed(elapsedSeconds))
-                    if (gameId in ACCURACY_TRACKED_GAMES) {
-                        Box(Modifier.width(1.dp).height(28.dp).background(MaterialTheme.colorScheme.outlineVariant))
-                        MetaItem(stringResource(R.string.completion_accuracy), "$accuracyPct%")
-                    }
-                    if (gameId in BEST_TILE_TRACKED_GAMES) {
-                        Box(Modifier.width(1.dp).height(28.dp).background(MaterialTheme.colorScheme.outlineVariant))
-                        MetaItem(stringResource(R.string.completion_best_tile), bestTile.toString())
-                    }
-                }
-
-                if (caseSolvedText != null) {
-                    Column(Modifier.padding(top = 14.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    WinHero(
+                        picture = picture,
+                        symbol = heroSymbol,
+                        gameId = gameId,
+                        glowSize = 112.dp,
+                        pictureSize = 96.dp,
+                        medallionSize = 72.dp,
+                        symbolSize = 30.sp,
+                        scale = heroScale,
+                        modifier = Modifier.size(112.dp),
+                    )
+                    Column(Modifier.widthIn(max = 420.dp)) {
+                        Text(stringResource(titleRes), style = MaterialTheme.typography.headlineSmall)
                         Text(
-                            stringResource(R.string.whodidit_completion_case_label),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                        Text(
-                            caseSolvedText,
+                            stringResource(bodyRes),
                             style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(top = 2.dp),
                         )
+                        Text(
+                            stringResource(difficultyLabelRes),
+                            style = MaterialTheme.typography.labelLarge,
+                            color = accentColor,
+                            modifier = Modifier.padding(top = 4.dp),
+                        )
                     }
                 }
 
-                if (nbackBreakdown != null) {
+                Row(
+                    Modifier.padding(top = 18.dp),
+                    horizontalArrangement = Arrangement.spacedBy(22.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    CountUpScore(
+                        score = score,
+                        progress = { scoreProgress.value },
+                        modifier = Modifier.semantics { contentDescription = scoreDescription },
+                    )
+                    ResultMetaDivider(height = 40.dp)
+                    WinMetaItems(gameId, elapsedSeconds, accuracyPct, bestTile)
+                }
+                WinHighlights(caseSolvedText, nbackBreakdown)
+
+                CompactResultActions(links, Modifier.padding(top = 20.dp), primaryAction)
+            } else {
+                WinHero(
+                    picture = picture,
+                    symbol = heroSymbol,
+                    gameId = gameId,
+                    glowSize = 180.dp,
+                    pictureSize = 130.dp,
+                    medallionSize = 96.dp,
+                    symbolSize = 40.sp,
+                    scale = heroScale,
+                    modifier = Modifier.fillMaxWidth().height(150.dp),
+                )
+
+                Text(stringResource(titleRes), style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center, modifier = Modifier.padding(top = 4.dp))
+                Text(
+                    stringResource(bodyRes),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(top = 6.dp),
+                )
+                Text(
+                    stringResource(difficultyLabelRes),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = accentColor,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(top = 8.dp),
+                )
+
+                Column(Modifier.padding(top = 20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        stringResource(R.string.completion_score),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    CountUpScore(score = score, progress = { scoreProgress.value })
+
                     Row(
-                        Modifier.padding(top = 10.dp),
+                        Modifier.padding(top = 14.dp),
                         horizontalArrangement = Arrangement.spacedBy(18.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        MetaItem(stringResource(R.string.nback_completion_hits), nbackBreakdown.hits.toString())
-                        MetaItem(stringResource(R.string.nback_completion_misses), nbackBreakdown.misses.toString())
-                        MetaItem(stringResource(R.string.nback_completion_false_positives), nbackBreakdown.falsePositives.toString())
-                        MetaItem(stringResource(R.string.nback_completion_avg_reaction_time), "${nbackBreakdown.avgReactionTimeMs}ms")
+                        WinMetaItems(gameId, elapsedSeconds, accuracyPct, bestTile)
                     }
-                }
-            }
-
-            if (dailyDate != null) {
-                DailyResultPrimaryButton(hasNextDaily, onPlayNextDaily, onShareDaily)
-                DailyResultLinks(hasNextDaily, onShareDaily, onBackToDaily, onTryAnotherGame)
-            } else {
-                OutlinedGlowButton(onClick = onPlayAgain, modifier = Modifier.padding(top = 24.dp)) {
-                    Text(
-                        stringResource(mixAwarePrimaryLabel(isMixActive, R.string.completion_play_again)),
-                        fontWeight = FontWeight.Bold,
-                    )
+                    WinHighlights(caseSolvedText, nbackBreakdown)
                 }
 
+                Box(Modifier.padding(top = 24.dp)) { primaryAction() }
                 Row(
                     Modifier.fillMaxWidth().padding(top = 8.dp),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    if (!isMixActive) {
-                        TextButton(onClick = onOtherDifficulty) {
-                            Text(stringResource(R.string.completion_other_difficulty), color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        }
-                        Box(Modifier.width(1.dp).height(16.dp).background(MaterialTheme.colorScheme.outlineVariant))
-                    }
-                    TextButton(onClick = onTryAnotherGame) {
-                        Text(stringResource(R.string.completion_try_another_game), color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
+                    ResultLinkGroup(links)
                 }
             }
         }
         if (showConfetti) {
             ConfettiBurst(Modifier.fillMaxSize())
+        }
+    }
+}
+
+@Composable
+private fun WinHero(
+    picture: List<List<Boolean>>?,
+    symbol: String,
+    gameId: GameId,
+    glowSize: Dp,
+    pictureSize: Dp,
+    medallionSize: Dp,
+    symbolSize: TextUnit,
+    scale: () -> Float,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier, contentAlignment = Alignment.Center) {
+        if (LocalIsDarkTheme.current) {
+            Box(
+                Modifier
+                    .size(glowSize)
+                    .graphicsLayer { scaleX = scale(); scaleY = scale() }
+                    .background(
+                        Brush.radialGradient(
+                            colors = listOf(MaterialTheme.colorScheme.primary.copy(alpha = 0.35f), Color.Transparent),
+                        ),
+                        CircleShape,
+                    ),
+            )
+        }
+        if (picture != null) {
+            NonogramMiniPicture(
+                solution = picture,
+                fillColor = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .size(pictureSize)
+                    .graphicsLayer { scaleX = scale(); scaleY = scale() },
+            )
+        } else {
+            ResultMedallion(
+                gameId = gameId,
+                symbol = symbol,
+                tint = MaterialTheme.colorScheme.primary,
+                size = medallionSize,
+                symbolSize = symbolSize,
+                modifier = Modifier.graphicsLayer { scaleX = scale(); scaleY = scale() },
+            )
+        }
+    }
+}
+
+@Composable
+private fun WinMetaItems(gameId: GameId, elapsedSeconds: Int, accuracyPct: Int, bestTile: Int) {
+    MetaItem(stringResource(R.string.completion_elapsed_time), formatElapsed(elapsedSeconds))
+    if (gameId in ACCURACY_TRACKED_GAMES) {
+        ResultMetaDivider()
+        MetaItem(stringResource(R.string.completion_accuracy), "$accuracyPct%")
+    }
+    if (gameId in BEST_TILE_TRACKED_GAMES) {
+        ResultMetaDivider()
+        MetaItem(stringResource(R.string.completion_best_tile), bestTile.toString())
+    }
+}
+
+@Composable
+private fun WinHighlights(caseSolvedText: String?, nbackBreakdown: CompletionHighlight.NBackBreakdown?) {
+    if (caseSolvedText != null) {
+        Column(Modifier.padding(top = 14.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                stringResource(R.string.whodidit_completion_case_label),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(
+                caseSolvedText,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 2.dp),
+            )
+        }
+    }
+    if (nbackBreakdown != null) {
+        Row(
+            Modifier.padding(top = 10.dp),
+            horizontalArrangement = Arrangement.spacedBy(18.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            MetaItem(stringResource(R.string.nback_completion_hits), nbackBreakdown.hits.toString())
+            MetaItem(stringResource(R.string.nback_completion_misses), nbackBreakdown.misses.toString())
+            MetaItem(stringResource(R.string.nback_completion_false_positives), nbackBreakdown.falsePositives.toString())
+            MetaItem(stringResource(R.string.nback_completion_avg_reaction_time), "${nbackBreakdown.avgReactionTimeMs}ms")
         }
     }
 }
@@ -539,12 +613,12 @@ private fun NonogramMiniPicture(solution: List<List<Boolean>>, fillColor: Color,
 }
 
 @Composable
-private fun CountUpScore(score: Int, progress: () -> Float) {
+private fun CountUpScore(score: Int, progress: () -> Float, modifier: Modifier = Modifier) {
     Text(
         (score * progress()).roundToInt().toString(),
         style = MaterialTheme.typography.displayMedium,
         fontWeight = FontWeight.Black,
-        modifier = Modifier.padding(top = 2.dp),
+        modifier = modifier.padding(top = 2.dp),
     )
 }
 

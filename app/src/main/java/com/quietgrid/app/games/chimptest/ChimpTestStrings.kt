@@ -2,6 +2,7 @@ package com.quietgrid.app.games.chimptest
 
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.ui.components.QuickRule
 import com.quietgrid.app.ui.components.QuickStartContent
 
 fun chimpDifficultyLabelRes(difficulty: Difficulty): Int = when (difficulty) {
@@ -22,4 +23,9 @@ val ChimpTestQuickStart = QuickStartContent(
     goalRes = R.string.chimp_quickstart_goal,
     bulletRes = listOf(R.string.chimp_quickstart_bullet_1, R.string.chimp_quickstart_bullet_2),
     hookRes = R.string.chimp_quickstart_hook,
+    rules = listOf(
+        QuickRule(R.string.chimp_rule_1_title) { ChimpStudyPicture() },
+        QuickRule(R.string.chimp_rule_2_title) { ChimpTapOrderPicture() },
+        QuickRule(R.string.chimp_rule_3_title) { ChimpVanishPicture() },
+    ),
 )

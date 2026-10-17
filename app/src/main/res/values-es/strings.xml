@@ -490,7 +490,6 @@
     <string name="minesweeper_difficulty_desc_hard">Espacios más ajustados que recompensan el marcado cuidadoso y el seguimiento de pistas.</string>
     <string name="minesweeper_difficulty_desc_expert">Campos de minas densos con muy poco espacio desde el principio.</string>
     <string name="minesweeper_size_label">Tamaño</string>
-    <string name="minesweeper_mines_left_label">Minas</string>
     <string name="minesweeper_how_to_play_goal">Revela cada casilla segura sin abrir una mina.</string>
     <string name="minesweeper_how_to_play_controls">Toca para revelar una casilla. Mantén pulsado para colocar o quitar una bandera.</string>
     <string name="minesweeper_how_to_play_wrong_move">Abrir una mina termina el puzzle inmediatamente.</string>
@@ -557,7 +556,6 @@
     <string name="sudoku_candidate_mode_label">Notas</string>
     <string name="sudoku_undo">Deshacer</string>
     <string name="sudoku_clear_cell">Borrar celda</string>
-    <string name="sudoku_auto_candidate_mode_label">Notas automáticas</string>
     <string name="sudoku_hint_show">Show next move hint</string>
     <string name="sudoku_hint_hide">Hide next move hint</string>
     <string name="sudoku_hint_row">fila %1$d</string>
@@ -624,7 +622,6 @@
     <string name="wordsearch_difficulty_desc_hard">Todas las direcciones, incluidas hacia atrás, con solapamientos más densos.</string>
     <string name="wordsearch_difficulty_desc_expert">Las cuadrículas más grandes con palabras en todas las direcciones y mucho solapamiento.</string>
     <string name="wordsearch_size_label">Tamaño</string>
-    <string name="wordsearch_theme_label">Tema</string>
     <string name="wordsearch_hidden_word_solved_title">¡Palabra oculta encontrada!</string>
     <string name="wordsearch_hidden_word_enter_mode">Resolver palabra oculta</string>
     <string name="wordsearch_hidden_word_exit_mode">Salir del modo de palabra oculta</string>
@@ -958,7 +955,6 @@
     <string name="game2048_difficulty_desc_medium">Tablero clásico de 4x4, la disposición original de 2048.</string>
     <string name="game2048_difficulty_desc_hard">El mismo tablero de 4x4 pero con más fichas de 4 poco útiles.</string>
     <string name="game2048_difficulty_desc_expert">Tablero diminuto de 3x3: el objetivo aquí es 1024, la ficha más alta que este tamaño puede contener.</string>
-    <string name="game2048_score_label">Puntuación</string>
     <string name="game2048_how_to_play_goal">Combina fichas iguales hasta que una de ellas llegue a 2048.</string>
     <string name="game2048_how_to_play_controls">Desliza hacia arriba, abajo, izquierda o derecha para mover todas las fichas en esa dirección.</string>
     <string name="game2048_rule_1_title">Desliza todas las fichas</string>
@@ -1026,7 +1022,6 @@
     <string name="starbattle_difficulty_desc_medium">Algunos puzzles necesitan dos estrellas por línea</string>
     <string name="starbattle_difficulty_desc_hard">Deducciones más profundas, a veces con dos estrellas por línea</string>
     <string name="starbattle_difficulty_desc_expert">Las deducciones de dos estrellas más profundas del juego</string>
-    <string name="starbattle_stars_per_group_content_description">Estrellas por fila, columna y región</string>
     <string name="starbattle_how_to_play_goal">Coloca exactamente el número correcto de estrellas en cada fila, columna y región.</string>
     <string name="starbattle_how_to_play_controls">Toca una celda para marcarla, tócala de nuevo para borrar la marca. Arrastra por varias celdas para marcarlas o borrarlas a la vez. Toca dos veces para colocar una estrella — los errores cuestan una vida.</string>
     <string name="starbattle_how_to_play_wrong_move">Un doble toque incorrecto bloquea la celda como una estrella mal colocada y cuesta una vida. Pierde las 3 vidas y el puzzle termina.</string>

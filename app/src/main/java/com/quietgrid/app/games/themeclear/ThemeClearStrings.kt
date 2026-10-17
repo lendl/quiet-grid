@@ -2,6 +2,7 @@ package com.quietgrid.app.games.themeclear
 
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.ui.components.QuickRule
 import com.quietgrid.app.ui.components.QuickStartContent
 import java.util.Locale
 
@@ -34,4 +35,9 @@ val ThemeClearQuickStart = QuickStartContent(
         R.string.themeclear_quickstart_bullet_3,
     ),
     hookRes = R.string.themeclear_quickstart_hook,
+    rules = listOf(
+        QuickRule(R.string.themeclear_rule_1_title) { ThemeClearAnyOrderPicture() },
+        QuickRule(R.string.themeclear_rule_2_title) { ThemeClearThemeWordPicture() },
+        QuickRule(R.string.themeclear_rule_3_title) { ThemeClearTakeBackPicture() },
+    ),
 )

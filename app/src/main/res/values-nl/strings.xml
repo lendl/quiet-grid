@@ -471,7 +471,6 @@
     <string name="minesweeper_difficulty_desc_hard">Strakkere ruimtes die zorgvuldig markeren en aanwijzingen volgen belonen.</string>
     <string name="minesweeper_difficulty_desc_expert">Dichte mijnenvelden met vanaf het begin heel weinig ademruimte.</string>
     <string name="minesweeper_size_label">Grootte</string>
-    <string name="minesweeper_mines_left_label">Mijnen</string>
     <string name="minesweeper_how_to_play_goal">Onthul elk veilig vak zonder een mijn te openen.</string>
     <string name="minesweeper_how_to_play_controls">Tik om een cel te onthullen. Houd ingedrukt om een vlag te plaatsen of verwijderen.</string>
     <string name="minesweeper_how_to_play_wrong_move">Een mijn openen beëindigt de puzzel onmiddellijk.</string>
@@ -538,7 +537,6 @@
     <string name="sudoku_candidate_mode_label">Notities</string>
     <string name="sudoku_undo">Ongedaan maken</string>
     <string name="sudoku_clear_cell">Cel wissen</string>
-    <string name="sudoku_auto_candidate_mode_label">Automatische notities</string>
     <string name="sudoku_hint_show">Show next move hint</string>
     <string name="sudoku_hint_hide">Hide next move hint</string>
     <string name="sudoku_hint_row">rij %1$d</string>
@@ -605,7 +603,6 @@
     <string name="wordsearch_difficulty_desc_hard">Alle richtingen, ook achterwaarts, met dichtere overlap.</string>
     <string name="wordsearch_difficulty_desc_expert">Grootste roosters met woorden in alle richtingen en zware overlap.</string>
     <string name="wordsearch_size_label">Grootte</string>
-    <string name="wordsearch_theme_label">Thema</string>
     <string name="wordsearch_hidden_word_solved_title">Verborgen woord gevonden!</string>
     <string name="wordsearch_hidden_word_enter_mode">Verborgen woord oplossen</string>
     <string name="wordsearch_hidden_word_exit_mode">Verborgen-woordmodus verlaten</string>
@@ -855,7 +852,6 @@
     <string name="game2048_difficulty_desc_medium">Klassiek 4x4-bord, de originele 2048-indeling.</string>
     <string name="game2048_difficulty_desc_hard">Hetzelfde 4x4-bord, maar met meer onhandige 4-tegels.</string>
     <string name="game2048_difficulty_desc_expert">Piepklein 3x3-bord — het doel hier is 1024, de hoogste tegel die dit formaat aankan.</string>
-    <string name="game2048_score_label">Score</string>
     <string name="game2048_how_to_play_goal">Voeg gelijke tegels samen totdat er één de waarde 2048 bereikt.</string>
     <string name="game2048_how_to_play_controls">Veeg omhoog, omlaag, naar links of naar rechts om alle tegels in die richting te schuiven.</string>
     <string name="game2048_rule_1_title">Schuif alle tegels</string>
@@ -956,7 +952,6 @@
     <string name="starbattle_quickstart_bullet_2">Sleep over cellen om er meerdere tegelijk te markeren of te wissen.</string>
     <string name="starbattle_quickstart_bullet_3">Dubbeltik om een ster te plaatsen — verkeerde gokken kosten een leven.</string>
     <string name="starbattle_quickstart_hook">Geen twee sterren mogen elkaar raken, ook niet diagonaal.</string>
-    <string name="starbattle_stars_per_group_content_description">Sterren per rij, kolom en regio</string>
 
     <!-- Challenger mode -->
     <string name="nonogram_challenger_label">Challenger</string>

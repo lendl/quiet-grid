@@ -1,26 +1,12 @@
 package com.quietgrid.app.games.wordsearch
 
-import java.time.LocalDate
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.ZoomOutMap
-import androidx.compose.material3.Card
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,16 +20,18 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.themes.themeLabelRes
 import com.quietgrid.app.ui.components.CollectPuzzleResult
-import com.quietgrid.app.ui.components.ElapsedTimerText
-import com.quietgrid.app.ui.components.EndPuzzleDialog
-import com.quietgrid.app.ui.components.EndPuzzleIconButton
-import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
-import com.quietgrid.app.ui.components.PuzzleLanguageFlag
 import com.quietgrid.app.ui.components.rememberHapticController
-import com.quietgrid.app.ui.components.LogoGridLoader
+import com.quietgrid.app.ui.play.GamePlayScaffold
+import com.quietgrid.app.ui.play.InfoItem
+import com.quietgrid.app.ui.play.PlayHintAction
+import com.quietgrid.app.ui.play.PlayHintMessage
+import com.quietgrid.app.ui.play.PlayTimer
+import com.quietgrid.app.ui.play.puzzleLanguageInfo
+import java.time.LocalDate
 
 @Composable
 fun WordSearchPlayScreen(
@@ -58,7 +46,6 @@ fun WordSearchPlayScreen(
     )
     CollectPuzzleResult(viewModel.result, onFinished)
 
-    var showEndDialog by remember { mutableStateOf(false) }
     var isBoardZoomed by remember { mutableStateOf(false) }
     var resetZoomTrigger by remember { mutableStateOf(0) }
     val session = viewModel.session
@@ -82,187 +69,102 @@ fun WordSearchPlayScreen(
         }
     }
 
-    Column(Modifier.fillMaxSize().padding(16.dp)) {
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            GameBackButton(onBack)
-            Row(
-                Modifier.weight(1f),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
+    val hint = viewModel.nextMoveHint
+    GamePlayScaffold(
+        gameId = GameId.WORDSEARCH,
+        timer = PlayTimer.Elapsed(viewModel.elapsedSeconds.toInt()),
+        onBack = onBack,
+        onEndPuzzle = { viewModel.endPuzzle() },
+        difficulty = session?.let { Difficulty.fromKey(it.puzzle.difficulty) },
+        hint = PlayHintAction(
+            active = hint != null,
+            busy = viewModel.isComputingHint,
+            contentDescription = stringResource(if (hint != null) R.string.wordsearch_next_move_hide else R.string.wordsearch_next_move_show),
+            onClick = { viewModel.toggleNextMoveHint() },
+        ),
+        hintMessage = hint?.let { wordSearchHintMessage(it) },
+        info = if (session == null) {
+            emptyList()
+        } else {
+            listOfNotNull(
+                InfoItem.Label(stringResource(themeLabelRes(session.puzzle.hiddenWord.clue)), emphasized = true),
+                InfoItem.Label(stringResource(R.string.wordsearch_words_found, session.foundWordIds.size, session.puzzle.words.size)),
+                puzzleLanguageInfo(session.puzzle.locale),
+            )
+        },
+        dockHeight = ::wordSearchDockHeight,
+        dock = {
+            if (session != null) {
+                WordSearchDock(
+                    session = session,
+                    onToggleHiddenWordMode = viewModel::onToggleHiddenWordMode,
+                    wrongHiddenWordTap = viewModel.wrongHiddenWordTap,
+                )
+            }
+        },
+        board = {
+            PuzzleBoardContainer(
+                visible = session != null,
+                playFresh = !resume,
+                flashTrigger = flashTrigger,
+                onZoomChange = { isBoardZoomed = it },
+                resetTrigger = resetZoomTrigger,
             ) {
                 if (session != null) {
-                    if (!session.hiddenWordSolved) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(stringResource(R.string.wordsearch_theme_label), style = MaterialTheme.typography.labelSmall)
-                            Text(stringResource(themeLabelRes(session.puzzle.hiddenWord.clue)), style = MaterialTheme.typography.titleMedium)
-                        }
-                    }
-                }
-                if (isBoardZoomed) {
-                    IconButton(onClick = { resetZoomTrigger++ }) {
-                        Icon(
-                            imageVector = Icons.Filled.ZoomOutMap,
-                            contentDescription = stringResource(R.string.wordsearch_reset_zoom),
-                        )
-                    }
-                }
-                IconButton(onClick = { viewModel.toggleNextMoveHint() }, enabled = !viewModel.isComputingHint) {
-                    if (viewModel.isComputingHint) {
-                        LogoGridLoader(size = 20.dp)
-                    } else {
-                        Icon(
-                            imageVector = Icons.Filled.Lightbulb,
-                            contentDescription = stringResource(
-                                if (viewModel.nextMoveHint != null) R.string.wordsearch_next_move_hide else R.string.wordsearch_next_move_show,
-                            ),
-                            tint = if (viewModel.nextMoveHint != null) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                }
-                if (session != null) {
-                    PuzzleLanguageFlag(session.puzzle.locale)
-                }
-                EndPuzzleIconButton(onClick = { showEndDialog = true })
-            }
-        }
-
-        val hint = viewModel.nextMoveHint
-        if (hint != null) {
-            Card(Modifier.fillMaxWidth().padding(top = 8.dp)) {
-                Column(Modifier.padding(12.dp)) {
-                    val title = when (hint) {
-                        is WSNextMoveHint.FindWord -> stringResource(R.string.wordsearch_next_move_title, hint.word)
-                        is WSNextMoveHint.FindHiddenLetter -> if (hint.revealedWord != null) {
-                            stringResource(R.string.wordsearch_hidden_word_next_letter_title, hint.revealedWord)
-                        } else {
-                            stringResource(R.string.wordsearch_hidden_word_theme_title, stringResource(themeLabelRes(hint.clue)))
-                        }
-                    }
-                    val body = when (hint) {
-                        is WSNextMoveHint.FindWord -> stringResource(R.string.wordsearch_next_move_body)
-                        is WSNextMoveHint.FindHiddenLetter -> stringResource(R.string.wordsearch_hidden_word_next_letter_body)
-                    }
-                    Text(title, style = MaterialTheme.typography.titleSmall)
-                    Text(body, style = MaterialTheme.typography.bodySmall)
-                }
-            }
-        }
-
-        ElapsedTimerText(
-            viewModel.elapsedSeconds.toInt(),
-            modifier = Modifier.padding(top = 4.dp, bottom = 12.dp),
-        )
-
-        BoxWithConstraints(Modifier.weight(1f).fillMaxWidth()) {
-            val sideBySide = shouldShowWordListSideBySide(maxWidth, maxHeight)
-            if (sideBySide) {
-                Row(Modifier.fillMaxSize()) {
-                    PuzzleBoardContainer(
-                        visible = session != null,
-                        playFresh = !resume,
-                        flashTrigger = flashTrigger,
-                        onZoomChange = { isBoardZoomed = it },
-                        resetTrigger = resetZoomTrigger,
-                    ) {
-                        if (session != null) {
-                            Box(Modifier.padding(8.dp)) {
-                                WordSearchGrid(
-                                    puzzle = session.puzzle,
-                                    foundWordIds = session.foundWordIds,
-                                    tempSelection = session.tempSelection,
-                                    hiddenWordMode = session.hiddenWordMode,
-                                    hiddenWordProgress = session.hiddenWordProgress,
-                                    onCellTap = viewModel::onCellTap,
-                                    onCellDragStart = viewModel::onCellDragStart,
-                                    onCellDragMove = viewModel::onCellDragMove,
-                                    onCellDragEnd = viewModel::onCellDragEnd,
-                                    onHiddenWordTap = viewModel::onHiddenWordCellTap,
-                                    nextMoveEvidenceCells = hint?.let {
-                                        when (it) {
-                                            is WSNextMoveHint.FindWord -> it.evidenceCells
-                                            is WSNextMoveHint.FindHiddenLetter -> it.evidenceCells
-                                        }
-                                    } ?: emptyList(),
-                                    nextMoveTargetCells = hint?.let {
-                                        when (it) {
-                                            is WSNextMoveHint.FindWord -> it.targetCells
-                                            is WSNextMoveHint.FindHiddenLetter -> it.targetCells
-                                        }
-                                    } ?: emptyList(),
-                                    wrongSelectionCells = viewModel.wrongSelectionCells,
-                                )
-                            }
-                        }
-                    }
-                    if (session != null) {
-                        Spacer(Modifier.width(12.dp))
-                        WordSearchWordStrip(
-                            session = session,
-                            onToggleHiddenWordMode = viewModel::onToggleHiddenWordMode,
-                            wrongHiddenWordTap = viewModel.wrongHiddenWordTap,
-                            isSideColumn = true,
-                            modifier = Modifier.width(160.dp).fillMaxHeight(),
-                        )
-                    }
-                }
-            } else {
-                Column(Modifier.fillMaxSize()) {
-                    PuzzleBoardContainer(
-                        visible = session != null,
-                        playFresh = !resume,
-                        flashTrigger = flashTrigger,
-                        onZoomChange = { isBoardZoomed = it },
-                        resetTrigger = resetZoomTrigger,
-                    ) {
-                        if (session != null) {
-                            Box(Modifier.padding(8.dp)) {
-                                WordSearchGrid(
-                                    puzzle = session.puzzle,
-                                    foundWordIds = session.foundWordIds,
-                                    tempSelection = session.tempSelection,
-                                    hiddenWordMode = session.hiddenWordMode,
-                                    hiddenWordProgress = session.hiddenWordProgress,
-                                    onCellTap = viewModel::onCellTap,
-                                    onCellDragStart = viewModel::onCellDragStart,
-                                    onCellDragMove = viewModel::onCellDragMove,
-                                    onCellDragEnd = viewModel::onCellDragEnd,
-                                    onHiddenWordTap = viewModel::onHiddenWordCellTap,
-                                    nextMoveEvidenceCells = hint?.let {
-                                        when (it) {
-                                            is WSNextMoveHint.FindWord -> it.evidenceCells
-                                            is WSNextMoveHint.FindHiddenLetter -> it.evidenceCells
-                                        }
-                                    } ?: emptyList(),
-                                    nextMoveTargetCells = hint?.let {
-                                        when (it) {
-                                            is WSNextMoveHint.FindWord -> it.targetCells
-                                            is WSNextMoveHint.FindHiddenLetter -> it.targetCells
-                                        }
-                                    } ?: emptyList(),
-                                    wrongSelectionCells = viewModel.wrongSelectionCells,
-                                )
-                            }
-                        }
-                    }
-
-                    if (session != null) {
-                        WordSearchWordStrip(
-                            session = session,
-                            onToggleHiddenWordMode = viewModel::onToggleHiddenWordMode,
-                            wrongHiddenWordTap = viewModel.wrongHiddenWordTap,
+                    Box(Modifier.padding(8.dp)) {
+                        WordSearchGrid(
+                            puzzle = session.puzzle,
+                            foundWordIds = session.foundWordIds,
+                            tempSelection = session.tempSelection,
+                            hiddenWordMode = session.hiddenWordMode,
+                            hiddenWordProgress = session.hiddenWordProgress,
+                            onCellTap = viewModel::onCellTap,
+                            onCellDragStart = viewModel::onCellDragStart,
+                            onCellDragMove = viewModel::onCellDragMove,
+                            onCellDragEnd = viewModel::onCellDragEnd,
+                            onHiddenWordTap = viewModel::onHiddenWordCellTap,
+                            nextMoveEvidenceCells = hint?.let {
+                                when (it) {
+                                    is WSNextMoveHint.FindWord -> it.evidenceCells
+                                    is WSNextMoveHint.FindHiddenLetter -> it.evidenceCells
+                                }
+                            } ?: emptyList(),
+                            nextMoveTargetCells = hint?.let {
+                                when (it) {
+                                    is WSNextMoveHint.FindWord -> it.targetCells
+                                    is WSNextMoveHint.FindHiddenLetter -> it.targetCells
+                                }
+                            } ?: emptyList(),
+                            wrongSelectionCells = viewModel.wrongSelectionCells,
                         )
                     }
                 }
             }
-        }
-    }
-
-    EndPuzzleDialog(
-        visible = showEndDialog,
-        onDismiss = { showEndDialog = false },
-        onConfirm = {
-            showEndDialog = false
-            viewModel.endPuzzle()
+            if (isBoardZoomed) {
+                FilledTonalIconButton(
+                    onClick = { resetZoomTrigger++ },
+                    modifier = Modifier.align(Alignment.TopEnd).padding(4.dp).size(36.dp),
+                ) {
+                    Icon(Icons.Filled.ZoomOutMap, contentDescription = stringResource(R.string.wordsearch_reset_zoom), modifier = Modifier.size(18.dp))
+                }
+            }
         },
     )
+}
+
+@Composable
+private fun wordSearchHintMessage(hint: WSNextMoveHint): PlayHintMessage {
+    val title = when (hint) {
+        is WSNextMoveHint.FindWord -> stringResource(R.string.wordsearch_next_move_title, hint.word)
+        is WSNextMoveHint.FindHiddenLetter -> if (hint.revealedWord != null) {
+            stringResource(R.string.wordsearch_hidden_word_next_letter_title, hint.revealedWord)
+        } else {
+            stringResource(R.string.wordsearch_hidden_word_theme_title, stringResource(themeLabelRes(hint.clue)))
+        }
+    }
+    val body = when (hint) {
+        is WSNextMoveHint.FindWord -> stringResource(R.string.wordsearch_next_move_body)
+        is WSNextMoveHint.FindHiddenLetter -> stringResource(R.string.wordsearch_hidden_word_next_letter_body)
+    }
+    return PlayHintMessage(title, body)
 }

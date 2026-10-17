@@ -2,6 +2,7 @@ package com.quietgrid.app.games.nback
 
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.ui.components.QuickRule
 import com.quietgrid.app.ui.components.QuickStartContent
 
 fun nbackDifficultyLabelRes(difficulty: Difficulty): Int = when (difficulty) {
@@ -26,4 +27,9 @@ val NBackQuickStart = QuickStartContent(
         R.string.nback_quickstart_bullet_3,
     ),
     hookRes = R.string.nback_quickstart_hook,
+    rules = listOf(
+        QuickRule(R.string.nback_rule_1_title) { NBackOneSquarePicture() },
+        QuickRule(R.string.nback_rule_2_title) { NBackStepsBackPicture() },
+        QuickRule(R.string.nback_rule_3_title) { NBackMatchPicture() },
+    ),
 )

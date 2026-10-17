@@ -1,12 +1,20 @@
 package com.quietgrid.app.games.guessbynumbers
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.ui.components.QuickRule
 import com.quietgrid.app.ui.components.QuickStartContent
 import com.quietgrid.app.ui.components.QuickStartExample
 
@@ -43,4 +51,20 @@ val GuessByNumbersQuickStart = QuickStartContent(
         ),
     ),
     hookRes = R.string.guessbynumbers_quickstart_hook,
+    rules = listOf(
+        QuickRule(R.string.guessbynumbers_rule_1_title) { GuessByNumbersNumberChip(stringResource(R.string.guessbynumbers_matches_label), 4) },
+        QuickRule(R.string.guessbynumbers_rule_2_title) { GuessByNumbersNumberChip(stringResource(R.string.guessbynumbers_exact_label), 2) },
+        QuickRule(R.string.guessbynumbers_rule_3_title) { GuessByNumbersTenGuessesPicture() },
+    ),
 )
+
+@Composable
+private fun GuessByNumbersTenGuessesPicture() {
+    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        repeat(2) {
+            Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                repeat(5) { Box(Modifier.size(8.dp).background(MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(2.dp))) }
+            }
+        }
+    }
+}

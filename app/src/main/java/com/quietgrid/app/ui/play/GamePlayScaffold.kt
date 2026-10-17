@@ -1,0 +1,326 @@
+package com.quietgrid.app.ui.play
+
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.coerceAtLeast
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
+import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.core.GameId
+import com.quietgrid.app.ui.components.EndPuzzleDialog
+
+const val PLAY_BOARD_TAG = "play_board"
+const val PLAY_HINT_TAG = "play_hint"
+const val PLAY_RULES_TAG = "play_rules"
+
+private val HINT_BOARD_SPACING = 4.dp
+private val SIDE_HINT_MIN_WIDTH = 160.dp
+private val TABLET_HINT_AREA_HEIGHT = 176.dp
+private const val WIDE_DOCK_FRACTION = 0.5f
+private val TABLET_DRAG_DOCK_WIDTH = 240.dp
+
+private typealias HintCardSlot = @Composable (maxHeight: Dp, expandedMaxHeight: Dp, modifier: Modifier) -> Unit
+
+@Composable
+fun GamePlayScaffold(
+    gameId: GameId,
+    timer: PlayTimer?,
+    onBack: () -> Unit,
+    onEndPuzzle: () -> Unit,
+    modifier: Modifier = Modifier,
+    difficulty: Difficulty? = null,
+    hint: PlayHintAction? = null,
+    hintMessage: PlayHintMessage? = null,
+    info: List<InfoItem> = emptyList(),
+    boardAspectRatio: Float = 1f,
+    wideDock: Boolean = false,
+    phonePortraitOnly: Boolean = false,
+    dockRole: DockRole = DockRole.Controls,
+    dockHeight: (PlaySizeClass) -> Dp = { 0.dp },
+    dock: (@Composable ColumnScope.(PlaySizeClass) -> Unit)? = null,
+    board: @Composable BoxScope.(PlaySizeClass) -> Unit,
+) {
+    var showEndDialog by remember { mutableStateOf(false) }
+    var rulesOpen by remember { mutableStateOf(false) }
+    BackHandler(enabled = rulesOpen) { rulesOpen = false }
+    if (phonePortraitOnly) LockPortraitOnPhones()
+    val openGameRules = LocalOpenGameRules.current
+
+    val hintActive = hint?.active == true
+    var hintCardHidden by remember(hintActive) { mutableStateOf(false) }
+    val hintCardVisible = hintActive && !hintCardHidden && hintMessage != null
+    val chromeHint = hint?.copy(
+        onClick = {
+            rulesOpen = false
+            if (hintActive && hintCardHidden) hintCardHidden = false else hint.onClick()
+        },
+    )
+    val actions = PlayChromeActions(
+        timer = timer,
+        hint = chromeHint,
+        rulesOpen = rulesOpen,
+        onBack = onBack,
+        onToggleRules = {
+            if (!rulesOpen && hintCardVisible) hintCardHidden = true
+            rulesOpen = !rulesOpen
+        },
+        onEndPuzzle = { showEndDialog = true },
+    )
+    val stripItems = playContextItems(gameId, difficulty) + info
+    val hintCard: HintCardSlot? = if (hintCardVisible && hintMessage != null) {
+        { maxHeight, expandedMaxHeight, cardModifier ->
+            PlayHintCard(hintMessage, onClose = { hintCardHidden = true }, maxHeight, expandedMaxHeight, cardModifier)
+        }
+    } else {
+        null
+    }
+
+    BoxWithConstraints(modifier.fillMaxSize()) {
+        val sizeClass = playSizeClass(maxWidth, maxHeight)
+        val metrics = playMetrics(sizeClass)
+        val boardSlot: @Composable BoxScope.() -> Unit = { board(sizeClass) }
+        val dockSlot: (@Composable ColumnScope.() -> Unit)? = if (dock != null) {
+            { dock(sizeClass) }
+        } else {
+            null
+        }
+        val dockAreaHeight = if (dock != null) dockHeight(sizeClass) else 0.dp
+        CompositionLocalProvider(LocalPlayMetrics provides metrics) {
+            when (sizeClass) {
+                PlaySizeClass.PhoneLandscape -> PhoneLandscapeLayout(
+                    metrics, actions, stripItems, if (wideDock) maxWidth * WIDE_DOCK_FRACTION else phoneLandscapePanelWidth(maxWidth), boardAspectRatio,
+                    reserveHintSpace = hint != null, dragSource = dockRole == DockRole.DragSource, boardSlot, dockSlot, hintCard,
+                )
+                PlaySizeClass.TabletLandscape -> if (dockRole == DockRole.DragSource) {
+                    TabletDragSourceLayout(metrics, actions, stripItems, boardSlot, dockSlot)
+                } else {
+                    TabletLandscapeLayout(
+                        metrics, actions, stripItems, tabletPanelWidth(maxWidth),
+                        reserveHintArea = hint != null, boardSlot, dockSlot, hintCard,
+                    )
+                }
+                else -> UprightLayout(metrics, actions, stripItems, boardAspectRatio, dockAreaHeight, boardSlot, dockSlot, hintCard)
+            }
+        }
+        if (rulesOpen) {
+            RulesPeekOverlay(
+                gameId = gameId,
+                cardAlignment = if (sizeClass.isTablet) Alignment.TopEnd else Alignment.TopCenter,
+                onDismiss = { rulesOpen = false },
+                onFullRules = openGameRules?.let { open ->
+                    {
+                        rulesOpen = false
+                        open(gameId)
+                    }
+                },
+                modifier = if (sizeClass == PlaySizeClass.PhoneLandscape) {
+                    Modifier.padding(start = PLAY_RAIL_WIDTH)
+                } else {
+                    Modifier.padding(top = metrics.topBarHeight)
+                },
+            )
+        }
+    }
+
+    EndPuzzleDialog(
+        visible = showEndDialog,
+        onDismiss = { showEndDialog = false },
+        onConfirm = {
+            showEndDialog = false
+            onEndPuzzle()
+        },
+    )
+}
+
+@Composable
+private fun UprightLayout(
+    metrics: PlayMetrics,
+    actions: PlayChromeActions,
+    stripItems: List<InfoItem>,
+    boardAspectRatio: Float,
+    dockAreaHeight: Dp,
+    board: @Composable BoxScope.() -> Unit,
+    dock: (@Composable ColumnScope.() -> Unit)?,
+    hintCard: HintCardSlot?,
+) {
+    val gap = metrics.contentPadding
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+        val headerHeight = metrics.topBarHeight + metrics.stripHeight
+        val dockSpace = if (dock != null) dockAreaHeight + gap else 0.dp
+        val bottomLimit = (maxHeight - gap - dockSpace).coerceAtLeast(headerHeight)
+        val bodyWidth = (maxWidth - gap * 2).coerceAtLeast(0.dp)
+        val boardHeight = uprightBoardHeight(bodyWidth, bottomLimit - headerHeight, boardAspectRatio, 0.dp)
+        val boardTop = centeredBoardTop(maxHeight, boardHeight, headerHeight, bottomLimit)
+        Column(Modifier.fillMaxWidth()) {
+            PlayTopBar(metrics, actions)
+            InfoStrip(stripItems, metrics)
+        }
+        Box(
+            Modifier.padding(start = gap, end = gap, top = boardTop).fillMaxWidth().height(boardHeight).testTag(PLAY_BOARD_TAG),
+            contentAlignment = Alignment.Center,
+            content = board,
+        )
+        if (dock != null) {
+            Column(
+                Modifier.align(Alignment.BottomCenter).padding(start = gap, end = gap, bottom = gap).fillMaxWidth().height(dockAreaHeight).clipToBounds(),
+                content = dock,
+            )
+        }
+        if (hintCard != null) {
+            hintCard(
+                boardTop - metrics.topBarHeight - HINT_BOARD_SPACING,
+                bottomLimit - metrics.topBarHeight - HINT_BOARD_SPACING,
+                Modifier.padding(top = metrics.topBarHeight, start = gap, end = gap),
+            )
+        }
+    }
+}
+
+@Composable
+private fun PhoneLandscapeLayout(
+    metrics: PlayMetrics,
+    actions: PlayChromeActions,
+    stripItems: List<InfoItem>,
+    panelWidth: Dp,
+    boardAspectRatio: Float,
+    reserveHintSpace: Boolean,
+    dragSource: Boolean,
+    board: @Composable BoxScope.() -> Unit,
+    dock: (@Composable ColumnScope.() -> Unit)?,
+    hintCard: HintCardSlot?,
+) {
+    val gap = metrics.contentPadding
+    val hasDock = dock != null
+    val hasSideColumn = !hasDock && (stripItems.isNotEmpty() || reserveHintSpace)
+    Row(Modifier.fillMaxSize().padding(end = gap)) {
+        PlayRail(metrics, actions)
+        BoxWithConstraints(Modifier.weight(1f).fillMaxHeight()) {
+            val panelSpace = if (hasDock) panelWidth else 0.dp
+            val boardAreaWidth = (maxWidth - panelSpace).coerceAtLeast(0.dp)
+            val boardWidth = min(boardAreaWidth - gap * 2, (maxHeight - gap * 2) * boardAspectRatio).coerceAtLeast(0.dp)
+            val freeWidth = (boardAreaWidth - gap * 2 - boardWidth).coerceAtLeast(0.dp)
+            val needsSideRoom = if (hasDock) reserveHintSpace else hasSideColumn
+            val centered = dragSource || !needsSideRoom || freeWidth / 2 >= SIDE_HINT_MIN_WIDTH
+            val boardStart = gap + if (centered) freeWidth / 2 else 0.dp
+            val besideBoard = boardStart + boardWidth + gap
+            Box(
+                Modifier.padding(start = boardStart, top = gap, bottom = gap).width(boardWidth).fillMaxHeight().testTag(PLAY_BOARD_TAG),
+                contentAlignment = Alignment.Center,
+                content = board,
+            )
+            if (hasDock) {
+                val panelStart = if (dragSource) besideBoard else maxWidth - panelSpace
+                Column(Modifier.padding(start = panelStart.coerceAtLeast(0.dp)).width(panelWidth).fillMaxHeight().padding(vertical = gap)) {
+                    InfoStrip(stripItems, metrics, stacked = true)
+                    Column(Modifier.fillMaxWidth().weight(1f).padding(top = gap).clipToBounds(), content = dock)
+                }
+                if (hintCard != null) {
+                    val hintEnd = if (boardAreaWidth - besideBoard >= SIDE_HINT_MIN_WIDTH) panelSpace + gap else 0.dp
+                    val hintHeight = maxHeight - gap * 2
+                    hintCard(hintHeight, hintHeight, Modifier.padding(start = besideBoard, end = hintEnd, top = gap))
+                }
+            } else if (hasSideColumn) {
+                Column(Modifier.padding(start = besideBoard, top = gap, bottom = gap).fillMaxSize()) {
+                    if (stripItems.isNotEmpty()) InfoStrip(stripItems, metrics, stacked = true)
+                    if (hintCard != null) {
+                        BoxWithConstraints(Modifier.fillMaxWidth().weight(1f).padding(top = if (stripItems.isNotEmpty()) gap else 0.dp)) {
+                            hintCard(maxHeight, maxHeight, Modifier)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun TabletDragSourceLayout(
+    metrics: PlayMetrics,
+    actions: PlayChromeActions,
+    stripItems: List<InfoItem>,
+    board: @Composable BoxScope.() -> Unit,
+    dock: (@Composable ColumnScope.() -> Unit)?,
+) {
+    val gap = metrics.contentPadding
+    Column(Modifier.fillMaxSize()) {
+        PlayTopBar(metrics, actions)
+        InfoStrip(stripItems, metrics)
+        BoxWithConstraints(Modifier.weight(1f).fillMaxWidth().padding(start = gap, end = gap, bottom = gap)) {
+            val boardSize = min(maxHeight, maxWidth - TABLET_DRAG_DOCK_WIDTH - gap).coerceAtLeast(0.dp)
+            Row(
+                Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.spacedBy(gap, Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(Modifier.size(boardSize).testTag(PLAY_BOARD_TAG), contentAlignment = Alignment.Center, content = board)
+                if (dock != null) {
+                    Column(Modifier.width(TABLET_DRAG_DOCK_WIDTH).fillMaxHeight().clipToBounds(), content = dock)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun TabletLandscapeLayout(
+    metrics: PlayMetrics,
+    actions: PlayChromeActions,
+    stripItems: List<InfoItem>,
+    panelWidth: Dp,
+    reserveHintArea: Boolean,
+    board: @Composable BoxScope.() -> Unit,
+    dock: (@Composable ColumnScope.() -> Unit)?,
+    hintCard: HintCardSlot?,
+) {
+    val gap = metrics.contentPadding
+    Column(Modifier.fillMaxSize()) {
+        PlayTopBar(metrics, actions)
+        Row(
+            Modifier.weight(1f).fillMaxWidth().padding(start = gap, end = gap, bottom = gap),
+            horizontalArrangement = Arrangement.spacedBy(gap),
+        ) {
+            Box(
+                Modifier.weight(1f).fillMaxHeight().testTag(PLAY_BOARD_TAG),
+                contentAlignment = Alignment.Center,
+                content = board,
+            )
+            Column(Modifier.width(panelWidth).fillMaxHeight()) {
+                InfoStrip(stripItems, metrics)
+                if (reserveHintArea) {
+                    Box(Modifier.fillMaxWidth().height(TABLET_HINT_AREA_HEIGHT).padding(top = 8.dp)) {
+                        val cardHeight = TABLET_HINT_AREA_HEIGHT - 8.dp
+                        hintCard?.invoke(cardHeight, cardHeight, Modifier)
+                    }
+                }
+                if (dock != null) {
+                    Column(Modifier.fillMaxWidth().weight(1f).padding(top = 16.dp).clipToBounds(), content = dock)
+                }
+            }
+        }
+    }
+}

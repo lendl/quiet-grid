@@ -2,6 +2,7 @@ package com.quietgrid.app.games.whodidit
 
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.ui.components.QuickRule
 import com.quietgrid.app.ui.components.QuickStartContent
 
 fun whoDidItDifficultyLabelRes(difficulty: Difficulty): Int = when (difficulty) {
@@ -26,4 +27,9 @@ val WhoDidItQuickStart = QuickStartContent(
         R.string.whodidit_quickstart_bullet_3,
     ),
     hookRes = R.string.whodidit_quickstart_hook,
+    rules = listOf(
+        QuickRule(R.string.whodidit_rule_1_title) { WhoDidItOneMatchPicture() },
+        QuickRule(R.string.whodidit_rule_2_title) { WhoDidItCluesPicture() },
+        QuickRule(R.string.whodidit_rule_4_title) { WhoDidItCulpritPicture() },
+    ),
 )

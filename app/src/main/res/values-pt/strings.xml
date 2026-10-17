@@ -215,7 +215,6 @@
     <string name="nback_quickstart_bullet_2">Toque em Bateu somente quando estiver no mesmo lugar de N rodadas atrás.</string>
     <string name="nback_quickstart_bullet_3">O quebra-cabeça roda um número fixo de rodadas e depois mostra sua precisão.</string>
     <string name="nback_quickstart_hook">Dificuldades mais altas significam uma memória mais distante e menos tempo para reagir.</string>
-    <string name="starbattle_stars_per_group_content_description">Estrelas por linha, coluna e região</string>
 
     <!-- tutorial host / puzzle play -->
     <string name="tutorial_host_unavailable_title">Tutorial não disponível</string>
@@ -511,7 +510,6 @@
     <string name="minesweeper_difficulty_desc_hard">Espaços mais apertados que recompensam marcação cuidadosa e acompanhamento das pistas.</string>
     <string name="minesweeper_difficulty_desc_expert">Campos minados densos com muito pouco espaço desde o início.</string>
     <string name="minesweeper_size_label">Tamanho</string>
-    <string name="minesweeper_mines_left_label">Minas</string>
     <string name="minesweeper_how_to_play_goal">Revele cada célula segura sem abrir uma mina.</string>
     <string name="minesweeper_how_to_play_controls">Toque para revelar uma célula. Pressione e segure para colocar ou remover uma bandeira.</string>
     <string name="minesweeper_how_to_play_wrong_move">Abrir uma mina encerra o quebra-cabeça na hora.</string>
@@ -573,7 +571,6 @@
     <string name="game2048_difficulty_desc_medium">Tabuleiro clássico 4x4, o layout original do 2048.</string>
     <string name="game2048_difficulty_desc_hard">O mesmo tabuleiro 4x4, mas com mais fichas de 4 pouco úteis.</string>
     <string name="game2048_difficulty_desc_expert">Tabuleiro minúsculo 3x3 -- o objetivo aqui é 1024, a maior ficha que esse tamanho comporta.</string>
-    <string name="game2048_score_label">Pontuação</string>
     <string name="game2048_how_to_play_goal">Combine fichas iguais até que uma delas chegue a 2048.</string>
     <string name="game2048_how_to_play_controls">Deslize para cima, para baixo, para a esquerda ou para a direita para mover todas as fichas naquela direção.</string>
     <string name="game2048_rule_1_title">Deslize todas as fichas</string>
@@ -614,7 +611,6 @@
     <string name="sudoku_candidate_mode_label">Notas</string>
     <string name="sudoku_undo">Desfazer</string>
     <string name="sudoku_clear_cell">Limpar célula</string>
-    <string name="sudoku_auto_candidate_mode_label">Modo de notas automáticas</string>
     <string name="sudoku_hint_show">Mostrar dica do próximo movimento</string>
     <string name="sudoku_hint_hide">Ocultar dica do próximo movimento</string>
     <string name="sudoku_hint_row">linha %1$d</string>
@@ -681,7 +677,6 @@
     <string name="wordsearch_difficulty_desc_hard">Todas as direções, incluindo de trás para frente, com sobreposições mais densas.</string>
     <string name="wordsearch_difficulty_desc_expert">As maiores grades, com palavras em todas as direções e muita sobreposição.</string>
     <string name="wordsearch_size_label">Tamanho</string>
-    <string name="wordsearch_theme_label">Tema</string>
     <string name="wordsearch_hidden_word_solved_title">Palavra escondida encontrada!</string>
     <string name="wordsearch_hidden_word_enter_mode">Resolver palavra escondida</string>
     <string name="wordsearch_hidden_word_exit_mode">Sair do modo de palavra escondida</string>

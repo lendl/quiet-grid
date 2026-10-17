@@ -1,6 +1,5 @@
 package com.quietgrid.app.ui.screens
 
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -8,15 +7,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -60,13 +59,9 @@ import com.quietgrid.app.games.themeclear.themeClearDifficultyLabelRes
 import com.quietgrid.app.games.killersudoku.killerSudokuDifficultyLabelRes
 import com.quietgrid.app.games.wordguess.wordGuessDifficultyLabelRes
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
-import com.quietgrid.app.nav.LocalAnimatedVisibilityScope
-import com.quietgrid.app.nav.LocalSharedTransitionScope
 import com.quietgrid.app.ui.components.OutlinedGlowButton
-import com.quietgrid.app.ui.components.SharedElementKeys
 import com.quietgrid.app.ui.components.rememberHapticController
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun LossScreen(
     gameId: GameId,
@@ -283,163 +278,140 @@ fun LossScreen(
         contentOffsetY.animateTo(0f, animationSpec = tween(320, easing = FastOutSlowInEasing))
     }
 
-    Column(Modifier.fillMaxSize().padding(16.dp)) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .graphicsLayer { alpha = pageOpacity.value },
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
+    val links = if (dailyDate != null) {
+        dailyResultLinks(hasNextDaily, onShareDaily, onBackToDaily, onTryAnotherGame)
+    } else {
+        buildList {
+            if (!isMixActive) add(ResultLink(R.string.loss_other_difficulty, onOtherDifficulty))
+            add(ResultLink(R.string.loss_try_another_game, onTryAnotherGame))
+        }
+    }
+    val primaryAction: @Composable () -> Unit = {
+        if (dailyDate != null) {
+            DailyResultPrimaryButton(hasNextDaily, onPlayNextDaily, onShareDaily)
+        } else {
+            OutlinedGlowButton(onClick = onRetry) {
+                Text(
+                    stringResource(mixAwarePrimaryLabel(isMixActive, R.string.loss_try_again)),
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+        }
+    }
+    val walkThrough: (() -> Unit)? = analyzerSnapshot?.let { snapshot ->
+        {
+            AnalyzerHandoff.set(snapshot)
+            onWalkThroughSolve()
+        }
+    }
+
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+        val sideways = isSidewaysPhoneResult(maxWidth, maxHeight)
+        Column(Modifier.fillMaxSize().padding(16.dp)) {
             Row(
                 Modifier
-                    .border(1.dp, errorColor, CircleShape)
-                    .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.7f), CircleShape)
-                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                    .fillMaxWidth()
+                    .graphicsLayer { alpha = pageOpacity.value },
+                horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Box(Modifier.size(10.dp).background(errorColor, CircleShape))
-                Text(stringResource(eyebrowRes), style = MaterialTheme.typography.labelMedium, color = errorColor)
-            }
-            ResultOverflowMenu(
-                gameId = gameId,
-                difficulty = difficulty,
-                onAddToMix = onAddToMix,
-                modifier = Modifier.offset(x = 12.dp),
-            )
-        }
-
-        Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-            Column(
-                Modifier
-                    .graphicsLayer {
-                        alpha = pageOpacity.value
-                        translationY = contentOffsetY.value
-                    }
-                    .verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                val sharedTransitionScope = LocalSharedTransitionScope.current
-                val animatedVisibilityScope = LocalAnimatedVisibilityScope.current
-                val sharedModifier = if (sharedTransitionScope != null && animatedVisibilityScope != null) {
-                    with(sharedTransitionScope) {
-                        Modifier.sharedBounds(
-                            sharedContentState = rememberSharedContentState(key = SharedElementKeys.gameIdentity(gameId)),
-                            animatedVisibilityScope = animatedVisibilityScope,
-                        )
-                    }
-                } else {
-                    Modifier
-                }
-                Box(
-                    sharedModifier
-                        .size(96.dp)
-                        .background(errorColor.copy(alpha = 0.12f), CircleShape)
-                        .border(1.dp, errorColor.copy(alpha = 0.3f), CircleShape),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(icon, fontSize = 40.sp)
-                }
-
-                Text(stringResource(titleRes), style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center, modifier = Modifier.padding(top = 12.dp))
-                Text(
-                    stringResource(bodyRes),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(top = 6.dp),
-                )
-
-                if (revealWord != null) {
-                    Column(Modifier.padding(top = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            stringResource(R.string.wordguess_reveal_word_label),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                        Text(
-                            revealWord.uppercase(),
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(top = 2.dp),
-                        )
-                    }
-                }
-
-                if (revealWordList != null) {
-                    Column(Modifier.padding(top = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            stringResource(R.string.themeclear_reveal_words_label),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                        Text(
-                            revealWordList.joinToString(" · "),
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(top = 2.dp),
-                        )
-                    }
-                }
-
                 Row(
-                    Modifier.padding(top = 20.dp),
-                    horizontalArrangement = Arrangement.spacedBy(18.dp),
+                    Modifier
+                        .border(1.dp, errorColor, CircleShape)
+                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.7f), CircleShape)
+                        .padding(horizontal = 12.dp, vertical = 6.dp),
                     verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    MetaItem(stringResource(R.string.loss_difficulty), stringResource(difficultyLabelRes))
-                    Box(Modifier.width(1.dp).height(28.dp).background(MaterialTheme.colorScheme.outlineVariant))
-                    MetaItem(stringResource(R.string.loss_elapsed_time), formatElapsed(elapsedSeconds))
-                    if (gameId in SCORE_ON_LOSS_TRACKED_GAMES) {
-                        Box(Modifier.width(1.dp).height(28.dp).background(MaterialTheme.colorScheme.outlineVariant))
-                        MetaItem(stringResource(R.string.completion_score), score.toString())
-                        Box(Modifier.width(1.dp).height(28.dp).background(MaterialTheme.colorScheme.outlineVariant))
-                        MetaItem(stringResource(R.string.completion_best_tile), bestTile.toString())
-                    }
+                    Box(Modifier.size(10.dp).background(errorColor, CircleShape))
+                    Text(stringResource(eyebrowRes), style = MaterialTheme.typography.labelMedium, color = errorColor)
                 }
+                ResultOverflowMenu(
+                    gameId = gameId,
+                    difficulty = difficulty,
+                    onAddToMix = onAddToMix,
+                    modifier = Modifier.offset(x = 12.dp),
+                )
+            }
 
-                if (dailyDate != null) {
-                    DailyResultPrimaryButton(hasNextDaily, onPlayNextDaily, onShareDaily)
-                } else {
-                    OutlinedGlowButton(onClick = onRetry, modifier = Modifier.padding(top = 24.dp)) {
-                        Text(
-                            stringResource(mixAwarePrimaryLabel(isMixActive, R.string.loss_try_again)),
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
-                }
-
-                if (analyzerSnapshot != null) {
-                    TextButton(
-                        onClick = {
-                            AnalyzerHandoff.set(analyzerSnapshot)
-                            onWalkThroughSolve()
-                        },
-                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                    ) {
-                        Text(stringResource(R.string.walk_through_solve))
-                    }
-                }
-
-                if (dailyDate != null) {
-                    DailyResultLinks(hasNextDaily, onShareDaily, onBackToDaily, onTryAnotherGame)
-                } else {
-                    Row(
-                        Modifier.fillMaxWidth().padding(top = 8.dp),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        if (!isMixActive) {
-                            TextButton(onClick = onOtherDifficulty) {
-                                Text(stringResource(R.string.loss_other_difficulty), color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            }
-                            Box(Modifier.width(1.dp).height(16.dp).background(MaterialTheme.colorScheme.outlineVariant))
+            Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Column(
+                    Modifier
+                        .graphicsLayer {
+                            alpha = pageOpacity.value
+                            translationY = contentOffsetY.value
                         }
-                        TextButton(onClick = onTryAnotherGame) {
-                            Text(stringResource(R.string.loss_try_another_game), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    if (sideways) {
+                        Row(
+                            Modifier.widthIn(max = 560.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(20.dp),
+                        ) {
+                            ResultMedallion(gameId, icon, errorColor, size = 72.dp, symbolSize = 30.sp)
+                            Column {
+                                Text(stringResource(titleRes), style = MaterialTheme.typography.headlineSmall)
+                                Text(
+                                    stringResource(bodyRes),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.padding(top = 2.dp),
+                                )
+                                LossReveals(revealWord, revealWordList, centered = false)
+                            }
+                        }
+
+                        Row(
+                            Modifier.padding(top = 22.dp),
+                            horizontalArrangement = Arrangement.spacedBy(18.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            LossMetaItems(gameId, difficultyLabelRes, elapsedSeconds, score, bestTile)
+                        }
+
+                        CompactResultActions(links, Modifier.padding(top = 22.dp), primaryAction)
+                        if (walkThrough != null) {
+                            TextButton(onClick = walkThrough, modifier = Modifier.padding(top = 4.dp)) {
+                                Text(stringResource(R.string.walk_through_solve))
+                            }
+                        }
+                    } else {
+                        ResultMedallion(gameId, icon, errorColor, size = 96.dp, symbolSize = 40.sp)
+
+                        Text(stringResource(titleRes), style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center, modifier = Modifier.padding(top = 12.dp))
+                        Text(
+                            stringResource(bodyRes),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(top = 6.dp),
+                        )
+                        LossReveals(revealWord, revealWordList, centered = true)
+
+                        Row(
+                            Modifier.padding(top = 20.dp),
+                            horizontalArrangement = Arrangement.spacedBy(18.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            LossMetaItems(gameId, difficultyLabelRes, elapsedSeconds, score, bestTile)
+                        }
+
+                        Box(Modifier.padding(top = 24.dp)) { primaryAction() }
+
+                        if (walkThrough != null) {
+                            TextButton(onClick = walkThrough, modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
+                                Text(stringResource(R.string.walk_through_solve))
+                            }
+                        }
+
+                        Row(
+                            Modifier.fillMaxWidth().padding(top = 8.dp),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            ResultLinkGroup(links)
                         }
                     }
                 }
@@ -449,6 +421,50 @@ fun LossScreen(
 }
 
 private val SCORE_ON_LOSS_TRACKED_GAMES = setOf(GameId.GAME_2048)
+
+@Composable
+private fun LossReveals(revealWord: String?, revealWordList: List<String>?, centered: Boolean) {
+    if (revealWord != null) {
+        RevealedAnswer(R.string.wordguess_reveal_word_label, revealWord.uppercase(), centered)
+    }
+    if (revealWordList != null) {
+        RevealedAnswer(R.string.themeclear_reveal_words_label, revealWordList.joinToString(" · "), centered)
+    }
+}
+
+@Composable
+private fun RevealedAnswer(labelRes: Int, answer: String, centered: Boolean) {
+    Column(
+        Modifier.padding(top = if (centered) 10.dp else 6.dp),
+        horizontalAlignment = if (centered) Alignment.CenterHorizontally else Alignment.Start,
+    ) {
+        Text(
+            stringResource(labelRes),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Text(
+            answer,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Bold,
+            textAlign = if (centered) TextAlign.Center else TextAlign.Start,
+            modifier = Modifier.padding(top = 2.dp),
+        )
+    }
+}
+
+@Composable
+private fun LossMetaItems(gameId: GameId, difficultyLabelRes: Int, elapsedSeconds: Int, score: Int, bestTile: Int) {
+    MetaItem(stringResource(R.string.loss_difficulty), stringResource(difficultyLabelRes))
+    ResultMetaDivider()
+    MetaItem(stringResource(R.string.loss_elapsed_time), formatElapsed(elapsedSeconds))
+    if (gameId in SCORE_ON_LOSS_TRACKED_GAMES) {
+        ResultMetaDivider()
+        MetaItem(stringResource(R.string.completion_score), score.toString())
+        ResultMetaDivider()
+        MetaItem(stringResource(R.string.completion_best_tile), bestTile.toString())
+    }
+}
 
 @Composable
 private fun MetaItem(label: String, value: String) {

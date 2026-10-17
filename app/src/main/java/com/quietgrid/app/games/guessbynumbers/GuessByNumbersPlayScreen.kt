@@ -1,9 +1,6 @@
 package com.quietgrid.app.games.guessbynumbers
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -23,16 +20,18 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.core.GameId
+import com.quietgrid.app.games.wordguess.WordGuessDock
 import com.quietgrid.app.games.wordguess.WordGuessKeyboard
+import com.quietgrid.app.games.wordguess.wordGuessDockHeight
 import com.quietgrid.app.ui.components.CollectPuzzleResult
-import com.quietgrid.app.ui.components.ElapsedTimerText
-import com.quietgrid.app.ui.components.EndPuzzleDialog
-import com.quietgrid.app.ui.components.EndPuzzleIconButton
 import com.quietgrid.app.ui.components.FeedbackText
-import com.quietgrid.app.ui.components.GameBackButton
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
-import com.quietgrid.app.ui.components.PuzzleLanguageFlag
 import com.quietgrid.app.ui.components.rememberHapticController
+import com.quietgrid.app.ui.play.GamePlayScaffold
+import com.quietgrid.app.ui.play.InfoItem
+import com.quietgrid.app.ui.play.PlayTimer
+import com.quietgrid.app.ui.play.puzzleLanguageInfo
 import kotlinx.coroutines.delay
 
 @Composable
@@ -47,7 +46,6 @@ fun GuessByNumbersPlayScreen(
     )
     CollectPuzzleResult(viewModel.result, onFinished)
 
-    var showEndDialog by remember { mutableStateOf(false) }
     var currentInput by remember { mutableStateOf("") }
     var invalidFlash by remember { mutableStateOf(false) }
 
@@ -69,74 +67,78 @@ fun GuessByNumbersPlayScreen(
         currentInput = ""
     }
 
-    Column(Modifier.fillMaxSize().padding(16.dp)) {
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            GameBackButton(onBack)
-            Row(
-                Modifier.weight(1f),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                if (session != null) {
-                    PuzzleLanguageFlag(session.locale)
-                }
-                EndPuzzleIconButton(onClick = { showEndDialog = true })
-            }
-        }
-
-        ElapsedTimerText(
-            viewModel.elapsedSeconds.toInt(),
-            modifier = Modifier.padding(top = 4.dp, bottom = 12.dp),
-        )
-
-        PuzzleBoardContainer(
-            visible = session != null,
-            playFresh = !resume,
-            zoomable = false,
-            showFrame = false,
-            flashTrigger = viewModel.wrongGuessTrigger,
-        ) {
+    GamePlayScaffold(
+        gameId = GameId.GUESSBYNUMBERS,
+        timer = PlayTimer.Elapsed(viewModel.elapsedSeconds.toInt()),
+        onBack = onBack,
+        onEndPuzzle = { viewModel.endPuzzle() },
+        difficulty = session?.let { Difficulty.fromKey(it.difficulty) },
+        info = if (session == null) {
+            emptyList()
+        } else {
+            listOfNotNull(
+                InfoItem.Label(
+                    stringResource(
+                        R.string.wordguess_guess_count,
+                        (session.guesses.size + 1).coerceAtMost(GUESS_BY_NUMBERS_MAX_GUESSES),
+                        GUESS_BY_NUMBERS_MAX_GUESSES,
+                    ),
+                ),
+                puzzleLanguageInfo(session.locale),
+            )
+        },
+        boardAspectRatio = GUESS_BY_NUMBERS_BOARD_ASPECT,
+        wideDock = true,
+        phonePortraitOnly = true,
+        dockHeight = ::wordGuessDockHeight,
+        dock = {
             if (session != null) {
-                GuessByNumbersGrid(
-                    wordLength = session.wordLength,
-                    maxGuesses = GUESS_BY_NUMBERS_MAX_GUESSES,
-                    guesses = session.guesses,
-                    currentInput = currentInput,
+                WordGuessDock(
+                    revealedWord = session.targetWord.takeIf { session.status == GuessByNumbersStatus.LOST },
+                    invalidFlash = invalidFlash,
+                    invalidMessageRes = R.string.guessbynumbers_invalid_word_message,
+                    keyboard = if (session.status == GuessByNumbersStatus.PLAYING) {
+                        {
+                            WordGuessKeyboard(
+                                keyboardState = emptyMap(),
+                                onLetter = { ch -> if (currentInput.length < session.wordLength) currentInput += ch },
+                                onBackspace = { currentInput = currentInput.dropLast(1) },
+                                onEnter = {
+                                    if (currentInput.length == session.wordLength) {
+                                        viewModel.onSubmitGuess(currentInput) { invalidFlash = true; haptics.incorrectFeedback() }
+                                    }
+                                },
+                                locale = session.locale,
+                            )
+                        }
+                    } else {
+                        null
+                    },
                 )
             }
-        }
-
-        if (session != null) {
-            GuessByNumbersMessageArea(
-                revealWord = session.targetWord.takeIf { session.status == GuessByNumbersStatus.LOST },
-                invalidFlash = invalidFlash,
-            )
-        }
-
-        if (session != null && session.status == GuessByNumbersStatus.PLAYING) {
-            WordGuessKeyboard(
-                keyboardState = emptyMap(),
-                onLetter = { ch -> if (currentInput.length < session.wordLength) currentInput += ch },
-                onBackspace = { currentInput = currentInput.dropLast(1) },
-                onEnter = {
-                    if (currentInput.length == session.wordLength) {
-                        viewModel.onSubmitGuess(currentInput) { invalidFlash = true; haptics.incorrectFeedback() }
-                    }
-                },
-                locale = session.locale,
-            )
-        }
-    }
-
-    EndPuzzleDialog(
-        visible = showEndDialog,
-        onDismiss = { showEndDialog = false },
-        onConfirm = {
-            showEndDialog = false
-            viewModel.endPuzzle()
+        },
+        board = {
+            PuzzleBoardContainer(
+                visible = session != null,
+                playFresh = !resume,
+                zoomable = false,
+                showFrame = false,
+                flashTrigger = viewModel.wrongGuessTrigger,
+            ) {
+                if (session != null) {
+                    GuessByNumbersGrid(
+                        wordLength = session.wordLength,
+                        maxGuesses = GUESS_BY_NUMBERS_MAX_GUESSES,
+                        guesses = session.guesses,
+                        currentInput = currentInput,
+                    )
+                }
+            }
         },
     )
 }
+
+private const val GUESS_BY_NUMBERS_BOARD_ASPECT = 0.7f
 
 @Composable
 internal fun GuessByNumbersMessageArea(revealWord: String?, invalidFlash: Boolean, modifier: Modifier = Modifier) {

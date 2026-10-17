@@ -215,7 +215,6 @@
     <string name="nback_quickstart_bullet_2">Tocca Uguale solo quando è nello stesso punto di N turni prima.</string>
     <string name="nback_quickstart_bullet_3">Il puzzle dura un numero fisso di turni, poi mostra la tua precisione.</string>
     <string name="nback_quickstart_hook">Una difficoltà più alta significa più passi da ricordare e meno tempo per reagire.</string>
-    <string name="starbattle_stars_per_group_content_description">Stelle per riga, colonna e regione</string>
 
     <!-- tutorial host / puzzle play -->
     <string name="tutorial_host_unavailable_title">Tutorial non disponibile</string>
@@ -557,7 +556,6 @@
     <string name="minesweeper_difficulty_desc_hard">Spazi più stretti che premiano bandierine attente e indizi ben seguiti.</string>
     <string name="minesweeper_difficulty_desc_expert">Campi minati densi con pochissimo respiro fin dall\'inizio.</string>
     <string name="minesweeper_size_label">Dimensione</string>
-    <string name="minesweeper_mines_left_label">Mine</string>
     <string name="minesweeper_how_to_play_goal">Scopri tutte le caselle sicure senza aprire una mina.</string>
     <string name="minesweeper_how_to_play_controls">Tocca per scoprire una casella. Tieni premuto per mettere o togliere una bandierina.</string>
     <string name="minesweeper_how_to_play_wrong_move">Aprire una mina termina subito il puzzle.</string>
@@ -619,7 +617,6 @@
     <string name="game2048_difficulty_desc_medium">La classica griglia 4x4 del 2048 originale.</string>
     <string name="game2048_difficulty_desc_hard">Stessa griglia 4x4, ma con più tessere da 4 poco utili.</string>
     <string name="game2048_difficulty_desc_expert">Minuscola griglia 3x3: qui l\'obiettivo è 1024, la tessera più alta che può contenere.</string>
-    <string name="game2048_score_label">Punteggio</string>
     <string name="game2048_how_to_play_goal">Unisci le tessere uguali finché una di esse arriva a 2048.</string>
     <string name="game2048_how_to_play_controls">Scorri in su, in giù, a sinistra o a destra per spostare tutte le tessere in quella direzione.</string>
     <string name="game2048_rule_1_title">Tutte le tessere si spostano</string>
@@ -660,7 +657,6 @@
     <string name="sudoku_candidate_mode_label">Note</string>
     <string name="sudoku_undo">Annulla</string>
     <string name="sudoku_clear_cell">Svuota casella</string>
-    <string name="sudoku_auto_candidate_mode_label">Note automatiche</string>
     <string name="sudoku_hint_show">Mostra il suggerimento per la prossima mossa</string>
     <string name="sudoku_hint_hide">Nascondi il suggerimento per la prossima mossa</string>
     <string name="sudoku_hint_row">riga %1$d</string>
@@ -727,7 +723,6 @@
     <string name="wordsearch_difficulty_desc_hard">Tutte le direzioni, anche al contrario, con più sovrapposizioni.</string>
     <string name="wordsearch_difficulty_desc_expert">Le griglie più grandi, parole in tutte le direzioni e molte sovrapposizioni.</string>
     <string name="wordsearch_size_label">Dimensione</string>
-    <string name="wordsearch_theme_label">Tema</string>
     <string name="wordsearch_hidden_word_solved_title">Parola nascosta trovata!</string>
     <string name="wordsearch_hidden_word_enter_mode">Risolvi la parola nascosta</string>
     <string name="wordsearch_hidden_word_exit_mode">Esci dalla modalità parola nascosta</string>

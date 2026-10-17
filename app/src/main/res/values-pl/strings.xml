@@ -200,7 +200,6 @@
     <string name="starbattle_quickstart_bullet_2">Przeciągnij palcem po polach, aby oznaczyć lub wyczyścić kilka naraz.</string>
     <string name="starbattle_quickstart_bullet_3">Stuknij dwukrotnie, aby umieścić gwiazdę — błędne typowania kosztują życie.</string>
     <string name="starbattle_quickstart_hook">Żadne dwie gwiazdy nie mogą się stykać, nawet po przekątnej.</string>
-    <string name="starbattle_stars_per_group_content_description">Gwiazdy w wierszu, kolumnie i obszarze</string>
 
     <string name="guessbynumbers_quickstart_goal">Dziesięć prób na odgadnięcie ukrytego słowa — żadnych kolorowych wskazówek, tylko dwie liczby.</string>
     <string name="guessbynumbers_quickstart_bullet_1">Każde wpisane słowo musi istnieć w słowniku.</string>
@@ -503,7 +502,6 @@
     <string name="minesweeper_difficulty_desc_hard">Ciasna przestrzeń, która nagradza uważne oznaczanie flagami i śledzenie wskazówek.</string>
     <string name="minesweeper_difficulty_desc_expert">Gęste pola minowe z bardzo małą ilością wolnego miejsca od samego początku.</string>
     <string name="minesweeper_size_label">Rozmiar</string>
-    <string name="minesweeper_mines_left_label">Min</string>
     <string name="minesweeper_how_to_play_goal">Odkryj każde bezpieczne pole bez trafienia na minę.</string>
     <string name="minesweeper_how_to_play_controls">Stuknij, aby odkryć pole. Przytrzymaj dłużej, aby postawić lub usunąć flagę.</string>
     <string name="minesweeper_how_to_play_wrong_move">Trafienie na minę natychmiast kończy łamigłówkę.</string>
@@ -565,7 +563,6 @@
     <string name="game2048_difficulty_desc_medium">Klasyczna plansza 4x4, oryginalny układ 2048.</string>
     <string name="game2048_difficulty_desc_hard">Ta sama plansza 4x4, ale z większą liczbą utrudniających kafelków z liczbą 4.</string>
     <string name="game2048_difficulty_desc_expert">Malutka plansza 3x3 — celem jest tu 1024, najwyższy kafelek, jaki ten rozmiar pomieści.</string>
-    <string name="game2048_score_label">Wynik</string>
     <string name="game2048_how_to_play_goal">Łącz pasujące kafelki, aż jeden z nich osiągnie 2048.</string>
     <string name="game2048_how_to_play_controls">Przesuwaj palcem w górę, w dół, w lewo lub w prawo, aby przesunąć wszystkie kafelki w tym kierunku.</string>
     <string name="game2048_rule_1_title">Przesuwaj wszystkie kafelki</string>
@@ -606,7 +603,6 @@
     <string name="sudoku_candidate_mode_label">Kandydat</string>
     <string name="sudoku_undo">Cofnij</string>
     <string name="sudoku_clear_cell">Wyczyść pole</string>
-    <string name="sudoku_auto_candidate_mode_label">Tryb automatycznych kandydatów</string>
     <string name="sudoku_hint_show">Pokaż podpowiedź do kolejnego ruchu</string>
     <string name="sudoku_hint_hide">Ukryj podpowiedź do kolejnego ruchu</string>
     <string name="sudoku_hint_row">wiersz %1$d</string>
@@ -673,7 +669,6 @@
     <string name="wordsearch_difficulty_desc_hard">Wszystkie kierunki, w tym słowa pisane wspak, z gęstszym nakładaniem się liter.</string>
     <string name="wordsearch_difficulty_desc_expert">Największe siatki ze słowami we wszystkich kierunkach i bardzo gęstym nakładaniem się liter.</string>
     <string name="wordsearch_size_label">Rozmiar</string>
-    <string name="wordsearch_theme_label">Motyw</string>
     <string name="wordsearch_hidden_word_solved_title">Ukryte słowo znalezione!</string>
     <string name="wordsearch_hidden_word_enter_mode">Odgadnij ukryte słowo</string>
     <string name="wordsearch_hidden_word_exit_mode">Wyjdź z trybu ukrytego słowa</string>
