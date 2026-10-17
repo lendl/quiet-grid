@@ -23,6 +23,11 @@
     <string name="common_end_puzzle">Zakończ łamigłówkę</string>
     <string name="common_continue_puzzle">Kontynuuj łamigłówkę</string>
     <string name="common_start_new_puzzle">Rozpocznij nową łamigłówkę</string>
+    <string name="play_full_rules">Pełne zasady</string>
+    <string name="play_all_words">Wszystkie słowa</string>
+    <string name="play_words_left">Pozostało: %1$d</string>
+    <string name="play_words_to_find">Do znalezienia (%1$d)</string>
+    <string name="play_words_found">Znalezione (%1$d)</string>
     <string name="replace_dialog_message">Masz już aktywną łamigłówkę. Możesz ją teraz kontynuować lub zastąpić nową.</string>
 
     <!-- games tab -->
@@ -207,6 +212,7 @@
     <string name="guessbynumbers_quickstart_example_1_word">TARAN</string>
     <string name="guessbynumbers_quickstart_example_1_hint">Cel to RATAN: 5 wspólnych liter, 3 na właściwym miejscu</string>
     <string name="guessbynumbers_quickstart_hook">Mniej prób i szybsze rozwiązanie oznaczają więcej punktów.</string>
+    <string name="starbattle_stars_per_group">%1$d na wiersz, kolumnę, obszar</string>
 
     <!-- tutorial host / puzzle play -->
     <string name="tutorial_host_unavailable_title">Samouczek niedostępny</string>
@@ -395,6 +401,7 @@
     <string name="takuzu_rule_2_body">Każdy wiersz i każda kolumna muszą zawierać tyle samo zer i jedynek.</string>
     <string name="takuzu_rule_3_title">Wszystkie linie są unikalne</string>
     <string name="takuzu_rule_3_body">Każdy wiersz musi różnić się od pozostałych wierszy, a każda kolumna od pozostałych kolumn.</string>
+    <string name="takuzu_rules_equal_halves_caption">dwa 0, dwa 1</string>
     <string name="takuzu_technique_1_title">Znajdź pary</string>
     <string name="takuzu_technique_1_body">Dwie identyczne cyfry obok siebie wymuszają wpisanie przeciwnej cyfry w polach po obu ich stronach.</string>
     <string name="takuzu_technique_2_title">Unikaj trio</string>
@@ -502,6 +509,7 @@
     <string name="minesweeper_difficulty_desc_hard">Ciasna przestrzeń, która nagradza uważne oznaczanie flagami i śledzenie wskazówek.</string>
     <string name="minesweeper_difficulty_desc_expert">Gęste pola minowe z bardzo małą ilością wolnego miejsca od samego początku.</string>
     <string name="minesweeper_size_label">Rozmiar</string>
+    <string name="minesweeper_mines_left_count">Pozostałe miny: %1$d</string>
     <string name="minesweeper_how_to_play_goal">Odkryj każde bezpieczne pole bez trafienia na minę.</string>
     <string name="minesweeper_how_to_play_controls">Stuknij, aby odkryć pole. Przytrzymaj dłużej, aby postawić lub usunąć flagę.</string>
     <string name="minesweeper_how_to_play_wrong_move">Trafienie na minę natychmiast kończy łamigłówkę.</string>
@@ -538,6 +546,10 @@
     <string name="minesweeper_hint_full_clue_resolution_body">Odkryj podświetlone %1$s. Wymagana liczba min dla tej wskazówki jest w pełni zrealizowana, więc pozostałe zakryte %1$s są bezpieczne.</string>
     <string name="minesweeper_hint_only_one_possible_mine_body">Odkryj podświetlone %1$s. Analiza %2$s wraz z %3$s pozostawia tylko jedno dozwolone miejsce na brakującą minę.</string>
     <string name="minesweeper_hint_guaranteed_safe_tile_body">Odkryj podświetlone %1$s. Gdyby to pole skrywało minę, wartości sąsiednich wskazówek byłyby zbyt wysokie.</string>
+    <string name="minesweeper_hint_title_clue_pair">Nakładające się wskazówki</string>
+    <string name="minesweeper_hint_title_mines_left">Liczba min</string>
+    <string name="minesweeper_hint_clue_pair_body">Odkryj podświetlone %1$s. Przeanalizuj %2$s wraz z %3$s: przy każdym możliwym ułożeniu ich min podświetlone %1$s pozostają puste.</string>
+    <string name="minesweeper_hint_mines_left_body">Odkryj podświetlone %1$s. Każda mina jest już ustalona gdzie indziej, więc podświetlone %1$s są bezpieczne.</string>
     <string name="minesweeper_how_to_play_scoring">Wynik zaczyna się od 10 000 punktów i spada wraz z upływem czasu. Szybsze ukończenie pozwala zachować więcej punktów.</string>
     <string name="minesweeper_tip_1_title">Zaczynaj od otwartych obszarów</string>
     <string name="minesweeper_tip_1_body">Duże, puste obszary odkrywają wiele bezpiecznych pól naraz i często dają pierwsze solidne wskazówki do analizy.</string>
@@ -563,6 +575,7 @@
     <string name="game2048_difficulty_desc_medium">Klasyczna plansza 4x4, oryginalny układ 2048.</string>
     <string name="game2048_difficulty_desc_hard">Ta sama plansza 4x4, ale z większą liczbą utrudniających kafelków z liczbą 4.</string>
     <string name="game2048_difficulty_desc_expert">Malutka plansza 3x3 — celem jest tu 1024, najwyższy kafelek, jaki ten rozmiar pomieści.</string>
+    <string name="game2048_score_value">Wynik %1$d</string>
     <string name="game2048_how_to_play_goal">Łącz pasujące kafelki, aż jeden z nich osiągnie 2048.</string>
     <string name="game2048_how_to_play_controls">Przesuwaj palcem w górę, w dół, w lewo lub w prawo, aby przesunąć wszystkie kafelki w tym kierunku.</string>
     <string name="game2048_rule_1_title">Przesuwaj wszystkie kafelki</string>
@@ -603,6 +616,10 @@
     <string name="sudoku_candidate_mode_label">Kandydat</string>
     <string name="sudoku_undo">Cofnij</string>
     <string name="sudoku_clear_cell">Wyczyść pole</string>
+    <string name="sudoku_auto_candidates">Automatyczni kandydaci</string>
+    <string name="sudoku_quickrule_row">Bez powtórzeń w wierszu</string>
+    <string name="sudoku_quickrule_column">Bez powtórzeń w kolumnie</string>
+    <string name="sudoku_quickrule_box">Bez powtórzeń w obszarze</string>
     <string name="sudoku_hint_show">Pokaż podpowiedź do kolejnego ruchu</string>
     <string name="sudoku_hint_hide">Ukryj podpowiedź do kolejnego ruchu</string>
     <string name="sudoku_hint_row">wiersz %1$d</string>
@@ -669,6 +686,7 @@
     <string name="wordsearch_difficulty_desc_hard">Wszystkie kierunki, w tym słowa pisane wspak, z gęstszym nakładaniem się liter.</string>
     <string name="wordsearch_difficulty_desc_expert">Największe siatki ze słowami we wszystkich kierunkach i bardzo gęstym nakładaniem się liter.</string>
     <string name="wordsearch_size_label">Rozmiar</string>
+    <string name="wordsearch_words_found">Słowa: %1$d / %2$d</string>
     <string name="wordsearch_hidden_word_solved_title">Ukryte słowo znalezione!</string>
     <string name="wordsearch_hidden_word_enter_mode">Odgadnij ukryte słowo</string>
     <string name="wordsearch_hidden_word_exit_mode">Wyjdź z trybu ukrytego słowa</string>
@@ -786,6 +804,10 @@
     <string name="wordguess_how_to_play_scoring">Rozwiązanie łamigłówki przyznaje punkty na podstawie poziomu trudności, liczby potrzebnych prób oraz czasu ukończenia gry.</string>
     <string name="wordguess_invalid_word_message">To nie jest prawidłowe słowo</string>
     <string name="wordguess_reveal_word_label">Prawidłowe słowo to:</string>
+    <string name="wordguess_guess_count">Próba %1$d z %2$d</string>
+    <string name="wordguess_quickrule_correct">Dobre miejsce</string>
+    <string name="wordguess_quickrule_present">W słowie, złe miejsce</string>
+    <string name="wordguess_quickrule_absent">Nie ma w słowie</string>
     <string name="wordguess_loss_abandoned_eyebrow">Łamigłówka zakończona</string>
     <string name="wordguess_loss_abandoned_title">Łamigłówka nieukończona</string>
     <string name="wordguess_loss_abandoned_body">Ta łamigłówka została zakończona przed jej rozwiązaniem.</string>
@@ -1239,6 +1261,10 @@
     <string name="quick_play_widget_description">Rozpocznij łamigłówkę jednym stuknięciem</string>
     <string name="quick_play_continue">Kontynuuj</string>
     <string name="quick_play_play">Graj</string>
+    <string name="mix_widget_label">Miks</string>
+    <string name="mix_widget_description">Zagraj w swój miks jednym stuknięciem</string>
+    <string name="mix_widget_create">Utwórz miks</string>
+    <string name="mix_widget_create_hint">Wybierz gry, a potem graj w nie jednym stuknięciem</string>
     <string name="minisudoku_title">Mini Sudoku</string>
     <string name="minisudoku_tagline">Małe plansze Sudoku: 4×4 na rozgrzewkę, 6×6, gdy chcesz więcej.</string>
     <string name="minisudoku_difficulty_desc_easy">Plansza 4×4 z obszarami 2×2, cyfry 1-4.</string>

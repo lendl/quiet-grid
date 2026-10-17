@@ -23,6 +23,11 @@
     <string name="common_end_puzzle">Encerrar quebra-cabeça</string>
     <string name="common_continue_puzzle">Continuar quebra-cabeça</string>
     <string name="common_start_new_puzzle">Começar novo quebra-cabeça</string>
+    <string name="play_full_rules">Regras completas</string>
+    <string name="play_all_words">Todas as palavras</string>
+    <string name="play_words_left">Faltam %1$d</string>
+    <string name="play_words_to_find">Para encontrar (%1$d)</string>
+    <string name="play_words_found">Encontradas (%1$d)</string>
     <string name="replace_dialog_message">Você já tem um quebra-cabeça ativo. Pode continuar agora ou substituí-lo por um novo.</string>
 
     <!-- games tab -->
@@ -215,6 +220,7 @@
     <string name="nback_quickstart_bullet_2">Toque em Bateu somente quando estiver no mesmo lugar de N rodadas atrás.</string>
     <string name="nback_quickstart_bullet_3">O quebra-cabeça roda um número fixo de rodadas e depois mostra sua precisão.</string>
     <string name="nback_quickstart_hook">Dificuldades mais altas significam uma memória mais distante e menos tempo para reagir.</string>
+    <string name="starbattle_stars_per_group">%1$d por linha, coluna, região</string>
 
     <!-- tutorial host / puzzle play -->
     <string name="tutorial_host_unavailable_title">Tutorial não disponível</string>
@@ -403,6 +409,7 @@
     <string name="takuzu_rule_2_body">Cada linha e cada coluna deve conter o mesmo número de 0s e 1s.</string>
     <string name="takuzu_rule_3_title">Todas as linhas são únicas</string>
     <string name="takuzu_rule_3_body">Nenhuma linha é igual a outra linha, e nenhuma coluna é igual a outra coluna.</string>
+    <string name="takuzu_rules_equal_halves_caption">dois 0, dois 1</string>
     <string name="takuzu_technique_1_title">Encontrar pares</string>
     <string name="takuzu_technique_1_body">Dois dígitos iguais lado a lado obrigam as células dos dois lados a serem o dígito oposto.</string>
     <string name="takuzu_technique_2_title">Evitar trios</string>
@@ -510,6 +517,7 @@
     <string name="minesweeper_difficulty_desc_hard">Espaços mais apertados que recompensam marcação cuidadosa e acompanhamento das pistas.</string>
     <string name="minesweeper_difficulty_desc_expert">Campos minados densos com muito pouco espaço desde o início.</string>
     <string name="minesweeper_size_label">Tamanho</string>
+    <string name="minesweeper_mines_left_count">%1$d minas restantes</string>
     <string name="minesweeper_how_to_play_goal">Revele cada célula segura sem abrir uma mina.</string>
     <string name="minesweeper_how_to_play_controls">Toque para revelar uma célula. Pressione e segure para colocar ou remover uma bandeira.</string>
     <string name="minesweeper_how_to_play_wrong_move">Abrir uma mina encerra o quebra-cabeça na hora.</string>
@@ -546,6 +554,10 @@
     <string name="minesweeper_hint_full_clue_resolution_body">Revele as %1$s destacadas. A exigência de minas desta pista está totalmente resolvida, então as %1$s ocultas restantes são seguras.</string>
     <string name="minesweeper_hint_only_one_possible_mine_body">Revele as %1$s destacadas. Ler %2$s junto com %3$s deixa só um lugar legal para a mina restante.</string>
     <string name="minesweeper_hint_guaranteed_safe_tile_body">Revele as %1$s destacadas. Se esta célula fosse uma mina, as contagens das pistas próximas seriam altas demais.</string>
+    <string name="minesweeper_hint_title_clue_pair">Pistas sobrepostas</string>
+    <string name="minesweeper_hint_title_mines_left">Contagem de minas</string>
+    <string name="minesweeper_hint_clue_pair_body">Revele as %1$s destacadas. Leia %2$s junto com %3$s: qualquer jeito de encaixar as minas deixa as %1$s destacadas vazias.</string>
+    <string name="minesweeper_hint_mines_left_body">Revele as %1$s destacadas. Todas as minas já estão definidas em outro lugar, então não sobra nenhuma escondida sob as %1$s destacadas.</string>
     <string name="minesweeper_how_to_play_scoring">Começa em 10.000 e cai enquanto o cronômetro corre. Terminar mais rápido preserva mais pontuação.</string>
     <string name="minesweeper_tip_1_title">Comece pelas aberturas</string>
     <string name="minesweeper_tip_1_body">Grandes aberturas vazias revelam várias células seguras de uma vez e costumam expor as primeiras pistas fortes.</string>
@@ -571,6 +583,7 @@
     <string name="game2048_difficulty_desc_medium">Tabuleiro clássico 4x4, o layout original do 2048.</string>
     <string name="game2048_difficulty_desc_hard">O mesmo tabuleiro 4x4, mas com mais fichas de 4 pouco úteis.</string>
     <string name="game2048_difficulty_desc_expert">Tabuleiro minúsculo 3x3 -- o objetivo aqui é 1024, a maior ficha que esse tamanho comporta.</string>
+    <string name="game2048_score_value">Pontuação %1$d</string>
     <string name="game2048_how_to_play_goal">Combine fichas iguais até que uma delas chegue a 2048.</string>
     <string name="game2048_how_to_play_controls">Deslize para cima, para baixo, para a esquerda ou para a direita para mover todas as fichas naquela direção.</string>
     <string name="game2048_rule_1_title">Deslize todas as fichas</string>
@@ -611,6 +624,10 @@
     <string name="sudoku_candidate_mode_label">Notas</string>
     <string name="sudoku_undo">Desfazer</string>
     <string name="sudoku_clear_cell">Limpar célula</string>
+    <string name="sudoku_auto_candidates">Notas automáticas</string>
+    <string name="sudoku_quickrule_row">Sem repetir na linha</string>
+    <string name="sudoku_quickrule_column">Sem repetir na coluna</string>
+    <string name="sudoku_quickrule_box">Sem repetir no quadrante</string>
     <string name="sudoku_hint_show">Mostrar dica do próximo movimento</string>
     <string name="sudoku_hint_hide">Ocultar dica do próximo movimento</string>
     <string name="sudoku_hint_row">linha %1$d</string>
@@ -677,6 +694,7 @@
     <string name="wordsearch_difficulty_desc_hard">Todas as direções, incluindo de trás para frente, com sobreposições mais densas.</string>
     <string name="wordsearch_difficulty_desc_expert">As maiores grades, com palavras em todas as direções e muita sobreposição.</string>
     <string name="wordsearch_size_label">Tamanho</string>
+    <string name="wordsearch_words_found">%1$d / %2$d palavras</string>
     <string name="wordsearch_hidden_word_solved_title">Palavra escondida encontrada!</string>
     <string name="wordsearch_hidden_word_enter_mode">Resolver palavra escondida</string>
     <string name="wordsearch_hidden_word_exit_mode">Sair do modo de palavra escondida</string>
@@ -792,6 +810,10 @@
     <string name="wordguess_how_to_play_scoring">Resolver o quebra-cabeça pontua com base na dificuldade, em quantas tentativas você precisou e em quão rápido você terminou.</string>
     <string name="wordguess_invalid_word_message">Não é uma palavra válida</string>
     <string name="wordguess_reveal_word_label">A palavra era</string>
+    <string name="wordguess_guess_count">Tentativa %1$d de %2$d</string>
+    <string name="wordguess_quickrule_correct">Lugar certo</string>
+    <string name="wordguess_quickrule_present">Na palavra, lugar errado</string>
+    <string name="wordguess_quickrule_absent">Não está na palavra</string>
     <string name="wordguess_loss_abandoned_eyebrow">Quebra-cabeça encerrado</string>
     <string name="wordguess_loss_abandoned_title">Quebra-cabeça inacabado</string>
     <string name="wordguess_loss_abandoned_body">Você encerrou este quebra-cabeça antes de resolvê-lo.</string>
@@ -1265,6 +1287,10 @@
     <string name="quick_play_widget_description">Comece um quebra-cabeça com um toque</string>
     <string name="quick_play_continue">Continuar</string>
     <string name="quick_play_play">Jogar</string>
+    <string name="mix_widget_label">Combinado</string>
+    <string name="mix_widget_description">Jogue seu combinado com um toque</string>
+    <string name="mix_widget_create">Criar um combinado</string>
+    <string name="mix_widget_create_hint">Escolha seus jogos e jogue com um toque</string>
     <string name="minisudoku_title">Mini Sudoku</string>
     <string name="minisudoku_tagline">Grades pequenas de Sudoku: 4×4 para aquecer, 6×6 quando quiser mais.</string>
     <string name="minisudoku_difficulty_desc_easy">Grade 4×4 com quadrantes 2×2, números de 1 a 4.</string>

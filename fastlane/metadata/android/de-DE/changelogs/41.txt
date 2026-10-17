@@ -1,0 +1,7 @@
+Version 1.11.0
+
+- Neues Spiel: Pfeilflucht. Tippe einen Pfeil an, um ihn vom Feld zu schicken, aber erst, wenn sein Weg frei ist.
+- Neuer Spielbildschirm in allen Spielen, mit Regeln in Bildern. Passt auf kleine Handys, im Querformat und auf Tablets.
+- Minesweeper lässt sich immer ohne Raten lösen
+- Neues Mix-Widget, und Widgets können dein Rätsel fortsetzen
+- Fehlerbehebungen und Stabilitätsverbesserungen

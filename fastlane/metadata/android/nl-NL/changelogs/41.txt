@@ -1,0 +1,7 @@
+Versie 1.11.0
+
+- Nieuw spel: Pijlenvlucht. Tik een pijl aan om hem van het bord te sturen, maar pas als zijn pad vrij is.
+- Nieuw speelscherm in elk spel, met regels in plaatjes. Past op kleine telefoons, liggend en op tablets.
+- Mijnenveger-borden zijn altijd op te lossen zonder te gokken
+- Nieuwe Mix-widget, en widgets kunnen verdergaan met je puzzel
+- Bugfixes en stabiliteitsverbeteringen

@@ -38,6 +38,7 @@ Wybierz, które gry mają codziennie dawać Ci nową łamigłówkę, na każdym 
 <li><b>Pamięć sekwencji</b> — Patrz, jak pola się podświetlają, i powtórz coraz dłuższą sekwencję.</li>
 <li><b>2048</b> — Przesuwaj i łącz kafelki, aż osiągniesz 2048.</li>
 <li><b>Układanka z klocków</b> — Przeciągaj klocki na planszę i oczyszczaj pełne wiersze i kolumny. Z trybem bez końca.</li>
+<li><b>Ucieczka strzałek</b> — Stuknij strzałkę, aby zsunąć ją z planszy. Wydostanie się tylko wtedy, gdy nic nie blokuje jej drogi.</li>
 </ul>
 
 <p><b>PO SWOJEMU</b><br>

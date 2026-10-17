@@ -38,6 +38,7 @@ Elige qué juegos te dan un puzzle nuevo cada día, en cada dificultad. Comparte
 <li><b>Memoria de Secuencias</b> — Mira cómo se iluminan las casillas y repite la secuencia mientras crece.</li>
 <li><b>2048</b> — Desliza y combina fichas hasta llegar a 2048.</li>
 <li><b>Block Fill</b> — Arrastra piezas al tablero y despeja filas y columnas completas. Incluye un modo sin fin.</li>
+<li><b>Escape de Flechas</b> — Toca una flecha para sacarla del tablero. Solo sale si nada le bloquea el paso.</li>
 </ul>
 
 <p><b>A TU MANERA</b><br>

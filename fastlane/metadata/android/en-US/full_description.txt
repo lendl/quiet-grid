@@ -38,6 +38,7 @@ Choose which games give you a new puzzle every day, in every difficulty. Share y
 <li><b>Sequence Memory</b> — Watch the pads light up, then tap the growing sequence back.</li>
 <li><b>2048</b> — Slide and merge tiles to reach 2048.</li>
 <li><b>Block Fill</b> — Drag pieces onto the board and clear full rows and columns. Includes an Endless mode.</li>
+<li><b>Arrow Escape</b> — Tap an arrow to send it off the board. It only gets out if nothing blocks its path.</li>
 </ul>
 
 <p><b>MAKE IT YOURS</b><br>

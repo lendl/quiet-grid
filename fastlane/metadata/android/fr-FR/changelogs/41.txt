@@ -1,0 +1,7 @@
+Version 1.11.0
+
+- Nouveau jeu : Évasion des Flèches. Touchez une flèche pour la faire sortir du plateau, mais seulement quand son chemin est libre.
+- Nouvel écran de jeu dans tous les jeux, avec des règles en images. Adapté aux petits téléphones, au mode paysage et aux tablettes.
+- Les grilles de Démineur se résolvent toujours sans deviner
+- Nouveau widget Mix, et les widgets peuvent reprendre votre puzzle
+- Corrections de bugs et améliorations de stabilité

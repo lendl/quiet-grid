@@ -1,0 +1,7 @@
+Versión 1.11.0
+
+- Nuevo juego: Escape de Flechas. Toca una flecha para sacarla del tablero, pero solo cuando su camino esté libre.
+- Nueva pantalla de juego en todos los juegos, con reglas en imágenes. Se adapta a móviles pequeños, horizontal y tablets.
+- Los tableros de Buscaminas se resuelven siempre sin adivinar
+- Nuevo widget Mix, y los widgets pueden continuar tu puzzle
+- Corrección de errores y mejoras de estabilidad

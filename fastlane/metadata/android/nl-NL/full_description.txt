@@ -38,6 +38,7 @@ Kies zelf welke spellen je elke dag een nieuwe puzzel geven, in elke moeilijkhei
 <li><b>Reeks Onthouden</b> — Kijk hoe de vakjes oplichten en tik de groeiende reeks na.</li>
 <li><b>2048</b> — Schuif en voeg tegels samen tot je 2048 bereikt.</li>
 <li><b>Block Fill</b> — Sleep stukken op het bord en maak volle rijen en kolommen leeg. Met eindeloze modus.</li>
+<li><b>Pijlenvlucht</b> — Tik een pijl aan om hem van het bord te halen. Hij komt alleen vrij als niets in de weg zit.</li>
 </ul>
 
 <p><b>HELEMAAL VAN JOU</b><br>

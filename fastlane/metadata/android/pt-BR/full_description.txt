@@ -38,6 +38,7 @@ Escolha quais jogos oferecem um quebra-cabeça novo todo dia, em cada dificuldad
 <li><b>Memória de Sequências</b> — Veja os quadrados acenderem e repita a sequência, que cresce a cada rodada.</li>
 <li><b>2048</b> — Deslize e junte peças até chegar a 2048.</li>
 <li><b>Block Fill</b> — Arraste peças para o tabuleiro e limpe linhas e colunas inteiras. Inclui modo infinito.</li>
+<li><b>Escape das Setas</b> — Toque em uma seta para tirá-la do tabuleiro. Ela só sai se nada bloquear o caminho.</li>
 </ul>
 
 <p><b>DO SEU JEITO</b><br>

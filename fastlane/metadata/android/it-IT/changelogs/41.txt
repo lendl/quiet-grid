@@ -1,0 +1,7 @@
+Versione 1.11.0
+
+- Nuovo gioco: Fuga delle frecce. Tocca una freccia per farla uscire dalla griglia, ma solo quando la strada è libera.
+- Nuova schermata di gioco in tutti i giochi, con regole illustrate. Si adatta a telefoni piccoli, orizzontale e tablet.
+- Le griglie di Campo minato si risolvono sempre senza tirare a indovinare
+- Nuovo widget Mix, e i widget possono riprendere il tuo puzzle
+- Correzioni di bug e miglioramenti della stabilità

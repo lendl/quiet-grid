@@ -23,6 +23,11 @@
     <string name="common_end_puzzle">Termina puzzle</string>
     <string name="common_continue_puzzle">Continua puzzle</string>
     <string name="common_start_new_puzzle">Inizia nuovo puzzle</string>
+    <string name="play_full_rules">Regole complete</string>
+    <string name="play_all_words">Tutte le parole</string>
+    <string name="play_words_left">Ne mancano %1$d</string>
+    <string name="play_words_to_find">Da trovare (%1$d)</string>
+    <string name="play_words_found">Trovate (%1$d)</string>
     <string name="replace_dialog_message">Hai già un puzzle attivo. Puoi continuarlo ora o sostituirlo con un nuovo puzzle.</string>
 
     <!-- games tab -->
@@ -215,6 +220,7 @@
     <string name="nback_quickstart_bullet_2">Tocca Uguale solo quando è nello stesso punto di N turni prima.</string>
     <string name="nback_quickstart_bullet_3">Il puzzle dura un numero fisso di turni, poi mostra la tua precisione.</string>
     <string name="nback_quickstart_hook">Una difficoltà più alta significa più passi da ricordare e meno tempo per reagire.</string>
+    <string name="starbattle_stars_per_group">%1$d per riga, colonna, regione</string>
 
     <!-- tutorial host / puzzle play -->
     <string name="tutorial_host_unavailable_title">Tutorial non disponibile</string>
@@ -449,6 +455,7 @@
     <string name="takuzu_rule_2_body">Ogni riga e colonna deve contenere lo stesso numero di 0 e di 1.</string>
     <string name="takuzu_rule_3_title">Tutte le linee sono uniche</string>
     <string name="takuzu_rule_3_body">Ogni riga è diversa da tutte le altre righe, e ogni colonna da tutte le altre colonne.</string>
+    <string name="takuzu_rules_equal_halves_caption">due 0, due 1</string>
     <string name="takuzu_technique_1_title">Trova le coppie</string>
     <string name="takuzu_technique_1_body">Due cifre uguali una accanto all\'altra obbligano le caselle ai due lati a contenere la cifra opposta.</string>
     <string name="takuzu_technique_2_title">Evita i tris</string>
@@ -556,6 +563,7 @@
     <string name="minesweeper_difficulty_desc_hard">Spazi più stretti che premiano bandierine attente e indizi ben seguiti.</string>
     <string name="minesweeper_difficulty_desc_expert">Campi minati densi con pochissimo respiro fin dall\'inizio.</string>
     <string name="minesweeper_size_label">Dimensione</string>
+    <string name="minesweeper_mines_left_count">%1$d mine rimaste</string>
     <string name="minesweeper_how_to_play_goal">Scopri tutte le caselle sicure senza aprire una mina.</string>
     <string name="minesweeper_how_to_play_controls">Tocca per scoprire una casella. Tieni premuto per mettere o togliere una bandierina.</string>
     <string name="minesweeper_how_to_play_wrong_move">Aprire una mina termina subito il puzzle.</string>
@@ -592,6 +600,10 @@
     <string name="minesweeper_hint_full_clue_resolution_body">Scopri %1$s in evidenza. Le mine richieste da questo indizio sono tutte individuate, quindi le altre caselle nascoste intorno sono sicure.</string>
     <string name="minesweeper_hint_only_one_possible_mine_body">Scopri %1$s in evidenza. Leggendo %2$s insieme a %3$s resta un solo posto valido per la mina rimanente.</string>
     <string name="minesweeper_hint_guaranteed_safe_tile_body">Scopri %1$s in evidenza. Se questa casella fosse una mina, i numeri degli indizi vicini sarebbero troppo alti.</string>
+    <string name="minesweeper_hint_title_clue_pair">Indizi sovrapposti</string>
+    <string name="minesweeper_hint_title_mines_left">Conteggio mine</string>
+    <string name="minesweeper_hint_clue_pair_body">Scopri %1$s in evidenza. Leggi %2$s insieme a %3$s: comunque si dispongano le loro mine, nessuna cade in %1$s in evidenza.</string>
+    <string name="minesweeper_hint_mines_left_body">Scopri %1$s in evidenza. Ogni mina è già fissata altrove, quindi non ne resta nessuna nascosta in %1$s in evidenza.</string>
     <string name="minesweeper_how_to_play_scoring">Parte da 10.000 e scende mentre il timer scorre. Più finisci in fretta, più punti tieni.</string>
     <string name="minesweeper_tip_1_title">Parti dalle aperture</string>
     <string name="minesweeper_tip_1_body">Le grandi aperture vuote scoprono diverse caselle sicure in una volta e spesso rivelano i primi indizi forti.</string>
@@ -617,6 +629,7 @@
     <string name="game2048_difficulty_desc_medium">La classica griglia 4x4 del 2048 originale.</string>
     <string name="game2048_difficulty_desc_hard">Stessa griglia 4x4, ma con più tessere da 4 poco utili.</string>
     <string name="game2048_difficulty_desc_expert">Minuscola griglia 3x3: qui l\'obiettivo è 1024, la tessera più alta che può contenere.</string>
+    <string name="game2048_score_value">Punteggio %1$d</string>
     <string name="game2048_how_to_play_goal">Unisci le tessere uguali finché una di esse arriva a 2048.</string>
     <string name="game2048_how_to_play_controls">Scorri in su, in giù, a sinistra o a destra per spostare tutte le tessere in quella direzione.</string>
     <string name="game2048_rule_1_title">Tutte le tessere si spostano</string>
@@ -657,6 +670,10 @@
     <string name="sudoku_candidate_mode_label">Note</string>
     <string name="sudoku_undo">Annulla</string>
     <string name="sudoku_clear_cell">Svuota casella</string>
+    <string name="sudoku_auto_candidates">Note automatiche</string>
+    <string name="sudoku_quickrule_row">Nessuna ripetizione nella riga</string>
+    <string name="sudoku_quickrule_column">Nessuna ripetizione nella colonna</string>
+    <string name="sudoku_quickrule_box">Nessuna ripetizione nel riquadro</string>
     <string name="sudoku_hint_show">Mostra il suggerimento per la prossima mossa</string>
     <string name="sudoku_hint_hide">Nascondi il suggerimento per la prossima mossa</string>
     <string name="sudoku_hint_row">riga %1$d</string>
@@ -723,6 +740,7 @@
     <string name="wordsearch_difficulty_desc_hard">Tutte le direzioni, anche al contrario, con più sovrapposizioni.</string>
     <string name="wordsearch_difficulty_desc_expert">Le griglie più grandi, parole in tutte le direzioni e molte sovrapposizioni.</string>
     <string name="wordsearch_size_label">Dimensione</string>
+    <string name="wordsearch_words_found">%1$d / %2$d parole</string>
     <string name="wordsearch_hidden_word_solved_title">Parola nascosta trovata!</string>
     <string name="wordsearch_hidden_word_enter_mode">Risolvi la parola nascosta</string>
     <string name="wordsearch_hidden_word_exit_mode">Esci dalla modalità parola nascosta</string>
@@ -838,6 +856,10 @@
     <string name="wordguess_how_to_play_scoring">Risolvere il puzzle dà punti in base alla difficoltà, a quanti tentativi ti sono serviti e a quanto in fretta hai finito.</string>
     <string name="wordguess_invalid_word_message">Parola non valida</string>
     <string name="wordguess_reveal_word_label">La parola era</string>
+    <string name="wordguess_guess_count">Tentativo %1$d di %2$d</string>
+    <string name="wordguess_quickrule_correct">Posto giusto</string>
+    <string name="wordguess_quickrule_present">Nella parola, posto sbagliato</string>
+    <string name="wordguess_quickrule_absent">Non è nella parola</string>
     <string name="wordguess_loss_abandoned_eyebrow">Puzzle terminato</string>
     <string name="wordguess_loss_abandoned_title">Puzzle incompleto</string>
     <string name="wordguess_loss_abandoned_body">Hai terminato questo puzzle prima di risolverlo.</string>
@@ -1266,6 +1288,10 @@
     <string name="quick_play_widget_description">Inizia un puzzle con un tocco</string>
     <string name="quick_play_continue">Continua</string>
     <string name="quick_play_play">Gioca</string>
+    <string name="mix_widget_label">Mix</string>
+    <string name="mix_widget_description">Gioca il tuo mix con un tocco</string>
+    <string name="mix_widget_create">Crea un mix</string>
+    <string name="mix_widget_create_hint">Scegli i tuoi giochi, poi giocali con un tocco</string>
     <string name="minisudoku_title">Mini Sudoku</string>
     <string name="minisudoku_tagline">Griglie Sudoku piccole: 4×4 per scaldarti, 6×6 quando vuoi di più.</string>
     <string name="minisudoku_difficulty_desc_easy">Griglia 4×4 con riquadri 2×2, cifre da 1 a 4.</string>

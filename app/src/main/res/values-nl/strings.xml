@@ -21,6 +21,11 @@
     <string name="common_end_puzzle">Puzzel beëindigen</string>
     <string name="common_continue_puzzle">Puzzel hervatten</string>
     <string name="common_start_new_puzzle">Nieuwe puzzel starten</string>
+    <string name="play_full_rules">Alle regels</string>
+    <string name="play_all_words">Alle woorden</string>
+    <string name="play_words_left">Nog %1$d</string>
+    <string name="play_words_to_find">Te vinden (%1$d)</string>
+    <string name="play_words_found">Gevonden (%1$d)</string>
     <string name="replace_dialog_message">Je hebt al een actieve puzzel. Je kunt die nu hervatten of vervangen door een nieuwe puzzel.</string>
 
     <string name="games_subtitle">Kies een puzzel en houd je actieve spel dichtbij.</string>
@@ -364,6 +369,7 @@
     <string name="takuzu_rule_2_body">Elke rij en kolom bevat evenveel 0\'en als 1\'en.</string>
     <string name="takuzu_rule_3_title">Alle lijnen zijn uniek</string>
     <string name="takuzu_rule_3_body">Geen twee rijen zijn gelijk, en geen twee kolommen zijn gelijk.</string>
+    <string name="takuzu_rules_equal_halves_caption">twee nullen, twee enen</string>
     <string name="takuzu_technique_1_title">Zoek paren</string>
     <string name="takuzu_technique_1_body">Twee gelijke cijfers naast elkaar dwingen de cellen ernaast tot het tegenovergestelde cijfer.</string>
     <string name="takuzu_technique_2_title">Vermijd trio\'s</string>
@@ -374,8 +380,8 @@
     <string name="takuzu_technique_4_body">Een rij of kolom mag geen kopie zijn van een voltooide lijn. Dreigt dat, gebruik dan de andere waarde.</string>
     <string name="takuzu_technique_5_title">Schrap onmogelijke combinaties</string>
     <string name="takuzu_technique_5_body">Als één waarde uiteindelijk drie op rij zou forceren, moet de andere waarde hier staan.</string>
-    <string name="takuzu_hint_show">Show next move hint</string>
-    <string name="takuzu_hint_hide">Hide next move hint</string>
+    <string name="takuzu_hint_show">Hint voor volgende zet tonen</string>
+    <string name="takuzu_hint_hide">Hint voor volgende zet verbergen</string>
     <string name="takuzu_hint_line_row">rij %1$d</string>
     <string name="takuzu_hint_line_column">kolom %1$d</string>
     <string name="takuzu_hint_kind_row">rij</string>
@@ -434,8 +440,8 @@
     <string name="nonogram_technique_2_body">Als geen enkel blok een cel legaal kan bereiken in enige geldige opstelling, markeer hem dan als leeg.</string>
     <string name="nonogram_technique_3_title">Complete lijn</string>
     <string name="nonogram_technique_3_body">Zodra alle blokken in een lijn volledig geplaatst zijn, moet elke resterende cel in die lijn leeg zijn.</string>
-    <string name="nonogram_hint_show">Show next move hint</string>
-    <string name="nonogram_hint_hide">Hide next move hint</string>
+    <string name="nonogram_hint_show">Hint voor volgende zet tonen</string>
+    <string name="nonogram_hint_hide">Hint voor volgende zet verbergen</string>
     <string name="nonogram_hint_line_row">Rij %1$d</string>
     <string name="nonogram_hint_line_col">Kolom %1$d</string>
     <string name="nonogram_hint_invalid_title">Ongeldige lijn</string>
@@ -471,6 +477,7 @@
     <string name="minesweeper_difficulty_desc_hard">Strakkere ruimtes die zorgvuldig markeren en aanwijzingen volgen belonen.</string>
     <string name="minesweeper_difficulty_desc_expert">Dichte mijnenvelden met vanaf het begin heel weinig ademruimte.</string>
     <string name="minesweeper_size_label">Grootte</string>
+    <string name="minesweeper_mines_left_count">Nog %1$d mijnen</string>
     <string name="minesweeper_how_to_play_goal">Onthul elk veilig vak zonder een mijn te openen.</string>
     <string name="minesweeper_how_to_play_controls">Tik om een cel te onthullen. Houd ingedrukt om een vlag te plaatsen of verwijderen.</string>
     <string name="minesweeper_how_to_play_wrong_move">Een mijn openen beëindigt de puzzel onmiddellijk.</string>
@@ -488,8 +495,8 @@
     <string name="minesweeper_technique_2_body">Als een aanwijzing al alle mijnen gemarkeerd heeft, is elk resterende verborgen buur veilig om te onthullen.</string>
     <string name="minesweeper_technique_3_title">Aanwijzingen vergelijken</string>
     <string name="minesweeper_technique_3_body">Twee aanwijzingen die verborgen vakken delen onthullen samen meer dan elk afzonderlijk — de overlap laat zien welke vakken veilig zijn en welke mijnen zijn.</string>
-    <string name="minesweeper_hint_show">Show next move hint</string>
-    <string name="minesweeper_hint_hide">Hide next move hint</string>
+    <string name="minesweeper_hint_show">Hint voor volgende zet tonen</string>
+    <string name="minesweeper_hint_hide">Hint voor volgende zet verbergen</string>
     <string name="minesweeper_hint_cell">rij %1$d, kolom %2$d</string>
     <string name="minesweeper_hint_tile_one">vak</string>
     <string name="minesweeper_hint_tile_other">vakken</string>
@@ -507,6 +514,10 @@
     <string name="minesweeper_hint_full_clue_resolution_body">Open de gemarkeerde %1$s. De mijnopgave van dit cijfer is volledig opgelost, dus de resterende verborgen %1$s zijn veilig.</string>
     <string name="minesweeper_hint_only_one_possible_mine_body">Open de gemarkeerde %1$s. Samen laten %2$s en %3$s nog maar één legale plek voor de overblijvende mijn over.</string>
     <string name="minesweeper_hint_guaranteed_safe_tile_body">Open de gemarkeerde %1$s. Als dit vak een mijn was, zouden nabije cijfers te veel mijnen tellen.</string>
+    <string name="minesweeper_hint_title_clue_pair">Overlappende cijfers</string>
+    <string name="minesweeper_hint_title_mines_left">Aantal mijnen</string>
+    <string name="minesweeper_hint_clue_pair_body">Open de gemarkeerde %1$s. Lees %2$s samen met %3$s: hoe hun mijnen ook liggen, de gemarkeerde %1$s blijven leeg.</string>
+    <string name="minesweeper_hint_mines_left_body">Open de gemarkeerde %1$s. Elke mijn ligt al vast op een andere plek, dus onder de gemarkeerde %1$s zit niets meer verborgen.</string>
     <string name="minesweeper_how_to_play_scoring">Start op 10.000 en daalt terwijl de timer loopt. Sneller oplossen houdt meer score over.</string>
     <string name="minesweeper_tip_1_title">Begin bij openingen</string>
     <string name="minesweeper_tip_1_body">Grote lege openingen onthullen meerdere veilige vakken tegelijk en tonen vaak de eerste sterke aanwijzingen.</string>
@@ -537,8 +548,12 @@
     <string name="sudoku_candidate_mode_label">Notities</string>
     <string name="sudoku_undo">Ongedaan maken</string>
     <string name="sudoku_clear_cell">Cel wissen</string>
-    <string name="sudoku_hint_show">Show next move hint</string>
-    <string name="sudoku_hint_hide">Hide next move hint</string>
+    <string name="sudoku_auto_candidates">Automatische notities</string>
+    <string name="sudoku_quickrule_row">Geen herhaling in een rij</string>
+    <string name="sudoku_quickrule_column">Geen herhaling in een kolom</string>
+    <string name="sudoku_quickrule_box">Geen herhaling in een box</string>
+    <string name="sudoku_hint_show">Hint voor volgende zet tonen</string>
+    <string name="sudoku_hint_hide">Hint voor volgende zet verbergen</string>
     <string name="sudoku_hint_row">rij %1$d</string>
     <string name="sudoku_hint_column">kolom %1$d</string>
     <string name="sudoku_hint_box">box %1$d</string>
@@ -603,14 +618,15 @@
     <string name="wordsearch_difficulty_desc_hard">Alle richtingen, ook achterwaarts, met dichtere overlap.</string>
     <string name="wordsearch_difficulty_desc_expert">Grootste roosters met woorden in alle richtingen en zware overlap.</string>
     <string name="wordsearch_size_label">Grootte</string>
+    <string name="wordsearch_words_found">%1$d / %2$d woorden</string>
     <string name="wordsearch_hidden_word_solved_title">Verborgen woord gevonden!</string>
     <string name="wordsearch_hidden_word_enter_mode">Verborgen woord oplossen</string>
     <string name="wordsearch_hidden_word_exit_mode">Verborgen-woordmodus verlaten</string>
     <string name="wordsearch_reset_zoom">Zoom resetten</string>
-    <string name="wordsearch_next_move_show">Show next word hint</string>
-    <string name="wordsearch_next_move_hide">Hide next word hint</string>
+    <string name="wordsearch_next_move_show">Hint voor volgend woord tonen</string>
+    <string name="wordsearch_next_move_hide">Hint voor volgend woord verbergen</string>
     <string name="wordsearch_next_move_title">Find \"%1$s\"</string>
-    <string name="wordsearch_next_move_body">Start from the highlighted letter and trace the full word in one straight line.</string>
+    <string name="wordsearch_next_move_body">Begin bij de gemarkeerde letter en trek het hele woord in één rechte lijn.</string>
     <string name="wordsearch_hidden_word_next_letter_title">Verborgen woord: %1$s</string>
     <string name="wordsearch_hidden_word_theme_title">Thema van het verborgen woord: %1$s</string>
     <string name="wordsearch_hidden_word_next_letter_body">De letters staan altijd in leesvolgorde: van links naar rechts, dan van boven naar beneden. Tik nu op de gemarkeerde letter.</string>
@@ -718,6 +734,10 @@
     <string name="wordguess_how_to_play_scoring">Het oplossen van de puzzel levert punten op, afhankelijk van de moeilijkheidsgraad, het aantal benodigde pogingen en hoe snel je klaar was.</string>
     <string name="wordguess_invalid_word_message">Geen geldig woord</string>
     <string name="wordguess_reveal_word_label">Het woord was</string>
+    <string name="wordguess_guess_count">Poging %1$d van %2$d</string>
+    <string name="wordguess_quickrule_correct">Juiste plek</string>
+    <string name="wordguess_quickrule_present">In het woord, verkeerde plek</string>
+    <string name="wordguess_quickrule_absent">Niet in het woord</string>
     <string name="wordguess_loss_abandoned_eyebrow">Puzzel beëindigd</string>
     <string name="wordguess_loss_abandoned_title">Puzzel onvoltooid</string>
     <string name="wordguess_loss_abandoned_body">Je hebt deze puzzel beëindigd voordat hij was opgelost.</string>
@@ -854,6 +874,7 @@
     <string name="game2048_difficulty_desc_medium">Klassiek 4x4-bord, de originele 2048-indeling.</string>
     <string name="game2048_difficulty_desc_hard">Hetzelfde 4x4-bord, maar met meer onhandige 4-tegels.</string>
     <string name="game2048_difficulty_desc_expert">Piepklein 3x3-bord — het doel hier is 1024, de hoogste tegel die dit formaat aankan.</string>
+    <string name="game2048_score_value">Score %1$d</string>
     <string name="game2048_how_to_play_goal">Voeg gelijke tegels samen totdat er één de waarde 2048 bereikt.</string>
     <string name="game2048_how_to_play_controls">Veeg omhoog, omlaag, naar links of naar rechts om alle tegels in die richting te schuiven.</string>
     <string name="game2048_rule_1_title">Schuif alle tegels</string>
@@ -912,6 +933,7 @@
     <string name="guessbynumbers_quickstart_example_1_word">WRONG</string>
     <string name="guessbynumbers_quickstart_example_1_hint">Doelwoord is BROWN: 4 gedeelde letters, 2 op de juiste plek</string>
     <string name="guessbynumbers_quickstart_hook">Minder pogingen en een snellere oplossing geven een hogere score.</string>
+    <string name="starbattle_stars_per_group">%1$d per rij, kolom, regio</string>
     <string name="guessbynumbers_rule_1_title">Overeenkomsten</string>
     <string name="guessbynumbers_rule_1_body">Overeenkomsten telt hoeveel letters uit je poging ook in het doelwoord voorkomen, ongeacht of ze op de juiste plek staan.</string>
     <string name="guessbynumbers_rule_2_title">Exact</string>
@@ -1214,6 +1236,10 @@
     <string name="quick_play_widget_description">Start een puzzel met één tik</string>
     <string name="quick_play_continue">Doorgaan</string>
     <string name="quick_play_play">Spelen</string>
+    <string name="mix_widget_label">Mix</string>
+    <string name="mix_widget_description">Speel je mix met één tik</string>
+    <string name="mix_widget_create">Maak een mix</string>
+    <string name="mix_widget_create_hint">Kies je games en speel ze dan met één tik</string>
     <string name="minisudoku_title">Mini Sudoku</string>
     <string name="minisudoku_tagline">Kleine sudoku\'s: 4×4 om op te warmen, 6×6 als je meer wilt.</string>
     <string name="minisudoku_difficulty_desc_easy">4×4-raster met 2×2-boxen, cijfers 1-4.</string>

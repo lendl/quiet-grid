@@ -38,6 +38,7 @@ Wähle, welche Spiele dir jeden Tag ein neues Rätsel geben, in jeder Schwierigk
 <li><b>Sequenzgedächtnis</b> — Sieh zu, wie die Felder aufleuchten, und tippe die wachsende Folge nach.</li>
 <li><b>2048</b> — Schiebe und verbinde Kacheln, bis du 2048 erreichst.</li>
 <li><b>Block Fill</b> — Ziehe Teile aufs Feld und räume volle Reihen und Spalten. Mit Endlos-Modus.</li>
+<li><b>Pfeilflucht</b> — Tippe einen Pfeil an, um ihn vom Feld zu ziehen. Er kommt nur frei, wenn nichts im Weg ist.</li>
 </ul>
 
 <p><b>GANZ NACH DEINEM GESCHMACK</b><br>

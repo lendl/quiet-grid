@@ -38,6 +38,7 @@ Scegli quali giochi ti danno un nuovo puzzle ogni giorno, in ogni difficoltà. C
 <li><b>Memoria di sequenze</b> — Guarda le caselle illuminarsi, poi ripeti la sequenza che si allunga.</li>
 <li><b>2048</b> — Fai scorrere e unisci le tessere fino a raggiungere 2048.</li>
 <li><b>Block Fill</b> — Trascina i pezzi sulla griglia e libera righe e colonne complete. Con modalità infinita.</li>
+<li><b>Fuga delle frecce</b> — Tocca una freccia per farla uscire dalla griglia. Esce solo se niente le sbarra la strada.</li>
 </ul>
 
 <p><b>A MODO TUO</b><br>

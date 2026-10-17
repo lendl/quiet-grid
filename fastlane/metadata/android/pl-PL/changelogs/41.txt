@@ -1,0 +1,7 @@
+Wersja 1.11.0
+
+- Nowa gra: Ucieczka strzałek. Stuknij strzałkę, aby zsunąć ją z planszy, ale dopiero gdy jej droga jest wolna.
+- Nowy ekran gry we wszystkich grach, z zasadami w obrazkach. Pasuje do małych telefonów, trybu poziomego i tabletów.
+- Plansze Sapera zawsze da się rozwiązać bez zgadywania
+- Nowy widżet Miks, a widżety mogą wznowić Twoją łamigłówkę
+- Poprawki błędów i stabilności

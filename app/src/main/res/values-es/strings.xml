@@ -21,6 +21,11 @@
     <string name="common_end_puzzle">Terminar puzzle</string>
     <string name="common_continue_puzzle">Continuar puzzle</string>
     <string name="common_start_new_puzzle">Comenzar nuevo puzzle</string>
+    <string name="play_full_rules">Reglas completas</string>
+    <string name="play_all_words">Todas las palabras</string>
+    <string name="play_words_left">Quedan %1$d</string>
+    <string name="play_words_to_find">Por encontrar (%1$d)</string>
+    <string name="play_words_found">Encontradas (%1$d)</string>
     <string name="replace_dialog_message">Ya tienes un puzzle activo. Puedes continuar ahora o reemplazarlo con un nuevo puzzle.</string>
 
     <string name="games_subtitle">Elige un puzzle y mantén tu partida activa cerca.</string>
@@ -195,6 +200,7 @@
     <string name="guessbynumbers_quickstart_example_1_word">WRONG</string>
     <string name="guessbynumbers_quickstart_example_1_hint">El objetivo es BROWN: 4 letras compartidas, 2 en el lugar correcto</string>
     <string name="guessbynumbers_quickstart_hook">Menos intentos y una solución más rápida dan una puntuación mayor.</string>
+    <string name="starbattle_stars_per_group">%1$d por fila, columna, región</string>
 
     <string name="starbattle_quickstart_goal">Coloca exactamente el número correcto de estrellas en cada fila, columna y región.</string>
     <string name="starbattle_quickstart_bullet_1">Toca una celda para marcarla, tócala de nuevo para borrar la marca.</string>
@@ -383,6 +389,7 @@
     <string name="takuzu_rule_2_body">Cada fila y cada columna contiene el mismo número de 0s y 1s.</string>
     <string name="takuzu_rule_3_title">Todas las líneas son únicas</string>
     <string name="takuzu_rule_3_body">No puede haber dos filas idénticas, ni dos columnas idénticas.</string>
+    <string name="takuzu_rules_equal_halves_caption">dos 0, dos 1</string>
     <string name="takuzu_technique_1_title">Encontrar pares</string>
     <string name="takuzu_technique_1_body">Dos dígitos iguales uno al lado del otro obligan a las celdas de ambos lados a ser el dígito opuesto.</string>
     <string name="takuzu_technique_2_title">Evitar trillizos</string>
@@ -393,8 +400,8 @@
     <string name="takuzu_technique_4_body">Una fila o columna no puede ser copia de una ya completa. Si lo fuera, usa el valor opuesto.</string>
     <string name="takuzu_technique_5_title">Eliminar combinaciones imposibles</string>
     <string name="takuzu_technique_5_body">Si un valor terminaría forzando tres seguidos, el otro valor debe ir aquí.</string>
-    <string name="takuzu_hint_show">Show next move hint</string>
-    <string name="takuzu_hint_hide">Hide next move hint</string>
+    <string name="takuzu_hint_show">Mostrar pista del siguiente movimiento</string>
+    <string name="takuzu_hint_hide">Ocultar pista del siguiente movimiento</string>
     <string name="takuzu_hint_line_row">fila %1$d</string>
     <string name="takuzu_hint_line_column">columna %1$d</string>
     <string name="takuzu_hint_kind_row">fila</string>
@@ -453,8 +460,8 @@
     <string name="nonogram_technique_2_body">Si ningún bloque puede alcanzar legalmente una celda en ninguna disposición válida, márcala como vacía.</string>
     <string name="nonogram_technique_3_title">Línea completa</string>
     <string name="nonogram_technique_3_body">Una vez que todos los bloques de una línea están completamente colocados, cada celda restante de esa línea debe estar vacía.</string>
-    <string name="nonogram_hint_show">Show next move hint</string>
-    <string name="nonogram_hint_hide">Hide next move hint</string>
+    <string name="nonogram_hint_show">Mostrar pista del siguiente movimiento</string>
+    <string name="nonogram_hint_hide">Ocultar pista del siguiente movimiento</string>
     <string name="nonogram_hint_line_row">Fila %1$d</string>
     <string name="nonogram_hint_line_col">Columna %1$d</string>
     <string name="nonogram_hint_invalid_title">Línea inválida</string>
@@ -490,6 +497,7 @@
     <string name="minesweeper_difficulty_desc_hard">Espacios más ajustados que recompensan el marcado cuidadoso y el seguimiento de pistas.</string>
     <string name="minesweeper_difficulty_desc_expert">Campos de minas densos con muy poco espacio desde el principio.</string>
     <string name="minesweeper_size_label">Tamaño</string>
+    <string name="minesweeper_mines_left_count">Quedan %1$d minas</string>
     <string name="minesweeper_how_to_play_goal">Revela cada casilla segura sin abrir una mina.</string>
     <string name="minesweeper_how_to_play_controls">Toca para revelar una casilla. Mantén pulsado para colocar o quitar una bandera.</string>
     <string name="minesweeper_how_to_play_wrong_move">Abrir una mina termina el puzzle inmediatamente.</string>
@@ -507,8 +515,8 @@
     <string name="minesweeper_technique_2_body">Cuando una pista ya tiene todas sus minas marcadas, cada vecino oculto restante es seguro para revelar.</string>
     <string name="minesweeper_technique_3_title">Comparar pistas</string>
     <string name="minesweeper_technique_3_body">Dos pistas que comparten casillas ocultas revelan juntas más que cada una por separado — la superposición muestra qué casillas son seguras y cuáles son minas.</string>
-    <string name="minesweeper_hint_show">Show next move hint</string>
-    <string name="minesweeper_hint_hide">Hide next move hint</string>
+    <string name="minesweeper_hint_show">Mostrar pista del siguiente movimiento</string>
+    <string name="minesweeper_hint_hide">Ocultar pista del siguiente movimiento</string>
     <string name="minesweeper_hint_cell">fila %1$d, columna %2$d</string>
     <string name="minesweeper_hint_tile_one">casilla</string>
     <string name="minesweeper_hint_tile_other">casillas</string>
@@ -526,6 +534,10 @@
     <string name="minesweeper_hint_full_clue_resolution_body">Revela las %1$s resaltadas. El requisito de minas de esta pista está completamente resuelto, así que las %1$s ocultas restantes son seguras.</string>
     <string name="minesweeper_hint_only_one_possible_mine_body">Revela las %1$s resaltadas. Leer %2$s junto con %3$s deja solo un lugar legal para la mina restante.</string>
     <string name="minesweeper_hint_guaranteed_safe_tile_body">Revela las %1$s resaltadas. Si esta casilla fuera una mina, las pistas cercanas tendrían demasiadas minas.</string>
+    <string name="minesweeper_hint_title_clue_pair">Pistas superpuestas</string>
+    <string name="minesweeper_hint_title_mines_left">Recuento de minas</string>
+    <string name="minesweeper_hint_clue_pair_body">Revela las %1$s resaltadas. Lee %2$s junto con %3$s: cualquier forma de colocar sus minas deja vacías las %1$s resaltadas.</string>
+    <string name="minesweeper_hint_mines_left_body">Revela las %1$s resaltadas. Todas las minas ya están fijadas en otro lugar, así que no queda ninguna escondida bajo las %1$s resaltadas.</string>
     <string name="minesweeper_how_to_play_scoring">Comienza en 10.000 y baja mientras el temporizador avanza. Terminar más rápido conserva más puntuación.</string>
     <string name="minesweeper_tip_1_title">Empezar por las aperturas</string>
     <string name="minesweeper_tip_1_body">Las grandes aperturas vacías revelan varias casillas seguras a la vez y suelen exponer las primeras pistas fuertes.</string>
@@ -556,8 +568,12 @@
     <string name="sudoku_candidate_mode_label">Notas</string>
     <string name="sudoku_undo">Deshacer</string>
     <string name="sudoku_clear_cell">Borrar celda</string>
-    <string name="sudoku_hint_show">Show next move hint</string>
-    <string name="sudoku_hint_hide">Hide next move hint</string>
+    <string name="sudoku_auto_candidates">Notas automáticas</string>
+    <string name="sudoku_quickrule_row">Sin repetir en una fila</string>
+    <string name="sudoku_quickrule_column">Sin repetir en una columna</string>
+    <string name="sudoku_quickrule_box">Sin repetir en una caja</string>
+    <string name="sudoku_hint_show">Mostrar pista del siguiente movimiento</string>
+    <string name="sudoku_hint_hide">Ocultar pista del siguiente movimiento</string>
     <string name="sudoku_hint_row">fila %1$d</string>
     <string name="sudoku_hint_column">columna %1$d</string>
     <string name="sudoku_hint_box">caja %1$d</string>
@@ -622,14 +638,15 @@
     <string name="wordsearch_difficulty_desc_hard">Todas las direcciones, incluidas hacia atrás, con solapamientos más densos.</string>
     <string name="wordsearch_difficulty_desc_expert">Las cuadrículas más grandes con palabras en todas las direcciones y mucho solapamiento.</string>
     <string name="wordsearch_size_label">Tamaño</string>
+    <string name="wordsearch_words_found">%1$d / %2$d palabras</string>
     <string name="wordsearch_hidden_word_solved_title">¡Palabra oculta encontrada!</string>
     <string name="wordsearch_hidden_word_enter_mode">Resolver palabra oculta</string>
     <string name="wordsearch_hidden_word_exit_mode">Salir del modo de palabra oculta</string>
     <string name="wordsearch_reset_zoom">Restablecer zoom</string>
-    <string name="wordsearch_next_move_show">Show next word hint</string>
-    <string name="wordsearch_next_move_hide">Hide next word hint</string>
+    <string name="wordsearch_next_move_show">Mostrar pista de la siguiente palabra</string>
+    <string name="wordsearch_next_move_hide">Ocultar pista de la siguiente palabra</string>
     <string name="wordsearch_next_move_title">Find \"%1$s\"</string>
-    <string name="wordsearch_next_move_body">Start from the highlighted letter and trace the full word in one straight line.</string>
+    <string name="wordsearch_next_move_body">Empieza por la letra resaltada y traza la palabra completa en una sola línea recta.</string>
     <string name="wordsearch_hidden_word_next_letter_title">Palabra oculta: %1$s</string>
     <string name="wordsearch_hidden_word_theme_title">Tema de la palabra oculta: %1$s</string>
     <string name="wordsearch_hidden_word_next_letter_body">Sus letras siempre aparecen en orden de lectura: de izquierda a derecha y luego de arriba abajo. Toca ahora la letra resaltada.</string>
@@ -737,6 +754,10 @@
     <string name="wordguess_how_to_play_scoring">Resolver el puzle otorga puntos según la dificultad, cuántos intentos necesitaste y lo rápido que terminaste.</string>
     <string name="wordguess_invalid_word_message">No es una palabra válida</string>
     <string name="wordguess_reveal_word_label">La palabra era</string>
+    <string name="wordguess_guess_count">Intento %1$d de %2$d</string>
+    <string name="wordguess_quickrule_correct">Lugar correcto</string>
+    <string name="wordguess_quickrule_present">En la palabra, lugar incorrecto</string>
+    <string name="wordguess_quickrule_absent">No está en la palabra</string>
     <string name="wordguess_loss_abandoned_eyebrow">Puzle terminado</string>
     <string name="wordguess_loss_abandoned_title">Puzle sin terminar</string>
     <string name="wordguess_loss_abandoned_body">Terminaste este puzle antes de resolverlo.</string>
@@ -957,6 +978,7 @@
     <string name="game2048_difficulty_desc_medium">Tablero clásico de 4x4, la disposición original de 2048.</string>
     <string name="game2048_difficulty_desc_hard">El mismo tablero de 4x4 pero con más fichas de 4 poco útiles.</string>
     <string name="game2048_difficulty_desc_expert">Tablero diminuto de 3x3: el objetivo aquí es 1024, la ficha más alta que este tamaño puede contener.</string>
+    <string name="game2048_score_value">Puntuación %1$d</string>
     <string name="game2048_how_to_play_goal">Combina fichas iguales hasta que una de ellas llegue a 2048.</string>
     <string name="game2048_how_to_play_controls">Desliza hacia arriba, abajo, izquierda o derecha para mover todas las fichas en esa dirección.</string>
     <string name="game2048_rule_1_title">Desliza todas las fichas</string>
@@ -1215,6 +1237,10 @@
     <string name="quick_play_widget_description">Empieza un puzzle con un toque</string>
     <string name="quick_play_continue">Continuar</string>
     <string name="quick_play_play">Jugar</string>
+    <string name="mix_widget_label">Mix</string>
+    <string name="mix_widget_description">Juega tu mix con un toque</string>
+    <string name="mix_widget_create">Crear un mix</string>
+    <string name="mix_widget_create_hint">Elige tus juegos y juégalos con un toque</string>
     <string name="minisudoku_title">Mini Sudoku</string>
     <string name="minisudoku_tagline">Sudokus pequeños: 4×4 para calentar, 6×6 cuando quieras más.</string>
     <string name="minisudoku_difficulty_desc_easy">Cuadrícula de 4×4 con cajas de 2×2, dígitos del 1 al 4.</string>

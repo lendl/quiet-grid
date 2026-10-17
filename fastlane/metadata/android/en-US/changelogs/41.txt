@@ -1,0 +1,7 @@
+Version 1.11.0
+
+- New game: Arrow Escape. Tap an arrow to send it off the board, but only once its path is clear.
+- New play screen in every game, with picture rules. Fits small phones, landscape and tablets.
+- Minesweeper boards never need a guess
+- New Mix widget, and widgets can continue your puzzle
+- Bug fixes and stability improvements

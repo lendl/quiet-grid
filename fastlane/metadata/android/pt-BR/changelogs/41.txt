@@ -1,0 +1,7 @@
+Versão 1.11.0
+
+- Novo jogo: Escape das Setas. Toque em uma seta para tirá-la do tabuleiro, mas só quando o caminho estiver livre.
+- Nova tela de jogo em todos os jogos, com regras ilustradas. Funciona em celulares pequenos, na horizontal e em tablets.
+- Os tabuleiros do Campo Minado sempre têm solução sem chutar
+- Novo widget Combinado, e os widgets podem continuar seu quebra-cabeça
+- Correções de erros e melhorias de estabilidade
