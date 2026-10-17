@@ -163,7 +163,7 @@ class PlayHistoryRepositoryTest {
         val dataStore = newDataStore(backgroundScope)
         val json = Json
         dataStore.edit { prefs ->
-            prefs[statsKeyFor(GameId.ARROWESCAPE)] = json.encodeToString(
+            prefs[statsKeyFor(GameId.NBACK)] = json.encodeToString(
                 GameStats(byDifficulty = mapOf(Difficulty.EASY.key to DifficultyStats(played = 1, solved = 1, bestScore = 10, currentStreak = 1))),
             )
         }
@@ -171,8 +171,8 @@ class PlayHistoryRepositoryTest {
 
         val allRecords = repository.allRecords().first()
 
-        assertTrue(allRecords.none { it.gameId == GameId.ARROWESCAPE.key })
-        assertEquals(json.encodeToString(GameStats(byDifficulty = mapOf(Difficulty.EASY.key to DifficultyStats(played = 1, solved = 1, bestScore = 10, currentStreak = 1)))), dataStore.data.first()[statsKeyFor(GameId.ARROWESCAPE)])
+        assertTrue(allRecords.none { it.gameId == GameId.NBACK.key })
+        assertEquals(json.encodeToString(GameStats(byDifficulty = mapOf(Difficulty.EASY.key to DifficultyStats(played = 1, solved = 1, bestScore = 10, currentStreak = 1)))), dataStore.data.first()[statsKeyFor(GameId.NBACK)])
     }
 
     private fun newDataStore(scope: CoroutineScope) = preferencesDataStoreForTest(

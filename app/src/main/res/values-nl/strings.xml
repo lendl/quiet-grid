@@ -827,7 +827,9 @@
     <string name="arrowescape_difficulty_desc_expert">Lange ketens van pijlen blokkeren elkaar helemaal over het hele bord.</string>
     <string name="arrowescape_how_to_play_goal">Verwijder elke pijl van het bord.</string>
     <string name="arrowescape_how_to_play_controls">Tik op een pijl om hem van het bord te trekken in de richting waarin hij wijst. Hij komt alleen los als niets anders in de weg staat.</string>
-    <string name="arrowescape_how_to_play_wrong_move">Als een pijl geblokkeerd is, kost het tikken erop een leven. Zijn pad blijft gemarkeerd, zodat je ziet wat hem tegenhoudt.</string>
+    <string name="arrowescape_how_to_play_wrong_move">Als een pijl geblokkeerd is, kost het tikken erop een leven. Hij botst tegen wat hem in de weg staat, zodat je ziet wat hem tegenhoudt.</string>
+    <string name="arrowescape_arrows_cleared">%1$d / %2$d pijlen</string>
+    <string name="arrowescape_hint_content_description">Toon een hint</string>
     <string name="arrowescape_rule_1_title">Eén richting</string>
     <string name="arrowescape_rule_1_body">Elke pijl kan alleen naar buiten in de richting waarin zijn punt wijst.</string>
     <string name="arrowescape_rule_2_title">Maak de weg vrij</string>

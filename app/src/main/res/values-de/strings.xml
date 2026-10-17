@@ -927,7 +927,9 @@
     <string name="arrowescape_difficulty_desc_expert">Lange Ketten von Pfeilen blockieren sich quer über das ganze Feld.</string>
     <string name="arrowescape_how_to_play_goal">Entferne jeden Pfeil vom Feld.</string>
     <string name="arrowescape_how_to_play_controls">Tippe auf einen Pfeil, um ihn in die Richtung, in die er zeigt, vom Feld zu ziehen. Er löst sich nur, wenn ihm nichts im Weg steht.</string>
-    <string name="arrowescape_how_to_play_wrong_move">Ist ein Pfeil blockiert, kostet das Antippen ein Leben. Sein Weg bleibt hervorgehoben, damit du siehst, was ihn aufhält.</string>
+    <string name="arrowescape_how_to_play_wrong_move">Ist ein Pfeil blockiert, kostet das Antippen ein Leben. Er prallt gegen das, was ihm im Weg steht, damit du siehst, was ihn aufhält.</string>
+    <string name="arrowescape_arrows_cleared">%1$d / %2$d Pfeile</string>
+    <string name="arrowescape_hint_content_description">Hinweis anzeigen</string>
     <string name="arrowescape_rule_1_title">Eine Richtung</string>
     <string name="arrowescape_rule_1_body">Jeder Pfeil kann nur in die Richtung austreten, in die seine Spitze zeigt.</string>
     <string name="arrowescape_rule_2_title">Weg freiräumen</string>

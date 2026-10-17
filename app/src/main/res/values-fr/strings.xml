@@ -895,7 +895,9 @@
     <string name="arrowescape_difficulty_desc_expert">De longues chaînes de flèches se bloquent les unes les autres sur tout le plateau.</string>
     <string name="arrowescape_how_to_play_goal">Fais sortir toutes les flèches du plateau.</string>
     <string name="arrowescape_how_to_play_controls">Appuie sur une flèche pour la faire sortir du plateau dans la direction qu\'elle indique. Elle ne se libère que si rien d\'autre ne bloque son chemin.</string>
-    <string name="arrowescape_how_to_play_wrong_move">Si une flèche est bloquée, appuyer dessus coûte une vie. Son chemin reste surligné pour que tu voies ce qui la bloque.</string>
+    <string name="arrowescape_how_to_play_wrong_move">Si une flèche est bloquée, appuyer dessus coûte une vie. Elle bute contre ce qui lui barre la route, pour que tu voies ce qui la bloque.</string>
+    <string name="arrowescape_arrows_cleared">%1$d / %2$d flèches</string>
+    <string name="arrowescape_hint_content_description">Afficher un indice</string>
     <string name="arrowescape_rule_1_title">Une seule direction</string>
     <string name="arrowescape_rule_1_body">Chaque flèche ne peut sortir que dans la direction indiquée par sa pointe.</string>
     <string name="arrowescape_rule_2_title">Dégage le chemin</string>

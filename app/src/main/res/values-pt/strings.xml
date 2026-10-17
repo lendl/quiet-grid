@@ -981,7 +981,9 @@
     <string name="arrowescape_difficulty_desc_expert">Longas cadeias de setas se bloqueiam de um lado a outro do tabuleiro.</string>
     <string name="arrowescape_how_to_play_goal">Retire todas as setas do tabuleiro.</string>
     <string name="arrowescape_how_to_play_controls">Toque em uma seta para puxá-la para fora do tabuleiro na direção que ela aponta. Ela só sai livre se nada mais estiver no caminho.</string>
-    <string name="arrowescape_how_to_play_wrong_move">Se uma seta estiver bloqueada, tocá-la custa uma vida. O caminho dela fica destacado para você ver o que está impedindo.</string>
+    <string name="arrowescape_how_to_play_wrong_move">Se uma seta estiver bloqueada, tocá-la custa uma vida. Ela esbarra no que estiver no caminho, para você ver o que a está impedindo.</string>
+    <string name="arrowescape_arrows_cleared">%1$d / %2$d setas</string>
+    <string name="arrowescape_hint_content_description">Mostrar uma dica</string>
     <string name="arrowescape_rule_1_title">Uma direção só</string>
     <string name="arrowescape_rule_1_body">Cada seta só pode sair na direção que sua ponta aponta.</string>
     <string name="arrowescape_rule_2_title">Limpe o caminho</string>

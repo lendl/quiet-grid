@@ -1021,7 +1021,9 @@
     <string name="arrowescape_difficulty_desc_expert">Długie łańcuchy strzałek blokują się wzajemnie na przestrzeni całej planszy.</string>
     <string name="arrowescape_how_to_play_goal">Usuń wszystkie strzałki z planszy.</string>
     <string name="arrowescape_how_to_play_controls">Stuknij strzałkę, aby wyciągnąć ją z planszy w kierunku, w którym wskazuje. Strzałka uwolni się tylko wtedy, gdy nic nie stoi jej na drodze.</string>
-    <string name="arrowescape_how_to_play_wrong_move">Jeśli strzałka jest zablokowana, jej stuknięcie kosztuje jedno życie. Ścieżka blokady pozostanie podświetlona, aby pokazać, co ją zatrzymuje.</string>
+    <string name="arrowescape_how_to_play_wrong_move">Jeśli strzałka jest zablokowana, jej stuknięcie kosztuje jedno życie. Strzałka uderza w to, co stoi jej na drodze, aby pokazać, co ją zatrzymuje.</string>
+    <string name="arrowescape_arrows_cleared">Strzałki: %1$d / %2$d</string>
+    <string name="arrowescape_hint_content_description">Pokaż podpowiedź</string>
     <string name="arrowescape_rule_1_title">Jeden kierunek</string>
     <string name="arrowescape_rule_1_body">Każda strzałka może opuścić planszę tylko w kierunku, w którym wskazuje jej grot.</string>
     <string name="arrowescape_rule_2_title">Oczyść drogę</string>

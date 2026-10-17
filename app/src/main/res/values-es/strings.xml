@@ -930,7 +930,9 @@
     <string name="arrowescape_difficulty_desc_expert">Largas cadenas de flechas se bloquean entre sí de un extremo a otro del tablero.</string>
     <string name="arrowescape_how_to_play_goal">Retira todas las flechas del tablero.</string>
     <string name="arrowescape_how_to_play_controls">Toca una flecha para sacarla del tablero en la dirección que señala. Solo se libera si nada más se interpone en su camino.</string>
-    <string name="arrowescape_how_to_play_wrong_move">Si una flecha está bloqueada, tocarla cuesta una vida. Su camino queda resaltado para que veas qué la detiene.</string>
+    <string name="arrowescape_how_to_play_wrong_move">Si una flecha está bloqueada, tocarla cuesta una vida. Choca con lo que tenga delante, para que veas qué la detiene.</string>
+    <string name="arrowescape_arrows_cleared">%1$d / %2$d flechas</string>
+    <string name="arrowescape_hint_content_description">Mostrar una pista</string>
     <string name="arrowescape_rule_1_title">Una sola dirección</string>
     <string name="arrowescape_rule_1_body">Cada flecha solo puede salir en la dirección que señala su punta.</string>
     <string name="arrowescape_rule_2_title">Despeja el camino</string>

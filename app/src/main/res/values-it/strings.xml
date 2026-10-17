@@ -1027,7 +1027,9 @@
     <string name="arrowescape_difficulty_desc_expert">Lunghe catene di frecce si bloccano a vicenda da un lato all\'altro della griglia.</string>
     <string name="arrowescape_how_to_play_goal">Togli tutte le frecce dalla griglia.</string>
     <string name="arrowescape_how_to_play_controls">Tocca una freccia per sfilarla dalla griglia nella direzione in cui punta. Esce solo se nient\'altro è sulla sua strada.</string>
-    <string name="arrowescape_how_to_play_wrong_move">Se una freccia è bloccata, toccarla costa una vita. Il suo percorso resta evidenziato così vedi cosa la blocca.</string>
+    <string name="arrowescape_how_to_play_wrong_move">Se una freccia è bloccata, toccarla costa una vita. Urta contro ciò che le sbarra la strada, così vedi cosa la blocca.</string>
+    <string name="arrowescape_arrows_cleared">%1$d / %2$d frecce</string>
+    <string name="arrowescape_hint_content_description">Mostra un suggerimento</string>
     <string name="arrowescape_rule_1_title">Una sola direzione</string>
     <string name="arrowescape_rule_1_body">Ogni freccia può uscire solo nella direzione in cui punta la sua punta.</string>
     <string name="arrowescape_rule_2_title">Libera la strada</string>

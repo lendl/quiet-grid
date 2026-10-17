@@ -158,12 +158,12 @@ class StatsRepositoryTest {
         val dataStore = newDataStore(backgroundScope, "stats.preferences_pb")
         val repository = StatsRepository(dataStore, newHistoryStore(backgroundScope))
         repository.recordResult(GameId.NBACK, Difficulty.EASY, solved = true, score = 10)
-        repository.recordResult(GameId.ARROWESCAPE, Difficulty.EASY, solved = true, score = 20)
+        repository.recordResult(GameId.HASHI, Difficulty.EASY, solved = true, score = 20)
 
         repository.clear(GameId.NBACK)
 
         assertEquals(GameStats(), repository.statsFor(GameId.NBACK).first())
-        assertEquals(20, repository.statsFor(GameId.ARROWESCAPE).first().forDifficulty(Difficulty.EASY).bestScore)
+        assertEquals(20, repository.statsFor(GameId.HASHI).first().forDifficulty(Difficulty.EASY).bestScore)
     }
 
     @Test
@@ -171,22 +171,22 @@ class StatsRepositoryTest {
         val dataStore = newDataStore(backgroundScope, "stats.preferences_pb")
         val repository = StatsRepository(dataStore, newHistoryStore(backgroundScope))
         repository.recordResult(GameId.NBACK, Difficulty.EASY, solved = true, score = 10)
-        repository.recordResult(GameId.ARROWESCAPE, Difficulty.EASY, solved = true, score = 20)
+        repository.recordResult(GameId.HASHI, Difficulty.EASY, solved = true, score = 20)
 
         repository.clearAll()
 
         assertEquals(GameStats(), repository.statsFor(GameId.NBACK).first())
-        assertEquals(GameStats(), repository.statsFor(GameId.ARROWESCAPE).first())
+        assertEquals(GameStats(), repository.statsFor(GameId.HASHI).first())
     }
 
     @Test
     fun `recordChallengerResult tracks best puzzles-solved and best score across runs for a beta game`() = runTest {
         val repository = StatsRepository(newDataStore(backgroundScope, "stats.preferences_pb"), newHistoryStore(backgroundScope))
 
-        repository.recordChallengerResult(GameId.ARROWESCAPE, puzzlesSolved = 4, score = 900)
-        repository.recordChallengerResult(GameId.ARROWESCAPE, puzzlesSolved = 7, score = 600)
+        repository.recordChallengerResult(GameId.HASHI, puzzlesSolved = 4, score = 900)
+        repository.recordChallengerResult(GameId.HASHI, puzzlesSolved = 7, score = 600)
 
-        val stats = repository.challengerStatsFor(GameId.ARROWESCAPE).first()
+        val stats = repository.challengerStatsFor(GameId.HASHI).first()
         assertEquals(2, stats.played)
         assertEquals(7, stats.solved)
         assertEquals(900, stats.bestScore)
@@ -196,11 +196,11 @@ class StatsRepositoryTest {
     fun `clear removes challenger stats for that beta game too`() = runTest {
         val dataStore = newDataStore(backgroundScope, "stats.preferences_pb")
         val repository = StatsRepository(dataStore, newHistoryStore(backgroundScope))
-        repository.recordChallengerResult(GameId.ARROWESCAPE, puzzlesSolved = 3, score = 300)
+        repository.recordChallengerResult(GameId.HASHI, puzzlesSolved = 3, score = 300)
 
-        repository.clear(GameId.ARROWESCAPE)
+        repository.clear(GameId.HASHI)
 
-        assertEquals(DifficultyStats(), repository.challengerStatsFor(GameId.ARROWESCAPE).first())
+        assertEquals(DifficultyStats(), repository.challengerStatsFor(GameId.HASHI).first())
     }
 
     private fun challengerRecord(gameId: GameId, puzzlesSolved: Int, score: Int, timestamp: Long) = PlayRecord(
