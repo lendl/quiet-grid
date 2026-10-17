@@ -107,6 +107,8 @@ class MinesweeperPlayViewModel @AssistedInject constructor(
 
     internal var hintDispatcher: CoroutineDispatcher = Dispatchers.Default
     private var hintJob: Job? = null
+    internal var generationDispatcher: CoroutineDispatcher = Dispatchers.Default
+    private var generationJob: Job? = null
 
     init {
         controller.start(requestedDifficulty, resume)
@@ -121,15 +123,24 @@ class MinesweeperPlayViewModel @AssistedInject constructor(
 
     fun onReveal(row: Int, col: Int) {
         val current = session ?: return
-        val nextBoard = revealMinesweeperCell(current.board, current.puzzle, row, col)
-        if (nextBoard == current.board) return
-        clearHint()
-        applyBoard(current, nextBoard)
+        if (generationJob?.isActive == true) return
+        if (current.board.generated) {
+            commitBoard(current, revealMinesweeperCell(current.board, current.puzzle, row, col))
+            return
+        }
+        generationJob = viewModelScope.launch {
+            val nextBoard = withContext(generationDispatcher) { revealMinesweeperCell(current.board, current.puzzle, row, col) }
+            if (!controller.isFinalized && session == current) commitBoard(current, nextBoard)
+        }
     }
 
     fun onToggleFlag(row: Int, col: Int) {
         val current = session ?: return
-        val nextBoard = toggleMinesweeperFlag(current.board, row, col)
+        if (generationJob?.isActive == true) return
+        commitBoard(current, toggleMinesweeperFlag(current.board, row, col))
+    }
+
+    private fun commitBoard(current: MinesweeperSession, nextBoard: MinesweeperBoard) {
         if (nextBoard == current.board) return
         clearHint()
         applyBoard(current, nextBoard)

@@ -41,6 +41,7 @@ fun MinesweeperPlayScreen(
         onBack = onBack,
         onEndPuzzle = { viewModel.endPuzzle() },
         difficulty = session?.let { Difficulty.fromKey(it.puzzle.difficulty) },
+        boardAspectRatio = session?.let { minesweeperBoardAspectRatio(it.puzzle) } ?: 1f,
         hint = PlayHintAction(
             active = hint != null,
             busy = viewModel.isComputingHint,
@@ -97,6 +98,8 @@ private fun resolveMinesweeperHintText(hint: MinesweeperNextMoveHint): Pair<Stri
             MinesweeperHintPattern.SINGLE_MINE_LOGIC -> R.string.minesweeper_hint_title_single_mine_logic
             MinesweeperHintPattern.FULL_CLUE_RESOLUTION -> R.string.minesweeper_hint_title_full_clue_resolution
             MinesweeperHintPattern.ALL_MINES_ACCOUNTED_FOR -> R.string.minesweeper_hint_title_all_mines_accounted_for
+            MinesweeperHintPattern.CLUE_PAIR -> R.string.minesweeper_hint_title_clue_pair
+            MinesweeperHintPattern.MINES_LEFT -> R.string.minesweeper_hint_title_mines_left
         },
     )
     val body = when (pattern.pattern) {
@@ -109,6 +112,10 @@ private fun resolveMinesweeperHintText(hint: MinesweeperNextMoveHint): Pair<Stri
             R.string.minesweeper_hint_only_one_possible_mine_body, tileLabel, clueLabel ?: "", secondaryClueLabel ?: "",
         )
         MinesweeperHintPattern.GUARANTEED_SAFE_TILE -> stringResource(R.string.minesweeper_hint_guaranteed_safe_tile_body, tileLabel)
+        MinesweeperHintPattern.CLUE_PAIR -> stringResource(
+            R.string.minesweeper_hint_clue_pair_body, tileLabel, clueLabel ?: "", secondaryClueLabel ?: "",
+        )
+        MinesweeperHintPattern.MINES_LEFT -> stringResource(R.string.minesweeper_hint_mines_left_body, tileLabel)
     }
     return title to body
 }

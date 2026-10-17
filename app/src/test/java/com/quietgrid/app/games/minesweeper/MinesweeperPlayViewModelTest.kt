@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -44,6 +45,7 @@ class MinesweeperPlayViewModelTest {
     @Test
     fun `revealing the first cell is always safe and generates the board`() {
         val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
+        viewModel.generationDispatcher = mainDispatcherRule.dispatcher
 
         viewModel.onReveal(0, 0)
 
@@ -51,6 +53,25 @@ class MinesweeperPlayViewModelTest {
         assertTrue(board.generated)
         assertEquals(MinesweeperStatus.PLAYING, board.status)
         assertEquals(MinesweeperCellState.REVEALED, board.cells[0][0].state)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `the first reveal deals the board in the background and ignores taps until it lands`() {
+        val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EXPERT, resume = false)
+        viewModel.generationDispatcher = StandardTestDispatcher(mainDispatcherRule.dispatcher.scheduler)
+
+        viewModel.onReveal(9, 5)
+        assertFalse(viewModel.session!!.board.generated)
+
+        viewModel.onToggleFlag(0, 0)
+        viewModel.onReveal(17, 10)
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+
+        val board = viewModel.session!!.board
+        assertTrue(board.generated)
+        assertEquals(MinesweeperCellState.REVEALED, board.cells[9][5].state)
+        assertNotEquals(MinesweeperCellState.FLAGGED, board.cells[0][0].state)
     }
 
     @Test

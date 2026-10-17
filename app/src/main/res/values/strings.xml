@@ -601,6 +601,10 @@
     <string name="minesweeper_hint_full_clue_resolution_body">Reveal highlighted %1$s. This clue\'s mine requirement is fully resolved, so its remaining hidden %1$s are safe.</string>
     <string name="minesweeper_hint_only_one_possible_mine_body">Reveal highlighted %1$s. Reading %2$s together with %3$s leaves only one legal place for the remaining mine.</string>
     <string name="minesweeper_hint_guaranteed_safe_tile_body">Reveal highlighted %1$s. If this tile were a mine, nearby clue counts would be too high.</string>
+    <string name="minesweeper_hint_title_clue_pair">Overlapping clues</string>
+    <string name="minesweeper_hint_title_mines_left">Mine count</string>
+    <string name="minesweeper_hint_clue_pair_body">Reveal highlighted %1$s. Read %2$s together with %3$s: every way their mines can fit leaves the highlighted %1$s empty.</string>
+    <string name="minesweeper_hint_mines_left_body">Reveal highlighted %1$s. Every mine is already pinned down elsewhere, so nothing is left to hide under the highlighted %1$s.</string>
     <string name="minesweeper_how_to_play_scoring">Starts at 10,000 and drops while the timer runs. Finishing faster keeps more score.</string>
     <string name="minesweeper_tip_1_title">Start from openings</string>
     <string name="minesweeper_tip_1_body">Large empty openings reveal several safe cells at once and often expose the first strong clues.</string>

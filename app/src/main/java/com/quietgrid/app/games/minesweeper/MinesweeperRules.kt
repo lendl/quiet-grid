@@ -1,6 +1,7 @@
 package com.quietgrid.app.games.minesweeper
 
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.engine.minesweeper.isMinesweeperSolvableWithoutGuessing
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.max
@@ -27,7 +28,6 @@ private data class Config(
     val distribution: Distribution,
     val openingMinRatio: Double?,
     val openingMaxRatio: Double?,
-    val protectNeighbors: Boolean,
     val retryLimit: Int,
 )
 
@@ -38,15 +38,14 @@ private data class DifficultyRules(
     val distribution: Distribution,
     val openingMinRatio: Double?,
     val openingMaxRatio: Double?,
-    val protectNeighbors: Boolean,
     val retryLimit: Int,
 )
 
 private val DIFFICULTY_RULES = mapOf(
-    Difficulty.EASY to DifficultyRules(0.10, 0.13, 0.12, Distribution.CLUSTER_LIMITED, 0.18, null, true, 500),
-    Difficulty.MEDIUM to DifficultyRules(0.15, 0.18, 0.165, Distribution.MOSTLY_UNIFORM, 0.10, 0.18, false, 500),
-    Difficulty.HARD to DifficultyRules(0.18, 0.22, 0.20, Distribution.RANDOM, 0.04, 0.10, false, 700),
-    Difficulty.EXPERT to DifficultyRules(0.20, 0.25, 0.21, Distribution.CLUSTERED, 0.03, null, true, 120),
+    Difficulty.EASY to DifficultyRules(0.10, 0.13, 0.12, Distribution.CLUSTER_LIMITED, 0.18, null, 500),
+    Difficulty.MEDIUM to DifficultyRules(0.15, 0.18, 0.165, Distribution.MOSTLY_UNIFORM, 0.10, 0.18, 500),
+    Difficulty.HARD to DifficultyRules(0.18, 0.22, 0.20, Distribution.RANDOM, 0.04, 0.10, 700),
+    Difficulty.EXPERT to DifficultyRules(0.20, 0.25, 0.21, Distribution.CLUSTERED, 0.03, null, 500),
 )
 
 private fun buildConfig(difficulty: Difficulty, rows: Int, cols: Int): Config {
@@ -60,7 +59,6 @@ private fun buildConfig(difficulty: Difficulty, rows: Int, cols: Int): Config {
         distribution = rules.distribution,
         openingMinRatio = rules.openingMinRatio,
         openingMaxRatio = rules.openingMaxRatio,
-        protectNeighbors = rules.protectNeighbors,
         retryLimit = rules.retryLimit,
     )
 }
@@ -202,11 +200,10 @@ private fun getMaxWindowMineCount(board: WorkingBoard, windowRows: Int, windowCo
     return maxCount
 }
 
-private fun getProtectedIndexes(rows: Int, cols: Int, targetRow: Int, targetCol: Int, protectNeighbors: Boolean): Set<Int> {
+private fun getProtectedIndexes(rows: Int, cols: Int, targetRow: Int, targetCol: Int): Set<Int> {
     val protectedIndexes = mutableSetOf<Int>()
     for (rOff in -1..1) {
         for (cOff in -1..1) {
-            if (!protectNeighbors && (rOff != 0 || cOff != 0)) continue
             val row = targetRow + rOff
             val col = targetCol + cOff
             if (row in 0 until rows && col in 0 until cols) protectedIndexes.add(row * cols + col)
@@ -295,13 +292,21 @@ private fun meetsOpeningQualityRules(board: WorkingBoard, row: Int, col: Int, co
     return countOpeningFrontier(simulated) >= 3
 }
 
+private fun needsNoGuessing(board: WorkingBoard, mineIndexes: Set<Int>, row: Int, col: Int): Boolean =
+    isMinesweeperSolvableWithoutGuessing(
+        rows = board.rows,
+        cols = board.cols,
+        mines = BooleanArray(board.rows * board.cols) { it in mineIndexes },
+        start = row * board.cols + col,
+    )
+
 private fun finalizeGeneratedBoard(board: WorkingBoard, puzzle: MinesweeperPuzzle, row: Int, col: Int): WorkingBoard {
     if (board.generated) return board
 
     val difficulty = Difficulty.fromKey(puzzle.difficulty)
     val config = buildConfig(difficulty, board.rows, board.cols)
     val mineCount = board.mines
-    val protectedIndexes = getProtectedIndexes(board.rows, board.cols, row, col, config.protectNeighbors)
+    val protectedIndexes = getProtectedIndexes(board.rows, board.cols, row, col)
 
     repeat(config.retryLimit) {
         val mineIndexes = getRandomMineIndexes(board.rows, board.cols, mineCount, protectedIndexes)
@@ -310,6 +315,7 @@ private fun finalizeGeneratedBoard(board: WorkingBoard, puzzle: MinesweeperPuzzl
         if (!meetsDistributionRules(candidate, config, mineCount)) return@repeat
         if (!meetsOpeningRules(candidate, row, col, config)) return@repeat
         if (!meetsOpeningQualityRules(candidate, row, col, config)) return@repeat
+        if (!needsNoGuessing(candidate, mineIndexes, row, col)) return@repeat
 
         return candidate
     }

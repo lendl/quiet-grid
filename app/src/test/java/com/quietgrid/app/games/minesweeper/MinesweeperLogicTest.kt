@@ -38,6 +38,13 @@ class MinesweeperLogicTest {
     }
 
     @Test
+    fun `the board shape is the grid's columns over its rows`() {
+        val expert = createMinesweeperPuzzle(Difficulty.EXPERT)
+
+        assertEquals(11f / 18f, minesweeperBoardAspectRatio(expert), 0.0001f)
+    }
+
+    @Test
     fun `hasMeaningfulProgress is false for a fresh ungenerated board`() {
         val session = createMinesweeperSession(Difficulty.EASY)
 

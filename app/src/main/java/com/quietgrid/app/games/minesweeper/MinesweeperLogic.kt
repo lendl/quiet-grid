@@ -25,5 +25,7 @@ fun minesweeperScore(difficulty: Difficulty, timeSeconds: Int): Int {
     return max(MIN_SCORE, (MAX_SCORE - timePenalty).roundToInt())
 }
 
+fun minesweeperBoardAspectRatio(puzzle: MinesweeperPuzzle): Float = puzzle.cols.toFloat() / puzzle.rows
+
 fun minesweeperHasMeaningfulProgress(session: MinesweeperSession): Boolean =
     session.board.generated || session.board.cells.any { row -> row.any { it.state != MinesweeperCellState.HIDDEN } }

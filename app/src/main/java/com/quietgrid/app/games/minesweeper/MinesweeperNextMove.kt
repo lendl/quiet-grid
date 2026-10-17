@@ -1,6 +1,19 @@
 package com.quietgrid.app.games.minesweeper
 
-enum class MinesweeperHintPattern { ONLY_ONE_POSSIBLE_MINE, GUARANTEED_SAFE_TILE, SINGLE_MINE_LOGIC, FULL_CLUE_RESOLUTION, ALL_MINES_ACCOUNTED_FOR }
+import com.quietgrid.engine.minesweeper.MINESWEEPER_HIDDEN
+import com.quietgrid.engine.minesweeper.MinesweeperDeduction
+import com.quietgrid.engine.minesweeper.MinesweeperTechnique
+import com.quietgrid.engine.minesweeper.findMinesweeperSafeDeduction
+
+enum class MinesweeperHintPattern {
+    ONLY_ONE_POSSIBLE_MINE,
+    GUARANTEED_SAFE_TILE,
+    SINGLE_MINE_LOGIC,
+    FULL_CLUE_RESOLUTION,
+    ALL_MINES_ACCOUNTED_FOR,
+    CLUE_PAIR,
+    MINES_LEFT,
+}
 
 sealed interface MinesweeperNextMoveHint {
     val evidenceCells: List<Pair<Int, Int>>
@@ -238,6 +251,32 @@ private fun findSatisfiedClueHint(
     return bestByTargetCountThenClue(hints)
 }
 
+internal fun minesweeperHintFromDeduction(board: MinesweeperBoard, deduction: MinesweeperDeduction): MinesweeperPatternHint {
+    fun cellAt(index: Int) = index / board.cols to index % board.cols
+    val clueCells = deduction.clues.map(::cellAt)
+    val primaryClue = clueCells.getOrNull(0)
+    return MinesweeperPatternHint(
+        pattern = when (deduction.technique) {
+            MinesweeperTechnique.CLUE_COUNT -> MinesweeperHintPattern.FULL_CLUE_RESOLUTION
+            MinesweeperTechnique.CLUE_PAIR -> MinesweeperHintPattern.CLUE_PAIR
+            MinesweeperTechnique.MINE_COUNT -> MinesweeperHintPattern.MINES_LEFT
+        },
+        clueCell = primaryClue,
+        secondaryClueCell = clueCells.getOrNull(1),
+        mineCount = primaryClue?.let { (row, col) -> board.cells[row][col].adjacentMines } ?: board.mines,
+        evidenceCells = dedupeCells(clueCells + clueCells.flatMap { (row, col) -> neighbors(board, row, col).filter { isUnknown(board, it) } }),
+        targetCells = dedupeCells(deduction.safe.map(::cellAt)),
+    )
+}
+
+private fun findSolverHint(board: MinesweeperBoard): MinesweeperPatternHint? {
+    val view = IntArray(board.rows * board.cols) { index ->
+        val cell = board.cells[index / board.cols][index % board.cols]
+        if (cell.state == MinesweeperCellState.REVEALED) cell.adjacentMines else MINESWEEPER_HIDDEN
+    }
+    return findMinesweeperSafeDeduction(board.rows, board.cols, board.mines, view)?.let { minesweeperHintFromDeduction(board, it) }
+}
+
 fun getMinesweeperNextMoveHint(board: MinesweeperBoard): MinesweeperNextMoveHint {
     if (board.status != MinesweeperStatus.PLAYING) return MinesweeperGuessHint
     val clues = getClues(board)
@@ -252,7 +291,7 @@ fun getMinesweeperNextMoveHint(board: MinesweeperBoard): MinesweeperNextMoveHint
         ?: findSatisfiedClueHint(board, clues, forcedMineReasons, wantSubsetResolution = true)?.let { it to MinesweeperHintPattern.FULL_CLUE_RESOLUTION }
         ?: findSatisfiedClueHint(board, clues, forcedMineReasons, wantSubsetResolution = false)?.let { it to MinesweeperHintPattern.ALL_MINES_ACCOUNTED_FOR }
 
-    val (hint, pattern) = analyzed ?: return MinesweeperGuessHint
+    val (hint, pattern) = analyzed ?: return findSolverHint(board) ?: MinesweeperGuessHint
     return MinesweeperPatternHint(
         pattern = pattern,
         clueCell = hint.primaryClueCell,

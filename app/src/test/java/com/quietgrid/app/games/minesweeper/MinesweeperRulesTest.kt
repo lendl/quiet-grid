@@ -1,6 +1,7 @@
 package com.quietgrid.app.games.minesweeper
 
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.engine.minesweeper.isMinesweeperSolvableWithoutGuessing
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -107,6 +108,23 @@ class MinesweeperRulesTest {
         val result = toggleMinesweeperFlag(board, row = 1, col = 1)
 
         assertEquals(MinesweeperCellState.FLAGGED, result.cells[1][1].state)
+    }
+
+    @Test
+    fun `the first reveal deals a board that can be finished without guessing`() {
+        for (difficulty in listOf(Difficulty.EASY, Difficulty.MEDIUM, Difficulty.HARD, Difficulty.EXPERT)) {
+            val dealt = createMinesweeperPuzzle(difficulty)
+            val starts = listOf(0 to 0, dealt.rows / 2 to dealt.cols / 2, dealt.rows - 1 to dealt.cols - 1)
+            for ((row, col) in starts) repeat(4) {
+                val board = revealMinesweeperCell(createMinesweeperBoard(dealt), dealt, row, col)
+                val mines = BooleanArray(board.rows * board.cols) { board.cells[it / board.cols][it % board.cols].isMine }
+
+                assertTrue(
+                    "$difficulty starting at ($row,$col)",
+                    isMinesweeperSolvableWithoutGuessing(board.rows, board.cols, mines, row * board.cols + col),
+                )
+            }
+        }
     }
 
     @Test
