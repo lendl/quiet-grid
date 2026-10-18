@@ -123,8 +123,8 @@ fun HashiGrid(
                         val end = center(edge.b)
                         val normal = if (edge.horizontal) Offset(0f, 1f) else Offset(1f, 0f)
                         when {
-                            hinted && highlight!!.isMistake -> drawBridge(start, end, normal, count, gap, stroke, hintColor, mistakeDash)
-                            hinted -> drawBridge(start, end, normal, highlight!!.count, gap, stroke, hintColor)
+                            hinted && highlight.isMistake -> drawBridge(start, end, normal, count, gap, stroke, hintColor, mistakeDash)
+                            hinted -> drawBridge(start, end, normal, highlight.count, gap, stroke, hintColor)
                             else -> drawBridge(start, end, normal, count, gap, stroke, bridgeColor)
                         }
                         if (shake != 0f) drawBridge(start + normal * shake, end + normal * shake, normal, 1, gap, stroke, blockedColor)

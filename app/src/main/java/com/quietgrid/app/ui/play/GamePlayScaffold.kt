@@ -92,7 +92,7 @@ fun GamePlayScaffold(
         onEndPuzzle = { showEndDialog = true },
     )
     val stripItems = playContextItems(gameId, difficulty) + info
-    val hintCard: HintCardSlot? = if (hintCardVisible && hintMessage != null) {
+    val hintCard: HintCardSlot? = if (hintCardVisible) {
         { maxHeight, expandedMaxHeight, cardModifier ->
             PlayHintCard(hintMessage, onClose = { hintCardHidden = true }, maxHeight, expandedMaxHeight, cardModifier)
         }

@@ -14,7 +14,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.SecondaryScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -181,7 +181,7 @@ private fun WhoDidItInfoPanel(puzzle: WhoDidItPuzzleEntry, text: WhoDidItText, m
     }
     var selected by remember(puzzle.id) { mutableIntStateOf(0) }
     Column(modifier.fillMaxWidth()) {
-        ScrollableTabRow(selectedTabIndex = selected, edgePadding = 0.dp) {
+        SecondaryScrollableTabRow(selectedTabIndex = selected, edgePadding = 0.dp) {
             tabs.forEachIndexed { index, tab ->
                 Tab(
                     selected = index == selected,
