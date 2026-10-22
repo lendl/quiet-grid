@@ -53,9 +53,9 @@ fun ArrowEscapePlayScreen(
     var visibleBounds by remember { mutableStateOf<Rect?>(null) }
     var panTarget by remember { mutableStateOf<Offset?>(null) }
     val session = viewModel.session
+    val viewport = remember(session?.puzzle) { session?.puzzle?.let(::arrowEscapeViewport) }
 
     val haptics = rememberHapticController()
-    var flashTrigger by remember { mutableStateOf(0) }
     LaunchedEffect(viewModel.lastTapEvent) {
         val event = viewModel.lastTapEvent
         if (event != null) {
@@ -63,7 +63,6 @@ fun ArrowEscapePlayScreen(
                 haptics.correctFeedback()
             } else {
                 haptics.incorrectFeedback()
-                flashTrigger++
             }
         }
     }
@@ -97,9 +96,10 @@ fun ArrowEscapePlayScreen(
         onBack = onBack,
         onEndPuzzle = { viewModel.endPuzzle() },
         finishing = finishing,
-        foldRows = session?.puzzle?.rows,
-        foldCols = session?.puzzle?.cols,
+        foldRows = viewport?.rows,
+        foldCols = viewport?.cols,
         difficulty = session?.let { Difficulty.fromKey(it.puzzle.difficulty) },
+        boardAspectRatio = viewport?.aspectRatio ?: 1f,
         hint = PlayHintAction(
             active = false,
             busy = viewModel.isComputingHint,
@@ -138,7 +138,7 @@ fun ArrowEscapePlayScreen(
                 visible = session != null,
                 playFresh = !resume,
                 zoomable = true,
-                flashTrigger = flashTrigger,
+                showFrame = false,
                 panTarget = panTarget,
                 onVisibleBoundsChange = { visibleBounds = it },
             ) {

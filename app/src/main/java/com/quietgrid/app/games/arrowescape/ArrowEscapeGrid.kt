@@ -26,12 +26,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
@@ -193,6 +193,7 @@ fun ArrowEscapeGrid(
     val isPencilTheme = LocalIsPencilTheme.current
     val pieces = remember(puzzle) { puzzle.pieces.map { it.toPiece() } }
     val ownerLookup = remember(puzzle) { buildCellOwnerMap(pieces) }
+    val viewport = remember(puzzle) { arrowEscapeViewport(puzzle) }
     val corridorSizes = remember(puzzle) {
         pieces.map { piece ->
             val head = piece.cells.last()
@@ -207,6 +208,7 @@ fun ArrowEscapeGrid(
     var previousRemoved by remember(puzzle) { mutableStateOf(removedIndices) }
     val currentRemoved by rememberUpdatedState(removedIndices)
     val blockedIndex = lastTap?.takeIf { !it.removed }?.pieceIndex
+    val hintedIndex = selectedIndex?.takeIf { it != blockedIndex && it !in removedIndices }
 
     LaunchedEffect(removedIndices) {
         val newlyRemoved = removedIndices - previousRemoved
@@ -257,9 +259,10 @@ fun ArrowEscapeGrid(
         }
     }
 
-    BoxWithConstraints(Modifier.padding(20.dp), contentAlignment = Alignment.Center) {
-        val cellSize = min(maxWidth / puzzle.cols, maxHeight / puzzle.rows)
+    BoxWithConstraints(Modifier.padding(4.dp), contentAlignment = Alignment.Center) {
+        val cellSize = min(maxWidth / viewport.cols, maxHeight / viewport.rows)
         val cellSizePx = with(LocalDensity.current) { cellSize.toPx() }
+        val viewportOrigin = Offset(cellSizePx * viewport.left, cellSizePx * viewport.top)
 
         LaunchedEffect(removedIndices, visibleBounds, cellSizePx, puzzle) {
             val remaining = pieces.indices.filter { it !in removedIndices }
@@ -270,7 +273,7 @@ fun ArrowEscapeGrid(
             }
             val anyVisible = remaining.any { index ->
                 pieces[index].cells.any { cell ->
-                    bounds.contains(Offset(cellSizePx * (cell.col + 0.5f), cellSizePx * (cell.row + 0.5f)))
+                    bounds.contains(cellCenter(cell, cellSizePx) - viewportOrigin)
                 }
             }
             if (anyVisible) {
@@ -282,7 +285,7 @@ fun ArrowEscapeGrid(
             var nearestDistance = Float.MAX_VALUE
             for (index in remaining) {
                 for (cell in pieces[index].cells) {
-                    val center = Offset(cellSizePx * (cell.col + 0.5f), cellSizePx * (cell.row + 0.5f))
+                    val center = cellCenter(cell, cellSizePx) - viewportOrigin
                     val distance = (center - viewportCenter).getDistance()
                     if (distance < nearestDistance) {
                         nearestDistance = distance
@@ -293,7 +296,7 @@ fun ArrowEscapeGrid(
             val targetCells = pieces[nearestIndex].cells
             val targetX = targetCells.map { cellSizePx * (it.col + 0.5f) }.average().toFloat()
             val targetY = targetCells.map { cellSizePx * (it.row + 0.5f) }.average().toFloat()
-            onRequestPan(Offset(targetX, targetY))
+            onRequestPan(Offset(targetX, targetY) - viewportOrigin)
         }
 
         val dotColor = if (isPencilTheme) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.outlineVariant
@@ -301,19 +304,19 @@ fun ArrowEscapeGrid(
         val escapeColor = MaterialTheme.colorScheme.primary
         val laneColor = if (isPencilTheme) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.primary
         val errorColor = MaterialTheme.colorScheme.error
-        val selectedColor = MaterialTheme.colorScheme.primary
+        val hintColor = MaterialTheme.colorScheme.primary
 
         Box(
             Modifier
-                .size(cellSize * puzzle.cols, cellSize * puzzle.rows)
-                .pointerInput(puzzle, cellSizePx) {
+                .size(cellSize * viewport.cols, cellSize * viewport.rows)
+                .pointerInput(puzzle, cellSizePx, viewport) {
                     val toleranceCells = TAP_TOLERANCE.toPx() / cellSizePx
                     detectTapGestures { tapOffset ->
                         val pieceIndex = resolveArrowEscapeTap(
                             puzzle,
                             currentRemoved,
-                            tapRow = tapOffset.y / cellSizePx,
-                            tapCol = tapOffset.x / cellSizePx,
+                            tapRow = tapOffset.y / cellSizePx + viewport.top,
+                            tapCol = tapOffset.x / cellSizePx + viewport.left,
                             toleranceCells = toleranceCells,
                         ) ?: return@detectTapGestures
                         onPieceTap(pieceIndex)
@@ -321,106 +324,103 @@ fun ArrowEscapeGrid(
                 }
                 .drawWithContent {
                     drawContent()
-                    val dotRadius = maxOf(cellSizePx * 0.05f, MIN_DOT_RADIUS.toPx())
-                    for (row in 0 until puzzle.rows) {
-                        for (col in 0 until puzzle.cols) {
-                            if (!puzzle.isActiveCell(row, col)) continue
-                            drawCircle(
-                                dotColor,
-                                radius = dotRadius,
-                                center = Offset(cellSizePx * (col + 0.5f), cellSizePx * (row + 0.5f)),
+                    translate(left = -viewportOrigin.x, top = -viewportOrigin.y) {
+                        val dotRadius = maxOf(cellSizePx * 0.05f, MIN_DOT_RADIUS.toPx())
+                        for (row in 0 until puzzle.rows) {
+                            for (col in 0 until puzzle.cols) {
+                                if (!puzzle.isActiveCell(row, col)) continue
+                                drawCircle(
+                                    dotColor,
+                                    radius = dotRadius,
+                                    center = Offset(cellSizePx * (col + 0.5f), cellSizePx * (row + 0.5f)),
+                                )
+                            }
+                        }
+                        val lineWidth = maxOf(cellSizePx * 0.115f, MIN_LINE_STROKE.toPx())
+                        val headLength = cellSizePx * 0.46f
+                        val headHalfWidth = maxOf(cellSizePx * 0.27f, lineWidth * 1.6f)
+                        val headCornerInset = lineWidth * 0.35f
+                        val cornerRadius = cellSizePx * 0.3f
+                        val lineStroke = Stroke(width = lineWidth, cap = StrokeCap.Round, join = StrokeJoin.Round)
+                        val headOutline = Stroke(width = headCornerInset * 2f, join = StrokeJoin.Round)
+
+                        laneGlows.forEach { (index, glow) ->
+                            val piece = pieces[index]
+                            val direction = directionVector(piece.headDirection)
+                            val start = cellCenter(piece.cells.last(), cellSizePx)
+                            val end = start + direction * (cellSizePx * (corridorSizes[index] + 0.5f))
+                            drawLine(
+                                laneColor.copy(alpha = 0.3f * (1f - glow.value)),
+                                start = start,
+                                end = end,
+                                strokeWidth = lineWidth * 2.4f,
+                                cap = StrokeCap.Round,
                             )
                         }
-                    }
-                    val lineWidth = maxOf(cellSizePx * 0.115f, MIN_LINE_STROKE.toPx())
-                    val headLength = cellSizePx * 0.46f
-                    val headHalfWidth = maxOf(cellSizePx * 0.27f, lineWidth * 1.6f)
-                    val headCornerInset = lineWidth * 0.35f
-                    val cornerRadius = cellSizePx * 0.3f
-                    val lineStroke = Stroke(width = lineWidth, cap = StrokeCap.Round, join = StrokeJoin.Round)
-                    val headOutline = Stroke(width = headCornerInset * 2f, join = StrokeJoin.Round)
 
-                    laneGlows.forEach { (index, glow) ->
-                        val piece = pieces[index]
-                        val direction = directionVector(piece.headDirection)
-                        val start = cellCenter(piece.cells.last(), cellSizePx)
-                        val end = start + direction * (cellSizePx * (corridorSizes[index] + 0.5f))
-                        drawLine(
-                            laneColor.copy(alpha = 0.3f * (1f - glow.value)),
-                            start = start,
-                            end = end,
-                            strokeWidth = lineWidth * 2.4f,
-                            cap = StrokeCap.Round,
-                        )
-                    }
+                        pieces.forEachIndexed { index, piece ->
+                            val escape = flyOuts[index]
+                            if (index in removedIndices && escape == null) return@forEachIndexed
+                            val direction = directionVector(piece.headDirection)
+                            val hinted = index == hintedIndex && escape == null
+                            var color = if (hinted) hintColor else lineColor
+                            var alpha = 1f
+                            var travelled = 0f
+                            var shift = Offset.Zero
 
-                    pieces.forEachIndexed { index, piece ->
-                        val escape = flyOuts[index]
-                        if (index in removedIndices && escape == null) return@forEachIndexed
-                        val direction = directionVector(piece.headDirection)
-                        var color = lineColor
-                        var alpha = 1f
-                        var travelled = 0f
-                        var shift = Offset.Zero
-
-                        if (escape != null) {
-                            val t = escape.progress.value
-                            travelled = cellSizePx * escape.distCells * EscapeEasing.transform(t)
-                            if (!isPencilTheme) {
-                                color = lerp(lineColor, escapeColor, (t * escape.durationMs / 120f).coerceIn(0f, 1f))
+                            if (escape != null) {
+                                val t = escape.progress.value
+                                travelled = cellSizePx * escape.distCells * EscapeEasing.transform(t)
+                                if (!isPencilTheme) {
+                                    color = lerp(lineColor, escapeColor, (t * escape.durationMs / 120f).coerceIn(0f, 1f))
+                                }
+                                if (t >= 0.8f) alpha = 1f - (t - 0.8f) / 0.2f
                             }
-                            if (t >= 0.8f) alpha = 1f - (t - 0.8f) / 0.2f
-                        }
 
-                        val bump = bumps[index]
-                        if (bump != null) {
-                            travelled = cellSizePx * (bump.blockerOffset + 0.45f) * bump.progress.value
-                            color = lerp(lineColor, errorColor, bump.tint.value)
-                        }
-
-                        val knock = knocks[index]
-                        if (knock != null) {
-                            val ms = knock.elapsedMs.value
-                            val wobble = cellSizePx * 0.12f * exp(-ms / 140f) * sin(ms / 600f * 5f * PI.toFloat() + 0.3f)
-                            shift = knock.direction * wobble
-                            color = lerp(lineColor, errorColor, (1f - ms / 450f).coerceAtLeast(0f))
-                        }
-
-                        val basePoints = piece.cells.map { cellCenter(it, cellSizePx) + shift }
-                        val stubEnd = basePoints.last() + direction * (cellSizePx * (piece.cells.size + corridorSizes[index] + 3))
-                        val extendedPoints = basePoints + stubEnd
-                        val cum = cumulativeArcLengths(extendedPoints)
-                        val pieceLength = cum[basePoints.lastIndex]
-
-                        val tailArc = travelled.coerceAtLeast(0f)
-                        val headArc = pieceLength + travelled
-
-                        val visiblePoints = buildList {
-                            add(pointAtArc(extendedPoints, cum, tailArc))
-                            for (i in extendedPoints.indices) {
-                                if (cum[i] > tailArc && cum[i] < headArc) add(extendedPoints[i])
+                            val bump = bumps[index]
+                            if (bump != null) {
+                                travelled = cellSizePx * (bump.blockerOffset + 0.45f) * bump.progress.value
+                                color = lerp(lineColor, errorColor, bump.tint.value)
                             }
-                            add(pointAtArc(extendedPoints, cum, headArc))
-                        }
 
-                        val pieceColor = color.copy(alpha = color.alpha * alpha)
-                        val tip = visiblePoints.last() + direction * (cellSizePx * 0.42f)
-                        val shaftEnd = tip - direction * (headLength - lineWidth * 0.5f)
-                        val head = headPath(tip, direction, headLength, headHalfWidth, headCornerInset)
-                        drawPath(shaftPath(visiblePoints, shaftEnd, cornerRadius), pieceColor, style = lineStroke)
-                        drawPath(head, pieceColor)
-                        drawPath(head, pieceColor, style = headOutline)
-                    }
-                    if (selectedIndex != null && selectedIndex != blockedIndex && selectedIndex !in removedIndices) {
-                        for (cell in pieces[selectedIndex].cells) {
-                            val x = cellSizePx * cell.col
-                            val y = cellSizePx * cell.row
-                            drawRect(
-                                selectedColor,
-                                topLeft = Offset(x, y),
-                                size = Size(cellSizePx, cellSizePx),
-                                style = Stroke(width = 2.dp.toPx()),
-                            )
+                            val knock = knocks[index]
+                            if (knock != null) {
+                                val ms = knock.elapsedMs.value
+                                val wobble = cellSizePx * 0.12f * exp(-ms / 140f) * sin(ms / 600f * 5f * PI.toFloat() + 0.3f)
+                                shift = knock.direction * wobble
+                                color = lerp(lineColor, errorColor, (1f - ms / 450f).coerceAtLeast(0f))
+                            }
+
+                            val basePoints = piece.cells.map { cellCenter(it, cellSizePx) + shift }
+                            val stubEnd = basePoints.last() + direction * (cellSizePx * (piece.cells.size + corridorSizes[index] + 3))
+                            val extendedPoints = basePoints + stubEnd
+                            val cum = cumulativeArcLengths(extendedPoints)
+                            val pieceLength = cum[basePoints.lastIndex]
+
+                            val tailArc = travelled.coerceAtLeast(0f)
+                            val headArc = pieceLength + travelled
+
+                            val visiblePoints = buildList {
+                                add(pointAtArc(extendedPoints, cum, tailArc))
+                                for (i in extendedPoints.indices) {
+                                    if (cum[i] > tailArc && cum[i] < headArc) add(extendedPoints[i])
+                                }
+                                add(pointAtArc(extendedPoints, cum, headArc))
+                            }
+
+                            val pieceColor = color.copy(alpha = color.alpha * alpha)
+                            val tip = visiblePoints.last() + direction * (cellSizePx * 0.42f)
+                            val shaftEnd = tip - direction * (headLength - lineWidth * 0.5f)
+                            val head = headPath(tip, direction, headLength, headHalfWidth, headCornerInset)
+                            val shaft = shaftPath(visiblePoints, shaftEnd, cornerRadius)
+                            if (hinted) {
+                                val halo = Stroke(width = lineWidth * 3.2f, cap = StrokeCap.Round, join = StrokeJoin.Round)
+                                drawPath(shaft, hintColor.copy(alpha = 0.22f), style = halo)
+                                drawPath(head, hintColor.copy(alpha = 0.22f), style = halo)
+                            }
+                            drawPath(shaft, pieceColor, style = lineStroke)
+                            drawPath(head, pieceColor)
+                            drawPath(head, pieceColor, style = headOutline)
                         }
                     }
                 },

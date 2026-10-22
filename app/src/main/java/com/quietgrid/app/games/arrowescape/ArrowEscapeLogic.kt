@@ -3,6 +3,7 @@ package com.quietgrid.app.games.arrowescape
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
 import com.quietgrid.engine.arrowescape.buildCellOwnerMap
+import com.quietgrid.engine.arrowescape.isActiveCell
 import com.quietgrid.engine.arrowescape.isPieceRemovable
 import com.quietgrid.engine.arrowescape.solveArrowEscape
 import com.quietgrid.engine.arrowescape.toPiece
@@ -28,6 +29,19 @@ fun applyArrowEscapeAttempt(session: ArrowEscapeSession, pieceIndex: Int): Arrow
     val removedIndices = session.removedIndices + pieceIndex
     val status = if (removedIndices.size == pieces.size) ArrowEscapeStatus.WON else ArrowEscapeStatus.PLAYING
     return ArrowEscapeAttemptResult(session.copy(removedIndices = removedIndices, selectedIndex = null, status = status), removed = true)
+}
+
+data class ArrowEscapeViewport(val top: Int, val left: Int, val rows: Int, val cols: Int) {
+    val aspectRatio: Float get() = cols.toFloat() / rows
+}
+
+fun arrowEscapeViewport(puzzle: ArrowEscapePuzzleEntry): ArrowEscapeViewport {
+    val used = puzzle.pieces.flatMap { piece -> piece.toPiece().cells.map { it.row to it.col } } +
+        (0 until puzzle.rows).flatMap { row -> (0 until puzzle.cols).filter { puzzle.isActiveCell(row, it) }.map { row to it } }
+    if (used.isEmpty()) return ArrowEscapeViewport(0, 0, puzzle.rows, puzzle.cols)
+    val top = used.minOf { it.first }
+    val left = used.minOf { it.second }
+    return ArrowEscapeViewport(top, left, used.maxOf { it.first } - top + 1, used.maxOf { it.second } - left + 1)
 }
 
 private fun distanceToCell(tapRow: Float, tapCol: Float, row: Int, col: Int): Float {
