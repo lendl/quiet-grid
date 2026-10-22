@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -47,6 +48,7 @@ fun ArrowEscapePlayScreen(
         creationCallback = { factory -> factory.create(difficulty, resume) },
     )
     CollectPuzzleResult(viewModel.result, onFinished)
+    val finishing by viewModel.finishing.collectAsState()
 
     var visibleBounds by remember { mutableStateOf<Rect?>(null) }
     var panTarget by remember { mutableStateOf<Offset?>(null) }
@@ -94,6 +96,9 @@ fun ArrowEscapePlayScreen(
         timer = PlayTimer.Elapsed(viewModel.elapsedSeconds.toInt()),
         onBack = onBack,
         onEndPuzzle = { viewModel.endPuzzle() },
+        finishing = finishing,
+        foldRows = session?.puzzle?.rows,
+        foldCols = session?.puzzle?.cols,
         difficulty = session?.let { Difficulty.fromKey(it.puzzle.difficulty) },
         hint = PlayHintAction(
             active = false,

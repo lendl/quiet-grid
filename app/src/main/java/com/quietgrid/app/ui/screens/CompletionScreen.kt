@@ -1,10 +1,5 @@
 package com.quietgrid.app.ui.screens
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,7 +27,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -43,7 +37,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -83,20 +76,12 @@ import com.quietgrid.app.games.killersudoku.killerSudokuDifficultyLabelRes
 import com.quietgrid.app.games.wordguess.wordGuessDifficultyLabelRes
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
 import com.quietgrid.app.ui.components.BadgePill
-import com.quietgrid.app.ui.components.ConfettiBurst
 import com.quietgrid.app.ui.components.OutlinedGlowButton
 import com.quietgrid.app.ui.components.rememberHapticController
-import com.quietgrid.app.ui.components.systemAnimationsDisabled
-import kotlinx.coroutines.delay
 import java.time.LocalDate
 import kotlin.math.roundToInt
 
-private val CELEBRATION_ICONS = listOf("🎉", "🏆", "⭐", "✨", "🎈", "💜")
-
-private fun pickCelebrationIcon(score: Int, accuracyPct: Int, variantSeed: Int): String {
-    val seed = maxOf(0, score) + accuracyPct + variantSeed
-    return CELEBRATION_ICONS[seed % CELEBRATION_ICONS.size]
-}
+private const val CHECK_SIZE_FRACTION = 0.46f
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -125,25 +110,21 @@ fun CompletionScreen(
     val eyebrowRes: Int
     val titleRes: Int
     val bodyRes: Int
-    val variantSeed: Int
     when {
         isNewHighScore -> {
             eyebrowRes = R.string.completion_new_high_score_eyebrow
             titleRes = R.string.completion_new_high_score_title
             bodyRes = R.string.completion_new_high_score_body
-            variantSeed = 14
         }
         isFirstSolve -> {
             eyebrowRes = R.string.completion_first_score_eyebrow
             titleRes = R.string.completion_first_score_title
             bodyRes = R.string.completion_first_score_body
-            variantSeed = 11
         }
         else -> {
             eyebrowRes = R.string.completion_solved_eyebrow
             titleRes = R.string.completion_solved_title
             bodyRes = R.string.completion_solved_body
-            variantSeed = 6
         }
     }
     val difficultyLabelRes = when (gameId) {
@@ -169,7 +150,6 @@ fun CompletionScreen(
         else -> chimpDifficultyLabelRes(difficulty)
     }
     val accentColor = difficultyColor(difficulty)
-    val icon = pickCelebrationIcon(score, accuracyPct, variantSeed)
     val isFlawless = gameId in FLAWLESS_ELIGIBLE_GAMES && accuracyPct == 100
 
     val highlight = remember { CompletionExtras.consume() }
@@ -199,52 +179,7 @@ fun CompletionScreen(
     val gamesToday = remember(allHistoryRecords, today) { distinctGamesToday(allHistoryRecords, today) }
     val puzzlesToday = remember(allHistoryRecords, today) { recordsToday(allHistoryRecords, today) }
 
-    val context = LocalContext.current
-    val reduceMotion = remember { systemAnimationsDisabled(context) }
-
-    val pageOpacity = remember { Animatable(if (reduceMotion) 1f else 0f) }
-    val contentOffsetY = remember { Animatable(if (reduceMotion) 0f else 24f) }
-    val pictureScale = remember { Animatable(if (reduceMotion) 1f else 0.6f) }
-    val scoreProgress = remember { Animatable(if (reduceMotion) 1f else 0f) }
-    val badgesOpacity = remember { Animatable(if (reduceMotion) 1f else 0f) }
-    var showConfetti by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
-        if (reduceMotion) {
-            showConfetti = false
-        } else {
-            pageOpacity.animateTo(1f, animationSpec = tween(220))
-            showConfetti = true
-        }
-    }
-    LaunchedEffect(Unit) {
-        if (!reduceMotion) {
-            contentOffsetY.animateTo(0f, animationSpec = tween(320, easing = FastOutSlowInEasing))
-        }
-    }
-    LaunchedEffect(Unit) {
-        if (!reduceMotion) {
-            pictureScale.animateTo(
-                1f,
-                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
-            )
-        }
-    }
-    LaunchedEffect(score) {
-        if (reduceMotion) {
-            scoreProgress.snapTo(1f)
-        } else {
-            delay(200)
-            scoreProgress.animateTo(1f, animationSpec = tween(650, easing = FastOutSlowInEasing))
-        }
-    }
-    LaunchedEffect(Unit) {
-        if (reduceMotion) {
-            badgesOpacity.snapTo(1f)
-        } else {
-            delay(400)
-            badgesOpacity.animateTo(1f, animationSpec = tween(250))
-        }
-    }
+    val entrance = rememberResultEntrance()
 
     val links = if (dailyDate != null) {
         dailyResultLinks(hasNextDaily, onShareDaily, onBackToDaily, onTryAnotherGame)
@@ -266,12 +201,14 @@ fun CompletionScreen(
             }
         }
     }
-    val heroScale = { pictureScale.value }
-    val heroSymbol = themeIcon ?: icon
     val scoreDescription = "${stringResource(R.string.completion_score)} $score"
 
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val sideways = isSidewaysPhoneResult(maxWidth, maxHeight)
+        val heroSize = if (sideways) WinHeroSize(96.dp, 72.dp, 30.sp) else WinHeroSize(130.dp, 96.dp, 40.sp)
+        val heroFigure: @Composable (Boolean) -> Unit = { shared ->
+            WinHeroFigure(picture, themeIcon, gameId, heroSize, entrance, shared)
+        }
         PinnedHeaderScrollLayout(
             header = {
                 Row(
@@ -284,7 +221,7 @@ fun CompletionScreen(
                         Modifier
                             .weight(1f)
                             .padding(top = 8.dp)
-                            .graphicsLayer { alpha = badgesOpacity.value },
+                            .badgesFadeIn(entrance),
                         horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
@@ -368,13 +305,9 @@ fun CompletionScreen(
                         gameId = gameId,
                         difficulty = difficulty,
                         onAddToMix = onAddToMix,
-                        modifier = Modifier.graphicsLayer { alpha = badgesOpacity.value },
+                        modifier = Modifier.badgesFadeIn(entrance),
                     )
                 }
-            },
-            contentModifier = Modifier.graphicsLayer {
-                alpha = pageOpacity.value
-                translationY = contentOffsetY.value
             },
         ) {
             if (sideways) {
@@ -383,76 +316,71 @@ fun CompletionScreen(
                     horizontalArrangement = Arrangement.spacedBy(20.dp),
                 ) {
                     WinHero(
-                        picture = picture,
-                        symbol = heroSymbol,
-                        gameId = gameId,
                         glowSize = 112.dp,
-                        pictureSize = 96.dp,
-                        medallionSize = 72.dp,
-                        symbolSize = 30.sp,
-                        scale = heroScale,
+                        entrance = entrance,
                         modifier = Modifier.size(112.dp),
-                    )
+                    ) { heroFigure(true) }
                     Column(Modifier.widthIn(max = 420.dp)) {
-                        Text(stringResource(titleRes), style = MaterialTheme.typography.headlineSmall)
+                        Text(stringResource(titleRes), style = MaterialTheme.typography.headlineSmall, modifier = Modifier.riseIn(entrance, 0))
                         Text(
                             stringResource(bodyRes),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(top = 2.dp),
+                            modifier = Modifier.padding(top = 2.dp).riseIn(entrance, 1),
                         )
                         Text(
                             stringResource(difficultyLabelRes),
                             style = MaterialTheme.typography.labelLarge,
                             color = accentColor,
-                            modifier = Modifier.padding(top = 4.dp),
+                            modifier = Modifier.padding(top = 4.dp).riseIn(entrance, 2),
                         )
                     }
                 }
 
                 Row(
-                    Modifier.padding(top = 18.dp),
+                    Modifier.padding(top = 18.dp).riseIn(entrance, 3),
                     horizontalArrangement = Arrangement.spacedBy(22.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     CountUpScore(
                         score = score,
-                        progress = { scoreProgress.value },
+                        progress = { entrance.scoreProgress() },
                         modifier = Modifier.semantics { contentDescription = scoreDescription },
                     )
                     ResultMetaDivider(height = 40.dp)
                     WinMetaItems(gameId, elapsedSeconds, accuracyPct, bestTile)
                 }
-                WinHighlights(caseSolvedText, nbackBreakdown)
+                Column(Modifier.riseIn(entrance, 4), horizontalAlignment = Alignment.CenterHorizontally) {
+                    WinHighlights(caseSolvedText, nbackBreakdown)
+                }
 
-                CompactResultActions(links, Modifier.padding(top = 20.dp), primaryAction)
+                CompactResultActions(links, Modifier.padding(top = 20.dp).riseIn(entrance, 5), primaryAction)
             } else {
                 WinHero(
-                    picture = picture,
-                    symbol = heroSymbol,
-                    gameId = gameId,
                     glowSize = 180.dp,
-                    pictureSize = 130.dp,
-                    medallionSize = 96.dp,
-                    symbolSize = 40.sp,
-                    scale = heroScale,
+                    entrance = entrance,
                     modifier = Modifier.fillMaxWidth().height(150.dp),
-                )
+                ) { heroFigure(true) }
 
-                Text(stringResource(titleRes), style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center, modifier = Modifier.padding(top = 4.dp))
+                Text(
+                    stringResource(titleRes),
+                    style = MaterialTheme.typography.headlineSmall,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(top = 4.dp).riseIn(entrance, 0),
+                )
                 Text(
                     stringResource(bodyRes),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(top = 6.dp),
+                    modifier = Modifier.padding(top = 6.dp).riseIn(entrance, 1),
                 )
                 Text(
                     stringResource(difficultyLabelRes),
                     style = MaterialTheme.typography.labelLarge,
                     color = accentColor,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier.padding(top = 8.dp).riseIn(entrance, 2),
                 )
 
                 Column(Modifier.padding(top = 20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -460,22 +388,25 @@ fun CompletionScreen(
                         stringResource(R.string.completion_score),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.riseIn(entrance, 3),
                     )
-                    CountUpScore(score = score, progress = { scoreProgress.value })
+                    CountUpScore(score = score, progress = { entrance.scoreProgress() }, modifier = Modifier.riseIn(entrance, 4))
 
                     Row(
-                        Modifier.padding(top = 14.dp),
+                        Modifier.padding(top = 14.dp).riseIn(entrance, 5),
                         horizontalArrangement = Arrangement.spacedBy(18.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         WinMetaItems(gameId, elapsedSeconds, accuracyPct, bestTile)
                     }
-                    WinHighlights(caseSolvedText, nbackBreakdown)
+                    Column(Modifier.riseIn(entrance, 6), horizontalAlignment = Alignment.CenterHorizontally) {
+                        WinHighlights(caseSolvedText, nbackBreakdown)
+                    }
                 }
 
-                Box(Modifier.padding(top = 24.dp)) { primaryAction() }
+                Box(Modifier.padding(top = 24.dp).riseIn(entrance, 7)) { primaryAction() }
                 Row(
-                    Modifier.fillMaxWidth().padding(top = 8.dp),
+                    Modifier.fillMaxWidth().padding(top = 8.dp).riseIn(entrance, 8),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -483,30 +414,25 @@ fun CompletionScreen(
                 }
             }
         }
-        if (showConfetti) {
-            ConfettiBurst(Modifier.fillMaxSize())
-        }
+        ResultHeroFlight(entrance) { heroFigure(false) }
     }
 }
 
+private class WinHeroSize(val pictureSize: Dp, val medallionSize: Dp, val symbolSize: TextUnit)
+
 @Composable
 private fun WinHero(
-    picture: List<List<Boolean>>?,
-    symbol: String,
-    gameId: GameId,
     glowSize: Dp,
-    pictureSize: Dp,
-    medallionSize: Dp,
-    symbolSize: TextUnit,
-    scale: () -> Float,
+    entrance: ResultEntrance,
     modifier: Modifier = Modifier,
+    figure: @Composable () -> Unit,
 ) {
     Box(modifier, contentAlignment = Alignment.Center) {
         if (LocalIsDarkTheme.current) {
             Box(
                 Modifier
                     .size(glowSize)
-                    .graphicsLayer { scaleX = scale(); scaleY = scale() }
+                    .graphicsLayer { alpha = entrance.glowAlpha() }
                     .background(
                         Brush.radialGradient(
                             colors = listOf(MaterialTheme.colorScheme.primary.copy(alpha = 0.35f), Color.Transparent),
@@ -515,23 +441,33 @@ private fun WinHero(
                     ),
             )
         }
-        if (picture != null) {
-            NonogramMiniPicture(
-                solution = picture,
-                fillColor = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .size(pictureSize)
-                    .graphicsLayer { scaleX = scale(); scaleY = scale() },
-            )
-        } else {
-            ResultMedallion(
-                gameId = gameId,
-                symbol = symbol,
-                tint = MaterialTheme.colorScheme.primary,
-                size = medallionSize,
-                symbolSize = symbolSize,
-                modifier = Modifier.graphicsLayer { scaleX = scale(); scaleY = scale() },
-            )
+        Box(Modifier.heroSlot(entrance)) { figure() }
+    }
+}
+
+@Composable
+private fun WinHeroFigure(
+    picture: List<List<Boolean>>?,
+    themeIcon: String?,
+    gameId: GameId,
+    size: WinHeroSize,
+    entrance: ResultEntrance,
+    shared: Boolean,
+) {
+    val tint = MaterialTheme.colorScheme.primary
+    if (picture != null) {
+        NonogramMiniPicture(solution = picture, fillColor = tint, modifier = Modifier.size(size.pictureSize))
+    } else {
+        ResultMedallion(gameId = gameId, tint = tint, size = size.medallionSize, shared = shared) {
+            if (themeIcon != null) {
+                MedallionSymbol(themeIcon, size.symbolSize)
+            } else {
+                DrawnCheck(
+                    progress = { entrance.checkProgress() },
+                    tint = tint,
+                    modifier = Modifier.size(size.medallionSize * CHECK_SIZE_FRACTION),
+                )
+            }
         }
     }
 }

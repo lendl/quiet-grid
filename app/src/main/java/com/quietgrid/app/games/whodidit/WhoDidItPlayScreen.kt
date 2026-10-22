@@ -24,6 +24,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -69,6 +70,7 @@ fun WhoDidItPlayScreen(
         creationCallback = { factory -> factory.create(difficulty, resume, dailyDate) },
     )
     CollectPuzzleResult(viewModel.result, onFinished)
+    val finishing by viewModel.finishing.collectAsState()
 
     val session = viewModel.session
     val haptics = rememberHapticController()
@@ -91,6 +93,7 @@ fun WhoDidItPlayScreen(
         timer = PlayTimer.Elapsed(viewModel.elapsedSeconds.toInt()),
         onBack = onBack,
         onEndPuzzle = { viewModel.endPuzzle() },
+        finishing = finishing,
         difficulty = session?.let { Difficulty.fromKey(it.puzzle.difficulty) },
         hint = PlayHintAction(
             active = hint != null,

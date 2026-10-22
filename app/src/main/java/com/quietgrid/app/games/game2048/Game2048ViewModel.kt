@@ -99,6 +99,7 @@ class Game2048PlayViewModel @AssistedInject constructor(
     val session get() = controller.session
     val elapsedSeconds get() = controller.elapsedSeconds
     val result = controller.result
+    val finishing = controller.finishing
 
     var lastMove by mutableStateOf<Game2048MoveResult?>(null)
         private set

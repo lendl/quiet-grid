@@ -136,6 +136,7 @@ class ThemeClearPlayViewModel @AssistedInject constructor(
     val session get() = controller.session
     val elapsedSeconds get() = controller.elapsedSeconds
     val result = controller.result
+    val finishing = controller.finishing
 
     var selectionState by mutableStateOf(ThemeClearSelectionState.EMPTY)
         private set

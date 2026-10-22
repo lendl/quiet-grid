@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.R
@@ -34,6 +35,7 @@ fun WordGuessPlayScreen(
         creationCallback = { factory -> factory.create(difficulty, resume, dailyDate) },
     )
     CollectPuzzleResult(viewModel.result, onFinished)
+    val finishing by viewModel.finishing.collectAsState()
 
     var currentInput by remember { mutableStateOf("") }
     var invalidFlash by remember { mutableStateOf(false) }
@@ -61,6 +63,9 @@ fun WordGuessPlayScreen(
         timer = PlayTimer.Elapsed(viewModel.elapsedSeconds.toInt()),
         onBack = onBack,
         onEndPuzzle = { viewModel.endPuzzle() },
+        finishing = finishing,
+        foldRows = WORD_GUESS_MAX_GUESSES,
+        foldCols = session?.wordLength,
         difficulty = session?.let { Difficulty.fromKey(it.difficulty) },
         info = if (session == null) {
             emptyList()

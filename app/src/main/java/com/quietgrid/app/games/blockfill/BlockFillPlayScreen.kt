@@ -2,6 +2,8 @@ package com.quietgrid.app.games.blockfill
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.R
@@ -22,6 +24,7 @@ fun BlockFillPlayScreen(
         creationCallback = { factory -> factory.create(difficulty, resume) },
     )
     CollectPuzzleResult(viewModel.result, onFinished)
+    val finishing by viewModel.finishing.collectAsState()
 
     val session = viewModel.session
 
@@ -35,6 +38,7 @@ fun BlockFillPlayScreen(
         onBack = onBack,
         onEndPuzzle = { viewModel.endPuzzle() },
         difficulty = session?.let { Difficulty.fromKey(it.puzzle.difficulty) },
+        finishing = finishing,
         info = if (session == null) {
             emptyList()
         } else {

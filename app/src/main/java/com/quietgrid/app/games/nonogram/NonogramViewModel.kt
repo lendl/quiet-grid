@@ -124,6 +124,7 @@ class NonogramPlayViewModel @AssistedInject constructor(
     val session get() = controller.session
     val elapsedSeconds get() = controller.elapsedSeconds
     val result = controller.result
+    val finishing = controller.finishing
 
     var inputMode by mutableStateOf(NonogramInputMode.FILL)
     var nextMoveHint by mutableStateOf<NonogramNextMoveHint?>(null)

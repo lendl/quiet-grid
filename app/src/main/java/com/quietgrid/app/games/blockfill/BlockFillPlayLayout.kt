@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.session.FinishKind
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
 import com.quietgrid.app.ui.play.DockRole
 import com.quietgrid.app.ui.play.GamePlayScaffold
@@ -81,6 +82,7 @@ fun BlockFillPlayLayout(
     onEndPuzzle: () -> Unit,
     info: List<InfoItem>,
     difficulty: Difficulty? = null,
+    finishing: FinishKind? = null,
 ) {
     var boardCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
     var slotCoordinates by remember { mutableStateOf(mapOf<Int, LayoutCoordinates>()) }
@@ -159,6 +161,9 @@ fun BlockFillPlayLayout(
             onEndPuzzle = onEndPuzzle,
             difficulty = difficulty,
             info = info,
+            finishing = finishing,
+            foldRows = BLOCKFILL_BOARD_SIZE,
+            foldCols = BLOCKFILL_BOARD_SIZE,
             dockRole = DockRole.DragSource,
             dockHeight = ::blockFillDockHeight,
             dock = { sizeClass ->

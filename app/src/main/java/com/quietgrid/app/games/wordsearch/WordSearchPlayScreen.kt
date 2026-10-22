@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -45,6 +46,7 @@ fun WordSearchPlayScreen(
         creationCallback = { factory -> factory.create(difficulty, resume, dailyDate) },
     )
     CollectPuzzleResult(viewModel.result, onFinished)
+    val finishing by viewModel.finishing.collectAsState()
 
     var isBoardZoomed by remember { mutableStateOf(false) }
     var resetZoomTrigger by remember { mutableStateOf(0) }
@@ -75,6 +77,9 @@ fun WordSearchPlayScreen(
         timer = PlayTimer.Elapsed(viewModel.elapsedSeconds.toInt()),
         onBack = onBack,
         onEndPuzzle = { viewModel.endPuzzle() },
+        finishing = finishing,
+        foldRows = session?.puzzle?.rows,
+        foldCols = session?.puzzle?.cols,
         difficulty = session?.let { Difficulty.fromKey(it.puzzle.difficulty) },
         hint = PlayHintAction(
             active = hint != null,

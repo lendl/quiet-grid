@@ -106,6 +106,7 @@ class NBackPlayViewModel @AssistedInject constructor(
     val session get() = controller.session
     val elapsedSeconds get() = controller.elapsedSeconds
     val result = controller.result
+    val finishing = controller.finishing
 
     private var trialStartMillis = 0L
     private var stimulusJob: Job? = null

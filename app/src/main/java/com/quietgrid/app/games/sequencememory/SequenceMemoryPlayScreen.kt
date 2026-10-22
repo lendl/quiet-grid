@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -29,6 +31,7 @@ fun SequenceMemoryPlayScreen(
         creationCallback = { factory -> factory.create(difficulty, resume) },
     )
     CollectPuzzleResult(viewModel.result, onFinished)
+    val finishing by viewModel.finishing.collectAsState()
 
     val session = viewModel.session
     val haptics = rememberHapticController()
@@ -44,6 +47,7 @@ fun SequenceMemoryPlayScreen(
         timer = PlayTimer.Elapsed(viewModel.elapsedSeconds.toInt()),
         onBack = onBack,
         onEndPuzzle = { viewModel.endPuzzle() },
+        finishing = finishing,
         difficulty = session?.let { Difficulty.fromKey(it.difficulty) },
         info = if (session == null) {
             emptyList()

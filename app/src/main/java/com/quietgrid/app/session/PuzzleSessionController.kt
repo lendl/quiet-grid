@@ -1,5 +1,6 @@
 package com.quietgrid.app.session
 
+import android.animation.ValueAnimator
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -15,15 +16,23 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
 
-private const val FINISH_TRANSITION_DELAY_MS = 450L
+private const val FOLD_HANDOFF_MS = 1500L
 private const val TICK_INTERVAL_MS = 1000L
 private const val CHECKPOINT_INTERVAL_TICKS = 15
+private const val ABANDONED_REASON = "abandoned"
+
+enum class FinishKind { Win, Loss, Abandoned }
+
+private fun systemAnimatorsEnabled(): Boolean =
+    runCatching { ValueAnimator.areAnimatorsEnabled() }.getOrDefault(false)
 
 class PuzzleSessionController<TSession, TResult>(
     private val scope: CoroutineScope,
@@ -32,6 +41,7 @@ class PuzzleSessionController<TSession, TResult>(
     private val historyStore: PlayHistoryStore,
     private val adapter: PuzzleAdapter<TSession, TResult>,
     private val isAppForeground: () -> Boolean = ProcessAppForeground()::isForeground,
+    private val animationsEnabled: () -> Boolean = ::systemAnimatorsEnabled,
 ) {
     var session by mutableStateOf<TSession?>(null)
         private set
@@ -48,6 +58,9 @@ class PuzzleSessionController<TSession, TResult>(
 
     private val _result = MutableSharedFlow<TResult>(extraBufferCapacity = 1)
     val result: SharedFlow<TResult> = _result
+
+    private val _finishing = MutableStateFlow<FinishKind?>(null)
+    val finishing: StateFlow<FinishKind?> = _finishing
 
     fun start(requestedDifficulty: Difficulty, resume: Boolean, requestedDailyDate: LocalDate? = null) {
         difficulty = requestedDifficulty
@@ -70,13 +83,14 @@ class PuzzleSessionController<TSession, TResult>(
 
     fun endPuzzle() {
         if (finalized) return
-        finishAsLoss("abandoned")
+        finishAsLoss(ABANDONED_REASON)
     }
 
     fun finishAsWin() {
         if (finalized) return
         finalized = true
         val current = session ?: return
+        _finishing.value = FinishKind.Win
         val score = adapter.scoreOnWin(current, difficulty, elapsedSeconds.toInt())
         scope.launch {
             val previous = statsStore.statsFor(adapter.gameId).first().forDifficulty(difficulty)
@@ -98,7 +112,7 @@ class PuzzleSessionController<TSession, TResult>(
                 )
             }
             sessionStore.clear()
-            delay(FINISH_TRANSITION_DELAY_MS)
+            delay(foldHandoffMs())
             _result.emit(
                 adapter.buildResult(
                     current,
@@ -119,6 +133,7 @@ class PuzzleSessionController<TSession, TResult>(
     fun finishAsLoss(reason: String) {
         if (finalized) return
         finalized = true
+        _finishing.value = if (reason == ABANDONED_REASON) FinishKind.Abandoned else FinishKind.Loss
         scope.launch {
             val score = session?.let { adapter.scoreOnLoss(it, difficulty, elapsedSeconds.toInt()) } ?: 0
             statsStore.recordResult(adapter.gameId, difficulty, solved = false, score = score)
@@ -139,7 +154,7 @@ class PuzzleSessionController<TSession, TResult>(
                 )
             }
             sessionStore.clear()
-            delay(FINISH_TRANSITION_DELAY_MS)
+            delay(foldHandoffMs())
             _result.emit(
                 adapter.buildResult(
                     session,
@@ -156,6 +171,8 @@ class PuzzleSessionController<TSession, TResult>(
             )
         }
     }
+
+    private fun foldHandoffMs(): Long = if (animationsEnabled()) FOLD_HANDOFF_MS else 0L
 
     private suspend fun restoreOrCreate(requestedDifficulty: Difficulty, requestedDailyDate: LocalDate?): TSession? {
         val envelope = sessionStore.activeSession.first()

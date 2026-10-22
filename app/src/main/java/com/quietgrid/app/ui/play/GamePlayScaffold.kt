@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,6 +26,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.PointerInputScope
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.coerceAtLeast
@@ -32,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.session.FinishKind
 import com.quietgrid.app.ui.components.EndPuzzleDialog
 
 const val PLAY_BOARD_TAG = "play_board"
@@ -63,11 +68,23 @@ fun GamePlayScaffold(
     dockRole: DockRole = DockRole.Controls,
     dockHeight: (PlaySizeClass) -> Dp = { 0.dp },
     dock: (@Composable ColumnScope.(PlaySizeClass) -> Unit)? = null,
+    finishing: FinishKind? = null,
+    foldRows: Int? = null,
+    foldCols: Int? = null,
     board: @Composable BoxScope.(PlaySizeClass) -> Unit,
 ) {
     var showEndDialog by remember { mutableStateOf(false) }
     var rulesOpen by remember { mutableStateOf(false) }
     BackHandler(enabled = rulesOpen) { rulesOpen = false }
+    BackHandler(enabled = finishing != null) {}
+    LaunchedEffect(finishing) {
+        if (finishing != null) {
+            rulesOpen = false
+            showEndDialog = false
+        }
+    }
+    val fold = rememberFoldState(finishing)
+    val (rows, cols) = remember(foldRows, foldCols, boardAspectRatio) { foldGrid(foldRows, foldCols, boardAspectRatio) }
     if (phonePortraitOnly) LockPortraitOnPhones()
     val openGameRules = LocalOpenGameRules.current
 
@@ -94,7 +111,7 @@ fun GamePlayScaffold(
     val stripItems = playContextItems(gameId, difficulty) + info
     val hintCard: HintCardSlot? = if (hintCardVisible) {
         { maxHeight, expandedMaxHeight, cardModifier ->
-            PlayHintCard(hintMessage, onClose = { hintCardHidden = true }, maxHeight, expandedMaxHeight, cardModifier)
+            PlayHintCard(hintMessage, onClose = { hintCardHidden = true }, maxHeight, expandedMaxHeight, cardModifier.foldChrome(fold))
         }
     } else {
         null
@@ -103,7 +120,9 @@ fun GamePlayScaffold(
     BoxWithConstraints(modifier.fillMaxSize()) {
         val sizeClass = playSizeClass(maxWidth, maxHeight)
         val metrics = playMetrics(sizeClass)
-        val boardSlot: @Composable BoxScope.() -> Unit = { board(sizeClass) }
+        val boardSlot: @Composable BoxScope.() -> Unit = {
+            FinishFold(fold, finishing, rows, cols) { board(sizeClass) }
+        }
         val dockSlot: (@Composable ColumnScope.() -> Unit)? = if (dock != null) {
             { dock(sizeClass) }
         } else {
@@ -114,18 +133,21 @@ fun GamePlayScaffold(
             when (sizeClass) {
                 PlaySizeClass.PhoneLandscape -> PhoneLandscapeLayout(
                     metrics, actions, stripItems, if (wideDock) maxWidth * WIDE_DOCK_FRACTION else phoneLandscapePanelWidth(maxWidth), boardAspectRatio,
-                    reserveHintSpace = hint != null, dragSource = dockRole == DockRole.DragSource, boardSlot, dockSlot, hintCard,
+                    reserveHintSpace = hint != null, dragSource = dockRole == DockRole.DragSource, fold, boardSlot, dockSlot, hintCard,
                 )
                 PlaySizeClass.TabletLandscape -> if (dockRole == DockRole.DragSource) {
-                    TabletDragSourceLayout(metrics, actions, stripItems, boardSlot, dockSlot)
+                    TabletDragSourceLayout(metrics, actions, stripItems, fold, boardSlot, dockSlot)
                 } else {
                     TabletLandscapeLayout(
                         metrics, actions, stripItems, tabletPanelWidth(maxWidth),
-                        reserveHintArea = hint != null, boardSlot, dockSlot, hintCard,
+                        reserveHintArea = hint != null, fold, boardSlot, dockSlot, hintCard,
                     )
                 }
-                else -> UprightLayout(metrics, actions, stripItems, boardAspectRatio, dockAreaHeight, boardSlot, dockSlot, hintCard)
+                else -> UprightLayout(metrics, actions, stripItems, boardAspectRatio, dockAreaHeight, fold, boardSlot, dockSlot, hintCard)
             }
+        }
+        if (finishing != null) {
+            Box(Modifier.fillMaxSize().pointerInput(Unit) { consumeAllPointerEvents() })
         }
         if (rulesOpen) {
             RulesPeekOverlay(
@@ -157,6 +179,14 @@ fun GamePlayScaffold(
     )
 }
 
+private suspend fun PointerInputScope.consumeAllPointerEvents() {
+    awaitPointerEventScope {
+        while (true) {
+            awaitPointerEvent(PointerEventPass.Initial).changes.forEach { it.consume() }
+        }
+    }
+}
+
 @Composable
 private fun UprightLayout(
     metrics: PlayMetrics,
@@ -164,6 +194,7 @@ private fun UprightLayout(
     stripItems: List<InfoItem>,
     boardAspectRatio: Float,
     dockAreaHeight: Dp,
+    fold: FoldState,
     board: @Composable BoxScope.() -> Unit,
     dock: (@Composable ColumnScope.() -> Unit)?,
     hintCard: HintCardSlot?,
@@ -176,7 +207,7 @@ private fun UprightLayout(
         val bodyWidth = (maxWidth - gap * 2).coerceAtLeast(0.dp)
         val boardHeight = uprightBoardHeight(bodyWidth, bottomLimit - headerHeight, boardAspectRatio, 0.dp)
         val boardTop = centeredBoardTop(maxHeight, boardHeight, headerHeight, bottomLimit)
-        Column(Modifier.fillMaxWidth()) {
+        Column(Modifier.fillMaxWidth().foldChrome(fold)) {
             PlayTopBar(metrics, actions)
             InfoStrip(stripItems, metrics)
         }
@@ -187,7 +218,7 @@ private fun UprightLayout(
         )
         if (dock != null) {
             Column(
-                Modifier.align(Alignment.BottomCenter).padding(start = gap, end = gap, bottom = gap).fillMaxWidth().height(dockAreaHeight).clipToBounds(),
+                Modifier.align(Alignment.BottomCenter).padding(start = gap, end = gap, bottom = gap).fillMaxWidth().height(dockAreaHeight).foldDock(fold).clipToBounds(),
                 content = dock,
             )
         }
@@ -210,6 +241,7 @@ private fun PhoneLandscapeLayout(
     boardAspectRatio: Float,
     reserveHintSpace: Boolean,
     dragSource: Boolean,
+    fold: FoldState,
     board: @Composable BoxScope.() -> Unit,
     dock: (@Composable ColumnScope.() -> Unit)?,
     hintCard: HintCardSlot?,
@@ -218,7 +250,7 @@ private fun PhoneLandscapeLayout(
     val hasDock = dock != null
     val hasSideColumn = !hasDock && (stripItems.isNotEmpty() || reserveHintSpace)
     Row(Modifier.fillMaxSize().padding(end = gap)) {
-        PlayRail(metrics, actions)
+        Box(Modifier.foldChrome(fold)) { PlayRail(metrics, actions) }
         BoxWithConstraints(Modifier.weight(1f).fillMaxHeight()) {
             val panelSpace = if (hasDock) panelWidth else 0.dp
             val boardAreaWidth = (maxWidth - panelSpace).coerceAtLeast(0.dp)
@@ -236,8 +268,8 @@ private fun PhoneLandscapeLayout(
             if (hasDock) {
                 val panelStart = if (dragSource) besideBoard else maxWidth - panelSpace
                 Column(Modifier.padding(start = panelStart.coerceAtLeast(0.dp)).width(panelWidth).fillMaxHeight().padding(vertical = gap)) {
-                    InfoStrip(stripItems, metrics, stacked = true)
-                    Column(Modifier.fillMaxWidth().weight(1f).padding(top = gap).clipToBounds(), content = dock)
+                    InfoStrip(stripItems, metrics, Modifier.foldChrome(fold), stacked = true)
+                    Column(Modifier.fillMaxWidth().weight(1f).padding(top = gap).foldDock(fold).clipToBounds(), content = dock)
                 }
                 if (hintCard != null) {
                     val hintEnd = if (boardAreaWidth - besideBoard >= SIDE_HINT_MIN_WIDTH) panelSpace + gap else 0.dp
@@ -246,7 +278,7 @@ private fun PhoneLandscapeLayout(
                 }
             } else if (hasSideColumn) {
                 Column(Modifier.padding(start = besideBoard, top = gap, bottom = gap).fillMaxSize()) {
-                    if (stripItems.isNotEmpty()) InfoStrip(stripItems, metrics, stacked = true)
+                    if (stripItems.isNotEmpty()) InfoStrip(stripItems, metrics, Modifier.foldChrome(fold), stacked = true)
                     if (hintCard != null) {
                         BoxWithConstraints(Modifier.fillMaxWidth().weight(1f).padding(top = if (stripItems.isNotEmpty()) gap else 0.dp)) {
                             hintCard(maxHeight, maxHeight, Modifier)
@@ -263,13 +295,16 @@ private fun TabletDragSourceLayout(
     metrics: PlayMetrics,
     actions: PlayChromeActions,
     stripItems: List<InfoItem>,
+    fold: FoldState,
     board: @Composable BoxScope.() -> Unit,
     dock: (@Composable ColumnScope.() -> Unit)?,
 ) {
     val gap = metrics.contentPadding
     Column(Modifier.fillMaxSize()) {
-        PlayTopBar(metrics, actions)
-        InfoStrip(stripItems, metrics)
+        Column(Modifier.fillMaxWidth().foldChrome(fold)) {
+            PlayTopBar(metrics, actions)
+            InfoStrip(stripItems, metrics)
+        }
         BoxWithConstraints(Modifier.weight(1f).fillMaxWidth().padding(start = gap, end = gap, bottom = gap)) {
             val boardSize = min(maxHeight, maxWidth - TABLET_DRAG_DOCK_WIDTH - gap).coerceAtLeast(0.dp)
             Row(
@@ -279,7 +314,7 @@ private fun TabletDragSourceLayout(
             ) {
                 Box(Modifier.size(boardSize).testTag(PLAY_BOARD_TAG), contentAlignment = Alignment.Center, content = board)
                 if (dock != null) {
-                    Column(Modifier.width(TABLET_DRAG_DOCK_WIDTH).fillMaxHeight().clipToBounds(), content = dock)
+                    Column(Modifier.width(TABLET_DRAG_DOCK_WIDTH).fillMaxHeight().foldDock(fold).clipToBounds(), content = dock)
                 }
             }
         }
@@ -293,13 +328,14 @@ private fun TabletLandscapeLayout(
     stripItems: List<InfoItem>,
     panelWidth: Dp,
     reserveHintArea: Boolean,
+    fold: FoldState,
     board: @Composable BoxScope.() -> Unit,
     dock: (@Composable ColumnScope.() -> Unit)?,
     hintCard: HintCardSlot?,
 ) {
     val gap = metrics.contentPadding
     Column(Modifier.fillMaxSize()) {
-        PlayTopBar(metrics, actions)
+        Box(Modifier.foldChrome(fold)) { PlayTopBar(metrics, actions) }
         Row(
             Modifier.weight(1f).fillMaxWidth().padding(start = gap, end = gap, bottom = gap),
             horizontalArrangement = Arrangement.spacedBy(gap),
@@ -310,7 +346,7 @@ private fun TabletLandscapeLayout(
                 content = board,
             )
             Column(Modifier.width(panelWidth).fillMaxHeight()) {
-                InfoStrip(stripItems, metrics)
+                InfoStrip(stripItems, metrics, Modifier.foldChrome(fold))
                 if (reserveHintArea) {
                     Box(Modifier.fillMaxWidth().height(TABLET_HINT_AREA_HEIGHT).padding(top = 8.dp)) {
                         val cardHeight = TABLET_HINT_AREA_HEIGHT - 8.dp
@@ -318,7 +354,7 @@ private fun TabletLandscapeLayout(
                     }
                 }
                 if (dock != null) {
-                    Column(Modifier.fillMaxWidth().weight(1f).padding(top = 16.dp).clipToBounds(), content = dock)
+                    Column(Modifier.fillMaxWidth().weight(1f).padding(top = 16.dp).foldDock(fold).clipToBounds(), content = dock)
                 }
             }
         }

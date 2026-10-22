@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
@@ -29,6 +30,7 @@ fun AnimalDokuPlayScreen(
         creationCallback = { factory -> factory.create(difficulty, resume, dailyDate) },
     )
     CollectPuzzleResult(viewModel.result, onFinished)
+    val finishing by viewModel.finishing.collectAsState()
 
     val session = viewModel.session
     val haptics = rememberHapticController()
@@ -52,6 +54,9 @@ fun AnimalDokuPlayScreen(
         timer = PlayTimer.Elapsed(viewModel.elapsedSeconds.toInt()),
         onBack = onBack,
         onEndPuzzle = { viewModel.endPuzzle() },
+        finishing = finishing,
+        foldRows = session?.puzzle?.size,
+        foldCols = session?.puzzle?.size,
         difficulty = session?.let { Difficulty.fromKey(it.puzzle.difficulty) },
         info = if (session == null) emptyList() else listOf(heartsInfo(session.lives, ANIMALDOKU_STARTING_LIVES, wrongOpenTrigger)),
         board = {

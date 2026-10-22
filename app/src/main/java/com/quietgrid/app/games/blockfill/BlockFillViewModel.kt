@@ -107,6 +107,7 @@ class BlockFillPlayViewModel @AssistedInject constructor(
     val session get() = controller.session
     val elapsedSeconds get() = controller.elapsedSeconds
     val result = controller.result
+    val finishing = controller.finishing
 
     init {
         controller.start(requestedDifficulty, resume)

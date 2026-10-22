@@ -130,6 +130,7 @@ class StarBattlePlayViewModel @AssistedInject constructor(
     val session get() = controller.session
     val elapsedSeconds get() = controller.elapsedSeconds
     val result = controller.result
+    val finishing = controller.finishing
 
     var lastOpenEvent by mutableStateOf<StarBattleOpenEvent?>(null)
         private set

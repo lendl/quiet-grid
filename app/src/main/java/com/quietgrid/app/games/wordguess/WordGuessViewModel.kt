@@ -157,6 +157,7 @@ class WordGuessPlayViewModel @AssistedInject constructor(
     val session get() = controller.session
     val elapsedSeconds get() = controller.elapsedSeconds
     val result = controller.result
+    val finishing = controller.finishing
 
     var wrongGuessTrigger by mutableStateOf(0)
         private set

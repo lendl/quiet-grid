@@ -1,8 +1,5 @@
 package com.quietgrid.app.ui.screens
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -29,12 +26,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
@@ -261,7 +256,7 @@ fun LossScreen(
         GameId.MINISUDOKU -> miniSudokuDifficultyLabelRes(difficulty)
         else -> chimpDifficultyLabelRes(difficulty)
     }
-    val icon = if (reason == "abandoned") "⏸" else "💥"
+    val abandoned = reason == "abandoned"
     val errorColor = MaterialTheme.colorScheme.error
 
     val highlight = remember { CompletionExtras.consume() }
@@ -269,14 +264,7 @@ fun LossScreen(
     val revealWordList = (highlight as? CompletionHighlight.RevealWordList)?.words?.takeIf { it.isNotEmpty() }
     val analyzerSnapshot = rememberSaveable { mutableStateOf(AnalyzerHandoff.consume()) }.value
 
-    val pageOpacity = remember { Animatable(0f) }
-    val contentOffsetY = remember { Animatable(24f) }
-    LaunchedEffect(Unit) {
-        pageOpacity.animateTo(1f, animationSpec = tween(220))
-    }
-    LaunchedEffect(Unit) {
-        contentOffsetY.animateTo(0f, animationSpec = tween(320, easing = FastOutSlowInEasing))
-    }
+    val entrance = rememberResultEntrance()
 
     val links = if (dailyDate != null) {
         dailyResultLinks(hasNextDaily, onShareDaily, onBackToDaily, onTryAnotherGame)
@@ -307,11 +295,17 @@ fun LossScreen(
 
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val sideways = isSidewaysPhoneResult(maxWidth, maxHeight)
+        val medallionSize = if (sideways) 72.dp else 96.dp
+        val lossFigure: @Composable (Boolean) -> Unit = { shared ->
+            ResultMedallion(gameId, errorColor, medallionSize, shared = shared) {
+                LossGlyph(abandoned, errorColor, Modifier.size(medallionSize * GLYPH_SIZE_FRACTION))
+            }
+        }
         Column(Modifier.fillMaxSize().padding(16.dp)) {
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .graphicsLayer { alpha = pageOpacity.value },
+                    .badgesFadeIn(entrance),
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -336,12 +330,7 @@ fun LossScreen(
 
             Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
                 Column(
-                    Modifier
-                        .graphicsLayer {
-                            alpha = pageOpacity.value
-                            translationY = contentOffsetY.value
-                        }
-                        .verticalScroll(rememberScrollState()),
+                    Modifier.verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     if (sideways) {
@@ -350,64 +339,73 @@ fun LossScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(20.dp),
                         ) {
-                            ResultMedallion(gameId, icon, errorColor, size = 72.dp, symbolSize = 30.sp)
+                            Box(Modifier.heroSlot(entrance)) { lossFigure(true) }
                             Column {
-                                Text(stringResource(titleRes), style = MaterialTheme.typography.headlineSmall)
+                                Text(stringResource(titleRes), style = MaterialTheme.typography.headlineSmall, modifier = Modifier.riseIn(entrance, 0))
                                 Text(
                                     stringResource(bodyRes),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.padding(top = 2.dp),
+                                    modifier = Modifier.padding(top = 2.dp).riseIn(entrance, 1),
                                 )
-                                LossReveals(revealWord, revealWordList, centered = false)
+                                Column(Modifier.riseIn(entrance, 2)) {
+                                    LossReveals(revealWord, revealWordList, centered = false)
+                                }
                             }
                         }
 
                         Row(
-                            Modifier.padding(top = 22.dp),
+                            Modifier.padding(top = 22.dp).riseIn(entrance, 3),
                             horizontalArrangement = Arrangement.spacedBy(18.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             LossMetaItems(gameId, difficultyLabelRes, elapsedSeconds, score, bestTile)
                         }
 
-                        CompactResultActions(links, Modifier.padding(top = 22.dp), primaryAction)
+                        CompactResultActions(links, Modifier.padding(top = 22.dp).riseIn(entrance, 4), primaryAction)
                         if (walkThrough != null) {
-                            TextButton(onClick = walkThrough, modifier = Modifier.padding(top = 4.dp)) {
+                            TextButton(onClick = walkThrough, modifier = Modifier.padding(top = 4.dp).riseIn(entrance, 5)) {
                                 Text(stringResource(R.string.walk_through_solve))
                             }
                         }
                     } else {
-                        ResultMedallion(gameId, icon, errorColor, size = 96.dp, symbolSize = 40.sp)
+                        Box(Modifier.heroSlot(entrance)) { lossFigure(true) }
 
-                        Text(stringResource(titleRes), style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center, modifier = Modifier.padding(top = 12.dp))
+                        Text(
+                            stringResource(titleRes),
+                            style = MaterialTheme.typography.headlineSmall,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(top = 12.dp).riseIn(entrance, 0),
+                        )
                         Text(
                             stringResource(bodyRes),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(top = 6.dp),
+                            modifier = Modifier.padding(top = 6.dp).riseIn(entrance, 1),
                         )
-                        LossReveals(revealWord, revealWordList, centered = true)
+                        Column(Modifier.riseIn(entrance, 2), horizontalAlignment = Alignment.CenterHorizontally) {
+                            LossReveals(revealWord, revealWordList, centered = true)
+                        }
 
                         Row(
-                            Modifier.padding(top = 20.dp),
+                            Modifier.padding(top = 20.dp).riseIn(entrance, 3),
                             horizontalArrangement = Arrangement.spacedBy(18.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             LossMetaItems(gameId, difficultyLabelRes, elapsedSeconds, score, bestTile)
                         }
 
-                        Box(Modifier.padding(top = 24.dp)) { primaryAction() }
+                        Box(Modifier.padding(top = 24.dp).riseIn(entrance, 4)) { primaryAction() }
 
                         if (walkThrough != null) {
-                            TextButton(onClick = walkThrough, modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
+                            TextButton(onClick = walkThrough, modifier = Modifier.fillMaxWidth().padding(top = 8.dp).riseIn(entrance, 5)) {
                                 Text(stringResource(R.string.walk_through_solve))
                             }
                         }
 
                         Row(
-                            Modifier.fillMaxWidth().padding(top = 8.dp),
+                            Modifier.fillMaxWidth().padding(top = 8.dp).riseIn(entrance, 6),
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
@@ -417,8 +415,11 @@ fun LossScreen(
                 }
             }
         }
+        ResultHeroFlight(entrance) { lossFigure(false) }
     }
 }
+
+private const val GLYPH_SIZE_FRACTION = 0.42f
 
 private val SCORE_ON_LOSS_TRACKED_GAMES = setOf(GameId.GAME_2048)
 

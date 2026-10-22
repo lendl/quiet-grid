@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +38,7 @@ fun SudokuPlayScreen(
         creationCallback = { factory -> factory.create(difficulty, resume, dailyDate, variant) },
     )
     CollectPuzzleResult(viewModel.result, onFinished)
+    val finishing by viewModel.finishing.collectAsState()
 
     val session = viewModel.session
 
@@ -69,6 +71,9 @@ fun SudokuPlayScreen(
             onClick = { viewModel.toggleNextMoveHint() },
         ),
         hintMessage = if (hintActive) sudokuHintMessage(hint) else null,
+        finishing = finishing,
+        foldRows = session?.board?.size,
+        foldCols = session?.board?.firstOrNull()?.size,
         dockHeight = ::sudokuDockHeight,
         dock = { sizeClass ->
             if (session != null) {

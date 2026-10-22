@@ -16,6 +16,7 @@ Read this before building or changing any `games/<id>/*PlayScreen.kt`. If a game
   - `boardAspectRatio` (width / height, default `1f`) and `dockHeight` (default `0.dp`) when the defaults don't fit.
   - `wideDock = true` when the dock needs width sideways (keyboards, long text panels), and `dockRole = DockRole.DragSource` when the player drags pieces out of it.
   - `phonePortraitOnly = true` for games with an on-screen keyboard: phones (smallest width under 600dp) stay upright while the game is open, and tablets still rotate. The previous orientation comes back when the player leaves.
+  - `finishing` (the ViewModel's `finishing` flow, collected as state) so the board folds into its center when the puzzle ends and the result medallion grows out of that spot. Add `foldRows` and `foldCols` with the grid size when the board is a grid; other boards fold as a default grid. Challenger and Endless runs leave it out.
 - `onEndPuzzle` is called after the player confirms the scaffold's End puzzle dialog.
 - Challenger and Endless variants use the same scaffold. Their hearts, tier or best score go in `info`, and their countdown goes in `timer`.
 - Reuse the shared pieces before writing your own: `heartsInfo(...)` for lives, `puzzleLanguageInfo(...)` for the puzzle language flag, `PlaySegmentedButtons` for two-way mode switches, `PlayHintAction(enabled = ...)` when the hint is temporarily unavailable.

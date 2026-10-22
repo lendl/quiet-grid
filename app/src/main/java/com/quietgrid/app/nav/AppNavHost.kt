@@ -10,12 +10,14 @@ import com.quietgrid.app.core.daily.shareDailyResult
 import java.time.LocalDate
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -143,6 +145,9 @@ import com.quietgrid.app.ui.play.LocalPlayContext
 import com.quietgrid.app.ui.play.PlayContext
 import com.quietgrid.app.ui.screens.HowToPlayScreen
 import java.util.UUID
+
+private const val FOLD_TAIL_MS = 300
+private val RESULT_ROUTES = setOf(Routes.COMPLETION, Routes.LOSS)
 
 val LocalSharedTransitionScope = compositionLocalOf<SharedTransitionScope?> { null }
 val LocalAnimatedVisibilityScope = compositionLocalOf<AnimatedVisibilityScope?> { null }
@@ -559,7 +564,13 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                     navArgument("daily") { type = NavType.StringType; nullable = true; defaultValue = null },
                 ),
                 enterTransition = { fadeIn(animationSpec = tween(250)) },
-                exitTransition = { fadeOut(animationSpec = tween(200)) },
+                exitTransition = {
+                    if (targetState.destination.route in RESULT_ROUTES) {
+                        fadeOut(animationSpec = snap(delayMillis = FOLD_TAIL_MS))
+                    } else {
+                        fadeOut(animationSpec = tween(200))
+                    }
+                },
             ) { entry ->
                 CompositionLocalProvider(
                     LocalSharedTransitionScope provides this@SharedTransitionLayout,
@@ -882,7 +893,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                     navArgument("bestTile") { type = NavType.IntType },
                     navArgument("daily") { type = NavType.StringType; nullable = true; defaultValue = null },
                 ),
-                enterTransition = { fadeIn(animationSpec = tween(250)) },
+                enterTransition = { EnterTransition.None },
                 exitTransition = { fadeOut(animationSpec = tween(200)) },
             ) { entry ->
                 CompositionLocalProvider(
@@ -944,7 +955,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                     navArgument("bestTile") { type = NavType.IntType },
                     navArgument("daily") { type = NavType.StringType; nullable = true; defaultValue = null },
                 ),
-                enterTransition = { fadeIn(animationSpec = tween(250)) },
+                enterTransition = { EnterTransition.None },
                 exitTransition = { fadeOut(animationSpec = tween(200)) },
             ) { entry ->
                 CompositionLocalProvider(

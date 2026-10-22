@@ -169,6 +169,7 @@ class WordSearchPlayViewModel @AssistedInject constructor(
     val session get() = controller.session
     val elapsedSeconds get() = controller.elapsedSeconds
     val result = controller.result
+    val finishing = controller.finishing
 
     var nextMoveHint by mutableStateOf<WSNextMoveHint?>(null)
         private set

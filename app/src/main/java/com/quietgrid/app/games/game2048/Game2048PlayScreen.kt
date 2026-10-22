@@ -2,6 +2,8 @@ package com.quietgrid.app.games.game2048
 
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
@@ -34,6 +36,7 @@ fun Game2048PlayScreen(
         creationCallback = { factory -> factory.create(difficulty, resume) },
     )
     CollectPuzzleResult(viewModel.result, onFinished)
+    val finishing by viewModel.finishing.collectAsState()
 
     val session = viewModel.session
     val haptics = rememberHapticController()
@@ -45,6 +48,7 @@ fun Game2048PlayScreen(
         timer = PlayTimer.Elapsed(viewModel.elapsedSeconds.toInt()),
         onBack = onBack,
         onEndPuzzle = { viewModel.endPuzzle() },
+        finishing = finishing,
         modifier = Modifier.pointerInput(Unit) {
             var totalDrag = Offset.Zero
             detectDragGestures(

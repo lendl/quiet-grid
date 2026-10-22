@@ -584,6 +584,71 @@ class PuzzleSessionControllerTest {
     }
 
     @Test
+    fun `finishAsWin announces a win at once and emits the result after the fold handoff`() = runTest {
+        val controller = PuzzleSessionController(
+            backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
+            animationsEnabled = { true },
+        )
+        controller.start(Difficulty.EASY, resume = false)
+        runCurrent()
+
+        var emitted: TestResult? = null
+        val collectJob = launch { controller.result.collect { emitted = it } }
+
+        controller.finishAsWin()
+        assertEquals(FinishKind.Win, controller.finishing.value)
+        advanceTimeBy(1_499)
+        runCurrent()
+        assertNull(emitted)
+
+        advanceTimeBy(2)
+        runCurrent()
+        assertEquals(true, emitted?.solved)
+        collectJob.cancel()
+    }
+
+    @Test
+    fun `endPuzzle announces an abandoned finish and a rule failure announces a loss`() = runTest {
+        val abandoned = PuzzleSessionController(
+            backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
+            animationsEnabled = { true },
+        )
+        val failed = PuzzleSessionController(
+            backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
+            animationsEnabled = { true },
+        )
+        abandoned.start(Difficulty.EASY, resume = false)
+        failed.start(Difficulty.EASY, resume = false)
+        runCurrent()
+
+        assertNull(abandoned.finishing.value)
+        abandoned.endPuzzle()
+        failed.finishAsLoss("rule_failure")
+
+        assertEquals(FinishKind.Abandoned, abandoned.finishing.value)
+        assertEquals(FinishKind.Loss, failed.finishing.value)
+    }
+
+    @Test
+    fun `disabled system animations emit the result without the fold delay`() = runTest {
+        val controller = PuzzleSessionController(
+            backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
+            animationsEnabled = { false },
+        )
+        controller.start(Difficulty.EASY, resume = false)
+        runCurrent()
+
+        var emitted: TestResult? = null
+        val collectJob = launch { controller.result.collect { emitted = it } }
+
+        controller.endPuzzle()
+        runCurrent()
+
+        assertEquals("abandoned", emitted?.lossReason)
+        collectJob.cancel()
+    }
+
+    @Test
     fun `finishAsWin does not append a play record for a beta game`() = runTest {
         val historyStore = FakeHistoryStore()
         val statsStore = FakeStatsStore()

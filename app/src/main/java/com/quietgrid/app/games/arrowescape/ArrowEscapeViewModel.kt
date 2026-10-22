@@ -129,6 +129,7 @@ class ArrowEscapePlayViewModel @AssistedInject constructor(
     val session get() = controller.session
     val elapsedSeconds get() = controller.elapsedSeconds
     val result = controller.result
+    val finishing = controller.finishing
 
     var lastTapEvent by mutableStateOf<ArrowEscapeTapEvent?>(null)
         private set
