@@ -164,6 +164,31 @@ class GamePlayScaffoldTest {
         assertEquals(strip.left.value, hint.left.value, 1f)
     }
 
+    private fun assertBoardRatio(expected: Float, tolerance: Float) {
+        composeRule.setContent {
+            MaterialTheme {
+                GamePlayScaffold(
+                    gameId = GameId.MINESWEEPER,
+                    timer = null,
+                    onBack = {},
+                    onEndPuzzle = {},
+                    boardAspectRatioFor = { if (it.isUpright) 0.75f else 1.6f },
+                    board = { Box(Modifier.fillMaxSize()) },
+                )
+            }
+        }
+        val board = composeRule.onNodeWithTag(PLAY_BOARD_TAG).getBoundsInRoot()
+        assertEquals(expected, (board.right - board.left).value / (board.bottom - board.top).value, tolerance)
+    }
+
+    @Test
+    @Config(qualifiers = "w390dp-h844dp-port")
+    fun `ratio per size class shapes an upright board`() = assertBoardRatio(0.75f, 0.01f)
+
+    @Test
+    @Config(qualifiers = "w844dp-h390dp-land")
+    fun `ratio per size class shapes a sideways board`() = assertBoardRatio(1.6f, 0.02f)
+
     @Test
     @Config(qualifiers = "w390dp-h844dp-port")
     fun `board without a dock sits in the middle of the page`() {

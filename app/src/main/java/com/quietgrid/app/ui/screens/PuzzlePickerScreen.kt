@@ -217,9 +217,10 @@ fun PuzzlePickerScreen(
                 requestStartDifficulty,
                 requestStartChallenger,
                 requestStartEndless,
+                endlessModeCopyFor(gameId, settings?.betaGamesEnabled == true),
             )
             GamePageTab.RULES -> HowToPlayScreen(gameId)
-            GamePageTab.STATS -> GameStatsTab(gameId)
+            GamePageTab.STATS -> GameStatsTab(gameId, endlessModeCopyFor(gameId, settings?.betaGamesEnabled == true))
             GamePageTab.SETTINGS -> GameSettingsTab(gameId)
         }
     }
@@ -233,6 +234,7 @@ private fun GamePlayPickerTab(
     requestStartDifficulty: (Difficulty) -> Unit,
     requestStartChallenger: () -> Unit,
     requestStartEndless: () -> Unit,
+    endlessCopy: EndlessModeCopy?,
 ) {
     Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(16.dp)) {
         Column {
@@ -324,15 +326,15 @@ private fun GamePlayPickerTab(
             if (challengerLabelRes != null && challengerDescriptionRes != null) {
                 PickerModeRow(stringResource(challengerLabelRes), stringResource(challengerDescriptionRes), detail = null, onClick = requestStartChallenger)
             }
-            if (gameId == GameId.BLOCKFILL) {
+            if (endlessCopy != null) {
                 val repositories: RepositoriesViewModel = hiltViewModel()
                 val endlessStats by remember(repositories, gameId) { repositories.statsRepository.endlessStatsFor(gameId) }
                     .collectAsState(initial = null)
                 val bestScore = endlessStats?.bestScore ?: 0
                 PickerModeRow(
-                    stringResource(R.string.blockfill_endless_label),
-                    stringResource(R.string.blockfill_endless_description),
-                    detail = if (bestScore > 0) stringResource(R.string.blockfill_endless_best_value, bestScore) else null,
+                    stringResource(endlessCopy.label),
+                    stringResource(endlessCopy.description),
+                    detail = if (bestScore > 0) stringResource(endlessCopy.bestValue, bestScore) else null,
                     onClick = requestStartEndless,
                 )
             }
@@ -400,7 +402,7 @@ private fun PickerModeRow(label: String, description: String, detail: String?, o
 }
 
 @Composable
-private fun GameStatsTab(gameId: GameId) {
+private fun GameStatsTab(gameId: GameId, endlessCopy: EndlessModeCopy?) {
     val repositories: RepositoriesViewModel = hiltViewModel()
     val stats by remember(repositories, gameId) { repositories.statsRepository.statsFor(gameId) }.collectAsState(initial = null)
     val currentStats = stats ?: return
@@ -475,23 +477,26 @@ private fun GameStatsTab(gameId: GameId) {
                 }
             }
         }
-        if (gameId == GameId.BLOCKFILL) {
+        if (endlessCopy != null) {
             val endlessStats by remember(repositories, gameId) { repositories.statsRepository.endlessStatsFor(gameId) }
                 .collectAsState(initial = null)
             endlessStats?.let { current ->
                 HorizontalDivider(Modifier.padding(top = 20.dp))
                 Text(
-                    stringResource(R.string.blockfill_endless_stats_title),
+                    stringResource(endlessCopy.statsTitle),
                     style = MaterialTheme.typography.titleSmall,
                     modifier = Modifier.padding(top = 20.dp, bottom = 4.dp),
                 )
+                val bestLevelText = when {
+                    endlessCopy.bestLevelFormat != null ->
+                        if (current.bestLevel > 0) stringResource(endlessCopy.bestLevelFormat, current.bestLevel) else "-"
+                    current.bestScore > 0 -> current.bestLevel.toString()
+                    else -> "-"
+                }
                 StatGroup(
                     listOf(
-                        StatItem(stringResource(R.string.blockfill_endless_stats_best_score), current.bestScore.toString()),
-                        StatItem(
-                            stringResource(R.string.blockfill_endless_stats_best_level),
-                            if (current.bestLevel > 0) stringResource(R.string.blockfill_multiplier_value, current.bestLevel) else "-",
-                        ),
+                        StatItem(stringResource(endlessCopy.statsBestScore), current.bestScore.toString()),
+                        StatItem(stringResource(endlessCopy.statsBestLevel), bestLevelText),
                     ),
                 )
             }

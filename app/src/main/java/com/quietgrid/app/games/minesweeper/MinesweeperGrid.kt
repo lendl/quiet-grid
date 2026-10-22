@@ -24,6 +24,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.lerp
@@ -143,55 +144,67 @@ fun MinesweeperGrid(
 @Composable
 internal fun MinesweeperFlagGlyph(poleColor: Color, bannerColor: Color) {
     Canvas(Modifier.fillMaxSize().padding(3.dp)) {
-        val u = size.minDimension / 24f
-        drawRoundRect(
-            color = poleColor,
-            topLeft = Offset(6.2f * u, 3f * u),
-            size = Size(1.8f * u, 17f * u),
-            cornerRadius = CornerRadius(0.9f * u),
-        )
-        val banner = Path().apply {
-            moveTo(8f * u, 4f * u)
-            lineTo(19.6f * u, 4f * u)
-            lineTo(16.7f * u, 8.5f * u)
-            lineTo(19.6f * u, 13f * u)
-            lineTo(8f * u, 13f * u)
-            close()
-        }
-        drawPath(banner, color = bannerColor)
-        drawCircle(color = poleColor, radius = 1.7f * u, center = Offset(7.1f * u, 20.6f * u))
+        drawMinesweeperFlag(Offset.Zero, size, poleColor, bannerColor)
     }
 }
 
 @Composable
 private fun MinesweeperMineGlyph(bodyColor: Color, fuseColor: Color) {
     Canvas(Modifier.fillMaxSize().padding(3.dp)) {
-        val u = size.minDimension / 24f
-        drawCircle(color = bodyColor, radius = 7f * u, center = Offset(10f * u, 14.5f * u))
-        rotate(degrees = 45f, pivot = Offset(15f * u, 9.2f * u)) {
-            drawRoundRect(
-                color = bodyColor,
-                topLeft = Offset(12.5f * u, 7.8f * u),
-                size = Size(5f * u, 2.8f * u),
-                cornerRadius = CornerRadius(0.9f * u),
-            )
-        }
-        val fuse = Path().apply {
-            moveTo(16.2f * u, 8f * u)
-            quadraticTo(18.4f * u, 4.4f * u, 20.6f * u, 6f * u)
-        }
-        drawPath(fuse, color = fuseColor, style = Stroke(width = 1.5f * u, cap = StrokeCap.Round))
-        val spark = Path().apply {
-            moveTo(21f * u, 3f * u)
-            lineTo(21.7f * u, 4.5f * u)
-            lineTo(23.2f * u, 5.2f * u)
-            lineTo(21.7f * u, 5.9f * u)
-            lineTo(21f * u, 7.4f * u)
-            lineTo(20.3f * u, 5.9f * u)
-            lineTo(18.8f * u, 5.2f * u)
-            lineTo(20.3f * u, 4.5f * u)
-            close()
-        }
-        drawPath(spark, color = SPARK_COLOR)
+        drawMinesweeperMine(Offset.Zero, size, bodyColor, fuseColor)
     }
+}
+
+internal fun DrawScope.drawMinesweeperFlag(topLeft: Offset, size: Size, poleColor: Color, bannerColor: Color) {
+    val u = size.minDimension / 24f
+    fun at(x: Float, y: Float) = Offset(topLeft.x + x * u, topLeft.y + y * u)
+    drawRoundRect(
+        color = poleColor,
+        topLeft = at(6.2f, 3f),
+        size = Size(1.8f * u, 17f * u),
+        cornerRadius = CornerRadius(0.9f * u),
+    )
+    val banner = Path().apply {
+        at(8f, 4f).let { moveTo(it.x, it.y) }
+        at(19.6f, 4f).let { lineTo(it.x, it.y) }
+        at(16.7f, 8.5f).let { lineTo(it.x, it.y) }
+        at(19.6f, 13f).let { lineTo(it.x, it.y) }
+        at(8f, 13f).let { lineTo(it.x, it.y) }
+        close()
+    }
+    drawPath(banner, color = bannerColor)
+    drawCircle(color = poleColor, radius = 1.7f * u, center = at(7.1f, 20.6f))
+}
+
+internal fun DrawScope.drawMinesweeperMine(topLeft: Offset, size: Size, bodyColor: Color, fuseColor: Color) {
+    val u = size.minDimension / 24f
+    fun at(x: Float, y: Float) = Offset(topLeft.x + x * u, topLeft.y + y * u)
+    drawCircle(color = bodyColor, radius = 7f * u, center = at(10f, 14.5f))
+    rotate(degrees = 45f, pivot = at(15f, 9.2f)) {
+        drawRoundRect(
+            color = bodyColor,
+            topLeft = at(12.5f, 7.8f),
+            size = Size(5f * u, 2.8f * u),
+            cornerRadius = CornerRadius(0.9f * u),
+        )
+    }
+    val fuse = Path().apply {
+        at(16.2f, 8f).let { moveTo(it.x, it.y) }
+        val control = at(18.4f, 4.4f)
+        val end = at(20.6f, 6f)
+        quadraticTo(control.x, control.y, end.x, end.y)
+    }
+    drawPath(fuse, color = fuseColor, style = Stroke(width = 1.5f * u, cap = StrokeCap.Round))
+    val spark = Path().apply {
+        at(21f, 3f).let { moveTo(it.x, it.y) }
+        at(21.7f, 4.5f).let { lineTo(it.x, it.y) }
+        at(23.2f, 5.2f).let { lineTo(it.x, it.y) }
+        at(21.7f, 5.9f).let { lineTo(it.x, it.y) }
+        at(21f, 7.4f).let { lineTo(it.x, it.y) }
+        at(20.3f, 5.9f).let { lineTo(it.x, it.y) }
+        at(18.8f, 5.2f).let { lineTo(it.x, it.y) }
+        at(20.3f, 4.5f).let { lineTo(it.x, it.y) }
+        close()
+    }
+    drawPath(spark, color = SPARK_COLOR)
 }

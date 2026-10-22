@@ -79,6 +79,10 @@ import com.quietgrid.app.games.hashi.HashiPlayScreen
 import com.quietgrid.app.games.blockfill.BLOCKFILL_ENDLESS_REASON_STUCK
 import com.quietgrid.app.games.blockfill.BlockFillEndlessPlayScreen
 import com.quietgrid.app.games.blockfill.BlockFillEndlessResult
+import com.quietgrid.app.games.minesweeper.MINESWEEPER_ENDLESS_REASON_ENDED
+import com.quietgrid.app.games.minesweeper.MinesweeperEndlessPlayScreen
+import com.quietgrid.app.games.minesweeper.MinesweeperEndlessResult
+import com.quietgrid.app.games.minesweeper.MinesweeperEndlessResultScreen
 import com.quietgrid.app.games.blockfill.BlockFillEndlessResultScreen
 import com.quietgrid.app.games.blockfill.BlockFillPlayScreen
 import com.quietgrid.app.games.chimptest.ChimpTestPlayScreen
@@ -300,7 +304,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                 )
                 currentRoute == Routes.COMPLETION || currentRoute == Routes.LOSS -> Unit
                 currentRoute == Routes.CHALLENGER || currentRoute == Routes.CHALLENGER_RESULT -> Unit
-                currentRoute == Routes.ENDLESS || currentRoute == Routes.ENDLESS_RESULT -> Unit
+                currentRoute == Routes.ENDLESS || currentRoute == Routes.ENDLESS_RESULT || currentRoute == Routes.MINESWEEPER_ENDLESS_RESULT -> Unit
                 currentRoute == Routes.SUPPORT_INFO -> {
                     val infoKey = backStackEntry?.arguments?.getString("key")
                     val infoTitleRes = infoKey?.let { supportInfoTitleRes(it) }
@@ -1086,12 +1090,56 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                 exitTransition = { fadeOut(animationSpec = tween(200)) },
             ) { entry ->
                 if (settings.keepScreenOnInPlay) Box(Modifier.keepScreenOn())
-                BlockFillEndlessPlayScreen(
-                    resume = entry.arguments?.getBoolean("resume") ?: false,
-                    onBack = { navController.popBackStack() },
-                    onFinished = { result ->
-                        navController.navigate(Routes.endlessResult(result)) { popUpTo(Routes.TABS) { inclusive = false } }
+                val endlessResume = entry.arguments?.getBoolean("resume") ?: false
+                if (entry.arguments?.getString("gameId") == GameId.MINESWEEPER.key) {
+                    MinesweeperEndlessPlayScreen(
+                        resume = endlessResume,
+                        onBack = { navController.popBackStack() },
+                        onFinished = { result ->
+                            navController.navigate(Routes.minesweeperEndlessResult(result)) { popUpTo(Routes.TABS) { inclusive = false } }
+                        },
+                    )
+                } else {
+                    BlockFillEndlessPlayScreen(
+                        resume = endlessResume,
+                        onBack = { navController.popBackStack() },
+                        onFinished = { result ->
+                            navController.navigate(Routes.endlessResult(result)) { popUpTo(Routes.TABS) { inclusive = false } }
+                        },
+                    )
+                }
+            }
+
+            composable(
+                Routes.MINESWEEPER_ENDLESS_RESULT,
+                arguments = listOf(
+                    navArgument("score") { type = NavType.IntType },
+                    navArgument("ring") { type = NavType.IntType },
+                    navArgument("elapsedSeconds") { type = NavType.IntType },
+                    navArgument("isNewBest") { type = NavType.BoolType },
+                    navArgument("previousBest") { type = NavType.IntType },
+                    navArgument("reason") { type = NavType.StringType },
+                ),
+                enterTransition = { fadeIn(animationSpec = tween(250)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) },
+            ) { entry ->
+                val args = entry.arguments
+                MinesweeperEndlessResultScreen(
+                    result = MinesweeperEndlessResult(
+                        score = args?.getInt("score") ?: 0,
+                        ring = args?.getInt("ring") ?: 0,
+                        elapsedSeconds = args?.getInt("elapsedSeconds") ?: 0,
+                        isNewBest = args?.getBoolean("isNewBest") ?: false,
+                        previousBest = args?.getInt("previousBest") ?: 0,
+                        reason = args?.getString("reason") ?: MINESWEEPER_ENDLESS_REASON_ENDED,
+                    ),
+                    onPlayAgain = {
+                        navController.navigate(Routes.endless(GameId.MINESWEEPER, resume = false)) { popUpTo(Routes.TABS) { inclusive = false } }
                     },
+                    onBack = {
+                        navController.navigate(Routes.picker(GameId.MINESWEEPER)) { popUpTo(Routes.TABS) { inclusive = false } }
+                    },
+                    onTryAnotherGame = { endMixAndGoToGames() },
                 )
             }
 

@@ -5,6 +5,7 @@ import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.ActiveSessionSummary
 import com.quietgrid.app.data.SESSION_MODE_ENDLESS
 import com.quietgrid.app.games.blockfill.BlockFillEndlessResult
+import com.quietgrid.app.games.minesweeper.MinesweeperEndlessResult
 import java.time.LocalDate
 
 object Routes {
@@ -27,6 +28,7 @@ object Routes {
     const val ADD_TO_NEW_MIX = "addToNewMix/{gameId}/{difficulty}"
     const val ENDLESS = "endless/{gameId}/{resume}"
     const val ENDLESS_RESULT = "endlessResult/{score}/{level}/{lines}/{moves}/{isNewBest}/{previousBest}/{reason}"
+    const val MINESWEEPER_ENDLESS_RESULT = "minesweeperEndlessResult/{score}/{ring}/{elapsedSeconds}/{isNewBest}/{previousBest}/{reason}"
 
     fun picker(gameId: GameId) = "picker/${gameId.key}"
 
@@ -47,6 +49,10 @@ object Routes {
 
     fun endlessResult(result: BlockFillEndlessResult) =
         "endlessResult/${result.score}/${result.levelReached}/${result.linesCleared}/${result.moves}/" +
+            "${result.isNewBest}/${result.previousBest}/${result.reason}"
+
+    fun minesweeperEndlessResult(result: MinesweeperEndlessResult) =
+        "minesweeperEndlessResult/${result.score}/${result.ring}/${result.elapsedSeconds}/" +
             "${result.isNewBest}/${result.previousBest}/${result.reason}"
 
     fun challengerResult(

@@ -63,6 +63,7 @@ fun GamePlayScaffold(
     hintMessage: PlayHintMessage? = null,
     info: List<InfoItem> = emptyList(),
     boardAspectRatio: Float = 1f,
+    boardAspectRatioFor: ((PlaySizeClass) -> Float)? = null,
     wideDock: Boolean = false,
     phonePortraitOnly: Boolean = false,
     dockRole: DockRole = DockRole.Controls,
@@ -120,6 +121,7 @@ fun GamePlayScaffold(
     BoxWithConstraints(modifier.fillMaxSize()) {
         val sizeClass = playSizeClass(maxWidth, maxHeight)
         val metrics = playMetrics(sizeClass)
+        val ratio = boardAspectRatioFor?.invoke(sizeClass) ?: boardAspectRatio
         val boardSlot: @Composable BoxScope.() -> Unit = {
             FinishFold(fold, finishing, rows, cols) { board(sizeClass) }
         }
@@ -132,7 +134,7 @@ fun GamePlayScaffold(
         CompositionLocalProvider(LocalPlayMetrics provides metrics) {
             when (sizeClass) {
                 PlaySizeClass.PhoneLandscape -> PhoneLandscapeLayout(
-                    metrics, actions, stripItems, if (wideDock) maxWidth * WIDE_DOCK_FRACTION else phoneLandscapePanelWidth(maxWidth), boardAspectRatio,
+                    metrics, actions, stripItems, if (wideDock) maxWidth * WIDE_DOCK_FRACTION else phoneLandscapePanelWidth(maxWidth), ratio,
                     reserveHintSpace = hint != null, dragSource = dockRole == DockRole.DragSource, fold, boardSlot, dockSlot, hintCard,
                 )
                 PlaySizeClass.TabletLandscape -> if (dockRole == DockRole.DragSource) {
@@ -143,7 +145,7 @@ fun GamePlayScaffold(
                         reserveHintArea = hint != null, fold, boardSlot, dockSlot, hintCard,
                     )
                 }
-                else -> UprightLayout(metrics, actions, stripItems, boardAspectRatio, dockAreaHeight, fold, boardSlot, dockSlot, hintCard)
+                else -> UprightLayout(metrics, actions, stripItems, ratio, dockAreaHeight, fold, boardSlot, dockSlot, hintCard)
             }
         }
         if (finishing != null) {

@@ -136,6 +136,17 @@ fun main(args: Array<String>) {
         return
     }
 
+    if (args.getOrNull(0) == "minesweeper-endless-bench") {
+        val report = com.quietgrid.cli.minesweeper.runMinesweeperEndlessBench(
+            sections = optionalFlag(args, "--sections", "100000").toInt(),
+            runLength = optionalFlag(args, "--run-length", "80").toInt(),
+            threads = optionalFlag(args, "--threads", "${Runtime.getRuntime().availableProcessors()}").toInt(),
+            seed = optionalFlag(args, "--seed", "1").toLong(),
+        )
+        print(com.quietgrid.cli.minesweeper.formatEndlessBenchReport(report))
+        return
+    }
+
     val command = parseArgs(args)
     val difficulty = parseDifficulty(command.difficulty)
 

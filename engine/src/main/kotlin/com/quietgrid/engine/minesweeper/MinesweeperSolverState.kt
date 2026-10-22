@@ -11,10 +11,20 @@ internal class MinesweeperSolverState(val rows: Int, val cols: Int, val totalMin
         private set
     var mineCount = 0
         private set
-    val unknownCount get() = size - openCount - mineCount
+    var lockedCount = 0
+        private set
+    val unknownCount get() = size - openCount - mineCount - lockedCount
 
     fun isUnknown(cell: Int) = status[cell] == UNKNOWN
     fun isOpen(cell: Int) = status[cell] == OPEN
+    fun isMine(cell: Int) = status[cell] == MINE
+    fun isSafeLocked(cell: Int) = status[cell] == SAFE_LOCKED
+
+    fun markSafeLocked(cell: Int) {
+        if (status[cell] != UNKNOWN) return
+        status[cell] = SAFE_LOCKED
+        lockedCount++
+    }
 
     fun open(cell: Int, number: Int) {
         if (status[cell] != UNKNOWN) return
@@ -48,5 +58,6 @@ internal class MinesweeperSolverState(val rows: Int, val cols: Int, val totalMin
         const val UNKNOWN = 0
         const val OPEN = 1
         const val MINE = 2
+        const val SAFE_LOCKED = 3
     }
 }

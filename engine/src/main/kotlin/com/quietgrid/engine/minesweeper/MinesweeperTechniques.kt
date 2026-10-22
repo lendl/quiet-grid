@@ -1,9 +1,20 @@
 package com.quietgrid.engine.minesweeper
 
-internal fun nextMinesweeperDeductions(state: MinesweeperSolverState): List<MinesweeperDeduction> =
-    clueCountDeductions(state)
-        .ifEmpty { cluePairDeductions(state) }
-        .ifEmpty { listOfNotNull(mineCountDeduction(state)) }
+internal fun nextMinesweeperDeductions(
+    state: MinesweeperSolverState,
+    techniques: Set<MinesweeperTechnique> = MinesweeperTechnique.entries.toSet(),
+): List<MinesweeperDeduction> {
+    if (MinesweeperTechnique.CLUE_COUNT in techniques) {
+        clueCountDeductions(state).let { if (it.isNotEmpty()) return it }
+    }
+    if (MinesweeperTechnique.CLUE_PAIR in techniques) {
+        cluePairDeductions(state).let { if (it.isNotEmpty()) return it }
+    }
+    if (MinesweeperTechnique.MINE_COUNT in techniques) {
+        return listOfNotNull(mineCountDeduction(state))
+    }
+    return emptyList()
+}
 
 private fun clueCountDeductions(state: MinesweeperSolverState): List<MinesweeperDeduction> {
     val result = mutableListOf<MinesweeperDeduction>()

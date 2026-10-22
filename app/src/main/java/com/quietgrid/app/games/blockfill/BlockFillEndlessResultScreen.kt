@@ -353,7 +353,7 @@ private fun MedalTiles(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun EndlessCountUpScore(score: Int, progress: () -> Float) {
+internal fun EndlessCountUpScore(score: Int, progress: () -> Float) {
     Text(
         (score * progress()).roundToInt().toString(),
         style = MaterialTheme.typography.displayMedium,
@@ -363,7 +363,7 @@ private fun EndlessCountUpScore(score: Int, progress: () -> Float) {
 }
 
 @Composable
-private fun EndlessBestBar(
+internal fun EndlessBestBar(
     score: Int,
     previousBest: Int,
     isNewBest: Boolean,
@@ -396,7 +396,7 @@ private fun EndlessBestBar(
 }
 
 @Composable
-private fun MetaItem(label: String, value: String) {
+internal fun MetaItem(label: String, value: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Text(value, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 2.dp))
@@ -404,6 +404,6 @@ private fun MetaItem(label: String, value: String) {
 }
 
 @Composable
-private fun MetaDivider() {
+internal fun MetaDivider() {
     Box(Modifier.width(1.dp).height(28.dp).background(MaterialTheme.colorScheme.outlineVariant))
 }
