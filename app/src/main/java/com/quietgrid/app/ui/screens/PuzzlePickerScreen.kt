@@ -1,26 +1,42 @@
 package com.quietgrid.app.ui.screens
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.MenuBook
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.outlined.BarChart
+import androidx.compose.material.icons.outlined.PlayArrow
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.Icon
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SecondaryTabRow
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,7 +49,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.R
@@ -42,50 +65,35 @@ import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.core.difficultyColor
+import com.quietgrid.app.core.formatElapsed
+import com.quietgrid.app.core.gameDifficultyLabelRes
+import com.quietgrid.app.data.ActiveSessionEnvelope
+import com.quietgrid.app.data.DifficultyStats
 import com.quietgrid.app.data.RepositoriesViewModel
+import com.quietgrid.app.data.SESSION_MODE_ENDLESS
 import com.quietgrid.app.data.resolveGamePlayPreferences
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyDescriptionRes
-import com.quietgrid.app.games.animaldoku.animalDokuDifficultyLabelRes
 import com.quietgrid.app.games.hashi.hashiDifficultyDescriptionRes
-import com.quietgrid.app.games.hashi.hashiDifficultyLabelRes
 import com.quietgrid.app.games.links.linksDifficultyDescriptionRes
-import com.quietgrid.app.games.links.linksDifficultyLabelRes
 import com.quietgrid.app.games.arrowescape.arrowEscapeDifficultyDescriptionRes
-import com.quietgrid.app.games.arrowescape.arrowEscapeDifficultyLabelRes
 import com.quietgrid.app.games.blockfill.blockFillDifficultyDescriptionRes
-import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
 import com.quietgrid.app.games.chimptest.chimpDifficultyDescriptionRes
-import com.quietgrid.app.games.chimptest.chimpDifficultyLabelRes
 import com.quietgrid.app.games.game2048.game2048DifficultyDescriptionRes
-import com.quietgrid.app.games.game2048.game2048DifficultyLabelRes
 import com.quietgrid.app.games.guessbynumbers.guessByNumbersDifficultyDescriptionRes
-import com.quietgrid.app.games.guessbynumbers.guessByNumbersDifficultyLabelRes
 import com.quietgrid.app.games.minesweeper.minesweeperDifficultyDescriptionRes
-import com.quietgrid.app.games.minesweeper.minesweeperDifficultyLabelRes
 import com.quietgrid.app.games.minisudoku.miniSudokuDifficultyDescriptionRes
-import com.quietgrid.app.games.minisudoku.miniSudokuDifficultyLabelRes
 import com.quietgrid.app.games.nback.nbackDifficultyDescriptionRes
-import com.quietgrid.app.games.nback.nbackDifficultyLabelRes
 import com.quietgrid.app.games.nonogram.nonogramDifficultyDescriptionRes
-import com.quietgrid.app.games.nonogram.nonogramDifficultyLabelRes
 import com.quietgrid.app.games.sequencememory.sequenceMemoryDifficultyDescriptionRes
-import com.quietgrid.app.games.sequencememory.sequenceMemoryDifficultyLabelRes
 import com.quietgrid.app.games.starbattle.starBattleDifficultyDescriptionRes
 import com.quietgrid.app.games.whodidit.whoDidItDifficultyDescriptionRes
-import com.quietgrid.app.games.starbattle.starBattleDifficultyLabelRes
-import com.quietgrid.app.games.whodidit.whoDidItDifficultyLabelRes
 import com.quietgrid.app.games.sudoku.sudokuDifficultyDescriptionRes
-import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
 import com.quietgrid.app.games.takuzu.takuzuDifficultyDescriptionRes
-import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
 import com.quietgrid.app.games.killersudoku.killerSudokuDifficultyDescriptionRes
-import com.quietgrid.app.games.killersudoku.killerSudokuDifficultyLabelRes
 import com.quietgrid.app.games.themeclear.themeClearDifficultyDescriptionRes
-import com.quietgrid.app.games.themeclear.themeClearDifficultyLabelRes
 import com.quietgrid.app.games.wordguess.wordGuessDifficultyDescriptionRes
-import com.quietgrid.app.games.wordguess.wordGuessDifficultyLabelRes
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyDescriptionRes
-import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
+import com.quietgrid.app.ui.components.pressScale
 import com.quietgrid.app.ui.components.quickStartFor
 import com.quietgrid.app.ui.components.StatGroup
 import com.quietgrid.app.ui.components.StatItem
@@ -103,8 +111,6 @@ fun PuzzlePickerScreen(
     onStartChallenger: () -> Unit,
     onStartEndless: () -> Unit = {},
 ) {
-    var selectedTab by remember { mutableStateOf(GamePageTab.PLAY) }
-
     val repositories: RepositoriesViewModel = hiltViewModel()
     val settings by repositories.settingsRepository.settings.collectAsState(initial = null)
     val activeSession by repositories.sessionRepository.activeSession.collectAsState(initial = null)
@@ -193,136 +199,173 @@ fun PuzzlePickerScreen(
         )
     }
 
-    Column(Modifier.fillMaxWidth()) {
-        SecondaryTabRow(
-            selectedTabIndex = selectedTab.ordinal,
-            containerColor = MaterialTheme.colorScheme.background,
-            contentColor = TabRowDefaults.primaryContentColor,
-        ) {
-            Tab(
-                selected = selectedTab == GamePageTab.PLAY,
-                onClick = { selectedTab = GamePageTab.PLAY },
-                text = { Text(stringResource(R.string.common_play)) },
-            )
-            Tab(
-                selected = selectedTab == GamePageTab.RULES,
-                onClick = { selectedTab = GamePageTab.RULES },
-                text = { Text(stringResource(R.string.common_rules)) },
-            )
-            Tab(
-                selected = selectedTab == GamePageTab.STATS,
-                onClick = { selectedTab = GamePageTab.STATS },
-                text = { Text(stringResource(R.string.common_stats)) },
-            )
-            Tab(
-                selected = selectedTab == GamePageTab.SETTINGS,
-                onClick = { selectedTab = GamePageTab.SETTINGS },
-                text = { Text(stringResource(R.string.common_settings)) },
-            )
-        }
+    val tabs = GamePageTab.entries
+    val pagerState = rememberPagerState(pageCount = { tabs.size })
+    val endlessCopy = endlessModeCopyFor(gameId, settings?.betaGamesEnabled == true)
 
-        when (selectedTab) {
-            GamePageTab.PLAY -> GamePlayPickerTab(
-                gameId,
-                rememberedDifficulty,
-                requestStartDifficulty,
-                requestStartChallenger,
-                requestStartEndless,
-                endlessModeCopyFor(gameId, settings?.betaGamesEnabled == true),
+    Column(Modifier.fillMaxSize()) {
+        GamePageTabs(
+            tabs = tabs,
+            selectedIndex = pagerState.currentPage,
+            onSelect = { index -> coroutineScope.launch { pagerState.animateScrollToPage(index) } },
+        )
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxWidth().weight(1f),
+            verticalAlignment = Alignment.Top,
+        ) { page ->
+            when (tabs[page]) {
+                GamePageTab.PLAY -> GamePlayPickerTab(
+                    gameId,
+                    activeSession = activeSession?.takeIf { it.gameId == gameId.key && it.dailyDate == null },
+                    rememberedDifficulty = rememberedDifficulty,
+                    onResume = resumeActiveGame,
+                    requestStartDifficulty = requestStartDifficulty,
+                    requestStartChallenger = requestStartChallenger,
+                    requestStartEndless = requestStartEndless,
+                    endlessCopy = endlessCopy,
+                )
+                GamePageTab.RULES -> HowToPlayScreen(gameId)
+                GamePageTab.STATS -> GameStatsTab(gameId, endlessCopy)
+                GamePageTab.SETTINGS -> GameSettingsTab(gameId)
+            }
+        }
+    }
+}
+
+private fun GamePageTab.icon(): ImageVector = when (this) {
+    GamePageTab.PLAY -> Icons.Outlined.PlayArrow
+    GamePageTab.RULES -> Icons.AutoMirrored.Outlined.MenuBook
+    GamePageTab.STATS -> Icons.Outlined.BarChart
+    GamePageTab.SETTINGS -> Icons.Outlined.Settings
+}
+
+private fun GamePageTab.labelRes(): Int = when (this) {
+    GamePageTab.PLAY -> R.string.common_play
+    GamePageTab.RULES -> R.string.common_rules
+    GamePageTab.STATS -> R.string.common_stats
+    GamePageTab.SETTINGS -> R.string.common_settings
+}
+
+@Composable
+private fun GamePageTabs(tabs: List<GamePageTab>, selectedIndex: Int, onSelect: (Int) -> Unit) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 4.dp)
+            .clip(RoundedCornerShape(22.dp))
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(4.dp)
+            .selectableGroup(),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        tabs.forEachIndexed { index, tab ->
+            val selected = index == selectedIndex
+            val containerColor by animateColorAsState(
+                if (selected) MaterialTheme.colorScheme.surfaceContainerHighest else Color.Transparent,
+                label = "gamePageTabContainer",
             )
-            GamePageTab.RULES -> HowToPlayScreen(gameId)
-            GamePageTab.STATS -> GameStatsTab(gameId, endlessModeCopyFor(gameId, settings?.betaGamesEnabled == true))
-            GamePageTab.SETTINGS -> GameSettingsTab(gameId)
+            val label = stringResource(tab.labelRes())
+            Row(
+                Modifier
+                    .weight(if (selected) 2.2f else 1f)
+                    .heightIn(min = 40.dp)
+                    .clip(RoundedCornerShape(18.dp))
+                    .background(containerColor)
+                    .semantics { if (!selected) contentDescription = label }
+                    .selectable(selected = selected, role = Role.Tab, onClick = { onSelect(index) }),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                val contentColor = if (selected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
+                Icon(tab.icon(), contentDescription = null, tint = contentColor, modifier = Modifier.size(20.dp))
+                if (selected) {
+                    Text(
+                        label,
+                        style = MaterialTheme.typography.labelLarge,
+                        color = contentColor,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(start = 8.dp),
+                    )
+                }
+            }
         }
     }
 }
 
 private fun pickableDifficultiesFor(gameId: GameId): List<Difficulty> = Difficulty.entries
 
+private fun difficultyDescriptionRes(gameId: GameId, difficulty: Difficulty): Int = when (gameId) {
+    GameId.CHIMPTEST -> chimpDifficultyDescriptionRes(difficulty)
+    GameId.TAKUZU -> takuzuDifficultyDescriptionRes(difficulty)
+    GameId.NONOGRAM -> nonogramDifficultyDescriptionRes(difficulty)
+    GameId.MINESWEEPER -> minesweeperDifficultyDescriptionRes(difficulty)
+    GameId.SUDOKU -> sudokuDifficultyDescriptionRes(difficulty)
+    GameId.WORDSEARCH -> wordSearchDifficultyDescriptionRes(difficulty)
+    GameId.BLOCKFILL -> blockFillDifficultyDescriptionRes(difficulty)
+    GameId.WORDGUESS -> wordGuessDifficultyDescriptionRes(difficulty)
+    GameId.ANIMALDOKU -> animalDokuDifficultyDescriptionRes(difficulty)
+    GameId.ARROWESCAPE -> arrowEscapeDifficultyDescriptionRes(difficulty)
+    GameId.GAME_2048 -> game2048DifficultyDescriptionRes(difficulty)
+    GameId.STARBATTLE -> starBattleDifficultyDescriptionRes(difficulty)
+    GameId.WHODIDIT -> whoDidItDifficultyDescriptionRes(difficulty)
+    GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyDescriptionRes(difficulty)
+    GameId.NBACK -> nbackDifficultyDescriptionRes(difficulty)
+    GameId.THEMECLEAR -> themeClearDifficultyDescriptionRes(difficulty)
+    GameId.SEQUENCEMEMORY -> sequenceMemoryDifficultyDescriptionRes(difficulty)
+    GameId.HASHI -> hashiDifficultyDescriptionRes(difficulty)
+    GameId.LINKS -> linksDifficultyDescriptionRes(difficulty)
+    GameId.KILLERSUDOKU -> killerSudokuDifficultyDescriptionRes(difficulty)
+    GameId.MINISUDOKU -> miniSudokuDifficultyDescriptionRes(difficulty)
+}
+
 @Composable
 private fun GamePlayPickerTab(
     gameId: GameId,
+    activeSession: ActiveSessionEnvelope?,
     rememberedDifficulty: Difficulty?,
+    onResume: () -> Unit,
     requestStartDifficulty: (Difficulty) -> Unit,
     requestStartChallenger: () -> Unit,
     requestStartEndless: () -> Unit,
     endlessCopy: EndlessModeCopy?,
 ) {
-    Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(16.dp)) {
-        Column {
-            pickableDifficultiesFor(gameId).forEachIndexed { index, difficulty ->
-                val labelRes = when (gameId) {
-                    GameId.TAKUZU -> takuzuDifficultyLabelRes(difficulty)
-                    GameId.NONOGRAM -> nonogramDifficultyLabelRes(difficulty)
-                    GameId.MINESWEEPER -> minesweeperDifficultyLabelRes(difficulty)
-                    GameId.SUDOKU -> sudokuDifficultyLabelRes(difficulty)
-                    GameId.WORDSEARCH -> wordSearchDifficultyLabelRes(difficulty)
-                    GameId.BLOCKFILL -> blockFillDifficultyLabelRes(difficulty)
-                    GameId.WORDGUESS -> wordGuessDifficultyLabelRes(difficulty)
-                    GameId.ANIMALDOKU -> animalDokuDifficultyLabelRes(difficulty)
-                    GameId.ARROWESCAPE -> arrowEscapeDifficultyLabelRes(difficulty)
-                    GameId.GAME_2048 -> game2048DifficultyLabelRes(difficulty)
-                    GameId.STARBATTLE -> starBattleDifficultyLabelRes(difficulty)
-                    GameId.WHODIDIT -> whoDidItDifficultyLabelRes(difficulty)
-                    GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyLabelRes(difficulty)
-                    GameId.NBACK -> nbackDifficultyLabelRes(difficulty)
-                    GameId.THEMECLEAR -> themeClearDifficultyLabelRes(difficulty)
-                    GameId.SEQUENCEMEMORY -> sequenceMemoryDifficultyLabelRes(difficulty)
-                    GameId.HASHI -> hashiDifficultyLabelRes(difficulty)
-                    GameId.LINKS -> linksDifficultyLabelRes(difficulty)
-                    GameId.KILLERSUDOKU -> killerSudokuDifficultyLabelRes(difficulty)
-                    GameId.MINISUDOKU -> miniSudokuDifficultyLabelRes(difficulty)
-                    else -> chimpDifficultyLabelRes(difficulty)
-                }
-                val descriptionRes = when (gameId) {
-                    GameId.CHIMPTEST -> chimpDifficultyDescriptionRes(difficulty)
-                    GameId.TAKUZU -> takuzuDifficultyDescriptionRes(difficulty)
-                    GameId.NONOGRAM -> nonogramDifficultyDescriptionRes(difficulty)
-                    GameId.MINESWEEPER -> minesweeperDifficultyDescriptionRes(difficulty)
-                    GameId.SUDOKU -> sudokuDifficultyDescriptionRes(difficulty)
-                    GameId.WORDSEARCH -> wordSearchDifficultyDescriptionRes(difficulty)
-                    GameId.BLOCKFILL -> blockFillDifficultyDescriptionRes(difficulty)
-                    GameId.WORDGUESS -> wordGuessDifficultyDescriptionRes(difficulty)
-                    GameId.ANIMALDOKU -> animalDokuDifficultyDescriptionRes(difficulty)
-                    GameId.ARROWESCAPE -> arrowEscapeDifficultyDescriptionRes(difficulty)
-                    GameId.GAME_2048 -> game2048DifficultyDescriptionRes(difficulty)
-                    GameId.STARBATTLE -> starBattleDifficultyDescriptionRes(difficulty)
-                    GameId.WHODIDIT -> whoDidItDifficultyDescriptionRes(difficulty)
-                    GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyDescriptionRes(difficulty)
-                    GameId.NBACK -> nbackDifficultyDescriptionRes(difficulty)
-                    GameId.THEMECLEAR -> themeClearDifficultyDescriptionRes(difficulty)
-                    GameId.SEQUENCEMEMORY -> sequenceMemoryDifficultyDescriptionRes(difficulty)
-                    GameId.HASHI -> hashiDifficultyDescriptionRes(difficulty)
-                    GameId.LINKS -> linksDifficultyDescriptionRes(difficulty)
-                    GameId.KILLERSUDOKU -> killerSudokuDifficultyDescriptionRes(difficulty)
-                    GameId.MINISUDOKU -> miniSudokuDifficultyDescriptionRes(difficulty)
-                }
-                if (index > 0) HorizontalDivider()
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .clickable { requestStartDifficulty(difficulty) }
-                        .padding(vertical = 18.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    DifficultyLevelBlock(difficulty)
-                    Column(Modifier.padding(start = 14.dp).weight(1f)) {
-                        Text(stringResource(labelRes), style = MaterialTheme.typography.titleLarge)
-                        Text(
-                            stringResource(descriptionRes),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(top = 2.dp),
+    val repositories: RepositoriesViewModel = hiltViewModel()
+    val stats by remember(repositories, gameId) { repositories.statsRepository.statsFor(gameId) }.collectAsState(initial = null)
+
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+        Column(
+            Modifier
+                .widthIn(max = 640.dp)
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            Text(
+                stringResource(GameCatalog.get(gameId).taglineRes),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 4.dp),
+            )
+            if (activeSession != null) {
+                ContinueButton(gameId, activeSession, endlessCopy, onResume)
+            }
+            pickableDifficultiesFor(gameId).chunked(2).forEach { pair ->
+                Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    pair.forEach { difficulty ->
+                        DifficultyTile(
+                            label = stringResource(gameDifficultyLabelRes(gameId, difficulty)),
+                            description = stringResource(difficultyDescriptionRes(gameId, difficulty)),
+                            difficulty = difficulty,
+                            stats = stats?.forDifficulty(difficulty),
+                            lastPlayed = difficulty == rememberedDifficulty,
+                            onClick = { requestStartDifficulty(difficulty) },
+                            modifier = Modifier.weight(1f).fillMaxHeight(),
                         )
                     }
-                    if (difficulty == rememberedDifficulty) {
-                        Text(
-                            stringResource(R.string.game_picker_last_played),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(start = 8.dp),
-                        )
-                    }
+                    if (pair.size == 1) Spacer(Modifier.weight(1f))
                 }
             }
             val challengerLabelRes = when (gameId) {
@@ -346,14 +389,21 @@ private fun GamePlayPickerTab(
                 else -> null
             }
             if (challengerLabelRes != null && challengerDescriptionRes != null) {
-                PickerModeRow(stringResource(challengerLabelRes), stringResource(challengerDescriptionRes), detail = null, onClick = requestStartChallenger)
+                val challengerStats by remember(repositories, gameId) { repositories.statsRepository.challengerStatsFor(gameId) }
+                    .collectAsState(initial = null)
+                val bestScore = challengerStats?.bestScore ?: 0
+                PickerModeTile(
+                    stringResource(challengerLabelRes),
+                    stringResource(challengerDescriptionRes),
+                    detail = if (bestScore > 0) stringResource(R.string.game_page_mode_best, bestScore) else null,
+                    onClick = requestStartChallenger,
+                )
             }
             if (endlessCopy != null) {
-                val repositories: RepositoriesViewModel = hiltViewModel()
                 val endlessStats by remember(repositories, gameId) { repositories.statsRepository.endlessStatsFor(gameId) }
                     .collectAsState(initial = null)
                 val bestScore = endlessStats?.bestScore ?: 0
-                PickerModeRow(
+                PickerModeTile(
                     stringResource(endlessCopy.label),
                     stringResource(endlessCopy.description),
                     detail = if (bestScore > 0) stringResource(endlessCopy.bestValue, bestScore) else null,
@@ -365,36 +415,129 @@ private fun GamePlayPickerTab(
 }
 
 @Composable
-private fun DifficultyLevelBlock(difficulty: Difficulty) {
-    val filledCount = difficulty.ordinal + 1
-    val fillColor = difficultyColor(difficulty)
-    val emptyColor = MaterialTheme.colorScheme.surfaceContainerHighest
-    val squareShape = RoundedCornerShape(percent = 30)
-    Column(Modifier.size(22.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        repeat(2) { row ->
-            Row(Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                repeat(2) { col ->
-                    Box(
-                        Modifier
-                            .weight(1f)
-                            .fillMaxHeight()
-                            .clip(squareShape)
-                            .background(if (row * 2 + col < filledCount) fillColor else emptyColor),
-                    )
-                }
-            }
+private fun ContinueButton(gameId: GameId, session: ActiveSessionEnvelope, endlessCopy: EndlessModeCopy?, onResume: () -> Unit) {
+    val difficulty = session.difficulty?.let { key -> Difficulty.entries.firstOrNull { it.key == key } }
+    val elapsed = formatElapsed(session.elapsedSeconds.toInt())
+    val detail = when {
+        session.mode == SESSION_MODE_ENDLESS ->
+            if (endlessCopy != null) stringResource(R.string.game_page_continue_detail, stringResource(endlessCopy.label), elapsed) else elapsed
+        difficulty != null -> stringResource(R.string.game_page_continue_detail, stringResource(gameDifficultyLabelRes(gameId, difficulty)), elapsed)
+        else -> elapsed
+    }
+    val interactionSource = remember { MutableInteractionSource() }
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .pressScale(interactionSource)
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.primary)
+            .clickable(interactionSource = interactionSource, indication = LocalIndication.current, onClick = onResume)
+            .heightIn(min = 60.dp)
+            .padding(horizontal = 16.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(Icons.Filled.PlayArrow, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary)
+        Column(Modifier.padding(start = 12.dp)) {
+            Text(
+                stringResource(R.string.common_continue_puzzle),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onPrimary,
+            )
+            Text(
+                detail,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f),
+            )
         }
     }
 }
 
 @Composable
-private fun PickerModeRow(label: String, description: String, detail: String?, onClick: () -> Unit) {
-    HorizontalDivider()
+private fun DifficultyTile(
+    label: String,
+    description: String,
+    difficulty: Difficulty,
+    stats: DifficultyStats?,
+    lastPlayed: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val surface = MaterialTheme.colorScheme.surface
+    val tileColor = if (lastPlayed) MaterialTheme.colorScheme.primary.copy(alpha = 0.10f).compositeOver(surface) else surface
+    Column(
+        modifier
+            .pressScale(interactionSource)
+            .clip(RoundedCornerShape(16.dp))
+            .background(tileColor)
+            .clickable(interactionSource = interactionSource, indication = LocalIndication.current, onClick = onClick)
+            .heightIn(min = 132.dp)
+            .padding(horizontal = 14.dp, vertical = 16.dp),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            DifficultyLevelBar(difficulty)
+            if (lastPlayed) {
+                Text(
+                    stringResource(R.string.game_picker_last_played),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    maxLines = 1,
+                    modifier = Modifier.padding(start = 8.dp),
+                )
+            }
+        }
+        Text(label, style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = 10.dp))
+        Text(
+            description,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(top = 4.dp),
+        )
+        Spacer(Modifier.weight(1f))
+        val solved = stats?.solved ?: 0
+        Text(
+            if (solved > 0) {
+                stringResource(R.string.game_page_tile_progress, solved, stats?.bestScore ?: 0)
+            } else {
+                stringResource(R.string.game_page_tile_not_played)
+            },
+            style = MaterialTheme.typography.labelMedium,
+            color = if (solved > 0) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(top = 8.dp),
+        )
+    }
+}
+
+@Composable
+private fun DifficultyLevelBar(difficulty: Difficulty) {
+    val filledCount = difficulty.ordinal + 1
+    val fillColor = difficultyColor(difficulty)
+    val emptyColor = MaterialTheme.colorScheme.surfaceContainerHighest
+    Row(Modifier.width(44.dp).height(6.dp), horizontalArrangement = Arrangement.spacedBy(3.dp)) {
+        repeat(Difficulty.entries.size) { index ->
+            Box(
+                Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .clip(RoundedCornerShape(3.dp))
+                    .background(if (index < filledCount) fillColor else emptyColor),
+            )
+        }
+    }
+}
+
+@Composable
+private fun PickerModeTile(label: String, description: String, detail: String?, onClick: () -> Unit) {
+    val interactionSource = remember { MutableInteractionSource() }
     Row(
         Modifier
             .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(vertical = 18.dp),
+            .pressScale(interactionSource)
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface)
+            .clickable(interactionSource = interactionSource, indication = LocalIndication.current, onClick = onClick)
+            .heightIn(min = 72.dp)
+            .padding(horizontal = 14.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
@@ -403,22 +546,22 @@ private fun PickerModeRow(label: String, description: String, detail: String?, o
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(22.dp),
         )
-        Column(Modifier.padding(start = 14.dp)) {
-            Text(label, style = MaterialTheme.typography.titleLarge)
+        Column(Modifier.weight(1f).padding(start = 12.dp)) {
+            Text(label, style = MaterialTheme.typography.titleMedium)
             Text(
                 description,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 2.dp),
             )
-            if (detail != null) {
-                Text(
-                    detail,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(top = 4.dp),
-                )
-            }
+        }
+        if (detail != null) {
+            Text(
+                detail,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(start = 8.dp),
+            )
         }
     }
 }
