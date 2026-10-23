@@ -61,7 +61,7 @@
 - **Block Fill** — Drag pieces onto the board and clear full lines. Includes an Endless mode.
 - **Arrow Escape** — Clear the board, one arrow at a time.
 
-In beta, enable in Settings: N-Back, Who Did It?, Hashi.
+In beta, enable in Settings: N-Back, Who Did It?, Hashi, Links.
 
 ### Also
 

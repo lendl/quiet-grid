@@ -8,6 +8,7 @@ import com.quietgrid.app.games.chimptest.ChimpTestQuickStart
 import com.quietgrid.app.games.game2048.Game2048QuickStart
 import com.quietgrid.app.games.guessbynumbers.GuessByNumbersQuickStart
 import com.quietgrid.app.games.hashi.HashiQuickStart
+import com.quietgrid.app.games.links.LinksQuickStart
 import com.quietgrid.app.games.killersudoku.KillerSudokuQuickStart
 import com.quietgrid.app.games.minesweeper.MinesweeperQuickStart
 import com.quietgrid.app.games.minisudoku.MiniSudokuQuickStart
@@ -41,6 +42,7 @@ internal fun quickStartFor(gameId: GameId): QuickStartContent = when (gameId) {
     GameId.THEMECLEAR -> ThemeClearQuickStart
     GameId.SEQUENCEMEMORY -> SequenceMemoryQuickStart
     GameId.HASHI -> HashiQuickStart
+    GameId.LINKS -> LinksQuickStart
     GameId.KILLERSUDOKU -> KillerSudokuQuickStart
     GameId.MINISUDOKU -> MiniSudokuQuickStart
 }

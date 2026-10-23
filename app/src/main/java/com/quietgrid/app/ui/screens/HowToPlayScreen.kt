@@ -72,6 +72,7 @@ fun HowToPlayScreen(gameId: GameId) {
             GameId.THEMECLEAR -> ThemeClearHowToPlay()
             GameId.SEQUENCEMEMORY -> SequenceMemoryHowToPlay()
             GameId.HASHI -> HashiHowToPlay()
+            GameId.LINKS -> LinksHowToPlay()
             GameId.KILLERSUDOKU -> KillerSudokuHowToPlay()
             GameId.MINISUDOKU -> SudokuHowToPlay(goalRes = R.string.minisudoku_how_to_play_goal)
         }
@@ -648,6 +649,26 @@ private fun HashiHowToPlay() {
     RuleRow(2, R.string.hashi_rule_2_title, R.string.hashi_rule_2_body)
     RuleRow(3, R.string.hashi_rule_3_title, R.string.hashi_rule_3_body)
     RuleRow(4, R.string.hashi_rule_4_title, R.string.hashi_rule_4_body)
+}
+
+@Composable
+private fun LinksHowToPlay() {
+    SectionHeader(Icons.Outlined.EmojiEvents, stringResource(R.string.how_to_play_goal_title))
+    BodyText(stringResource(R.string.links_how_to_play_goal))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.PanTool, stringResource(R.string.how_to_play_controls_title))
+    BodyText(stringResource(R.string.links_how_to_play_controls))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.WarningAmber, stringResource(R.string.how_to_play_wrong_move_title))
+    BodyText(stringResource(R.string.links_how_to_play_wrong_move))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.Description, stringResource(R.string.how_to_play_rules_title))
+    RuleRow(1, R.string.links_rule_1_title, R.string.links_rule_1_body)
+    RuleRow(2, R.string.links_rule_2_title, R.string.links_rule_2_body)
+    RuleRow(3, R.string.links_rule_3_title, R.string.links_rule_3_body)
 }
 
 @Composable

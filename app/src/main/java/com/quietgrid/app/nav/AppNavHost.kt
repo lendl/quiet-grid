@@ -76,6 +76,7 @@ import com.quietgrid.app.games.chimptest.ChimpTestChallengerPlayScreen
 import com.quietgrid.app.games.chimptest.ChimpTestChallengerResultScreen
 import com.quietgrid.app.games.arrowescape.ArrowEscapePlayScreen
 import com.quietgrid.app.games.hashi.HashiPlayScreen
+import com.quietgrid.app.games.links.LinksPlayScreen
 import com.quietgrid.app.games.blockfill.BLOCKFILL_ENDLESS_REASON_STUCK
 import com.quietgrid.app.games.blockfill.BlockFillEndlessPlayScreen
 import com.quietgrid.app.games.blockfill.BlockFillEndlessResult
@@ -761,6 +762,18 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                     onFinished = { result ->
                                         if (result.solved) {
                                             goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
+                                        } else {
+                                            goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
+                                        }
+                                    },
+                                )
+                                GameId.LINKS -> LinksPlayScreen(
+                                    difficulty = difficulty,
+                                    resume = resume,
+                                    onBack = { navController.popBackStack() },
+                                    onFinished = { result ->
+                                        if (result.solved) {
+                                            goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
                                         } else {
                                             goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
                                         }

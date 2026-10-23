@@ -43,6 +43,7 @@ import com.quietgrid.app.ui.components.StatItem
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyLabelRes
 import com.quietgrid.app.games.arrowescape.arrowEscapeDifficultyLabelRes
 import com.quietgrid.app.games.hashi.hashiDifficultyLabelRes
+import com.quietgrid.app.games.links.linksDifficultyLabelRes
 import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
 import com.quietgrid.app.games.chimptest.chimpDifficultyLabelRes
 import com.quietgrid.app.games.game2048.game2048DifficultyLabelRes
@@ -80,6 +81,7 @@ fun difficultyLabelRes(gameId: GameId, difficulty: Difficulty): Int = when (game
     GameId.THEMECLEAR -> themeClearDifficultyLabelRes(difficulty)
     GameId.SEQUENCEMEMORY -> sequenceMemoryDifficultyLabelRes(difficulty)
     GameId.HASHI -> hashiDifficultyLabelRes(difficulty)
+    GameId.LINKS -> linksDifficultyLabelRes(difficulty)
     GameId.KILLERSUDOKU -> killerSudokuDifficultyLabelRes(difficulty)
     GameId.MINISUDOKU -> miniSudokuDifficultyLabelRes(difficulty)
 }

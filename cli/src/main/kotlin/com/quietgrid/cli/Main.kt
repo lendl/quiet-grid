@@ -13,6 +13,7 @@ import com.quietgrid.cli.takuzu.generateTakuzuPuzzle
 import com.quietgrid.cli.whodidit.generateWhoDidItPuzzle
 import com.quietgrid.cli.arrowescape.arrowEscapeSizesForDifficulty
 import com.quietgrid.cli.hashi.generateHashiPuzzle
+import com.quietgrid.cli.links.generateLinksPuzzle
 import com.quietgrid.cli.starbattle.generateStarBattleK1PuzzleForTier
 import com.quietgrid.cli.starbattle.generateStarBattleSolution
 import com.quietgrid.cli.starbattle.growStarBattleRegions
@@ -23,6 +24,7 @@ import com.quietgrid.engine.animaldoku.AnimalDokuPuzzleEntry
 import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
 import com.quietgrid.engine.core.Difficulty
 import com.quietgrid.engine.hashi.HashiPuzzleEntry
+import com.quietgrid.engine.links.LinksPuzzleEntry
 import com.quietgrid.engine.killersudoku.KillerSudokuPuzzleEntry
 import com.quietgrid.engine.starbattle.StarBattlePuzzleEntry
 import com.quietgrid.engine.starbattle.STARBATTLE_K2_SIZES_BY_GRADE
@@ -408,6 +410,21 @@ fun main(args: Array<String>) {
             state.save()
             appendPuzzleEntries("${command.outDir}/hashi_puzzles.json", entries, HashiPuzzleEntry.serializer()) { it.id }
             println("Generated ${entries.size}/${command.count} hashi puzzles at $difficulty into ${command.outDir}/hashi_puzzles.json")
+        }
+        "links" -> {
+            val state = GenerationState("${command.outDir}/.generation-state/links.json")
+            val entries = mutableListOf<LinksPuzzleEntry>()
+            var attempts = 0
+            while (entries.size < command.count && attempts < command.count * 10) {
+                attempts++
+                val candidate = generateLinksPuzzle(difficulty) ?: continue
+                if (state.hasTried(candidate.id)) continue
+                state.recordTried(candidate.id, "valid")
+                entries += candidate
+            }
+            state.save()
+            appendPuzzleEntries("${command.outDir}/links_puzzles.json", entries, LinksPuzzleEntry.serializer()) { it.id }
+            println("Generated ${entries.size}/${command.count} links puzzles at $difficulty into ${command.outDir}/links_puzzles.json")
         }
         "themeclear" -> {
             val locale = command.locale
