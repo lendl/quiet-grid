@@ -3,6 +3,7 @@ package com.quietgrid.app.games.sudoku
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.engine.sudoku.SudokuPuzzleEntry
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -103,5 +104,37 @@ class SudokuValidationTest {
 
         val again = applySudokuFinalizeValidation(result.session, wrongRow, listOf("r0"))
         assertEquals(1, again.session.accuracyDrops)
+    }
+
+    @Test
+    fun `applySudokuFinalizeValidation with line checks off neither confirms nor locks a correct row`() {
+        val puzzle = SudokuPuzzleEntry(
+            id = "p",
+            difficulty = Difficulty.EASY.key,
+            givens = solutionGrid.mapIndexed { r, row -> row.mapIndexed { c, v -> if (r == 0 && c == 0) null else v } },
+            solution = solutionGrid,
+        )
+        val session = createSudokuSession(puzzle)
+
+        val result = applySudokuFinalizeValidation(session, solutionGrid, listOf("r0"), showMistakes = false)
+
+        assertTrue(result.effect.correctRowIndexes.isEmpty())
+        assertFalse(result.session.finishedCells[0][0])
+        assertEquals(solutionGrid, result.session.board)
+    }
+
+    @Test
+    fun `applySudokuFinalizeValidation with line checks off neither flags nor penalizes a wrong row`() {
+        val puzzle = SudokuPuzzleEntry(id = "p", difficulty = Difficulty.EASY.key, givens = solutionGrid, solution = solutionGrid)
+        val session = createSudokuSession(puzzle)
+        val wrongRow = solutionGrid.mapIndexed { r, row -> if (r != 0) row else listOf(3, 5, 4, 6, 7, 8, 9, 1, 2) }
+
+        val result = applySudokuFinalizeValidation(session, wrongRow, listOf("r0"), showMistakes = false)
+
+        assertTrue(result.effect.incorrectRowIndexes.isEmpty())
+        assertEquals(0, result.session.accuracyDrops)
+
+        val shownLater = applySudokuFinalizeValidation(result.session, wrongRow, listOf("r0"))
+        assertEquals(0, shownLater.session.accuracyDrops)
     }
 }

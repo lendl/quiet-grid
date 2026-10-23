@@ -25,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -33,7 +32,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
-import com.quietgrid.app.ui.components.systemAnimationsDisabled
+import com.quietgrid.app.ui.components.rememberReduceMotion
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -50,7 +49,7 @@ fun ThemeClearGrid(
     val positions = tcTilePositions(session)
     val selected = session.selection.toSet()
     val hinted = hintTileIds.toSet()
-    val animate = !systemAnimationsDisabled(LocalContext.current)
+    val animate = !rememberReduceMotion()
 
     BoxWithConstraints(contentAlignment = Alignment.Center) {
         val cellSize = min(maxWidth / session.puzzle.cols, maxHeight / session.puzzle.rows)

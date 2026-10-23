@@ -81,8 +81,14 @@ private fun mergeFinishedCells(
     return next
 }
 
-fun applyTakuzuFinalizeValidation(session: TakuzuSession, board: TakuzuGrid, lineKeys: List<LineKey>): TakuzuFinalizeResult {
-    val completedLineKeys = lineKeys.filter {
+fun applyTakuzuFinalizeValidation(
+    session: TakuzuSession,
+    board: TakuzuGrid,
+    lineKeys: List<LineKey>,
+    showMistakes: Boolean = true,
+): TakuzuFinalizeResult {
+    val checkedLineKeys = if (showMistakes) lineKeys else emptyList()
+    val completedLineKeys = checkedLineKeys.filter {
         getCompletedLineStateForKey(board, session.solution, it) != CompletedLineState.INCOMPLETE
     }
     val correctRowIndexes = completedLineKeys
@@ -99,11 +105,11 @@ fun applyTakuzuFinalizeValidation(session: TakuzuSession, board: TakuzuGrid, lin
         .map { it.substring(1).toInt() }
 
     val newPenalizedLineKeys = getMismatchedCompletedLines(board, session.solution)
-    val newPenaltyCount = newPenalizedLineKeys.count { it !in session.penalizedLineKeys }
+    val newPenaltyCount = if (showMistakes) newPenalizedLineKeys.count { it !in session.penalizedLineKeys } else 0
 
     val updated = session.copy(
         board = board,
-        finishedCells = mergeFinishedCells(session.finishedCells, board, session.solution, session.isGiven, lineKeys),
+        finishedCells = mergeFinishedCells(session.finishedCells, board, session.solution, session.isGiven, checkedLineKeys),
         penalizedLineKeys = newPenalizedLineKeys,
         accuracyDrops = session.accuracyDrops + newPenaltyCount,
     )

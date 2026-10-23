@@ -28,14 +28,13 @@ import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.changedToUp
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
-import com.quietgrid.app.ui.components.systemAnimationsDisabled
+import com.quietgrid.app.ui.components.rememberReduceMotion
 import com.quietgrid.app.ui.theme.LocalIsPencilTheme
 import com.quietgrid.engine.minesweeper.endless.ENDLESS_START_SECTION
 import com.quietgrid.engine.minesweeper.endless.EndlessCellState
@@ -112,7 +111,7 @@ fun MinesweeperEndlessGrid(
     val textMeasurer = rememberTextMeasurer()
     val gapPx = with(LocalDensity.current) { 2.dp.toPx() }
     val glyphInsetPx = with(LocalDensity.current) { 3.dp.toPx() }
-    val reduceMotion = systemAnimationsDisabled(LocalContext.current)
+    val reduceMotion = rememberReduceMotion()
 
     var liveCamera by remember { mutableStateOf(camera) }
     LaunchedEffect(camera) { liveCamera = camera }

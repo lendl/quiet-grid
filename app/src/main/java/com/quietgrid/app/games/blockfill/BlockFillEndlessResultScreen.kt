@@ -42,7 +42,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -52,7 +51,7 @@ import com.quietgrid.app.ui.components.BadgePill
 import com.quietgrid.app.ui.components.ConfettiBurst
 import com.quietgrid.app.ui.components.CrownIcon
 import com.quietgrid.app.ui.components.OutlinedGlowButton
-import com.quietgrid.app.ui.components.systemAnimationsDisabled
+import com.quietgrid.app.ui.components.rememberReduceMotion
 import com.quietgrid.app.ui.theme.LocalIsDarkTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -95,8 +94,7 @@ fun BlockFillEndlessResultScreen(
     onBack: () -> Unit,
     onTryAnotherGame: () -> Unit,
 ) {
-    val context = LocalContext.current
-    val reduceMotion = remember { systemAnimationsDisabled(context) }
+    val reduceMotion = rememberReduceMotion()
     val isDarkTheme = LocalIsDarkTheme.current
     val hasPreviousBest = result.previousBest > 0
     val celebrateAbove = if (hasPreviousBest) result.previousBest else result.score - 1

@@ -59,6 +59,7 @@ class MixEditorContentTest {
             mixRepository = mixRepository,
             dailyRepository = mockk(relaxed = true),
             themePreferencesRepository = mockk(relaxed = true),
+            gamePreferencesRepository = mockk(relaxed = true),
         )
     }
 

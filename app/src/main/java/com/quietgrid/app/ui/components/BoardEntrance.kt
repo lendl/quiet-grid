@@ -12,9 +12,10 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun BoardEntrance(playFresh: Boolean, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
-    val visibleState = remember { MutableTransitionState(!playFresh) }
+    val animate = playFresh && !LocalReduceMotion.current
+    val visibleState = remember { MutableTransitionState(!animate) }
     LaunchedEffect(Unit) {
-        if (playFresh) visibleState.targetState = true
+        if (animate) visibleState.targetState = true
     }
 
     AnimatedVisibility(

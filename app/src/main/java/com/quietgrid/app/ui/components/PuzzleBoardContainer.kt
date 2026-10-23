@@ -107,7 +107,7 @@ private fun PuzzleBoardContainerBox(
     }
     Box(modifier, contentAlignment = Alignment.Center) {
         if (visible) {
-            if (zoomable) {
+            if (zoomable && LocalPinchZoomEnabled.current) {
                 BoardEntrance(playFresh = playFresh, modifier = Modifier.fillMaxSize()) {
                     ZoomableBoardSurface(
                         Modifier.fillMaxSize(),

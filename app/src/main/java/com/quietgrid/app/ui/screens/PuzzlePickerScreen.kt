@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameCatalog
@@ -42,6 +43,7 @@ import com.quietgrid.app.core.GameId
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.core.difficultyColor
 import com.quietgrid.app.data.RepositoriesViewModel
+import com.quietgrid.app.data.resolveGamePlayPreferences
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyDescriptionRes
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyLabelRes
 import com.quietgrid.app.games.hashi.hashiDifficultyDescriptionRes
@@ -111,9 +113,21 @@ fun PuzzlePickerScreen(
     var showQuickStart by remember(gameId) { mutableStateOf(false) }
     var pendingDifficulty by remember(gameId) { mutableStateOf<Difficulty?>(null) }
     var pendingStart by remember(gameId) { mutableStateOf<(() -> Unit)?>(null) }
+    val overrides by remember(gameId) { repositories.gamePreferencesRepository.overrides(gameId) }.collectAsState(initial = null)
+    val lastDifficulty by remember(gameId) { repositories.gamePreferencesRepository.lastDifficulty(gameId) }.collectAsState(initial = null)
+    val currentSettings = settings
+    val currentOverrides = overrides
+    val rememberedDifficulty = lastDifficulty?.takeIf {
+        currentSettings != null && currentOverrides != null &&
+            resolveGamePlayPreferences(currentSettings, currentOverrides).rememberDifficulty
+    }
 
+    val startDifficulty: (Difficulty) -> Unit = { difficulty ->
+        repositories.viewModelScope.launch { repositories.gamePreferencesRepository.setLastDifficulty(gameId, difficulty) }
+        onPickDifficulty(difficulty)
+    }
     val requestStartDifficulty: (Difficulty) -> Unit = { difficulty ->
-        if (activeGameKey != null) pendingDifficulty = difficulty else onPickDifficulty(difficulty)
+        if (activeGameKey != null) pendingDifficulty = difficulty else startDifficulty(difficulty)
     }
     val requestStartChallenger: () -> Unit = {
         if (activeGameKey != null) pendingStart = onStartChallenger else onStartChallenger()
@@ -160,7 +174,7 @@ fun PuzzlePickerScreen(
             },
             onStartNew = {
                 pendingDifficulty = null
-                onPickDifficulty(difficultyToStart)
+                startDifficulty(difficultyToStart)
             },
             onDismiss = { pendingDifficulty = null },
         )
@@ -180,12 +194,8 @@ fun PuzzlePickerScreen(
     }
 
     Column(Modifier.fillMaxWidth()) {
-        val visibleTabs = remember(gameId) {
-            listOf(GamePageTab.PLAY, GamePageTab.RULES, GamePageTab.STATS) +
-                if (gameHasSettings(gameId)) listOf(GamePageTab.SETTINGS) else emptyList()
-        }
         SecondaryTabRow(
-            selectedTabIndex = visibleTabs.indexOf(selectedTab).coerceAtLeast(0),
+            selectedTabIndex = selectedTab.ordinal,
             containerColor = MaterialTheme.colorScheme.background,
             contentColor = TabRowDefaults.primaryContentColor,
         ) {
@@ -204,18 +214,17 @@ fun PuzzlePickerScreen(
                 onClick = { selectedTab = GamePageTab.STATS },
                 text = { Text(stringResource(R.string.common_stats)) },
             )
-            if (GamePageTab.SETTINGS in visibleTabs) {
-                Tab(
-                    selected = selectedTab == GamePageTab.SETTINGS,
-                    onClick = { selectedTab = GamePageTab.SETTINGS },
-                    text = { Text(stringResource(R.string.common_settings)) },
-                )
-            }
+            Tab(
+                selected = selectedTab == GamePageTab.SETTINGS,
+                onClick = { selectedTab = GamePageTab.SETTINGS },
+                text = { Text(stringResource(R.string.common_settings)) },
+            )
         }
 
         when (selectedTab) {
             GamePageTab.PLAY -> GamePlayPickerTab(
                 gameId,
+                rememberedDifficulty,
                 requestStartDifficulty,
                 requestStartChallenger,
                 requestStartEndless,
@@ -233,6 +242,7 @@ private fun pickableDifficultiesFor(gameId: GameId): List<Difficulty> = Difficul
 @Composable
 private fun GamePlayPickerTab(
     gameId: GameId,
+    rememberedDifficulty: Difficulty?,
     requestStartDifficulty: (Difficulty) -> Unit,
     requestStartChallenger: () -> Unit,
     requestStartEndless: () -> Unit,
@@ -296,13 +306,21 @@ private fun GamePlayPickerTab(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     DifficultyLevelBlock(difficulty)
-                    Column(Modifier.padding(start = 14.dp)) {
+                    Column(Modifier.padding(start = 14.dp).weight(1f)) {
                         Text(stringResource(labelRes), style = MaterialTheme.typography.titleLarge)
                         Text(
                             stringResource(descriptionRes),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(top = 2.dp),
+                        )
+                    }
+                    if (difficulty == rememberedDifficulty) {
+                        Text(
+                            stringResource(R.string.game_picker_last_played),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(start = 8.dp),
                         )
                     }
                 }

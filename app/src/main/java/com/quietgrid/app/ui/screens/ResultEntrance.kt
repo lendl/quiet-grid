@@ -21,10 +21,9 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
-import com.quietgrid.app.ui.components.systemAnimationsDisabled
+import com.quietgrid.app.ui.components.rememberReduceMotion
 import com.quietgrid.app.ui.play.FoldHandoff
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -84,8 +83,7 @@ class ResultEntrance internal constructor(private val time: () -> Float, private
 
 @Composable
 fun rememberResultEntrance(): ResultEntrance {
-    val context = LocalContext.current
-    val reduceMotion = remember { systemAnimationsDisabled(context) }
+    val reduceMotion = rememberReduceMotion()
     var played by rememberSaveable { mutableStateOf(false) }
     val origin = remember { FoldHandoff.consume() }
     val clock = remember { Animatable(if (reduceMotion || played) ENTRANCE_END_MS else 0f) }

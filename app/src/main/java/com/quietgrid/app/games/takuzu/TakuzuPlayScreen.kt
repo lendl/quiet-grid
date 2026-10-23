@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,6 +22,7 @@ import com.quietgrid.app.ui.components.CollectPuzzleResult
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
 import com.quietgrid.app.ui.components.rememberHapticController
 import com.quietgrid.app.ui.play.GamePlayScaffold
+import com.quietgrid.app.ui.play.LocalGamePlayPreferences
 import com.quietgrid.app.ui.play.PlayHintAction
 import com.quietgrid.app.ui.play.PlayHintMessage
 import com.quietgrid.app.ui.play.PlayTimer
@@ -42,6 +44,8 @@ fun TakuzuPlayScreen(
     val session = viewModel.session
 
     val haptics = rememberHapticController()
+    val showMistakes = LocalGamePlayPreferences.current.showMistakes
+    SideEffect { viewModel.showMistakes = showMistakes }
     var flashTrigger by remember { mutableStateOf(0) }
     LaunchedEffect(viewModel.feedbackEvent) {
         val event = viewModel.feedbackEvent

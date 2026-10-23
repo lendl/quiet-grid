@@ -23,12 +23,13 @@ fun FeedbackText(
     isIncorrect: Boolean,
     modifier: Modifier = Modifier,
 ) {
+    val reduceMotion = LocalReduceMotion.current
     val rotation = remember { Animatable(0f) }
     val shakeX = remember { Animatable(0f) }
 
     var spinTrigger by remember { mutableStateOf(0) }
     LaunchedEffect(isCorrect) {
-        if (isCorrect) spinTrigger++
+        if (isCorrect && !reduceMotion) spinTrigger++
     }
     LaunchedEffect(spinTrigger) {
         if (spinTrigger > 0) {
@@ -40,7 +41,7 @@ fun FeedbackText(
 
     var shakeTrigger by remember { mutableStateOf(0) }
     LaunchedEffect(isIncorrect) {
-        if (isIncorrect) shakeTrigger++
+        if (isIncorrect && !reduceMotion) shakeTrigger++
     }
     LaunchedEffect(shakeTrigger) {
         if (shakeTrigger > 0) {

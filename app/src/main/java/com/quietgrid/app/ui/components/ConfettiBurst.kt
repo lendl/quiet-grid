@@ -28,6 +28,7 @@ private data class ConfettiParticle(
 
 @Composable
 fun ConfettiBurst(modifier: Modifier = Modifier, particleCount: Int = 40) {
+    if (LocalReduceMotion.current) return
     val colors = listOf(
         MaterialTheme.colorScheme.primary,
         MaterialTheme.colorScheme.secondary,

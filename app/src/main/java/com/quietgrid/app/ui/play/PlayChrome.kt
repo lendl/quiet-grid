@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
 import com.quietgrid.app.core.formatElapsed
 import com.quietgrid.app.ui.components.ElapsedTimerText
+import com.quietgrid.app.ui.components.LocalReduceMotion
 import com.quietgrid.app.ui.components.LogoGridLoader
 import com.quietgrid.app.ui.components.pressScale
 
@@ -142,9 +143,10 @@ private fun PlayTimerText(timer: PlayTimer, metrics: PlayMetrics, modifier: Modi
 private fun CountdownTimerText(seconds: Int, style: TextStyle, modifier: Modifier) {
     val remaining = maxOf(0, seconds)
     val lowTime = remaining <= COUNTDOWN_WARNING_SECONDS
+    val reduceMotion = LocalReduceMotion.current
     val pulse = remember { Animatable(1f) }
     LaunchedEffect(remaining) {
-        if (lowTime && remaining > 0) {
+        if (lowTime && remaining > 0 && !reduceMotion) {
             pulse.snapTo(1f)
             pulse.animateTo(
                 targetValue = 1f,

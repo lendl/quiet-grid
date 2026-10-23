@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Nightlight
+import androidx.compose.material.icons.filled.ScreenRotation
 import androidx.compose.material.icons.filled.SettingsSuggest
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -50,8 +51,11 @@ import com.quietgrid.app.R
 import com.quietgrid.app.core.AppLocale
 import com.quietgrid.app.core.localeFlagEmoji
 import com.quietgrid.app.data.AppSettings
+import com.quietgrid.app.data.GameToggle
 import com.quietgrid.app.data.RepositoriesViewModel
+import com.quietgrid.app.data.ScreenRotation
 import com.quietgrid.app.data.ThemeMode
+import com.quietgrid.app.data.toggleDefault
 import kotlinx.coroutines.launch
 import android.Manifest
 import android.content.Intent
@@ -149,6 +153,7 @@ fun PreferencesSection() {
     var themeMenuOpen by remember { mutableStateOf(false) }
     var languageMenuOpen by remember { mutableStateOf(false) }
     var puzzleLanguageMenuOpen by remember { mutableStateOf(false) }
+    var rotationMenuOpen by remember { mutableStateOf(false) }
     val currentLanguageTag = AppLocale.currentTag(context)
 
     Column(Modifier.fillMaxWidth()) {
@@ -253,9 +258,47 @@ fun PreferencesSection() {
 
         SettingsToggleRow(
             label = stringResource(R.string.settings_show_timer_in_play_label),
+            detail = stringResource(R.string.settings_show_timer_in_play_detail),
             checked = settings.showTimerInPlay,
             onCheckedChange = { scope.launch { repositories.settingsRepository.setShowTimerInPlay(it) } },
         )
+
+        HorizontalDivider(Modifier.padding(vertical = 4.dp))
+
+        SettingsToggleRow(
+            label = stringResource(R.string.settings_show_hints_label),
+            detail = stringResource(R.string.settings_show_hints_detail),
+            checked = settings.showHintsInPlay,
+            onCheckedChange = { scope.launch { repositories.settingsRepository.setShowHintsInPlay(it) } },
+        )
+
+        HorizontalDivider(Modifier.padding(vertical = 4.dp))
+
+        Box {
+            SettingsDropdownRow(
+                icon = Icons.Filled.ScreenRotation,
+                label = stringResource(R.string.settings_screen_rotation_label),
+                value = stringResource(settings.screenRotation.labelRes),
+                expanded = rotationMenuOpen,
+                onClick = { rotationMenuOpen = true },
+            )
+            DropdownMenu(expanded = rotationMenuOpen, onDismissRequest = { rotationMenuOpen = false }) {
+                ScreenRotation.entries.forEach { rotation ->
+                    DropdownMenuItem(
+                        trailingIcon = {
+                            if (rotation == settings.screenRotation) {
+                                Icon(Icons.Filled.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                            }
+                        },
+                        text = { Text(stringResource(rotation.labelRes)) },
+                        onClick = {
+                            rotationMenuOpen = false
+                            scope.launch { repositories.settingsRepository.setScreenRotation(rotation) }
+                        },
+                    )
+                }
+            }
+        }
 
         HorizontalDivider(Modifier.padding(vertical = 4.dp))
 
@@ -273,6 +316,22 @@ fun PreferencesSection() {
             detail = stringResource(R.string.settings_haptics_detail),
             checked = settings.hapticsEnabled,
             onCheckedChange = { scope.launch { repositories.settingsRepository.setHapticsEnabled(it) } },
+        )
+
+        MORE_PLAY_DEFAULT_TOGGLES.forEach { toggle ->
+            HorizontalDivider(Modifier.padding(vertical = 4.dp))
+            SettingsToggleRow(
+                label = stringResource(toggle.labelRes),
+                detail = stringResource(toggle.detailRes),
+                checked = settings.toggleDefault(toggle),
+                onCheckedChange = { scope.launch { repositories.settingsRepository.setPlayDefault(toggle, it) } },
+            )
+        }
+        Text(
+            stringResource(R.string.settings_play_defaults_note),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(bottom = 4.dp),
         )
 
         HorizontalDivider(Modifier.padding(vertical = 4.dp))
@@ -327,6 +386,15 @@ private fun SettingsDropdownRow(
         }
     }
 }
+
+private val MORE_PLAY_DEFAULT_TOGGLES = listOf(
+    GameToggle.MISTAKES,
+    GameToggle.REDUCE_MOTION,
+    GameToggle.LEFT_HANDED,
+    GameToggle.PINCH_ZOOM,
+    GameToggle.CONFIRM_END,
+    GameToggle.REMEMBER_DIFFICULTY,
+)
 
 @Composable
 private fun SettingsToggleRow(label: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit, detail: String? = null) {

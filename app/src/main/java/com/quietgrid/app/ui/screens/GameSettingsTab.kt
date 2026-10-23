@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -66,8 +68,6 @@ private val TIER_COLUMN_LABELS = listOf(
     Difficulty.EXPERT to R.string.game_settings_themes_col_expert,
 )
 
-fun gameHasSettings(gameId: GameId): Boolean = gameId in THEMED_GAMES
-
 private fun themeLocaleFor(gameId: GameId, puzzleLanguage: String): String = when (gameId) {
     GameId.THEMECLEAR -> currentThemeClearLocale(puzzleLanguage)
     else -> currentWordSearchLocale(puzzleLanguage)
@@ -83,12 +83,26 @@ private fun themeLabel(context: Context, themeId: String): String = context.getS
 
 @Composable
 fun GameSettingsTab(gameId: GameId) {
-    if (gameId in THEMED_GAMES) ThemeSelectionSection(gameId)
+    if (gameId in THEMED_GAMES) {
+        ThemeSelectionSection(gameId) {
+            GamePreferencesSection(gameId)
+            HorizontalDivider(Modifier.padding(vertical = 12.dp))
+        }
+    } else {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+        ) {
+            GamePreferencesSection(gameId)
+        }
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun ThemeSelectionSection(gameId: GameId) {
+private fun ThemeSelectionSection(gameId: GameId, header: @Composable () -> Unit) {
     val repositories: RepositoriesViewModel = hiltViewModel()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -124,6 +138,7 @@ private fun ThemeSelectionSection(gameId: GameId) {
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
     ) {
         item {
+            header()
             Text(stringResource(R.string.game_settings_themes_title), style = MaterialTheme.typography.titleMedium)
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Text(

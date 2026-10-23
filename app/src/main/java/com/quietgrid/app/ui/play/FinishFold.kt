@@ -27,10 +27,9 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.quietgrid.app.session.FinishKind
-import com.quietgrid.app.ui.components.systemAnimationsDisabled
+import com.quietgrid.app.ui.components.rememberReduceMotion
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -70,8 +69,7 @@ private fun fraction(time: Float, start: Float, duration: Float): Float = ((time
 
 @Composable
 internal fun rememberFoldState(finishing: FinishKind?): FoldState {
-    val context = LocalContext.current
-    val reduceMotion = remember { systemAnimationsDisabled(context) }
+    val reduceMotion = rememberReduceMotion()
     val clock = remember { Animatable(0f) }
     val active = finishing != null && !reduceMotion
     LaunchedEffect(active) {

@@ -28,6 +28,8 @@ import androidx.compose.ui.unit.DpRect
 import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.data.GamePlayPreferences
+import com.quietgrid.app.data.ScreenRotation
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -344,6 +346,131 @@ class GamePlayScaffoldTest {
             }
         }
         assertEquals(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED, composeRule.activity.requestedOrientation)
+    }
+
+    @Test
+    @Config(qualifiers = "w390dp-h844dp-port")
+    fun `hidden hints and timer leave the top bar without them`() {
+        composeRule.setContent {
+            MaterialTheme {
+                ProvideGamePlayPreferences(GamePlayPreferences(showTimer = false, showHints = false)) {
+                    GamePlayScaffold(
+                        gameId = GameId.TAKUZU,
+                        timer = PlayTimer.Elapsed(75),
+                        onBack = {},
+                        onEndPuzzle = {},
+                        hint = PlayHintAction(active = false, busy = false, contentDescription = "hint", onClick = {}),
+                        board = { Box(Modifier.fillMaxSize()) },
+                    )
+                }
+            }
+        }
+        composeRule.onNodeWithContentDescription("hint").assertDoesNotExist()
+        composeRule.onNodeWithText("1:15").assertDoesNotExist()
+    }
+
+    @Test
+    @Config(qualifiers = "w390dp-h844dp-port")
+    fun `countdown stays visible when the timer is hidden`() {
+        composeRule.setContent {
+            MaterialTheme {
+                ProvideGamePlayPreferences(GamePlayPreferences(showTimer = false)) {
+                    GamePlayScaffold(
+                        gameId = GameId.SUDOKU,
+                        timer = PlayTimer.Countdown(75),
+                        onBack = {},
+                        onEndPuzzle = {},
+                        board = { Box(Modifier.fillMaxSize()) },
+                    )
+                }
+            }
+        }
+        composeRule.onNodeWithText("1:15").assertIsDisplayed()
+    }
+
+    @Test
+    @Config(qualifiers = "sw800dp-w1280dp-h800dp-land")
+    fun `sideways preference locks the screen sideways and restores it on leave`() {
+        var showGame by mutableStateOf(true)
+        composeRule.setContent {
+            MaterialTheme {
+                if (showGame) {
+                    ProvideGamePlayPreferences(GamePlayPreferences(rotation = ScreenRotation.LANDSCAPE)) {
+                        GamePlayScaffold(gameId = GameId.SUDOKU, timer = null, onBack = {}, onEndPuzzle = {}, board = { Box(Modifier.fillMaxSize()) })
+                    }
+                }
+            }
+        }
+        assertEquals(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE, composeRule.activity.requestedOrientation)
+
+        showGame = false
+        composeRule.waitForIdle()
+
+        assertEquals(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED, composeRule.activity.requestedOrientation)
+    }
+
+    @Test
+    @Config(qualifiers = "sw390dp-w390dp-h844dp-port")
+    fun `portrait-only game stays upright on a phone even with a sideways preference`() {
+        composeRule.setContent {
+            MaterialTheme {
+                ProvideGamePlayPreferences(GamePlayPreferences(rotation = ScreenRotation.LANDSCAPE)) {
+                    GamePlayScaffold(
+                        gameId = GameId.WORDGUESS,
+                        timer = null,
+                        onBack = {},
+                        onEndPuzzle = {},
+                        phonePortraitOnly = true,
+                        board = { Box(Modifier.fillMaxSize()) },
+                    )
+                }
+            }
+        }
+        assertEquals(ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT, composeRule.activity.requestedOrientation)
+    }
+
+    @Test
+    @Config(qualifiers = "w390dp-h844dp-port")
+    fun `end puzzle without confirmation ends right away`() {
+        var ended = false
+        composeRule.setContent {
+            MaterialTheme {
+                ProvideGamePlayPreferences(GamePlayPreferences(confirmEndPuzzle = false)) {
+                    GamePlayScaffold(gameId = GameId.SUDOKU, timer = null, onBack = {}, onEndPuzzle = { ended = true }, board = { Box(Modifier.fillMaxSize()) })
+                }
+            }
+        }
+        val activity = composeRule.activity
+        composeRule.onNodeWithContentDescription(activity.getString(R.string.result_more_options)).performClick()
+        composeRule.onNodeWithText(activity.getString(R.string.common_end_puzzle)).performClick()
+        composeRule.waitForIdle()
+
+        assertTrue(ended)
+    }
+
+    @Test
+    @Config(qualifiers = "w844dp-h390dp-land")
+    fun `left-handed sideways phone moves the rail to the right of the board`() {
+        composeRule.setContent {
+            MaterialTheme {
+                ProvideGamePlayPreferences(GamePlayPreferences(leftHanded = true)) {
+                    GamePlayScaffold(
+                        gameId = GameId.SUDOKU,
+                        timer = null,
+                        onBack = {},
+                        onEndPuzzle = {},
+                        dockHeight = { 120.dp },
+                        dock = { Box(Modifier.fillMaxWidth().height(40.dp)) },
+                        board = { Box(Modifier.fillMaxSize()) },
+                    )
+                }
+            }
+        }
+        val activity = composeRule.activity
+        val back = composeRule.onNodeWithContentDescription(activity.getString(R.string.common_back)).getBoundsInRoot()
+        val board = composeRule.onNodeWithTag(PLAY_BOARD_TAG).getBoundsInRoot()
+
+        assertTrue("back button should sit right of the board", back.left >= board.right)
     }
 
     private fun assertHintLeavesBoardAlone(hintBesideBoard: Boolean) {

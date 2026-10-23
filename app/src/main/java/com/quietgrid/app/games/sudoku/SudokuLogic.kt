@@ -119,9 +119,14 @@ private fun groupUnitIndexes(unitKeys: List<SudokuUnitKey>): Triple<List<Int>, L
     return Triple(rows, cols, boxes)
 }
 
-fun applySudokuFinalizeValidation(session: SudokuSession, board: SudokuGrid, unitKeys: List<SudokuUnitKey>): SudokuFinalizeResult {
-    val uniqueKeys = unitKeys.distinct()
-    val completed = uniqueKeys.filter { getCompletedSudokuUnitState(board, session.puzzle.solution, it) != SudokuUnitState.INCOMPLETE }
+fun applySudokuFinalizeValidation(
+    session: SudokuSession,
+    board: SudokuGrid,
+    unitKeys: List<SudokuUnitKey>,
+    showMistakes: Boolean = true,
+): SudokuFinalizeResult {
+    val checkedKeys = if (showMistakes) unitKeys.distinct() else emptyList()
+    val completed = checkedKeys.filter { getCompletedSudokuUnitState(board, session.puzzle.solution, it) != SudokuUnitState.INCOMPLETE }
     val incorrect = completed.filter { getCompletedSudokuUnitState(board, session.puzzle.solution, it) == SudokuUnitState.INCORRECT }
     val correct = completed.filter { getCompletedSudokuUnitState(board, session.puzzle.solution, it) == SudokuUnitState.CORRECT }
     val newPenaltyCount = incorrect.count { it !in session.penalizedUnitKeys }

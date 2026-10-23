@@ -15,9 +15,9 @@ Read this before building or changing any `games/<id>/*PlayScreen.kt`. If a game
   - `board`, and `dock` for controls. Leave `dock` out when the game has no controls. Sideways phones then have no right panel: the strip items and the hint share one column beside the board.
   - `boardAspectRatio` (width / height, default `1f`) and `dockHeight` (default `0.dp`) when the defaults don't fit.
   - `wideDock = true` when the dock needs width sideways (keyboards, long text panels), and `dockRole = DockRole.DragSource` when the player drags pieces out of it.
-  - `phonePortraitOnly = true` for games with an on-screen keyboard: phones (smallest width under 600dp) stay upright while the game is open, and tablets still rotate. The previous orientation comes back when the player leaves.
+  - `phonePortraitOnly = true` for games with an on-screen keyboard: phones (smallest width under 600dp) stay upright while the game is open, and tablets still rotate. The previous orientation comes back when the player leaves. This wins over the player's rotation setting on phones, so list the game in `PHONE_PORTRAIT_ONLY_GAMES` (`core/GameCatalog.kt`) too.
   - `finishing` (the ViewModel's `finishing` flow, collected as state) so the board folds into its center when the puzzle ends and the result medallion grows out of that spot. Add `foldRows` and `foldCols` with the grid size when the board is a grid; other boards fold as a default grid. Challenger and Endless runs leave it out.
-- `onEndPuzzle` is called after the player confirms the scaffold's End puzzle dialog.
+- `onEndPuzzle` is called after the player confirms the scaffold's End puzzle dialog, or right away when the player turned that confirmation off.
 - Challenger and Endless variants use the same scaffold. Their hearts, tier or best score go in `info`, and their countdown goes in `timer`.
 - Reuse the shared pieces before writing your own: `heartsInfo(...)` for lives, `puzzleLanguageInfo(...)` for the puzzle language flag, `PlaySegmentedButtons` for two-way mode switches, `PlayHintAction(enabled = ...)` when the hint is temporarily unavailable.
 - Never special-case a game by name in shared code.
@@ -26,9 +26,9 @@ Read this before building or changing any `games/<id>/*PlayScreen.kt`. If a game
 
 1. **Top bar:** back on the left, the timer centered, then Hint, Rules (?) and the ⋮ menu on the right.
    - Never show the game name.
-   - A game without hints leaves the hint icon out. Rules and ⋮ keep their positions.
+   - A game without hints leaves the hint icon out, and so does a game whose player turned hints off (app-wide or for that game). Rules and ⋮ keep their positions.
    - End puzzle lives in the ⋮ menu, not as its own icon.
-   - When the timer is off in Settings, the center stays empty and nothing shifts. A countdown always shows.
+   - When the timer is off (app-wide or for that game), the center stays empty and nothing shifts. A countdown always shows.
 2. **Info strip:** one line of muted text with what the player needs to see (lives, theme, score / target, mines left, words found, puzzle language). It always keeps its height, even when empty. The strip adds the `·` separators itself, and only the first item marked `emphasized` is emphasized.
 3. **Board:** centered on the whole page when it fits, otherwise as close to the middle as it can get without touching the strip or the dock. It stays put.
 4. **Dock:** the game's tools and input (pad, keyboard, tray, word list), near the thumb. Its height is fixed per game and layout (`dockHeight = { sizeClass -> ... }`). Labelled tools (icon over a short label) sit in one row, toggles show their on state with the primary container tint.
@@ -91,12 +91,20 @@ The scaffold measures the space it actually gets (after system bars and the app'
 
 Unfolded foldables count as tablets. A phone turned sideways never gets the tablet layout.
 
+## Player preferences
+
+Timer, hint button, screen rotation, keep screen awake, vibration, check lines as you go, reduce motion, left-handed layout, pinch to zoom, confirm before End puzzle and remember last difficulty each have an app-wide default in Settings and an optional per-game override on the game page's Settings tab (`GamePreferencesRepository`, `ui/screens/GamePreferencesSection.kt`). `AppNavHost` resolves them per game with `playPreferencesFor(gameId)` and hands them down through `ProvideGamePlayPreferences` on every play and result route (including Challenger and Endless), which also sets `LocalHapticsEnabled`, `LocalReduceMotion` and `LocalPinchZoomEnabled`. The scaffold applies the timer, hint, rotation, left-handed and End puzzle ones itself, and `BoardEntrance`, `FeedbackText`, `PuzzleBoardContainer` and `ConfettiBurst` follow the locals. Play screens read `LocalGamePlayPreferences` only for game-specific behavior, such as `showMistakes` in the games listed in `MISTAKE_CHECK_GAMES`.
+
+- **Left-handed layout** mirrors the sideways layouts (sideways phone and tablet landscape): the rail or top-bar chrome and the panel swap sides, and the rules peek opens on the panel side. The scaffold does this by laying out in the opposite direction and restoring the original direction inside the board, dock, strip, rail and hint card, so board content never mirrors.
+- **Reduce motion** covers decorative motion only: the board entrance, spins and shakes, confetti, the end-of-puzzle fold and the result screen entrance. Moves that show what happened (2048 tiles sliding, Arrow Escape arrows leaving) still animate. Use `rememberReduceMotion()`, which also honors the system animation setting, instead of reading `systemAnimationsDisabled` directly.
+- **Check lines as you go** off skips line checking entirely: no spin or lock for a right line, no flag, shake or buzz for a wrong one, and a wrong line costs no score. Only the finished puzzle is checked. Hiding just the wrong-line flag would still give mistakes away, because a finished line that doesn't spin must be wrong. The ViewModel passes `showMistakes` into its finalize-validation step, which then checks no lines.
+
 ## Checklist for a new game
 
 - [ ] Uses `GamePlayScaffold`, with no custom header, timer, end button or end dialog.
 - [ ] Has `QuickStartContent` registered in `quickStartFor`, with 2 or 3 picture rules in `rules`.
 - [ ] Passes `difficulty` from the session. The strip shows only game state, never the title.
-- [ ] The hint, if the game has one, uses `hint` / `hintMessage`.
+- [ ] The hint, if the game has one, uses `hint` / `hintMessage`, and the game is listed in `HINT_CAPABLE_GAMES` (`core/GameCatalog.kt`) so its Settings tab offers the hint preference. Likewise list it in `ZOOMABLE_GAMES` if its board is zoomable and in `MISTAKE_CHECK_GAMES` if it flags wrong lines.
 - [ ] The dock type fits how the player uses it.
 - [ ] `dockHeight` covers the essential controls, and nothing in the dock grows past its box.
 - [ ] Checked in all six layouts: small and normal phone each upright and sideways, and tablet in landscape and upright. `GamePlayScaffoldTest` shows how to cover them with Robolectric qualifiers.

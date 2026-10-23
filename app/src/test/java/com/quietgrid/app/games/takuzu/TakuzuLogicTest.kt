@@ -93,6 +93,29 @@ class TakuzuLogicTest {
     }
 
     @Test
+    fun `finalizing a correct row with line checks off neither confirms nor locks it`() {
+        val session = createTakuzuSession(puzzleEntry)
+        val filledBoard = session.board.mapIndexed { r, row -> row.mapIndexed { c, v -> if (r == 0) solutionGrid[r][c] else v } }
+
+        val result = applyTakuzuFinalizeValidation(session, filledBoard, listOf("r0"), showMistakes = false)
+
+        assertTrue(result.effect.correctRowIndexes.isEmpty())
+        assertFalse(result.session.finishedCells[0][0])
+        assertEquals(filledBoard, result.session.board)
+    }
+
+    @Test
+    fun `finalizing an incorrect row with line checks off neither flags nor penalizes it`() {
+        val session = createTakuzuSession(puzzleEntry)
+        val wrongBoard = session.board.mapIndexed { r, row -> row.mapIndexed { c, v -> if (r == 0) listOf(1, 0, 0, 1)[c] else v } }
+
+        val result = applyTakuzuFinalizeValidation(session, wrongBoard, listOf("r0"), showMistakes = false)
+
+        assertTrue(result.effect.incorrectRowIndexes.isEmpty())
+        assertEquals(0, result.session.accuracyDrops)
+    }
+
+    @Test
     fun `takuzuScore is at its ceiling immediately and floors out for very slow or inaccurate play`() {
         assertEquals(10_000, takuzuScore(Difficulty.EASY, timeSeconds = 0, accuracyDrops = 0))
         assertEquals(1_000, takuzuScore(Difficulty.EASY, timeSeconds = 100_000, accuracyDrops = 0))

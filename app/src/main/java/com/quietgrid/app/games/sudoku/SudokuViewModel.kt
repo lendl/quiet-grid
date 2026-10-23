@@ -175,6 +175,7 @@ class SudokuPlayViewModel @AssistedInject constructor(
         private set
 
     internal var hintDispatcher: CoroutineDispatcher = Dispatchers.Default
+    var showMistakes = true
     private var hintJob: Job? = null
 
     private var pendingUnitKeys = mutableSetOf<SudokuUnitKey>()
@@ -303,7 +304,7 @@ class SudokuPlayViewModel @AssistedInject constructor(
         pendingUnitKeys = mutableSetOf()
         pendingBoard = null
 
-        val result = applySudokuFinalizeValidation(current, board, unitKeys)
+        val result = applySudokuFinalizeValidation(current, board, unitKeys, showMistakes)
         controller.updateSession(result.session)
 
         feedbackCorrectRows = result.effect.correctRowIndexes.toSet()

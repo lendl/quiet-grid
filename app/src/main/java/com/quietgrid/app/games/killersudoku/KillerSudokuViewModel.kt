@@ -178,6 +178,7 @@ class KillerSudokuPlayViewModel @AssistedInject constructor(
         private set
 
     internal var hintDispatcher: CoroutineDispatcher = Dispatchers.Default
+    var showMistakes = true
     private var hintJob: Job? = null
 
     private var pendingUnitKeys = mutableSetOf<SudokuUnitKey>()
@@ -305,7 +306,7 @@ class KillerSudokuPlayViewModel @AssistedInject constructor(
         pendingUnitKeys = mutableSetOf()
         pendingBoard = null
 
-        val result = applySudokuFinalizeValidation(current.grid, board, unitKeys)
+        val result = applySudokuFinalizeValidation(current.grid, board, unitKeys, showMistakes)
         controller.updateSession(current.copy(grid = result.session))
 
         feedbackCorrectRows = result.effect.correctRowIndexes.toSet()

@@ -71,6 +71,28 @@ class SettingsRepositoryTest {
     }
 
     @Test
+    fun `play defaults persist through the shared setter`() = runTest {
+        val repository = SettingsRepository(newDataStore(backgroundScope))
+
+        GameToggle.entries.forEach { repository.setPlayDefault(it, false) }
+
+        val settings = repository.settings.first()
+        GameToggle.entries.forEach { assertFalse(it.name, settings.toggleDefault(it)) }
+    }
+
+    @Test
+    fun `hints and rotation defaults persist`() = runTest {
+        val repository = SettingsRepository(newDataStore(backgroundScope))
+
+        repository.setShowHintsInPlay(false)
+        repository.setScreenRotation(ScreenRotation.PORTRAIT)
+
+        val settings = repository.settings.first()
+        assertFalse(settings.showHintsInPlay)
+        assertEquals(ScreenRotation.PORTRAIT, settings.screenRotation)
+    }
+
+    @Test
     fun `setBetaGamesEnabled persists true`() = runTest {
         val repository = SettingsRepository(newDataStore(backgroundScope))
 

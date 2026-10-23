@@ -163,6 +163,7 @@ class TakuzuPlayViewModel @AssistedInject constructor(
         private set
 
     internal var hintDispatcher: CoroutineDispatcher = Dispatchers.Default
+    var showMistakes = true
 
     private var pendingLineKeys = mutableSetOf<LineKey>()
     private var pendingBoard: TakuzuGrid? = null
@@ -205,7 +206,7 @@ class TakuzuPlayViewModel @AssistedInject constructor(
         pendingLineKeys = mutableSetOf()
         pendingBoard = null
 
-        val result = applyTakuzuFinalizeValidation(current, board, lineKeys)
+        val result = applyTakuzuFinalizeValidation(current, board, lineKeys, showMistakes)
         controller.updateSession(result.session)
 
         feedbackCorrectRows = result.effect.correctRowIndexes.toSet()

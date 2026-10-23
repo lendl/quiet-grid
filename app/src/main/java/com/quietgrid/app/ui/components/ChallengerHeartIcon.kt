@@ -21,9 +21,10 @@ fun ChallengerHeartIcon(
     shakeTrigger: Int = 0,
     tint: Color = MaterialTheme.colorScheme.error,
 ) {
+    val reduceMotion = LocalReduceMotion.current
     val shakeX = remember { Animatable(0f) }
     LaunchedEffect(shakeTrigger) {
-        if (shakeTrigger > 0) {
+        if (shakeTrigger > 0 && !reduceMotion) {
             shakeX.snapTo(0f)
             shakeX.animateTo(
                 targetValue = 0f,
