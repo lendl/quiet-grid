@@ -4,40 +4,28 @@ data class AnimalDokuSolveStep(val technique: AnimalDokuTechnique, val chainDept
 
 data class AnimalDokuSolveResult(val solved: Boolean, val steps: List<AnimalDokuSolveStep>, val remainingCandidates: Int = 0)
 
+fun nextAnimalDokuStep(state: AnimalDokuSolverState, maxPairingK: Int = 4): AnimalDokuStep? =
+    findSingleton(state)
+        ?: findConfinement(state)
+        ?: (2..maxPairingK).asSequence().mapNotNull { k -> findPairing(state, k) }.firstOrNull()
+        ?: findChainContradiction(state)
+
+fun AnimalDokuSolverState.apply(step: AnimalDokuStep) {
+    when (step) {
+        is AnimalDokuStep.Placement -> place(step.row, step.col)
+        is AnimalDokuStep.Elimination -> step.cells.forEach { (r, c) -> eliminated[r][c] = true }
+    }
+}
+
 fun solveAnimalDoku(size: Int, regionOf: List<List<Int>>, maxPairingK: Int = 4): AnimalDokuSolveResult {
     val state = AnimalDokuSolverState(size, regionOf)
     val steps = mutableListOf<AnimalDokuSolveStep>()
 
     while (!state.isSolved()) {
-        val singleton = findSingleton(state)
-        if (singleton != null) {
-            state.place(singleton.row, singleton.col)
-            steps.add(AnimalDokuSolveStep(AnimalDokuTechnique.SINGLETON, 0))
-            continue
-        }
-
-        val confinement = findConfinement(state)
-        if (confinement != null) {
-            confinement.cells.forEach { (r, c) -> state.eliminated[r][c] = true }
-            steps.add(AnimalDokuSolveStep(confinement.technique, 0))
-            continue
-        }
-
-        val pairing = (2..maxPairingK).asSequence().mapNotNull { k -> findPairing(state, k) }.firstOrNull()
-        if (pairing != null) {
-            pairing.cells.forEach { (r, c) -> state.eliminated[r][c] = true }
-            steps.add(AnimalDokuSolveStep(pairing.technique, 0))
-            continue
-        }
-
-        val chain = findChainContradiction(state)
-        if (chain != null) {
-            chain.cells.forEach { (r, c) -> state.eliminated[r][c] = true }
-            steps.add(AnimalDokuSolveStep(AnimalDokuTechnique.CHAIN, chain.chainDepth))
-            continue
-        }
-
-        return AnimalDokuSolveResult(solved = false, steps = steps, remainingCandidates = state.candidateCount())
+        val step = nextAnimalDokuStep(state, maxPairingK)
+            ?: return AnimalDokuSolveResult(solved = false, steps = steps, remainingCandidates = state.candidateCount())
+        state.apply(step)
+        steps.add(AnimalDokuSolveStep(step.technique, (step as? AnimalDokuStep.Elimination)?.chainDepth ?: 0))
     }
 
     return AnimalDokuSolveResult(solved = true, steps = steps)

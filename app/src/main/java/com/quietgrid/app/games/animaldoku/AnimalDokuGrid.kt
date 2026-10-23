@@ -34,10 +34,13 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
@@ -48,8 +51,10 @@ import androidx.compose.ui.unit.min
 import com.quietgrid.app.ui.theme.LocalIsPencilTheme
 import kotlinx.coroutines.delay
 import kotlin.math.floor
+import kotlin.math.roundToInt
 
 private const val DOUBLE_TAP_WINDOW_MS = 300L
+private const val HINT_GHOST_ALPHA = 0.5f
 
 private fun offsetToCell(offset: Offset, cellSizePx: Float, size: Int): Pair<Int, Int>? {
     val col = floor(offset.x / cellSizePx).toInt()
@@ -66,6 +71,7 @@ fun AnimalDokuGrid(
     onCellTap: (Int, Int) -> Unit,
     onCellDrag: (markAll: Boolean, visited: List<Pair<Int, Int>>) -> Unit,
     onCellDoubleTap: (Int, Int) -> Unit,
+    hintHighlight: AnimalDokuHintHighlight? = null,
 ) {
     val isPencilTheme = LocalIsPencilTheme.current
     val regionColors = rememberAnimalDokuRegionColors(regions)
@@ -80,6 +86,9 @@ fun AnimalDokuGrid(
         val borderColor = MaterialTheme.colorScheme.outline
         val thinBorderStrokeWidth = 1.dp
         val thickBorderStrokeWidth = 5.dp
+        val hintScrimColor = if (isPencilTheme) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.surface
+        val hintContextAlpha = if (isPencilTheme) 0.08f else 0.35f
+        val hintDimmedAlpha = if (isPencilTheme) 0.18f else 0.65f
 
         Box(
             Modifier
@@ -126,6 +135,9 @@ fun AnimalDokuGrid(
                 }
                 .drawWithContent {
                     drawContent()
+                    if (hintHighlight != null) {
+                        drawHintScrim(hintHighlight, size, cellSizePx, hintScrimColor, hintContextAlpha, hintDimmedAlpha)
+                    }
                     if (isPencilTheme) {
                         for (row in 0 until size) {
                             for (col in 0 until size) {
@@ -166,8 +178,37 @@ fun AnimalDokuGrid(
                         isPencilTheme = isPencilTheme,
                         modifier = Modifier.offset(x = cellSize * col, y = cellSize * row),
                     )
+                    if (hintHighlight != null && cellState == AnimalDokuCellState.EMPTY) {
+                        val ghostModifier = Modifier.offset(x = cellSize * col, y = cellSize * row).size(cellSize).alpha(HINT_GHOST_ALPHA)
+                        if (row to col in hintHighlight.crossCells) {
+                            Box(ghostModifier, contentAlignment = Alignment.Center) {
+                                AnimalDokuXMark(cellSize, locked = false, isPencilTheme = isPencilTheme)
+                            }
+                        } else if (hintHighlight.animalCell == row to col) {
+                            Box(ghostModifier, contentAlignment = Alignment.Center) {
+                                AnimalDokuAnimalIcon(pose = AnimalDokuAnimalPose.FRONT_FACING, region = region, modifier = Modifier.size(cellSize * 0.7f))
+                            }
+                        }
+                    }
                 }
             }
+        }
+    }
+}
+
+private fun DrawScope.drawHintScrim(highlight: AnimalDokuHintHighlight, gridSize: Int, cellSizePx: Float, color: Color, contextAlpha: Float, dimmedAlpha: Float) {
+    for (row in 0 until gridSize) {
+        for (col in 0 until gridSize) {
+            val alpha = when (highlight.toneOf(row to col)) {
+                AnimalDokuHintTone.FOCUS -> continue
+                AnimalDokuHintTone.CONTEXT -> contextAlpha
+                AnimalDokuHintTone.DIMMED -> dimmedAlpha
+            }
+            val left = (cellSizePx * col).roundToInt().toFloat()
+            val top = (cellSizePx * row).roundToInt().toFloat()
+            val right = (cellSizePx * (col + 1)).roundToInt().toFloat()
+            val bottom = (cellSizePx * (row + 1)).roundToInt().toFloat()
+            drawRect(color.copy(alpha = alpha), Offset(left, top), Size(right - left, bottom - top))
         }
     }
 }

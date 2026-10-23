@@ -2,33 +2,62 @@ package com.quietgrid.engine.animaldoku
 
 enum class AnimalDokuTechnique { SINGLETON, STRUCTURAL_CONFINEMENT, CONFINEMENT, PAIRING_2, PAIRING_3, PAIRING_4_PLUS, CHAIN }
 
+enum class AnimalDokuUnitKind { ROW, COLUMN, REGION }
+
+data class AnimalDokuUnit(val kind: AnimalDokuUnitKind, val index: Int)
+
+fun AnimalDokuUnit.cells(regionOf: List<List<Int>>): List<Pair<Int, Int>> {
+    val size = regionOf.size
+    return when (kind) {
+        AnimalDokuUnitKind.ROW -> (0 until size).map { col -> index to col }
+        AnimalDokuUnitKind.COLUMN -> (0 until size).map { row -> row to index }
+        AnimalDokuUnitKind.REGION -> regionCellsRaw(regionOf, size, index)
+    }
+}
+
+fun AnimalDokuSolverState.candidatesIn(unit: AnimalDokuUnit): List<Pair<Int, Int>> =
+    unit.cells(regionOf).filter { (row, col) -> isCandidate(row, col) }
+
 sealed class AnimalDokuStep {
     abstract val technique: AnimalDokuTechnique
 
-    data class Placement(val row: Int, val col: Int, override val technique: AnimalDokuTechnique) : AnimalDokuStep()
+    data class Placement(
+        val row: Int,
+        val col: Int,
+        override val technique: AnimalDokuTechnique,
+        val unit: AnimalDokuUnit,
+    ) : AnimalDokuStep()
 
     data class Elimination(
         val cells: List<Pair<Int, Int>>,
         override val technique: AnimalDokuTechnique,
+        val sources: List<AnimalDokuUnit>,
+        val targets: List<AnimalDokuUnit>,
         val chainDepth: Int = 0,
     ) : AnimalDokuStep()
 }
+
+private fun rowUnit(index: Int) = AnimalDokuUnit(AnimalDokuUnitKind.ROW, index)
+private fun columnUnit(index: Int) = AnimalDokuUnit(AnimalDokuUnitKind.COLUMN, index)
+private fun regionUnit(index: Int) = AnimalDokuUnit(AnimalDokuUnitKind.REGION, index)
+
+private fun Int.maskIndices(size: Int): List<Int> = (0 until size).filter { this and (1 shl it) != 0 }
 
 fun findSingleton(state: AnimalDokuSolverState): AnimalDokuStep.Placement? {
     for (region in 0 until state.size) {
         if (state.regionSolved[region]) continue
         val cells = state.candidatesInRegion(region)
-        if (cells.size == 1) return AnimalDokuStep.Placement(cells[0].first, cells[0].second, AnimalDokuTechnique.SINGLETON)
+        if (cells.size == 1) return AnimalDokuStep.Placement(cells[0].first, cells[0].second, AnimalDokuTechnique.SINGLETON, regionUnit(region))
     }
     for (row in 0 until state.size) {
         if (state.rowSolved[row]) continue
         val cells = state.candidatesInRow(row)
-        if (cells.size == 1) return AnimalDokuStep.Placement(cells[0].first, cells[0].second, AnimalDokuTechnique.SINGLETON)
+        if (cells.size == 1) return AnimalDokuStep.Placement(cells[0].first, cells[0].second, AnimalDokuTechnique.SINGLETON, rowUnit(row))
     }
     for (col in 0 until state.size) {
         if (state.colSolved[col]) continue
         val cells = state.candidatesInCol(col)
-        if (cells.size == 1) return AnimalDokuStep.Placement(cells[0].first, cells[0].second, AnimalDokuTechnique.SINGLETON)
+        if (cells.size == 1) return AnimalDokuStep.Placement(cells[0].first, cells[0].second, AnimalDokuTechnique.SINGLETON, columnUnit(col))
     }
     return null
 }
@@ -56,7 +85,7 @@ fun findConfinement(state: AnimalDokuSolverState): AnimalDokuStep.Elimination? {
             if (toEliminate.isNotEmpty()) {
                 val structural = regionCellsRaw(state.regionOf, size, region).all { it.first == rows.first() }
                 val technique = if (structural) AnimalDokuTechnique.STRUCTURAL_CONFINEMENT else AnimalDokuTechnique.CONFINEMENT
-                return AnimalDokuStep.Elimination(toEliminate, technique)
+                return AnimalDokuStep.Elimination(toEliminate, technique, sources = listOf(regionUnit(region)), targets = listOf(rowUnit(rows.first())))
             }
         }
 
@@ -66,7 +95,7 @@ fun findConfinement(state: AnimalDokuSolverState): AnimalDokuStep.Elimination? {
             if (toEliminate.isNotEmpty()) {
                 val structural = regionCellsRaw(state.regionOf, size, region).all { it.second == cols.first() }
                 val technique = if (structural) AnimalDokuTechnique.STRUCTURAL_CONFINEMENT else AnimalDokuTechnique.CONFINEMENT
-                return AnimalDokuStep.Elimination(toEliminate, technique)
+                return AnimalDokuStep.Elimination(toEliminate, technique, sources = listOf(regionUnit(region)), targets = listOf(columnUnit(cols.first())))
             }
         }
     }
@@ -81,7 +110,7 @@ fun findConfinement(state: AnimalDokuSolverState): AnimalDokuStep.Elimination? {
             if (toEliminate.isNotEmpty()) {
                 val structural = rowIsMonochrome(state.regionOf, size, row)
                 val technique = if (structural) AnimalDokuTechnique.STRUCTURAL_CONFINEMENT else AnimalDokuTechnique.CONFINEMENT
-                return AnimalDokuStep.Elimination(toEliminate, technique)
+                return AnimalDokuStep.Elimination(toEliminate, technique, sources = listOf(rowUnit(row)), targets = listOf(regionUnit(regions.first())))
             }
         }
     }
@@ -96,7 +125,7 @@ fun findConfinement(state: AnimalDokuSolverState): AnimalDokuStep.Elimination? {
             if (toEliminate.isNotEmpty()) {
                 val structural = colIsMonochrome(state.regionOf, size, col)
                 val technique = if (structural) AnimalDokuTechnique.STRUCTURAL_CONFINEMENT else AnimalDokuTechnique.CONFINEMENT
-                return AnimalDokuStep.Elimination(toEliminate, technique)
+                return AnimalDokuStep.Elimination(toEliminate, technique, sources = listOf(columnUnit(col)), targets = listOf(regionUnit(regions.first())))
             }
         }
     }
@@ -159,7 +188,9 @@ fun findPairing(state: AnimalDokuSolverState, k: Int): AnimalDokuStep.Eliminatio
         val rows = combo.fold(0) { mask, region -> mask or regionRows[region] }
         if (Integer.bitCount(rows) == k) {
             val toEliminate = candidatesWhere { row, col -> rows and (1 shl row) != 0 && regionMask and (1 shl state.regionOf[row][col]) == 0 }
-            if (toEliminate.isNotEmpty()) return AnimalDokuStep.Elimination(toEliminate, technique)
+            if (toEliminate.isNotEmpty()) {
+                return AnimalDokuStep.Elimination(toEliminate, technique, sources = combo.map(::regionUnit), targets = rows.maskIndices(size).map(::rowUnit))
+            }
         }
     }
     for (combo in regionCombos) {
@@ -167,7 +198,9 @@ fun findPairing(state: AnimalDokuSolverState, k: Int): AnimalDokuStep.Eliminatio
         val cols = combo.fold(0) { mask, region -> mask or regionCols[region] }
         if (Integer.bitCount(cols) == k) {
             val toEliminate = candidatesWhere { row, col -> cols and (1 shl col) != 0 && regionMask and (1 shl state.regionOf[row][col]) == 0 }
-            if (toEliminate.isNotEmpty()) return AnimalDokuStep.Elimination(toEliminate, technique)
+            if (toEliminate.isNotEmpty()) {
+                return AnimalDokuStep.Elimination(toEliminate, technique, sources = combo.map(::regionUnit), targets = cols.maskIndices(size).map(::columnUnit))
+            }
         }
     }
 
@@ -176,7 +209,9 @@ fun findPairing(state: AnimalDokuSolverState, k: Int): AnimalDokuStep.Eliminatio
         val regions = combo.fold(0) { mask, row -> mask or rowRegions[row] }
         if (Integer.bitCount(regions) == k) {
             val toEliminate = candidatesWhere { row, col -> rowMask and (1 shl row) == 0 && regions and (1 shl state.regionOf[row][col]) != 0 }
-            if (toEliminate.isNotEmpty()) return AnimalDokuStep.Elimination(toEliminate, technique)
+            if (toEliminate.isNotEmpty()) {
+                return AnimalDokuStep.Elimination(toEliminate, technique, sources = combo.map(::rowUnit), targets = regions.maskIndices(size).map(::regionUnit))
+            }
         }
     }
     for (combo in (0 until size).filter { colRegions[it] != 0 }.combinationsOfSize(k)) {
@@ -184,7 +219,9 @@ fun findPairing(state: AnimalDokuSolverState, k: Int): AnimalDokuStep.Eliminatio
         val regions = combo.fold(0) { mask, col -> mask or colRegions[col] }
         if (Integer.bitCount(regions) == k) {
             val toEliminate = candidatesWhere { row, col -> colMask and (1 shl col) == 0 && regions and (1 shl state.regionOf[row][col]) != 0 }
-            if (toEliminate.isNotEmpty()) return AnimalDokuStep.Elimination(toEliminate, technique)
+            if (toEliminate.isNotEmpty()) {
+                return AnimalDokuStep.Elimination(toEliminate, technique, sources = combo.map(::columnUnit), targets = regions.maskIndices(size).map(::regionUnit))
+            }
         }
     }
 
@@ -203,11 +240,11 @@ private fun propagateSingletons(state: AnimalDokuSolverState, maxDepth: Int): In
     return depth
 }
 
-private fun hasContradiction(state: AnimalDokuSolverState): Boolean {
-    for (region in 0 until state.size) if (!state.regionSolved[region] && state.candidatesInRegion(region).isEmpty()) return true
-    for (row in 0 until state.size) if (!state.rowSolved[row] && state.candidatesInRow(row).isEmpty()) return true
-    for (col in 0 until state.size) if (!state.colSolved[col] && state.candidatesInCol(col).isEmpty()) return true
-    return false
+private fun findEmptyUnit(state: AnimalDokuSolverState): AnimalDokuUnit? {
+    for (region in 0 until state.size) if (!state.regionSolved[region] && state.candidatesInRegion(region).isEmpty()) return regionUnit(region)
+    for (row in 0 until state.size) if (!state.rowSolved[row] && state.candidatesInRow(row).isEmpty()) return rowUnit(row)
+    for (col in 0 until state.size) if (!state.colSolved[col] && state.candidatesInCol(col).isEmpty()) return columnUnit(col)
+    return null
 }
 
 fun findChainContradiction(state: AnimalDokuSolverState): AnimalDokuStep.Elimination? {
@@ -217,8 +254,15 @@ fun findChainContradiction(state: AnimalDokuSolverState): AnimalDokuStep.Elimina
             val hypothesis = state.copy()
             hypothesis.place(row, col)
             val intermediatePlacements = propagateSingletons(hypothesis, MAX_CHAIN_PROPAGATION_DEPTH)
-            if (hasContradiction(hypothesis)) {
-                return AnimalDokuStep.Elimination(listOf(row to col), AnimalDokuTechnique.CHAIN, chainDepth = 1 + intermediatePlacements)
+            val emptyUnit = findEmptyUnit(hypothesis)
+            if (emptyUnit != null) {
+                return AnimalDokuStep.Elimination(
+                    listOf(row to col),
+                    AnimalDokuTechnique.CHAIN,
+                    sources = listOf(emptyUnit),
+                    targets = emptyList(),
+                    chainDepth = 1 + intermediatePlacements,
+                )
             }
         }
     }

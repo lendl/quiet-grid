@@ -17,10 +17,16 @@ import com.quietgrid.app.data.recentlyPlayedPuzzleIds
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
+import com.quietgrid.engine.animaldoku.AnimalDokuHint
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -144,6 +150,38 @@ class AnimalDokuPlayViewModel @AssistedInject constructor(
     var lastOpenEvent by mutableStateOf<AnimalDokuOpenEvent?>(null)
         private set
 
+    var hint by mutableStateOf<AnimalDokuHint?>(null)
+        private set
+
+    var isComputingHint by mutableStateOf(false)
+        private set
+
+    internal var hintDispatcher: CoroutineDispatcher = Dispatchers.Default
+
+    private var hintJob: Job? = null
+
+    private fun clearHint() {
+        hintJob?.cancel()
+        hintJob = null
+        isComputingHint = false
+        hint = null
+    }
+
+    fun toggleHint() {
+        if (controller.isFinalized || isComputingHint) return
+        if (hint != null) {
+            clearHint()
+            return
+        }
+        val current = session ?: return
+        isComputingHint = true
+        hintJob = viewModelScope.launch {
+            val next = withContext(hintDispatcher) { findAnimalDokuSessionHint(current) }
+            isComputingHint = false
+            if (!controller.isFinalized && session == current) hint = next
+        }
+    }
+
     init {
         controller.start(requestedDifficulty, resume, dailyDate)
     }
@@ -152,6 +190,7 @@ class AnimalDokuPlayViewModel @AssistedInject constructor(
         if (controller.isFinalized) return
         val current = session ?: return
         val next = applyAnimalDokuTap(current, row, col) ?: return
+        clearHint()
         controller.updateSession(next)
     }
 
@@ -159,6 +198,7 @@ class AnimalDokuPlayViewModel @AssistedInject constructor(
         if (controller.isFinalized) return
         val current = session ?: return
         val next = applyAnimalDokuDrag(current, markAll, visited) ?: return
+        clearHint()
         controller.updateSession(next)
     }
 
@@ -166,6 +206,7 @@ class AnimalDokuPlayViewModel @AssistedInject constructor(
         if (controller.isFinalized) return
         val current = session ?: return
         val opened = applyAnimalDokuOpen(current, row, col) ?: return
+        clearHint()
         lastOpenEvent = AnimalDokuOpenEvent(row, col, opened.wasCorrect)
         val stillPlaying = opened.session.status == AnimalDokuStatus.PLAYING
         controller.updateSession(opened.session, persist = stillPlaying)
@@ -176,5 +217,8 @@ class AnimalDokuPlayViewModel @AssistedInject constructor(
         }
     }
 
-    fun endPuzzle() = controller.endPuzzle()
+    fun endPuzzle() {
+        clearHint()
+        controller.endPuzzle()
+    }
 }

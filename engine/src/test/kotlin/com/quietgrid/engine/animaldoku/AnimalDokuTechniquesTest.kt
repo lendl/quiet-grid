@@ -27,7 +27,7 @@ class AnimalDokuTechniquesTest {
         state.eliminated[0][3] = true
         state.eliminated[1][3] = true
         val move = findSingleton(state)
-        assertEquals(AnimalDokuStep.Placement(1, 2, AnimalDokuTechnique.SINGLETON), move)
+        assertEquals(AnimalDokuStep.Placement(1, 2, AnimalDokuTechnique.SINGLETON, AnimalDokuUnit(AnimalDokuUnitKind.REGION, 1)), move)
     }
 
     @Test
@@ -37,7 +37,7 @@ class AnimalDokuTechniquesTest {
         state.eliminated[2][1] = true
         state.eliminated[2][3] = true
         val move = findSingleton(state)
-        assertEquals(AnimalDokuStep.Placement(2, 2, AnimalDokuTechnique.SINGLETON), move)
+        assertEquals(AnimalDokuStep.Placement(2, 2, AnimalDokuTechnique.SINGLETON, AnimalDokuUnit(AnimalDokuUnitKind.ROW, 2)), move)
     }
 
     @Test
