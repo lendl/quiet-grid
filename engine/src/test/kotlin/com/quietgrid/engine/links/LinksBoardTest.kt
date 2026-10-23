@@ -96,10 +96,22 @@ class LinksBoardTest {
     }
 
     @Test
-    fun `the hint picks the shortest pair that is not drawn as its solution`() {
-        assertEquals(0, linksHintColor(puzzle, emptyLinksPaths(puzzle)))
-        val hinted = applyLinksSolutionPath(puzzle, emptyLinksPaths(puzzle), 0)
+    fun `applying a solution path draws that pair and cuts pipes in its way`() {
+        val start = draw(emptyLinksPaths(puzzle), 4, 1)
+        assertEquals(listOf(4, 1), start[1])
+        val hinted = applyLinksSolutionPath(puzzle, start, 0)
         assertEquals(listOf(0, 1, 2), hinted[0])
-        assertEquals(1, linksHintColor(puzzle, hinted))
+        assertEquals(emptyList<Int>(), hinted[1])
+    }
+
+    @Test
+    fun `a stroke that ends where it began is unmoved`() {
+        val start = draw(emptyLinksPaths(puzzle), 3, 6, 7, 8)
+        var stroke = startLinksStroke(puzzle, start, 7)!!
+        assertTrue(isLinksStrokeUnmoved(stroke))
+        stroke = extendLinksStroke(puzzle, stroke, 8)
+        assertFalse(isLinksStrokeUnmoved(stroke))
+        stroke = extendLinksStroke(puzzle, stroke, 7)
+        assertTrue(isLinksStrokeUnmoved(stroke))
     }
 }

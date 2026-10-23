@@ -42,6 +42,7 @@ fun ZoomableBoardSurface(
     resetTrigger: Int = 0,
     panTarget: Offset? = null,
     onVisibleBoundsChange: (Rect) -> Unit = {},
+    singleFingerPan: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     var scale by remember { mutableFloatStateOf(1f) }
@@ -101,7 +102,7 @@ fun ZoomableBoardSurface(
         modifier
             .clipToBounds()
             .onSizeChanged { viewportSize = it }
-            .pointerInput(Unit) {
+            .pointerInput(singleFingerPan) {
                 val touchSlop = viewConfiguration.touchSlop
                 awaitEachGesture {
                     var panClaimed = false
@@ -119,7 +120,7 @@ fun ZoomableBoardSurface(
                                 onZoomChange(newScale > MIN_SCALE)
                                 event.changes.forEach { it.consume() }
                             }
-                            pressed.size == 1 && scale > MIN_SCALE -> {
+                            pressed.size == 1 && singleFingerPan && scale > MIN_SCALE -> {
                                 val change = pressed[0]
                                 if (!panClaimed) {
                                     dragDistance += change.positionChange().getDistance()

@@ -133,6 +133,7 @@ fun main(args: Array<String>) {
             "minisudoku" -> com.quietgrid.cli.sudoku.runSudokuRegrade(path, write = "--write" in args) {
                 com.quietgrid.engine.sudoku.gradeMiniSudoku(it)
             }
+            "links" -> com.quietgrid.cli.links.runLinksRegrade(path, write = "--write" in args)
             else -> error("Regrade not implemented for game '$game'")
         }
         return
@@ -413,18 +414,22 @@ fun main(args: Array<String>) {
         }
         "links" -> {
             val state = GenerationState("${command.outDir}/.generation-state/links.json")
+            val outFile = "${command.outDir}/links_puzzles.json"
+            val existing = readPuzzleEntries(outFile, LinksPuzzleEntry.serializer())
+            val existingIds = existing.map { it.id }.toSet()
+            val requested = command.fillTo?.let { target -> maxOf(0, target - existing.count { it.difficulty == difficulty.key }) } ?: command.count
             val entries = mutableListOf<LinksPuzzleEntry>()
             var attempts = 0
-            while (entries.size < command.count && attempts < command.count * 10) {
+            while (entries.size < requested && attempts < requested * 10) {
                 attempts++
                 val candidate = generateLinksPuzzle(difficulty) ?: continue
-                if (state.hasTried(candidate.id)) continue
+                if (candidate.id in existingIds || state.hasTried(candidate.id)) continue
                 state.recordTried(candidate.id, "valid")
                 entries += candidate
             }
             state.save()
-            appendPuzzleEntries("${command.outDir}/links_puzzles.json", entries, LinksPuzzleEntry.serializer()) { it.id }
-            println("Generated ${entries.size}/${command.count} links puzzles at $difficulty into ${command.outDir}/links_puzzles.json")
+            appendPuzzleEntries(outFile, entries, LinksPuzzleEntry.serializer()) { it.id }
+            println("Generated ${entries.size}/$requested links puzzles at $difficulty into $outFile")
         }
         "themeclear" -> {
             val locale = command.locale

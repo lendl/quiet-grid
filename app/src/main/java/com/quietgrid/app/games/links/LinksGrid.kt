@@ -17,7 +17,6 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
@@ -51,13 +50,14 @@ fun LinksGrid(
     onDragStart: (Int) -> Unit,
     onDragMove: (Int) -> Unit,
     onDragEnd: () -> Unit,
+    onDragCancel: () -> Unit,
 ) {
     val pencil = LocalIsPencilTheme.current
     val textMeasurer = rememberTextMeasurer()
     val currentPaths by rememberUpdatedState(paths)
+    val pairColors = rememberLinksPairColors(puzzle)
     val background = MaterialTheme.colorScheme.surfaceContainerHigh
     val gridLine = MaterialTheme.colorScheme.outlineVariant
-    val letterColor = Color.White
     val letterFamily = MaterialTheme.typography.titleMedium.fontFamily
 
     BoxWithConstraints(Modifier.padding(12.dp), contentAlignment = Alignment.Center) {
@@ -68,7 +68,6 @@ fun LinksGrid(
             fontSize = with(density) { (cellPx * 0.36f).toSp() },
             fontWeight = FontWeight.Bold,
             fontFamily = letterFamily,
-            color = letterColor,
         )
 
         fun cellAt(position: Offset): Int? {
@@ -88,7 +87,7 @@ fun LinksGrid(
                         down.consume()
                         onDragStart(start)
                         var last = start
-                        drag(down.id) { change ->
+                        val completed = drag(down.id) { change ->
                             change.consume()
                             val cell = cellAt(change.position) ?: return@drag
                             if (cell != last) {
@@ -96,7 +95,7 @@ fun LinksGrid(
                                 onDragMove(cell)
                             }
                         }
-                        onDragEnd()
+                        if (completed) onDragEnd() else onDragCancel()
                     }
                 }
                 .drawBehind {
@@ -107,7 +106,7 @@ fun LinksGrid(
                     currentPaths.forEachIndexed { color, path ->
                         if (path.isEmpty()) return@forEachIndexed
                         val alpha = if (isLinksPairConnected(puzzle, currentPaths, color)) FILL_ALPHA_CONNECTED else FILL_ALPHA_OPEN
-                        val tint = linksPairColor(color, pencil).copy(alpha = alpha)
+                        val tint = pairColors[color].copy(alpha = alpha)
                         path.forEach { cell ->
                             drawRect(tint, topLeft = Offset((cell % n) * cellPx, (cell / n) * cellPx), size = Size(cellPx, cellPx))
                         }
@@ -128,20 +127,20 @@ fun LinksGrid(
                         }
                         drawPath(
                             pipe,
-                            linksPairColor(color, pencil),
+                            pairColors[color],
                             style = Stroke(width = cellPx * PIPE_WIDTH, cap = StrokeCap.Round, join = StrokeJoin.Round),
                         )
                     }
 
                     puzzle.endpoints.forEachIndexed { color, ends ->
-                        val pairColor = linksPairColor(color, pencil)
+                        val pairColor = pairColors[color]
                         val connected = isLinksPairConnected(puzzle, currentPaths, color)
                         ends.forEach { cell ->
                             val c = center(cell)
                             if (connected) drawCircle(pairColor, radius = cellPx * RING_RADIUS, center = c, style = Stroke(cellPx * RING_WIDTH))
                             drawCircle(pairColor, radius = cellPx * DOT_RADIUS, center = c)
                             if (pencil) {
-                                val layout = textMeasurer.measure(linksPairLetter(color), letterStyle)
+                                val layout = textMeasurer.measure(linksPairLetter(color), letterStyle.copy(color = linksLetterColor(pairColor)))
                                 drawText(layout, topLeft = Offset(c.x - layout.size.width / 2f, c.y - layout.size.height / 2f))
                             }
                         }
@@ -150,7 +149,7 @@ fun LinksGrid(
                     val active = activeColor?.let { currentPaths.getOrNull(it) }?.lastOrNull()
                     if (activeColor != null && active != null) {
                         drawCircle(
-                            linksPairColor(activeColor, pencil).copy(alpha = HEAD_GLOW_ALPHA),
+                            pairColors[activeColor].copy(alpha = HEAD_GLOW_ALPHA),
                             radius = cellPx * HEAD_GLOW_RADIUS,
                             center = center(active),
                         )

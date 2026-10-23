@@ -4,7 +4,10 @@ data class LinksStroke(
     val color: Int,
     val base: List<List<Int>>,
     val path: List<Int>,
+    val origin: List<Int> = path,
 )
+
+fun isLinksStrokeUnmoved(stroke: LinksStroke): Boolean = stroke.path == stroke.origin
 
 fun emptyLinksPaths(puzzle: LinksPuzzleEntry): List<List<Int>> = List(puzzle.pairCount) { emptyList() }
 
@@ -94,17 +97,6 @@ fun linksAccuracyPercent(pairCount: Int, moves: Int, hintsUsed: Int): Int {
     if (pairCount <= 0) return 100
     return (pairCount * 100 / maxOf(pairCount, spent)).coerceIn(0, 100)
 }
-
-private fun matchesSolution(puzzle: LinksPuzzleEntry, paths: List<List<Int>>, color: Int): Boolean {
-    val path = paths.getOrNull(color) ?: return false
-    val solution = puzzle.solution[color]
-    return path == solution || path == solution.asReversed()
-}
-
-fun linksHintColor(puzzle: LinksPuzzleEntry, paths: List<List<Int>>): Int? =
-    (0 until puzzle.pairCount)
-        .filter { !matchesSolution(puzzle, paths, it) }
-        .minByOrNull { puzzle.solution[it].size }
 
 fun applyLinksSolutionPath(puzzle: LinksPuzzleEntry, paths: List<List<Int>>, color: Int): List<List<Int>> =
     finishLinksStroke(LinksStroke(color, paths, puzzle.solution[color]))

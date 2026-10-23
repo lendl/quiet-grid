@@ -669,6 +669,11 @@ private fun LinksHowToPlay() {
     RuleRow(1, R.string.links_rule_1_title, R.string.links_rule_1_body)
     RuleRow(2, R.string.links_rule_2_title, R.string.links_rule_2_body)
     RuleRow(3, R.string.links_rule_3_title, R.string.links_rule_3_body)
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    Accordion(stringResource(R.string.how_to_play_scoring_title)) {
+        BodyText(stringResource(R.string.links_how_to_play_scoring))
+    }
 }
 
 @Composable

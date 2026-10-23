@@ -1,21 +1,30 @@
 package com.quietgrid.app.games.links
 
+import com.quietgrid.app.core.Difficulty
 import com.quietgrid.engine.links.LinksStroke
 import com.quietgrid.engine.links.applyLinksSolutionPath
+import com.quietgrid.engine.links.findLinksHint
 import com.quietgrid.engine.links.finishLinksStroke
 import com.quietgrid.engine.links.isLinksSolved
+import com.quietgrid.engine.links.isLinksStrokeUnmoved
 import com.quietgrid.engine.links.isValidLinksSolution
 import com.quietgrid.engine.links.linksAccuracyPercent
 import com.quietgrid.engine.links.linksAreAdjacent
-import com.quietgrid.engine.links.linksHintColor
 
 private const val LINKS_BASE_SCORE = 1000
 private const val LINKS_HINT_PENALTY = 100
 private const val LINKS_EXTRA_MOVE_PENALTY = 20
-private const val LINKS_TIME_PENALTY_PER_SECOND = 1
+
+private fun linksSecondsPerPoint(difficulty: Difficulty): Int = when (difficulty) {
+    Difficulty.EASY -> 1
+    Difficulty.MEDIUM -> 2
+    Difficulty.HARD -> 3
+    Difficulty.EXPERT -> 4
+}
 
 fun commitLinksStroke(session: LinksSession, stroke: LinksStroke): LinksSession {
     if (session.status != LinksStatus.PLAYING) return session
+    if (isLinksStrokeUnmoved(stroke)) return session
     val paths = finishLinksStroke(stroke)
     if (paths == session.paths) return session
     val newColor = stroke.color != session.lastColor
@@ -30,7 +39,7 @@ fun commitLinksStroke(session: LinksSession, stroke: LinksStroke): LinksSession 
 
 fun applyLinksHint(session: LinksSession): LinksSession? {
     if (session.status != LinksStatus.PLAYING) return null
-    val color = linksHintColor(session.puzzle, session.paths) ?: return null
+    val color = findLinksHint(session.puzzle, session.paths)?.color ?: return null
     return withPaths(
         session.copy(hintsUsed = session.hintsUsed + 1),
         applyLinksSolutionPath(session.puzzle, session.paths, color),
@@ -47,12 +56,13 @@ fun linksAccuracy(session: LinksSession): Int =
 
 fun linksScore(session: LinksSession, elapsedSeconds: Int): Int {
     val extraMoves = maxOf(0, session.moves - session.puzzle.pairCount)
+    val secondsPerPoint = linksSecondsPerPoint(Difficulty.fromKey(session.puzzle.difficulty))
     return maxOf(
         0,
         LINKS_BASE_SCORE -
             session.hintsUsed * LINKS_HINT_PENALTY -
             extraMoves * LINKS_EXTRA_MOVE_PENALTY -
-            elapsedSeconds * LINKS_TIME_PENALTY_PER_SECOND,
+            elapsedSeconds / secondsPerPoint,
     )
 }
 

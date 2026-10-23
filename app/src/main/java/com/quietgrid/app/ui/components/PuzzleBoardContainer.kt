@@ -75,6 +75,7 @@ private fun PuzzleBoardContainerBox(
     onVisibleBoundsChange: (Rect) -> Unit,
     flashTrigger: Int,
     showFrame: Boolean,
+    singleFingerPan: Boolean,
     modifier: Modifier,
     content: @Composable () -> Unit,
 ) {
@@ -114,6 +115,7 @@ private fun PuzzleBoardContainerBox(
                         resetTrigger = resetTrigger,
                         panTarget = panTarget,
                         onVisibleBoundsChange = onVisibleBoundsChange,
+                        singleFingerPan = singleFingerPan,
                     ) {
                         Box(if (showFrame) frameModifier.padding(BOARD_FRAME_PADDING) else Modifier) {
                             content()
@@ -144,6 +146,7 @@ fun ColumnScope.PuzzleBoardContainer(
     resetTrigger: Int = 0,
     panTarget: Offset? = null,
     onVisibleBoundsChange: (Rect) -> Unit = {},
+    singleFingerPan: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     PuzzleBoardContainerBox(
@@ -156,6 +159,7 @@ fun ColumnScope.PuzzleBoardContainer(
         onVisibleBoundsChange = onVisibleBoundsChange,
         flashTrigger = flashTrigger,
         showFrame = showFrame,
+        singleFingerPan = singleFingerPan,
         modifier = Modifier.weight(1f).fillMaxWidth(),
         content = content,
     )
@@ -172,6 +176,7 @@ fun BoxScope.PuzzleBoardContainer(
     resetTrigger: Int = 0,
     panTarget: Offset? = null,
     onVisibleBoundsChange: (Rect) -> Unit = {},
+    singleFingerPan: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     PuzzleBoardContainerBox(
@@ -184,6 +189,7 @@ fun BoxScope.PuzzleBoardContainer(
         onVisibleBoundsChange = onVisibleBoundsChange,
         flashTrigger = flashTrigger,
         showFrame = showFrame,
+        singleFingerPan = singleFingerPan,
         modifier = Modifier.fillMaxSize(),
         content = content,
     )
@@ -200,6 +206,7 @@ fun RowScope.PuzzleBoardContainer(
     resetTrigger: Int = 0,
     panTarget: Offset? = null,
     onVisibleBoundsChange: (Rect) -> Unit = {},
+    singleFingerPan: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     PuzzleBoardContainerBox(
@@ -212,6 +219,7 @@ fun RowScope.PuzzleBoardContainer(
         onVisibleBoundsChange = onVisibleBoundsChange,
         flashTrigger = flashTrigger,
         showFrame = showFrame,
+        singleFingerPan = singleFingerPan,
         modifier = Modifier.weight(1f).fillMaxHeight(),
         content = content,
     )

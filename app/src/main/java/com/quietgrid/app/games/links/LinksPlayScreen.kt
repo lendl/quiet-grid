@@ -1,6 +1,8 @@
 package com.quietgrid.app.games.links
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.R
@@ -15,6 +17,8 @@ import com.quietgrid.app.ui.play.PlayTimer
 import com.quietgrid.engine.links.linksConnectedCount
 import com.quietgrid.engine.links.linksFilledCount
 
+private const val LINKS_ZOOM_MIN_SIZE = 9
+
 @Composable
 fun LinksPlayScreen(
     difficulty: Difficulty,
@@ -26,6 +30,7 @@ fun LinksPlayScreen(
         creationCallback = { factory -> factory.create(difficulty, resume) },
     )
     CollectPuzzleResult(viewModel.result, onFinished)
+    val finishing by viewModel.finishing.collectAsState()
 
     val session = viewModel.session
     val paths = viewModel.shownPaths
@@ -34,10 +39,13 @@ fun LinksPlayScreen(
         timer = PlayTimer.Elapsed(viewModel.elapsedSeconds.toInt()),
         onBack = onBack,
         onEndPuzzle = { viewModel.endPuzzle() },
+        finishing = finishing,
+        foldRows = session?.puzzle?.size,
+        foldCols = session?.puzzle?.size,
         difficulty = session?.let { Difficulty.fromKey(it.puzzle.difficulty) },
         hint = PlayHintAction(
             active = false,
-            busy = false,
+            busy = viewModel.isComputingHint,
             contentDescription = stringResource(R.string.links_hint_content_description),
             onClick = viewModel::onHint,
         ),
@@ -55,7 +63,8 @@ fun LinksPlayScreen(
             PuzzleBoardContainer(
                 visible = session != null,
                 playFresh = !resume,
-                zoomable = false,
+                zoomable = (session?.puzzle?.size ?: 0) >= LINKS_ZOOM_MIN_SIZE,
+                singleFingerPan = false,
             ) {
                 if (session != null && paths != null) {
                     LinksGrid(
@@ -65,6 +74,7 @@ fun LinksPlayScreen(
                         onDragStart = viewModel::onDragStart,
                         onDragMove = viewModel::onDragMove,
                         onDragEnd = viewModel::onDragEnd,
+                        onDragCancel = viewModel::onDragCancel,
                     )
                 }
             }

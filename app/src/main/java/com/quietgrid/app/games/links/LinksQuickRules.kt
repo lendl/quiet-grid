@@ -62,14 +62,14 @@ private fun LinksMiniPicture(pipes: List<MiniPipe>, tintCells: Boolean = false) 
         fun center(spot: Pair<Int, Int>) = Offset((spot.second + 0.5f) * cell, (spot.first + 0.5f) * cell)
         if (tintCells) {
             pipes.forEach { pipe ->
-                val tint = linksPairColor(pipe.color, pencil).copy(alpha = 0.22f)
+                val tint = linksPaletteColor(pipe.color, pencil).copy(alpha = 0.22f)
                 pipe.cells.forEach { drawRect(tint, Offset(it.second * cell, it.first * cell), Size(cell, cell)) }
             }
         }
         for (k in 1 until MINI_COLS) drawLine(gridLine, Offset(k * cell, 0f), Offset(k * cell, MINI_ROWS * cell), 1f)
         for (k in 1 until MINI_ROWS) drawLine(gridLine, Offset(0f, k * cell), Offset(MINI_COLS * cell, k * cell), 1f)
         pipes.forEach { pipe ->
-            val color = linksPairColor(pipe.color, pencil)
+            val color = linksPaletteColor(pipe.color, pencil)
             if (pipe.cells.size > 1) {
                 val path = Path().apply {
                     center(pipe.cells.first()).let { moveTo(it.x, it.y) }

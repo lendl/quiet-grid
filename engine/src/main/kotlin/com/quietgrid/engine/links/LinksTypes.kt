@@ -25,8 +25,8 @@ val LINKS_SIZE_BY_DIFFICULTY: Map<Difficulty, Int> = mapOf(
 val LINKS_PAIR_RANGE_BY_DIFFICULTY: Map<Difficulty, IntRange> = mapOf(
     Difficulty.EASY to 4..6,
     Difficulty.MEDIUM to 6..8,
-    Difficulty.HARD to 8..11,
-    Difficulty.EXPERT to 10..14,
+    Difficulty.HARD to 9..11,
+    Difficulty.EXPERT to 13..14,
 )
 
 const val LINKS_MIN_PATH_LENGTH = 3

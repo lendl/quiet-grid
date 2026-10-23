@@ -22,6 +22,10 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -122,9 +126,15 @@ class LinksPlayViewModel @AssistedInject constructor(
     val session get() = controller.session
     val elapsedSeconds get() = controller.elapsedSeconds
     val result = controller.result
+    val finishing = controller.finishing
 
     var stroke by mutableStateOf<LinksStroke?>(null)
         private set
+
+    var isComputingHint by mutableStateOf(false)
+        private set
+
+    internal var hintDispatcher: CoroutineDispatcher = Dispatchers.Default
 
     val shownPaths: List<List<Int>>?
         get() = stroke?.let { linksStrokePaths(it) } ?: session?.paths
@@ -152,16 +162,26 @@ class LinksPlayViewModel @AssistedInject constructor(
         val current = session ?: return
         val next = commitLinksStroke(current, active)
         if (next === current) return
-        val won = next.status == LinksStatus.WON
-        controller.updateSession(next, persist = !won)
-        if (won) controller.finishAsWin()
+        commit(next)
+    }
+
+    fun onDragCancel() {
+        stroke = null
     }
 
     fun onHint() {
-        if (controller.isFinalized) return
+        if (controller.isFinalized || isComputingHint) return
         stroke = null
         val current = session ?: return
-        val next = applyLinksHint(current) ?: return
+        isComputingHint = true
+        viewModelScope.launch {
+            val next = withContext(hintDispatcher) { applyLinksHint(current) }
+            isComputingHint = false
+            if (next != null && !controller.isFinalized && session == current) commit(next)
+        }
+    }
+
+    private fun commit(next: LinksSession) {
         val won = next.status == LinksStatus.WON
         controller.updateSession(next, persist = !won)
         if (won) controller.finishAsWin()

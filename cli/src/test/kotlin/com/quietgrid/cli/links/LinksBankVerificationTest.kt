@@ -32,6 +32,11 @@ class LinksBankVerificationTest {
     }
 
     @Test
+    fun `every puzzle solves by logic at its own tier`() {
+        bank.forEach { entry -> assertTrue(entry.id, isLinksEntryAtTier(entry)) }
+    }
+
+    @Test
     fun `every puzzle has one answer that matches its stored solution`() {
         bank.forEach { entry ->
             assertTrue(entry.id, isValidLinksSolution(entry.size, entry.endpoints, entry.solution))

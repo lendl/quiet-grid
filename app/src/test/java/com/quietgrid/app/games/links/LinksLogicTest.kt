@@ -84,4 +84,27 @@ class LinksLogicTest {
         assertEquals(990, linksScore(base, elapsedSeconds = 10))
         assertEquals(850, linksScore(base.copy(moves = 4, hintsUsed = 1), elapsedSeconds = 10))
     }
+
+    @Test
+    fun `time costs less on harder tiers`() {
+        val expert = createLinksSession(puzzle.copy(difficulty = "expert")).copy(moves = 2)
+        assertEquals(900, linksScore(expert, elapsedSeconds = 400))
+    }
+
+    @Test
+    fun `tapping a pipe without dragging keeps it`() {
+        var session = createLinksSession(puzzle)
+        session = draw(session, 3, 6, 7, 8)
+        val tapped = draw(session, 6)
+        assertSame(session, tapped)
+        assertEquals(listOf(3, 6, 7, 8), tapped.paths[1])
+    }
+
+    @Test
+    fun `a hint fixes a pipe that went the wrong way`() {
+        var session = createLinksSession(puzzle)
+        session = draw(session, 3, 6, 7, 4)
+        val hinted = applyLinksHint(session)!!
+        assertEquals(puzzle.solution[1], hinted.paths[1])
+    }
 }

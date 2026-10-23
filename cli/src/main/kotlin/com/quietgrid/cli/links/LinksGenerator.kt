@@ -1,11 +1,14 @@
 package com.quietgrid.cli.links
 
+import com.quietgrid.cli.readPuzzleEntries
+import com.quietgrid.cli.writePuzzleEntries
 import com.quietgrid.engine.core.Difficulty
 import com.quietgrid.engine.links.LINKS_PAIR_RANGE_BY_DIFFICULTY
 import com.quietgrid.engine.links.LINKS_SIZE_BY_DIFFICULTY
 import com.quietgrid.engine.links.LinksPuzzleEntry
 import com.quietgrid.engine.links.countLinksSolutions
 import com.quietgrid.engine.links.generateLinksSolution
+import com.quietgrid.engine.links.gradeLinksPuzzle
 import com.quietgrid.engine.links.linksEndpointsOf
 import java.security.MessageDigest
 import kotlin.random.Random
@@ -20,6 +23,11 @@ fun linksPuzzleId(size: Int, endpoints: List<List<Int>>): String {
     return "lk$size-" + digest.take(6).joinToString("") { "%02x".format(it) }
 }
 
+fun isLinksEntryAtTier(entry: LinksPuzzleEntry): Boolean {
+    val difficulty = Difficulty.entries.firstOrNull { it.key == entry.difficulty } ?: return false
+    return entry.size == LINKS_SIZE_BY_DIFFICULTY.getValue(difficulty) && gradeLinksPuzzle(entry.size, entry.endpoints) == difficulty
+}
+
 fun generateLinksPuzzle(difficulty: Difficulty, random: Random = Random.Default, maxAttempts: Int = 400): LinksPuzzleEntry? {
     val size = LINKS_SIZE_BY_DIFFICULTY.getValue(difficulty)
     val pairRange = LINKS_PAIR_RANGE_BY_DIFFICULTY.getValue(difficulty)
@@ -30,6 +38,7 @@ fun generateLinksPuzzle(difficulty: Difficulty, random: Random = Random.Default,
         val endpoints = linksEndpointsOf(solution)
         val count = countLinksSolutions(size, endpoints)
         if (!count.exhausted || count.solutions != 1) return@repeat
+        if (gradeLinksPuzzle(size, endpoints) != difficulty) return@repeat
         return LinksPuzzleEntry(
             id = linksPuzzleId(size, endpoints),
             size = size,
@@ -39,4 +48,17 @@ fun generateLinksPuzzle(difficulty: Difficulty, random: Random = Random.Default,
         )
     }
     return null
+}
+
+fun runLinksRegrade(path: String, write: Boolean) {
+    val bank = readPuzzleEntries(path, LinksPuzzleEntry.serializer())
+    val (kept, dropped) = bank.partition { isLinksEntryAtTier(it) }
+    Difficulty.entries.forEach { difficulty ->
+        val total = bank.count { it.difficulty == difficulty.key }
+        val stays = kept.count { it.difficulty == difficulty.key }
+        println("${difficulty.key}: $stays/$total stay at tier")
+    }
+    if (!write) return
+    writePuzzleEntries(path, kept, LinksPuzzleEntry.serializer())
+    println("Dropped ${dropped.size} puzzles from $path")
 }
