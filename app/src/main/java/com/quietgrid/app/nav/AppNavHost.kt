@@ -168,8 +168,8 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
     val scope = rememberCoroutineScope()
     val repositories: RepositoriesViewModel = hiltViewModel()
     val settings by repositories.settingsRepository.settings.collectAsState(initial = AppSettings())
-    val activeSession by repositories.sessionRepository.activeSessionSummary.collectAsState(initial = null)
-    val activeGameKey = activeSession?.gameId
+    val activeSessionState = repositories.sessionRepository.activeSessionSummary.collectAsState(initial = null)
+    fun activeGameKey(): String? = activeSessionState.value?.gameId
 
     val mixes by repositories.mixRepository.mixes.collectAsState(initial = emptyList())
     val activeMixId by repositories.mixRepository.activeMixId.collectAsState(initial = null)
@@ -183,7 +183,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
     }
 
     fun resumeActiveRoute(gameId: GameId): String =
-        Routes.resume(ActiveSessionSummary(gameId.key, activeSession?.dailyDate, activeSession?.mode))
+        Routes.resume(ActiveSessionSummary(gameId.key, activeSessionState.value?.dailyDate, activeSessionState.value?.mode))
             ?: Routes.play(gameId, Difficulty.EASY, resume = true)
 
     fun playNextDaily(next: Pair<GameId, Difficulty>?, dailyKey: String?) {
@@ -386,8 +386,9 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
         bottomBar = {
             if (isTabsRoute || currentRoute == Routes.PICKER || currentRoute == Routes.SUPPORT_INFO) {
                 Column {
-                    if (isTabsRoute && activeGameKey != null) {
-                        val activeGameId = GameId.entries.firstOrNull { it.key == activeGameKey }
+                    val continueGameKey = activeGameKey()
+                    if (isTabsRoute && continueGameKey != null) {
+                        val activeGameId = GameId.entries.firstOrNull { it.key == continueGameKey }
                         val activeGameTitle = activeGameId
                             ?.let { stringResource(GameCatalog.games.first { meta -> meta.id == it }.titleRes) }
                         if (activeGameId != null && activeGameTitle != null) {
@@ -443,7 +444,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                 onOpenAccount = { scope.launch { accountDrawerState.open() } },
                                 onStartDaily = { gameId, difficulty, date ->
                                     val route = Routes.play(gameId, difficulty, resume = false, daily = date)
-                                    if (activeGameKey != null) pendingDailyRoute = route else navController.navigate(route)
+                                    if (activeGameKey() != null) pendingDailyRoute = route else navController.navigate(route)
                                 },
                                 onResumeDaily = { gameId -> navController.navigate(resumeActiveRoute(gameId)) },
                             )
@@ -453,7 +454,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                             )
                             AppTab.MIXES -> MixesScreen(
                                 mixes = mixes,
-                                onPlay = { mix -> if (activeGameKey != null) pendingMixToStart = mix else startMix(mix) },
+                                onPlay = { mix -> if (activeGameKey() != null) pendingMixToStart = mix else startMix(mix) },
                                 onEdit = { mixId -> navController.navigate(Routes.mixEditor(mixId)) },
                                 onNewMix = {
                                     scope.launch {
@@ -1444,7 +1445,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
     }
 
     val resumeActiveGame: () -> Unit = {
-        val activeGameId = activeGameKey?.let { key -> GameId.entries.firstOrNull { it.key == key } }
+        val activeGameId = activeGameKey()?.let { key -> GameId.entries.firstOrNull { it.key == key } }
         if (activeGameId != null) navController.navigate(resumeActiveRoute(activeGameId))
     }
 

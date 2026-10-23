@@ -1,6 +1,7 @@
 package com.quietgrid.app.games.arrowescape
 
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.engine.arrowescape.ArrowEscapePiece
 import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
 import com.quietgrid.engine.arrowescape.buildCellOwnerMap
 import com.quietgrid.engine.arrowescape.isActiveCell
@@ -56,14 +57,14 @@ fun resolveArrowEscapeTap(
     tapRow: Float,
     tapCol: Float,
     toleranceCells: Float,
+    pieces: List<ArrowEscapePiece> = puzzle.pieces.map { it.toPiece() },
+    ownerLookup: Map<Pair<Int, Int>, Int> = buildCellOwnerMap(pieces),
 ): Int? {
-    val pieces = puzzle.pieces.map { it.toPiece() }
     val inRange = pieces.indices
         .filter { it !in removedIndices }
         .map { index -> index to pieces[index].cells.minOf { distanceToCell(tapRow, tapCol, it.row, it.col) } }
         .filter { (_, distance) -> distance <= toleranceCells }
     if (inRange.isEmpty()) return null
-    val ownerLookup = buildCellOwnerMap(pieces)
     val removable = inRange.filter { (index, _) ->
         isPieceRemovable(index, pieces, removedIndices, ownerLookup, puzzle.rows, puzzle.cols)
     }

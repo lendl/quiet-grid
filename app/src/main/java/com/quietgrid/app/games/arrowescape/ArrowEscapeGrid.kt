@@ -318,6 +318,8 @@ fun ArrowEscapeGrid(
                             tapRow = tapOffset.y / cellSizePx + viewport.top,
                             tapCol = tapOffset.x / cellSizePx + viewport.left,
                             toleranceCells = toleranceCells,
+                            pieces = pieces,
+                            ownerLookup = ownerLookup,
                         ) ?: return@detectTapGestures
                         onPieceTap(pieceIndex)
                     }

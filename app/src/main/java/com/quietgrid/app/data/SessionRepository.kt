@@ -4,8 +4,10 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
@@ -44,6 +46,7 @@ class SessionRepository @Inject constructor(private val dataStore: DataStore<Pre
         .map { prefs -> prefs[ACTIVE_SESSION_KEY] }
         .distinctUntilChanged()
         .map { raw -> raw?.let { runCatching { json.decodeFromString<ActiveSessionEnvelope>(it) }.getOrNull() } }
+        .flowOn(Dispatchers.Default)
 
     val activeSessionSummary: Flow<ActiveSessionSummary?> = activeSession
         .map { envelope -> envelope?.let { ActiveSessionSummary(it.gameId, it.dailyDate, it.mode, it.difficulty ?: it.dailyTier) } }
