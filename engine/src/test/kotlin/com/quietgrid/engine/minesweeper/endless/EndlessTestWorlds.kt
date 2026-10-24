@@ -28,6 +28,17 @@ internal fun allSafeWorld(radius: Int, states: Map<SectionPos, SectionState>): E
     return EndlessWorld.of(sections)
 }
 
+internal val WALLED_ROWS: List<String> = List(ENDLESS_SECTION_SIZE) { row -> if (row == 4) "****.****" else "*********" }
+
+internal fun islandWorld(radius: Int, safe: Set<SectionPos>, states: Map<SectionPos, SectionState> = emptyMap()): EndlessWorld {
+    val sections = mutableListOf<EndlessSection>()
+    for (sy in -radius..radius) for (sx in -radius..radius) {
+        val pos = SectionPos(sx, sy)
+        sections += section(pos, states[pos] ?: SectionState.BUILT, if (pos in safe) null else WALLED_ROWS)
+    }
+    return EndlessWorld.of(sections)
+}
+
 internal fun localCell(pos: SectionPos, col: Int, row: Int) =
     WorldCell(pos.sx * ENDLESS_SECTION_SIZE + col, pos.sy * ENDLESS_SECTION_SIZE + row)
 

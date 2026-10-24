@@ -33,3 +33,13 @@ val MinesweeperQuickStart = QuickStartContent(
         QuickRule(R.string.minesweeper_rule_3_title) { MinesweeperFlagPicture() },
     ),
 )
+
+val MinesweeperEndlessQuickStart = QuickStartContent(
+    goalRes = R.string.minesweeper_endless_rules_goal,
+    bulletRes = listOf(
+        R.string.minesweeper_endless_rules_bullet_1,
+        R.string.minesweeper_endless_rules_bullet_2,
+        R.string.minesweeper_endless_rules_bullet_3,
+    ),
+    hookRes = R.string.minesweeper_endless_rules_hook,
+)

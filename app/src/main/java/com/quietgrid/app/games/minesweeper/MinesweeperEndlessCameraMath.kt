@@ -11,13 +11,24 @@ import kotlin.math.min
 const val ENDLESS_DEFAULT_CELLS_ACROSS = 11
 const val ENDLESS_MIN_ZOOM = 11f / 27f
 const val ENDLESS_MAX_ZOOM = 1.5f
+const val ENDLESS_GUTTER_CELLS = 0.25f
+const val ENDLESS_SECTION_SPAN = ENDLESS_SECTION_SIZE + ENDLESS_GUTTER_CELLS
 
 data class EndlessCameraBounds(val minX: Float, val minY: Float, val maxX: Float, val maxY: Float)
+
+fun endlessLayoutOf(world: Int): Float = world + Math.floorDiv(world, ENDLESS_SECTION_SIZE) * ENDLESS_GUTTER_CELLS
+
+fun endlessWorldOf(layout: Float): Int? {
+    val section = floor(layout / ENDLESS_SECTION_SPAN).toInt()
+    val local = layout - section * ENDLESS_SECTION_SPAN
+    if (local >= ENDLESS_SECTION_SIZE) return null
+    return section * ENDLESS_SECTION_SIZE + floor(local).toInt()
+}
 
 fun endlessCellPx(camera: MinesweeperEndlessCamera, viewportW: Float, viewportH: Float): Float =
     min(viewportW, viewportH) / ENDLESS_DEFAULT_CELLS_ACROSS * camera.zoom
 
-fun endlessWorldPoint(
+fun endlessLayoutPoint(
     camera: MinesweeperEndlessCamera,
     viewportW: Float,
     viewportH: Float,
@@ -34,9 +45,11 @@ fun endlessCellAt(
     viewportH: Float,
     screenX: Float,
     screenY: Float,
-): WorldCell {
-    val (x, y) = endlessWorldPoint(camera, viewportW, viewportH, screenX, screenY)
-    return WorldCell(floor(x).toInt(), floor(y).toInt())
+): WorldCell? {
+    val (x, y) = endlessLayoutPoint(camera, viewportW, viewportH, screenX, screenY)
+    val worldX = endlessWorldOf(x) ?: return null
+    val worldY = endlessWorldOf(y) ?: return null
+    return WorldCell(worldX, worldY)
 }
 
 fun MinesweeperEndlessCamera.panned(dxPx: Float, dyPx: Float, viewportW: Float, viewportH: Float): MinesweeperEndlessCamera {
@@ -51,24 +64,23 @@ fun MinesweeperEndlessCamera.zoomed(
     viewportW: Float,
     viewportH: Float,
 ): MinesweeperEndlessCamera {
-    val (worldX, worldY) = endlessWorldPoint(this, viewportW, viewportH, focusX, focusY)
+    val (layoutX, layoutY) = endlessLayoutPoint(this, viewportW, viewportH, focusX, focusY)
     val next = copy(zoom = (zoom * factor).coerceIn(ENDLESS_MIN_ZOOM, ENDLESS_MAX_ZOOM))
     val cell = endlessCellPx(next, viewportW, viewportH)
     return next.copy(
-        centerX = worldX - (focusX - viewportW / 2) / cell,
-        centerY = worldY - (focusY - viewportH / 2) / cell,
+        centerX = layoutX - (focusX - viewportW / 2) / cell,
+        centerY = layoutY - (focusY - viewportH / 2) / cell,
     )
 }
 
 fun endlessCameraBounds(world: EndlessWorld): EndlessCameraBounds {
     val built = world.sections.values.filter { it.state != SectionState.UNBUILT }.map { it.pos }
         .ifEmpty { listOf(ENDLESS_START_SECTION) }
-    val size = ENDLESS_SECTION_SIZE.toFloat()
     return EndlessCameraBounds(
-        minX = built.minOf { it.sx } * size - size,
-        minY = built.minOf { it.sy } * size - size,
-        maxX = (built.maxOf { it.sx } + 1) * size + size,
-        maxY = (built.maxOf { it.sy } + 1) * size + size,
+        minX = built.minOf { it.sx } * ENDLESS_SECTION_SPAN - ENDLESS_SECTION_SPAN,
+        minY = built.minOf { it.sy } * ENDLESS_SECTION_SPAN - ENDLESS_SECTION_SPAN,
+        maxX = (built.maxOf { it.sx } + 1) * ENDLESS_SECTION_SPAN + ENDLESS_SECTION_SPAN,
+        maxY = (built.maxOf { it.sy } + 1) * ENDLESS_SECTION_SPAN + ENDLESS_SECTION_SPAN,
     )
 }
 

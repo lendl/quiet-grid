@@ -15,7 +15,10 @@ import com.quietgrid.engine.minesweeper.endless.SectionState
 import com.quietgrid.engine.minesweeper.endless.WorldCell
 import com.quietgrid.engine.minesweeper.endless.cells
 import com.quietgrid.engine.minesweeper.endless.encodeEndlessSections
+import com.quietgrid.engine.minesweeper.endless.endlessStalledSections
+import com.quietgrid.engine.minesweeper.endless.neighbors
 import com.quietgrid.engine.minesweeper.endless.revealEndlessCell
+import com.quietgrid.engine.minesweeper.endless.section
 import com.quietgrid.engine.minesweeper.endless.sideNeighbors
 import com.quietgrid.engine.minesweeper.endless.startEndlessRun
 import kotlinx.coroutines.CoroutineDispatcher
@@ -106,6 +109,24 @@ class MinesweeperEndlessViewModelTest {
                 world = revealEndlessCell(world, hidden.first()).world
             }
         }
+    }
+
+    private fun worldWithStalledOpening(): EndlessWorld {
+        for (seed in 1..50) {
+            val world = startEndlessRun(WorldCell(4, 4), Random(seed)).world
+            for (open in world.sections.values.filter { it.state == SectionState.OPEN }) {
+                for (neighbor in open.pos.sideNeighbors()) {
+                    val section = world.sections[neighbor] ?: continue
+                    if (section.state == SectionState.UNBUILT) continue
+                    val touches = open.pos.cells().any { cell ->
+                        world.cellStateAt(cell) == EndlessCellState.REVEALED && world.numberAt(cell) == 0 &&
+                            cell.neighbors().any { it.section == neighbor }
+                    }
+                    if (touches) return world.withSection(section.copy(state = SectionState.UNBUILT, cells = "-".repeat(81)))
+                }
+            }
+        }
+        error("no seed in 1..50 has an opening across a section border")
     }
 
     private fun everyOpenSectionHasBuiltNeighbours(world: EndlessWorld): Boolean =
@@ -240,6 +261,21 @@ class MinesweeperEndlessViewModelTest {
             assertTrue(state == SectionState.OPEN || state == SectionState.CLEARED)
         }
         assertTrue(everyOpenSectionHasBuiltNeighbours(after))
+        assertTrue(endlessStalledSections(after).isEmpty())
+    }
+
+    @Test
+    fun `restore finishes a stalled opening before taps`() {
+        val stalled = worldWithStalledOpening()
+        assertTrue(endlessStalledSections(stalled).isNotEmpty())
+        val buildDispatcher = StandardTestDispatcher(mainDispatcherRule.dispatcher.scheduler)
+        val viewModel = viewModel(storeWith(stalled), resume = true, buildDispatcher = buildDispatcher)
+
+        assertTrue(viewModel.building)
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+
+        assertFalse(viewModel.building)
+        assertTrue(endlessStalledSections(viewModel.session!!.world).isEmpty())
     }
 
     @Test

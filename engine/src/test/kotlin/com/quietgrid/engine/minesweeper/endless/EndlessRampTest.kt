@@ -1,7 +1,6 @@
 package com.quietgrid.engine.minesweeper.endless
 
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -9,22 +8,15 @@ class EndlessRampTest {
 
     @Test
     fun `mine counts match the spec at key levels`() {
-        assertEquals(5, endlessTargetsFor(1).mines)
-        assertEquals(9, endlessTargetsFor(21).mines)
+        assertEquals(9, endlessTargetsFor(1).mines)
+        assertEquals(9, endlessTargetsFor(10).mines)
+        assertEquals(10, endlessTargetsFor(11).mines)
+        assertEquals(11, endlessTargetsFor(21).mines)
+        assertEquals(12, endlessTargetsFor(31).mines)
         assertEquals(13, endlessTargetsFor(41).mines)
         assertEquals(13, endlessTargetsFor(200).mines)
-        assertEquals(0.16, endlessTargetsFor(41).density, 1e-9)
-        assertEquals(0.16, endlessTargetsFor(200).density, 1e-9)
-    }
-
-    @Test
-    fun `opening limit starts at level twenty and stops at twenty-five`() {
-        assertNull(endlessTargetsFor(19).largestCascadeLimit)
-        assertEquals(40, endlessTargetsFor(20).largestCascadeLimit)
-        assertEquals(30, endlessTargetsFor(30).largestCascadeLimit)
-        assertEquals(25, endlessTargetsFor(35).largestCascadeLimit)
-        assertEquals(25, endlessTargetsFor(50).largestCascadeLimit)
-        assertEquals(25, endlessTargetsFor(90).largestCascadeLimit)
+        assertEquals(9.0 / 81, endlessTargetsFor(1).density, 1e-9)
+        assertEquals(13.0 / 81, endlessTargetsFor(41).density, 1e-9)
     }
 
     @Test
@@ -47,9 +39,6 @@ class EndlessRampTest {
             assertTrue(current.bottleneckSteps.last >= previous.bottleneckSteps.last)
             assertEquals(0, current.cluePairSteps.first)
             assertEquals(0, current.bottleneckSteps.first)
-            val previousLimit = previous.largestCascadeLimit
-            val currentLimit = current.largestCascadeLimit
-            if (previousLimit != null) assertTrue(currentLimit != null && currentLimit <= previousLimit)
             previous = current
         }
     }
@@ -58,10 +47,10 @@ class EndlessRampTest {
     fun `every lever respects its cap`() {
         for (level in 1..1000) {
             val targets = endlessTargetsFor(level)
-            assertTrue(targets.density <= ENDLESS_DENSITY_CAP + 1e-9)
+            assertTrue(targets.mines <= ENDLESS_MINES_CAP)
+            assertEquals(targets.mines / 81.0, targets.density, 1e-9)
             assertTrue(targets.cluePairSteps.last <= ENDLESS_CLUE_PAIR_CAP + ENDLESS_CLUE_PAIR_MARGIN)
             assertTrue(targets.bottleneckSteps.last <= ENDLESS_BOTTLENECK_CAP + ENDLESS_BOTTLENECK_MARGIN)
-            targets.largestCascadeLimit?.let { assertTrue(it >= ENDLESS_CASCADE_MIN_LIMIT) }
             assertEquals(level, targets.level)
         }
     }

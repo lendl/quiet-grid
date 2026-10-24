@@ -20,16 +20,12 @@ import com.quietgrid.app.ui.components.PuzzleBoardContainer
 import com.quietgrid.app.ui.components.rememberHapticController
 import com.quietgrid.app.ui.play.GamePlayScaffold
 import com.quietgrid.app.ui.play.InfoItem
-import com.quietgrid.app.ui.play.PlaySizeClass
 import com.quietgrid.app.ui.play.PlayTimer
 import com.quietgrid.app.ui.play.heartsInfo
-import com.quietgrid.app.ui.play.isUpright
 import com.quietgrid.engine.minesweeper.endless.WorldCell
 import kotlinx.coroutines.delay
 
 private const val BUILD_LOADER_DELAY_MS = 300L
-
-fun minesweeperEndlessBoardRatio(sizeClass: PlaySizeClass): Float = if (sizeClass.isUpright) 0.75f else 1.6f
 
 @Composable
 fun MinesweeperEndlessPlayScreen(
@@ -75,7 +71,8 @@ internal fun MinesweeperEndlessPlayContent(
         timer = timer,
         onBack = onBack,
         onEndPuzzle = onEndRun,
-        boardAspectRatioFor = ::minesweeperEndlessBoardRatio,
+        boardFillsSlot = true,
+        rulesContent = MinesweeperEndlessQuickStart,
         info = if (session == null) {
             emptyList()
         } else {
@@ -88,7 +85,7 @@ internal fun MinesweeperEndlessPlayContent(
             }
         },
         board = {
-            PuzzleBoardContainer(visible = session != null, playFresh = playFresh, zoomable = false) {
+            PuzzleBoardContainer(visible = session != null, playFresh = playFresh, zoomable = false, showFrame = false) {
                 if (session != null) {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         MinesweeperEndlessGrid(

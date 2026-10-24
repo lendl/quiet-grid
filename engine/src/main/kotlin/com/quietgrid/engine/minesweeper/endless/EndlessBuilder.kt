@@ -9,6 +9,7 @@ const val ENDLESS_UNGRADED_ATTEMPTS = 20
 const val ENDLESS_REBUILD_ATTEMPTS = 20
 const val ENDLESS_LOOKAHEAD_SAMPLES = 24
 const val ENDLESS_MAX_MINE_REDUCTION = 3
+const val ENDLESS_HALO_MINE_SHARE = 3
 
 data class EndlessBuildStats(
     val builds: Int = 0,
@@ -44,6 +45,7 @@ fun buildEndlessSection(
     random: Random,
     entry: EndlessEntry? = null,
     protectedCells: Set<WorldCell> = emptySet(),
+    openingCap: Int? = ENDLESS_OPENING_CAP,
 ): EndlessBuildResult {
     val targets = endlessTargetsFor(level)
     var current = world
@@ -68,11 +70,13 @@ fun buildEndlessSection(
 
     fun tryRolls(base: EndlessWorld, mineTotal: Int, attempts: Int, grade: Boolean, lookAhead: Boolean = true): EndlessWorld? {
         repeat(attempts) {
-            val candidate = rollEndlessSection(base, pos, level, mineTotal, targets.density, random, protectedCells)
+            val candidate = rollEndlessSection(base, pos, level, mineTotal, targets.density, random, protectedCells, openingCap)
             candidates++
             lastCandidate = candidate
             val entryForCandidate = gradeEntryFor(candidate, pos, entry)
-            if (passesEndlessChecks(candidate, pos, targets, entryForCandidate, random, lookAhead = lookAhead, grade = grade)) return candidate
+            if (passesEndlessChecks(candidate, pos, targets, entryForCandidate, random, lookAhead = lookAhead, grade = grade, openingCap = openingCap)) {
+                return candidate
+            }
         }
         return null
     }
@@ -113,7 +117,9 @@ internal fun passesEndlessChecks(
     lookAhead: Boolean = true,
     grade: Boolean = true,
     builtEntries: Boolean = true,
+    openingCap: Int? = ENDLESS_OPENING_CAP,
 ): Boolean {
+    if (openingCap != null && largestEndlessOpeningThrough(world, pos, openingCap) > openingCap) return false
     val otherEntries = pos.sideNeighbors()
         .filter { neighbor ->
             val state = world.stateOf(neighbor)
@@ -135,13 +141,16 @@ internal fun passesEndlessChecks(
 
 private fun withinBand(trace: EndlessSolveTrace, targets: EndlessTargets): Boolean =
     trace.cluePairSteps in targets.cluePairSteps &&
-        trace.bottleneckSteps in targets.bottleneckSteps &&
-        trace.largestCascade <= (targets.largestCascadeLimit ?: Int.MAX_VALUE)
+        trace.bottleneckSteps in targets.bottleneckSteps
 
 private fun lookAheadPasses(world: EndlessWorld, pos: SectionPos, entry: SectionPos, targets: EndlessTargets, random: Random): Boolean {
     repeat(ENDLESS_LOOKAHEAD_SAMPLES) {
         val sample = rollEndlessSection(world, pos, targets.level, targets.mines, targets.density, random, emptySet())
-        if (solveEndlessSection(sample, pos, EndlessEntry.FromSection(entry)).solved) return true
+        if (largestEndlessOpeningThrough(sample, pos) <= ENDLESS_OPENING_CAP &&
+            solveEndlessSection(sample, pos, EndlessEntry.FromSection(entry)).solved
+        ) {
+            return true
+        }
     }
     return false
 }
@@ -154,6 +163,7 @@ internal fun rollEndlessSection(
     density: Double,
     random: Random,
     protectedCells: Set<WorldCell>,
+    openingCap: Int? = ENDLESS_OPENING_CAP,
 ): EndlessWorld {
     val layouts = HashMap<SectionPos, CharArray>()
     fun charsOf(section: SectionPos) = layouts.getOrPut(section) {
@@ -167,10 +177,11 @@ internal fun rollEndlessSection(
     for (index in cells.indices) {
         if (own[index] == LAYOUT_UNFIXED) own[index] = if (index in chosen) LAYOUT_MINE else LAYOUT_SAFE
     }
+    val haloMineLimit = max(1, mineTotal / ENDLESS_HALO_MINE_SHARE)
     for (cell in pos.halo()) {
         val chars = charsOf(cell.section)
         if (chars[cell.localIndex] != LAYOUT_UNFIXED) continue
-        val mine = cell !in protectedCells && random.nextDouble() < density
+        val mine = cell !in protectedCells && random.nextDouble() < density && chars.count { it == LAYOUT_MINE } < haloMineLimit
         chars[cell.localIndex] = if (mine) LAYOUT_MINE else LAYOUT_SAFE
     }
     val updated = HashMap(world.sections)
@@ -189,7 +200,8 @@ internal fun rollEndlessSection(
             else -> EndlessSection(section, SectionState.UNBUILT, 0, layout, HIDDEN_CELLS)
         }
     }
-    return EndlessWorld(updated)
+    val rolled = EndlessWorld(updated)
+    return if (openingCap == null) rolled else repairEndlessOpenings(rolled, pos, free.toSet(), random, openingCap)
 }
 
 internal fun rebuildableCells(world: EndlessWorld, pos: SectionPos): Set<WorldCell> {

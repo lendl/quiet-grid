@@ -41,6 +41,8 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.session.FinishKind
 import com.quietgrid.app.ui.components.EndPuzzleDialog
+import com.quietgrid.app.ui.components.QuickStartContent
+import com.quietgrid.app.ui.components.quickStartFor
 
 const val PLAY_BOARD_TAG = "play_board"
 const val PLAY_HINT_TAG = "play_hint"
@@ -66,7 +68,8 @@ fun GamePlayScaffold(
     hintMessage: PlayHintMessage? = null,
     info: List<InfoItem> = emptyList(),
     boardAspectRatio: Float = 1f,
-    boardAspectRatioFor: ((PlaySizeClass) -> Float)? = null,
+    boardFillsSlot: Boolean = false,
+    rulesContent: QuickStartContent? = null,
     wideDock: Boolean = false,
     phonePortraitOnly: Boolean = false,
     dockRole: DockRole = DockRole.Controls,
@@ -121,7 +124,7 @@ fun GamePlayScaffold(
     BoxWithConstraints(modifier.fillMaxSize()) {
         val sizeClass = playSizeClass(maxWidth, maxHeight)
         val metrics = playMetrics(sizeClass)
-        val ratio = boardAspectRatioFor?.invoke(sizeClass) ?: boardAspectRatio
+        val ratio = boardAspectRatio.takeUnless { boardFillsSlot }
         val mirrored = preferences.leftHanded && sizeClass in MIRRORABLE_SIZE_CLASSES
         val layoutDirection = if (mirrored) contentDirection.flipped() else contentDirection
         val boardSlot: @Composable BoxScope.() -> Unit = {
@@ -175,7 +178,7 @@ fun GamePlayScaffold(
         }
         if (rulesOpen) {
             RulesPeekOverlay(
-                gameId = gameId,
+                content = rulesContent ?: quickStartFor(gameId),
                 cardAlignment = when {
                     !sizeClass.isTablet -> Alignment.TopCenter
                     mirrored -> Alignment.TopStart
@@ -232,7 +235,7 @@ private fun UprightLayout(
     metrics: PlayMetrics,
     actions: PlayChromeActions,
     stripItems: List<InfoItem>,
-    boardAspectRatio: Float,
+    boardAspectRatio: Float?,
     dockAreaHeight: Dp,
     fold: FoldState,
     board: @Composable BoxScope.() -> Unit,
@@ -245,7 +248,11 @@ private fun UprightLayout(
         val dockSpace = if (dock != null) dockAreaHeight + gap else 0.dp
         val bottomLimit = (maxHeight - gap - dockSpace).coerceAtLeast(headerHeight)
         val bodyWidth = (maxWidth - gap * 2).coerceAtLeast(0.dp)
-        val boardHeight = uprightBoardHeight(bodyWidth, bottomLimit - headerHeight, boardAspectRatio, 0.dp)
+        val boardHeight = if (boardAspectRatio == null) {
+            (bottomLimit - headerHeight).coerceAtLeast(0.dp)
+        } else {
+            uprightBoardHeight(bodyWidth, bottomLimit - headerHeight, boardAspectRatio, 0.dp)
+        }
         val boardTop = centeredBoardTop(maxHeight, boardHeight, headerHeight, bottomLimit)
         Column(Modifier.fillMaxWidth().foldChrome(fold)) {
             PlayTopBar(metrics, actions)
@@ -278,7 +285,7 @@ private fun PhoneLandscapeLayout(
     actions: PlayChromeActions,
     stripItems: List<InfoItem>,
     panelWidth: Dp,
-    boardAspectRatio: Float,
+    boardAspectRatio: Float?,
     reserveHintSpace: Boolean,
     dragSource: Boolean,
     fold: FoldState,
@@ -294,7 +301,11 @@ private fun PhoneLandscapeLayout(
         BoxWithConstraints(Modifier.weight(1f).fillMaxHeight()) {
             val panelSpace = if (hasDock) panelWidth else 0.dp
             val boardAreaWidth = (maxWidth - panelSpace).coerceAtLeast(0.dp)
-            val boardWidth = min(boardAreaWidth - gap * 2, (maxHeight - gap * 2) * boardAspectRatio).coerceAtLeast(0.dp)
+            val boardWidth = if (boardAspectRatio == null) {
+                boardAreaWidth - gap * 2 - if (hasSideColumn) panelWidth else 0.dp
+            } else {
+                min(boardAreaWidth - gap * 2, (maxHeight - gap * 2) * boardAspectRatio)
+            }.coerceAtLeast(0.dp)
             val freeWidth = (boardAreaWidth - gap * 2 - boardWidth).coerceAtLeast(0.dp)
             val needsSideRoom = if (hasDock) reserveHintSpace else hasSideColumn
             val centered = dragSource || !needsSideRoom || freeWidth / 2 >= SIDE_HINT_MIN_WIDTH

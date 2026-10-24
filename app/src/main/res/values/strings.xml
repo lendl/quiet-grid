@@ -885,6 +885,11 @@
     <string name="minesweeper_endless_stats_title">Endless</string>
     <string name="minesweeper_endless_stats_best_score">Most sections cleared</string>
     <string name="minesweeper_endless_stats_best_ring">Furthest ring</string>
+    <string name="minesweeper_endless_rules_goal">Clear sections in one endless minefield.</string>
+    <string name="minesweeper_endless_rules_bullet_1">Reveal every safe cell in a section to clear it and unlock the sections next to it.</string>
+    <string name="minesweeper_endless_rules_bullet_2">An opening spreads across sections and opens every section it reaches.</string>
+    <string name="minesweeper_endless_rules_bullet_3">You have 3 hearts. Each mine you hit costs one.</string>
+    <string name="minesweeper_endless_rules_hook">Clear as many sections as you can.</string>
     <string name="blockfill_loss_abandoned_eyebrow">Puzzle ended</string>
     <string name="blockfill_loss_abandoned_title">Puzzle unfinished</string>
     <string name="blockfill_loss_abandoned_body">You ended this puzzle before it was solved.</string>

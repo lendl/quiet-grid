@@ -30,6 +30,7 @@ import com.quietgrid.app.R
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.GamePlayPreferences
 import com.quietgrid.app.data.ScreenRotation
+import com.quietgrid.app.ui.components.QuickStartContent
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -166,7 +167,7 @@ class GamePlayScaffoldTest {
         assertEquals(strip.left.value, hint.left.value, 1f)
     }
 
-    private fun assertBoardRatio(expected: Float, tolerance: Float) {
+    private fun showFillingBoard() {
         composeRule.setContent {
             MaterialTheme {
                 GamePlayScaffold(
@@ -174,22 +175,65 @@ class GamePlayScaffoldTest {
                     timer = null,
                     onBack = {},
                     onEndPuzzle = {},
-                    boardAspectRatioFor = { if (it.isUpright) 0.75f else 1.6f },
+                    info = listOf(InfoItem.Label("1 cleared")),
+                    boardFillsSlot = true,
                     board = { Box(Modifier.fillMaxSize()) },
                 )
             }
         }
-        val board = composeRule.onNodeWithTag(PLAY_BOARD_TAG).getBoundsInRoot()
-        assertEquals(expected, (board.right - board.left).value / (board.bottom - board.top).value, tolerance)
     }
 
     @Test
     @Config(qualifiers = "w390dp-h844dp-port")
-    fun `ratio per size class shapes an upright board`() = assertBoardRatio(0.75f, 0.01f)
+    fun `a filling board takes the whole height below the strip`() {
+        showFillingBoard()
+        val root = composeRule.onRoot().getBoundsInRoot()
+        val board = composeRule.onNodeWithTag(PLAY_BOARD_TAG).getBoundsInRoot()
+
+        assertEquals((root.top + 96.dp).value, board.top.value, 1f)
+        assertEquals((root.bottom - 16.dp).value, board.bottom.value, 1f)
+    }
 
     @Test
     @Config(qualifiers = "w844dp-h390dp-land")
-    fun `ratio per size class shapes a sideways board`() = assertBoardRatio(1.6f, 0.02f)
+    fun `a filling board takes the width beside the strip`() {
+        showFillingBoard()
+        val root = composeRule.onRoot().getBoundsInRoot()
+        val board = composeRule.onNodeWithTag(PLAY_BOARD_TAG).getBoundsInRoot()
+        val strip = composeRule.onNodeWithText("1 cleared").getBoundsInRoot()
+
+        assertEquals((root.top + 8.dp).value, board.top.value, 1f)
+        assertEquals((root.bottom - 8.dp).value, board.bottom.value, 1f)
+        assertTrue("strip $strip not beside board $board", strip.left >= board.right)
+        assertTrue("board $board", board.right >= root.right - phoneLandscapePanelWidth(844.dp) - 16.dp - 1.dp)
+    }
+
+    @Test
+    @Config(qualifiers = "w390dp-h844dp-port")
+    fun `a rules override replaces the game's rules`() {
+        composeRule.setContent {
+            MaterialTheme {
+                GamePlayScaffold(
+                    gameId = GameId.TAKUZU,
+                    timer = null,
+                    onBack = {},
+                    onEndPuzzle = {},
+                    rulesContent = QuickStartContent(
+                        goalRes = R.string.minesweeper_quickstart_goal,
+                        bulletRes = listOf(R.string.minesweeper_quickstart_bullet_1),
+                        hookRes = R.string.minesweeper_quickstart_hook,
+                    ),
+                    board = { Box(Modifier.fillMaxSize()) },
+                )
+            }
+        }
+        val activity = composeRule.activity
+
+        composeRule.onNodeWithContentDescription(activity.getString(R.string.common_rules)).performClick()
+
+        composeRule.onNodeWithText(activity.getString(R.string.minesweeper_quickstart_goal)).assertIsDisplayed()
+        composeRule.onNodeWithText(activity.getString(R.string.takuzu_rule_1_title)).assertDoesNotExist()
+    }
 
     @Test
     @Config(qualifiers = "w390dp-h844dp-port")

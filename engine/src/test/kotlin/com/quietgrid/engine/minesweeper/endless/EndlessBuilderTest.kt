@@ -59,13 +59,52 @@ class EndlessBuilderTest {
     }
 
     @Test
-    fun `grading can be switched off without touching the safety checks`() {
+    fun `the opening cap rejects an all-safe section`() {
         val world = allSafeWorld(3, mapOf(start to SectionState.OPEN))
-        val targets = endlessTargetsFor(20)
+        val targets = endlessTargetsFor(1)
         val entry = EndlessEntry.FromSection(start)
 
-        assertFalse(passesEndlessChecks(world, EAST, targets, entry, Random(0), lookAhead = false))
-        assertTrue(passesEndlessChecks(world, EAST, targets, entry, Random(0), lookAhead = false, grade = false))
+        assertFalse(passesEndlessChecks(world, EAST, targets, entry, Random(0), lookAhead = false, grade = false))
+        assertTrue(passesEndlessChecks(world, EAST, targets, entry, Random(0), lookAhead = false, grade = false, openingCap = null))
+    }
+
+    @Test
+    fun `built sections respect the opening cap`() {
+        var checked = 0
+        for (seed in 1..20) {
+            val (_, builds) = buildAroundNorth(seed)
+            for ((pos, result) in builds) {
+                if (result.stats.lastPathHits > 0) continue
+                val largest = largestEndlessOpeningThrough(result.world, pos)
+                assertTrue("seed $seed section $pos opening $largest", largest <= ENDLESS_OPENING_CAP)
+                checked++
+            }
+        }
+        assertTrue(checked > 0)
+    }
+
+    @Test
+    fun `halo mines never crowd an unbuilt section`() {
+        for (seed in 1..200) {
+            val random = Random(seed)
+            val tap = WorldCell(random.nextInt(ENDLESS_SECTION_SIZE), random.nextInt(ENDLESS_SECTION_SIZE))
+            val protectedCells = (tap.neighbors() + tap).toSet()
+            val world = rollEndlessSection(EndlessWorld.EMPTY, start, 1, 9, 9.0 / 81, random, protectedCells)
+            for (section in world.sections.values) {
+                if (section.state != SectionState.UNBUILT) continue
+                assertTrue("seed $seed ${section.pos}", section.layout.count { it == '*' } <= 3)
+            }
+        }
+    }
+
+    @Test
+    fun `the first opening is at most thirty cells`() {
+        for (seed in 1..10) {
+            val started = startEndlessRun(WorldCell(4, 4), Random(seed))
+            if (started.stats.lastPathHits > 0) continue
+            val largest = largestEndlessOpeningThrough(started.world, ENDLESS_START_SECTION)
+            assertTrue("seed $seed opening $largest", largest <= 30)
+        }
     }
 
     @Test
@@ -74,7 +113,7 @@ class EndlessBuilderTest {
             .withSection(section(SectionPos(2, 0), SectionState.BUILT, List(ENDLESS_SECTION_SIZE) { row -> if (row == 8) "********." else "*********" }))
 
         assertTrue(
-            passesEndlessChecks(world, EAST, endlessTargetsFor(1), EndlessEntry.FromSection(start), Random(0), lookAhead = false),
+            passesEndlessChecks(world, EAST, endlessTargetsFor(1), EndlessEntry.FromSection(start), Random(0), lookAhead = false, openingCap = null),
         )
     }
 
@@ -87,7 +126,7 @@ class EndlessBuilderTest {
 
         assertFalse(solveEndlessSection(world, northEast, EndlessEntry.FromSection(NORTH)).solved)
         assertTrue(
-            passesEndlessChecks(world, northEast, endlessTargetsFor(1), EndlessEntry.FromSection(NORTH), Random(0), lookAhead = false, grade = false),
+            passesEndlessChecks(world, northEast, endlessTargetsFor(1), EndlessEntry.FromSection(NORTH), Random(0), lookAhead = false, grade = false, openingCap = null),
         )
     }
 
@@ -100,7 +139,7 @@ class EndlessBuilderTest {
 
         assertFalse(solveEndlessSection(world, northEast, EndlessEntry.FromSection(EAST)).solved)
         assertTrue(
-            passesEndlessChecks(world, northEast, endlessTargetsFor(1), EndlessEntry.FromSection(EAST), Random(0), lookAhead = false, grade = false),
+            passesEndlessChecks(world, northEast, endlessTargetsFor(1), EndlessEntry.FromSection(EAST), Random(0), lookAhead = false, grade = false, openingCap = null),
         )
     }
 
@@ -112,7 +151,7 @@ class EndlessBuilderTest {
         val world = EndlessWorld(base.sections - EAST)
             .withSection(section(beyond, SectionState.UNBUILT, walled))
 
-        val result = buildEndlessSection(world, EAST, 1, Random(0), EndlessEntry.FromSection(start))
+        val result = buildEndlessSection(world, EAST, 1, Random(0), EndlessEntry.FromSection(start), openingCap = null)
 
         assertEquals(0, result.stats.lastPathHits)
         assertTrue(solveEndlessSection(result.world, EAST, EndlessEntry.FromSection(start)).solved)

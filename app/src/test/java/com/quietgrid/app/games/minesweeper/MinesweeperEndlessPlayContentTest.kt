@@ -51,6 +51,13 @@ class MinesweeperEndlessPlayContentTest {
         assertTrue(board.left >= root.left && board.top >= root.top && board.right <= root.right && board.bottom <= root.bottom)
         val shortSide = minOf(board.right - board.left, board.bottom - board.top)
         assertTrue("board short side ${shortSide.value}dp", shortSide.value >= 200f)
+        val rootWidth = (root.right - root.left).value
+        val rootHeight = (root.bottom - root.top).value
+        if (rootHeight > rootWidth) {
+            assertTrue("board height ${board.bottom - board.top} of $rootHeight", (board.bottom - board.top).value >= rootHeight * 0.7f)
+        } else {
+            assertTrue("board width ${board.right - board.left} of $rootWidth", (board.right - board.left).value >= rootWidth * 0.5f)
+        }
     }
 
     @Test

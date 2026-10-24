@@ -49,14 +49,27 @@ fun settleEndlessWorld(world: EndlessWorld, random: Random): EndlessSettleResult
                 changed = true
             }
         }
+        for (pos in endlessStalledSections(current).sortedWith(SECTION_ORDER)) {
+            if (current.stateOf(pos) != SectionState.UNBUILT) continue
+            val built = buildEndlessSection(current, pos, current.clearedCount + 1, random)
+            current = built.world
+            stats += built.stats
+            changed = true
+        }
+        val continued = continueEndlessOpenings(current)
+        if (continued != current) {
+            current = continued
+            changed = true
+        }
         if (!changed) break
     }
     return EndlessSettleResult(current, cleared, stats)
 }
 
+private val SECTION_ORDER = compareBy<SectionPos>({ it.ring }, { it.sy }, { it.sx })
+
 private fun openSectionsInOrder(world: EndlessWorld): List<SectionPos> =
-    world.sections.values.filter { it.state == SectionState.OPEN }.map { it.pos }
-        .sortedWith(compareBy({ it.ring }, { it.sy }, { it.sx }))
+    world.sections.values.filter { it.state == SectionState.OPEN }.map { it.pos }.sortedWith(SECTION_ORDER)
 
 private fun clearSection(world: EndlessWorld, pos: SectionPos): EndlessWorld {
     val section = world.sections.getValue(pos)

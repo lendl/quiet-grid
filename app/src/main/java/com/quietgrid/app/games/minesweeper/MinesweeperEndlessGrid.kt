@@ -36,6 +36,7 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import com.quietgrid.app.ui.components.rememberReduceMotion
 import com.quietgrid.app.ui.theme.LocalIsPencilTheme
+import com.quietgrid.engine.minesweeper.endless.ENDLESS_SECTION_SIZE
 import com.quietgrid.engine.minesweeper.endless.ENDLESS_START_SECTION
 import com.quietgrid.engine.minesweeper.endless.EndlessCellState
 import com.quietgrid.engine.minesweeper.endless.EndlessWorld
@@ -43,7 +44,6 @@ import com.quietgrid.engine.minesweeper.endless.SectionPos
 import com.quietgrid.engine.minesweeper.endless.SectionState
 import com.quietgrid.engine.minesweeper.endless.WorldCell
 import com.quietgrid.engine.minesweeper.endless.section
-import kotlin.math.ceil
 import kotlin.math.floor
 
 private const val CLEARED_MUTE = 0.35f
@@ -152,10 +152,10 @@ fun MinesweeperEndlessGrid(
                     }
                     when (val start = withTimeoutOrNull(longPressMillis) { awaitTapOrMove(slop) }) {
                         null -> {
-                            currentOnToggleFlag(endlessCellAt(liveCamera, width, height, down.position.x, down.position.y))
+                            endlessCellAt(liveCamera, width, height, down.position.x, down.position.y)?.let(currentOnToggleFlag)
                             awaitAllUp()
                         }
-                        GestureStart.Tap -> currentOnReveal(endlessCellAt(liveCamera, width, height, down.position.x, down.position.y))
+                        GestureStart.Tap -> endlessCellAt(liveCamera, width, height, down.position.x, down.position.y)?.let(currentOnReveal)
                         GestureStart.Cancel -> Unit
                         is GestureStart.Move -> {
                             moveCamera(start.event)
@@ -181,8 +181,12 @@ fun MinesweeperEndlessGrid(
             textMeasurer.measure(count.toString(), numberStyle.copy(color = numberColors.getOrElse(count - 1) { numberColors.last() }))
         }
 
-        for (y in floor(top).toInt()..ceil(top + size.height / cell).toInt()) {
-            for (x in floor(left).toInt()..ceil(left + size.width / cell).toInt()) {
+        val firstRow = floor(top / ENDLESS_SECTION_SPAN).toInt() * ENDLESS_SECTION_SIZE
+        val lastRow = (floor((top + size.height / cell) / ENDLESS_SECTION_SPAN).toInt() + 1) * ENDLESS_SECTION_SIZE - 1
+        val firstCol = floor(left / ENDLESS_SECTION_SPAN).toInt() * ENDLESS_SECTION_SIZE
+        val lastCol = (floor((left + size.width / cell) / ENDLESS_SECTION_SPAN).toInt() + 1) * ENDLESS_SECTION_SIZE - 1
+        for (y in firstRow..lastRow) {
+            for (x in firstCol..lastCol) {
                 val worldCell = WorldCell(x, y)
                 val pos = worldCell.section
                 val sectionState = endlessDisplayState(world, pos)
@@ -201,7 +205,7 @@ fun MinesweeperEndlessGrid(
                     SectionState.CLEARED -> lerp(base, surface, CLEARED_MUTE)
                     SectionState.BUILT, SectionState.UNBUILT -> lerp(base, surface, CLOSED_DIM)
                 }
-                val origin = Offset((x - left) * cell, (y - top) * cell)
+                val origin = Offset((endlessLayoutOf(x) - left) * cell, (endlessLayoutOf(y) - top) * cell)
                 drawRoundRect(tone, origin, Size(tile, tile), corner)
                 val glyphOrigin = Offset(origin.x + glyphInsetPx, origin.y + glyphInsetPx)
                 when {

@@ -56,10 +56,8 @@ import androidx.compose.ui.unit.constrainHeight
 import androidx.compose.ui.unit.constrainWidth
 import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
-import com.quietgrid.app.core.GameId
 import com.quietgrid.app.ui.components.QuickRule
 import com.quietgrid.app.ui.components.QuickStartContent
-import com.quietgrid.app.ui.components.quickStartFor
 
 private val OVERLAY_CARD_MAX_WIDTH = 560.dp
 private val OVERLAY_CARD_SHAPE = RoundedCornerShape(18.dp)
@@ -186,7 +184,7 @@ private enum class HintCardPart { Header, Body }
 
 @Composable
 internal fun RulesPeekOverlay(
-    gameId: GameId,
+    content: QuickStartContent,
     cardAlignment: Alignment,
     onDismiss: () -> Unit,
     onFullRules: (() -> Unit)?,
@@ -199,7 +197,7 @@ internal fun RulesPeekOverlay(
             .pointerInput(onDismiss) { detectTapGestures { onDismiss() } }
             .padding(horizontal = 12.dp, vertical = 4.dp),
     ) {
-        RulesPeekCard(quickStartFor(gameId), onFullRules, Modifier.align(cardAlignment))
+        RulesPeekCard(content, onFullRules, Modifier.align(cardAlignment))
     }
 }
 

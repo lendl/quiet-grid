@@ -82,6 +82,32 @@ class MinesweeperEndlessGridTest {
     }
 
     @Test
+    fun `a tap in a gutter reveals nothing`() {
+        showGrid()
+
+        composeRule.onNodeWithTag("grid").performTouchInput {
+            val point = Offset(center.x + width / 11f * 4.6f, center.y)
+            down(point)
+            up()
+        }
+
+        assertTrue(reveals.isEmpty())
+        assertTrue(flags.isEmpty())
+    }
+
+    @Test
+    fun `a long press in a gutter flags nothing`() {
+        showGrid()
+
+        composeRule.onNodeWithTag("grid").performTouchInput { down(Offset(center.x + width / 11f * 4.6f, center.y)) }
+        composeRule.mainClock.advanceTimeBy(1_000)
+        composeRule.onNodeWithTag("grid").performTouchInput { up() }
+
+        assertTrue(flags.isEmpty())
+        assertTrue(reveals.isEmpty())
+    }
+
+    @Test
     fun `a drag pans instead of revealing`() {
         showGrid()
 

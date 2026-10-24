@@ -26,6 +26,8 @@ class EndlessSimulationTest {
             assertEquals("seed $seed hit the last path", 0, result.stats.lastPathHits)
             assertEquals("seed $seed stranded a section", 0, result.strandedSections)
             assertTrue("seed $seed cleared ${result.sectionsCleared}", result.sectionsCleared >= clearsPerRun)
+            assertTrue("seed $seed stalled", endlessStalledSections(world).isEmpty())
+            assertTrue("seed $seed largest opening ${result.largestOpening}", result.largestOpening <= ENDLESS_OPENING_CAP)
             for (section in world.sections.values) {
                 if (section.state == SectionState.UNBUILT) {
                     assertTrue(section.pos.cells().none { world.cellStateAt(it) == EndlessCellState.REVEALED })

@@ -1,5 +1,6 @@
 package com.quietgrid.cli.minesweeper
 
+import com.quietgrid.engine.minesweeper.endless.ENDLESS_OPENING_CAP
 import com.quietgrid.engine.minesweeper.endless.EndlessBuildStats
 import com.quietgrid.engine.minesweeper.endless.simulateEndlessRun
 import java.util.concurrent.Callable
@@ -22,6 +23,9 @@ data class EndlessBenchReport(
     val candidatesByLevel: Map<Int, Int> = emptyMap(),
     val passesByLevel: Map<Int, Int> = emptyMap(),
     val lastPathByLevel: Map<Int, Int> = emptyMap(),
+    val largestOpening: Int = 0,
+    val runsOverOpeningCap: Int = 0,
+    val maxBuildsPerSettle: Int = 0,
 )
 
 fun runMinesweeperEndlessBench(sections: Int, runLength: Int, threads: Int, seed: Long): EndlessBenchReport {
@@ -38,7 +42,7 @@ fun runMinesweeperEndlessBench(sections: Int, runLength: Int, threads: Int, seed
     val passes = stats.candidatesByLevel.keys.associateWith { level ->
         (stats.buildsByLevel[level] ?: 0) - (stats.lastPathByLevel[level] ?: 0)
     }
-    val settleTimes = results.flatMap { it.clearSettleMillis }.sorted()
+    val settleTimes = results.flatMap { it.settleMillis }.sorted()
     return EndlessBenchReport(
         runs = runs,
         sectionsCleared = results.sumOf { it.sectionsCleared },
@@ -53,6 +57,9 @@ fun runMinesweeperEndlessBench(sections: Int, runLength: Int, threads: Int, seed
         candidatesByLevel = stats.candidatesByLevel,
         passesByLevel = passes,
         lastPathByLevel = stats.lastPathByLevel,
+        largestOpening = results.maxOfOrNull { it.largestOpening } ?: 0,
+        runsOverOpeningCap = results.count { it.largestOpening > ENDLESS_OPENING_CAP },
+        maxBuildsPerSettle = results.flatMap { it.buildsPerSettle }.maxOrNull() ?: 0,
     )
 }
 
@@ -66,7 +73,10 @@ fun formatEndlessBenchReport(report: EndlessBenchReport): String = buildString {
     appendLine("mine-hit runs: ${report.mineHitRuns}")
     appendLine("last-path hits: ${report.lastPathHits}")
     appendLine("stranded sections: ${report.strandedSections}")
-    appendLine("settle per clear p50: ${"%.2f".format(report.settleP50Millis)} ms, p99: ${"%.2f".format(report.settleP99Millis)} ms")
+    appendLine("largest opening: ${report.largestOpening}")
+    appendLine("runs over opening cap: ${report.runsOverOpeningCap}")
+    appendLine("max builds per settle: ${report.maxBuildsPerSettle}")
+    appendLine("settle per tap p50: ${"%.2f".format(report.settleP50Millis)} ms, p99: ${"%.2f".format(report.settleP99Millis)} ms")
     val buckets = report.passRateByLevel.keys.groupBy { (it - 1) / LEVEL_BUCKET }.toSortedMap()
     for ((bucket, levels) in buckets) {
         val first = bucket * LEVEL_BUCKET + 1

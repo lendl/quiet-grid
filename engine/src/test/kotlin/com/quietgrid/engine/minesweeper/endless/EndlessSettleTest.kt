@@ -14,6 +14,58 @@ class EndlessSettleTest {
         world.sections.values.filter { it.state == SectionState.OPEN }
             .all { section -> section.pos.sideNeighbors().all { world.stateOf(it) != SectionState.UNBUILT } }
 
+    private val southEast = SectionPos(1, 1)
+
+    private fun cornerWorld(flagShared: Boolean = false): EndlessWorld {
+        val hidden = "-".repeat(ENDLESS_SECTION_CELLS)
+        val eastRows = List(ENDLESS_SECTION_SIZE) { row -> if (row >= 7) ".********" else "*********" }
+        val southRows = List(ENDLESS_SECTION_SIZE) { row -> if (row == 0) "*******.." else "*********" }
+        val southEastRows = List(ENDLESS_SECTION_SIZE) { row -> if (row == 0) "........." else ".????????" }
+        fun cellsWithFlags(rows: List<String>) =
+            if (flagShared) rows.joinToString("").map { if (it == '.') 'f' else '-' }.joinToString("") else hidden
+        return islandWorld(3, safe = setOf(start), states = mapOf(start to SectionState.OPEN))
+            .withSection(section(EAST, SectionState.BUILT, eastRows, cellsWithFlags(eastRows)))
+            .withSection(section(SOUTH, SectionState.BUILT, southRows, cellsWithFlags(southRows)))
+            .withSection(section(southEast, SectionState.UNBUILT, southEastRows))
+    }
+
+    @Test
+    fun `settle builds a section an opening runs into and continues it`() {
+        val revealed = revealEndlessCell(cornerWorld(), WorldCell(4, 4)).world
+        assertTrue(endlessNeedsSettle(revealed))
+
+        val result = settleEndlessWorld(revealed, Random(1)).world
+
+        assertTrue(result.stateOf(southEast) != SectionState.UNBUILT)
+        assertEquals(EndlessCellState.REVEALED, result.cellStateAt(WorldCell(9, 9)))
+        assertTrue(endlessStalledSections(result).isEmpty())
+    }
+
+    @Test
+    fun `a stalled opening behind flags is still built`() {
+        val revealed = revealEndlessCell(cornerWorld(flagShared = true), WorldCell(4, 4)).world
+        assertEquals(SectionState.BUILT, revealed.stateOf(EAST))
+        assertEquals(SectionState.BUILT, revealed.stateOf(SOUTH))
+        assertEquals(setOf(southEast), endlessStalledSections(revealed))
+
+        val result = settleEndlessWorld(revealed, Random(1)).world
+
+        assertTrue(result.stateOf(southEast) != SectionState.UNBUILT)
+        assertEquals(EndlessCellState.REVEALED, result.cellStateAt(WorldCell(9, 9)))
+    }
+
+    @Test
+    fun `after settle no revealed zero has a hidden neighbour`() {
+        for (seed in 1..10) {
+            val random = Random(seed)
+            val started = startEndlessRun(WorldCell(4, 4), random).world
+            val result = settleEndlessWorld(revealEverySafeCell(started, start), random).world
+
+            assertTrue("seed $seed", endlessStalledSections(result).isEmpty())
+            assertTrue("seed $seed", everyOpenSectionHasBuiltNeighbours(result))
+        }
+    }
+
     private fun startedWithOpenStart(firstSeed: Int): Pair<EndlessWorld, Random> {
         var seed = firstSeed
         while (true) {
@@ -62,11 +114,12 @@ class EndlessSettleTest {
         var checked = 0
         for (seed in 1..20) {
             val (started, random) = startedWithOpenStart(seed)
+            val before = started.sections.values.filter { it.state != SectionState.UNBUILT }.map { it.pos }.toSet()
             val result = settleEndlessWorld(revealEverySafeCell(started, start), random)
             if (result.newlyCleared != 1) continue
-            val ringTwo = result.world.sections.values.filter { it.state != SectionState.UNBUILT && it.pos.ring == 2 }
-            assertTrue(ringTwo.isNotEmpty())
-            assertTrue(ringTwo.all { it.level == 2 })
+            val builtInSettle = result.world.sections.values.filter { it.state != SectionState.UNBUILT && it.pos !in before }
+            assertTrue(builtInSettle.isNotEmpty())
+            assertTrue(builtInSettle.all { it.level == 2 })
             assertTrue(start.sideNeighbors().all { result.world.sections.getValue(it).level == 1 })
             checked++
         }
@@ -90,8 +143,8 @@ class EndlessSettleTest {
     }
 
     @Test
-    fun `clearing opens only the neighbours that can be entered from it`() {
-        val base = allSafeWorld(3, mapOf(start to SectionState.OPEN))
+    fun `clearing never opens a neighbour that cannot be solved from it`() {
+        val base = islandWorld(3, safe = setOf(start, NORTH, SOUTH, WEST), states = mapOf(start to SectionState.OPEN))
         val revealedStart = base.sections.getValue(start).copy(cells = "o".repeat(ENDLESS_SECTION_CELLS))
         val world = base.withSection(revealedStart).withSection(section(EAST, SectionState.BUILT, List(ENDLESS_SECTION_SIZE) { row -> if (row == 8) "********." else "*********" }))
 

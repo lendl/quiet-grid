@@ -9,10 +9,16 @@ data class EndlessSimulationResult(
     val stuck: Boolean,
     val hitMine: Boolean,
     val stats: EndlessBuildStats,
-    val clearSettleMillis: List<Double>,
+    val settleMillis: List<Double>,
+    val buildsPerSettle: List<Int>,
     val world: EndlessWorld,
     val strandedSections: Int = countStrandedEndlessSections(world),
+    val largestOpening: Int = largestEndlessOpening(world),
 )
+
+fun largestEndlessOpening(world: EndlessWorld): Int =
+    world.sections.values.filter { it.state != SectionState.UNBUILT }
+        .maxOfOrNull { largestEndlessOpeningThrough(world, it.pos, Int.MAX_VALUE) } ?: 0
 
 fun countStrandedEndlessSections(world: EndlessWorld): Int = world.sections.values.count { section ->
     section.state == SectionState.BUILT && section.pos.sideNeighbors().none { neighbor ->
@@ -85,10 +91,11 @@ fun simulateEndlessRun(targetClears: Int, random: Random): EndlessSimulationResu
     val started = startEndlessRun(first, random)
     var world = started.world
     var stats = started.stats
-    val clearSettleMillis = ArrayList<Double>()
+    val settleMillis = ArrayList<Double>()
+    val buildsPerSettle = ArrayList<Int>()
 
     fun result(stuck: Boolean, hitMine: Boolean) =
-        EndlessSimulationResult(world.clearedCount, stuck, hitMine, stats, clearSettleMillis, world)
+        EndlessSimulationResult(world.clearedCount, stuck, hitMine, stats, settleMillis, buildsPerSettle, world)
 
     while (world.clearedCount < targetClears) {
         val moves = nextEndlessBotMoves(world, random)
@@ -104,7 +111,8 @@ fun simulateEndlessRun(targetClears: Int, random: Random): EndlessSimulationResu
             val elapsedMillis = (System.nanoTime() - startedAt) / 1_000_000.0
             world = settled.world
             stats += settled.stats
-            if (settled.newlyCleared > 0) clearSettleMillis.add(elapsedMillis)
+            settleMillis.add(elapsedMillis)
+            buildsPerSettle.add(settled.stats.builds)
         }
     }
     return result(stuck = false, hitMine = false)

@@ -6,26 +6,57 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlin.random.Random
 
 class EndlessPlayTest {
 
     private val start = ENDLESS_START_SECTION
 
     private fun worldWithStartLayout(rows: List<String>): EndlessWorld =
-        allSafeWorld(2, mapOf(start to SectionState.OPEN))
+        islandWorld(2, safe = setOf(start), states = mapOf(start to SectionState.OPEN))
             .withSection(section(start, SectionState.OPEN, rows))
 
     @Test
-    fun `a cascade fills the tapped section and its side neighbours but not the corners`() {
-        val world = allSafeWorld(2, mapOf(start to SectionState.OPEN))
+    fun `an opening crosses into side and diagonal sections`() {
+        val northEast = SectionPos(1, -1)
+        val world = islandWorld(2, safe = setOf(start, EAST, northEast), states = mapOf(start to SectionState.OPEN))
 
         val result = revealEndlessCell(world, WorldCell(4, 4)).world
 
-        for (pos in listOf(start) + start.sideNeighbors()) {
-            assertTrue(pos.cells().all { result.cellStateAt(it) == EndlessCellState.REVEALED })
+        for (pos in listOf(start, EAST, northEast)) {
+            assertTrue("$pos", pos.cells().all { result.cellStateAt(it) == EndlessCellState.REVEALED })
         }
-        assertTrue(SectionPos(1, -1).cells().none { result.cellStateAt(it) == EndlessCellState.REVEALED })
+        assertEquals(SectionState.OPEN, result.stateOf(EAST))
+        assertEquals(SectionState.OPEN, result.stateOf(northEast))
         assertTrue(SectionPos(2, 0).cells().none { result.cellStateAt(it) == EndlessCellState.REVEALED })
+    }
+
+    @Test
+    fun `an opening never enters an unbuilt section`() {
+        val world = islandWorld(2, safe = setOf(start), states = mapOf(start to SectionState.OPEN))
+            .withSection(section(EAST, SectionState.UNBUILT))
+
+        val result = revealEndlessCell(world, WorldCell(4, 4)).world
+
+        assertTrue(EAST.cells().none { result.cellStateAt(it) == EndlessCellState.REVEALED })
+        assertEquals(setOf(EAST), endlessStalledSections(result))
+        assertTrue(endlessNeedsSettle(result))
+    }
+
+    @Test
+    fun `a flagged cell stops the opening`() {
+        val flaggedCell = localCell(EAST, 0, 4)
+        val world = toggleEndlessFlag(
+            islandWorld(2, safe = setOf(start, EAST), states = mapOf(start to SectionState.OPEN, EAST to SectionState.OPEN)),
+            flaggedCell,
+        )
+
+        val result = revealEndlessCell(world, WorldCell(4, 4)).world
+
+        assertEquals(EndlessCellState.FLAGGED, result.cellStateAt(flaggedCell))
+        assertTrue(endlessStalledSections(result).isEmpty())
+        val settled = settleEndlessWorld(result, Random(1)).world
+        assertEquals(EndlessCellState.FLAGGED, settled.cellStateAt(flaggedCell))
     }
 
     @Test
@@ -77,7 +108,7 @@ class EndlessPlayTest {
 
     @Test
     fun `a flag on a safe cell blocks clearing`() {
-        var world = toggleEndlessFlag(allSafeWorld(2, mapOf(start to SectionState.OPEN)), WorldCell(0, 0))
+        var world = toggleEndlessFlag(islandWorld(2, safe = setOf(start), states = mapOf(start to SectionState.OPEN)), WorldCell(0, 0))
 
         world = revealEndlessCell(world, WorldCell(8, 8)).world
 
@@ -98,10 +129,10 @@ class EndlessPlayTest {
     @Test
     fun `a cascade stops at numbers`() {
         val mineColumn = rowsWithMines(*Array(ENDLESS_SECTION_SIZE) { 0 to it })
-        val world = allSafeWorld(2, mapOf(start to SectionState.OPEN))
+        val world = islandWorld(2, safe = setOf(start), states = mapOf(start to SectionState.OPEN))
             .withSection(section(EAST, SectionState.BUILT, mineColumn))
 
-        val result = revealEndlessCell(world, WorldCell(0, 0)).world
+        val result = revealEndlessCell(world, WorldCell(4, 4)).world
 
         assertEquals(EndlessCellState.REVEALED, result.cellStateAt(WorldCell(8, 4)))
         assertEquals(3, result.numberAt(WorldCell(8, 4)))
@@ -117,7 +148,7 @@ class EndlessPlayTest {
 
     @Test
     fun `needs settle when an open section is resolved or has an unbuilt neighbour`() {
-        val closedAround = allSafeWorld(2, mapOf(start to SectionState.OPEN))
+        val closedAround = islandWorld(2, safe = setOf(start), states = mapOf(start to SectionState.OPEN))
         assertFalse(endlessNeedsSettle(closedAround))
 
         val missingNorth = EndlessWorld(closedAround.sections - NORTH)
@@ -129,11 +160,11 @@ class EndlessPlayTest {
 
     @Test
     fun `a section is seen when a cell in it or its halo is revealed`() {
-        val world = allSafeWorld(2, mapOf(start to SectionState.OPEN))
+        val world = islandWorld(2, safe = setOf(start), states = mapOf(start to SectionState.OPEN))
             .withSection(section(EAST, SectionState.BUILT, rowsWithMines(0 to 4)))
         assertFalse(world.isSeen(EAST))
 
-        val result = revealEndlessCell(world, WorldCell(0, 0)).world
+        val result = revealEndlessCell(world, WorldCell(4, 4)).world
 
         assertTrue(result.isSeen(EAST))
         assertTrue(result.isSeen(SectionPos(2, 0)))
