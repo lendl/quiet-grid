@@ -17,6 +17,9 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -211,3 +214,9 @@ suspend fun PlayHistoryStore.recentlyPlayedPuzzleIds(
     .take(window)
     .mapNotNull { it.puzzleId }
     .toSet()
+
+suspend fun PlayHistoryStore.puzzleIdsPlayedOn(gameId: GameId, date: LocalDate, zone: ZoneId = ZoneId.systemDefault()): Set<String> =
+    recordsFor(gameId).first()
+        .filter { Instant.ofEpochMilli(it.timestampMillis).atZone(zone).toLocalDate() == date }
+        .mapNotNull { it.puzzleId }
+        .toSet()

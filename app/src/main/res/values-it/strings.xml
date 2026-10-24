@@ -1252,6 +1252,7 @@
     <string name="theme_technology">Tecnologia</string>
     <string name="theme_geography">Geografia</string>
     <string name="theme_fantasy">Fantasy</string>
+    <string name="theme_halloween">Halloween</string>
     <string name="game_settings_themes_title">Temi</string>
     <string name="game_settings_themes_all">Tutti i temi</string>
     <string name="game_settings_themes_selected">%1$d di %2$d selezionati</string>
@@ -1394,4 +1395,20 @@
     <string name="killersudoku_loss_abandoned_title">Puzzle incompleto</string>
     <string name="killersudoku_loss_abandoned_body">Hai terminato questo puzzle prima di risolverlo.</string>
     <string name="killersudoku_how_to_play_scoring">Parte da 10.000 e scende mentre il timer scorre. Ogni riga, colonna o riquadro completato in modo errato costa 500 punti. Nelle difficoltà più alte il punteggio scende più lentamente.</string>
+    <string name="settings_seasonal_label">Tocchi stagionali</string>
+    <string name="settings_seasonal_detail">Un piccolo tocco di Halloween il 31 ottobre: un\'animazione di vittoria tranquilla e un promemoria con la zucca.</string>
+    <string name="halloween_line_pumpkin">Risolto da paura.</string>
+    <string name="halloween_line_cat">Sette vite, una soluzione pulita.</string>
+    <string name="halloween_line_owl">Mosse sagge, una dopo l\'altra.</string>
+    <string name="halloween_line_ghost">Risolto con spirito.</string>
+    <string name="halloween_line_bat">Risolto prima di mezzanotte.</string>
+    <string name="halloween_line_moon">Risolto al chiaro di luna.</string>
+    <string name="halloween_character_pumpkin">Zucca di Halloween</string>
+    <string name="halloween_character_cat">Gatto nero davanti alla luna</string>
+    <string name="halloween_character_owl">Gufo su un ramo</string>
+    <string name="halloween_character_ghost">Fantasmino simpatico</string>
+    <string name="halloween_character_bat">Piccolo pipistrello</string>
+    <string name="halloween_character_moon">Luna piena assonnata</string>
+    <string name="daily_reminder_title_halloween">Puzzle di Halloween</string>
+    <string name="daily_reminder_text_halloween">Qualche puzzle tranquillo per Halloween: %1$s</string>
 </resources>

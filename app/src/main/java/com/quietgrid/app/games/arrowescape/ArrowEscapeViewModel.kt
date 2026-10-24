@@ -10,11 +10,15 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
+import com.quietgrid.app.data.SettingsRepository
 import com.quietgrid.app.data.StatsStore
+import com.quietgrid.app.data.isHalloweenActive
+import com.quietgrid.app.data.puzzleIdsPlayedOn
 import com.quietgrid.app.data.recentlyPlayedPuzzleIds
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
+import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -27,6 +31,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import java.time.LocalDate
 
 private val json = Json { ignoreUnknownKeys = true }
 
@@ -45,13 +50,21 @@ data class ArrowEscapeTapEvent(val id: Int, val pieceIndex: Int, val removed: Bo
 private class ArrowEscapePuzzleAdapter(
     private val appContext: android.content.Context,
     private val historyStore: PlayHistoryStore,
+    private val settingsRepository: SettingsRepository,
 ) : PuzzleAdapter<ArrowEscapeSession, ArrowEscapeResult> {
     override val gameId: GameId = GameId.ARROWESCAPE
 
     override suspend fun freshSession(difficulty: Difficulty): ArrowEscapeSession? {
-        val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
-        val puzzle = ArrowEscapePuzzleBank.randomPuzzle(appContext, difficulty, recentIds) ?: return null
+        val puzzle = halloweenPuzzle(difficulty)
+            ?: ArrowEscapePuzzleBank.randomPuzzle(appContext, difficulty, historyStore.recentlyPlayedPuzzleIds(gameId, difficulty))
+            ?: return null
         return createArrowEscapeSession(puzzle)
+    }
+
+    private suspend fun halloweenPuzzle(difficulty: Difficulty): ArrowEscapePuzzleEntry? {
+        val today = LocalDate.now()
+        if (!settingsRepository.isHalloweenActive(today)) return null
+        return ArrowEscapePuzzleBank.halloweenPuzzle(appContext, difficulty, historyStore.puzzleIdsPlayedOn(gameId, today))
     }
 
     override fun restoreSession(payload: String, elapsedSeconds: Double): ArrowEscapeSession? = runCatching {
@@ -109,6 +122,7 @@ class ArrowEscapePlayViewModel @AssistedInject constructor(
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
+    settingsRepository: SettingsRepository,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
 ) : ViewModel() {
@@ -123,7 +137,7 @@ class ArrowEscapePlayViewModel @AssistedInject constructor(
         sessionStore = sessionRepository,
         statsStore = statsRepository,
         historyStore = historyRepository,
-        adapter = ArrowEscapePuzzleAdapter(appContext, historyRepository),
+        adapter = ArrowEscapePuzzleAdapter(appContext, historyRepository, settingsRepository),
     )
 
     val session get() = controller.session

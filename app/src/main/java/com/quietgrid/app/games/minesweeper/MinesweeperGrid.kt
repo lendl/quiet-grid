@@ -38,6 +38,46 @@ import com.quietgrid.app.ui.theme.LocalIsPencilTheme
 
 private val GAP = 2.dp
 private val SPARK_COLOR = Color(0xFFF59E0B)
+private val PUMPKIN_COLOR = Color(0xFFE8893F)
+private val PUMPKIN_STEM_COLOR = Color(0xFF6E8B4E)
+private val CANDLE_WAX_COLOR = Color(0xFFF3E6C8)
+private val FLAME_CORE_COLOR = Color(0xFFFFE3A3)
+
+internal class MinesweeperHalloweenColors(
+    val pumpkin: Color,
+    val stem: Color,
+    val carve: Color,
+    val wax: Color,
+    val waxEdge: Color,
+    val flame: Color,
+    val flameCore: Color,
+)
+
+@Composable
+internal fun minesweeperHalloweenColors(): MinesweeperHalloweenColors {
+    val colors = MaterialTheme.colorScheme
+    return if (LocalIsPencilTheme.current) {
+        MinesweeperHalloweenColors(
+            pumpkin = colors.onErrorContainer,
+            stem = colors.onSurfaceVariant,
+            carve = colors.errorContainer,
+            wax = colors.surface,
+            waxEdge = colors.onSurface,
+            flame = colors.onSurfaceVariant,
+            flameCore = colors.surface,
+        )
+    } else {
+        MinesweeperHalloweenColors(
+            pumpkin = PUMPKIN_COLOR,
+            stem = PUMPKIN_STEM_COLOR,
+            carve = colors.errorContainer,
+            wax = CANDLE_WAX_COLOR,
+            waxEdge = colors.onSurface.copy(alpha = 0.55f),
+            flame = SPARK_COLOR,
+            flameCore = FLAME_CORE_COLOR,
+        )
+    }
+}
 
 private val PENCIL_NUMBER_COLORS = mapOf(
     1 to Color(0xFF666666),
@@ -58,7 +98,9 @@ fun MinesweeperGrid(
     onToggleFlag: (row: Int, col: Int) -> Unit,
     hintEvidenceCells: Set<Pair<Int, Int>> = emptySet(),
     hintTargetCells: Set<Pair<Int, Int>> = emptySet(),
+    halloween: Boolean = false,
 ) {
+    val halloweenColors = minesweeperHalloweenColors().takeIf { halloween }
     Box {
         BoxWithConstraints(contentAlignment = Alignment.Center) {
             val cellSize = min(maxWidth / board.cols, maxHeight / board.rows)
@@ -114,6 +156,8 @@ fun MinesweeperGrid(
                         contentAlignment = Alignment.Center,
                     ) {
                         when {
+                            halloweenColors != null && cell.state == MinesweeperCellState.FLAGGED -> MinesweeperCandleGlyph(halloweenColors)
+                            halloweenColors != null && cell.state == MinesweeperCellState.REVEALED && cell.isMine -> MinesweeperPumpkinGlyph(halloweenColors)
                             cell.state == MinesweeperCellState.FLAGGED -> MinesweeperFlagGlyph(
                                 poleColor = MaterialTheme.colorScheme.onSurface,
                                 bannerColor = MaterialTheme.colorScheme.primary,
@@ -153,6 +197,60 @@ private fun MinesweeperMineGlyph(bodyColor: Color, fuseColor: Color) {
     Canvas(Modifier.fillMaxSize().padding(3.dp)) {
         drawMinesweeperMine(Offset.Zero, size, bodyColor, fuseColor)
     }
+}
+
+@Composable
+private fun MinesweeperCandleGlyph(colors: MinesweeperHalloweenColors) {
+    Canvas(Modifier.fillMaxSize().padding(3.dp)) {
+        drawMinesweeperCandle(Offset.Zero, size, colors)
+    }
+}
+
+@Composable
+private fun MinesweeperPumpkinGlyph(colors: MinesweeperHalloweenColors) {
+    Canvas(Modifier.fillMaxSize().padding(3.dp)) {
+        drawMinesweeperPumpkin(Offset.Zero, size, colors)
+    }
+}
+
+internal fun DrawScope.drawMinesweeperCandle(topLeft: Offset, size: Size, colors: MinesweeperHalloweenColors) {
+    val u = size.minDimension / 24f
+    fun at(x: Float, y: Float) = Offset(topLeft.x + x * u, topLeft.y + y * u)
+    drawRoundRect(colors.waxEdge, at(5f, 19.6f), Size(14f * u, 2.4f * u), CornerRadius(1.2f * u))
+    drawRoundRect(colors.wax, at(8.5f, 9f), Size(7f * u, 11f * u), CornerRadius(1.2f * u))
+    drawRoundRect(colors.waxEdge, at(8.5f, 9f), Size(7f * u, 11f * u), CornerRadius(1.2f * u), style = Stroke(width = u))
+    drawLine(colors.waxEdge, at(12f, 9f), at(12f, 7.2f), strokeWidth = 0.9f * u, cap = StrokeCap.Round)
+    val flame = Path().apply {
+        at(12f, 1.4f).let { moveTo(it.x, it.y) }
+        val right = at(15.6f, 5.6f)
+        val bottom = at(12f, 7.8f)
+        val left = at(8.4f, 5.6f)
+        val top = at(12f, 1.4f)
+        quadraticTo(right.x, right.y, bottom.x, bottom.y)
+        quadraticTo(left.x, left.y, top.x, top.y)
+        close()
+    }
+    drawPath(flame, colors.flame)
+    drawOval(colors.flameCore, at(10.9f, 4.6f), Size(2.2f * u, 3f * u))
+}
+
+internal fun DrawScope.drawMinesweeperPumpkin(topLeft: Offset, size: Size, colors: MinesweeperHalloweenColors) {
+    val u = size.minDimension / 24f
+    fun at(x: Float, y: Float) = Offset(topLeft.x + x * u, topLeft.y + y * u)
+    fun polygon(vararg points: Pair<Float, Float>) = Path().apply {
+        points.forEachIndexed { index, (x, y) ->
+            val point = at(x, y)
+            if (index == 0) moveTo(point.x, point.y) else lineTo(point.x, point.y)
+        }
+        close()
+    }
+    drawRoundRect(colors.stem, at(10.8f, 2.6f), Size(2.4f * u, 5.4f * u), CornerRadius(1f * u))
+    drawOval(colors.pumpkin, at(2.5f, 7f), Size(11f * u, 14.5f * u))
+    drawOval(colors.pumpkin, at(10.5f, 7f), Size(11f * u, 14.5f * u))
+    drawOval(colors.pumpkin, at(6.5f, 6.4f), Size(11f * u, 15.6f * u))
+    drawPath(polygon(7.4f to 13.8f, 11f to 13.8f, 9.2f to 10.6f), colors.carve)
+    drawPath(polygon(13f to 13.8f, 16.6f to 13.8f, 14.8f to 10.6f), colors.carve)
+    drawPath(polygon(7f to 15.6f, 17f to 15.6f, 15.4f to 18.2f, 12f to 19.2f, 8.6f to 18.2f), colors.carve)
 }
 
 internal fun DrawScope.drawMinesweeperFlag(topLeft: Offset, size: Size, poleColor: Color, bannerColor: Color) {

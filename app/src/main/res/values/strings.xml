@@ -1347,6 +1347,7 @@
     <string name="theme_technology">Technology</string>
     <string name="theme_geography">Geography</string>
     <string name="theme_fantasy">Fantasy</string>
+    <string name="theme_halloween">Halloween</string>
     <string name="game_settings_play_title">While playing</string>
     <string name="game_settings_play_note">Pick a setting for this game only, or keep the app-wide default.</string>
     <string name="game_settings_play_default">Default (%1$s)</string>
@@ -2068,4 +2069,20 @@
     <string name="links_loss_abandoned_eyebrow">Puzzle ended</string>
     <string name="links_loss_abandoned_title">Puzzle unfinished</string>
     <string name="links_loss_abandoned_body">You ended this puzzle before it was solved.</string>
+    <string name="settings_seasonal_label">Seasonal touches</string>
+    <string name="settings_seasonal_detail">A small Halloween touch on October 31: a quiet win animation and a pumpkin reminder.</string>
+    <string name="halloween_line_pumpkin">Spookily well solved.</string>
+    <string name="halloween_line_cat">Nine lives, one clean solve.</string>
+    <string name="halloween_line_owl">Wise moves, every one.</string>
+    <string name="halloween_line_ghost">Boo-tifully solved.</string>
+    <string name="halloween_line_bat">Solved before midnight.</string>
+    <string name="halloween_line_moon">Solved by moonlight.</string>
+    <string name="halloween_character_pumpkin">Jack-o\'-lantern</string>
+    <string name="halloween_character_cat">Black cat in front of the moon</string>
+    <string name="halloween_character_owl">Owl on a branch</string>
+    <string name="halloween_character_ghost">Friendly ghost</string>
+    <string name="halloween_character_bat">Small bat</string>
+    <string name="halloween_character_moon">Sleepy full moon</string>
+    <string name="daily_reminder_title_halloween">Halloween puzzles</string>
+    <string name="daily_reminder_text_halloween">A few quiet puzzles for Halloween: %1$s</string>
 </resources>

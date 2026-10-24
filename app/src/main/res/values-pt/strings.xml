@@ -1251,6 +1251,7 @@
     <string name="theme_technology">Tecnologia</string>
     <string name="theme_geography">Geografia</string>
     <string name="theme_fantasy">Fantasia</string>
+    <string name="theme_halloween">Halloween</string>
     <string name="game_settings_themes_title">Temas</string>
     <string name="game_settings_themes_all">Todos os temas</string>
     <string name="game_settings_themes_selected">%1$d de %2$d selecionados</string>
@@ -1393,4 +1394,20 @@
     <string name="killersudoku_loss_abandoned_title">Quebra-cabeça inacabado</string>
     <string name="killersudoku_loss_abandoned_body">Você encerrou este quebra-cabeça antes de resolvê-lo.</string>
     <string name="killersudoku_how_to_play_scoring">Começa em 10.000 e cai enquanto o cronômetro corre. Cada linha, coluna ou quadrante completado incorretamente custa 500 pontos. A pontuação cai mais devagar nas dificuldades mais altas.</string>
+    <string name="settings_seasonal_label">Toques sazonais</string>
+    <string name="settings_seasonal_detail">Um pequeno toque de Halloween em 31 de outubro: uma animação de vitória tranquila e um lembrete com abóbora.</string>
+    <string name="halloween_line_pumpkin">Resolvido de arrepiar.</string>
+    <string name="halloween_line_cat">Sete vidas, uma solução impecável.</string>
+    <string name="halloween_line_owl">Jogadas sábias, uma após a outra.</string>
+    <string name="halloween_line_ghost">Resolvido de forma assombrosa.</string>
+    <string name="halloween_line_bat">Resolvido antes da meia-noite.</string>
+    <string name="halloween_line_moon">Resolvido ao luar.</string>
+    <string name="halloween_character_pumpkin">Abóbora de Halloween</string>
+    <string name="halloween_character_cat">Gato preto diante da lua</string>
+    <string name="halloween_character_owl">Coruja em um galho</string>
+    <string name="halloween_character_ghost">Fantasma amigável</string>
+    <string name="halloween_character_bat">Pequeno morcego</string>
+    <string name="halloween_character_moon">Lua cheia sonolenta</string>
+    <string name="daily_reminder_title_halloween">Quebra-cabeças de Halloween</string>
+    <string name="daily_reminder_text_halloween">Alguns quebra-cabeças tranquilos para Halloween: %1$s</string>
 </resources>

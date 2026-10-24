@@ -1225,6 +1225,7 @@
     <string name="theme_technology">Technologia</string>
     <string name="theme_geography">Geografia</string>
     <string name="theme_fantasy">Fantastyka</string>
+    <string name="theme_halloween">Halloween</string>
     <string name="game_settings_themes_title">Tematy</string>
     <string name="game_settings_themes_all">Wszystkie tematy</string>
     <string name="game_settings_themes_selected">Wybrano %1$d z %2$d</string>
@@ -1367,4 +1368,20 @@
     <string name="killersudoku_loss_abandoned_title">Łamigłówka nieukończona</string>
     <string name="killersudoku_loss_abandoned_body">Ta łamigłówka została zakończona przed jej rozwiązaniem.</string>
     <string name="killersudoku_how_to_play_scoring">Wynik zaczyna się od 10 000 punktów i spada wraz z upływem czasu. Każdy nieprawidłowo ukończony wiersz, kolumna lub obszar 3×3 kosztuje 500 punktów. Na wyższych poziomach trudności punkty spadają wolniej.</string>
+    <string name="settings_seasonal_label">Akcenty sezonowe</string>
+    <string name="settings_seasonal_detail">Drobny akcent Halloween 31 października: spokojna animacja wygranej i przypomnienie z dynią.</string>
+    <string name="halloween_line_pumpkin">Upiornie dobrze rozwiązane.</string>
+    <string name="halloween_line_cat">Dziewięć żyć, jedno czyste rozwiązanie.</string>
+    <string name="halloween_line_owl">Mądre ruchy, jeden po drugim.</string>
+    <string name="halloween_line_ghost">Rozwiązane cicho jak duch.</string>
+    <string name="halloween_line_bat">Rozwiązane przed północą.</string>
+    <string name="halloween_line_moon">Rozwiązane przy świetle księżyca.</string>
+    <string name="halloween_character_pumpkin">Lampion z dyni</string>
+    <string name="halloween_character_cat">Czarny kot na tle księżyca</string>
+    <string name="halloween_character_owl">Sowa na gałęzi</string>
+    <string name="halloween_character_ghost">Przyjazny duch</string>
+    <string name="halloween_character_bat">Mały nietoperz</string>
+    <string name="halloween_character_moon">Senny księżyc w pełni</string>
+    <string name="daily_reminder_title_halloween">Łamigłówki na Halloween</string>
+    <string name="daily_reminder_text_halloween">Kilka spokojnych łamigłówek na Halloween: %1$s</string>
 </resources>

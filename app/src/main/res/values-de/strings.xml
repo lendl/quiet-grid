@@ -1194,6 +1194,7 @@
     <string name="theme_technology">Technik</string>
     <string name="theme_geography">Erdkunde</string>
     <string name="theme_fantasy">Fantasie</string>
+    <string name="theme_halloween">Halloween</string>
     <string name="game_settings_themes_title">Themen</string>
     <string name="game_settings_themes_all">Alle Themen</string>
     <string name="game_settings_themes_selected">%1$d von %2$d ausgewählt</string>
@@ -1336,4 +1337,20 @@
     <string name="killersudoku_loss_abandoned_title">Rätsel unfertig</string>
     <string name="killersudoku_loss_abandoned_body">Du hast dieses Rätsel beendet, bevor es gelöst war.</string>
     <string name="killersudoku_how_to_play_scoring">Startet bei 10.000 und sinkt, solange der Timer läuft. Jede falsch abgeschlossene Zeile, Spalte oder Box kostet 500 Punkte. Punkte sinken bei höheren Schwierigkeitsgraden langsamer.</string>
+    <string name="settings_seasonal_label">Saisonale Akzente</string>
+    <string name="settings_seasonal_detail">Ein kleiner Halloween-Akzent am 31. Oktober: eine ruhige Gewinnanimation und eine Kürbis-Erinnerung.</string>
+    <string name="halloween_line_pumpkin">Schaurig gut gelöst.</string>
+    <string name="halloween_line_cat">Neun Leben, eine saubere Lösung.</string>
+    <string name="halloween_line_owl">Weise Züge, jeder einzelne.</string>
+    <string name="halloween_line_ghost">Gespenstisch gut gelöst.</string>
+    <string name="halloween_line_bat">Noch vor Mitternacht gelöst.</string>
+    <string name="halloween_line_moon">Im Mondschein gelöst.</string>
+    <string name="halloween_character_pumpkin">Kürbislaterne</string>
+    <string name="halloween_character_cat">Schwarze Katze vor dem Mond</string>
+    <string name="halloween_character_owl">Eule auf einem Ast</string>
+    <string name="halloween_character_ghost">Freundliches Gespenst</string>
+    <string name="halloween_character_bat">Kleine Fledermaus</string>
+    <string name="halloween_character_moon">Schläfriger Vollmond</string>
+    <string name="daily_reminder_title_halloween">Halloween-Rätsel</string>
+    <string name="daily_reminder_text_halloween">Ein paar ruhige Rätsel für Halloween: %1$s</string>
 </resources>

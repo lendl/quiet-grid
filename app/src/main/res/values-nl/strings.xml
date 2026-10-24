@@ -1200,6 +1200,7 @@
     <string name="theme_technology">Technologie</string>
     <string name="theme_geography">Aardrijkskunde</string>
     <string name="theme_fantasy">Fantasie</string>
+    <string name="theme_halloween">Halloween</string>
     <string name="game_settings_themes_title">Thema\'s</string>
     <string name="game_settings_themes_all">Alle thema\'s</string>
     <string name="game_settings_themes_selected">%1$d van %2$d geselecteerd</string>
@@ -1342,4 +1343,20 @@
     <string name="killersudoku_loss_abandoned_title">Puzzel niet af</string>
     <string name="killersudoku_loss_abandoned_body">Je hebt deze puzzel beëindigd voordat hij was opgelost.</string>
     <string name="killersudoku_how_to_play_scoring">Start op 10.000 en daalt terwijl de timer loopt. Elke fout voltooide rij, kolom of box kost 500 punten. De score daalt trager bij hogere moeilijkheden.</string>
+    <string name="settings_seasonal_label">Seizoensaccenten</string>
+    <string name="settings_seasonal_detail">Een klein Halloween-accent op 31 oktober: een rustige winanimatie en een pompoenherinnering.</string>
+    <string name="halloween_line_pumpkin">Griezelig goed opgelost.</string>
+    <string name="halloween_line_cat">Negen levens, één nette oplossing.</string>
+    <string name="halloween_line_owl">Wijze zetten, stuk voor stuk.</string>
+    <string name="halloween_line_ghost">Spookachtig goed opgelost.</string>
+    <string name="halloween_line_bat">Opgelost voor middernacht.</string>
+    <string name="halloween_line_moon">Opgelost bij maanlicht.</string>
+    <string name="halloween_character_pumpkin">Halloweenpompoen</string>
+    <string name="halloween_character_cat">Zwarte kat voor de maan</string>
+    <string name="halloween_character_owl">Uil op een tak</string>
+    <string name="halloween_character_ghost">Vriendelijk spookje</string>
+    <string name="halloween_character_bat">Kleine vleermuis</string>
+    <string name="halloween_character_moon">Slaperige volle maan</string>
+    <string name="daily_reminder_title_halloween">Halloweenpuzzels</string>
+    <string name="daily_reminder_text_halloween">Een paar rustige puzzels voor Halloween: %1$s</string>
 </resources>

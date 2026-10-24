@@ -22,6 +22,7 @@ import com.quietgrid.app.ui.play.GamePlayScaffold
 import com.quietgrid.app.ui.play.InfoItem
 import com.quietgrid.app.ui.play.PlayTimer
 import com.quietgrid.app.ui.play.heartsInfo
+import com.quietgrid.app.ui.seasonal.rememberHalloweenActive
 import com.quietgrid.engine.minesweeper.endless.WorldCell
 import kotlinx.coroutines.delay
 
@@ -50,6 +51,7 @@ fun MinesweeperEndlessPlayScreen(
         onReveal = { cell -> haptics.tapFeedback(); viewModel.onReveal(cell) },
         onToggleFlag = { cell -> haptics.tapFeedback(); viewModel.onToggleFlag(cell) },
         onCameraChanged = { viewModel.onCameraChanged(it) },
+        halloween = rememberHalloweenActive(),
     )
 }
 
@@ -65,6 +67,7 @@ internal fun MinesweeperEndlessPlayContent(
     onReveal: (WorldCell) -> Unit,
     onToggleFlag: (WorldCell) -> Unit,
     onCameraChanged: (MinesweeperEndlessCamera) -> Unit,
+    halloween: Boolean = false,
 ) {
     GamePlayScaffold(
         gameId = GameId.MINESWEEPER,
@@ -96,6 +99,7 @@ internal fun MinesweeperEndlessPlayContent(
                             onReveal = onReveal,
                             onToggleFlag = onToggleFlag,
                             modifier = Modifier.fillMaxSize(),
+                            halloween = halloween,
                         )
                         if (building) DelayedBuildLoader()
                     }

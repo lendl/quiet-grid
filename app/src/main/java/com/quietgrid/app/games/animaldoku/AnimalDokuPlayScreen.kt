@@ -20,6 +20,7 @@ import com.quietgrid.app.ui.play.PlayHintAction
 import com.quietgrid.app.ui.play.PlayHintMessage
 import com.quietgrid.app.ui.play.PlayTimer
 import com.quietgrid.app.ui.play.heartsInfo
+import com.quietgrid.app.ui.seasonal.rememberHalloweenActive
 import com.quietgrid.engine.animaldoku.AnimalDokuHint
 import com.quietgrid.engine.animaldoku.AnimalDokuUnit
 import com.quietgrid.engine.animaldoku.AnimalDokuUnitKind
@@ -41,6 +42,7 @@ fun AnimalDokuPlayScreen(
 
     val session = viewModel.session
     val haptics = rememberHapticController()
+    val emojiPalette = animalDokuEmojiPalette(rememberHalloweenActive())
     var boardFlashTrigger by remember { mutableStateOf(0) }
     var wrongOpenTrigger by remember { mutableStateOf(0) }
     LaunchedEffect(viewModel.lastOpenEvent) {
@@ -90,6 +92,7 @@ fun AnimalDokuPlayScreen(
                         onCellTap = viewModel::onCellTap,
                         onCellDrag = viewModel::onCellDrag,
                         onCellDoubleTap = viewModel::onCellDoubleTap,
+                        emojiPalette = emojiPalette,
                     )
                 }
             }

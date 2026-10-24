@@ -79,6 +79,9 @@ import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
 import com.quietgrid.app.ui.components.BadgePill
 import com.quietgrid.app.ui.components.OutlinedGlowButton
 import com.quietgrid.app.ui.components.rememberHapticController
+import com.quietgrid.app.ui.seasonal.HalloweenCharacter
+import com.quietgrid.app.ui.seasonal.HalloweenFigure
+import com.quietgrid.app.ui.seasonal.rememberHalloweenCharacter
 import java.time.LocalDate
 import kotlin.math.roundToInt
 
@@ -161,6 +164,8 @@ fun CompletionScreen(
     val caseSolvedText = (highlight as? CompletionHighlight.CaseSolved)?.text?.takeIf { it.isNotEmpty() }
 
     val repositories: RepositoriesViewModel = hiltViewModel()
+    val halloween = rememberHalloweenCharacter()?.takeIf { picture == null }
+    val bodyText = stringResource(halloween?.lineRes?.takeIf { !isNewHighScore && !isFirstSolve } ?: bodyRes)
     val stats by remember(repositories, gameId) { repositories.statsRepository.statsFor(gameId) }.collectAsState(initial = null)
     val streak = stats?.forDifficulty(difficulty)?.currentStreak ?: 0
 
@@ -209,8 +214,9 @@ fun CompletionScreen(
         val sideways = isSidewaysPhoneResult(maxWidth, maxHeight)
         val heroSize = if (sideways) WinHeroSize(96.dp, 72.dp, 30.sp) else WinHeroSize(130.dp, 96.dp, 40.sp)
         val heroFigure: @Composable (Boolean) -> Unit = { shared ->
-            WinHeroFigure(picture, themeIcon, gameId, heroSize, entrance, shared)
+            WinHeroFigure(picture, halloween, themeIcon, gameId, heroSize, entrance, shared)
         }
+        val heroGlow = halloween?.glow ?: MaterialTheme.colorScheme.primary
         PinnedHeaderScrollLayout(
             header = {
                 Row(
@@ -319,13 +325,14 @@ fun CompletionScreen(
                 ) {
                     WinHero(
                         glowSize = 112.dp,
+                        glowColor = heroGlow,
                         entrance = entrance,
                         modifier = Modifier.size(112.dp),
                     ) { heroFigure(true) }
                     Column(Modifier.widthIn(max = 420.dp)) {
                         Text(stringResource(titleRes), style = MaterialTheme.typography.headlineSmall, modifier = Modifier.riseIn(entrance, 0))
                         Text(
-                            stringResource(bodyRes),
+                            bodyText,
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(top = 2.dp).riseIn(entrance, 1),
@@ -360,6 +367,7 @@ fun CompletionScreen(
             } else {
                 WinHero(
                     glowSize = 180.dp,
+                    glowColor = heroGlow,
                     entrance = entrance,
                     modifier = Modifier.fillMaxWidth().height(150.dp),
                 ) { heroFigure(true) }
@@ -371,7 +379,7 @@ fun CompletionScreen(
                     modifier = Modifier.padding(top = 4.dp).riseIn(entrance, 0),
                 )
                 Text(
-                    stringResource(bodyRes),
+                    bodyText,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
@@ -425,6 +433,7 @@ private class WinHeroSize(val pictureSize: Dp, val medallionSize: Dp, val symbol
 @Composable
 private fun WinHero(
     glowSize: Dp,
+    glowColor: Color,
     entrance: ResultEntrance,
     modifier: Modifier = Modifier,
     figure: @Composable () -> Unit,
@@ -437,7 +446,7 @@ private fun WinHero(
                     .graphicsLayer { alpha = entrance.glowAlpha() }
                     .background(
                         Brush.radialGradient(
-                            colors = listOf(MaterialTheme.colorScheme.primary.copy(alpha = 0.35f), Color.Transparent),
+                            colors = listOf(glowColor.copy(alpha = 0.35f), Color.Transparent),
                         ),
                         CircleShape,
                     ),
@@ -450,6 +459,7 @@ private fun WinHero(
 @Composable
 private fun WinHeroFigure(
     picture: List<List<Boolean>>?,
+    halloween: HalloweenCharacter?,
     themeIcon: String?,
     gameId: GameId,
     size: WinHeroSize,
@@ -459,6 +469,8 @@ private fun WinHeroFigure(
     val tint = MaterialTheme.colorScheme.primary
     if (picture != null) {
         NonogramMiniPicture(solution = picture, fillColor = tint, modifier = Modifier.size(size.pictureSize))
+    } else if (halloween != null) {
+        HalloweenFigure(halloween, size.pictureSize, clockMs = { entrance.elapsedMs() })
     } else {
         ResultMedallion(gameId = gameId, tint = tint, size = size.medallionSize, shared = shared) {
             if (themeIcon != null) {

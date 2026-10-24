@@ -45,6 +45,7 @@ The file is a JSON array. Each entry looks like this:
 | `width`, `height` | The size of the drawing box in your own units. Only the ratio matters. A board has `round(rows * width / height)` columns. |
 | `minRows` | The smallest board height at which the shape still reads. Boards grow from here until they reach the tier's cell target. |
 | `parts` | Optional, default 1. Set it only for a shape made of separate pieces on purpose, such as the 4 squares of `logo`. |
+| `season` | Optional. Marks a seasonal shape, such as `"halloween"`. See [Seasonal shapes](#seasonal-shapes). |
 | `shapes` | The drawing, listed in order. See below. |
 
 Coordinates run from `(0, 0)` at the top-left to `(width, height)` at the bottom-right. `y` grows downward.
@@ -109,6 +110,13 @@ If the cap stops the growth before the target, the board stays smaller than its 
    Run the four tiers one after another, not in parallel, because they all write to the same bank file.
 5. Run the bank check:
    `./gradlew :cli:test --tests "*ArrowEscapeBankVerificationTest*"`
+
+## Seasonal shapes
+
+A shape with a `season` never goes into the main bank. `--shape all` skips it, and generating it by id writes to `arrowescape_<season>_puzzles.json` instead of `arrowescape_puzzles.json`. The app serves that bank only on its day: the Halloween bank on October 31, while "Seasonal touches" is on in Settings, as the first new puzzle of each tier that the player hasn't played that day.
+
+The Halloween bank holds one puzzle per tier, each with its own shape: `witchhat` (Easy), `bat` (Medium), `jackolantern` (Hard) and `cauldron` (Expert). The bat is too wide for Hard or Expert, so keep it on Medium or below. The jack-o'-lantern reads by its cut-out eyes and mouth, which is how it avoids the plain pumpkin's `apple` problem. Regenerate a tier with:
+`./gradlew :cli:run --args="generate --game arrowescape --difficulty <tier> --count 1 --shape <id> --out app/src/main/assets"`
 
 ## Shapes that work and shapes that don't
 

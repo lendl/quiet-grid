@@ -19,15 +19,29 @@ import org.junit.Test
 import java.io.File
 import kotlin.math.ceil
 
+private fun readBank(path: String): List<ArrowEscapePuzzleEntry> = Json { ignoreUnknownKeys = true }
+    .decodeFromString(ListSerializer(ArrowEscapePuzzleEntry.serializer()), File(path).readText())
+
 class ArrowEscapeBankVerificationTest {
-    private val bank: List<ArrowEscapePuzzleEntry> = Json { ignoreUnknownKeys = true }
-        .decodeFromString(ListSerializer(ArrowEscapePuzzleEntry.serializer()), File("app/src/main/assets/arrowescape_puzzles.json").readText())
+    private val mainBank = readBank("app/src/main/assets/arrowescape_puzzles.json")
+    private val halloweenBank = readBank("app/src/main/assets/arrowescape_halloween_puzzles.json")
+    private val bank = mainBank + halloweenBank
+    private val seasonByShape = loadArrowEscapeSilhouettes().associate { it.id to it.season }
 
     @Test
     fun `every tier has at least 55 puzzles`() {
         Difficulty.entries.forEach { difficulty ->
-            assertTrue(difficulty.key, bank.count { it.difficulty == difficulty.key } >= 55)
+            assertTrue(difficulty.key, mainBank.count { it.difficulty == difficulty.key } >= 55)
         }
+    }
+
+    @Test
+    fun `the halloween bank has a halloween shape for every tier and the main bank has none`() {
+        Difficulty.entries.forEach { difficulty ->
+            assertTrue(difficulty.key, halloweenBank.any { it.difficulty == difficulty.key })
+        }
+        halloweenBank.forEach { assertEquals(it.id, "halloween", seasonByShape[it.shape]) }
+        mainBank.forEach { assertEquals(it.id, null, seasonByShape[it.shape]) }
     }
 
     @Test

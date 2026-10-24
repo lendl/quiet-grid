@@ -21,6 +21,7 @@ fun themeLabelRes(themeId: String): Int = when (themeId) {
     "technology" -> R.string.theme_technology
     "geography" -> R.string.theme_geography
     "fantasy" -> R.string.theme_fantasy
+    "halloween" -> R.string.theme_halloween
     else -> R.string.theme_fallback
 }
 
@@ -43,6 +44,7 @@ private val THEME_ICONS: Map<String, String> = mapOf(
     "technology" to "💻",
     "geography" to "🗺️",
     "fantasy" to "🐉",
+    "halloween" to "🎃",
 )
 
 fun themeIcon(themeId: String): String? = THEME_ICONS[themeId]

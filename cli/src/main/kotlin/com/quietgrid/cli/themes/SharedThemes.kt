@@ -12,6 +12,13 @@ private val defaultThemes: Map<String, List<ThemeClearTheme>> by lazy { parseThe
 fun loadSharedThemes(path: String = SHARED_THEMES_ASSET): Map<String, List<ThemeClearTheme>> =
     if (path == SHARED_THEMES_ASSET) defaultThemes else parseThemeClearThemes(File(path).readText())
 
+fun loadSeasonalThemes(season: String): Map<String, List<ThemeClearTheme>> {
+    val resource = "/seasonal_themes_$season.json"
+    val text = object {}.javaClass.getResourceAsStream(resource)?.bufferedReader()?.use { it.readText() }
+        ?: error("$resource missing from cli resources")
+    return parseThemeClearThemes(text)
+}
+
 fun encodeSharedThemes(themes: Map<String, List<ThemeClearTheme>>): String {
     fun quote(value: String) = JsonPrimitive(value).toString()
     val locales = themes.entries.joinToString(",\n") { (locale, list) ->

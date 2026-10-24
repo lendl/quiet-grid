@@ -1,0 +1,50 @@
+{
+ "en": [
+  {
+   "themeId": "halloween",
+   "words": ["Pumpkin", "Lantern", "Candle", "Ghost", "Witch", "Wizard", "Broom", "Cauldron", "Potion", "Spell", "Magic", "Wand", "Cloak", "Cape", "Mask", "Costume", "Candy", "Sweets", "Treat", "Trick", "Toffee", "Caramel", "Apple", "Cider", "Harvest", "Autumn", "Leaves", "Acorn", "Scarecrow", "Hay", "Straw", "Corn", "Orchard", "Mist", "Fog", "Shadow", "Spider", "Cobweb", "Attic", "Castle", "Tower", "Crow", "Raven", "Owl", "Bat", "Cat", "Wolf", "Howl", "Moon", "Moonlight", "Midnight", "Night", "Star", "Torch", "Party", "Monster", "Skeleton", "Mummy", "Goblin", "Troll", "Phantom", "Spirit", "Riddle", "Mystery", "Secret", "Cookie", "Gourd", "Squash", "Bonfire", "Hood", "Lollipop", "Feast", "Basket", "Shiver", "Hat", "Spooky"]
+  }
+ ],
+ "de": [
+  {
+   "themeId": "halloween",
+   "words": ["Kuerbis", "Laterne", "Kerze", "Geist", "Gespenst", "Hexe", "Zauberer", "Besen", "Kessel", "Trank", "Zauber", "Magie", "Zauberstab", "Umhang", "Maske", "Kostuem", "Bonbon", "Suessigkeit", "Streich", "Karamell", "Apfel", "Most", "Ernte", "Herbst", "Blaetter", "Laub", "Eichel", "Kastanie", "Vogelscheuche", "Heu", "Stroh", "Mais", "Obstgarten", "Nebel", "Dunst", "Schatten", "Spinne", "Spinnennetz", "Dachboden", "Schloss", "Burg", "Turm", "Kraehe", "Rabe", "Eule", "Fledermaus", "Katze", "Wolf", "Heulen", "Mond", "Mondschein", "Mitternacht", "Nacht", "Stern", "Fackel", "Party", "Monster", "Skelett", "Mumie", "Kobold", "Troll", "Phantom", "Raetsel", "Geheimnis", "Keks", "Lagerfeuer", "Kapuze", "Lutscher", "Festmahl", "Korb", "Grusel", "Spuk", "Hut", "Schauder", "Zaubertrank"]
+  }
+ ],
+ "nl": [
+  {
+   "themeId": "halloween",
+   "words": ["Pompoen", "Lantaarn", "Kaars", "Geest", "Spook", "Heks", "Tovenaar", "Bezem", "Ketel", "Drankje", "Toverspreuk", "Magie", "Toverstaf", "Cape", "Mantel", "Masker", "Kostuum", "Snoep", "Snoepje", "Traktatie", "Grap", "Karamel", "Appel", "Appelsap", "Oogst", "Herfst", "Bladeren", "Eikel", "Kastanje", "Hooi", "Stro", "Mais", "Boomgaard", "Mist", "Nevel", "Schaduw", "Spin", "Spinnenweb", "Zolder", "Kasteel", "Toren", "Kraai", "Raaf", "Uil", "Vleermuis", "Kat", "Wolf", "Gehuil", "Maan", "Maanlicht", "Middernacht", "Nacht", "Ster", "Fakkel", "Feest", "Monster", "Skelet", "Mummie", "Kabouter", "Trol", "Fantoom", "Raadsel", "Geheim", "Koekje", "Kampvuur", "Capuchon", "Lolly", "Feestmaal", "Mand", "Griezel", "Kalebas", "Hoed", "Rilling", "Toverdrank"]
+  }
+ ],
+ "fr": [
+  {
+   "themeId": "halloween",
+   "words": ["Citrouille", "Lanterne", "Bougie", "Fantome", "Spectre", "Sorciere", "Sorcier", "Balai", "Chaudron", "Potion", "Sortilege", "Magie", "Baguette", "Cape", "Masque", "Costume", "Bonbon", "Friandise", "Farce", "Caramel", "Pomme", "Cidre", "Recolte", "Automne", "Feuilles", "Gland", "Chataigne", "Epouvantail", "Foin", "Paille", "Mais", "Verger", "Brume", "Brouillard", "Ombre", "Araignee", "Toile", "Grenier", "Chateau", "Tour", "Corbeau", "Hibou", "Chouette", "Chat", "Loup", "Hurlement", "Lune", "Minuit", "Nuit", "Etoile", "Torche", "Fete", "Monstre", "Squelette", "Momie", "Lutin", "Troll", "Esprit", "Enigme", "Mystere", "Secret", "Biscuit", "Courge", "Potiron", "Flambeau", "Capuche", "Sucette", "Festin", "Panier", "Frisson", "Chapeau", "Grimoire", "Elixir"]
+  }
+ ],
+ "es": [
+  {
+   "themeId": "halloween",
+   "words": ["Calabaza", "Linterna", "Vela", "Fantasma", "Bruja", "Brujo", "Mago", "Escoba", "Caldero", "Pocion", "Hechizo", "Magia", "Varita", "Capa", "Mascara", "Disfraz", "Caramelo", "Dulce", "Golosina", "Truco", "Broma", "Manzana", "Sidra", "Cosecha", "Otono", "Hojas", "Bellota", "Castana", "Espantapajaros", "Heno", "Paja", "Maiz", "Huerto", "Niebla", "Bruma", "Sombra", "Arana", "Telarana", "Desvan", "Castillo", "Torre", "Cuervo", "Buho", "Lechuza", "Murcielago", "Gato", "Lobo", "Aullido", "Luna", "Medianoche", "Noche", "Estrella", "Antorcha", "Fiesta", "Monstruo", "Esqueleto", "Momia", "Duende", "Trol", "Espiritu", "Acertijo", "Misterio", "Secreto", "Galleta", "Hoguera", "Capucha", "Piruleta", "Banquete", "Cesta", "Escalofrio", "Sombrero", "Pocima"]
+  }
+ ],
+ "it": [
+  {
+   "themeId": "halloween",
+   "words": ["Zucca", "Lanterna", "Candela", "Fantasma", "Spettro", "Strega", "Stregone", "Mago", "Scopa", "Calderone", "Pozione", "Incantesimo", "Magia", "Bacchetta", "Mantello", "Maschera", "Costume", "Caramella", "Dolcetto", "Scherzo", "Mela", "Sidro", "Raccolto", "Autunno", "Foglie", "Ghianda", "Castagna", "Fieno", "Paglia", "Mais", "Frutteto", "Nebbia", "Foschia", "Ombra", "Ragno", "Ragnatela", "Soffitta", "Castello", "Torre", "Corvo", "Gufo", "Civetta", "Pipistrello", "Gatto", "Lupo", "Ululato", "Luna", "Mezzanotte", "Notte", "Stella", "Torcia", "Festa", "Mostro", "Scheletro", "Mummia", "Folletto", "Troll", "Spirito", "Indovinello", "Mistero", "Segreto", "Biscotto", "Cappuccio", "Banchetto", "Cesto", "Brivido", "Cappello", "Elisir", "Lumino", "Zucchina"]
+  }
+ ],
+ "pl": [
+  {
+   "themeId": "halloween",
+   "words": ["Dynia", "Latarnia", "Lampion", "Swieca", "Duch", "Zjawa", "Upior", "Czarownica", "Wiedzma", "Czarodziej", "Miotla", "Kociol", "Eliksir", "Zaklecie", "Magia", "Rozdzka", "Peleryna", "Maska", "Kostium", "Cukierek", "Slodycze", "Psikus", "Figiel", "Karmel", "Jablko", "Cydr", "Zbiory", "Jesien", "Liscie", "Zoladz", "Kasztan", "Siano", "Sloma", "Kukurydza", "Sad", "Mgla", "Cien", "Pajak", "Pajeczyna", "Strych", "Zamek", "Wieza", "Wrona", "Kruk", "Sowa", "Puszczyk", "Nietoperz", "Kot", "Wilk", "Wycie", "Ksiezyc", "Polnoc", "Noc", "Gwiazda", "Pochodnia", "Impreza", "Potwor", "Szkielet", "Mumia", "Skrzat", "Troll", "Widmo", "Zagadka", "Tajemnica", "Sekret", "Ciastko", "Ognisko", "Kaptur", "Lizak", "Uczta", "Koszyk", "Dreszcz", "Kapelusz", "Mikstura", "Czary"]
+  }
+ ],
+ "pt": [
+  {
+   "themeId": "halloween",
+   "words": ["Abobora", "Lanterna", "Vela", "Fantasma", "Assombracao", "Bruxa", "Bruxo", "Mago", "Vassoura", "Caldeirao", "Pocao", "Feitico", "Magia", "Varinha", "Capa", "Mascara", "Fantasia", "Doce", "Bala", "Guloseima", "Travessura", "Truque", "Caramelo", "Maca", "Sidra", "Colheita", "Outono", "Folhas", "Bolota", "Castanha", "Espantalho", "Feno", "Palha", "Milho", "Pomar", "Neblina", "Nevoa", "Sombra", "Aranha", "Teia", "Sotao", "Castelo", "Torre", "Corvo", "Coruja", "Morcego", "Gato", "Lobo", "Uivo", "Lua", "Luar", "Noite", "Estrela", "Tocha", "Festa", "Monstro", "Esqueleto", "Mumia", "Duende", "Troll", "Espirito", "Charada", "Enigma", "Misterio", "Segredo", "Biscoito", "Fogueira", "Capuz", "Pirulito", "Banquete", "Cesta", "Arrepio", "Chapeu", "Grimorio", "Elixir"]
+  }
+ ]
+}

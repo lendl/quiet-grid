@@ -20,6 +20,7 @@ import com.quietgrid.app.ui.play.InfoItem
 import com.quietgrid.app.ui.play.PlayHintAction
 import com.quietgrid.app.ui.play.PlayHintMessage
 import com.quietgrid.app.ui.play.PlayTimer
+import com.quietgrid.app.ui.seasonal.rememberHalloweenActive
 
 @Composable
 fun MinesweeperPlayScreen(
@@ -36,6 +37,7 @@ fun MinesweeperPlayScreen(
 
     val session = viewModel.session
     val haptics = rememberHapticController()
+    val halloween = rememberHalloweenActive()
 
     val hint = viewModel.nextMoveHint
     GamePlayScaffold(
@@ -74,6 +76,7 @@ fun MinesweeperPlayScreen(
                             onToggleFlag = { row, col -> haptics.tapFeedback(); viewModel.onToggleFlag(row, col) },
                             hintEvidenceCells = hint?.evidenceCells?.toSet() ?: emptySet(),
                             hintTargetCells = hint?.targetCells?.toSet() ?: emptySet(),
+                            halloween = halloween,
                         )
                     }
                 }

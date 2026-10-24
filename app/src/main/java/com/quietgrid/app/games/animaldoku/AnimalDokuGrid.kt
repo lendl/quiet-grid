@@ -72,6 +72,7 @@ fun AnimalDokuGrid(
     onCellDrag: (markAll: Boolean, visited: List<Pair<Int, Int>>) -> Unit,
     onCellDoubleTap: (Int, Int) -> Unit,
     hintHighlight: AnimalDokuHintHighlight? = null,
+    emojiPalette: List<String> = ANIMAL_EMOJI_PALETTE,
 ) {
     val isPencilTheme = LocalIsPencilTheme.current
     val regionColors = rememberAnimalDokuRegionColors(regions)
@@ -176,6 +177,7 @@ fun AnimalDokuGrid(
                         cellSize = cellSize,
                         backgroundColor = backgroundColor,
                         isPencilTheme = isPencilTheme,
+                        emojiPalette = emojiPalette,
                         modifier = Modifier.offset(x = cellSize * col, y = cellSize * row),
                     )
                     if (hintHighlight != null && cellState == AnimalDokuCellState.EMPTY) {
@@ -186,7 +188,12 @@ fun AnimalDokuGrid(
                             }
                         } else if (hintHighlight.animalCell == row to col) {
                             Box(ghostModifier, contentAlignment = Alignment.Center) {
-                                AnimalDokuAnimalIcon(pose = AnimalDokuAnimalPose.FRONT_FACING, region = region, modifier = Modifier.size(cellSize * 0.7f))
+                                AnimalDokuAnimalIcon(
+                                    pose = AnimalDokuAnimalPose.FRONT_FACING,
+                                    region = region,
+                                    modifier = Modifier.size(cellSize * 0.7f),
+                                    palette = emojiPalette,
+                                )
                             }
                         }
                     }
@@ -220,6 +227,7 @@ private fun AnimalDokuAnimatedCell(
     cellSize: Dp,
     backgroundColor: Color,
     isPencilTheme: Boolean,
+    emojiPalette: List<String>,
     modifier: Modifier = Modifier,
 ) {
     val squish = remember { Animatable(1f) }
@@ -276,14 +284,14 @@ private fun AnimalDokuAnimatedCell(
                 AnimalDokuCellState.EMPTY -> Unit
                 AnimalDokuCellState.MARKED -> AnimalDokuXMark(cellSize, locked = false, isPencilTheme = isPencilTheme)
                 AnimalDokuCellState.LOCKED_WRONG -> AnimalDokuXMark(cellSize, locked = true, isPencilTheme = isPencilTheme)
-                AnimalDokuCellState.LOCKED_CORRECT -> AnimalDokuCorrectReveal(region, cellSize)
+                AnimalDokuCellState.LOCKED_CORRECT -> AnimalDokuCorrectReveal(region, cellSize, emojiPalette)
             }
         }
     }
 }
 
 @Composable
-private fun AnimalDokuCorrectReveal(region: Int, cellSize: Dp) {
+private fun AnimalDokuCorrectReveal(region: Int, cellSize: Dp, emojiPalette: List<String>) {
     var settled by remember { mutableStateOf(false) }
     val scale = remember { Animatable(0.7f) }
     LaunchedEffect(Unit) {
@@ -295,6 +303,7 @@ private fun AnimalDokuCorrectReveal(region: Int, cellSize: Dp) {
         pose = if (settled) AnimalDokuAnimalPose.FRONT_FACING else AnimalDokuAnimalPose.PEEKING,
         region = region,
         modifier = Modifier.size(cellSize * 0.7f).graphicsLayer(scaleX = scale.value, scaleY = scale.value),
+        palette = emojiPalette,
     )
 }
 

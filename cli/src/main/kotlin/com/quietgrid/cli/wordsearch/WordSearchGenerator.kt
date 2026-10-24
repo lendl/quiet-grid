@@ -9,8 +9,7 @@ private const val MAX_HIDDEN_WORD_ATTEMPTS = 5
 
 private fun normalizeWordToken(value: String): String = value.uppercase().replace(Regex("[^A-Z]"), "")
 
-private fun pickLanguage(preferredLanguages: List<String>?): String {
-    val themes = loadSharedThemes()
+private fun pickLanguage(preferredLanguages: List<String>?, themes: Map<String, List<ThemeClearTheme>>): String {
     if (!preferredLanguages.isNullOrEmpty()) {
         val supported = preferredLanguages.filter { themes.containsKey(it) }
         if (supported.isNotEmpty()) return supported.random()
@@ -18,8 +17,7 @@ private fun pickLanguage(preferredLanguages: List<String>?): String {
     return themes.keys.random()
 }
 
-private fun pickTheme(language: String, themeId: String?): ThemeClearTheme {
-    val themes = loadSharedThemes()
+private fun pickTheme(language: String, themeId: String?, themes: Map<String, List<ThemeClearTheme>>): ThemeClearTheme {
     val languageThemes = themes[language] ?: themes.getValue("en")
     if (themeId == null) return languageThemes.random()
     return languageThemes.firstOrNull { it.themeId == themeId } ?: error("Unknown wordsearch theme '$themeId' for language '$language'")
@@ -37,10 +35,11 @@ fun generateWordSearchPuzzle(
     difficulty: Difficulty,
     preferredLanguages: List<String>? = null,
     themeId: String? = null,
+    themes: Map<String, List<ThemeClearTheme>> = loadSharedThemes(),
 ): WordSearchPuzzleEntry? {
     val config = WORD_SEARCH_DIFFICULTY_CONFIG.getValue(difficulty)
-    val language = pickLanguage(preferredLanguages)
-    val theme = pickTheme(language, themeId)
+    val language = pickLanguage(preferredLanguages, themes)
+    val theme = pickTheme(language, themeId, themes)
 
     val maxFit = maxOf(rows, cols)
     val normalizedThemeWords = theme.words.map { normalizeWordToken(it) }.distinct()

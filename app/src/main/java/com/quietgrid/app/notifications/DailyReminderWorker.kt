@@ -7,6 +7,7 @@ import androidx.work.WorkerParameters
 import com.quietgrid.app.core.daily.DailyPools
 import com.quietgrid.app.core.daily.dailyEligibleGames
 import com.quietgrid.app.core.daily.gamesNeedingReminder
+import com.quietgrid.app.core.isHalloween
 import com.quietgrid.app.data.DailyRepository
 import com.quietgrid.app.data.PlayHistoryRepository
 import com.quietgrid.app.data.SessionRepository
@@ -42,7 +43,10 @@ class DailyReminderWorker @AssistedInject constructor(
                     envelope = sessionRepository.activeSession.first(),
                     today = LocalDate.now(),
                 )
-                if (games.isNotEmpty()) DailyReminderNotifier.post(applicationContext, games)
+                if (games.isNotEmpty()) {
+                    val halloween = settings.seasonalTouchesEnabled && isHalloween(LocalDate.now())
+                    DailyReminderNotifier.post(applicationContext, games, halloween)
+                }
             }
         } catch (e: CancellationException) {
             throw e

@@ -93,7 +93,9 @@ fun MinesweeperEndlessGrid(
     onReveal: (WorldCell) -> Unit,
     onToggleFlag: (WorldCell) -> Unit,
     modifier: Modifier = Modifier,
+    halloween: Boolean = false,
 ) {
+    val halloweenColors = minesweeperHalloweenColors().takeIf { halloween }
     val colors = MaterialTheme.colorScheme
     val isPencil = LocalIsPencilTheme.current
     val palette = minesweeperPaletteFor(colors.surface)
@@ -209,7 +211,9 @@ fun MinesweeperEndlessGrid(
                 drawRoundRect(tone, origin, Size(tile, tile), corner)
                 val glyphOrigin = Offset(origin.x + glyphInsetPx, origin.y + glyphInsetPx)
                 when {
+                    showMine && halloweenColors != null -> drawMinesweeperPumpkin(glyphOrigin, glyphSize, halloweenColors)
                     showMine -> drawMinesweeperMine(glyphOrigin, glyphSize, mineBody, mineFuse)
+                    cellState == EndlessCellState.FLAGGED && halloweenColors != null -> drawMinesweeperCandle(glyphOrigin, glyphSize, halloweenColors)
                     cellState == EndlessCellState.FLAGGED -> drawMinesweeperFlag(glyphOrigin, glyphSize, flagPole, flagBanner)
                     cellState == EndlessCellState.REVEALED -> {
                         val layout = numberLayouts[world.numberAt(worldCell)] ?: continue

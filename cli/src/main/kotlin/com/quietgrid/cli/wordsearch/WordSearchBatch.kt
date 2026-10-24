@@ -2,6 +2,7 @@ package com.quietgrid.cli.wordsearch
 
 import com.quietgrid.cli.themes.loadSharedThemes
 import com.quietgrid.engine.core.Difficulty
+import com.quietgrid.engine.themeclear.ThemeClearTheme
 import com.quietgrid.engine.wordsearch.WordSearchPuzzleEntry
 import com.quietgrid.engine.wordsearch.wordSearchAllowedSizes
 import java.util.concurrent.Callable
@@ -20,9 +21,10 @@ fun generateWordSearchForQuotas(
     quotas: Map<String, Int>,
     threads: Int,
     maxAttempts: Int,
+    themes: Map<String, List<ThemeClearTheme>> = loadSharedThemes(),
     isNew: (WordSearchPuzzleEntry) -> Boolean = { true },
 ): List<WordSearchPuzzleEntry> {
-    val knownThemeIds = loadSharedThemes().getValue(locale).map { it.themeId }.toSet()
+    val knownThemeIds = themes.getValue(locale).map { it.themeId }.toSet()
     require(quotas.keys.all { it in knownThemeIds }) { "Unknown wordsearch themes for '$locale': ${quotas.keys - knownThemeIds}" }
 
     val remaining = quotas.filterValues { it > 0 }.toMutableMap()
@@ -37,7 +39,7 @@ fun generateWordSearchForQuotas(
     fun submitNext() {
         val themeId = pickWeightedTheme(remaining)
         val (rows, cols) = sizes.random()
-        completion.submit(Callable { generateWordSearchPuzzle(rows, cols, difficulty, listOf(locale), themeId) })
+        completion.submit(Callable { generateWordSearchPuzzle(rows, cols, difficulty, listOf(locale), themeId, themes) })
         submitted += 1
         pending += 1
     }

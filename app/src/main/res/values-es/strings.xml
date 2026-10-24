@@ -1201,6 +1201,7 @@
     <string name="theme_technology">Tecnología</string>
     <string name="theme_geography">Geografía</string>
     <string name="theme_fantasy">Fantasía</string>
+    <string name="theme_halloween">Halloween</string>
     <string name="game_settings_themes_title">Temas</string>
     <string name="game_settings_themes_all">Todos los temas</string>
     <string name="game_settings_themes_selected">%1$d de %2$d seleccionados</string>
@@ -1343,4 +1344,20 @@
     <string name="killersudoku_loss_abandoned_title">Puzzle sin terminar</string>
     <string name="killersudoku_loss_abandoned_body">Terminaste este puzzle antes de resolverlo.</string>
     <string name="killersudoku_how_to_play_scoring">Empieza en 10.000 y baja mientras el cronómetro corre. Cada fila, columna o caja completada incorrectamente resta 500 puntos. El marcador baja más lentamente en dificultades altas.</string>
+    <string name="settings_seasonal_label">Toques de temporada</string>
+    <string name="settings_seasonal_detail">Un pequeño toque de Halloween el 31 de octubre: una animación de victoria tranquila y un recordatorio con calabaza.</string>
+    <string name="halloween_line_pumpkin">Resuelto de miedo.</string>
+    <string name="halloween_line_cat">Siete vidas, una solución impecable.</string>
+    <string name="halloween_line_owl">Cada jugada, una jugada sabia.</string>
+    <string name="halloween_line_ghost">Fantasmagóricamente bien resuelto.</string>
+    <string name="halloween_line_bat">Resuelto antes de medianoche.</string>
+    <string name="halloween_line_moon">Resuelto a la luz de la luna.</string>
+    <string name="halloween_character_pumpkin">Calabaza de Halloween</string>
+    <string name="halloween_character_cat">Gato negro delante de la luna</string>
+    <string name="halloween_character_owl">Búho en una rama</string>
+    <string name="halloween_character_ghost">Fantasma amistoso</string>
+    <string name="halloween_character_bat">Murciélago pequeño</string>
+    <string name="halloween_character_moon">Luna llena somnolienta</string>
+    <string name="daily_reminder_title_halloween">Puzzles de Halloween</string>
+    <string name="daily_reminder_text_halloween">Unos puzzles tranquilos para Halloween: %1$s</string>
 </resources>

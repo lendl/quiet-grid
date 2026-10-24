@@ -341,6 +341,15 @@ fun PreferencesSection() {
         HorizontalDivider(Modifier.padding(vertical = 4.dp))
 
         SettingsToggleRow(
+            label = stringResource(R.string.settings_seasonal_label),
+            detail = stringResource(R.string.settings_seasonal_detail),
+            checked = settings.seasonalTouchesEnabled,
+            onCheckedChange = { scope.launch { repositories.settingsRepository.setSeasonalTouchesEnabled(it) } },
+        )
+
+        HorizontalDivider(Modifier.padding(vertical = 4.dp))
+
+        SettingsToggleRow(
             label = stringResource(R.string.settings_beta_games_label),
             detail = stringResource(R.string.settings_beta_games_detail),
             checked = settings.betaGamesEnabled,

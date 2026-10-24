@@ -15,11 +15,14 @@ import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.SettingsRepository
 import com.quietgrid.app.data.StatsStore
 import com.quietgrid.app.data.ThemePreferencesRepository
+import com.quietgrid.app.data.isHalloweenActive
+import com.quietgrid.app.data.puzzleIdsPlayedOn
 import com.quietgrid.app.data.recentlyPlayedPuzzleIds
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
 import com.quietgrid.engine.wordsearch.WSCellRef
+import com.quietgrid.engine.wordsearch.WordSearchPuzzleEntry
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -64,9 +67,11 @@ private class WordSearchPuzzleAdapter(
 
     override suspend fun freshSession(difficulty: Difficulty): WordSearchSession? {
         val locale = currentWordSearchLocale(settingsRepository.settings.first().puzzleLanguage)
-        val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
-        val excludedThemes = themePreferencesRepository.excludedThemes(gameId, locale).first()
-        val entry = WordSearchPuzzleBank.randomPuzzle(appContext, locale, difficulty, recentIds, excludedThemes) ?: return null
+        val entry = halloweenPuzzle(locale, difficulty) ?: run {
+            val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
+            val excludedThemes = themePreferencesRepository.excludedThemes(gameId, locale).first()
+            WordSearchPuzzleBank.randomPuzzle(appContext, locale, difficulty, recentIds, excludedThemes)
+        } ?: return null
         return WordSearchSession(
             puzzle = entry,
             foundWordIds = emptyList(),
@@ -76,6 +81,12 @@ private class WordSearchPuzzleAdapter(
             hiddenWordSolved = false,
             accuracyDrops = 0,
         )
+    }
+
+    private suspend fun halloweenPuzzle(locale: String, difficulty: Difficulty): WordSearchPuzzleEntry? {
+        val today = LocalDate.now()
+        if (!settingsRepository.isHalloweenActive(today)) return null
+        return WordSearchPuzzleBank.halloweenPuzzle(appContext, locale, difficulty, historyStore.puzzleIdsPlayedOn(gameId, today))
     }
 
     override suspend fun dailySession(difficulty: Difficulty, date: LocalDate): WordSearchSession? {

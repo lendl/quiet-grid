@@ -72,4 +72,13 @@ object WordSearchPuzzleBank {
 
     suspend fun themeCounts(context: Context, locale: String): List<ThemeCount> =
         themeCountsForLocale(ThemeCountIndex.forGame(context, "wordsearch"), locale, fallbackToAllLocales = true)
+
+    suspend fun halloweenPuzzle(context: Context, locale: String, difficulty: Difficulty, playedIds: Set<String>): WordSearchPuzzleEntry? {
+        val key = "halloween:${difficulty.key}:$locale"
+        val pool = cache[key] ?: withContext(Dispatchers.IO) {
+            decodeWordSearchPool({ context.assets.open("wordsearch_halloween_puzzles_${difficulty.key}.json") }, locale, difficulty.key)
+                .also { cache[key] = it }
+        }
+        return pool.firstOrNull { it.id !in playedIds }
+    }
 }

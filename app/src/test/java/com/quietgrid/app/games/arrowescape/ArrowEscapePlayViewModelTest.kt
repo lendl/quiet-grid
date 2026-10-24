@@ -3,16 +3,20 @@ package com.quietgrid.app.games.arrowescape
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.data.AppSettings
+import com.quietgrid.app.data.SettingsRepository
 import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeSessionStore
 import com.quietgrid.app.testutil.FakeStatsStore
 import com.quietgrid.engine.arrowescape.ArrowEscapePieceData
 import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -45,6 +49,7 @@ class ArrowEscapePlayViewModelTest {
     fun setUp() {
         mockkObject(ArrowEscapePuzzleBank)
         coEvery { ArrowEscapePuzzleBank.randomPuzzle(any(), any(), any()) } returns puzzleEntry
+        coEvery { ArrowEscapePuzzleBank.halloweenPuzzle(any(), any(), any()) } returns null
     }
 
     @After
@@ -52,8 +57,11 @@ class ArrowEscapePlayViewModelTest {
         unmockkObject(ArrowEscapePuzzleBank)
     }
 
-    private fun newViewModel(sessionStore: FakeSessionStore = FakeSessionStore(), statsStore: FakeStatsStore = FakeStatsStore()) =
-        ArrowEscapePlayViewModel(mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), Difficulty.EASY, resume = false)
+    private fun newViewModel(sessionStore: FakeSessionStore = FakeSessionStore(), statsStore: FakeStatsStore = FakeStatsStore()): ArrowEscapePlayViewModel {
+        val settingsRepository = mockk<SettingsRepository>(relaxed = true)
+        every { settingsRepository.settings } returns MutableStateFlow(AppSettings())
+        return ArrowEscapePlayViewModel(mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), settingsRepository, Difficulty.EASY, resume = false)
+    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test

@@ -48,6 +48,7 @@ data class GenerateCommand(
     val threads: Int = Runtime.getRuntime().availableProcessors(),
     val theme: String? = null,
     val shape: String? = null,
+    val season: String? = null,
 )
 
 private fun requireFlag(args: Array<String>, flag: String): String {
@@ -63,7 +64,7 @@ private fun optionalFlag(args: Array<String>, flag: String, default: String): St
 
 fun parseArgs(args: Array<String>): GenerateCommand {
     require(args.isNotEmpty() && args[0] == "generate") {
-        "Usage: generate --game <id> --difficulty <d> [--count <n>] [--out <dir>] [--locale <l>] [--fill-to <n>] [--threads <n>] [--theme <id>] [--shape <id|all>]"
+        "Usage: generate --game <id> --difficulty <d> [--count <n>] [--out <dir>] [--locale <l>] [--fill-to <n>] [--threads <n>] [--theme <id>] [--shape <id|all>] [--season <id>]"
     }
     return GenerateCommand(
         game = requireFlag(args, "--game"),
@@ -75,6 +76,7 @@ fun parseArgs(args: Array<String>): GenerateCommand {
         threads = optionalFlag(args, "--threads", "${Runtime.getRuntime().availableProcessors()}").toInt(),
         theme = optionalFlag(args, "--theme", "").ifEmpty { null },
         shape = optionalFlag(args, "--shape", "").ifEmpty { null },
+        season = optionalFlag(args, "--season", "").ifEmpty { null },
     )
 }
 
@@ -238,17 +240,21 @@ fun main(args: Array<String>) {
         }
         "wordsearch" -> {
             val locale = command.locale
+            val season = command.season
             val serializer = com.quietgrid.engine.wordsearch.WordSearchBankEntry.serializer()
-            val outFile = "${command.outDir}/wordsearch_puzzles_${difficulty.key}.json"
+            val bankName = if (season != null) "wordsearch_${season}_puzzles" else "wordsearch_puzzles"
+            val outFile = "${command.outDir}/${bankName}_${difficulty.key}.json"
             val bank = readPuzzleEntries(outFile, serializer).map { it.toPuzzleEntry(difficulty.key) }
-            val themeIds = com.quietgrid.cli.themes.loadSharedThemes().getValue(locale).map { it.themeId }
+            val themes = season?.let { com.quietgrid.cli.themes.loadSeasonalThemes(it) } ?: com.quietgrid.cli.themes.loadSharedThemes()
+            val themeIds = themes.getValue(locale).map { it.themeId }
             val quotas = command.fillTo?.let { com.quietgrid.cli.wordsearch.wordSearchThemeDeficits(bank, locale, themeIds, it) }
                 ?: List(command.count) { themeIds.random() }.groupingBy { it }.eachCount()
             val requested = quotas.values.sum()
-            val state = GenerationState("${command.outDir}/.generation-state/wordsearch-$locale.json")
+            val stateName = if (season != null) "wordsearch-$season-$locale" else "wordsearch-$locale"
+            val state = GenerationState("${command.outDir}/.generation-state/$stateName.json")
             val existingIds = bank.map { it.id }.toSet()
             val startedAt = System.currentTimeMillis()
-            val entries = com.quietgrid.cli.wordsearch.generateWordSearchForQuotas(difficulty, locale, quotas, command.threads, maxAttempts = requested * 30) {
+            val entries = com.quietgrid.cli.wordsearch.generateWordSearchForQuotas(difficulty, locale, quotas, command.threads, maxAttempts = requested * 30, themes = themes) {
                 !state.hasTried(it.id) && it.id !in existingIds
             }
             entries.forEach { state.recordTried(it.id, "valid") }
@@ -315,10 +321,12 @@ fun main(args: Array<String>) {
             val sizes = arrowEscapeSizesForDifficulty(difficulty)
             val silhouettes = command.shape?.let { shape ->
                 val all = loadArrowEscapeSilhouettes()
-                if (shape == "all") all else all.filter { it.id == shape }.ifEmpty {
+                if (shape == "all") all.filter { it.season == null } else all.filter { it.id == shape }.ifEmpty {
                     error("Unknown arrowescape shape '$shape'. Expected one of: all, ${all.joinToString { it.id }}")
                 }
             }
+            val season = silhouettes?.mapNotNull { it.season }?.distinct()?.singleOrNull()
+            val bankFile = "${command.outDir}/${if (season != null) "arrowescape_${season}_puzzles" else "arrowescape_puzzles"}.json"
             val state = GenerationState("${command.outDir}/.generation-state/arrowescape.json")
             val maxTotalAttempts = command.count * 30
             val entries = mutableListOf<ArrowEscapePuzzleEntry>()
@@ -340,8 +348,8 @@ fun main(args: Array<String>) {
                 entries += toEntry("$idPrefix-${entries.size}-${System.nanoTime()}", generated)
             }
             state.save()
-            appendPuzzleEntries("${command.outDir}/arrowescape_puzzles.json", entries, ArrowEscapePuzzleEntry.serializer()) { it.id }
-            println("Generated ${entries.size}/${command.count} arrowescape puzzles at $difficulty into ${command.outDir}/arrowescape_puzzles.json")
+            appendPuzzleEntries(bankFile, entries, ArrowEscapePuzzleEntry.serializer()) { it.id }
+            println("Generated ${entries.size}/${command.count} arrowescape puzzles at $difficulty into $bankFile")
         }
         "starbattle" -> {
             val entries = mutableListOf<StarBattlePuzzleEntry>()

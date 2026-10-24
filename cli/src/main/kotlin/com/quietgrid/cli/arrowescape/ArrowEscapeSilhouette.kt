@@ -99,6 +99,7 @@ data class ArrowEscapeSilhouette(
     val minRows: Int,
     val shapes: List<SilhouetteShape>,
     val parts: Int = 1,
+    val season: String? = null,
 ) {
     fun covers(x: Double, y: Double): Boolean {
         var inside = false
