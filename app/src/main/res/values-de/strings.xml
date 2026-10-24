@@ -407,11 +407,11 @@
     <string name="takuzu_loss_abandoned_eyebrow">Rätsel beendet</string>
     <string name="takuzu_loss_abandoned_title">Rätsel unfertig</string>
     <string name="takuzu_loss_abandoned_body">Du hast dieses Rätsel beendet, bevor es gelöst war.</string>
-    <string name="takuzu_analyzer_title">Lösung Schritt für Schritt</string>
-    <string name="takuzu_analyzer_load_failed">Die Lösung für dieses Rätsel konnte nicht geladen werden.</string>
-    <string name="takuzu_analyzer_already_solved">Dieses Rätsel war bereits vollständig gelöst.</string>
-    <string name="takuzu_analyzer_solved_title">Gelöst!</string>
-    <string name="takuzu_analyzer_solved_body">Dies ist das vollständige Raster.</string>
+    <string name="analyzer_title">Lösung Schritt für Schritt</string>
+    <string name="analyzer_load_failed">Die Lösung für dieses Rätsel konnte nicht geladen werden.</string>
+    <string name="analyzer_already_solved">Dieses Rätsel war bereits vollständig gelöst.</string>
+    <string name="analyzer_solved_title">Gelöst!</string>
+    <string name="analyzer_solved_body">Dies ist das vollständige Raster.</string>
     <string name="takuzu_challenger_label">Challenger</string>
     <string name="takuzu_challenger_description">Löse so viele Rätsel wie möglich, bevor die Zeit abläuft.</string>
     <string name="takuzu_challenger_solved_label">Gelöst</string>

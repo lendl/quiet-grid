@@ -44,6 +44,7 @@ data class AnimalDokuResult(
     val lossReason: String?,
     val isFirstSolve: Boolean = false,
     val isNewHighScore: Boolean = false,
+    val analyzerSnapshot: String? = null,
 )
 
 data class AnimalDokuOpenEvent(val row: Int, val col: Int, val wasCorrect: Boolean)
@@ -55,7 +56,7 @@ internal fun animalDokuScore(livesLeft: Int, elapsedSeconds: Int): Int = maxOf(
 
 private fun encodeCells(cells: List<List<AnimalDokuCellState>>): List<Int> = cells.flatten().map { it.ordinal }
 
-private fun decodeCells(flat: List<Int>, size: Int): List<List<AnimalDokuCellState>> {
+internal fun decodeAnimalDokuCells(flat: List<Int>, size: Int): List<List<AnimalDokuCellState>> {
     val states = AnimalDokuCellState.entries
     return List(size) { row -> List(size) { col -> states[flat[row * size + col]] } }
 }
@@ -82,7 +83,7 @@ private class AnimalDokuPuzzleAdapter(
         if (persisted.status != AnimalDokuStatus.PLAYING.name) return@runCatching null
         AnimalDokuSession(
             puzzle = persisted.puzzle,
-            cells = decodeCells(persisted.cells, persisted.puzzle.size),
+            cells = decodeAnimalDokuCells(persisted.cells, persisted.puzzle.size),
             lives = persisted.lives,
             status = AnimalDokuStatus.valueOf(persisted.status),
         )
@@ -115,6 +116,7 @@ private class AnimalDokuPuzzleAdapter(
         lossReason = outcome.lossReason,
         isFirstSolve = outcome.isFirstSolve,
         isNewHighScore = outcome.isNewHighScore,
+        analyzerSnapshot = session?.let { encode(it) },
     )
 }
 

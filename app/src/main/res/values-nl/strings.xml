@@ -407,11 +407,11 @@
     <string name="takuzu_loss_abandoned_eyebrow">Puzzel beëindigd</string>
     <string name="takuzu_loss_abandoned_title">Puzzel niet af</string>
     <string name="takuzu_loss_abandoned_body">Je hebt deze puzzel beëindigd voordat hij was opgelost.</string>
-    <string name="takuzu_analyzer_title">Bekijk de oplossing stap voor stap</string>
-    <string name="takuzu_analyzer_load_failed">Kon de oplossing voor deze puzzel niet laden.</string>
-    <string name="takuzu_analyzer_already_solved">Deze puzzel was al volledig opgelost.</string>
-    <string name="takuzu_analyzer_solved_title">Opgelost!</string>
-    <string name="takuzu_analyzer_solved_body">Dit is het voltooide raster.</string>
+    <string name="analyzer_title">Bekijk de oplossing stap voor stap</string>
+    <string name="analyzer_load_failed">Kon de oplossing voor deze puzzel niet laden.</string>
+    <string name="analyzer_already_solved">Deze puzzel was al volledig opgelost.</string>
+    <string name="analyzer_solved_title">Opgelost!</string>
+    <string name="analyzer_solved_body">Dit is het voltooide raster.</string>
 
     <!-- Nonogram -->
     <string name="nonogram_tagline">Vul cellen om aan de rij- en kolomhints te voldoen.</string>

@@ -516,11 +516,11 @@
     <string name="takuzu_loss_abandoned_eyebrow">Puzzle ended</string>
     <string name="takuzu_loss_abandoned_title">Puzzle unfinished</string>
     <string name="takuzu_loss_abandoned_body">You ended this puzzle before it was solved.</string>
-    <string name="takuzu_analyzer_title">Walk through the solve</string>
-    <string name="takuzu_analyzer_load_failed">Couldn\'t load the solve for this puzzle.</string>
-    <string name="takuzu_analyzer_already_solved">This puzzle was already fully solved.</string>
-    <string name="takuzu_analyzer_solved_title">Solved!</string>
-    <string name="takuzu_analyzer_solved_body">This is the completed grid.</string>
+    <string name="analyzer_title">Walk through the solve</string>
+    <string name="analyzer_load_failed">Couldn\'t load the solve for this puzzle.</string>
+    <string name="analyzer_already_solved">This puzzle was already fully solved.</string>
+    <string name="analyzer_solved_title">Solved!</string>
+    <string name="analyzer_solved_body">This is the completed grid.</string>
 
     <!-- Nonogram (English-only in the source app; other locales fall back here) -->
     <string name="nonogram_tagline">Fill cells to match the row and column clues.</string>

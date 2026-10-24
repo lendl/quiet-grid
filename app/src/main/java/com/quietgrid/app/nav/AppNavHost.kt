@@ -71,6 +71,7 @@ import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.GamePreferenceOverrides
 import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.data.resolveGamePlayPreferences
+import com.quietgrid.app.games.animaldoku.AnimalDokuAnalyzerScreen
 import com.quietgrid.app.games.animaldoku.AnimalDokuChallengerPlayScreen
 import com.quietgrid.app.games.animaldoku.AnimalDokuChallengerResultScreen
 import com.quietgrid.app.games.animaldoku.AnimalDokuPlayScreen
@@ -624,10 +625,10 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                         dailyDate = dailyDate,
                                         onBack = { navController.popBackStack() },
                                         onFinished = { result ->
-                                            AnalyzerHandoff.set(result.analyzerSnapshot)
                                             if (result.solved) {
                                                 goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
                                             } else {
+                                                AnalyzerHandoff.set(result.analyzerSnapshot)
                                                 goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
                                             }
                                         },
@@ -749,6 +750,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                             if (result.solved) {
                                                 goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
                                             } else {
+                                                AnalyzerHandoff.set(result.analyzerSnapshot)
                                                 goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
                                             }
                                         },
@@ -1418,6 +1420,10 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                 val analyzerSnapshot = rememberSaveable { mutableStateOf(AnalyzerHandoff.consume()) }.value
                 when (analyzerGameId) {
                     GameId.TAKUZU -> TakuzuAnalyzerScreen(
+                        snapshot = analyzerSnapshot,
+                        onBack = { navController.popBackStack() },
+                    )
+                    GameId.ANIMALDOKU -> AnimalDokuAnalyzerScreen(
                         snapshot = analyzerSnapshot,
                         onBack = { navController.popBackStack() },
                     )

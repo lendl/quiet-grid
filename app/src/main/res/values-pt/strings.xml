@@ -447,11 +447,11 @@
     <string name="takuzu_loss_abandoned_eyebrow">Quebra-cabeça encerrado</string>
     <string name="takuzu_loss_abandoned_title">Quebra-cabeça inacabado</string>
     <string name="takuzu_loss_abandoned_body">Você encerrou este quebra-cabeça antes de resolvê-lo.</string>
-    <string name="takuzu_analyzer_title">Ver a solução passo a passo</string>
-    <string name="takuzu_analyzer_load_failed">Não foi possível carregar a solução deste quebra-cabeça.</string>
-    <string name="takuzu_analyzer_already_solved">Este quebra-cabeça já estava totalmente resolvido.</string>
-    <string name="takuzu_analyzer_solved_title">Resolvido!</string>
-    <string name="takuzu_analyzer_solved_body">Esta é a grade completa.</string>
+    <string name="analyzer_title">Ver a solução passo a passo</string>
+    <string name="analyzer_load_failed">Não foi possível carregar a solução deste quebra-cabeça.</string>
+    <string name="analyzer_already_solved">Este quebra-cabeça já estava totalmente resolvido.</string>
+    <string name="analyzer_solved_title">Resolvido!</string>
+    <string name="analyzer_solved_body">Esta é a grade completa.</string>
 
     <!-- Nonogram (English-only in the source app; other locales fall back here) -->
     <string name="nonogram_tagline">Preencha células para corresponder às pistas de linha e coluna.</string>

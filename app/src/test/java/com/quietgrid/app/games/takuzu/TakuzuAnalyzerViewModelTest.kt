@@ -1,6 +1,8 @@
 package com.quietgrid.app.games.takuzu
 
 import com.quietgrid.app.MainDispatcherRule
+import com.quietgrid.app.ui.analyzer.AnalyzerState
+import com.quietgrid.engine.takuzu.TakuzuGrid
 import com.quietgrid.engine.takuzu.TakuzuPuzzleEntry
 import com.quietgrid.engine.takuzu.gridToHex
 import com.quietgrid.engine.takuzu.maskToHex
@@ -12,6 +14,9 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
+
+private val TakuzuAnalyzerViewModel.ready: AnalyzerState.Ready<TakuzuAnalyzerPuzzle, TakuzuGrid, TakuzuNextMoveHint>
+    get() = state as AnalyzerState.Ready<TakuzuAnalyzerPuzzle, TakuzuGrid, TakuzuNextMoveHint>
 
 class TakuzuAnalyzerViewModelTest {
 
@@ -63,14 +68,14 @@ class TakuzuAnalyzerViewModelTest {
         val board: List<Int?> = solutionGrid.flatten().toMutableList<Int?>().also { it[0] = null }
         val viewModel = newViewModel(snapshotWith(board))
 
-        assertEquals(TakuzuAnalyzerState.Loading, viewModel.state)
+        assertEquals(AnalyzerState.Loading, viewModel.state)
         mainDispatcherRule.dispatcher.scheduler.runCurrent()
 
-        val ready = viewModel.state as TakuzuAnalyzerState.Ready
-        assertEquals(1, ready.steps.size)
+        val ready = viewModel.ready
+        assertEquals(1, ready.replay.steps.size)
         assertEquals(0, ready.currentIndex)
-        assertEquals(4, ready.puzzleSize)
-        assertEquals(solutionGrid, ready.finalBoard)
+        assertEquals(4, ready.replay.puzzle.size)
+        assertEquals(solutionGrid, ready.replay.finalBoard)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -81,8 +86,8 @@ class TakuzuAnalyzerViewModelTest {
 
         mainDispatcherRule.dispatcher.scheduler.runCurrent()
 
-        val ready = viewModel.state as TakuzuAnalyzerState.Ready
-        assertEquals(solutionGrid, ready.finalBoard)
+        val ready = viewModel.ready
+        assertEquals(solutionGrid, ready.replay.finalBoard)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -92,7 +97,7 @@ class TakuzuAnalyzerViewModelTest {
 
         mainDispatcherRule.dispatcher.scheduler.runCurrent()
 
-        assertEquals(TakuzuAnalyzerState.AlreadySolved, viewModel.state)
+        assertEquals(AnalyzerState.AlreadySolved, viewModel.state)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -102,7 +107,7 @@ class TakuzuAnalyzerViewModelTest {
 
         mainDispatcherRule.dispatcher.scheduler.runCurrent()
 
-        assertEquals(TakuzuAnalyzerState.LoadFailed, viewModel.state)
+        assertEquals(AnalyzerState.LoadFailed, viewModel.state)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -112,7 +117,7 @@ class TakuzuAnalyzerViewModelTest {
 
         mainDispatcherRule.dispatcher.scheduler.runCurrent()
 
-        assertEquals(TakuzuAnalyzerState.LoadFailed, viewModel.state)
+        assertEquals(AnalyzerState.LoadFailed, viewModel.state)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -121,17 +126,17 @@ class TakuzuAnalyzerViewModelTest {
         val board: List<Int?> = solutionGrid.flatten().toMutableList<Int?>().also { it[0] = null; it[3] = null }
         val viewModel = newViewModel(snapshotWith(board))
         mainDispatcherRule.dispatcher.scheduler.runCurrent()
-        val readyBefore = viewModel.state as TakuzuAnalyzerState.Ready
-        val lastIndex = readyBefore.steps.size
+        val readyBefore = viewModel.ready
+        val lastIndex = readyBefore.replay.steps.size
 
         viewModel.back()
-        assertEquals(0, (viewModel.state as TakuzuAnalyzerState.Ready).currentIndex)
+        assertEquals(0, viewModel.ready.currentIndex)
 
         repeat(lastIndex + 5) { viewModel.next() }
-        assertEquals(lastIndex, (viewModel.state as TakuzuAnalyzerState.Ready).currentIndex)
+        assertEquals(lastIndex, viewModel.ready.currentIndex)
 
         repeat(lastIndex + 5) { viewModel.back() }
-        assertEquals(0, (viewModel.state as TakuzuAnalyzerState.Ready).currentIndex)
+        assertEquals(0, viewModel.ready.currentIndex)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -142,13 +147,13 @@ class TakuzuAnalyzerViewModelTest {
         mainDispatcherRule.dispatcher.scheduler.runCurrent()
 
         viewModel.togglePlay()
-        assertTrue((viewModel.state as TakuzuAnalyzerState.Ready).isPlaying)
+        assertTrue(viewModel.ready.isPlaying)
 
         mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(10_000)
         mainDispatcherRule.dispatcher.scheduler.runCurrent()
 
-        val ready = viewModel.state as TakuzuAnalyzerState.Ready
-        assertEquals(ready.steps.size, ready.currentIndex)
+        val ready = viewModel.ready
+        assertEquals(ready.replay.steps.size, ready.currentIndex)
         assertEquals(false, ready.isPlaying)
     }
 }

@@ -119,7 +119,7 @@ private fun unitsLabel(units: List<AnimalDokuUnit>): String {
 }
 
 @Composable
-private fun animalDokuHintMessage(hint: AnimalDokuHint): PlayHintMessage {
+internal fun animalDokuHintMessage(hint: AnimalDokuHint): PlayHintMessage {
     val copy = animalDokuHintCopy(hint)
     val args = copy.unitArgs.map { unitsLabel(it) }
     return PlayHintMessage(stringResource(copy.titleRes), stringResource(copy.bodyRes, *args.toTypedArray()))

@@ -416,11 +416,11 @@
     <string name="takuzu_loss_abandoned_eyebrow">Puzzle terminé</string>
     <string name="takuzu_loss_abandoned_title">Puzzle inachevé</string>
     <string name="takuzu_loss_abandoned_body">Tu as terminé ce puzzle avant de le résoudre.</string>
-    <string name="takuzu_analyzer_title">Revoir la résolution</string>
-    <string name="takuzu_analyzer_load_failed">Impossible de charger la résolution de ce puzzle.</string>
-    <string name="takuzu_analyzer_already_solved">Ce puzzle était déjà entièrement résolu.</string>
-    <string name="takuzu_analyzer_solved_title">Résolu !</string>
-    <string name="takuzu_analyzer_solved_body">Voici la grille complète.</string>
+    <string name="analyzer_title">Revoir la résolution</string>
+    <string name="analyzer_load_failed">Impossible de charger la résolution de ce puzzle.</string>
+    <string name="analyzer_already_solved">Ce puzzle était déjà entièrement résolu.</string>
+    <string name="analyzer_solved_title">Résolu !</string>
+    <string name="analyzer_solved_body">Voici la grille complète.</string>
     <string name="takuzu_challenger_label">Challenger</string>
     <string name="takuzu_challenger_description">Résous autant de puzzles que possible avant que le temps ne s\'écoule.</string>
     <string name="takuzu_challenger_solved_label">Résolus</string>

@@ -427,11 +427,11 @@
     <string name="takuzu_loss_abandoned_eyebrow">Puzzle terminado</string>
     <string name="takuzu_loss_abandoned_title">Puzzle sin terminar</string>
     <string name="takuzu_loss_abandoned_body">Terminaste este puzzle antes de resolverlo.</string>
-    <string name="takuzu_analyzer_title">Ver la solución paso a paso</string>
-    <string name="takuzu_analyzer_load_failed">No se pudo cargar la solución de este puzzle.</string>
-    <string name="takuzu_analyzer_already_solved">Este puzzle ya estaba completamente resuelto.</string>
-    <string name="takuzu_analyzer_solved_title">¡Resuelto!</string>
-    <string name="takuzu_analyzer_solved_body">Esta es la cuadrícula completa.</string>
+    <string name="analyzer_title">Ver la solución paso a paso</string>
+    <string name="analyzer_load_failed">No se pudo cargar la solución de este puzzle.</string>
+    <string name="analyzer_already_solved">Este puzzle ya estaba completamente resuelto.</string>
+    <string name="analyzer_solved_title">¡Resuelto!</string>
+    <string name="analyzer_solved_body">Esta es la cuadrícula completa.</string>
 
     <!-- Nonogram -->
     <string name="nonogram_tagline">Rellena celdas para cumplir las pistas de fila y columna.</string>

@@ -3,6 +3,7 @@ package com.quietgrid.app.games.animaldoku
 
 import com.quietgrid.app.R
 import com.quietgrid.engine.animaldoku.AnimalDokuHint
+import com.quietgrid.engine.animaldoku.AnimalDokuPuzzleEntry
 import com.quietgrid.engine.animaldoku.AnimalDokuStep
 import com.quietgrid.engine.animaldoku.AnimalDokuTechnique
 import com.quietgrid.engine.animaldoku.AnimalDokuUnitKind
@@ -44,10 +45,9 @@ fun applyAnimalDokuOpen(session: AnimalDokuSession, row: Int, col: Int): AnimalD
     val isCorrect = session.puzzle.solution[row] == col
     val cells = session.cells.replaceCell(row, col, if (isCorrect) AnimalDokuCellState.LOCKED_CORRECT else AnimalDokuCellState.LOCKED_WRONG)
     val lives = if (isCorrect) session.lives else session.lives - 1
-    val solvedRows = cells.count { line -> line.any { it == AnimalDokuCellState.LOCKED_CORRECT } }
 
     val status = when {
-        solvedRows == session.puzzle.size -> AnimalDokuStatus.WON
+        isAnimalDokuSolved(cells) -> AnimalDokuStatus.WON
         lives <= 0 -> AnimalDokuStatus.LOST
         else -> AnimalDokuStatus.PLAYING
     }
@@ -55,11 +55,34 @@ fun applyAnimalDokuOpen(session: AnimalDokuSession, row: Int, col: Int): AnimalD
     return AnimalDokuOpenResult(session.copy(cells = cells, lives = lives, status = status), isCorrect)
 }
 
+fun isAnimalDokuSolved(cells: List<List<AnimalDokuCellState>>): Boolean =
+    cells.all { line -> line.any { it == AnimalDokuCellState.LOCKED_CORRECT } }
+
+fun withoutWrongAnimalDokuMarks(puzzle: AnimalDokuPuzzleEntry, cells: List<List<AnimalDokuCellState>>): List<List<AnimalDokuCellState>> =
+    cells.mapIndexed { row, line ->
+        line.mapIndexed { col, cell -> if (cell == AnimalDokuCellState.MARKED && puzzle.solution[row] == col) AnimalDokuCellState.EMPTY else cell }
+    }
+
+fun applyAnimalDokuHintToCells(cells: List<List<AnimalDokuCellState>>, hint: AnimalDokuHint): List<List<AnimalDokuCellState>> = when (hint) {
+    is AnimalDokuHint.WrongMark -> cells.replaceCell(hint.row, hint.col, AnimalDokuCellState.EMPTY)
+    is AnimalDokuHint.Reveal -> cells.replaceCell(hint.row, hint.col, AnimalDokuCellState.LOCKED_CORRECT)
+    is AnimalDokuHint.Deduction -> when (val step = hint.step) {
+        is AnimalDokuStep.Placement -> cells.replaceCell(step.row, step.col, AnimalDokuCellState.LOCKED_CORRECT)
+        is AnimalDokuStep.Elimination -> step.cells.fold(cells) { current, (row, col) ->
+            if (current[row][col] == AnimalDokuCellState.EMPTY) current.replaceCell(row, col, AnimalDokuCellState.MARKED) else current
+        }
+    }
+}
+
 fun findAnimalDokuSessionHint(session: AnimalDokuSession): AnimalDokuHint? {
     if (session.status != AnimalDokuStatus.PLAYING) return null
+    return findAnimalDokuCellsHint(session.puzzle, session.cells)
+}
+
+fun findAnimalDokuCellsHint(puzzle: AnimalDokuPuzzleEntry, cells: List<List<AnimalDokuCellState>>): AnimalDokuHint? {
     val placed = mutableSetOf<Pair<Int, Int>>()
     val excluded = mutableSetOf<Pair<Int, Int>>()
-    session.cells.forEachIndexed { row, line ->
+    cells.forEachIndexed { row, line ->
         line.forEachIndexed { col, cell ->
             when (cell) {
                 AnimalDokuCellState.LOCKED_CORRECT -> placed.add(row to col)
@@ -68,7 +91,7 @@ fun findAnimalDokuSessionHint(session: AnimalDokuSession): AnimalDokuHint? {
             }
         }
     }
-    return findAnimalDokuHint(session.puzzle, placed, excluded)
+    return findAnimalDokuHint(puzzle, placed, excluded)
 }
 
 fun animalDokuHintHighlight(hint: AnimalDokuHint, regions: List<List<Int>>): AnimalDokuHintHighlight = when (hint) {

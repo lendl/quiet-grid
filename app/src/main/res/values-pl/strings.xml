@@ -439,11 +439,11 @@
     <string name="takuzu_loss_abandoned_eyebrow">Łamigłówka zakończona</string>
     <string name="takuzu_loss_abandoned_title">Łamigłówka nieukończona</string>
     <string name="takuzu_loss_abandoned_body">Ta łamigłówka została zakończona przed jej rozwiązaniem.</string>
-    <string name="takuzu_analyzer_title">Prześledź proces rozwiązywania</string>
-    <string name="takuzu_analyzer_load_failed">Nie udało się załadować historii rozwiązania dla tej łamigłówki.</string>
-    <string name="takuzu_analyzer_already_solved">Ta łamigłówka została już w pełni rozwiązana.</string>
-    <string name="takuzu_analyzer_solved_title">Rozwiązano!</string>
-    <string name="takuzu_analyzer_solved_body">Oto kompletna, rozwiązana siatka.</string>
+    <string name="analyzer_title">Prześledź proces rozwiązywania</string>
+    <string name="analyzer_load_failed">Nie udało się załadować historii rozwiązania dla tej łamigłówki.</string>
+    <string name="analyzer_already_solved">Ta łamigłówka została już w pełni rozwiązana.</string>
+    <string name="analyzer_solved_title">Rozwiązano!</string>
+    <string name="analyzer_solved_body">Oto kompletna, rozwiązana siatka.</string>
 
     <!-- Nonogram (English-only in the source app; other locales fall back here) -->
     <string name="nonogram_tagline">Wypełniaj pola zgodnie ze wskazówkami w wierszach i kolumnach.</string>

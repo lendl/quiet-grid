@@ -493,11 +493,11 @@
     <string name="takuzu_loss_abandoned_eyebrow">Puzzle terminato</string>
     <string name="takuzu_loss_abandoned_title">Puzzle incompleto</string>
     <string name="takuzu_loss_abandoned_body">Hai terminato questo puzzle prima di risolverlo.</string>
-    <string name="takuzu_analyzer_title">Ripercorri la soluzione</string>
-    <string name="takuzu_analyzer_load_failed">Impossibile caricare la soluzione di questo puzzle.</string>
-    <string name="takuzu_analyzer_already_solved">Questo puzzle era già completamente risolto.</string>
-    <string name="takuzu_analyzer_solved_title">Risolto!</string>
-    <string name="takuzu_analyzer_solved_body">Questa è la griglia completata.</string>
+    <string name="analyzer_title">Ripercorri la soluzione</string>
+    <string name="analyzer_load_failed">Impossibile caricare la soluzione di questo puzzle.</string>
+    <string name="analyzer_already_solved">Questo puzzle era già completamente risolto.</string>
+    <string name="analyzer_solved_title">Risolto!</string>
+    <string name="analyzer_solved_body">Questa è la griglia completata.</string>
 
     <!-- Nonogram -->
     <string name="nonogram_tagline">Riempi le caselle seguendo gli indizi di righe e colonne.</string>
