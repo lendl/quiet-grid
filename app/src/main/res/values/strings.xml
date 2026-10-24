@@ -120,9 +120,6 @@
     <string name="settings_pinch_zoom_detail">Zoom into bigger grids with two fingers.</string>
     <string name="settings_confirm_end_label">Confirm before ending a puzzle</string>
     <string name="settings_confirm_end_detail">Ask before End puzzle counts the puzzle as unfinished.</string>
-    <string name="settings_remember_difficulty_label">Remember last difficulty</string>
-    <string name="settings_remember_difficulty_detail">Mark the difficulty you played last on the Play tab.</string>
-    <string name="game_picker_last_played">Last played</string>
     <string name="settings_play_defaults_note">These apply to every game. To change one game, open it and use its Settings tab.</string>
     <string name="settings_keep_screen_on_label">Keep screen awake</string>
     <string name="settings_keep_screen_on_detail">Stop the screen dimming while a puzzle is open. N-Back always stays awake.</string>

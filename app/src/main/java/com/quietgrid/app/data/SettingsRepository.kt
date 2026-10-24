@@ -29,7 +29,6 @@ data class AppSettings(
     val leftHandedInPlay: Boolean = false,
     val pinchZoomInPlay: Boolean = true,
     val confirmEndPuzzle: Boolean = true,
-    val rememberLastDifficulty: Boolean = true,
     val betaGamesEnabled: Boolean = false,
     val puzzleLanguage: String = "",
     val quickStartSeenGameIds: Set<String> = emptySet(),
@@ -55,7 +54,6 @@ class SettingsRepository @Inject constructor(private val dataStore: DataStore<Pr
         val LEFT_HANDED_IN_PLAY = booleanPreferencesKey("left_handed_in_play")
         val PINCH_ZOOM_IN_PLAY = booleanPreferencesKey("pinch_zoom_in_play")
         val CONFIRM_END_PUZZLE = booleanPreferencesKey("confirm_end_puzzle")
-        val REMEMBER_LAST_DIFFICULTY = booleanPreferencesKey("remember_last_difficulty")
         val BETA_GAMES_ENABLED = booleanPreferencesKey("beta_games_enabled")
         val PUZZLE_LANGUAGE = stringPreferencesKey("puzzle_language")
         val QUICK_START_SEEN = stringSetPreferencesKey("quick_start_seen_game_ids")
@@ -82,7 +80,6 @@ class SettingsRepository @Inject constructor(private val dataStore: DataStore<Pr
             leftHandedInPlay = prefs[Keys.LEFT_HANDED_IN_PLAY] ?: false,
             pinchZoomInPlay = prefs[Keys.PINCH_ZOOM_IN_PLAY] ?: true,
             confirmEndPuzzle = prefs[Keys.CONFIRM_END_PUZZLE] ?: true,
-            rememberLastDifficulty = prefs[Keys.REMEMBER_LAST_DIFFICULTY] ?: true,
             betaGamesEnabled = prefs[Keys.BETA_GAMES_ENABLED] ?: false,
             puzzleLanguage = prefs[Keys.PUZZLE_LANGUAGE] ?: "",
             quickStartSeenGameIds = prefs[Keys.QUICK_START_SEEN] ?: emptySet(),
@@ -130,7 +127,6 @@ class SettingsRepository @Inject constructor(private val dataStore: DataStore<Pr
             GameToggle.LEFT_HANDED -> Keys.LEFT_HANDED_IN_PLAY
             GameToggle.PINCH_ZOOM -> Keys.PINCH_ZOOM_IN_PLAY
             GameToggle.CONFIRM_END -> Keys.CONFIRM_END_PUZZLE
-            GameToggle.REMEMBER_DIFFICULTY -> Keys.REMEMBER_LAST_DIFFICULTY
         }
         dataStore.edit { it[key] = enabled }
     }

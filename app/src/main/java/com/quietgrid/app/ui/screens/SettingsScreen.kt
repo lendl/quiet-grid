@@ -402,7 +402,6 @@ private val MORE_PLAY_DEFAULT_TOGGLES = listOf(
     GameToggle.LEFT_HANDED,
     GameToggle.PINCH_ZOOM,
     GameToggle.CONFIRM_END,
-    GameToggle.REMEMBER_DIFFICULTY,
 )
 
 @Composable

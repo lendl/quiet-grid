@@ -50,7 +50,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -58,7 +57,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameCatalog
@@ -71,7 +69,6 @@ import com.quietgrid.app.data.ActiveSessionEnvelope
 import com.quietgrid.app.data.DifficultyStats
 import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.data.SESSION_MODE_ENDLESS
-import com.quietgrid.app.data.resolveGamePlayPreferences
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyDescriptionRes
 import com.quietgrid.app.games.hashi.hashiDifficultyDescriptionRes
 import com.quietgrid.app.games.links.linksDifficultyDescriptionRes
@@ -119,21 +116,8 @@ fun PuzzlePickerScreen(
     var showQuickStart by remember(gameId) { mutableStateOf(false) }
     var pendingDifficulty by remember(gameId) { mutableStateOf<Difficulty?>(null) }
     var pendingStart by remember(gameId) { mutableStateOf<(() -> Unit)?>(null) }
-    val overrides by remember(gameId) { repositories.gamePreferencesRepository.overrides(gameId) }.collectAsState(initial = null)
-    val lastDifficulty by remember(gameId) { repositories.gamePreferencesRepository.lastDifficulty(gameId) }.collectAsState(initial = null)
-    val currentSettings = settings
-    val currentOverrides = overrides
-    val rememberedDifficulty = lastDifficulty?.takeIf {
-        currentSettings != null && currentOverrides != null &&
-            resolveGamePlayPreferences(currentSettings, currentOverrides).rememberDifficulty
-    }
-
-    val startDifficulty: (Difficulty) -> Unit = { difficulty ->
-        repositories.viewModelScope.launch { repositories.gamePreferencesRepository.setLastDifficulty(gameId, difficulty) }
-        onPickDifficulty(difficulty)
-    }
     val requestStartDifficulty: (Difficulty) -> Unit = { difficulty ->
-        if (activeGameKey != null) pendingDifficulty = difficulty else startDifficulty(difficulty)
+        if (activeGameKey != null) pendingDifficulty = difficulty else onPickDifficulty(difficulty)
     }
     val requestStartChallenger: () -> Unit = {
         if (activeGameKey != null) pendingStart = onStartChallenger else onStartChallenger()
@@ -180,7 +164,7 @@ fun PuzzlePickerScreen(
             },
             onStartNew = {
                 pendingDifficulty = null
-                startDifficulty(difficultyToStart)
+                onPickDifficulty(difficultyToStart)
             },
             onDismiss = { pendingDifficulty = null },
         )
@@ -218,7 +202,6 @@ fun PuzzlePickerScreen(
                 GamePageTab.PLAY -> GamePlayPickerTab(
                     gameId,
                     activeSession = activeSession?.takeIf { it.gameId == gameId.key && it.dailyDate == null },
-                    rememberedDifficulty = rememberedDifficulty,
                     onResume = resumeActiveGame,
                     requestStartDifficulty = requestStartDifficulty,
                     requestStartChallenger = requestStartChallenger,
@@ -324,7 +307,6 @@ private fun difficultyDescriptionRes(gameId: GameId, difficulty: Difficulty): In
 private fun GamePlayPickerTab(
     gameId: GameId,
     activeSession: ActiveSessionEnvelope?,
-    rememberedDifficulty: Difficulty?,
     onResume: () -> Unit,
     requestStartDifficulty: (Difficulty) -> Unit,
     requestStartChallenger: () -> Unit,
@@ -360,7 +342,6 @@ private fun GamePlayPickerTab(
                             description = stringResource(difficultyDescriptionRes(gameId, difficulty)),
                             difficulty = difficulty,
                             stats = stats?.forDifficulty(difficulty),
-                            lastPlayed = difficulty == rememberedDifficulty,
                             onClick = { requestStartDifficulty(difficulty) },
                             modifier = Modifier.weight(1f).fillMaxHeight(),
                         )
@@ -458,34 +439,20 @@ private fun DifficultyTile(
     description: String,
     difficulty: Difficulty,
     stats: DifficultyStats?,
-    lastPlayed: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    val surface = MaterialTheme.colorScheme.surface
-    val tileColor = if (lastPlayed) MaterialTheme.colorScheme.primary.copy(alpha = 0.10f).compositeOver(surface) else surface
     Column(
         modifier
             .pressScale(interactionSource)
             .clip(RoundedCornerShape(16.dp))
-            .background(tileColor)
+            .background(MaterialTheme.colorScheme.surface)
             .clickable(interactionSource = interactionSource, indication = LocalIndication.current, onClick = onClick)
             .heightIn(min = 132.dp)
             .padding(horizontal = 14.dp, vertical = 16.dp),
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            DifficultyLevelBar(difficulty)
-            if (lastPlayed) {
-                Text(
-                    stringResource(R.string.game_picker_last_played),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.primary,
-                    maxLines = 1,
-                    modifier = Modifier.padding(start = 8.dp),
-                )
-            }
-        }
+        DifficultyLevelBar(difficulty)
         Text(label, style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = 10.dp))
         Text(
             description,

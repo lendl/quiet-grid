@@ -5,7 +5,6 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -27,7 +26,6 @@ enum class GameToggle(val keySuffix: String) {
     LEFT_HANDED("left_handed"),
     PINCH_ZOOM("pinch_zoom"),
     CONFIRM_END("confirm_end"),
-    REMEMBER_DIFFICULTY("remember_difficulty"),
 }
 
 data class GamePreferenceOverrides(
@@ -48,7 +46,6 @@ data class GamePlayPreferences(
     val leftHanded: Boolean = false,
     val pinchZoom: Boolean = true,
     val confirmEndPuzzle: Boolean = true,
-    val rememberDifficulty: Boolean = true,
 )
 
 fun AppSettings.toggleDefault(toggle: GameToggle): Boolean = when (toggle) {
@@ -61,7 +58,6 @@ fun AppSettings.toggleDefault(toggle: GameToggle): Boolean = when (toggle) {
     GameToggle.LEFT_HANDED -> leftHandedInPlay
     GameToggle.PINCH_ZOOM -> pinchZoomInPlay
     GameToggle.CONFIRM_END -> confirmEndPuzzle
-    GameToggle.REMEMBER_DIFFICULTY -> rememberLastDifficulty
 }
 
 fun resolveGamePlayPreferences(settings: AppSettings, overrides: GamePreferenceOverrides): GamePlayPreferences {
@@ -77,7 +73,6 @@ fun resolveGamePlayPreferences(settings: AppSettings, overrides: GamePreferenceO
         leftHanded = toggle(GameToggle.LEFT_HANDED),
         pinchZoom = toggle(GameToggle.PINCH_ZOOM),
         confirmEndPuzzle = toggle(GameToggle.CONFIRM_END),
-        rememberDifficulty = toggle(GameToggle.REMEMBER_DIFFICULTY),
     )
 }
 
@@ -88,8 +83,6 @@ class GamePreferencesRepository @Inject constructor(private val dataStore: DataS
         booleanPreferencesKey("game_pref_${gameId.key}_${toggle.keySuffix}")
 
     private fun rotationKey(gameId: GameId) = stringPreferencesKey("game_pref_${gameId.key}_rotation")
-
-    private fun lastDifficultyKey(gameId: GameId) = stringPreferencesKey("game_last_difficulty_${gameId.key}")
 
     private fun overridesIn(prefs: Preferences, gameId: GameId) = GamePreferenceOverrides(
         toggles = GameToggle.entries.mapNotNull { toggle -> prefs[toggleKey(gameId, toggle)]?.let { toggle to it } }.toMap(),
@@ -113,14 +106,6 @@ class GamePreferencesRepository @Inject constructor(private val dataStore: DataS
         dataStore.edit { prefs ->
             if (rotation == null) prefs.remove(rotationKey(gameId)) else prefs[rotationKey(gameId)] = rotation.name
         }
-    }
-
-    fun lastDifficulty(gameId: GameId): Flow<Difficulty?> = dataStore.data.map { prefs ->
-        prefs[lastDifficultyKey(gameId)]?.let { key -> Difficulty.entries.firstOrNull { it.key == key } }
-    }.distinctUntilChanged()
-
-    suspend fun setLastDifficulty(gameId: GameId, difficulty: Difficulty) {
-        dataStore.edit { it[lastDifficultyKey(gameId)] = difficulty.key }
     }
 
     suspend fun clear(gameId: GameId) {

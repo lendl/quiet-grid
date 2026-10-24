@@ -1,6 +1,5 @@
 package com.quietgrid.app.data
 
-import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
@@ -77,16 +76,6 @@ class GamePreferencesRepositoryTest {
 
         assertTrue(repository.overrides(GameId.HASHI).first().isEmpty)
         assertEquals(mapOf(GameToggle.TIMER to false), repository.overrides(GameId.SUDOKU).first().toggles)
-    }
-
-    @Test
-    fun `last difficulty is stored per game`() = runTest {
-        val repository = GamePreferencesRepository(newDataStore(backgroundScope))
-
-        repository.setLastDifficulty(GameId.SUDOKU, Difficulty.HARD)
-
-        assertEquals(Difficulty.HARD, repository.lastDifficulty(GameId.SUDOKU).first())
-        assertEquals(null, repository.lastDifficulty(GameId.TAKUZU).first())
     }
 
     @Test

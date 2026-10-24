@@ -64,7 +64,6 @@ internal val GameToggle.labelRes: Int
         GameToggle.LEFT_HANDED -> R.string.settings_left_handed_label
         GameToggle.PINCH_ZOOM -> R.string.settings_pinch_zoom_label
         GameToggle.CONFIRM_END -> R.string.settings_confirm_end_label
-        GameToggle.REMEMBER_DIFFICULTY -> R.string.settings_remember_difficulty_label
     }
 
 @get:StringRes
@@ -79,7 +78,6 @@ internal val GameToggle.detailRes: Int
         GameToggle.LEFT_HANDED -> R.string.settings_left_handed_detail
         GameToggle.PINCH_ZOOM -> R.string.settings_pinch_zoom_detail
         GameToggle.CONFIRM_END -> R.string.settings_confirm_end_detail
-        GameToggle.REMEMBER_DIFFICULTY -> R.string.settings_remember_difficulty_detail
     }
 
 private fun GameToggle.appliesTo(gameId: GameId): Boolean = when (this) {
