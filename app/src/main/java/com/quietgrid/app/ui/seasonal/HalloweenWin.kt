@@ -11,6 +11,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.Paint
@@ -24,6 +26,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.core.isHalloween
 import com.quietgrid.app.data.RepositoriesViewModel
+import com.quietgrid.app.ui.theme.LocalIsDarkTheme
 import com.quietgrid.app.ui.theme.LocalIsPencilTheme
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
@@ -31,14 +34,16 @@ import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.sin
 
-private const val EYES_OPEN_START_MS = 800f
-private const val EYES_OPEN_END_MS = 1300f
-private const val SLIT_END_MS = 1500f
-private const val LOOK_START_MS = 1300f
-private const val LOOK_END_MS = 1900f
-private const val BLINK_START_MS = 2000f
-private const val BLINK_END_MS = 2280f
+private const val EYES_OPEN_START_MS = 400f
+private const val EYES_OPEN_END_MS = 800f
+private const val SLIT_END_MS = 1000f
+private const val LOOK_START_MS = 1550f
+private const val LOOK_END_MS = 2150f
+private const val BLINK_START_MS = 2250f
+private const val BLINK_END_MS = 2530f
 private const val BLINK_DEPTH = 0.92f
+private const val GLOW_RADIUS_FRACTION = 0.7f
+private const val GLOW_ALPHA = 0.35f
 
 private val grayscalePaint = Paint().apply {
     colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) })
@@ -74,7 +79,15 @@ fun rememberHalloweenCharacter(): HalloweenCharacter? {
 fun HalloweenFigure(character: HalloweenCharacter, size: Dp, clockMs: () -> Float, modifier: Modifier = Modifier) {
     val description = stringResource(character.descriptionRes)
     val pencil = LocalIsPencilTheme.current
+    val glow = character.glow.takeIf { LocalIsDarkTheme.current }
     Canvas(modifier.size(size).semantics { contentDescription = description }) {
+        if (glow != null) {
+            val radius = this.size.width * GLOW_RADIUS_FRACTION
+            drawCircle(
+                Brush.radialGradient(listOf(glow.copy(alpha = GLOW_ALPHA), Color.Transparent), center, radius),
+                radius,
+            )
+        }
         val t = clockMs()
         val open = phase(t, EYES_OPEN_START_MS, EYES_OPEN_END_MS)
         val eyes = HalloweenEyes(

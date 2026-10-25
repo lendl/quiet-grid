@@ -216,7 +216,7 @@ fun CompletionScreen(
         val heroFigure: @Composable (Boolean) -> Unit = { shared ->
             WinHeroFigure(picture, halloween, themeIcon, gameId, heroSize, entrance, shared)
         }
-        val heroGlow = halloween?.glow ?: MaterialTheme.colorScheme.primary
+        val heroGlow = MaterialTheme.colorScheme.primary.takeIf { halloween == null }
         PinnedHeaderScrollLayout(
             header = {
                 Row(
@@ -433,13 +433,13 @@ private class WinHeroSize(val pictureSize: Dp, val medallionSize: Dp, val symbol
 @Composable
 private fun WinHero(
     glowSize: Dp,
-    glowColor: Color,
+    glowColor: Color?,
     entrance: ResultEntrance,
     modifier: Modifier = Modifier,
     figure: @Composable () -> Unit,
 ) {
     Box(modifier, contentAlignment = Alignment.Center) {
-        if (LocalIsDarkTheme.current) {
+        if (glowColor != null && LocalIsDarkTheme.current) {
             Box(
                 Modifier
                     .size(glowSize)

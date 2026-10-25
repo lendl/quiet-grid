@@ -31,6 +31,10 @@ private const val ABANDONED_REASON = "abandoned"
 
 enum class FinishKind { Win, Loss, Abandoned }
 
+object FinishMotion {
+    var reduced: Boolean = false
+}
+
 private fun systemAnimatorsEnabled(): Boolean =
     runCatching { ValueAnimator.areAnimatorsEnabled() }.getOrDefault(false)
 
@@ -172,7 +176,7 @@ class PuzzleSessionController<TSession, TResult>(
         }
     }
 
-    private fun foldHandoffMs(): Long = if (animationsEnabled()) FOLD_HANDOFF_MS else 0L
+    private fun foldHandoffMs(): Long = if (animationsEnabled() && !FinishMotion.reduced) FOLD_HANDOFF_MS else 0L
 
     private suspend fun restoreOrCreate(requestedDifficulty: Difficulty, requestedDailyDate: LocalDate?): TSession? {
         val envelope = sessionStore.activeSession.first()

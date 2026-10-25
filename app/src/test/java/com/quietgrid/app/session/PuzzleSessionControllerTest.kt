@@ -649,6 +649,30 @@ class PuzzleSessionControllerTest {
     }
 
     @Test
+    fun `reduce motion in play emits the result without the fold delay`() = runTest {
+        val controller = PuzzleSessionController(
+            backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
+            animationsEnabled = { true },
+        )
+        controller.start(Difficulty.EASY, resume = false)
+        runCurrent()
+
+        var emitted: TestResult? = null
+        val collectJob = launch { controller.result.collect { emitted = it } }
+
+        FinishMotion.reduced = true
+        try {
+            controller.finishAsWin()
+            runCurrent()
+        } finally {
+            FinishMotion.reduced = false
+        }
+
+        assertEquals(true, emitted?.solved)
+        collectJob.cancel()
+    }
+
+    @Test
     fun `finishAsWin does not append a play record for a beta game`() = runTest {
         val historyStore = FakeHistoryStore()
         val statsStore = FakeStatsStore()

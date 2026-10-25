@@ -153,6 +153,7 @@ import com.quietgrid.app.ui.play.LocalPlayContext
 import com.quietgrid.app.ui.play.PlayContext
 import com.quietgrid.app.ui.play.ProvideGamePlayPreferences
 import com.quietgrid.app.ui.screens.HowToPlayScreen
+import com.quietgrid.app.session.FinishMotion
 import java.util.UUID
 
 private const val FOLD_TAIL_MS = 300
@@ -580,7 +581,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                 enterTransition = { fadeIn(animationSpec = tween(250)) },
                 exitTransition = {
                     if (targetState.destination.route in RESULT_ROUTES) {
-                        fadeOut(animationSpec = snap(delayMillis = FOLD_TAIL_MS))
+                        fadeOut(animationSpec = snap(delayMillis = if (FinishMotion.reduced) 0 else FOLD_TAIL_MS))
                     } else {
                         fadeOut(animationSpec = tween(200))
                     }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +30,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.unit.dp
 import com.quietgrid.app.session.FinishKind
+import com.quietgrid.app.session.FinishMotion
 import com.quietgrid.app.ui.components.rememberReduceMotion
 import kotlin.math.abs
 import kotlin.math.max
@@ -70,6 +72,7 @@ private fun fraction(time: Float, start: Float, duration: Float): Float = ((time
 @Composable
 internal fun rememberFoldState(finishing: FinishKind?): FoldState {
     val reduceMotion = rememberReduceMotion()
+    SideEffect { FinishMotion.reduced = reduceMotion }
     val clock = remember { Animatable(0f) }
     val active = finishing != null && !reduceMotion
     LaunchedEffect(active) {
