@@ -13,6 +13,7 @@ import com.quietgrid.engine.core.Difficulty
 import kotlin.random.Random
 
 const val ARROW_ESCAPE_EMPTY_CELL_TOLERANCE = 0.03
+const val ARROW_ESCAPE_SILHOUETTE_EXPERT_MIN_PIECES = 100
 private const val MAX_GENERATE_ATTEMPTS = 20
 
 data class ArrowEscapeGeneratedPuzzle(
@@ -67,7 +68,7 @@ fun generateArrowEscapePuzzle(
     targetDifficulty: Difficulty,
     random: Random = Random.Default,
 ): ArrowEscapeGeneratedPuzzle? = generateArrowEscapePuzzleOnBoard(
-    rows, cols, null, null, ARROW_ESCAPE_FILL_PARAMS_BY_DIFFICULTY.getValue(targetDifficulty), targetDifficulty, random,
+    rows, cols, null, null, ARROW_ESCAPE_FILL_PARAMS_BY_DIFFICULTY.getValue(targetDifficulty), targetDifficulty, 0, random,
 )
 
 fun generateArrowEscapeSilhouettePuzzle(
@@ -78,7 +79,8 @@ fun generateArrowEscapeSilhouettePuzzle(
     val targetCells = ARROW_ESCAPE_SILHOUETTE_CELL_RANGE_BY_DIFFICULTY.getValue(targetDifficulty).random(random)
     val mask = silhouetteBoardForCellTarget(silhouette, targetCells)
     val params = ARROW_ESCAPE_SILHOUETTE_FILL_PARAMS_BY_DIFFICULTY.getValue(targetDifficulty)
-    return generateArrowEscapePuzzleOnBoard(mask.rows, mask.cols, silhouette.id, mask, params, targetDifficulty, random)
+    val minPieces = if (targetDifficulty == Difficulty.EXPERT) ARROW_ESCAPE_SILHOUETTE_EXPERT_MIN_PIECES else 0
+    return generateArrowEscapePuzzleOnBoard(mask.rows, mask.cols, silhouette.id, mask, params, targetDifficulty, minPieces, random)
 }
 
 private fun generateArrowEscapePuzzleOnBoard(
@@ -88,12 +90,14 @@ private fun generateArrowEscapePuzzleOnBoard(
     mask: ArrowEscapeBoardMask?,
     params: ArrowEscapeFillParams,
     targetDifficulty: Difficulty,
+    minPieces: Int,
     random: Random,
 ): ArrowEscapeGeneratedPuzzle? {
     val activeCells = mask?.active?.map { it.row to it.col }?.toSet()
     repeat(MAX_GENERATE_ATTEMPTS) {
         val fillResult = fillCoverage(rows, cols, params, ARROW_ESCAPE_EMPTY_CELL_TOLERANCE, random, activeCells) ?: return@repeat
         val pieces = fillResult.pieces
+        if (pieces.size < minPieces) return@repeat
         if (!solveArrowEscape(pieces, rows, cols).solvable) return@repeat
         val profile = profileArrowEscapePuzzle(pieces, rows, cols, activeCells = mask?.active)
         if (classifyArrowEscapeDifficulty(profile) != targetDifficulty) return@repeat

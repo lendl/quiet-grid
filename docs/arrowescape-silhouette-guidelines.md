@@ -88,6 +88,8 @@ Knowing these steps explains most design rules below. The code is in `cli/src/ma
 
 If the cap stops the growth before the target, the board stays smaller than its tier asks for. Avoid shapes that do this, because their Hard and Expert boards end up the same size.
 
+Every Expert puzzle must also hold at least 100 arrows (`ARROW_ESCAPE_SILHOUETTE_EXPERT_MIN_PIECES`). The generator throws away Expert fills with fewer arrows, and `ArrowEscapeBankVerificationTest` checks the bank for it. A shape that is too small for 100 arrows at the cap can't be Expert: generating it just reports 0 puzzles. The turtle is the only such shape in the bank, so it has no Expert puzzles. Fish, runner and sailboat stay below the Expert cell target but still reach 100 arrows with shorter arrows, which takes a few more attempts.
+
 ## Design rules
 
 - **Square or tall.** Keep `width / height` at or below about 1.1. Wide shapes hit the 45-column cap early. A 100x62 turtle tops out at 573 cells, which is too small for both Hard and Expert.
@@ -105,7 +107,7 @@ If the cap stops the growth before the target, the board stays smaller than its 
 3. Run the shape tests:
    `./gradlew :cli:test --tests "*ArrowEscapeSilhouette*"`
    They check unique ids, parts and fragmentation at `minRows`, and they generate a Medium puzzle for every shape.
-4. Generate 4 puzzles per tier. The bank only holds shaped boards, and every shape has 4 puzzles in each tier:
+4. Generate 4 puzzles per tier. The bank only holds shaped boards, and every shape that can reach a tier has 4 puzzles in it:
    `./gradlew :cli:run --args="generate --game arrowescape --difficulty <tier> --count 4 --shape <id> --out app/src/main/assets"`
    Run the four tiers one after another, not in parallel, because they all write to the same bank file.
 5. Run the bank check:
