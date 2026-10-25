@@ -15,6 +15,11 @@ private fun threeByThreeSingleMineBoard(): MinesweeperBoard {
     return MinesweeperBoard(rows = 3, cols = 3, mines = 1, generated = true, cells = cells, status = MinesweeperStatus.PLAYING)
 }
 
+private fun MinesweeperBoard.withStates(vararg states: Pair<Pair<Int, Int>, MinesweeperCellState>): MinesweeperBoard {
+    val byCell = states.toMap()
+    return copy(cells = cells.mapIndexed { r, row -> row.mapIndexed { c, cellValue -> byCell[r to c]?.let { cellValue.copy(state = it) } ?: cellValue } })
+}
+
 private val puzzle = MinesweeperPuzzle(difficulty = Difficulty.EASY.key, profileId = "test", rows = 3, cols = 3, mines = 1)
 
 class MinesweeperRulesTest {
@@ -79,6 +84,75 @@ class MinesweeperRulesTest {
             if (r == 0 && c == 0) continue
             assertEquals("cell ($r,$c)", MinesweeperCellState.REVEALED, result.cells[r][c].state)
         }
+    }
+
+    @Test
+    fun `tapping a revealed number whose flags match it opens the other neighbours and can win`() {
+        val board = threeByThreeSingleMineBoard().withStates(
+            (1 to 1) to MinesweeperCellState.REVEALED,
+            (0 to 0) to MinesweeperCellState.FLAGGED,
+        )
+
+        val result = revealMinesweeperCell(board, puzzle, row = 1, col = 1)
+
+        assertEquals(MinesweeperStatus.WON, result.status)
+        assertEquals(MinesweeperCellState.FLAGGED, result.cells[0][0].state)
+        for (r in 0 until 3) for (c in 0 until 3) {
+            if (r == 0 && c == 0) continue
+            assertEquals("cell ($r,$c)", MinesweeperCellState.REVEALED, result.cells[r][c].state)
+        }
+    }
+
+    @Test
+    fun `chording with a wrong flag opens the mine and loses`() {
+        val board = threeByThreeSingleMineBoard().withStates(
+            (1 to 1) to MinesweeperCellState.REVEALED,
+            (0 to 1) to MinesweeperCellState.FLAGGED,
+        )
+
+        val result = chordMinesweeperCell(board, row = 1, col = 1)
+
+        assertEquals(MinesweeperStatus.LOST, result.status)
+        assertEquals(MinesweeperCellState.REVEALED, result.cells[0][0].state)
+    }
+
+    @Test
+    fun `chording a number without enough flags around it does nothing`() {
+        val board = threeByThreeSingleMineBoard().withStates((1 to 1) to MinesweeperCellState.REVEALED)
+
+        assertEquals(board, chordMinesweeperCell(board, row = 1, col = 1))
+    }
+
+    @Test
+    fun `chording a number with too many flags around it does nothing`() {
+        val board = threeByThreeSingleMineBoard().withStates(
+            (1 to 1) to MinesweeperCellState.REVEALED,
+            (0 to 0) to MinesweeperCellState.FLAGGED,
+            (0 to 1) to MinesweeperCellState.FLAGGED,
+        )
+
+        assertEquals(board, chordMinesweeperCell(board, row = 1, col = 1))
+    }
+
+    @Test
+    fun `chording a revealed blank cell or a hidden cell does nothing`() {
+        val board = threeByThreeSingleMineBoard().withStates(
+            (2 to 2) to MinesweeperCellState.REVEALED,
+            (0 to 0) to MinesweeperCellState.FLAGGED,
+        )
+
+        assertEquals(board, chordMinesweeperCell(board, row = 2, col = 2))
+        assertEquals(board, chordMinesweeperCell(board, row = 1, col = 1))
+    }
+
+    @Test
+    fun `chording on a board that is not PLAYING is a no-op`() {
+        val board = threeByThreeSingleMineBoard().withStates(
+            (1 to 1) to MinesweeperCellState.REVEALED,
+            (0 to 0) to MinesweeperCellState.FLAGGED,
+        ).copy(status = MinesweeperStatus.LOST)
+
+        assertEquals(board, chordMinesweeperCell(board, row = 1, col = 1))
     }
 
     @Test

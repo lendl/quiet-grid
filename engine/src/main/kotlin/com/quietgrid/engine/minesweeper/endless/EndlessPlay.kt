@@ -27,6 +27,28 @@ fun revealEndlessCell(world: EndlessWorld, cell: WorldCell): EndlessReveal {
     return EndlessReveal(floodEndless(world, listOf(cell)), hitMine = false)
 }
 
+fun chordEndlessCell(world: EndlessWorld, cell: WorldCell): EndlessReveal {
+    val unchanged = EndlessReveal(world, hitMine = false)
+    if (world.stateOf(cell.section) != SectionState.OPEN || world.cellStateAt(cell) != EndlessCellState.REVEALED) return unchanged
+    val number = world.numberAt(cell)
+    if (number == 0) return unchanged
+    val neighbors = cell.neighbors()
+    val marked = neighbors.count {
+        val state = world.cellStateAt(it)
+        state == EndlessCellState.FLAGGED || state == EndlessCellState.KNOWN_MINE
+    }
+    val covered = neighbors.filter {
+        world.cellStateAt(it) == EndlessCellState.HIDDEN && world.stateOf(it.section) != SectionState.UNBUILT && world.mineAt(it) != null
+    }
+    if (marked != number || covered.isEmpty()) return unchanged
+    val (mines, safe) = covered.partition { world.mineAt(it) == true }
+    val opened = floodEndless(world, safe)
+    if (mines.isEmpty()) return EndlessReveal(opened, hitMine = false)
+    val edits = CellEdits(opened)
+    for (mine in mines) edits.set(mine, CELL_KNOWN_MINE)
+    return EndlessReveal(edits.applyTo(opened), hitMine = true)
+}
+
 fun toggleEndlessFlag(world: EndlessWorld, cell: WorldCell): EndlessWorld {
     if (world.stateOf(cell.section) != SectionState.OPEN) return world
     val next = when (world.cellStateAt(cell)) {

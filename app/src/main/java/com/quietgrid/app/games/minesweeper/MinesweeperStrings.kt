@@ -40,6 +40,7 @@ val MinesweeperEndlessQuickStart = QuickStartContent(
         R.string.minesweeper_endless_rules_bullet_1,
         R.string.minesweeper_endless_rules_bullet_2,
         R.string.minesweeper_endless_rules_bullet_3,
+        R.string.minesweeper_how_to_play_chord,
     ),
     hookRes = R.string.minesweeper_endless_rules_hook,
 )

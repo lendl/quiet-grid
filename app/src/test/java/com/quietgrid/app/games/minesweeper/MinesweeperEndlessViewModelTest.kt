@@ -94,6 +94,29 @@ class MinesweeperEndlessViewModelTest {
         }
     }
 
+    private data class WrongChord(val world: EndlessWorld, val number: WorldCell, val wrongFlags: List<WorldCell>, val mines: List<WorldCell>)
+
+    private fun worldWithWrongChord(): WrongChord {
+        for (seed in 1..200) {
+            val world = startEndlessRun(WorldCell(4, 4), Random(seed)).world
+            for (open in world.sections.values.filter { it.state == SectionState.OPEN }) {
+                for (cell in open.pos.cells()) {
+                    if (world.cellStateAt(cell) != EndlessCellState.REVEALED) continue
+                    val number = world.numberAt(cell)
+                    val hidden = cell.neighbors().filter {
+                        world.cellStateAt(it) == EndlessCellState.HIDDEN && world.stateOf(it.section) != SectionState.UNBUILT
+                    }
+                    val mines = hidden.filter { world.mineAt(it) == true }
+                    val flaggable = hidden.filter { world.mineAt(it) == false && world.stateOf(it.section) == SectionState.OPEN }
+                    if (mines.size >= 2 && mines.size == number && flaggable.size >= number) {
+                        return WrongChord(world, cell, flaggable.take(number), mines)
+                    }
+                }
+            }
+        }
+        error("no seed in 1..200 has a number with two covered mines and room for wrong flags")
+    }
+
     private fun worldOneCellFromClearing(): Pair<EndlessWorld, WorldCell> {
         var seed = 1
         while (true) {
@@ -219,6 +242,22 @@ class MinesweeperEndlessViewModelTest {
         assertEquals(MINESWEEPER_ENDLESS_HEARTS - 1, session.hearts)
         assertEquals(1, session.heartShake)
         assertEquals(EndlessCellState.KNOWN_MINE, session.world.cellStateAt(mine))
+        assertEquals(MINESWEEPER_ENDLESS_HEARTS - 1, savedPayload(store)!!.hearts)
+    }
+
+    @Test
+    fun `a chord with wrong flags costs one heart however many mines it opens`() {
+        val chord = worldWithWrongChord()
+        val store = storeWith(chord.world)
+        val viewModel = viewModel(store, resume = true)
+        chord.wrongFlags.forEach(viewModel::onToggleFlag)
+
+        viewModel.onReveal(chord.number)
+
+        val session = viewModel.session!!
+        assertEquals(MINESWEEPER_ENDLESS_HEARTS - 1, session.hearts)
+        assertEquals(1, session.heartShake)
+        chord.mines.forEach { assertEquals(EndlessCellState.KNOWN_MINE, session.world.cellStateAt(it)) }
         assertEquals(MINESWEEPER_ENDLESS_HEARTS - 1, savedPayload(store)!!.hearts)
     }
 

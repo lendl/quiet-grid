@@ -589,6 +589,7 @@
     <string name="minesweeper_mines_left_count">%1$d mines left</string>
     <string name="minesweeper_how_to_play_goal">Reveal every safe cell without opening a mine.</string>
     <string name="minesweeper_how_to_play_controls">Tap to reveal a cell. Long-press to place or remove a flag.</string>
+    <string name="minesweeper_how_to_play_chord">Tap a revealed number once all its mines are flagged to open every other cell around it. A wrong flag opens a mine.</string>
     <string name="minesweeper_how_to_play_wrong_move">Opening a mine ends the puzzle immediately.</string>
     <string name="minesweeper_rule_1_title">Reveal safe cells</string>
     <string name="minesweeper_rule_1_body">Tap any hidden cell you think is safe to open it.</string>

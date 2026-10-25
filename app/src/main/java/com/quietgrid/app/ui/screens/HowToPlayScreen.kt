@@ -277,6 +277,7 @@ private fun MinesweeperHowToPlay() {
     HorizontalDivider(Modifier.padding(vertical = 20.dp))
     SectionHeader(Icons.Outlined.PanTool, stringResource(R.string.how_to_play_controls_title))
     BodyText(stringResource(R.string.minesweeper_how_to_play_controls))
+    Box(Modifier.padding(top = 8.dp)) { BodyText(stringResource(R.string.minesweeper_how_to_play_chord)) }
 
     HorizontalDivider(Modifier.padding(vertical = 20.dp))
     SectionHeader(Icons.Outlined.WarningAmber, stringResource(R.string.how_to_play_wrong_move_title))

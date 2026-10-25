@@ -330,9 +330,8 @@ fun revealMinesweeperCell(board: MinesweeperBoard, puzzle: MinesweeperPuzzle, ro
     if (!working.generated) working = finalizeGeneratedBoard(working, puzzle, row, col)
 
     val currentCell = working.cells[row][col]
-    if (currentCell.state == MinesweeperCellState.FLAGGED || currentCell.state == MinesweeperCellState.REVEALED) {
-        return working.toImmutable()
-    }
+    if (currentCell.state == MinesweeperCellState.REVEALED) return chordMinesweeperCell(board, row, col)
+    if (currentCell.state == MinesweeperCellState.FLAGGED) return working.toImmutable()
 
     val next = working.deepCopy()
     val cell = next.cells[row][col]
@@ -345,6 +344,29 @@ fun revealMinesweeperCell(board: MinesweeperBoard, puzzle: MinesweeperPuzzle, ro
     }
 
     revealSafeArea(next, row, col)
+    next.status = computeStatus(next)
+    return next.toImmutable()
+}
+
+fun chordMinesweeperCell(board: MinesweeperBoard, row: Int, col: Int): MinesweeperBoard {
+    if (!(row in 0 until board.rows && col in 0 until board.cols) || board.status != MinesweeperStatus.PLAYING) return board
+    if (!board.generated) return board
+    val target = board.cells[row][col]
+    if (target.state != MinesweeperCellState.REVEALED || target.isMine || target.adjacentMines == 0) return board
+
+    val next = board.toWorking()
+    val neighbors = neighborCoords(next, row, col)
+    val flagged = neighbors.count { (r, c) -> next.cells[r][c].state == MinesweeperCellState.FLAGGED }
+    val hidden = neighbors.filter { (r, c) -> next.cells[r][c].state == MinesweeperCellState.HIDDEN }
+    if (flagged != target.adjacentMines || hidden.isEmpty()) return board
+
+    if (hidden.any { (r, c) -> next.cells[r][c].isMine }) {
+        revealAllMines(next)
+        next.status = MinesweeperStatus.LOST
+        return next.toImmutable()
+    }
+
+    for ((r, c) in hidden) revealSafeArea(next, r, c)
     next.status = computeStatus(next)
     return next.toImmutable()
 }

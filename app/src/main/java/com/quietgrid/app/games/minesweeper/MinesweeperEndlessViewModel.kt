@@ -17,6 +17,7 @@ import com.quietgrid.engine.minesweeper.endless.EndlessCellState
 import com.quietgrid.engine.minesweeper.endless.EndlessWorld
 import com.quietgrid.engine.minesweeper.endless.WorldCell
 import com.quietgrid.engine.minesweeper.endless.canTapEndlessCell
+import com.quietgrid.engine.minesweeper.endless.chordEndlessCell
 import com.quietgrid.engine.minesweeper.endless.endlessNeedsSettle
 import com.quietgrid.engine.minesweeper.endless.revealEndlessCell
 import com.quietgrid.engine.minesweeper.endless.section
@@ -104,8 +105,12 @@ class MinesweeperEndlessViewModel internal constructor(
             if (cell.section == ENDLESS_START_SECTION) startRun(current, cell)
             return
         }
-        if (!canTapEndlessCell(current.world, cell) || current.world.cellStateAt(cell) != EndlessCellState.HIDDEN) return
-        val reveal = revealEndlessCell(current.world, cell)
+        val cellState = current.world.cellStateAt(cell)
+        val reveal = when {
+            cellState == EndlessCellState.REVEALED -> chordEndlessCell(current.world, cell)
+            canTapEndlessCell(current.world, cell) && cellState == EndlessCellState.HIDDEN -> revealEndlessCell(current.world, cell)
+            else -> return
+        }
         if (reveal.world == current.world) return
         val next = if (reveal.hitMine) {
             current.copy(world = reveal.world, hearts = current.hearts - 1, heartShake = current.heartShake + 1)

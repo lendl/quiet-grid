@@ -116,6 +116,98 @@ class EndlessPlayTest {
         assertFalse(world.isResolved(start))
     }
 
+    private fun revealedNumberWorld(vararg mines: Pair<Int, Int>, number: WorldCell = WorldCell(4, 4)): EndlessWorld =
+        revealEndlessCell(worldWithStartLayout(rowsWithMines(*mines)), number).world
+
+    private fun flagged(world: EndlessWorld, vararg cells: WorldCell): EndlessWorld =
+        cells.fold(world) { current, cell -> toggleEndlessFlag(current, cell) }
+
+    @Test
+    fun `a chord with matching flags opens every covered neighbour`() {
+        val world = flagged(revealedNumberWorld(3 to 3), WorldCell(3, 3))
+
+        val result = chordEndlessCell(world, WorldCell(4, 4))
+
+        assertFalse(result.hitMine)
+        for (neighbor in WorldCell(4, 4).neighbors()) {
+            val expected = if (neighbor == WorldCell(3, 3)) EndlessCellState.FLAGGED else EndlessCellState.REVEALED
+            assertEquals("$neighbor", expected, result.world.cellStateAt(neighbor))
+        }
+    }
+
+    @Test
+    fun `a chord with a wrong flag opens the mine`() {
+        val world = flagged(revealedNumberWorld(3 to 3), WorldCell(5, 5))
+
+        val result = chordEndlessCell(world, WorldCell(4, 4))
+
+        assertTrue(result.hitMine)
+        assertEquals(EndlessCellState.KNOWN_MINE, result.world.cellStateAt(WorldCell(3, 3)))
+        assertEquals(EndlessCellState.FLAGGED, result.world.cellStateAt(WorldCell(5, 5)))
+        assertEquals(EndlessCellState.REVEALED, result.world.cellStateAt(WorldCell(4, 3)))
+    }
+
+    @Test
+    fun `a chord that opens two mines reports one hit`() {
+        val world = flagged(revealedNumberWorld(3 to 3, 5 to 5), WorldCell(4, 3), WorldCell(5, 4))
+
+        val result = chordEndlessCell(world, WorldCell(4, 4))
+
+        assertTrue(result.hitMine)
+        assertEquals(EndlessCellState.KNOWN_MINE, result.world.cellStateAt(WorldCell(3, 3)))
+        assertEquals(EndlessCellState.KNOWN_MINE, result.world.cellStateAt(WorldCell(5, 5)))
+        assertEquals(EndlessCellState.REVEALED, result.world.cellStateAt(WorldCell(3, 4)))
+    }
+
+    @Test
+    fun `a chord does nothing with too few or too many flags`() {
+        val bare = revealedNumberWorld(3 to 3)
+        val tooMany = flagged(bare, WorldCell(3, 3), WorldCell(5, 5))
+
+        assertSame(bare, chordEndlessCell(bare, WorldCell(4, 4)).world)
+        assertSame(tooMany, chordEndlessCell(tooMany, WorldCell(4, 4)).world)
+        assertFalse(chordEndlessCell(tooMany, WorldCell(4, 4)).hitMine)
+    }
+
+    @Test
+    fun `a chord does nothing on a covered cell, a zero, or outside an open section`() {
+        val world = flagged(revealedNumberWorld(3 to 3), WorldCell(3, 3))
+        val withZero = revealEndlessCell(world, WorldCell(7, 7)).world
+        val closed = world.withSection(world.sections.getValue(start).copy(state = SectionState.CLEARED))
+
+        assertSame(world, chordEndlessCell(world, WorldCell(4, 3)).world)
+        assertEquals(0, withZero.numberAt(WorldCell(7, 7)))
+        assertSame(withZero, chordEndlessCell(withZero, WorldCell(7, 7)).world)
+        assertSame(closed, chordEndlessCell(closed, WorldCell(4, 4)).world)
+    }
+
+    @Test
+    fun `a known mine counts toward the flags of a chord`() {
+        val world = revealEndlessCell(revealedNumberWorld(3 to 3), WorldCell(3, 3)).world
+
+        val result = chordEndlessCell(world, WorldCell(4, 4))
+
+        assertFalse(result.hitMine)
+        assertEquals(EndlessCellState.KNOWN_MINE, result.world.cellStateAt(WorldCell(3, 3)))
+        assertEquals(EndlessCellState.REVEALED, result.world.cellStateAt(WorldCell(5, 5)))
+    }
+
+    @Test
+    fun `a chord never opens a cell in an unbuilt section`() {
+        val border = WorldCell(8, 4)
+        val base = islandWorld(2, safe = setOf(start), states = mapOf(start to SectionState.OPEN))
+            .withSection(section(start, SectionState.OPEN, rowsWithMines(7 to 4)))
+            .withSection(section(EAST, SectionState.UNBUILT))
+        val world = flagged(revealEndlessCell(base, border).world, WorldCell(7, 4))
+
+        val result = chordEndlessCell(world, border).world
+
+        assertEquals(EndlessCellState.REVEALED, result.cellStateAt(WorldCell(8, 3)))
+        assertEquals(EndlessCellState.REVEALED, result.cellStateAt(WorldCell(7, 5)))
+        assertTrue(EAST.cells().none { result.cellStateAt(it) == EndlessCellState.REVEALED })
+        assertEquals(SectionState.UNBUILT, result.stateOf(EAST))
+    }
+
     @Test
     fun `numbers count mines across section borders`() {
         val world = allSafeWorld(2, mapOf(start to SectionState.OPEN))
