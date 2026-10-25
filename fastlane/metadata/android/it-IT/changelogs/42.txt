@@ -1,0 +1,9 @@
+Versione 1.12.0
+
+- Nuova pagina di gioco: riquadri di difficoltà e schede scorrevoli
+- Impostazioni per gioco: suggerimenti, rotazione, meno movimento, mancini e altro
+- Animal Doku: suggerimenti per tecnica e soluzione ripercorsa se perdi
+- Campo minato: tocca un numero con tutte le bandierine per aprire le caselle vicine
+- Fuga delle frecce: griglie ritagliate sulla forma, puzzle Esperto più grandi
+- Nuova animazione di vittoria e sconfitta
+- Correzioni e miglioramenti di stabilità

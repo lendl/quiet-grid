@@ -1,0 +1,9 @@
+Versión 1.12.0
+
+- Nueva página de juego con fichas de dificultad y pestañas deslizables
+- Ajustes por juego: pistas, rotación, menos movimiento, diseño para zurdos y más
+- Animal Doku: pistas por técnica y solución paso a paso tras perder
+- Buscaminas: toca un número con todas sus banderas para abrir las casillas vecinas
+- Escape de Flechas: tableros recortados a su forma y puzzles Experto más grandes
+- Nueva animación al ganar y perder
+- Corrección de errores y mejoras de estabilidad

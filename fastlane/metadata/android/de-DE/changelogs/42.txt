@@ -1,0 +1,9 @@
+Version 1.12.0
+
+- Neue Spielseite mit Schwierigkeitskacheln und wischbaren Tabs
+- Einstellungen pro Spiel: Hinweise, Drehung, weniger Bewegung, Linkshänder-Layout und mehr
+- Animal Doku: Technik-Hinweise und Lösung Schritt für Schritt nach Niederlagen
+- Minesweeper: Eine Zahl mit allen Flaggen antippen deckt die Felder darum auf
+- Pfeilflucht: Felder auf ihre Form zugeschnitten, größere Experte-Rätsel
+- Neue Animation bei Sieg und Niederlage
+- Fehlerbehebungen und Stabilitätsverbesserungen

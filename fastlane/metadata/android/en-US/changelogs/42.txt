@@ -1,0 +1,9 @@
+Version 1.12.0
+
+- New game page with difficulty tiles and swipeable tabs
+- Per-game settings: hints, rotation, reduce motion, left-handed layout and more
+- Animal Doku: technique hints and a solve walkthrough after a loss
+- Minesweeper: tap a fully flagged number to open the cells around it
+- Arrow Escape: boards trimmed to their shape, bigger Expert puzzles
+- New win and loss animation
+- Bug fixes and stability improvements

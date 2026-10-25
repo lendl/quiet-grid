@@ -1,0 +1,9 @@
+Wersja 1.12.0
+
+- Nowa strona gry z kafelkami poziomów i przesuwanymi kartami
+- Ustawienia dla każdej gry: podpowiedzi, obrót, ograniczenie ruchu, układ dla leworęcznych i więcej
+- Zwierzęce Doku: podpowiedzi z nazwą techniki i prześledzenie rozwiązania po porażce
+- Saper: stuknij cyfrę ze wszystkimi flagami, aby odkryć pola wokół niej
+- Ucieczka strzałek: plansze przycięte do kształtu, większe łamigłówki Ekspert
+- Nowa animacja wygranej i porażki
+- Poprawki błędów i większa stabilność

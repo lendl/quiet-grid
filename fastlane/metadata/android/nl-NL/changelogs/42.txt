@@ -1,0 +1,9 @@
+Versie 1.12.0
+
+- Nieuwe spelpagina met moeilijkheidstegels en veegbare tabbladen
+- Instellingen per spel: hints, rotatie, minder beweging, linkshandige indeling en meer
+- Animal Doku: hints met de techniek en de oplossing stap voor stap na verlies
+- Mijnenveger: tik op een cijfer met al zijn vlaggen om de cellen eromheen te openen
+- Pijlenvlucht: borden in hun vorm bijgesneden, grotere Expert-puzzels
+- Nieuwe animatie bij winst en verlies
+- Bugfixes en stabiliteitsverbeteringen

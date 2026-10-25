@@ -1,0 +1,9 @@
+Versão 1.12.0
+
+- Nova página de jogo com blocos de dificuldade e abas deslizáveis
+- Ajustes por jogo: dicas, rotação, menos movimento, layout para canhotos e mais
+- Animal Doku: dicas por técnica e solução passo a passo após perder
+- Campo Minado: toque em um número com todas as bandeiras para abrir as células ao redor
+- Escape das Setas: tabuleiros recortados no formato, quebra-cabeças Especialista maiores
+- Nova animação de vitória e derrota
+- Correções de bugs e melhorias de estabilidade

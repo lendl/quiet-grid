@@ -2049,7 +2049,7 @@
     <string name="links_quickstart_bullet_1">Drag from a dot to draw a pipe to its twin.</string>
     <string name="links_quickstart_bullet_2">Drag back over a pipe to shorten it, or drag through another pipe to cut it.</string>
     <string name="links_quickstart_bullet_3">Each time you switch to a different color counts as a move.</string>
-    <string name="links_quickstart_hook">Join every pair in one go for 100% accuracy.</string>
+    <string name="links_quickstart_hook" formatted="false">Join every pair in one go for 100% accuracy.</string>
     <string name="links_how_to_play_goal">Connect every pair of matching dots with a pipe. The puzzle is solved when every pair is joined and every cell of the grid is filled.</string>
     <string name="links_how_to_play_controls">Drag from a dot to draw a pipe. Drag back over your pipe to shorten it, or press anywhere on a pipe and drag to redraw it from there. Dragging through another pipe cuts it; back off during the same drag and the cut pipe comes back. A tap without dragging changes nothing. On big grids, pinch to zoom and move the view with two fingers.</string>
     <string name="links_how_to_play_wrong_move">There are no lives. A move counts each time you start drawing a different color than last time, and accuracy is pairs divided by moves. A hint fixes a pipe that has gone the wrong way, or draws the pair you can work out next, and costs two moves.</string>

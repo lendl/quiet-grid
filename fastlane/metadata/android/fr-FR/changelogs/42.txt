@@ -1,0 +1,9 @@
+Version 1.12.0
+
+- Nouvelle page de jeu : tuiles de difficulté et onglets à balayer
+- Réglages par jeu : indices, rotation, moins d'animations, gauchers et plus
+- Animal Doku : indices par technique et revue de la résolution après une défaite
+- Démineur : appuie sur un chiffre aux mines signalées pour ouvrir les cases autour
+- Évasion des Flèches : grilles taillées à leur forme, puzzles Expert plus grands
+- Nouvelle animation de victoire et défaite
+- Corrections et améliorations de stabilité
