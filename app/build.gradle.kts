@@ -115,6 +115,38 @@ abstract class GenerateThemeCountsTask : DefaultTask() {
     }
 }
 
+abstract class CheckPermissionsTask : DefaultTask() {
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.NONE)
+    abstract val mergedManifest: RegularFileProperty
+
+    @get:Input
+    abstract val allowedPermissions: SetProperty<String>
+
+    @get:OutputFile
+    abstract val report: RegularFileProperty
+
+    @TaskAction
+    fun check() {
+        val androidNs = "http://schemas.android.com/apk/res/android"
+        val factory = javax.xml.parsers.DocumentBuilderFactory.newInstance().apply { isNamespaceAware = true }
+        val document = factory.newDocumentBuilder().parse(mergedManifest.get().asFile)
+        val declared = listOf("uses-permission", "uses-permission-sdk-23").flatMap { tag ->
+            val nodes = document.getElementsByTagName(tag)
+            (0 until nodes.length).map { (nodes.item(it) as org.w3c.dom.Element).getAttributeNS(androidNs, "name") }
+        }.toSortedSet()
+        report.get().asFile.apply { parentFile.mkdirs() }.writeText(declared.joinToString("\n", postfix = "\n"))
+        val unexpected = declared - allowedPermissions.get()
+        if (unexpected.isNotEmpty()) {
+            throw GradleException(
+                "Permissions not on the allowlist: ${unexpected.joinToString()}. " +
+                    "Remove them with tools:node=\"remove\" in app/src/main/AndroidManifest.xml, " +
+                    "or add them to allowedPermissions in app/build.gradle.kts if the app really needs them."
+            )
+        }
+    }
+}
+
 val generateThemeCounts = tasks.register<GenerateThemeCountsTask>("generateThemeCounts") {
     puzzleFiles.from(fileTree("src/main/assets") { include("wordsearch_puzzles_*.json", "themeclear_puzzles.json") })
 }
@@ -129,6 +161,25 @@ androidComponents {
                 output.versionName.map { "quiet-grid-v$it.apk" }
             )
         }
+    }
+    onVariants { variant ->
+        val variantName = variant.name.replaceFirstChar { it.uppercase() }
+        val checkPermissions = tasks.register<CheckPermissionsTask>("check${variantName}Permissions") {
+            mergedManifest.set(variant.artifacts.get(com.android.build.api.artifact.SingleArtifact.MERGED_MANIFEST))
+            allowedPermissions.set(
+                variant.applicationId.map { appId ->
+                    setOf(
+                        "android.permission.POST_NOTIFICATIONS",
+                        "android.permission.VIBRATE",
+                        "android.permission.RECEIVE_BOOT_COMPLETED",
+                        "$appId.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION",
+                    )
+                }
+            )
+            report.set(layout.buildDirectory.file("reports/permissions/${variant.name}.txt"))
+        }
+        tasks.matching { it.name == "assemble$variantName" }.configureEach { dependsOn(checkPermissions) }
+        tasks.named("check") { dependsOn(checkPermissions) }
     }
 }
 

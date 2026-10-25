@@ -33,3 +33,6 @@ jobs:
 
       - name: Unit tests
         run: ./gradlew testDebugUnitTest :engine:test :cli:test
+
+      - name: Check app permissions
+        run: ./gradlew :app:checkReleasePermissions
