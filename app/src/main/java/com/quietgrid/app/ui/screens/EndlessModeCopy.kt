@@ -14,7 +14,7 @@ internal data class EndlessModeCopy(
     @StringRes val bestLevelFormat: Int?,
 )
 
-internal fun endlessModeCopyFor(gameId: GameId, betaGamesEnabled: Boolean): EndlessModeCopy? = when (gameId) {
+internal fun endlessModeCopyFor(gameId: GameId): EndlessModeCopy? = when (gameId) {
     GameId.BLOCKFILL -> EndlessModeCopy(
         label = R.string.blockfill_endless_label,
         description = R.string.blockfill_endless_description,
@@ -24,18 +24,14 @@ internal fun endlessModeCopyFor(gameId: GameId, betaGamesEnabled: Boolean): Endl
         statsBestLevel = R.string.blockfill_endless_stats_best_level,
         bestLevelFormat = R.string.blockfill_multiplier_value,
     )
-    GameId.MINESWEEPER -> if (betaGamesEnabled) {
-        EndlessModeCopy(
-            label = R.string.minesweeper_endless_label,
-            description = R.string.minesweeper_endless_description,
-            bestValue = R.string.minesweeper_endless_best_value,
-            statsTitle = R.string.minesweeper_endless_stats_title,
-            statsBestScore = R.string.minesweeper_endless_stats_best_score,
-            statsBestLevel = R.string.minesweeper_endless_stats_best_ring,
-            bestLevelFormat = null,
-        )
-    } else {
-        null
-    }
+    GameId.MINESWEEPER -> EndlessModeCopy(
+        label = R.string.minesweeper_endless_label,
+        description = R.string.minesweeper_endless_description,
+        bestValue = R.string.minesweeper_endless_best_value,
+        statsTitle = R.string.minesweeper_endless_stats_title,
+        statsBestScore = R.string.minesweeper_endless_stats_best_score,
+        statsBestLevel = R.string.minesweeper_endless_stats_best_ring,
+        bestLevelFormat = null,
+    )
     else -> null
 }

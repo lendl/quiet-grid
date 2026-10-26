@@ -9,18 +9,15 @@ import org.junit.Test
 class EndlessModeCopyTest {
 
     @Test
-    fun `block fill always has its endless row`() {
-        for (beta in listOf(false, true)) {
-            val copy = endlessModeCopyFor(GameId.BLOCKFILL, beta)!!
-            assertEquals(R.string.blockfill_endless_label, copy.label)
-            assertEquals(R.string.blockfill_multiplier_value, copy.bestLevelFormat)
-        }
+    fun `block fill has its endless row`() {
+        val copy = endlessModeCopyFor(GameId.BLOCKFILL)!!
+        assertEquals(R.string.blockfill_endless_label, copy.label)
+        assertEquals(R.string.blockfill_multiplier_value, copy.bestLevelFormat)
     }
 
     @Test
-    fun `minesweeper endless shows only with beta games on`() {
-        assertNull(endlessModeCopyFor(GameId.MINESWEEPER, betaGamesEnabled = false))
-        val copy = endlessModeCopyFor(GameId.MINESWEEPER, betaGamesEnabled = true)!!
+    fun `minesweeper has its endless row`() {
+        val copy = endlessModeCopyFor(GameId.MINESWEEPER)!!
         assertEquals(R.string.minesweeper_endless_label, copy.label)
         assertEquals(R.string.minesweeper_endless_stats_best_ring, copy.statsBestLevel)
         assertNull(copy.bestLevelFormat)
@@ -29,8 +26,7 @@ class EndlessModeCopyTest {
     @Test
     fun `other games have no endless row`() {
         for (gameId in GameId.entries - GameId.BLOCKFILL - GameId.MINESWEEPER) {
-            assertNull(endlessModeCopyFor(gameId, betaGamesEnabled = false))
-            assertNull(endlessModeCopyFor(gameId, betaGamesEnabled = true))
+            assertNull(endlessModeCopyFor(gameId))
         }
     }
 }

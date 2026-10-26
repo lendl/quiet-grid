@@ -185,7 +185,7 @@ fun PuzzlePickerScreen(
 
     val tabs = GamePageTab.entries
     val pagerState = rememberPagerState(pageCount = { tabs.size })
-    val endlessCopy = endlessModeCopyFor(gameId, settings?.betaGamesEnabled == true)
+    val endlessCopy = endlessModeCopyFor(gameId)
 
     Column(Modifier.fillMaxSize()) {
         GamePageTabs(
