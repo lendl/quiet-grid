@@ -200,7 +200,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-process:2.11.0")
     implementation("androidx.navigation:navigation-compose:2.10.2")
     implementation("androidx.datastore:datastore-preferences:1.2.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.12.0")
     implementation("com.google.dagger:hilt-android:2.60.1")
     implementation("androidx.hilt:hilt-lifecycle-viewmodel-compose:1.4.0")
     implementation("androidx.work:work-runtime-ktx:2.12.0")
@@ -215,7 +215,7 @@ dependencies {
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("androidx.glance:glance-appwidget-testing:1.2.0")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.12.0")
     testImplementation("io.mockk:mockk:1.14.11")
     testImplementation("org.robolectric:robolectric:4.17")
     testImplementation(platform("androidx.compose:compose-bom:2026.09.00"))
