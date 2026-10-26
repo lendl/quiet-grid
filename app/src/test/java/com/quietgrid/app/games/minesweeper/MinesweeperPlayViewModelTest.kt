@@ -77,6 +77,7 @@ class MinesweeperPlayViewModelTest {
     @Test
     fun `revealing an out-of-bounds cell leaves the session unchanged`() {
         val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
+        viewModel.generationDispatcher = mainDispatcherRule.dispatcher
         val before = viewModel.session
 
         viewModel.onReveal(-1, -1)
