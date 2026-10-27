@@ -109,24 +109,29 @@ Every Expert puzzle must also hold at least 100 arrows (`ARROW_ESCAPE_SILHOUETTE
    They check unique ids, parts and fragmentation at `minRows`, and they generate a Medium puzzle for every shape.
 4. Generate 4 puzzles per tier. The bank only holds shaped boards, and every shape that can reach a tier has 4 puzzles in it:
    `./gradlew :cli:run --args="generate --game arrowescape --difficulty <tier> --count 4 --shape <id> --out app/src/main/assets"`
-   Run the four tiers one after another, not in parallel, because they all write to the same bank file.
+   Each tier writes its own bank file, `arrowescape_puzzles_<tier>.json`, but run the four tiers one after another, not in parallel, because they share the generation state file.
 5. Run the bank check:
    `./gradlew :cli:test --tests "*ArrowEscapeBankVerificationTest*"`
 
 ## Seasonal shapes
 
-A shape with a `season` never goes into the main bank. `--shape all` skips it, and generating it by id writes to `arrowescape_<season>_puzzles.json` instead of `arrowescape_puzzles.json`. The app serves that bank only on its day: the Halloween bank on October 31, while "Seasonal touches" is on in Settings, as the first new puzzle of each tier that the player hasn't played that day.
+A shape with a `season` never goes into the main bank. `--shape all` skips it, and generating it by id writes to `arrowescape_<season>_puzzles.json` instead of the per-tier main bank `arrowescape_puzzles_<tier>.json`. The app serves that bank only on its day: the Halloween bank on October 31, while "Seasonal touches" is on in Settings, as the first new puzzle of each tier that the player hasn't played that day.
 
 The Halloween bank holds one puzzle per tier, each with its own shape: `witchhat` (Easy), `bat` (Medium), `jackolantern` (Hard) and `cauldron` (Expert). The bat is too wide for Hard or Expert, so keep it on Medium or below. The jack-o'-lantern reads by its cut-out eyes and mouth, which is how it avoids the plain pumpkin's `apple` problem. Regenerate a tier with:
 `./gradlew :cli:run --args="generate --game arrowescape --difficulty <tier> --count 1 --shape <id> --out app/src/main/assets"`
 
 ## Shapes that work and shapes that don't
 
-Good candidates are chunky objects that read by outline. The bank already uses house, tree, pine, apple, pear, owl, bear, rook, pawn, crown, bell, mug, hot-air balloon, padlock, hourglass, acorn, cactus, gift, duck, ghost and ice cream. Open candidates include penguin, tent, boot, strawberry and milk bottle.
+Good candidates are chunky objects that read by outline. The bank already uses house, tree, pine, apple, pear, owl, bear, rook, pawn, crown, bell, mug, hot-air balloon, padlock, hourglass, acorn, cactus, gift, duck, ghost, ice cream, boot, bottle, teapot, umbrella, chess knight, trophy, gem, star, gear, T-shirt, mitten, snail, squirrel, leaf, tulip, paw print, top hat, octopus, elephant and lamp.
 
 A new shape must also look different from every shape already in the file. Compare the previews side by side at `minRows` and at 26 rows:
 - A pumpkin was dropped because its lobes don't show in the outline, so it reads as `apple`.
 - A lightbulb was dropped because a round top on a narrow base reads as `balloon` or `icecream`.
+- A tent was dropped because a triangle with a door notch reads as the letter A, and it is too thin for Expert.
+- A lighthouse was dropped because its gallery and lantern read as a chess piece.
+- A pineapple was dropped because at mid sizes the oval with a leaf tuft reads as a grenade.
+- A snowman was dropped because the pinches between its balls vanish on Easy boards, so it reads as a vase.
+- A penguin, a cupcake and a strawberry were dropped because on Easy boards they blur into blobs that read as `pine`, `acorn` and `apple`.
 
 Avoid these:
 

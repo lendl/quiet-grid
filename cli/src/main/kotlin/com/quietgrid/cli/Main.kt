@@ -326,7 +326,7 @@ fun main(args: Array<String>) {
                 }
             }
             val season = silhouettes?.mapNotNull { it.season }?.distinct()?.singleOrNull()
-            val bankFile = "${command.outDir}/${if (season != null) "arrowescape_${season}_puzzles" else "arrowescape_puzzles"}.json"
+            val bankFile = "${command.outDir}/${if (season != null) "arrowescape_${season}_puzzles" else "arrowescape_puzzles_${difficulty.key}"}.json"
             val state = GenerationState("${command.outDir}/.generation-state/arrowescape.json")
             val maxTotalAttempts = command.count * 30
             val entries = mutableListOf<ArrowEscapePuzzleEntry>()

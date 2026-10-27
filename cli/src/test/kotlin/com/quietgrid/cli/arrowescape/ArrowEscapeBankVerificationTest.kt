@@ -23,15 +23,23 @@ private fun readBank(path: String): List<ArrowEscapePuzzleEntry> = Json { ignore
     .decodeFromString(ListSerializer(ArrowEscapePuzzleEntry.serializer()), File(path).readText())
 
 class ArrowEscapeBankVerificationTest {
-    private val mainBank = readBank("app/src/main/assets/arrowescape_puzzles.json")
+    private val tierBanks = Difficulty.entries.associateWith { readBank("app/src/main/assets/arrowescape_puzzles_${it.key}.json") }
+    private val mainBank = tierBanks.values.flatten()
     private val halloweenBank = readBank("app/src/main/assets/arrowescape_halloween_puzzles.json")
     private val bank = mainBank + halloweenBank
     private val seasonByShape = loadArrowEscapeSilhouettes().associate { it.id to it.season }
 
     @Test
     fun `every tier has at least 55 puzzles`() {
-        Difficulty.entries.forEach { difficulty ->
-            assertTrue(difficulty.key, mainBank.count { it.difficulty == difficulty.key } >= 55)
+        tierBanks.forEach { (difficulty, entries) ->
+            assertTrue(difficulty.key, entries.size >= 55)
+        }
+    }
+
+    @Test
+    fun `every tier file holds only its own tier`() {
+        tierBanks.forEach { (difficulty, entries) ->
+            entries.forEach { assertEquals(it.id, difficulty.key, it.difficulty) }
         }
     }
 
