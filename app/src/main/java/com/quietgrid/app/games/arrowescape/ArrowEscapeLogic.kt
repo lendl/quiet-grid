@@ -8,6 +8,7 @@ import com.quietgrid.engine.arrowescape.isActiveCell
 import com.quietgrid.engine.arrowescape.isPieceRemovable
 import com.quietgrid.engine.arrowescape.solveArrowEscape
 import com.quietgrid.engine.arrowescape.toPiece
+import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
@@ -92,11 +93,11 @@ fun applyArrowEscapeHint(session: ArrowEscapeSession): ArrowEscapeSession? {
     return session.copy(selectedIndex = hintIndex, hintsUsed = session.hintsUsed + if (newHint) 1 else 0)
 }
 
-private const val ARROW_ESCAPE_TIME_POINTS = 30_000.0
-private const val ARROW_ESCAPE_MISTAKE_POINTS = 12_500.0
-private const val ARROW_ESCAPE_HINT_POINTS = 7_500.0
-private const val ARROW_ESCAPE_MISTAKE_WEIGHT = 4.0
-private const val ARROW_ESCAPE_HINT_WEIGHT = 2.0
+private const val ARROW_ESCAPE_TIME_POINTS = 80_000.0
+private const val ARROW_ESCAPE_MISTAKE_POINTS = 12_000
+private const val ARROW_ESCAPE_HINT_POINTS = 8_000
+private const val ARROW_ESCAPE_MISTAKE_COST = 6_000
+private const val ARROW_ESCAPE_HINT_COST = 2_000
 
 private val ARROW_ESCAPE_PAR_SECONDS_PER_ARROW = mapOf(
     Difficulty.EASY to 1.5,
@@ -106,10 +107,9 @@ private val ARROW_ESCAPE_PAR_SECONDS_PER_ARROW = mapOf(
 )
 
 fun arrowEscapeScore(difficulty: Difficulty, arrowCount: Int, elapsedSeconds: Int, mistakes: Int, hintsUsed: Int): Int {
-    val arrows = maxOf(1, arrowCount).toDouble()
-    val parSeconds = arrows * ARROW_ESCAPE_PAR_SECONDS_PER_ARROW.getValue(difficulty)
-    val timePoints = ARROW_ESCAPE_TIME_POINTS * minOf(1.0, parSeconds / maxOf(1, elapsedSeconds))
-    val mistakePoints = ARROW_ESCAPE_MISTAKE_POINTS * maxOf(0.0, 1 - ARROW_ESCAPE_MISTAKE_WEIGHT * mistakes / arrows)
-    val hintPoints = ARROW_ESCAPE_HINT_POINTS * maxOf(0.0, 1 - ARROW_ESCAPE_HINT_WEIGHT * hintsUsed / arrows)
-    return (timePoints + mistakePoints + hintPoints).roundToInt()
+    val parSeconds = maxOf(1, arrowCount) * ARROW_ESCAPE_PAR_SECONDS_PER_ARROW.getValue(difficulty)
+    val timePoints = ARROW_ESCAPE_TIME_POINTS * 0.5.pow(maxOf(0, elapsedSeconds) / parSeconds)
+    val mistakePoints = maxOf(0, ARROW_ESCAPE_MISTAKE_POINTS - ARROW_ESCAPE_MISTAKE_COST * mistakes)
+    val hintPoints = maxOf(0, ARROW_ESCAPE_HINT_POINTS - ARROW_ESCAPE_HINT_COST * hintsUsed)
+    return timePoints.roundToInt() + mistakePoints + hintPoints
 }
