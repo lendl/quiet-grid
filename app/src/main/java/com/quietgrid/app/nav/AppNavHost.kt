@@ -424,7 +424,13 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
     ) { padding ->
         CompositionLocalProvider(LocalOpenGameRules provides { gameId -> navController.navigate(Routes.rules(gameId)) }) {
         SharedTransitionLayout {
-            NavHost(navController = navController, startDestination = Routes.TABS, modifier = Modifier.padding(padding)) {
+            NavHost(
+                navController = navController,
+                startDestination = Routes.TABS,
+                modifier = Modifier.padding(padding),
+                predictivePopEnterTransition = { fadeIn(animationSpec = tween(250)) },
+                predictivePopExitTransition = { fadeOut(animationSpec = tween(200)) },
+            ) {
             composable(
                 Routes.RULES,
                 arguments = listOf(navArgument("gameId") { type = NavType.StringType }),
