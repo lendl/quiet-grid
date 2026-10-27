@@ -1,0 +1,7 @@
+Version 1.13.0
+
+- Minesweeper: new Endless mode. Clear sections of one endless minefield, with three hearts per run.
+- Arrow Escape: 20 new board shapes and fairer scoring. A blocked arrow you tap is marked as wrong and slides out by itself once its way is clear.
+- Mini Sudoku joins the daily puzzles.
+- Smoother back gesture animation.
+- Bug fixes and stability improvements

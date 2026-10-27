@@ -1,0 +1,7 @@
+Versão 1.13.0
+
+- Campo Minado: novo modo Infinito. Limpe seções de um campo minado infinito, com três corações por partida.
+- Escape das Setas: 20 novos formatos de tabuleiro e pontuação mais justa. Uma seta bloqueada que você toca é marcada como errada e sai sozinha assim que o caminho estiver livre.
+- Mini Sudoku agora faz parte dos quebra-cabeças diários.
+- Animação mais suave do gesto de voltar.
+- Correções de bugs e melhorias de estabilidade

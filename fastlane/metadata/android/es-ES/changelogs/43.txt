@@ -1,0 +1,7 @@
+Versión 1.13.0
+
+- Buscaminas: nuevo modo Sin fin. Despeja secciones de un campo de minas sin fin, con tres corazones por partida.
+- Escape de Flechas: 20 nuevas formas de tablero y una puntuación más justa. Una flecha bloqueada que tocas se marca como incorrecta y sale sola en cuanto su camino queda libre.
+- Mini Sudoku se une a los puzzles diarios.
+- Animación más fluida del gesto atrás.
+- Corrección de errores y mejoras de estabilidad

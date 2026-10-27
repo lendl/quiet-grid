@@ -1,0 +1,7 @@
+Versie 1.13.0
+
+- Mijnenveger: nieuwe Eindeloos-modus. Maak secties vrij in één eindeloos mijnenveld, met drie hartjes per ronde.
+- Pijlenvlucht: 20 nieuwe bordvormen en eerlijkere score. Een geblokkeerde pijl waarop je tikt, wordt als fout gemarkeerd en schuift vanzelf weg zodra zijn weg vrij is.
+- Mini Sudoku doet nu mee in de dagelijkse puzzels.
+- Vloeiendere animatie bij het terug-gebaar.
+- Bugfixes en stabiliteitsverbeteringen

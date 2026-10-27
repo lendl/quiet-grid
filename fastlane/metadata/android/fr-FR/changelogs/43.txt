@@ -1,0 +1,7 @@
+Version 1.13.0
+
+- Démineur : nouveau mode Infini. Dégage les sections d'un champ de mines infini, avec trois cœurs par partie.
+- Évasion des Flèches : 20 nouvelles formes de grille et un score plus juste. Une flèche bloquée sur laquelle tu appuies est marquée fausse et sort d'elle-même dès que son chemin est libre.
+- Mini Sudoku rejoint les puzzles du jour.
+- Animation du geste retour plus fluide.
+- Corrections et améliorations de stabilité

@@ -1,0 +1,7 @@
+Wersja 1.13.0
+
+- Saper: nowy tryb Bez końca. Oczyszczaj sektory na polu minowym bez końca, mając trzy serca na rozgrywkę.
+- Ucieczka strzałek: 20 nowych kształtów planszy i uczciwsza punktacja. Stuknięta zablokowana strzałka zostaje oznaczona jako błędna i wysuwa się sama, gdy jej droga jest wolna.
+- Mini Sudoku dołącza do codziennych łamigłówek.
+- Płynniejsza animacja gestu wstecz.
+- Poprawki błędów i większa stabilność

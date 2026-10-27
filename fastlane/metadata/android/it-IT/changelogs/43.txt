@@ -1,0 +1,7 @@
+Versione 1.13.0
+
+- Campo minato: nuova modalità Infinito. Libera le sezioni di un campo minato infinito, con tre cuori per partita.
+- Fuga delle frecce: 20 nuove forme di griglia e un punteggio più equo. Una freccia bloccata che tocchi viene segnata come sbagliata ed esce da sola appena la sua strada è libera.
+- Mini Sudoku entra nei puzzle del giorno.
+- Animazione più fluida del gesto indietro.
+- Correzioni e miglioramenti di stabilità

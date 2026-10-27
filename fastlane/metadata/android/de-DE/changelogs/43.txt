@@ -1,0 +1,7 @@
+Version 1.13.0
+
+- Minesweeper: neuer Endlos-Modus. Räume Abschnitte in einem endlosen Minenfeld, mit drei Herzen pro Runde.
+- Pfeilflucht: 20 neue Feldformen und fairere Wertung. Ein blockierter Pfeil, den du antippst, wird als falsch markiert und gleitet von selbst hinaus, sobald sein Weg frei ist.
+- Mini Sudoku ist jetzt bei den täglichen Rätseln dabei.
+- Flüssigere Animation bei der Zurück-Geste.
+- Fehlerbehebungen und Stabilitätsverbesserungen
