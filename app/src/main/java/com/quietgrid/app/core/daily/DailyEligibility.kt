@@ -7,6 +7,7 @@ import com.quietgrid.app.core.GameId
 val DAILY_GAMES: Set<GameId> = setOf(
     GameId.ANIMALDOKU,
     GameId.SUDOKU,
+    GameId.MINISUDOKU,
     GameId.TAKUZU,
     GameId.WORDSEARCH,
     GameId.WORDGUESS,

@@ -675,6 +675,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                     GameId.MINISUDOKU -> SudokuPlayScreen(
                                         difficulty = difficulty,
                                         resume = resume,
+                                        dailyDate = dailyDate,
                                         variant = SudokuVariant.MINI,
                                         onBack = { navController.popBackStack() },
                                         onFinished = { result ->

@@ -4,6 +4,7 @@ import android.content.Context
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.games.animaldoku.AnimalDokuPuzzleBank
+import com.quietgrid.app.games.minisudoku.MiniSudokuPuzzleBank
 import com.quietgrid.app.games.sudoku.SudokuPuzzleBank
 import com.quietgrid.app.games.takuzu.TakuzuPuzzleBank
 import com.quietgrid.app.games.whodidit.WhoDidItPuzzleBank
@@ -15,6 +16,7 @@ import com.quietgrid.app.games.wordsearch.currentWordSearchLocale
 object DailyPools {
     private suspend fun poolSize(context: Context, gameId: GameId, difficulty: Difficulty, puzzleLanguage: String): Int = when (gameId) {
         GameId.SUDOKU -> SudokuPuzzleBank.dailyPool(context, difficulty).size
+        GameId.MINISUDOKU -> MiniSudokuPuzzleBank.dailyPool(context, difficulty).size
         GameId.TAKUZU -> TakuzuPuzzleBank.dailyPool(context, difficulty).size
         GameId.ANIMALDOKU -> AnimalDokuPuzzleBank.dailyPool(context, difficulty).size
         GameId.WHODIDIT -> WhoDidItPuzzleBank.dailyPool(context, difficulty).size
