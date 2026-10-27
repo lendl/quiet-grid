@@ -43,7 +43,88 @@ private fun tapPuzzle() = ArrowEscapePuzzleEntry(
     ),
 )
 
+private fun chainPuzzle() = ArrowEscapePuzzleEntry(
+    id = "test-chain",
+    difficulty = "easy",
+    rows = 3,
+    cols = 2,
+    pieces = listOf(
+        ArrowEscapePieceData(cells = listOf(listOf(0, 0)), headDirection = "down"),
+        ArrowEscapePieceData(cells = listOf(listOf(1, 0)), headDirection = "down"),
+        ArrowEscapePieceData(cells = listOf(listOf(2, 0)), headDirection = "down"),
+        ArrowEscapePieceData(cells = listOf(listOf(0, 1)), headDirection = "up"),
+    ),
+)
+
+private fun deadlockRowPuzzle() = ArrowEscapePuzzleEntry(
+    id = "test-deadlock",
+    difficulty = "easy",
+    rows = 1,
+    cols = 3,
+    pieces = listOf(
+        ArrowEscapePieceData(cells = listOf(listOf(0, 0)), headDirection = "right"),
+        ArrowEscapePieceData(cells = listOf(listOf(0, 1)), headDirection = "right"),
+        ArrowEscapePieceData(cells = listOf(listOf(0, 2)), headDirection = "left"),
+    ),
+)
+
 class ArrowEscapeLogicTest {
+    @Test
+    fun `a tap never selects a wrong arrow`() {
+        assertNull(resolveArrowEscapeTap(tapPuzzle(), emptySet(), tapRow = 0.5f, tapCol = 0.5f, toleranceCells = 0f, wrongIndices = setOf(0)))
+    }
+
+    @Test
+    fun `a tap near a wrong arrow selects the next blocked arrow in range instead`() {
+        assertEquals(0, resolveArrowEscapeTap(deadlockRowPuzzle(), emptySet(), tapRow = 0.5f, tapCol = 0.5f, toleranceCells = 0.6f))
+        assertEquals(1, resolveArrowEscapeTap(deadlockRowPuzzle(), emptySet(), tapRow = 0.5f, tapCol = 0.5f, toleranceCells = 0.6f, wrongIndices = setOf(0)))
+    }
+
+    @Test
+    fun `a blocked attempt marks the arrow as wrong`() {
+        val result = applyArrowEscapeAttempt(createArrowEscapeSession(twoPiecePuzzle()), pieceIndex = 0)!!
+        assertEquals(setOf(0), result.session.wrongIndices)
+    }
+
+    @Test
+    fun `tapping a wrong arrow again does nothing and costs no life`() {
+        val marked = applyArrowEscapeAttempt(createArrowEscapeSession(twoPiecePuzzle()), pieceIndex = 0)!!.session
+        assertNull(applyArrowEscapeAttempt(marked, pieceIndex = 0))
+    }
+
+    @Test
+    fun `a wrong arrow leaves by itself once its way is clear, which can win the puzzle`() {
+        val marked = applyArrowEscapeAttempt(createArrowEscapeSession(twoPiecePuzzle()), pieceIndex = 0)!!.session
+        val result = applyArrowEscapeAttempt(marked, pieceIndex = 1)!!
+        assertTrue(result.removed)
+        assertEquals(setOf(0, 1), result.session.removedIndices)
+        assertTrue(result.session.wrongIndices.isEmpty())
+        assertEquals(ArrowEscapeStatus.WON, result.session.status)
+    }
+
+    @Test
+    fun `wrong arrows leave in a chain when each exit clears the next one's way`() {
+        var session = createArrowEscapeSession(chainPuzzle())
+        session = applyArrowEscapeAttempt(session, pieceIndex = 0)!!.session
+        session = applyArrowEscapeAttempt(session, pieceIndex = 1)!!.session
+        assertEquals(setOf(0, 1), session.wrongIndices)
+
+        val result = applyArrowEscapeAttempt(session, pieceIndex = 2)!!
+        assertEquals(setOf(0, 1, 2), result.session.removedIndices)
+        assertTrue(result.session.wrongIndices.isEmpty())
+        assertEquals(ArrowEscapeStatus.PLAYING, result.session.status)
+    }
+
+    @Test
+    fun `an arrow that was never wrong stays put when its way clears`() {
+        var session = createArrowEscapeSession(chainPuzzle())
+        session = applyArrowEscapeAttempt(session, pieceIndex = 0)!!.session
+
+        val result = applyArrowEscapeAttempt(session, pieceIndex = 2)!!
+        assertEquals(setOf(2), result.session.removedIndices)
+        assertEquals(setOf(0), result.session.wrongIndices)
+    }
+
     @Test
     fun `a tap inside a piece cell selects that piece`() {
         assertEquals(0, resolveArrowEscapeTap(tapPuzzle(), emptySet(), tapRow = 0.5f, tapCol = 0.5f, toleranceCells = 0f))

@@ -146,6 +146,7 @@ fun ArrowEscapePlayScreen(
                     ArrowEscapeGrid(
                         puzzle = current.puzzle,
                         removedIndices = current.removedIndices,
+                        wrongIndices = current.wrongIndices,
                         selectedIndex = current.selectedIndex,
                         lastTap = viewModel.lastTapEvent,
                         visibleBounds = visibleBounds,

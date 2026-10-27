@@ -77,6 +77,7 @@ private class ArrowEscapePuzzleAdapter(
             selectedIndex = persisted.selectedIndex,
             status = ArrowEscapeStatus.valueOf(persisted.status),
             hintsUsed = persisted.hintsUsed,
+            wrongIndices = persisted.wrongIndices.toSet(),
         )
     }.getOrNull()
 
@@ -92,6 +93,7 @@ private class ArrowEscapePuzzleAdapter(
             selectedIndex = session.selectedIndex,
             status = session.status.name,
             hintsUsed = session.hintsUsed,
+            wrongIndices = session.wrongIndices.toList(),
         ),
     )
 

@@ -29,11 +29,18 @@ class ArrowEscapeModelsTest {
         assertTrue(session.removedIndices.isEmpty())
         assertNull(session.selectedIndex)
         assertEquals(0, session.hintsUsed)
+        assertTrue(session.wrongIndices.isEmpty())
     }
 
     @Test
     fun `a saved session from before hint counting decodes with zero hints`() {
         val legacy = """{"puzzle":{"id":"test","difficulty":"easy","rows":2,"cols":1,"pieces":[]},"removedIndices":[],"lives":3,"selectedIndex":null,"status":"PLAYING"}"""
         assertEquals(0, Json.decodeFromString<ArrowEscapePersistedSession>(legacy).hintsUsed)
+    }
+
+    @Test
+    fun `a saved session from before wrong arrows decodes with none marked`() {
+        val legacy = """{"puzzle":{"id":"test","difficulty":"easy","rows":2,"cols":1,"pieces":[]},"removedIndices":[],"lives":3,"selectedIndex":null,"status":"PLAYING","hintsUsed":1}"""
+        assertTrue(Json.decodeFromString<ArrowEscapePersistedSession>(legacy).wrongIndices.isEmpty())
     }
 }

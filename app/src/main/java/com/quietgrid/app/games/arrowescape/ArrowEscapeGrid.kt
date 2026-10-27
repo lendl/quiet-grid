@@ -49,6 +49,7 @@ import com.quietgrid.engine.arrowescape.toPiece
 import kotlin.math.PI
 import kotlin.math.exp
 import kotlin.math.sin
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private val TAP_TOLERANCE = 12.dp
@@ -63,10 +64,15 @@ private val BackOutEasing = Easing { t ->
     1f + 2.2f * u * u * u + 1.2f * u * u
 }
 
+private const val AUTO_EXIT_DELAY_MS = 150L
+private const val WRONG_TINT = 0.5f
+private const val PENCIL_WRONG_ALPHA = 0.45f
+
 private class EscapeAnimation(
     val progress: Animatable<Float, AnimationVector1D>,
     val distCells: Int,
     val durationMs: Int,
+    val autoExit: Boolean,
 )
 
 private class BumpAnimation(
@@ -184,6 +190,7 @@ private fun headPath(tip: Offset, direction: Offset, headLength: Float, headHalf
 fun ArrowEscapeGrid(
     puzzle: ArrowEscapePuzzleEntry,
     removedIndices: Set<Int>,
+    wrongIndices: Set<Int>,
     selectedIndex: Int?,
     lastTap: ArrowEscapeTapEvent?,
     visibleBounds: Rect?,
@@ -207,25 +214,28 @@ fun ArrowEscapeGrid(
     val animationScope = rememberCoroutineScope()
     var previousRemoved by remember(puzzle) { mutableStateOf(removedIndices) }
     val currentRemoved by rememberUpdatedState(removedIndices)
-    val blockedIndex = lastTap?.takeIf { !it.removed }?.pieceIndex
-    val hintedIndex = selectedIndex?.takeIf { it != blockedIndex && it !in removedIndices }
+    val currentWrong by rememberUpdatedState(wrongIndices)
+    val hintedIndex = selectedIndex?.takeIf { it !in wrongIndices && it !in removedIndices }
 
     LaunchedEffect(removedIndices) {
         val newlyRemoved = removedIndices - previousRemoved
         previousRemoved = removedIndices
+        val tappedIndex = lastTap?.takeIf { it.removed }?.pieceIndex
         for (index in newlyRemoved) {
+            val autoExit = index != tappedIndex
             val distCells = (pieces[index].cells.size - 1) + corridorSizes[index] + 2
-            val escape = EscapeAnimation(Animatable(0f), distCells, minOf(360 + 18 * distCells, 900))
-            val glow = Animatable(0f)
+            val escape = EscapeAnimation(Animatable(0f), distCells, minOf(360 + 18 * distCells, 900), autoExit)
             flyOuts[index] = escape
-            laneGlows[index] = glow
             animationScope.launch {
+                if (autoExit) delay(AUTO_EXIT_DELAY_MS)
+                val glow = Animatable(0f)
+                laneGlows[index] = glow
+                launch {
+                    glow.animateTo(1f, animationSpec = tween(380, easing = LinearEasing))
+                    if (laneGlows[index] === glow) laneGlows.remove(index)
+                }
                 escape.progress.animateTo(1f, animationSpec = tween(escape.durationMs, easing = LinearEasing))
                 if (flyOuts[index] === escape) flyOuts.remove(index)
-            }
-            animationScope.launch {
-                glow.animateTo(1f, animationSpec = tween(380, easing = LinearEasing))
-                if (laneGlows[index] === glow) laneGlows.remove(index)
             }
         }
     }
@@ -304,6 +314,7 @@ fun ArrowEscapeGrid(
         val escapeColor = MaterialTheme.colorScheme.primary
         val laneColor = if (isPencilTheme) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.primary
         val errorColor = MaterialTheme.colorScheme.error
+        val wrongColor = if (isPencilTheme) lineColor.copy(alpha = PENCIL_WRONG_ALPHA) else lerp(lineColor, errorColor, WRONG_TINT)
         val hintColor = MaterialTheme.colorScheme.primary
 
         Box(
@@ -318,6 +329,7 @@ fun ArrowEscapeGrid(
                             tapRow = tapOffset.y / cellSizePx + viewport.top,
                             tapCol = tapOffset.x / cellSizePx + viewport.left,
                             toleranceCells = toleranceCells,
+                            wrongIndices = currentWrong,
                             pieces = pieces,
                             ownerLookup = ownerLookup,
                         ) ?: return@detectTapGestures
@@ -365,7 +377,12 @@ fun ArrowEscapeGrid(
                             if (index in removedIndices && escape == null) return@forEachIndexed
                             val direction = directionVector(piece.headDirection)
                             val hinted = index == hintedIndex && escape == null
-                            var color = if (hinted) hintColor else lineColor
+                            val wrong = index in wrongIndices || escape?.autoExit == true
+                            var color = when {
+                                hinted -> hintColor
+                                wrong -> wrongColor
+                                else -> lineColor
+                            }
                             var alpha = 1f
                             var travelled = 0f
                             var shift = Offset.Zero
@@ -374,7 +391,7 @@ fun ArrowEscapeGrid(
                                 val t = escape.progress.value
                                 travelled = cellSizePx * escape.distCells * EscapeEasing.transform(t)
                                 if (!isPencilTheme) {
-                                    color = lerp(lineColor, escapeColor, (t * escape.durationMs / 120f).coerceIn(0f, 1f))
+                                    color = lerp(color, escapeColor, (t * escape.durationMs / 120f).coerceIn(0f, 1f))
                                 }
                                 if (t >= 0.8f) alpha = 1f - (t - 0.8f) / 0.2f
                             }
@@ -382,7 +399,7 @@ fun ArrowEscapeGrid(
                             val bump = bumps[index]
                             if (bump != null) {
                                 travelled = cellSizePx * (bump.blockerOffset + 0.45f) * bump.progress.value
-                                color = lerp(lineColor, errorColor, bump.tint.value)
+                                color = lerp(color, errorColor, bump.tint.value)
                             }
 
                             val knock = knocks[index]
@@ -390,7 +407,7 @@ fun ArrowEscapeGrid(
                                 val ms = knock.elapsedMs.value
                                 val wobble = cellSizePx * 0.12f * exp(-ms / 140f) * sin(ms / 600f * 5f * PI.toFloat() + 0.3f)
                                 shift = knock.direction * wobble
-                                color = lerp(lineColor, errorColor, (1f - ms / 450f).coerceAtLeast(0f))
+                                color = lerp(color, errorColor, (1f - ms / 450f).coerceAtLeast(0f))
                             }
 
                             val basePoints = piece.cells.map { cellCenter(it, cellSizePx) + shift }

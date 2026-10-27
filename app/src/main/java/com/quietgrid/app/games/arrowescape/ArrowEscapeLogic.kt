@@ -15,21 +15,32 @@ data class ArrowEscapeAttemptResult(val session: ArrowEscapeSession, val removed
 
 fun applyArrowEscapeAttempt(session: ArrowEscapeSession, pieceIndex: Int): ArrowEscapeAttemptResult? {
     if (session.status != ArrowEscapeStatus.PLAYING) return null
-    if (pieceIndex in session.removedIndices) return null
+    if (pieceIndex in session.removedIndices || pieceIndex in session.wrongIndices) return null
 
     val pieces = session.puzzle.pieces.map { it.toPiece() }
     val ownerLookup = buildCellOwnerMap(pieces)
-    val removable = isPieceRemovable(pieceIndex, pieces, session.removedIndices, ownerLookup, session.puzzle.rows, session.puzzle.cols)
+    val rows = session.puzzle.rows
+    val cols = session.puzzle.cols
+    val removable = isPieceRemovable(pieceIndex, pieces, session.removedIndices, ownerLookup, rows, cols)
 
     if (!removable) {
         val lives = session.lives - 1
         val status = if (lives <= 0) ArrowEscapeStatus.LOST else ArrowEscapeStatus.PLAYING
-        return ArrowEscapeAttemptResult(session.copy(lives = lives, selectedIndex = pieceIndex, status = status), removed = false)
+        val marked = session.copy(lives = lives, selectedIndex = pieceIndex, status = status, wrongIndices = session.wrongIndices + pieceIndex)
+        return ArrowEscapeAttemptResult(marked, removed = false)
     }
 
-    val removedIndices = session.removedIndices + pieceIndex
+    val removedIndices = session.removedIndices.toMutableSet().apply { add(pieceIndex) }
+    val wrongIndices = session.wrongIndices.toMutableSet()
+    do {
+        val freed = wrongIndices.filter { isPieceRemovable(it, pieces, removedIndices, ownerLookup, rows, cols) }
+        removedIndices += freed
+        wrongIndices -= freed
+    } while (freed.isNotEmpty())
+
     val status = if (removedIndices.size == pieces.size) ArrowEscapeStatus.WON else ArrowEscapeStatus.PLAYING
-    return ArrowEscapeAttemptResult(session.copy(removedIndices = removedIndices, selectedIndex = null, status = status), removed = true)
+    val cleared = session.copy(removedIndices = removedIndices, wrongIndices = wrongIndices, selectedIndex = null, status = status)
+    return ArrowEscapeAttemptResult(cleared, removed = true)
 }
 
 data class ArrowEscapeViewport(val top: Int, val left: Int, val rows: Int, val cols: Int) {
@@ -57,11 +68,12 @@ fun resolveArrowEscapeTap(
     tapRow: Float,
     tapCol: Float,
     toleranceCells: Float,
+    wrongIndices: Set<Int> = emptySet(),
     pieces: List<ArrowEscapePiece> = puzzle.pieces.map { it.toPiece() },
     ownerLookup: Map<Pair<Int, Int>, Int> = buildCellOwnerMap(pieces),
 ): Int? {
     val inRange = pieces.indices
-        .filter { it !in removedIndices }
+        .filter { it !in removedIndices && it !in wrongIndices }
         .map { index -> index to pieces[index].cells.minOf { distanceToCell(tapRow, tapCol, it.row, it.col) } }
         .filter { (_, distance) -> distance <= toleranceCells }
     if (inRange.isEmpty()) return null

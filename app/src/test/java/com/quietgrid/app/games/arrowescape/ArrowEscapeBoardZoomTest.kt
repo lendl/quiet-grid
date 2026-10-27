@@ -58,6 +58,7 @@ class ArrowEscapeBoardZoomTest {
                         ArrowEscapeGrid(
                             puzzle = puzzle,
                             removedIndices = emptySet(),
+                            wrongIndices = emptySet(),
                             selectedIndex = null,
                             lastTap = null,
                             visibleBounds = bounds.lastOrNull(),
