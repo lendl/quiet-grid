@@ -1154,8 +1154,6 @@
     <string name="analyzer_step_of">Passo %1$d de %2$d</string>
     <string name="analyzer_back">Passo anterior</string>
     <string name="analyzer_next">Próximo passo</string>
-    <string name="analyzer_play">Reproduzir</string>
-    <string name="analyzer_pause">Pausar</string>
 
     <!-- Puzzle Mix editor -->
     <string name="mix_editor_title_edit">Editar Combinado</string>

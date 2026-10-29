@@ -1164,8 +1164,6 @@
     <string name="analyzer_step_of">Krok %1$d z %2$d</string>
     <string name="analyzer_back">Poprzedni krok</string>
     <string name="analyzer_next">Kolejny krok</string>
-    <string name="analyzer_play">Odtwórz</string>
-    <string name="analyzer_pause">Wstrzymaj</string>
 
     <!-- Puzzle Mix editor -->
     <string name="mix_editor_title_edit">Edytuj Miks</string>

@@ -1230,8 +1230,7 @@
     <string name="analyzer_step_of">Step %1$d of %2$d</string>
     <string name="analyzer_back">Previous step</string>
     <string name="analyzer_next">Next step</string>
-    <string name="analyzer_play">Play</string>
-    <string name="analyzer_pause">Pause</string>
+    <string name="analyzer_auto_play">Auto-play</string>
     <string name="analyzer_show_steps">Show each step</string>
     <string name="analyzer_hide_steps">Hide steps</string>
     <string name="analyzer_detail_progress">%1$d of %2$d</string>

@@ -1200,8 +1200,6 @@
     <string name="analyzer_step_of">Passo %1$d di %2$d</string>
     <string name="analyzer_back">Passo precedente</string>
     <string name="analyzer_next">Passo successivo</string>
-    <string name="analyzer_play">Riproduci</string>
-    <string name="analyzer_pause">Pausa</string>
 
     <!-- Puzzle Mix editor -->
     <string name="mix_editor_title_edit">Modifica mix</string>

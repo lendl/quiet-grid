@@ -5,14 +5,13 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.ui.analyzer.AnalyzerScreenFrame
 
 @Composable
-fun TakuzuAnalyzerScreen(snapshot: String?, onBack: () -> Unit) {
+fun TakuzuAnalyzerScreen(snapshot: String?) {
     val viewModel = hiltViewModel<TakuzuAnalyzerViewModel, TakuzuAnalyzerViewModel.Factory>(
         creationCallback = { factory -> factory.create(snapshot) },
     )
 
     AnalyzerScreenFrame(
         viewModel = viewModel,
-        onBack = onBack,
         hintText = { hint, _ -> resolveTakuzuHintText(hint) },
         board = { puzzle, board, hint, _ ->
             TakuzuBoard(

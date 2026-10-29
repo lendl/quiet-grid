@@ -1143,8 +1143,6 @@
     <string name="analyzer_step_of">Étape %1$d sur %2$d</string>
     <string name="analyzer_back">Étape précédente</string>
     <string name="analyzer_next">Étape suivante</string>
-    <string name="analyzer_play">Lecture</string>
-    <string name="analyzer_pause">Pause</string>
 
     <!-- Puzzle Mix editor -->
     <string name="mix_editor_title_edit">Modifier le Mix</string>

@@ -312,6 +312,10 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                     title = stringResource(R.string.common_rules),
                     onBack = { navController.popBackStack() },
                 )
+                currentRoute == Routes.ANALYZER -> AppTopBar(
+                    title = stringResource(R.string.analyzer_title),
+                    onBack = { navController.popBackStack() },
+                )
                 currentRoute == Routes.COMPLETION || currentRoute == Routes.LOSS -> Unit
                 currentRoute == Routes.CHALLENGER || currentRoute == Routes.CHALLENGER_RESULT -> Unit
                 currentRoute == Routes.ENDLESS || currentRoute == Routes.ENDLESS_RESULT || currentRoute == Routes.MINESWEEPER_ENDLESS_RESULT -> Unit
@@ -1427,14 +1431,8 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                 val analyzerGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
                 val analyzerSnapshot = rememberSaveable { mutableStateOf(AnalyzerHandoff.consume()) }.value
                 when (analyzerGameId) {
-                    GameId.TAKUZU -> TakuzuAnalyzerScreen(
-                        snapshot = analyzerSnapshot,
-                        onBack = { navController.popBackStack() },
-                    )
-                    GameId.ANIMALDOKU -> AnimalDokuAnalyzerScreen(
-                        snapshot = analyzerSnapshot,
-                        onBack = { navController.popBackStack() },
-                    )
+                    GameId.TAKUZU -> TakuzuAnalyzerScreen(snapshot = analyzerSnapshot)
+                    GameId.ANIMALDOKU -> AnimalDokuAnalyzerScreen(snapshot = analyzerSnapshot)
                     else -> Unit
                 }
             }

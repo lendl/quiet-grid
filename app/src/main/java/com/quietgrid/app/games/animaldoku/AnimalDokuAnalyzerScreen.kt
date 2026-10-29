@@ -6,7 +6,7 @@ import com.quietgrid.app.ui.analyzer.AnalyzerScreenFrame
 import com.quietgrid.app.ui.seasonal.rememberHalloweenActive
 
 @Composable
-fun AnimalDokuAnalyzerScreen(snapshot: String?, onBack: () -> Unit) {
+fun AnimalDokuAnalyzerScreen(snapshot: String?) {
     val viewModel = hiltViewModel<AnimalDokuAnalyzerViewModel, AnimalDokuAnalyzerViewModel.Factory>(
         creationCallback = { factory -> factory.create(snapshot) },
     )
@@ -14,7 +14,6 @@ fun AnimalDokuAnalyzerScreen(snapshot: String?, onBack: () -> Unit) {
 
     AnalyzerScreenFrame(
         viewModel = viewModel,
-        onBack = onBack,
         hintText = { hint, frame ->
             val message = if (frame == null) animalDokuHintMessage(hint) else animalDokuChainFrameMessage(hint, frame)
             message.title to message.body
