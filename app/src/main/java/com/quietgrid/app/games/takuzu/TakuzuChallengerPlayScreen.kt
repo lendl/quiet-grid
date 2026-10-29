@@ -18,7 +18,6 @@ import com.quietgrid.app.ui.components.rememberHapticController
 import com.quietgrid.app.ui.play.GamePlayScaffold
 import com.quietgrid.app.ui.play.InfoItem
 import com.quietgrid.app.ui.play.PlayTimer
-import com.quietgrid.app.ui.play.heartsInfo
 
 @Composable
 fun TakuzuChallengerPlayScreen(
@@ -44,7 +43,6 @@ fun TakuzuChallengerPlayScreen(
         emptyList()
     } else {
         listOf(
-            heartsInfo(session.livesRemaining, TAKUZU_CHALLENGER_STARTING_LIVES),
             InfoItem.Label("${stringResource(R.string.takuzu_challenger_tier_label)}: ${stringResource(takuzuDifficultyLabelRes(session.tier))}"),
             InfoItem.Label("${stringResource(R.string.takuzu_challenger_solved_label)}: ${session.puzzlesSolved}"),
         )

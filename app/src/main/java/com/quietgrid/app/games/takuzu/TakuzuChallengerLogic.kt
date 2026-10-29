@@ -9,7 +9,6 @@ private val TAKUZU_CHALLENGER_TIER_ORDER = listOf(Difficulty.EASY, Difficulty.ME
 fun createInitialTakuzuChallengerSession(firstPuzzle: TakuzuPuzzleEntry): TakuzuChallengerSession =
     TakuzuChallengerSession(
         puzzleSession = createTakuzuSession(firstPuzzle),
-        livesRemaining = TAKUZU_CHALLENGER_STARTING_LIVES,
         tier = Difficulty.EASY,
         solvesInTier = 0,
         puzzlesSolved = 0,

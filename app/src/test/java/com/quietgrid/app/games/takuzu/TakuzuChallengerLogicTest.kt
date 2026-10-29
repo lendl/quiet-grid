@@ -32,7 +32,7 @@ private fun testPuzzle(id: String, difficulty: String) = TakuzuPuzzleEntry(
 class TakuzuChallengerLogicTest {
 
     @Test
-    fun `createInitialTakuzuChallengerSession starts on Easy with full lives and starting clock`() {
+    fun `createInitialTakuzuChallengerSession starts on Easy with starting clock`() {
         val puzzle = testPuzzle("p1", "easy")
 
         val session = createInitialTakuzuChallengerSession(puzzle)
@@ -42,7 +42,6 @@ class TakuzuChallengerLogicTest {
         assertEquals(0, session.puzzlesSolved)
         assertEquals(0, session.score)
         assertEquals(TAKUZU_CHALLENGER_STARTING_SECONDS, session.secondsRemaining, 0.0)
-        assertEquals(TAKUZU_CHALLENGER_STARTING_LIVES, session.livesRemaining)
         assertEquals(setOf("p1"), session.servedPuzzleIds)
     }
 
@@ -63,14 +62,13 @@ class TakuzuChallengerLogicTest {
     }
 
     @Test
-    fun `advanceTakuzuChallengerAfterSolve keeps lives, adds bonus time, and loads the next puzzle`() {
-        val initial = createInitialTakuzuChallengerSession(testPuzzle("p1", "easy")).copy(livesRemaining = 2)
+    fun `advanceTakuzuChallengerAfterSolve adds bonus time and loads the next puzzle`() {
+        val initial = createInitialTakuzuChallengerSession(testPuzzle("p1", "easy"))
         val nextPuzzle = testPuzzle("p2", "easy")
 
         val advanced = advanceTakuzuChallengerAfterSolve(initial, nextTier = Difficulty.EASY, nextSolvesInTier = 1, nextPuzzle = nextPuzzle)
 
         assertEquals(1, advanced.puzzlesSolved)
-        assertEquals(2, advanced.livesRemaining)
         assertEquals("p2", advanced.puzzleSession.puzzle.id)
         assertEquals(TAKUZU_CHALLENGER_STARTING_SECONDS + TAKUZU_CHALLENGER_BONUS_SECONDS, advanced.secondsRemaining, 0.0)
         assertEquals(0.0, advanced.secondsOnCurrentPuzzle, 0.0)

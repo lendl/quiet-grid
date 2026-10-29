@@ -1098,8 +1098,6 @@
     <string name="takuzu_challenger_tier_label">Niveau</string>
     <string name="takuzu_challenger_result_time_up_title">Tijd om!</string>
     <string name="takuzu_challenger_result_time_up_body">De tijd is om. Zo verliep je ronde.</string>
-    <string name="takuzu_challenger_result_lives_exhausted_title">Geen levens meer!</string>
-    <string name="takuzu_challenger_result_lives_exhausted_body">Drie fouten beëindigden je ronde.</string>
     <string name="takuzu_challenger_result_abandoned_title">Ronde beëindigd</string>
     <string name="takuzu_challenger_result_abandoned_body">Je hebt de ronde vroegtijdig gestopt.</string>
     <string name="takuzu_challenger_result_new_high_score">Nieuwe topscore!</string>

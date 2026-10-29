@@ -23,10 +23,6 @@ fun TakuzuChallengerResultScreen(
     val titleRes: Int
     val bodyRes: Int
     when (reason) {
-        "lives_exhausted" -> {
-            titleRes = R.string.takuzu_challenger_result_lives_exhausted_title
-            bodyRes = R.string.takuzu_challenger_result_lives_exhausted_body
-        }
         "abandoned" -> {
             titleRes = R.string.takuzu_challenger_result_abandoned_title
             bodyRes = R.string.takuzu_challenger_result_abandoned_body
@@ -58,7 +54,7 @@ fun TakuzuChallengerResultScreen(
         previousBest = previousBest,
         fastestSolveSeconds = fastestSolveSeconds,
         reason = reason,
-        startingLives = TAKUZU_CHALLENGER_STARTING_LIVES,
+        startingLives = 0,
         solvesPerTier = TAKUZU_CHALLENGER_SOLVES_PER_TIER,
         isMixActive = isMixActive,
         onPlayAgain = onPlayAgain,

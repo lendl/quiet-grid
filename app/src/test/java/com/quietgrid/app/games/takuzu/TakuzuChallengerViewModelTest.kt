@@ -53,6 +53,14 @@ private val losingTestPuzzle = TakuzuPuzzleEntry(
     mask = maskToHex(SINGLE_BLANK_MASK),
 )
 
+private val diagonalBlanksTestPuzzle = TakuzuPuzzleEntry(
+    id = "diagonal",
+    size = 4,
+    difficulty = "easy",
+    solution = gridToHex(SOLVABLE_GRID),
+    mask = maskToHex(List(4) { r -> List(4) { c -> r != c } }),
+)
+
 class TakuzuChallengerViewModelTest {
 
     @get:Rule
@@ -75,11 +83,10 @@ class TakuzuChallengerViewModelTest {
     }
 
     @Test
-    fun `starting fresh loads a puzzle on the Easy tier with starting lives and starting seconds`() {
+    fun `starting fresh loads a puzzle on the Easy tier with starting seconds`() {
         val viewModel = newViewModel(solvableTestPuzzle)
 
         assertEquals(Difficulty.EASY, viewModel.session?.tier)
-        assertEquals(TAKUZU_CHALLENGER_STARTING_LIVES, viewModel.session?.livesRemaining)
         assertEquals(TAKUZU_CHALLENGER_STARTING_SECONDS, viewModel.session?.secondsRemaining)
     }
 
@@ -93,21 +100,40 @@ class TakuzuChallengerViewModelTest {
         checkNotNull(session)
         assertEquals(1, session.puzzlesSolved)
         assertEquals(TAKUZU_CHALLENGER_STARTING_SECONDS + TAKUZU_CHALLENGER_BONUS_SECONDS, session.secondsRemaining, 0.0)
-        assertEquals(TAKUZU_CHALLENGER_STARTING_LIVES, session.livesRemaining)
         assertEquals(1, session.puzzleHistory.size)
     }
 
     @Test
-    fun `pressing the last cell to a wrong value costs both touched lines worth of lives without exhausting them`() {
-        val statsStore = FakeStatsStore()
-        val viewModel = newViewModel(losingTestPuzzle, statsStore)
+    fun `pressing the last cell to a wrong value costs both touched lines as mistakes`() {
+        val viewModel = newViewModel(losingTestPuzzle)
 
         viewModel.onCellPress(0, 0)
 
         val session = viewModel.session
         checkNotNull(session)
-        assertEquals(TAKUZU_CHALLENGER_STARTING_LIVES - 2, session.livesRemaining)
+        assertEquals(2, session.puzzleSession.accuracyDrops)
+        assertEquals(1, viewModel.wrongMoveTrigger)
         assertEquals(0, session.puzzlesSolved)
+    }
+
+    @Test
+    fun `mistakes never end the run`() {
+        val viewModel = newViewModel(diagonalBlanksTestPuzzle)
+        val results = mutableListOf<ChallengerResult>()
+        val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
+
+        viewModel.onCellPress(2, 2)
+        viewModel.onCellPress(3, 3)
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+
+        val session = viewModel.session
+        checkNotNull(session)
+        assertEquals(4, session.puzzleSession.accuracyDrops)
+        assertEquals(2, viewModel.wrongMoveTrigger)
+        assertEquals(0, session.puzzlesSolved)
+        assertEquals(0, results.size)
+
+        collectJob.cancel()
     }
 
     @Test

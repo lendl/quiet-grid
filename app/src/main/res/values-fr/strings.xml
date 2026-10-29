@@ -448,8 +448,6 @@
     <string name="takuzu_challenger_tier_label">Niveau</string>
     <string name="takuzu_challenger_result_time_up_title">Temps écoulé !</string>
     <string name="takuzu_challenger_result_time_up_body">Le temps est écoulé. Voici comment s\'est passée ta partie.</string>
-    <string name="takuzu_challenger_result_lives_exhausted_title">Plus de vies !</string>
-    <string name="takuzu_challenger_result_lives_exhausted_body">Trois erreurs ont mis fin à ta partie.</string>
     <string name="takuzu_challenger_result_abandoned_title">Partie terminée</string>
     <string name="takuzu_challenger_result_abandoned_body">Tu as arrêté la partie avant la fin.</string>
     <string name="takuzu_challenger_result_new_high_score">Nouveau meilleur score !</string>

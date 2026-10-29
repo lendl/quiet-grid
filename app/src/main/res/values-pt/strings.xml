@@ -1007,8 +1007,6 @@
     <string name="takuzu_challenger_tier_label">Nível</string>
     <string name="takuzu_challenger_result_time_up_title">O tempo acabou!</string>
     <string name="takuzu_challenger_result_time_up_body">O tempo acabou. Veja como foi sua partida.</string>
-    <string name="takuzu_challenger_result_lives_exhausted_title">Sem vidas!</string>
-    <string name="takuzu_challenger_result_lives_exhausted_body">Três erros encerraram sua partida.</string>
     <string name="takuzu_challenger_result_abandoned_title">Partida encerrada</string>
     <string name="takuzu_challenger_result_abandoned_body">Você parou a partida antes do fim.</string>
     <string name="takuzu_challenger_result_new_high_score">Nova pontuação máxima!</string>

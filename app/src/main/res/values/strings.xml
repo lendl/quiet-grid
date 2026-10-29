@@ -1079,8 +1079,6 @@
     <string name="takuzu_challenger_tier_label">Tier</string>
     <string name="takuzu_challenger_result_time_up_title">Time\'s up!</string>
     <string name="takuzu_challenger_result_time_up_body">The clock ran out. Here\'s how your run went.</string>
-    <string name="takuzu_challenger_result_lives_exhausted_title">Out of lives!</string>
-    <string name="takuzu_challenger_result_lives_exhausted_body">Three mistakes ended your run.</string>
     <string name="takuzu_challenger_result_abandoned_title">Run ended</string>
     <string name="takuzu_challenger_result_abandoned_body">You stopped the run early.</string>
     <string name="takuzu_challenger_result_new_high_score">New high score!</string>

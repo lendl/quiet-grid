@@ -1043,8 +1043,6 @@
     <string name="takuzu_challenger_tier_label">Poziom</string>
     <string name="takuzu_challenger_result_time_up_title">Koniec czasu!</string>
     <string name="takuzu_challenger_result_time_up_body">Czas minął. Oto podsumowanie Twojego podejścia.</string>
-    <string name="takuzu_challenger_result_lives_exhausted_title">Koniec żyć!</string>
-    <string name="takuzu_challenger_result_lives_exhausted_body">Trzy błędy zakończyły Twoje podejście.</string>
     <string name="takuzu_challenger_result_abandoned_title">Podejście przerwane</string>
     <string name="takuzu_challenger_result_abandoned_body">Podejście zostało przerwane przed czasem.</string>
     <string name="takuzu_challenger_result_new_high_score">Nowy rekord!</string>

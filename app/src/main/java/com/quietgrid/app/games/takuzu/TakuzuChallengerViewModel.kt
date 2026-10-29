@@ -56,18 +56,12 @@ class TakuzuChallengerViewModel @Inject constructor(
         val updated = applyTakuzuPressCell(current.puzzleSession, row, col) ?: return
         val lineKeys = listOf("r$row", "c$col")
         val result = applyTakuzuFinalizeValidation(updated, updated.board, lineKeys)
-        val newPenalties = result.session.accuracyDrops - updated.accuracyDrops
-        val livesRemaining = current.livesRemaining - newPenalties
-        if (newPenalties > 0) wrongMoveTrigger++
+        if (result.session.accuracyDrops > updated.accuracyDrops) wrongMoveTrigger++
 
-        val withValidation = current.copy(puzzleSession = result.session, livesRemaining = livesRemaining)
+        val withValidation = current.copy(puzzleSession = result.session)
         controller.session = withValidation
 
-        when {
-            livesRemaining <= 0 -> controller.finalizeRun(withValidation, "lives_exhausted")
-            isBoardSolved(result.session.board, result.session.solution) -> onSolved(withValidation)
-            else -> Unit
-        }
+        if (isBoardSolved(result.session.board, result.session.solution)) onSolved(withValidation)
     }
 
     private fun onSolved(withValidation: TakuzuChallengerSession) {

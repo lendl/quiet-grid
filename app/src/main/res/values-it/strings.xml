@@ -1053,8 +1053,6 @@
     <string name="takuzu_challenger_tier_label">Livello</string>
     <string name="takuzu_challenger_result_time_up_title">Tempo scaduto!</string>
     <string name="takuzu_challenger_result_time_up_body">Il tempo è finito. Ecco com\'è andata la tua partita.</string>
-    <string name="takuzu_challenger_result_lives_exhausted_title">Vite esaurite!</string>
-    <string name="takuzu_challenger_result_lives_exhausted_body">Tre errori hanno chiuso la tua partita.</string>
     <string name="takuzu_challenger_result_abandoned_title">Partita terminata</string>
     <string name="takuzu_challenger_result_abandoned_body">Hai interrotto la partita prima del tempo.</string>
     <string name="takuzu_challenger_result_new_high_score">Nuovo record!</string>
