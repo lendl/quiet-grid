@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -25,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,6 +47,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
@@ -181,12 +184,14 @@ fun AnimalDokuGrid(
                         modifier = Modifier.offset(x = cellSize * col, y = cellSize * row),
                     )
                     if (hintHighlight != null && cellState == AnimalDokuCellState.EMPTY) {
-                        val ghostModifier = Modifier.offset(x = cellSize * col, y = cellSize * row).size(cellSize).alpha(HINT_GHOST_ALPHA)
+                        val cellModifier = Modifier.offset(x = cellSize * col, y = cellSize * row).size(cellSize)
+                        val ghostModifier = cellModifier.alpha(HINT_GHOST_ALPHA)
+                        val animalIndex = hintHighlight.animalCells.indexOf(row to col)
                         if (row to col in hintHighlight.crossCells) {
                             Box(ghostModifier, contentAlignment = Alignment.Center) {
                                 AnimalDokuXMark(cellSize, locked = false, isPencilTheme = isPencilTheme)
                             }
-                        } else if (hintHighlight.animalCell == row to col) {
+                        } else if (animalIndex >= 0) {
                             Box(ghostModifier, contentAlignment = Alignment.Center) {
                                 AnimalDokuAnimalIcon(
                                     pose = AnimalDokuAnimalPose.FRONT_FACING,
@@ -194,6 +199,11 @@ fun AnimalDokuGrid(
                                     modifier = Modifier.size(cellSize * 0.7f),
                                     palette = emojiPalette,
                                 )
+                            }
+                            if (hintHighlight.numberedAnimals) {
+                                Box(cellModifier.padding(3.dp), contentAlignment = Alignment.BottomEnd) {
+                                    AnimalDokuGhostOrderBadge(animalIndex + 1, cellSize)
+                                }
                             }
                         }
                     }
@@ -305,6 +315,27 @@ private fun AnimalDokuCorrectReveal(region: Int, cellSize: Dp, emojiPalette: Lis
         modifier = Modifier.size(cellSize * 0.7f).graphicsLayer(scaleX = scale.value, scaleY = scale.value),
         palette = emojiPalette,
     )
+}
+
+@Composable
+private fun AnimalDokuGhostOrderBadge(number: Int, cellSize: Dp) {
+    val badgeSize = cellSize * 0.34f
+    val fontSize = with(LocalDensity.current) { (badgeSize * 0.62f).toSp() }
+    Box(
+        Modifier
+            .size(badgeSize)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            number.toString(),
+            color = MaterialTheme.colorScheme.onSurface,
+            fontSize = fontSize,
+            fontWeight = FontWeight.Bold,
+            lineHeight = fontSize,
+        )
+    }
 }
 
 @Composable

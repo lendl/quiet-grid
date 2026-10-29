@@ -34,6 +34,7 @@ sealed class AnimalDokuStep {
         val sources: List<AnimalDokuUnit>,
         val targets: List<AnimalDokuUnit>,
         val chainDepth: Int = 0,
+        val forced: List<Placement> = emptyList(),
     ) : AnimalDokuStep()
 }
 
@@ -230,14 +231,14 @@ fun findPairing(state: AnimalDokuSolverState, k: Int): AnimalDokuStep.Eliminatio
 
 private const val MAX_CHAIN_PROPAGATION_DEPTH = 10
 
-private fun propagateSingletons(state: AnimalDokuSolverState, maxDepth: Int): Int {
-    var depth = 0
-    while (depth < maxDepth) {
+private fun propagateSingletons(state: AnimalDokuSolverState, maxDepth: Int): List<AnimalDokuStep.Placement> {
+    val forced = mutableListOf<AnimalDokuStep.Placement>()
+    while (forced.size < maxDepth) {
         val move = findSingleton(state) ?: break
         state.place(move.row, move.col)
-        depth++
+        forced.add(move)
     }
-    return depth
+    return forced
 }
 
 private fun findEmptyUnit(state: AnimalDokuSolverState): AnimalDokuUnit? {
@@ -253,18 +254,74 @@ fun findChainContradiction(state: AnimalDokuSolverState): AnimalDokuStep.Elimina
         for ((row, col) in state.candidatesInRegion(region)) {
             val hypothesis = state.copy()
             hypothesis.place(row, col)
-            val intermediatePlacements = propagateSingletons(hypothesis, MAX_CHAIN_PROPAGATION_DEPTH)
+            val forced = propagateSingletons(hypothesis, MAX_CHAIN_PROPAGATION_DEPTH)
             val emptyUnit = findEmptyUnit(hypothesis)
-            if (emptyUnit != null) {
-                return AnimalDokuStep.Elimination(
-                    listOf(row to col),
-                    AnimalDokuTechnique.CHAIN,
-                    sources = listOf(emptyUnit),
-                    targets = emptyList(),
-                    chainDepth = 1 + intermediatePlacements,
-                )
-            }
+            if (emptyUnit != null) return chainElimination(row, col, forced, emptyUnit)
         }
     }
     return null
+}
+
+private fun chainElimination(row: Int, col: Int, forced: List<AnimalDokuStep.Placement>, emptyUnit: AnimalDokuUnit) =
+    AnimalDokuStep.Elimination(
+        listOf(row to col),
+        AnimalDokuTechnique.CHAIN,
+        sources = listOf(emptyUnit),
+        targets = emptyList(),
+        chainDepth = 1 + forced.size,
+        forced = forced,
+    )
+
+private fun AnimalDokuSolverState.isSolved(unit: AnimalDokuUnit): Boolean = when (unit.kind) {
+    AnimalDokuUnitKind.ROW -> rowSolved[unit.index]
+    AnimalDokuUnitKind.COLUMN -> colSolved[unit.index]
+    AnimalDokuUnitKind.REGION -> regionSolved[unit.index]
+}
+
+private fun traceUntilStuck(state: AnimalDokuSolverState, row: Int, col: Int, maxForced: Int): AnimalDokuStep.Elimination? {
+    val hypothesis = state.copy()
+    hypothesis.place(row, col)
+    val forced = mutableListOf<AnimalDokuStep.Placement>()
+    while (true) {
+        findEmptyUnit(hypothesis)?.let { return chainElimination(row, col, forced, it) }
+        if (forced.size >= maxForced) return null
+        val move = findSingleton(hypothesis) ?: return null
+        hypothesis.place(move.row, move.col)
+        forced.add(move)
+    }
+}
+
+private fun chainStillHolds(state: AnimalDokuSolverState, row: Int, col: Int, forced: List<AnimalDokuStep.Placement>, emptyUnit: AnimalDokuUnit): Boolean {
+    val hypothesis = state.copy()
+    hypothesis.place(row, col)
+    for (move in forced) {
+        if (hypothesis.candidatesIn(move.unit) != listOf(move.row to move.col)) return false
+        hypothesis.place(move.row, move.col)
+    }
+    return !hypothesis.isSolved(emptyUnit) && hypothesis.candidatesIn(emptyUnit).isEmpty()
+}
+
+private fun withoutIdleLinks(state: AnimalDokuSolverState, chain: AnimalDokuStep.Elimination): AnimalDokuStep.Elimination {
+    val (row, col) = chain.cells.single()
+    val emptyUnit = chain.sources.single()
+    var kept = chain.forced
+    for (index in chain.forced.indices.reversed()) {
+        val without = kept.filterIndexed { i, _ -> i != index }
+        if (chainStillHolds(state, row, col, without, emptyUnit)) kept = without
+    }
+    return chainElimination(row, col, kept, emptyUnit)
+}
+
+fun findShortestChainContradiction(state: AnimalDokuSolverState): AnimalDokuStep.Elimination? {
+    var best: AnimalDokuStep.Elimination? = null
+    for (region in 0 until state.size) {
+        if (state.regionSolved[region]) continue
+        for ((row, col) in state.candidatesInRegion(region)) {
+            val maxForced = best?.let { it.forced.size - 1 } ?: MAX_CHAIN_PROPAGATION_DEPTH
+            val chain = traceUntilStuck(state, row, col, maxForced) ?: continue
+            if (chain.forced.isEmpty()) return chain
+            best = chain
+        }
+    }
+    return best?.let { withoutIdleLinks(state, it) }
 }

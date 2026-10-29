@@ -16,6 +16,7 @@ sealed interface AnalyzerState<out Puzzle, out Board, out Hint> {
         val replay: AnalyzerReplay<Puzzle, Board, Hint>,
         val currentIndex: Int = 0,
         val isPlaying: Boolean = false,
+        val detailIndex: Int? = null,
     ) : AnalyzerState<Puzzle, Board, Hint> {
         val isFinalFrame: Boolean get() = currentIndex == replay.steps.size
         val board: Board get() = if (isFinalFrame) replay.finalBoard else replay.steps[currentIndex].boardBefore

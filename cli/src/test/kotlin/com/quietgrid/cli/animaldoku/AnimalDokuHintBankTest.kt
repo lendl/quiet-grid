@@ -2,8 +2,10 @@ package com.quietgrid.cli.animaldoku
 
 import com.quietgrid.engine.animaldoku.AnimalDokuHint
 import com.quietgrid.engine.animaldoku.AnimalDokuPuzzleEntry
+import com.quietgrid.engine.animaldoku.AnimalDokuSolverState
 import com.quietgrid.engine.animaldoku.AnimalDokuStep
 import com.quietgrid.engine.animaldoku.AnimalDokuTechnique
+import com.quietgrid.engine.animaldoku.candidatesIn
 import com.quietgrid.engine.animaldoku.cells
 import com.quietgrid.engine.animaldoku.findAnimalDokuHint
 import kotlinx.serialization.builtins.ListSerializer
@@ -54,7 +56,7 @@ class AnimalDokuHintBankTest {
                     placed.add(hint.row to hint.col)
                 }
                 is AnimalDokuHint.Deduction -> {
-                    checkDeduction(entry, hint)
+                    checkDeduction(entry, hint, placed, excluded)
                     when (val step = hint.step) {
                         is AnimalDokuStep.Placement -> placed.add(step.row to step.col)
                         is AnimalDokuStep.Elimination -> excluded.addAll(step.cells)
@@ -65,7 +67,12 @@ class AnimalDokuHintBankTest {
         error("${entry.id}: hints did not finish the puzzle")
     }
 
-    private fun checkDeduction(entry: AnimalDokuPuzzleEntry, hint: AnimalDokuHint.Deduction) {
+    private fun checkDeduction(
+        entry: AnimalDokuPuzzleEntry,
+        hint: AnimalDokuHint.Deduction,
+        placed: Set<Pair<Int, Int>>,
+        excluded: Set<Pair<Int, Int>>,
+    ) {
         val regions = entry.regions
         assertTrue(entry.id, hint.openCells.isNotEmpty())
         when (val step = hint.step) {
@@ -83,6 +90,19 @@ class AnimalDokuHintBankTest {
                     assertEquals(entry.id, 1, step.sources.size)
                     assertEquals(entry.id, 1, step.cells.size)
                     assertTrue(entry.id, step.cells.none { it in sourceCells })
+                    assertEquals(entry.id, 1 + step.forced.size, step.chainDepth)
+                    assertEquals(entry.id, hint.openCells, hint.chainOpenCells.filter { it in sourceCells }.toSet())
+                    val hypothesis = AnimalDokuSolverState(entry.size, regions)
+                    placed.forEach { (row, col) -> hypothesis.place(row, col) }
+                    excluded.forEach { (row, col) -> hypothesis.eliminated[row][col] = true }
+                    val (triedRow, triedCol) = step.cells.single()
+                    hypothesis.place(triedRow, triedCol)
+                    step.forced.forEach { link ->
+                        assertTrue(entry.id, (link.row to link.col) in hint.chainOpenCells)
+                        assertEquals(entry.id, listOf(link.row to link.col), hypothesis.candidatesIn(link.unit))
+                        hypothesis.place(link.row, link.col)
+                    }
+                    assertTrue(entry.id, hypothesis.candidatesIn(step.sources.single()).isEmpty())
                 } else {
                     val targetCells = step.targets.flatMap { it.cells(regions) }.toSet()
                     assertTrue(entry.id, targetCells.containsAll(hint.openCells))

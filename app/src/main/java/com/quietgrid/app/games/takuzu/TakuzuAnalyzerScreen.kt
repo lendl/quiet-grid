@@ -13,8 +13,8 @@ fun TakuzuAnalyzerScreen(snapshot: String?, onBack: () -> Unit) {
     AnalyzerScreenFrame(
         viewModel = viewModel,
         onBack = onBack,
-        hintText = { hint -> resolveTakuzuHintText(hint) },
-        board = { puzzle, board, hint ->
+        hintText = { hint, _ -> resolveTakuzuHintText(hint) },
+        board = { puzzle, board, hint, _ ->
             TakuzuBoard(
                 board = board,
                 isGiven = puzzle.isGiven,

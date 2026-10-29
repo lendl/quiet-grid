@@ -974,8 +974,17 @@
     <string name="animaldoku_hint_line_confined_to_region_body">Every open cell in %1$s belongs to %2$s, so that region\'s animal is in %1$s. Mark the rest of the region with X.</string>
     <string name="animaldoku_hint_regions_fill_lines_body">The open cells of %1$s all sit in %2$s, so those lines belong to them. Mark the other cells in %2$s with X.</string>
     <string name="animaldoku_hint_lines_fill_regions_body">The open cells in %1$s all belong to %2$s, so those regions\' animals are there. Mark the rest of those regions with X.</string>
-    <string name="animaldoku_hint_chain_body">An animal in the cell with the faded X would leave %1$s with no open cell. Mark that cell with X.</string>
-    <string name="animaldoku_hint_chain_long_body">An animal in the cell with the faded X would force other animals into place and leave %1$s with no open cell. Mark that cell with X.</string>
+    <string name="animaldoku_hint_chain_body">Try the faded animal: it would leave %1$s with no open cell. So mark its cell with X.</string>
+    <string name="animaldoku_hint_chain_long_body">Try the faded animal: it would force other animals into place and leave %1$s with no open cell. So mark its cell with X.</string>
+    <string name="animaldoku_chain_suppose_title">Suppose an animal goes here</string>
+    <string name="animaldoku_chain_suppose_body">Try the faded animal. No other animal could then share its row, column or region, or touch it. Follow what that forces.</string>
+    <string name="animaldoku_chain_forced_title">That forces an animal</string>
+    <string name="animaldoku_chain_forced_again_title">And another</string>
+    <string name="animaldoku_chain_forced_body">The faded animals leave only one open cell in %1$s, so an animal would have to go there.</string>
+    <string name="animaldoku_chain_stuck_title">Stuck</string>
+    <string name="animaldoku_chain_stuck_body">The faded animals now block every open cell in %1$s. Every row, column and region needs one animal, so this can\'t happen.</string>
+    <string name="animaldoku_chain_conclusion_title">So the guess was wrong</string>
+    <string name="animaldoku_chain_conclusion_body">No animal can go in the cell you tried. Mark it with X.</string>
     <string name="animaldoku_hint_wrong_mark_body">This cell is marked X, but an animal belongs here. Tap it to clear the mark.</string>
     <string name="animaldoku_hint_reveal_body">No simple step is left from here. An animal belongs in the highlighted cell.</string>
     <string name="animaldoku_loss_abandoned_eyebrow">Puzzle ended</string>
@@ -1223,6 +1232,9 @@
     <string name="analyzer_next">Next step</string>
     <string name="analyzer_play">Play</string>
     <string name="analyzer_pause">Pause</string>
+    <string name="analyzer_show_steps">Show each step</string>
+    <string name="analyzer_hide_steps">Hide steps</string>
+    <string name="analyzer_detail_progress">%1$d of %2$d</string>
 
     <!-- Puzzle Mix editor -->
     <string name="mix_editor_title_edit">Edit Mix</string>

@@ -939,8 +939,6 @@
     <string name="animaldoku_hint_line_confined_to_region_body">Wszystkie otwarte pola w %1$s leżą w %2$s, więc zwierzę tego obszaru jest w %1$s. Oznacz znakiem X resztę obszaru.</string>
     <string name="animaldoku_hint_regions_fill_lines_body">Otwarte pola w %1$s leżą wyłącznie w %2$s, więc te linie należą do tych obszarów. Oznacz znakiem X pozostałe pola w %2$s.</string>
     <string name="animaldoku_hint_lines_fill_regions_body">Otwarte pola w %1$s leżą wyłącznie w %2$s, więc tam są zwierzęta tych obszarów. Oznacz znakiem X resztę tych obszarów.</string>
-    <string name="animaldoku_hint_chain_body">Zwierzę w polu z bladym X nie zostawiłoby żadnego otwartego pola w %1$s. Oznacz to pole znakiem X.</string>
-    <string name="animaldoku_hint_chain_long_body">Zwierzę w polu z bladym X wymusiłoby położenie innych zwierząt i nie zostawiłoby żadnego otwartego pola w %1$s. Oznacz to pole znakiem X.</string>
     <string name="animaldoku_hint_wrong_mark_body">To pole jest oznaczone znakiem X, ale tu powinno być zwierzę. Stuknij je, aby usunąć oznaczenie.</string>
     <string name="animaldoku_hint_reveal_body">Stąd nie ma już prostego kroku. W podświetlonym polu powinno być zwierzę.</string>
     <string name="animaldoku_loss_abandoned_eyebrow">Łamigłówka zakończona</string>

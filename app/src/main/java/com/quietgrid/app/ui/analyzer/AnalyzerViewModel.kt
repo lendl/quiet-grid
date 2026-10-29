@@ -26,6 +26,8 @@ abstract class AnalyzerViewModel<Puzzle, Board, Hint> : ViewModel() {
 
     protected abstract fun computeInitialState(): AnalyzerState<Puzzle, Board, Hint>
 
+    open fun detailFrameCount(hint: Hint): Int = 0
+
     private val ready: AnalyzerState.Ready<Puzzle, Board, Hint>?
         get() = state as? AnalyzerState.Ready<Puzzle, Board, Hint>
 
@@ -37,19 +39,43 @@ abstract class AnalyzerViewModel<Puzzle, Board, Hint> : ViewModel() {
         }
     }
 
+    private fun advanced(current: AnalyzerState.Ready<Puzzle, Board, Hint>): AnalyzerState.Ready<Puzzle, Board, Hint> {
+        val detailIndex = current.detailIndex
+        val hint = current.hint
+        if (detailIndex != null && hint != null && detailIndex < detailFrameCount(hint) - 1) {
+            return current.copy(detailIndex = detailIndex + 1)
+        }
+        return current.copy(currentIndex = current.currentIndex + 1, detailIndex = null)
+    }
+
     fun next() {
         val current = ready ?: return
         if (current.isFinalFrame) {
             stopPlaying(current)
             return
         }
-        state = current.copy(currentIndex = current.currentIndex + 1)
+        state = advanced(current)
     }
 
     fun back() {
         val current = ready ?: return
-        if (current.currentIndex <= 0) return
-        state = current.copy(currentIndex = current.currentIndex - 1)
+        val detailIndex = current.detailIndex
+        state = when {
+            detailIndex != null -> current.copy(detailIndex = if (detailIndex > 0) detailIndex - 1 else null)
+            current.currentIndex > 0 -> current.copy(currentIndex = current.currentIndex - 1)
+            else -> return
+        }
+    }
+
+    fun showDetail() {
+        val current = ready ?: return
+        val hint = current.hint ?: return
+        if (detailFrameCount(hint) > 0) state = current.copy(detailIndex = 0)
+    }
+
+    fun hideDetail() {
+        val current = ready ?: return
+        state = current.copy(detailIndex = null)
     }
 
     fun togglePlay() {
@@ -68,7 +94,7 @@ abstract class AnalyzerViewModel<Puzzle, Board, Hint> : ViewModel() {
                     state = playing.copy(isPlaying = false)
                     return@launch
                 }
-                state = playing.copy(currentIndex = playing.currentIndex + 1)
+                state = advanced(playing)
             }
         }
     }

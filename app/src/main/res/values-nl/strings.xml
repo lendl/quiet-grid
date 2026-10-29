@@ -837,8 +837,6 @@
     <string name="animaldoku_hint_line_confined_to_region_body">Alle open cellen in %1$s horen bij %2$s, dus het dier van die regio staat in %1$s. Zet een X in de rest van de regio.</string>
     <string name="animaldoku_hint_regions_fill_lines_body">De open cellen van %1$s liggen allemaal in %2$s, dus die lijnen zijn voor hen. Zet een X in de andere cellen van %2$s.</string>
     <string name="animaldoku_hint_lines_fill_regions_body">De open cellen in %1$s horen allemaal bij %2$s, dus de dieren van die regio\'s staan daar. Zet een X in de rest van die regio\'s.</string>
-    <string name="animaldoku_hint_chain_body">Een dier in de cel met de vage X zou %1$s zonder open cel laten. Zet een X in die cel.</string>
-    <string name="animaldoku_hint_chain_long_body">Een dier in de cel met de vage X zou andere dieren vastleggen en %1$s zonder open cel laten. Zet een X in die cel.</string>
     <string name="animaldoku_hint_wrong_mark_body">Deze cel heeft een X, maar hier hoort een dier. Tik erop om de X te wissen.</string>
     <string name="animaldoku_hint_reveal_body">Vanaf hier is er geen eenvoudige stap meer. In de uitgelichte cel hoort een dier.</string>
     <string name="animaldoku_loss_abandoned_eyebrow">Puzzel beëindigd</string>

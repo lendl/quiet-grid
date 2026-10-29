@@ -857,8 +857,6 @@
     <string name="animaldoku_hint_line_confined_to_region_body">Todas las celdas libres de %1$s pertenecen a %2$s, así que el animal de esa región está en %1$s. Marca con X el resto de la región.</string>
     <string name="animaldoku_hint_regions_fill_lines_body">Las celdas libres de %1$s están todas en %2$s, así que esas líneas les pertenecen. Marca con X las demás celdas de %2$s.</string>
     <string name="animaldoku_hint_lines_fill_regions_body">Las celdas libres de %1$s pertenecen todas a %2$s, así que los animales de esas regiones están ahí. Marca con X el resto de esas regiones.</string>
-    <string name="animaldoku_hint_chain_body">Un animal en la celda con la X tenue dejaría %1$s sin ninguna celda libre. Marca esa celda con X.</string>
-    <string name="animaldoku_hint_chain_long_body">Un animal en la celda con la X tenue obligaría a colocar otros animales y dejaría %1$s sin ninguna celda libre. Marca esa celda con X.</string>
     <string name="animaldoku_hint_wrong_mark_body">Esta celda tiene una X, pero aquí va un animal. Tócala para quitar la marca.</string>
     <string name="animaldoku_hint_reveal_body">Desde aquí no queda ningún paso sencillo. En la celda resaltada va un animal.</string>
     <string name="animaldoku_loss_abandoned_eyebrow">Puzzle terminado</string>

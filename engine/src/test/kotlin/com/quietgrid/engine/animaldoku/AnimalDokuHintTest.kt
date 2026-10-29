@@ -86,6 +86,48 @@ class AnimalDokuHintTest {
     }
 
     @Test
+    fun `chain hints use the shortest chain and list the open cells of every unit in it`() {
+        val puzzle = AnimalDokuPuzzleEntry(
+            id = "chain-test",
+            size = 8,
+            difficulty = "hard",
+            regions = listOf(
+                listOf(0, 0, 2, 3, 3, 3, 3, 3),
+                listOf(0, 0, 2, 3, 3, 3, 1, 1),
+                listOf(2, 2, 2, 3, 3, 3, 3, 1),
+                listOf(2, 2, 3, 3, 2, 3, 3, 1),
+                listOf(5, 2, 2, 2, 2, 5, 3, 4),
+                listOf(5, 5, 5, 5, 5, 5, 4, 4),
+                listOf(6, 5, 5, 5, 7, 5, 5, 4),
+                listOf(6, 6, 5, 5, 7, 7, 7, 4),
+            ),
+            solution = listOf(1, 6, 2, 5, 7, 3, 0, 4),
+        )
+        val excluded = setOf(
+            0 to 2, 0 to 3, 0 to 4, 0 to 5, 0 to 6, 0 to 7, 1 to 0, 1 to 1, 1 to 7, 2 to 0, 2 to 1, 2 to 6, 2 to 7,
+            3 to 0, 3 to 1, 3 to 6, 3 to 7, 4 to 0, 4 to 1, 4 to 2, 4 to 3, 4 to 4, 4 to 6, 5 to 0, 5 to 1,
+            6 to 1, 6 to 2, 6 to 3, 6 to 5, 6 to 6, 6 to 7, 7 to 2, 7 to 3, 7 to 6, 7 to 7,
+        )
+        val state = AnimalDokuSolverState(8, puzzle.regions)
+        state.place(1, 6)
+        excluded.forEach { (row, col) -> state.eliminated[row][col] = true }
+
+        val hint = findAnimalDokuHint(puzzle, placed = setOf(1 to 6), excluded = excluded) as AnimalDokuHint.Deduction
+        val step = hint.step as AnimalDokuStep.Elimination
+        assertEquals(AnimalDokuTechnique.CHAIN, step.technique)
+        assertTrue(step.chainDepth <= 3)
+        val chainUnits = step.forced.map { it.unit } + step.sources
+        assertEquals(chainUnits.flatMap { state.candidatesIn(it) }.toSet(), hint.chainOpenCells)
+        assertEquals(step.sources.flatMap { state.candidatesIn(it) }.toSet(), hint.openCells)
+    }
+
+    @Test
+    fun `non-chain hints have no chain open cells`() {
+        val hint = findAnimalDokuHint(HINT_PUZZLE, placed = emptySet(), excluded = emptySet()) as AnimalDokuHint.Deduction
+        assertTrue(hint.chainOpenCells.isEmpty())
+    }
+
+    @Test
     fun `units list their cells`() {
         assertEquals(listOf(2 to 0, 2 to 1, 2 to 2, 2 to 3, 2 to 4), AnimalDokuUnit(AnimalDokuUnitKind.ROW, 2).cells(HINT_PUZZLE.regions))
         assertEquals(listOf(0 to 4, 1 to 4, 2 to 4, 3 to 4, 4 to 4), AnimalDokuUnit(AnimalDokuUnitKind.COLUMN, 4).cells(HINT_PUZZLE.regions))

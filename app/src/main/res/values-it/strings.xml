@@ -959,8 +959,6 @@
     <string name="animaldoku_hint_line_confined_to_region_body">Tutte le caselle libere %1$s stanno %2$s, quindi l\'animale di quella regione è %1$s. Segna con una X il resto della regione.</string>
     <string name="animaldoku_hint_regions_fill_lines_body">Le caselle libere %1$s stanno tutte %2$s, quindi quelle linee spettano a loro. Segna con una X le altre caselle %2$s.</string>
     <string name="animaldoku_hint_lines_fill_regions_body">Le caselle libere %1$s stanno tutte %2$s, quindi gli animali di quelle regioni sono lì. Segna con una X il resto di quelle regioni.</string>
-    <string name="animaldoku_hint_chain_body">Un animale nella casella con la X sbiadita non lascerebbe nessuna casella libera %1$s. Segna quella casella con una X.</string>
-    <string name="animaldoku_hint_chain_long_body">Un animale nella casella con la X sbiadita costringerebbe altri animali al loro posto e non lascerebbe nessuna casella libera %1$s. Segna quella casella con una X.</string>
     <string name="animaldoku_hint_wrong_mark_body">Questa casella ha una X, ma qui va un animale. Toccala per togliere il segno.</string>
     <string name="animaldoku_hint_reveal_body">Da qui non resta nessun passo semplice. Nella casella evidenziata va un animale.</string>
     <string name="animaldoku_loss_abandoned_eyebrow">Puzzle terminato</string>

@@ -4,11 +4,11 @@ data class AnimalDokuSolveStep(val technique: AnimalDokuTechnique, val chainDept
 
 data class AnimalDokuSolveResult(val solved: Boolean, val steps: List<AnimalDokuSolveStep>, val remainingCandidates: Int = 0)
 
-fun nextAnimalDokuStep(state: AnimalDokuSolverState, maxPairingK: Int = 4): AnimalDokuStep? =
+fun nextAnimalDokuStep(state: AnimalDokuSolverState, maxPairingK: Int = 4, shortestChain: Boolean = false): AnimalDokuStep? =
     findSingleton(state)
         ?: findConfinement(state)
         ?: (2..maxPairingK).asSequence().mapNotNull { k -> findPairing(state, k) }.firstOrNull()
-        ?: findChainContradiction(state)
+        ?: if (shortestChain) findShortestChainContradiction(state) else findChainContradiction(state)
 
 fun AnimalDokuSolverState.apply(step: AnimalDokuStep) {
     when (step) {

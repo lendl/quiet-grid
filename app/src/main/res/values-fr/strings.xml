@@ -906,8 +906,6 @@
     <string name="animaldoku_hint_line_confined_to_region_body">Toutes les cases libres dans %1$s sont dans %2$s, donc l\'animal de cette région est dans %1$s. Marque d\'un X le reste de la région.</string>
     <string name="animaldoku_hint_regions_fill_lines_body">Les cases libres dans %1$s sont toutes dans %2$s, donc les animaux de ces régions occupent ces rangées. Marque d\'un X les autres cases dans %2$s.</string>
     <string name="animaldoku_hint_lines_fill_regions_body">Les cases libres dans %1$s sont toutes dans %2$s, donc les animaux de ces régions s\'y trouvent. Marque d\'un X le reste de ces régions.</string>
-    <string name="animaldoku_hint_chain_body">Un animal dans la case au X pâle ne laisserait aucune case libre dans %1$s. Marque cette case d\'un X.</string>
-    <string name="animaldoku_hint_chain_long_body">Un animal dans la case au X pâle forcerait d\'autres animaux à leur place et ne laisserait aucune case libre dans %1$s. Marque cette case d\'un X.</string>
     <string name="animaldoku_hint_wrong_mark_body">Cette case est marquée d\'un X, mais un animal doit s\'y trouver. Appuie dessus pour effacer la marque.</string>
     <string name="animaldoku_hint_reveal_body">Il ne reste aucune étape simple à partir d\'ici. Un animal va dans la case en surbrillance.</string>
     <string name="animaldoku_loss_abandoned_eyebrow">Puzzle terminé</string>

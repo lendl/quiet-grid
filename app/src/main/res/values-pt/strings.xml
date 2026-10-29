@@ -913,8 +913,6 @@
     <string name="animaldoku_hint_line_confined_to_region_body">Todas as células livres %1$s ficam %2$s, então o animal dessa região está %1$s. Marque com X o resto da região.</string>
     <string name="animaldoku_hint_regions_fill_lines_body">As células livres %1$s ficam todas %2$s, então os animais dessas regiões ocupam esses espaços. Marque com X as outras células %2$s.</string>
     <string name="animaldoku_hint_lines_fill_regions_body">As células livres %1$s ficam todas %2$s, então os animais dessas regiões estão ali. Marque com X o resto dessas regiões.</string>
-    <string name="animaldoku_hint_chain_body">Um animal na célula com o X apagado não deixaria nenhuma célula livre %1$s. Marque essa célula com X.</string>
-    <string name="animaldoku_hint_chain_long_body">Um animal na célula com o X apagado forçaria outros animais a seus lugares e não deixaria nenhuma célula livre %1$s. Marque essa célula com X.</string>
     <string name="animaldoku_hint_wrong_mark_body">Esta célula está marcada com X, mas aqui vai um animal. Toque nela para tirar a marca.</string>
     <string name="animaldoku_hint_reveal_body">Daqui não resta nenhum passo simples. Um animal vai na célula destacada.</string>
     <string name="animaldoku_loss_abandoned_eyebrow">Quebra-cabeça encerrado</string>

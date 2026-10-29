@@ -6,6 +6,7 @@ import com.quietgrid.engine.animaldoku.AnimalDokuHint
 import com.quietgrid.engine.animaldoku.AnimalDokuPuzzleEntry
 import com.quietgrid.engine.animaldoku.AnimalDokuStep
 import com.quietgrid.engine.animaldoku.AnimalDokuTechnique
+import com.quietgrid.engine.animaldoku.AnimalDokuUnit
 import com.quietgrid.engine.animaldoku.AnimalDokuUnitKind
 import com.quietgrid.engine.animaldoku.cells
 import com.quietgrid.engine.animaldoku.findAnimalDokuHint
@@ -96,18 +97,90 @@ fun findAnimalDokuCellsHint(puzzle: AnimalDokuPuzzleEntry, cells: List<List<Anim
 
 fun animalDokuHintHighlight(hint: AnimalDokuHint, regions: List<List<Int>>): AnimalDokuHintHighlight = when (hint) {
     is AnimalDokuHint.WrongMark -> AnimalDokuHintHighlight(focusCells = setOf(hint.row to hint.col))
-    is AnimalDokuHint.Reveal -> AnimalDokuHintHighlight(focusCells = setOf(hint.row to hint.col), animalCell = hint.row to hint.col)
+    is AnimalDokuHint.Reveal -> AnimalDokuHintHighlight(focusCells = setOf(hint.row to hint.col), animalCells = listOf(hint.row to hint.col))
     is AnimalDokuHint.Deduction -> when (val step = hint.step) {
         is AnimalDokuStep.Placement -> AnimalDokuHintHighlight(
             focusCells = hint.openCells + (step.row to step.col),
             unitCells = step.unit.cells(regions).toSet(),
-            animalCell = step.row to step.col,
+            animalCells = listOf(step.row to step.col),
         )
-        is AnimalDokuStep.Elimination -> AnimalDokuHintHighlight(
-            focusCells = hint.openCells + step.cells,
-            unitCells = (step.sources + step.targets).flatMap { it.cells(regions) }.toSet(),
-            crossCells = step.cells.toSet(),
+        is AnimalDokuStep.Elimination -> if (step.technique == AnimalDokuTechnique.CHAIN) {
+            AnimalDokuHintHighlight(
+                focusCells = hint.openCells + step.cells,
+                unitCells = step.sources.flatMap { it.cells(regions) }.toSet(),
+                animalCells = step.cells,
+            )
+        } else {
+            AnimalDokuHintHighlight(
+                focusCells = hint.openCells + step.cells,
+                unitCells = (step.sources + step.targets).flatMap { it.cells(regions) }.toSet(),
+                crossCells = step.cells.toSet(),
+            )
+        }
+    }
+}
+
+private val AnimalDokuHint.chain: AnimalDokuStep.Elimination?
+    get() = ((this as? AnimalDokuHint.Deduction)?.step as? AnimalDokuStep.Elimination)?.takeIf { it.technique == AnimalDokuTechnique.CHAIN }
+
+fun animalDokuChainFrameCount(hint: AnimalDokuHint): Int = hint.chain?.let { it.forced.size + 3 } ?: 0
+
+fun animalDokuChainFrameCopy(hint: AnimalDokuHint, frame: Int): AnimalDokuHintCopy {
+    val chain = hint.chain ?: return animalDokuHintCopy(hint)
+    val forced = chain.forced
+    return when {
+        frame == 0 -> AnimalDokuHintCopy(R.string.animaldoku_chain_suppose_title, R.string.animaldoku_chain_suppose_body)
+        frame <= forced.size -> AnimalDokuHintCopy(
+            if (frame == 1) R.string.animaldoku_chain_forced_title else R.string.animaldoku_chain_forced_again_title,
+            R.string.animaldoku_chain_forced_body,
+            listOf(listOf(forced[frame - 1].unit)),
         )
+        frame == forced.size + 1 -> AnimalDokuHintCopy(R.string.animaldoku_chain_stuck_title, R.string.animaldoku_chain_stuck_body, listOf(chain.sources))
+        else -> AnimalDokuHintCopy(R.string.animaldoku_chain_conclusion_title, R.string.animaldoku_chain_conclusion_body)
+    }
+}
+
+fun animalDokuChainFrameHighlight(hint: AnimalDokuHint, regions: List<List<Int>>, frame: Int): AnimalDokuHintHighlight {
+    val chain = hint.chain ?: return animalDokuHintHighlight(hint, regions)
+    val chainOpenCells = (hint as AnimalDokuHint.Deduction).chainOpenCells
+    val tried = chain.cells.single()
+    val triedRegion = AnimalDokuUnit(AnimalDokuUnitKind.REGION, regions[tried.first][tried.second]).cells(regions).toSet()
+    val forced = chain.forced
+    fun animalsUpTo(count: Int) = listOf(tried) + forced.take(count).map { it.row to it.col }
+    fun openCellsIn(unit: AnimalDokuUnit) = unit.cells(regions).filter { it in chainOpenCells }.toSet()
+
+    return when {
+        frame == 0 -> AnimalDokuHintHighlight(
+            focusCells = setOf(tried),
+            unitCells = triedRegion,
+            animalCells = listOf(tried),
+            numberedAnimals = true,
+        )
+        frame <= forced.size -> {
+            val link = forced[frame - 1]
+            val open = openCellsIn(link.unit)
+            val animals = animalsUpTo(frame)
+            AnimalDokuHintHighlight(
+                focusCells = open + animals,
+                unitCells = link.unit.cells(regions).toSet(),
+                crossCells = open - (link.row to link.col),
+                animalCells = animals,
+                numberedAnimals = true,
+            )
+        }
+        frame == forced.size + 1 -> {
+            val emptyUnit = chain.sources.single()
+            val open = openCellsIn(emptyUnit)
+            val animals = animalsUpTo(forced.size)
+            AnimalDokuHintHighlight(
+                focusCells = open + animals,
+                unitCells = emptyUnit.cells(regions).toSet(),
+                crossCells = open,
+                animalCells = animals,
+                numberedAnimals = true,
+            )
+        }
+        else -> AnimalDokuHintHighlight(focusCells = setOf(tried), unitCells = triedRegion, crossCells = setOf(tried))
     }
 }
 

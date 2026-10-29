@@ -27,13 +27,14 @@ fun AnalyzerNavigationControls(
     onNext: () -> Unit,
     onTogglePlay: () -> Unit,
     modifier: Modifier = Modifier,
+    canGoBack: Boolean = currentIndex > 0,
 ) {
     Row(
         modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        IconButton(onClick = onBack, enabled = currentIndex > 0) {
+        IconButton(onClick = onBack, enabled = canGoBack) {
             Icon(Icons.Filled.SkipPrevious, contentDescription = stringResource(R.string.analyzer_back))
         }
         Text(

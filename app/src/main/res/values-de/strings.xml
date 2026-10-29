@@ -938,8 +938,6 @@
     <string name="animaldoku_hint_line_confined_to_region_body">Alle offenen Zellen in %1$s liegen in %2$s, also steht das Tier dieser Region in %1$s. Markiere den Rest der Region mit X.</string>
     <string name="animaldoku_hint_regions_fill_lines_body">Die offenen Zellen in %1$s liegen alle in %2$s, also gehören diese Linien ihnen. Markiere die anderen Zellen in %2$s mit X.</string>
     <string name="animaldoku_hint_lines_fill_regions_body">Die offenen Zellen in %1$s liegen alle in %2$s, also stehen die Tiere dieser Regionen dort. Markiere den Rest dieser Regionen mit X.</string>
-    <string name="animaldoku_hint_chain_body">Ein Tier in der Zelle mit dem blassen X ließe in %1$s keine offene Zelle übrig. Markiere diese Zelle mit X.</string>
-    <string name="animaldoku_hint_chain_long_body">Ein Tier in der Zelle mit dem blassen X würde andere Tiere festlegen und in %1$s keine offene Zelle übrig lassen. Markiere diese Zelle mit X.</string>
     <string name="animaldoku_hint_wrong_mark_body">Diese Zelle ist mit X markiert, aber hier gehört ein Tier hin. Tippe darauf, um die Markierung zu entfernen.</string>
     <string name="animaldoku_hint_reveal_body">Von hier aus gibt es keinen einfachen Schritt mehr. In die hervorgehobene Zelle gehört ein Tier.</string>
     <string name="animaldoku_loss_abandoned_eyebrow">Rätsel beendet</string>

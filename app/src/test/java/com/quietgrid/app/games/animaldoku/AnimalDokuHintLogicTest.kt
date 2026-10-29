@@ -40,7 +40,104 @@ private fun elimination(
     chainDepth: Int = 0,
 ) = AnimalDokuHint.Deduction(AnimalDokuStep.Elimination(listOf(0 to 0), technique, sources, targets, chainDepth), setOf(1 to 1))
 
+private val CHAIN_HINT = AnimalDokuHint.Deduction(
+    AnimalDokuStep.Elimination(
+        listOf(0 to 0),
+        AnimalDokuTechnique.CHAIN,
+        sources = listOf(region(3)),
+        targets = emptyList(),
+        chainDepth = 2,
+        forced = listOf(AnimalDokuStep.Placement(2, 3, AnimalDokuTechnique.SINGLETON, row(2))),
+    ),
+    openCells = setOf(3 to 2, 3 to 3),
+    chainOpenCells = setOf(2 to 2, 2 to 3, 2 to 4, 3 to 2, 3 to 3),
+)
+
 class AnimalDokuHintLogicTest {
+    @Test
+    fun `a chain has a frame to suppose, one per forced animal, one when stuck and one to conclude`() {
+        assertEquals(4, animalDokuChainFrameCount(CHAIN_HINT))
+        assertEquals(0, animalDokuChainFrameCount(elimination(listOf(region(0)), listOf(row(3)))))
+        assertEquals(0, animalDokuChainFrameCount(AnimalDokuHint.Reveal(1, 1)))
+    }
+
+    @Test
+    fun `chain frame copy names the unit each frame is about`() {
+        assertEquals(
+            AnimalDokuHintCopy(R.string.animaldoku_chain_suppose_title, R.string.animaldoku_chain_suppose_body),
+            animalDokuChainFrameCopy(CHAIN_HINT, 0),
+        )
+        assertEquals(
+            AnimalDokuHintCopy(R.string.animaldoku_chain_forced_title, R.string.animaldoku_chain_forced_body, listOf(listOf(row(2)))),
+            animalDokuChainFrameCopy(CHAIN_HINT, 1),
+        )
+        assertEquals(
+            AnimalDokuHintCopy(R.string.animaldoku_chain_stuck_title, R.string.animaldoku_chain_stuck_body, listOf(listOf(region(3)))),
+            animalDokuChainFrameCopy(CHAIN_HINT, 2),
+        )
+        assertEquals(
+            AnimalDokuHintCopy(R.string.animaldoku_chain_conclusion_title, R.string.animaldoku_chain_conclusion_body),
+            animalDokuChainFrameCopy(CHAIN_HINT, 3),
+        )
+    }
+
+    @Test
+    fun `later forced animals get their own title`() {
+        val longer = CHAIN_HINT.copy(
+            step = (CHAIN_HINT.step as AnimalDokuStep.Elimination).let {
+                it.copy(forced = it.forced + AnimalDokuStep.Placement(4, 4, AnimalDokuTechnique.SINGLETON, column(4)), chainDepth = 3)
+            },
+        )
+        assertEquals(R.string.animaldoku_chain_forced_title, animalDokuChainFrameCopy(longer, 1).titleRes)
+        assertEquals(R.string.animaldoku_chain_forced_again_title, animalDokuChainFrameCopy(longer, 2).titleRes)
+    }
+
+    @Test
+    fun `the suppose frame shows a numbered faded animal on the tried cell`() {
+        val highlight = animalDokuChainFrameHighlight(CHAIN_HINT, HINT_PUZZLE.regions, 0)
+        assertEquals(listOf(0 to 0), highlight.animalCells)
+        assertTrue(highlight.numberedAnimals)
+        assertTrue(highlight.crossCells.isEmpty())
+        assertEquals(AnimalDokuHintTone.FOCUS, highlight.toneOf(0 to 0))
+        assertEquals(AnimalDokuHintTone.CONTEXT, highlight.toneOf(2 to 1))
+        assertEquals(AnimalDokuHintTone.DIMMED, highlight.toneOf(4 to 4))
+    }
+
+    @Test
+    fun `a forced frame crosses the open cells the animals block and adds the forced animal`() {
+        val highlight = animalDokuChainFrameHighlight(CHAIN_HINT, HINT_PUZZLE.regions, 1)
+        assertEquals(listOf(0 to 0, 2 to 3), highlight.animalCells)
+        assertEquals(setOf(2 to 2, 2 to 4), highlight.crossCells)
+        assertEquals(AnimalDokuHintTone.FOCUS, highlight.toneOf(2 to 2))
+        assertEquals(AnimalDokuHintTone.FOCUS, highlight.toneOf(0 to 0))
+        assertEquals(AnimalDokuHintTone.CONTEXT, highlight.toneOf(2 to 0))
+        assertEquals(AnimalDokuHintTone.DIMMED, highlight.toneOf(3 to 2))
+    }
+
+    @Test
+    fun `the stuck frame crosses every open cell of the unit left without room`() {
+        val highlight = animalDokuChainFrameHighlight(CHAIN_HINT, HINT_PUZZLE.regions, 2)
+        assertEquals(listOf(0 to 0, 2 to 3), highlight.animalCells)
+        assertEquals(setOf(3 to 2, 3 to 3), highlight.crossCells)
+        assertEquals(AnimalDokuHintTone.FOCUS, highlight.toneOf(3 to 3))
+    }
+
+    @Test
+    fun `the conclusion frame drops the faded animals and crosses the tried cell`() {
+        val highlight = animalDokuChainFrameHighlight(CHAIN_HINT, HINT_PUZZLE.regions, 3)
+        assertTrue(highlight.animalCells.isEmpty())
+        assertEquals(setOf(0 to 0), highlight.crossCells)
+    }
+
+    @Test
+    fun `the chain summary shows a faded animal on the tried cell instead of an X`() {
+        val highlight = animalDokuHintHighlight(CHAIN_HINT, HINT_PUZZLE.regions)
+        assertEquals(listOf(0 to 0), highlight.animalCells)
+        assertTrue(highlight.crossCells.isEmpty())
+        assertEquals(AnimalDokuHintTone.FOCUS, highlight.toneOf(3 to 2))
+        assertEquals(AnimalDokuHintTone.FOCUS, highlight.toneOf(0 to 0))
+    }
+
     @Test
     fun `an X on an animal's cell becomes a wrong mark hint`() {
         val session = createAnimalDokuSession(HINT_PUZZLE).withCell(2, 4, AnimalDokuCellState.MARKED)
@@ -83,7 +180,7 @@ class AnimalDokuHintLogicTest {
     fun `placement highlight shows the animal in its unit`() {
         val hint = AnimalDokuHint.Deduction(AnimalDokuStep.Placement(2, 4, AnimalDokuTechnique.SINGLETON, column(4)), setOf(2 to 4))
         val highlight = animalDokuHintHighlight(hint, HINT_PUZZLE.regions)
-        assertEquals(2 to 4, highlight.animalCell)
+        assertEquals(listOf(2 to 4), highlight.animalCells)
         assertEquals(AnimalDokuHintTone.FOCUS, highlight.toneOf(2 to 4))
         assertEquals(AnimalDokuHintTone.CONTEXT, highlight.toneOf(0 to 4))
         assertEquals(AnimalDokuHintTone.DIMMED, highlight.toneOf(2 to 3))
@@ -95,7 +192,7 @@ class AnimalDokuHintLogicTest {
         assertEquals(AnimalDokuHintTone.FOCUS, wrong.toneOf(2 to 4))
         assertEquals(AnimalDokuHintTone.DIMMED, wrong.toneOf(2 to 3))
         val reveal = animalDokuHintHighlight(AnimalDokuHint.Reveal(1, 1), HINT_PUZZLE.regions)
-        assertEquals(1 to 1, reveal.animalCell)
+        assertEquals(listOf(1 to 1), reveal.animalCells)
         assertEquals(AnimalDokuHintTone.DIMMED, reveal.toneOf(0 to 0))
     }
 

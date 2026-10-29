@@ -2,7 +2,11 @@ package com.quietgrid.engine.animaldoku
 
 sealed interface AnimalDokuHint {
     data class WrongMark(val row: Int, val col: Int) : AnimalDokuHint
-    data class Deduction(val step: AnimalDokuStep, val openCells: Set<Pair<Int, Int>>) : AnimalDokuHint
+    data class Deduction(
+        val step: AnimalDokuStep,
+        val openCells: Set<Pair<Int, Int>>,
+        val chainOpenCells: Set<Pair<Int, Int>> = emptySet(),
+    ) : AnimalDokuHint
     data class Reveal(val row: Int, val col: Int) : AnimalDokuHint
 }
 
@@ -29,8 +33,16 @@ fun findAnimalDokuHint(
     correct.forEach { (row, col) -> state.place(row, col) }
     excluded.forEach { (row, col) -> state.eliminated[row][col] = true }
 
-    val step = nextAnimalDokuStep(state, maxPairingK)
-    if (step != null) return AnimalDokuHint.Deduction(step, step.sourceUnits.flatMap { state.candidatesIn(it) }.toSet())
+    val step = nextAnimalDokuStep(state, maxPairingK, shortestChain = true)
+    if (step != null) {
+        val chain = (step as? AnimalDokuStep.Elimination)?.takeIf { it.technique == AnimalDokuTechnique.CHAIN }
+        val chainUnits = chain?.let { it.forced.map { link -> link.unit } + it.sources }.orEmpty()
+        return AnimalDokuHint.Deduction(
+            step,
+            openCells = step.sourceUnits.flatMap { state.candidatesIn(it) }.toSet(),
+            chainOpenCells = chainUnits.flatMap { state.candidatesIn(it) }.toSet(),
+        )
+    }
 
     val placedRows = correct.map { it.first }.toSet()
     val row = (0 until size).first { it !in placedRows }

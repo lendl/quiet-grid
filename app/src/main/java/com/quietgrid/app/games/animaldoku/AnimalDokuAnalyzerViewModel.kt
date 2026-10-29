@@ -24,6 +24,8 @@ class AnimalDokuAnalyzerViewModel @AssistedInject constructor(
         fun create(snapshot: String?): AnimalDokuAnalyzerViewModel
     }
 
+    override fun detailFrameCount(hint: AnimalDokuHint): Int = animalDokuChainFrameCount(hint)
+
     override fun computeInitialState(): AnalyzerState<AnimalDokuPuzzleEntry, List<List<AnimalDokuCellState>>, AnimalDokuHint> {
         val persisted = snapshot?.let { runCatching { json.decodeFromString<AnimalDokuPersistedSession>(it) }.getOrNull() }
             ?: return AnalyzerState.LoadFailed

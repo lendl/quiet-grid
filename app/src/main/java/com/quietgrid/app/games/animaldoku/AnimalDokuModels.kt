@@ -46,7 +46,8 @@ data class AnimalDokuHintHighlight(
     val focusCells: Set<Pair<Int, Int>>,
     val unitCells: Set<Pair<Int, Int>> = emptySet(),
     val crossCells: Set<Pair<Int, Int>> = emptySet(),
-    val animalCell: Pair<Int, Int>? = null,
+    val animalCells: List<Pair<Int, Int>> = emptyList(),
+    val numberedAnimals: Boolean = false,
 ) {
     fun toneOf(cell: Pair<Int, Int>): AnimalDokuHintTone = when (cell) {
         in focusCells -> AnimalDokuHintTone.FOCUS
