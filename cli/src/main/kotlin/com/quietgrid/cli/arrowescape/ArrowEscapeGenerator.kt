@@ -13,7 +13,7 @@ import com.quietgrid.engine.core.Difficulty
 import kotlin.random.Random
 
 const val ARROW_ESCAPE_EMPTY_CELL_TOLERANCE = 0.03
-const val ARROW_ESCAPE_SILHOUETTE_EXPERT_MIN_PIECES = 100
+const val ARROW_ESCAPE_SILHOUETTE_EXPERT_MIN_PIECES = 140
 private const val MAX_GENERATE_ATTEMPTS = 20
 
 data class ArrowEscapeGeneratedPuzzle(
@@ -39,14 +39,25 @@ val ARROW_ESCAPE_SIZE_RANGE_BY_DIFFICULTY: Map<Difficulty, IntRange> = mapOf(
     Difficulty.EASY to 10..12,
     Difficulty.MEDIUM to 12..14,
     Difficulty.HARD to 14..18,
-    Difficulty.EXPERT to 18..24,
+    Difficulty.EXPERT to 38..42,
 )
 
 val ARROW_ESCAPE_SILHOUETTE_CELL_RANGE_BY_DIFFICULTY: Map<Difficulty, IntRange> = mapOf(
     Difficulty.EASY to 100..144,
     Difficulty.MEDIUM to 324..576,
     Difficulty.HARD to 625..900,
-    Difficulty.EXPERT to 961..1369,
+    Difficulty.EXPERT to 1500..2100,
+)
+
+data class ArrowEscapeBoardLimit(val maxRows: Int, val maxCols: Int)
+
+private val DEFAULT_SILHOUETTE_BOARD_LIMIT = ArrowEscapeBoardLimit(maxRows = 60, maxCols = 45)
+
+val ARROW_ESCAPE_SILHOUETTE_BOARD_LIMIT_BY_DIFFICULTY: Map<Difficulty, ArrowEscapeBoardLimit> = mapOf(
+    Difficulty.EASY to DEFAULT_SILHOUETTE_BOARD_LIMIT,
+    Difficulty.MEDIUM to DEFAULT_SILHOUETTE_BOARD_LIMIT,
+    Difficulty.HARD to DEFAULT_SILHOUETTE_BOARD_LIMIT,
+    Difficulty.EXPERT to ArrowEscapeBoardLimit(maxRows = 80, maxCols = 60),
 )
 
 val ARROW_ESCAPE_FILL_PARAMS_BY_DIFFICULTY: Map<Difficulty, ArrowEscapeFillParams> = mapOf(
@@ -77,7 +88,8 @@ fun generateArrowEscapeSilhouettePuzzle(
     random: Random = Random.Default,
 ): ArrowEscapeGeneratedPuzzle? {
     val targetCells = ARROW_ESCAPE_SILHOUETTE_CELL_RANGE_BY_DIFFICULTY.getValue(targetDifficulty).random(random)
-    val mask = silhouetteBoardForCellTarget(silhouette, targetCells)
+    val limit = ARROW_ESCAPE_SILHOUETTE_BOARD_LIMIT_BY_DIFFICULTY.getValue(targetDifficulty)
+    val mask = silhouetteBoardForCellTarget(silhouette, targetCells, limit.maxRows, limit.maxCols)
     val params = ARROW_ESCAPE_SILHOUETTE_FILL_PARAMS_BY_DIFFICULTY.getValue(targetDifficulty)
     val minPieces = if (targetDifficulty == Difficulty.EXPERT) ARROW_ESCAPE_SILHOUETTE_EXPERT_MIN_PIECES else 0
     return generateArrowEscapePuzzleOnBoard(mask.rows, mask.cols, silhouette.id, mask, params, targetDifficulty, minPieces, random)
@@ -96,7 +108,12 @@ private fun generateArrowEscapePuzzleOnBoard(
     val activeCells = mask?.active?.map { it.row to it.col }?.toSet()
     repeat(MAX_GENERATE_ATTEMPTS) {
         val fillResult = fillCoverage(rows, cols, params, ARROW_ESCAPE_EMPTY_CELL_TOLERANCE, random, activeCells) ?: return@repeat
-        val pieces = fillResult.pieces
+        if (fillResult.pieces.size < minPieces) return@repeat
+        val pieces = if (targetDifficulty == Difficulty.EXPERT) {
+            reduceArrowEscapeTrail(fillResult.pieces, rows, cols, ARROW_ESCAPE_TRAIL_OPTIMIZER_PARAMS, random, minPieces)
+        } else {
+            fillResult.pieces
+        }
         if (pieces.size < minPieces) return@repeat
         if (!solveArrowEscape(pieces, rows, cols).solvable) return@repeat
         val profile = profileArrowEscapePuzzle(pieces, rows, cols, activeCells = mask?.active)

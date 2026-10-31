@@ -77,23 +77,25 @@ Knowing these steps explains most design rules below. The code is in `cli/src/ma
 1. **Sampling.** Each cell is sampled at 4x4 points. The cell is active when more than half the samples fall inside the shape.
 2. **Pinhole fill.** An empty pocket of 1-2 cells that doesn't touch the board edge gets filled.
 3. **Speck removal.** Any group of cells smaller than `max(4, 2% of active cells)` is removed. So is any cell with no active neighbour.
-4. **Growth.** The board starts at `minRows` and grows one row at a time until it reaches the tier's cell target. It stops at **60 rows or 45 columns**, whichever comes first.
+4. **Growth.** The board starts at `minRows` and grows one row at a time until it reaches the tier's cell target. It stops at the tier's size cap (`ARROW_ESCAPE_SILHOUETTE_BOARD_LIMIT_BY_DIFFICULTY`), whichever comes first.
 
-| Tier | Target active cells |
-|---|---|
-| Easy | 100-144 |
-| Medium | 324-576 |
-| Hard | 625-900 |
-| Expert | 961-1369 |
+| Tier | Target active cells | Size cap |
+|---|---|---|
+| Easy | 100-144 | 60 rows x 45 columns |
+| Medium | 324-576 | 60 rows x 45 columns |
+| Hard | 625-900 | 60 rows x 45 columns |
+| Expert | 1500-2100 | 80 rows x 60 columns |
 
-If the cap stops the growth before the target, the board stays smaller than its tier asks for. Avoid shapes that do this, because their Hard and Expert boards end up the same size.
+If the cap stops the growth before the target, the board stays smaller than its tier asks for. Avoid shapes that do this, because their boards end up smaller than the rest of the tier. A square shape tops out at about 1750 cells at the 60x60 Expert cap; only tall shapes reach the top of the Expert range.
 
-Every Expert puzzle must also hold at least 100 arrows (`ARROW_ESCAPE_SILHOUETTE_EXPERT_MIN_PIECES`). The generator throws away Expert fills with fewer arrows, and `ArrowEscapeBankVerificationTest` checks the bank for it. A shape that is too small for 100 arrows at the cap can't be Expert: generating it just reports 0 puzzles. The turtle is the only such shape in the bank, so it has no Expert puzzles. Fish, runner and sailboat stay below the Expert cell target but still reach 100 arrows with shorter arrows, which takes a few more attempts.
+Every Expert puzzle must also hold at least 140 arrows (`ARROW_ESCAPE_SILHOUETTE_EXPERT_MIN_PIECES`). The generator throws away Expert fills with fewer arrows, and `ArrowEscapeBankVerificationTest` checks the bank for it. A shape that is too small for 140 arrows at the cap can't be Expert: generating it just reports 0 puzzles. Wide shapes are the usual case: the turtle (991 cells at the cap) has no Expert puzzles, and fish (1172) and runner (1285) only reach 140 arrows on some fills.
+
+Expert also has to pass two gates in `classifyArrowEscapeDifficulty`, on top of the free-share floors: free share below `ARROW_ESCAPE_EXPERT_FREE_SHARE_CEILING` (0.15) and trail share at most `ARROW_ESCAPE_EXPERT_TRAIL_CEILING` (0.25). Trail share is how often a player who always takes the arrow next to the one just removed finds such an arrow. The generator lowers it with `reduceArrowEscapeTrail` after the fill. About a quarter of Expert fills pass, and the share depends on the shape: in calibration, rocket, octopus and elephant passed much less often than turtle, pine or runner.
 
 ## Design rules
 
-- **Square or tall.** Keep `width / height` at or below about 1.1. Wide shapes hit the 45-column cap early. A 100x62 turtle tops out at 573 cells, which is too small for both Hard and Expert.
-- **Fill at least 45% of the box.** At 45x45 a shape needs about 47% fill to reach the 961-cell Expert minimum. Rings, thin letters and stick figures fall short. Thicken them, or accept that they can't be Expert.
+- **Square or tall.** Keep `width / height` at or below about 1.1. Wide shapes hit the column cap early. A 100x62 turtle tops out at 573 cells at Hard's 45-column cap and 991 cells at Expert's 60-column cap, which is too small for both tiers.
+- **Fill at least 45% of the box.** At 60x60 a shape needs about 42% fill to reach the 1500-cell Expert minimum, and at 45x45 about 31% to reach Hard's 625. Rings, thin letters and stick figures fall short. Thicken them, or accept that they can't be Expert.
 - **No thin parts.** At `minRows`, every leg, stem, ear, handle and neck must be at least 2 cells thick. Thinner parts break off and are removed as specks, or they connect only through a corner. As a rule of thumb, nothing should be thinner than `height / minRows * 2` units.
 - **Holes must be big.** A cut hole needs to be at least 3 cells across at `minRows`. Smaller holes get filled, or show up only at some board sizes.
 - **No detail that depends on size.** The same shape is drawn at 12 rows and at 50 rows. If a feature shows only on big boards, the shape will look different between tiers. Leave it out.
@@ -137,7 +139,7 @@ Avoid these:
 
 | Shape | Problem |
 |---|---|
-| Whale, cloud, bat, car, train | Too wide; they hit the 45-column cap. |
+| Whale, cloud, bat, car, train | Too wide; they hit the column cap. |
 | Key, snowflake, music note, spider | Too thin; they break into specks on Easy boards. |
 | Faces, clocks, anything defined by inner detail | The detail never shows. |
 | Letters or text, except a deliberate multi-part logo | Too thin, and they read as text, not as a shape. |

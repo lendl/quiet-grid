@@ -343,7 +343,7 @@ fun main(args: Array<String>) {
                 if (state.hasTried(generated.dedupeKey)) continue
                 state.recordTried(generated.dedupeKey, "valid")
                 val profile = generated.profile
-                println("arrowescape audit: difficulty=$difficulty pieces=${profile.pieceCount} rounds=${profile.rounds} freeShare=${"%.2f".format(profile.freeShare)} borderExitShare=${"%.2f".format(profile.borderExitShare)}")
+                println("arrowescape audit: difficulty=$difficulty pieces=${profile.pieceCount} rounds=${profile.rounds} freeShare=${"%.2f".format(profile.freeShare)} trailShare=${"%.2f".format(profile.trailShare)} borderExitShare=${"%.2f".format(profile.borderExitShare)}")
                 val idPrefix = generated.shape?.let { "ae-$it-${generated.rows}x${generated.cols}" } ?: "ae${generated.rows}"
                 entries += toEntry("$idPrefix-${entries.size}-${System.nanoTime()}", generated)
             }

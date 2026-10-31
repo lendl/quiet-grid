@@ -9,11 +9,18 @@ data class ArrowEscapeDifficultyProfile(
     val freeShare: Double,
     val borderExitShare: Double,
     val meanBlockers: Double,
+    val trailShare: Double,
 )
 
 data class ArrowEscapeFreeShareFloors(val easy: Double, val medium: Double, val hard: Double)
 
 val ARROW_ESCAPE_FREE_SHARE_FLOORS = ArrowEscapeFreeShareFloors(easy = 0.52, medium = 0.40, hard = 0.29)
+
+const val ARROW_ESCAPE_EXPERT_TRAIL_CEILING = 0.25
+
+const val ARROW_ESCAPE_EXPERT_FREE_SHARE_CEILING = 0.15
+
+const val ARROW_ESCAPE_TRAIL_SIGHT = 3
 
 fun profileArrowEscapePuzzle(
     pieces: List<ArrowEscapePiece>,
@@ -35,17 +42,67 @@ fun profileArrowEscapePuzzle(
         freeShare = simulateFreeShare(graph, pieces.size, runs, random),
         borderExitShare = if (pieces.isEmpty()) 0.0 else borderExits.toDouble() / pieces.size,
         meanBlockers = if (blockerCounts.isEmpty()) 0.0 else blockerCounts.average(),
+        trailShare = simulateTrailShare(pieces, graph, rows, cols, runs, random),
     )
 }
 
 fun classifyArrowEscapeDifficulty(
     profile: ArrowEscapeDifficultyProfile,
     floors: ArrowEscapeFreeShareFloors = ARROW_ESCAPE_FREE_SHARE_FLOORS,
+    expertTrailCeiling: Double = ARROW_ESCAPE_EXPERT_TRAIL_CEILING,
+    expertFreeShareCeiling: Double = ARROW_ESCAPE_EXPERT_FREE_SHARE_CEILING,
 ): Difficulty = when {
     profile.freeShare >= floors.easy -> Difficulty.EASY
     profile.freeShare >= floors.medium -> Difficulty.MEDIUM
     profile.freeShare >= floors.hard -> Difficulty.HARD
+    profile.freeShare >= expertFreeShareCeiling -> Difficulty.HARD
+    profile.trailShare > expertTrailCeiling -> Difficulty.HARD
     else -> Difficulty.EXPERT
+}
+
+fun simulateTrailShare(
+    pieces: List<ArrowEscapePiece>,
+    graph: DependencyGraph,
+    rows: Int,
+    cols: Int,
+    runs: Int,
+    random: Random,
+): Double {
+    val owner = buildCellOwnerGrid(pieces, rows, cols)
+    val sightOwners = pieces.map { corridorOwners(it, owner, rows, cols, ARROW_ESCAPE_TRAIL_SIGHT).toIntArray() }
+    val pending = IntArray(pieces.size)
+    val free = IntArray(pieces.size)
+    val trail = IntArray(pieces.size)
+    var trailMoves = 0
+    var moves = 0
+    repeat(runs) {
+        var freeCount = 0
+        for (index in pieces.indices) {
+            pending[index] = graph.dependsOn[index].size
+            if (pending[index] == 0) free[freeCount++] = index
+        }
+        var last = -1
+        while (freeCount > 0) {
+            var trailCount = 0
+            if (last >= 0) {
+                for (slot in 0 until freeCount) {
+                    if (last in sightOwners[free[slot]]) trail[trailCount++] = free[slot]
+                }
+            }
+            val pick = if (trailCount > 0) trail[random.nextInt(trailCount)] else free[random.nextInt(freeCount)]
+            if (trailCount > 0) trailMoves += 1
+            moves += 1
+            val slot = (0 until freeCount).first { free[it] == pick }
+            free.copyInto(free, slot, slot + 1, freeCount)
+            freeCount--
+            last = pick
+            graph.blocks[pick].forEach { blocked ->
+                pending[blocked] -= 1
+                if (pending[blocked] == 0) free[freeCount++] = blocked
+            }
+        }
+    }
+    return if (moves == 0) 0.0 else trailMoves.toDouble() / moves
 }
 
 private fun freePieces(graph: DependencyGraph, totalPieces: Int, removed: Set<Int>): List<Int> =
