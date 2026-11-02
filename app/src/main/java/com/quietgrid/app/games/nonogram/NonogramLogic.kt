@@ -36,21 +36,16 @@ fun createNonogramSession(entry: NonogramPuzzleEntry): NonogramSession = Nonogra
     solution = entry.solution,
 )
 
-private fun isLineCorrectlyComplete(cells: List<NonogramCellValue>, clues: List<Int>, solutionLine: List<Boolean>): Boolean =
-    isNonogramLineComplete(cells, clues) && cells.indices.all { cells[it] != 1 || solutionLine[it] }
-
-private fun autoFillCompletedLines(board: List<MutableList<NonogramCellValue>>, puzzle: NonogramPuzzle, solution: List<List<Boolean>>) {
+private fun autoFillCompletedLines(board: List<MutableList<NonogramCellValue>>, puzzle: NonogramPuzzle) {
     puzzle.rowClues.forEachIndexed { rowIndex, clues ->
         val cells = board[rowIndex]
-        val solutionRow = solution[rowIndex]
-        if (isLineCorrectlyComplete(cells, clues, solutionRow)) {
+        if (isNonogramLineComplete(cells, clues)) {
             for (c in cells.indices) if (cells[c] == null) cells[c] = 0
         }
     }
     puzzle.colClues.forEachIndexed { colIndex, clues ->
         val cells = board.map { it[colIndex] }
-        val solutionCol = solution.map { it[colIndex] }
-        if (isLineCorrectlyComplete(cells, clues, solutionCol)) {
+        if (isNonogramLineComplete(cells, clues)) {
             for (r in board.indices) if (board[r][colIndex] == null) board[r][colIndex] = 0
         }
     }
@@ -68,7 +63,7 @@ fun applyNonogramTap(session: NonogramSession, row: Int, col: Int, mode: Nonogra
 
     val board = session.board.map { it.toMutableList() }.toMutableList()
     board[row][col] = next
-    autoFillCompletedLines(board, session.puzzle, session.solution)
+    autoFillCompletedLines(board, session.puzzle)
     return session.copy(board = board)
 }
 
@@ -84,7 +79,7 @@ fun applyNonogramPaint(session: NonogramSession, cells: List<Pair<Int, Int>>, va
         }
     }
     if (!changed) return null
-    autoFillCompletedLines(board, session.puzzle, session.solution)
+    autoFillCompletedLines(board, session.puzzle)
     return session.copy(board = board)
 }
 

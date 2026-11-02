@@ -92,6 +92,48 @@ class NonogramChallengerViewModelTest {
     }
 
     @Test
+    fun `dragging across both correct cells solves the puzzle`() {
+        val viewModel = newViewModel()
+
+        viewModel.onDragStart()
+        viewModel.onDragPaint(listOf(0 to 0))
+        viewModel.onDragPaint(listOf(1 to 1))
+
+        val session = checkNotNull(viewModel.session)
+        assertEquals(1, session.puzzlesSolved)
+        assertEquals(NONOGRAM_CHALLENGER_STARTING_LIVES, session.livesRemaining)
+    }
+
+    @Test
+    fun `a drag stops at its first wrong cell and costs one life`() {
+        val viewModel = newViewModel()
+
+        viewModel.onDragStart()
+        viewModel.onDragPaint(listOf(0 to 1))
+        viewModel.onDragPaint(listOf(1 to 0))
+        viewModel.onDragPaint(listOf(1 to 1))
+
+        val session = checkNotNull(viewModel.session)
+        assertEquals(NONOGRAM_CHALLENGER_STARTING_LIVES - 1, session.livesRemaining)
+        assertEquals(null, session.puzzleSession.board[1][0])
+        assertEquals(null, session.puzzleSession.board[1][1])
+    }
+
+    @Test
+    fun `a new drag after a wrong cell paints again`() {
+        val viewModel = newViewModel()
+
+        viewModel.onDragStart()
+        viewModel.onDragPaint(listOf(0 to 1))
+        viewModel.onDragStart()
+        viewModel.onDragPaint(listOf(0 to 0))
+
+        val session = checkNotNull(viewModel.session)
+        assertEquals(NONOGRAM_CHALLENGER_STARTING_LIVES - 1, session.livesRemaining)
+        assertEquals(1, session.puzzleSession.board[0][0])
+    }
+
+    @Test
     fun `three wrong taps on the same cell exhaust all lives and finalize the run`() {
         val statsStore = FakeStatsStore()
         val viewModel = newViewModel(statsStore)

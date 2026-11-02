@@ -95,4 +95,45 @@ class NonogramChallengerLogicTest {
         assertTrue(result.wasWrong)
         assertNull(result.session.puzzleSession.board[0][1])
     }
+
+    @Test
+    fun `applyNonogramChallengerPaint fills a correct cell and reports no wrongness`() {
+        val session = createInitialNonogramChallengerSession(testPuzzle("p1", "easy"))
+
+        val result = applyNonogramChallengerPaint(session, row = 0, col = 0, mode = NonogramInputMode.FILL)
+
+        assertFalse(result.wasWrong)
+        assertEquals(1, result.session.puzzleSession.board[0][0])
+    }
+
+    @Test
+    fun `applyNonogramChallengerPaint reports wrongness without filling a cell the solution marks blank`() {
+        val session = createInitialNonogramChallengerSession(testPuzzle("p1", "easy"))
+
+        val result = applyNonogramChallengerPaint(session, row = 0, col = 1, mode = NonogramInputMode.FILL)
+
+        assertTrue(result.wasWrong)
+        assertNull(result.session.puzzleSession.board[0][1])
+    }
+
+    @Test
+    fun `applyNonogramChallengerPaint never clears a filled cell in FILL mode`() {
+        val session = createInitialNonogramChallengerSession(testPuzzle("p1", "easy"))
+        val filled = applyNonogramChallengerPaint(session, row = 0, col = 0, mode = NonogramInputMode.FILL).session
+
+        val result = applyNonogramChallengerPaint(filled, row = 0, col = 0, mode = NonogramInputMode.FILL)
+
+        assertFalse(result.wasWrong)
+        assertEquals(1, result.session.puzzleSession.board[0][0])
+    }
+
+    @Test
+    fun `applyNonogramChallengerPaint crosses any cell in CROSS mode without wrongness`() {
+        val session = createInitialNonogramChallengerSession(testPuzzle("p1", "easy"))
+
+        val result = applyNonogramChallengerPaint(session, row = 0, col = 0, mode = NonogramInputMode.CROSS)
+
+        assertFalse(result.wasWrong)
+        assertEquals(0, result.session.puzzleSession.board[0][0])
+    }
 }

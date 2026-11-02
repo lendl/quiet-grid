@@ -78,3 +78,14 @@ fun applyNonogramChallengerTap(session: NonogramChallengerSession, row: Int, col
     val updatedPuzzleSession = applyNonogramTap(puzzleSession, row, col, mode) ?: puzzleSession
     return NonogramChallengerTapResult(session.copy(puzzleSession = updatedPuzzleSession), wasWrong = false)
 }
+
+fun applyNonogramChallengerPaint(session: NonogramChallengerSession, row: Int, col: Int, mode: NonogramInputMode): NonogramChallengerTapResult {
+    val puzzleSession = session.puzzleSession
+    val value = if (mode == NonogramInputMode.FILL) 1 else 0
+    if (puzzleSession.board[row][col] == value) return NonogramChallengerTapResult(session, wasWrong = false)
+    if (value == 1 && !puzzleSession.solution[row][col]) {
+        return NonogramChallengerTapResult(session, wasWrong = true)
+    }
+    val updatedPuzzleSession = applyNonogramPaint(puzzleSession, listOf(row to col), value) ?: puzzleSession
+    return NonogramChallengerTapResult(session.copy(puzzleSession = updatedPuzzleSession), wasWrong = false)
+}

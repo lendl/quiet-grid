@@ -38,6 +38,7 @@ fun NonogramBoard(
     board: NonogramGrid,
     onTap: (row: Int, col: Int) -> Unit,
     onDragPaint: (cells: List<Pair<Int, Int>>) -> Unit,
+    onDragStart: () -> Unit = {},
     hintEvidenceCells: Set<Pair<Int, Int>> = emptySet(),
     hintTargetCells: Map<Pair<Int, Int>, Int> = emptyMap(),
 ) {
@@ -114,6 +115,7 @@ fun NonogramBoard(
                                 val dy = change.position.y - down.position.y
                                 if (kotlin.math.sqrt(dx * dx + dy * dy) > touchSlop) {
                                     dragging = true
+                                    onDragStart()
                                     cellAt(startXDp, startYDp)?.let {
                                         visited.add(it)
                                         onDragPaint(listOf(it))

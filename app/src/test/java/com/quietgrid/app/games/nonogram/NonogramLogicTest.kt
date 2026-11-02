@@ -67,6 +67,16 @@ class NonogramLogicTest {
     }
 
     @Test
+    fun `completing a row in the wrong position still auto-fills its remaining blanks as crossed`() {
+        val session = createNonogramSession(entry)
+
+        val result = applyNonogramTap(session, row = 0, col = 1, mode = NonogramInputMode.FILL)!!
+
+        assertEquals(1, result.board[0][1])
+        assertEquals(0, result.board[0][0])
+    }
+
+    @Test
     fun `paint sets every listed cell to the given value`() {
         val session = createNonogramSession(entry)
 

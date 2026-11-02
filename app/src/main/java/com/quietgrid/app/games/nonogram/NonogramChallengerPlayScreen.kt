@@ -74,7 +74,8 @@ fun NonogramChallengerPlayScreen(
                         puzzle = current.puzzleSession.puzzle,
                         board = current.puzzleSession.board,
                         onTap = viewModel::onCellTap,
-                        onDragPaint = {},
+                        onDragPaint = viewModel::onDragPaint,
+                        onDragStart = viewModel::onDragStart,
                     )
                 }
             }

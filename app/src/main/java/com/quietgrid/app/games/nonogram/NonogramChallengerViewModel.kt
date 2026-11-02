@@ -52,11 +52,30 @@ class NonogramChallengerViewModel @Inject constructor(
         }
     }
 
-    fun onCellTap(row: Int, col: Int) {
-        if (controller.isFinalized) return
-        val current = session ?: return
-        val tapResult = applyNonogramChallengerTap(current, row, col, inputMode)
+    private var dragHalted = false
+    private var advancing = false
 
+    fun onCellTap(row: Int, col: Int) {
+        if (controller.isFinalized || advancing) return
+        val current = session ?: return
+        applyTapResult(current, applyNonogramChallengerTap(current, row, col, inputMode))
+    }
+
+    fun onDragStart() {
+        dragHalted = false
+    }
+
+    fun onDragPaint(cells: List<Pair<Int, Int>>) {
+        for ((row, col) in cells) {
+            if (controller.isFinalized || advancing || dragHalted) return
+            val current = session ?: return
+            val paintResult = applyNonogramChallengerPaint(current, row, col, inputMode)
+            if (paintResult.wasWrong) dragHalted = true
+            applyTapResult(current, paintResult)
+        }
+    }
+
+    private fun applyTapResult(current: NonogramChallengerSession, tapResult: NonogramChallengerTapResult) {
         if (tapResult.wasWrong) {
             wrongTapTrigger++
             val livesRemaining = current.livesRemaining - 1
@@ -74,6 +93,7 @@ class NonogramChallengerViewModel @Inject constructor(
 
     private fun onSolved(withTap: NonogramChallengerSession) {
         val (nextTier, nextSolvesInTier) = nonogramChallengerTierAfterSolve(withTap.tier, withTap.solvesInTier)
+        advancing = true
         viewModelScope.launch {
             val nextPuzzle = NonogramPuzzleBank.randomPuzzle(appContext, nextTier, withTap.servedPuzzleIds)
             if (nextPuzzle == null) {
@@ -87,6 +107,7 @@ class NonogramChallengerViewModel @Inject constructor(
                 controller.finalizeRun(credited, "bank_exhausted")
             } else {
                 controller.session = advanceNonogramChallengerAfterSolve(withTap, nextTier, nextSolvesInTier, nextPuzzle)
+                advancing = false
             }
         }
     }
