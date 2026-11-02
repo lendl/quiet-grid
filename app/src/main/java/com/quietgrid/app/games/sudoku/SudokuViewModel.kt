@@ -36,7 +36,7 @@ import kotlinx.serialization.json.Json
 
 private val json = Json { ignoreUnknownKeys = true }
 private const val VALIDATION_DELAY_MS = 800L
-private const val MAX_UNDO_HISTORY = 50
+internal const val MAX_UNDO_HISTORY = 50
 
 data class SudokuFeedbackEvent(val id: Int, val correct: Boolean, val incorrect: Boolean)
 
@@ -207,37 +207,19 @@ class SudokuPlayViewModel @AssistedInject constructor(
 
     fun onToggleNoteMode() {
         val current = session ?: return
-        if (current.autoCandidateMode) return
-        controller.updateSession(
-            current.copy(inputMode = if (current.inputMode == SudokuInputMode.DIGIT) SudokuInputMode.NOTES else SudokuInputMode.DIGIT),
-            persist = false,
-        )
+        val updated = applySudokuToggleNoteMode(current) ?: return
+        controller.updateSession(updated, persist = false)
     }
 
     fun onToggleAutoCandidateMode() {
         val current = session ?: return
-        val enabling = !current.autoCandidateMode
-        var updated = current.copy(autoCandidateMode = enabling)
-        updated = if (enabling) {
-            updated.copy(notes = computeSudokuAutoNotes(updated.board), inputMode = SudokuInputMode.DIGIT)
-        } else {
-            updated.copy(notes = current.notes.map { row -> row.map { emptySet<Int>() } })
-        }
-        controller.updateSession(updated)
+        controller.updateSession(applySudokuToggleAutoCandidateMode(current))
     }
 
     fun onPressDigit(digit: Int) {
         val current = session ?: return
         val (row, col) = selectedCell ?: return
-
-        val nextSession: SudokuSession? = if (current.inputMode == SudokuInputMode.NOTES) {
-            applySudokuToggleNote(current, row, col, digit)
-        } else if (current.board[row][col] == digit) {
-            applySudokuClearCell(current, row, col)
-        } else {
-            applySudokuSetDigit(current, row, col, digit)
-        }
-        val updated: SudokuSession = nextSession ?: return
+        val updated = applySudokuPressDigit(current, row, col, digit) ?: return
         pushUndoSnapshot(current)
         finishBoardMutation(current, updated, row, col)
     }
@@ -277,7 +259,7 @@ class SudokuPlayViewModel @AssistedInject constructor(
     private fun finishBoardMutation(previous: SudokuSession, updated: SudokuSession, row: Int, col: Int) {
         clearHint()
 
-        val finalUpdated = if (updated.autoCandidateMode) updated.copy(notes = computeSudokuAutoNotes(updated.board)) else updated
+        val finalUpdated = refreshSudokuAutoNotes(updated)
         controller.updateSession(finalUpdated)
 
         for (key in sudokuTouchedUnitKeys(row, col, SudokuLayout.forSize(finalUpdated.board.size))) {

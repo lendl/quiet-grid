@@ -40,6 +40,13 @@ class SudokuChallengerViewModel @Inject constructor(
 
     var wrongMoveTrigger by mutableStateOf(0)
         private set
+    var selectedCell by mutableStateOf<Pair<Int, Int>?>(null)
+        private set
+    var canUndo by mutableStateOf(false)
+        private set
+
+    private val undoHistory = mutableListOf<SudokuSession>()
+    private var advancing = false
 
     init {
         viewModelScope.launch {
@@ -50,18 +57,60 @@ class SudokuChallengerViewModel @Inject constructor(
         }
     }
 
-    fun onDigit(row: Int, col: Int, digit: Int) {
-        if (controller.isFinalized) return
-        val current = session ?: return
-        val updated = applySudokuSetDigit(current.puzzleSession, row, col, digit) ?: return
-        applyValidationAndAdvance(current, updated, row, col)
+    private val acceptsInput get() = !controller.isFinalized && !advancing
+
+    fun onCellPress(row: Int, col: Int) {
+        val puzzleSession = session?.puzzleSession ?: return
+        selectedCell = if (puzzleSession.puzzle.givens[row][col] != null || puzzleSession.finishedCells[row][col]) null else row to col
     }
 
-    fun onErase(row: Int, col: Int) {
-        if (controller.isFinalized) return
+    fun onToggleNoteMode() {
+        if (!acceptsInput) return
         val current = session ?: return
-        val updated = applySudokuClearCell(current.puzzleSession, row, col) ?: return
+        val updated = applySudokuToggleNoteMode(current.puzzleSession) ?: return
         controller.session = current.copy(puzzleSession = updated)
+    }
+
+    fun onToggleAutoCandidateMode() {
+        if (!acceptsInput) return
+        val current = session ?: return
+        controller.session = current.copy(puzzleSession = applySudokuToggleAutoCandidateMode(current.puzzleSession))
+    }
+
+    fun onPressDigit(digit: Int) {
+        if (!acceptsInput) return
+        val current = session ?: return
+        val (row, col) = selectedCell ?: return
+        val updated = applySudokuPressDigit(current.puzzleSession, row, col, digit) ?: return
+        commitMove(current, updated, row, col)
+    }
+
+    fun onClearCell() {
+        if (!acceptsInput) return
+        val current = session ?: return
+        val (row, col) = selectedCell ?: return
+        val updated = applySudokuClearCell(current.puzzleSession, row, col) ?: return
+        commitMove(current, updated, row, col)
+    }
+
+    fun onUndo() {
+        if (!acceptsInput) return
+        val current = session ?: return
+        val previous = undoHistory.removeLastOrNull() ?: return
+        canUndo = undoHistory.isNotEmpty()
+        controller.session = current.copy(puzzleSession = previous.copy(accuracyDrops = current.puzzleSession.accuracyDrops))
+    }
+
+    private fun commitMove(current: SudokuChallengerSession, updated: SudokuSession, row: Int, col: Int) {
+        undoHistory.add(current.puzzleSession)
+        if (undoHistory.size > MAX_UNDO_HISTORY) undoHistory.removeAt(0)
+        canUndo = true
+        val refreshed = refreshSudokuAutoNotes(updated)
+        if (refreshed.board[row][col] == null) {
+            controller.session = current.copy(puzzleSession = refreshed)
+        } else {
+            applyValidationAndAdvance(current, refreshed, row, col)
+        }
     }
 
     private fun applyValidationAndAdvance(current: SudokuChallengerSession, updatedPuzzleSession: SudokuSession, row: Int, col: Int) {
@@ -83,6 +132,7 @@ class SudokuChallengerViewModel @Inject constructor(
 
     private fun onSolved(withValidation: SudokuChallengerSession) {
         val (nextTier, nextSolvesInTier) = sudokuChallengerTierAfterSolve(withValidation.tier, withValidation.solvesInTier)
+        advancing = true
         viewModelScope.launch {
             val nextPuzzle = SudokuPuzzleBank.randomPuzzle(appContext, nextTier, withValidation.servedPuzzleIds)
             if (nextPuzzle == null) {
@@ -96,6 +146,10 @@ class SudokuChallengerViewModel @Inject constructor(
                 controller.finalizeRun(credited, "bank_exhausted")
             } else {
                 controller.session = advanceSudokuChallengerAfterSolve(withValidation, nextTier, nextSolvesInTier, nextPuzzle)
+                selectedCell = null
+                undoHistory.clear()
+                canUndo = false
+                advancing = false
             }
         }
     }

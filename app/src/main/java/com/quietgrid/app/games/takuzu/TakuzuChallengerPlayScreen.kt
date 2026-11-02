@@ -58,8 +58,8 @@ fun TakuzuChallengerPlayScreen(
             PuzzleBoardContainer(
                 visible = session != null,
                 playFresh = true,
-                zoomable = false,
                 flashTrigger = boardFlashTrigger,
+                resetTrigger = session?.puzzlesSolved ?: 0,
             ) {
                 session?.let { current ->
                     TakuzuBoard(

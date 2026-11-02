@@ -19,6 +19,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -39,6 +42,20 @@ private val testPuzzle = SudokuPuzzleEntry(
     id = "test",
     difficulty = "easy",
     givens = SOLVED_GRID.mapIndexed { r, row -> row.mapIndexed { c, v -> if (r == 0 && c == 0) null else v } },
+    solution = SOLVED_GRID,
+)
+
+private val twoEmptyPuzzle = SudokuPuzzleEntry(
+    id = "two-empty",
+    difficulty = "easy",
+    givens = SOLVED_GRID.mapIndexed { r, row -> row.mapIndexed { c, v -> if (r == 0 && c < 2) null else v } },
+    solution = SOLVED_GRID,
+)
+
+private val fourEmptyPuzzle = SudokuPuzzleEntry(
+    id = "four-empty",
+    difficulty = "easy",
+    givens = SOLVED_GRID.mapIndexed { r, row -> row.mapIndexed { c, v -> if (r < 2 && c < 2) null else v } },
     solution = SOLVED_GRID,
 )
 
@@ -78,7 +95,8 @@ class SudokuChallengerViewModelTest {
     fun `filling the last cell correctly solves the puzzle and advances with a bonus`() {
         val viewModel = newViewModel()
 
-        viewModel.onDigit(0, 0, 5)
+        viewModel.onCellPress(0, 0)
+        viewModel.onPressDigit(5)
 
         val session = viewModel.session
         checkNotNull(session)
@@ -89,13 +107,101 @@ class SudokuChallengerViewModelTest {
     }
 
     @Test
+    fun `pressing a given cell does not select it`() {
+        val viewModel = newViewModel()
+
+        viewModel.onCellPress(0, 1)
+
+        assertNull(viewModel.selectedCell)
+    }
+
+    @Test
+    fun `note mode adds a note without placing a digit or costing a life`() {
+        coEvery { SudokuPuzzleBank.randomPuzzle(any(), any(), any()) } returns twoEmptyPuzzle
+        val viewModel = newViewModel()
+
+        viewModel.onCellPress(0, 0)
+        viewModel.onToggleNoteMode()
+        viewModel.onPressDigit(7)
+
+        val puzzleSession = checkNotNull(viewModel.session).puzzleSession
+        assertNull(puzzleSession.board[0][0])
+        assertEquals(setOf(7), puzzleSession.notes[0][0])
+        assertEquals(SUDOKU_CHALLENGER_STARTING_LIVES, viewModel.session!!.livesRemaining)
+    }
+
+    @Test
+    fun `pressing the digit a cell already holds clears it`() {
+        coEvery { SudokuPuzzleBank.randomPuzzle(any(), any(), any()) } returns fourEmptyPuzzle
+        val viewModel = newViewModel()
+
+        viewModel.onCellPress(0, 0)
+        viewModel.onPressDigit(5)
+        viewModel.onPressDigit(5)
+
+        assertNull(checkNotNull(viewModel.session).puzzleSession.board[0][0])
+    }
+
+    @Test
+    fun `undo restores the previous board but keeps lives already lost`() {
+        coEvery { SudokuPuzzleBank.randomPuzzle(any(), any(), any()) } returns twoEmptyPuzzle
+        val viewModel = newViewModel()
+
+        viewModel.onCellPress(0, 0)
+        viewModel.onPressDigit(3)
+        val afterWrong = checkNotNull(viewModel.session)
+        assertEquals(SUDOKU_CHALLENGER_STARTING_LIVES - 1, afterWrong.livesRemaining)
+        assertTrue(viewModel.canUndo)
+
+        viewModel.onUndo()
+
+        val afterUndo = checkNotNull(viewModel.session)
+        assertNull(afterUndo.puzzleSession.board[0][0])
+        assertEquals(SUDOKU_CHALLENGER_STARTING_LIVES - 1, afterUndo.livesRemaining)
+        assertEquals(afterWrong.puzzleSession.accuracyDrops, afterUndo.puzzleSession.accuracyDrops)
+        assertFalse(viewModel.canUndo)
+    }
+
+    @Test
+    fun `auto candidates fill notes and stay on for the next puzzle`() {
+        coEvery { SudokuPuzzleBank.randomPuzzle(any(), any(), any()) } returns twoEmptyPuzzle
+        val viewModel = newViewModel()
+
+        viewModel.onToggleAutoCandidateMode()
+        assertEquals(setOf(5), checkNotNull(viewModel.session).puzzleSession.notes[0][0])
+
+        viewModel.onCellPress(0, 0)
+        viewModel.onPressDigit(5)
+        viewModel.onCellPress(0, 1)
+        viewModel.onPressDigit(3)
+
+        val next = checkNotNull(viewModel.session)
+        assertEquals(1, next.puzzlesSolved)
+        assertTrue(next.puzzleSession.autoCandidateMode)
+        assertEquals(setOf(5), next.puzzleSession.notes[0][0])
+    }
+
+    @Test
+    fun `loading the next puzzle clears the selection and undo history`() {
+        val viewModel = newViewModel()
+
+        viewModel.onCellPress(0, 0)
+        viewModel.onPressDigit(5)
+
+        assertEquals(1, checkNotNull(viewModel.session).puzzlesSolved)
+        assertNull(viewModel.selectedCell)
+        assertFalse(viewModel.canUndo)
+    }
+
+    @Test
     fun `filling the last cell wrong invalidates every touched unit at once and exhausts lives`() {
         val statsStore = FakeStatsStore()
         val viewModel = newViewModel(statsStore)
         val results = mutableListOf<ChallengerResult>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 
-        viewModel.onDigit(0, 0, 9)
+        viewModel.onCellPress(0, 0)
+        viewModel.onPressDigit(9)
 
         mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(500)
         mainDispatcherRule.dispatcher.scheduler.runCurrent()

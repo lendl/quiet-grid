@@ -102,6 +102,7 @@ fun WordGuessChallengerPlayScreen(
                                         viewModel.onSubmitGuess(currentInput) { invalidFlash = true; haptics.incorrectFeedback() }
                                     }
                                 },
+                                locale = puzzle.locale,
                             )
                         }
                     } else {

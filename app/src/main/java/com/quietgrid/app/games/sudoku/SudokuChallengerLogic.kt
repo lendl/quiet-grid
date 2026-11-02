@@ -40,8 +40,14 @@ fun advanceSudokuChallengerAfterSolve(
 ): SudokuChallengerSession {
     val gainedScore = sudokuScore(session.tier, session.secondsOnCurrentPuzzle.toInt(), session.puzzleSession.accuracyDrops)
     val fastestSolveSeconds = sudokuChallengerFastestSolve(session)
+    val fresh = createSudokuSession(nextPuzzle)
+    val nextPuzzleSession = if (session.puzzleSession.autoCandidateMode) {
+        applySudokuToggleAutoCandidateMode(fresh)
+    } else {
+        fresh.copy(inputMode = session.puzzleSession.inputMode)
+    }
     return session.copy(
-        puzzleSession = createSudokuSession(nextPuzzle),
+        puzzleSession = nextPuzzleSession,
         tier = nextTier,
         solvesInTier = nextSolvesInTier,
         puzzlesSolved = session.puzzlesSolved + 1,

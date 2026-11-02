@@ -79,6 +79,26 @@ fun applySudokuToggleNote(session: SudokuSession, row: Int, col: Int, digit: Int
     return session.copy(notes = notes)
 }
 
+fun applySudokuPressDigit(session: SudokuSession, row: Int, col: Int, digit: Int): SudokuSession? = when {
+    session.inputMode == SudokuInputMode.NOTES -> applySudokuToggleNote(session, row, col, digit)
+    session.board[row][col] == digit -> applySudokuClearCell(session, row, col)
+    else -> applySudokuSetDigit(session, row, col, digit)
+}
+
+fun applySudokuToggleNoteMode(session: SudokuSession): SudokuSession? {
+    if (session.autoCandidateMode) return null
+    return session.copy(inputMode = if (session.inputMode == SudokuInputMode.DIGIT) SudokuInputMode.NOTES else SudokuInputMode.DIGIT)
+}
+
+fun applySudokuToggleAutoCandidateMode(session: SudokuSession): SudokuSession = if (session.autoCandidateMode) {
+    session.copy(autoCandidateMode = false, notes = session.notes.map { row -> row.map { emptySet<Int>() } })
+} else {
+    session.copy(autoCandidateMode = true, notes = computeSudokuAutoNotes(session.board), inputMode = SudokuInputMode.DIGIT)
+}
+
+fun refreshSudokuAutoNotes(session: SudokuSession): SudokuSession =
+    if (session.autoCandidateMode) session.copy(notes = computeSudokuAutoNotes(session.board)) else session
+
 data class SudokuValidationEffect(
     val correctRowIndexes: List<Int>,
     val correctColIndexes: List<Int>,

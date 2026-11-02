@@ -30,7 +30,6 @@ fun SudokuChallengerPlayScreen(
 
     BackHandler { viewModel.endRun() }
 
-    var selectedCell by remember { mutableStateOf<Pair<Int, Int>?>(null) }
     val session = viewModel.session
     val haptics = rememberHapticController()
     var boardFlashTrigger by remember { mutableStateOf(0) }
@@ -60,16 +59,17 @@ fun SudokuChallengerPlayScreen(
         dockHeight = ::sudokuDockHeight,
         dock = { sizeClass ->
             if (session != null) {
-                val cell = selectedCell
                 SudokuDock(
                     sizeClass,
-                    SudokuDockModel(
-                        digitCount = session.puzzleSession.board.size,
-                        digitsEnabled = cell != null,
-                        clearEnabled = cell != null,
-                        isDigitActive = { false },
-                        onDigit = { digit -> cell?.let { (row, col) -> viewModel.onDigit(row, col, digit) } },
-                        onClear = { cell?.let { (row, col) -> viewModel.onErase(row, col) } },
+                    sudokuDockModel(
+                        session = session.puzzleSession,
+                        selectedCell = viewModel.selectedCell,
+                        canUndo = viewModel.canUndo,
+                        onDigit = viewModel::onPressDigit,
+                        onClear = viewModel::onClearCell,
+                        onToggleNoteMode = viewModel::onToggleNoteMode,
+                        onToggleAutoCandidateMode = viewModel::onToggleAutoCandidateMode,
+                        onUndo = viewModel::onUndo,
                     ),
                 )
             }
@@ -78,8 +78,8 @@ fun SudokuChallengerPlayScreen(
             PuzzleBoardContainer(
                 visible = session != null,
                 playFresh = true,
-                zoomable = false,
                 flashTrigger = boardFlashTrigger,
+                resetTrigger = session?.puzzlesSolved ?: 0,
             ) {
                 session?.let { current ->
                     SudokuGrid(
@@ -87,14 +87,14 @@ fun SudokuChallengerPlayScreen(
                         givens = current.puzzleSession.puzzle.givens,
                         notes = current.puzzleSession.notes,
                         finishedCells = current.puzzleSession.finishedCells,
-                        selectedCell = selectedCell,
+                        selectedCell = viewModel.selectedCell,
                         feedbackCorrectRows = emptySet(),
                         feedbackCorrectCols = emptySet(),
                         feedbackCorrectBoxes = emptySet(),
                         feedbackIncorrectRows = emptySet(),
                         feedbackIncorrectCols = emptySet(),
                         feedbackIncorrectBoxes = emptySet(),
-                        onCellPress = { row, col -> selectedCell = row to col },
+                        onCellPress = viewModel::onCellPress,
                     )
                 }
             }
