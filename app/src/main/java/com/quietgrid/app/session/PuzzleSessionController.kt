@@ -7,11 +7,15 @@ import androidx.compose.runtime.setValue
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.journey.JourneyRequest
+import com.quietgrid.app.core.journey.JourneySignals
 import com.quietgrid.app.data.ActiveSessionEnvelope
+import com.quietgrid.app.data.JourneyProgressStore
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.PlayRecord
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
+import com.quietgrid.app.data.journey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
@@ -46,12 +50,15 @@ class PuzzleSessionController<TSession, TResult>(
     private val adapter: PuzzleAdapter<TSession, TResult>,
     private val isAppForeground: () -> Boolean = ProcessAppForeground()::isForeground,
     private val animationsEnabled: () -> Boolean = ::systemAnimatorsEnabled,
+    private val journeyStore: JourneyProgressStore? = null,
 ) {
     var session by mutableStateOf<TSession?>(null)
         private set
     var elapsedSeconds by mutableStateOf(0.0)
         private set
     var dailyDate by mutableStateOf<LocalDate?>(null)
+        private set
+    var journey by mutableStateOf<JourneyRequest?>(null)
         private set
 
     val isFinalized: Boolean
@@ -66,14 +73,14 @@ class PuzzleSessionController<TSession, TResult>(
     private val _finishing = MutableStateFlow<FinishKind?>(null)
     val finishing: StateFlow<FinishKind?> = _finishing
 
-    fun start(requestedDifficulty: Difficulty, resume: Boolean, requestedDailyDate: LocalDate? = null) {
+    fun start(requestedDifficulty: Difficulty, resume: Boolean, requestedDailyDate: LocalDate? = null, journey: JourneyRequest? = null) {
         difficulty = requestedDifficulty
         scope.launch {
             session = if (resume) {
-                restoreOrCreate(requestedDifficulty, requestedDailyDate)
+                restoreOrCreate(requestedDifficulty, requestedDailyDate, journey)
             } else {
                 forfeitStaleDaily(requestedDifficulty, requestedDailyDate)
-                createFresh(requestedDifficulty, requestedDailyDate)
+                createFresh(requestedDifficulty, requestedDailyDate, journey)
             }
             runTicker()
         }
@@ -112,9 +119,11 @@ class PuzzleSessionController<TSession, TResult>(
                         lossReason = null,
                         dailyDate = dailyDate?.toString(),
                         shareDetail = if (dailyDate != null) adapter.dailyShareDetail(current) else null,
+                        journeyStop = journey?.stopId,
                     ),
                 )
             }
+            journey?.let { journeyStore?.recordWin(adapter.gameId, it.stopId, adapter.journeySignals(current), elapsedSeconds.toInt()) }
             sessionStore.clear()
             delay(foldHandoffMs())
             _result.emit(
@@ -128,6 +137,7 @@ class PuzzleSessionController<TSession, TResult>(
                         lossReason = null,
                         isFirstSolve = previous.solved == 0,
                         isNewHighScore = previous.solved > 0 && score > previous.bestScore,
+                        journeySignals = adapter.journeySignals(current),
                     ),
                 ),
             )
@@ -154,9 +164,11 @@ class PuzzleSessionController<TSession, TResult>(
                         lossReason = reason,
                         dailyDate = dailyDate?.toString(),
                         shareDetail = if (dailyDate != null) session?.let { adapter.dailyShareDetail(it) } else null,
+                        journeyStop = journey?.stopId,
                     ),
                 )
             }
+            if (reason != ABANDONED_REASON) journey?.let { journeyStore?.recordLoss(adapter.gameId, it.stopId) }
             sessionStore.clear()
             delay(foldHandoffMs())
             _result.emit(
@@ -170,6 +182,7 @@ class PuzzleSessionController<TSession, TResult>(
                         lossReason = reason,
                         isFirstSolve = false,
                         isNewHighScore = false,
+                        journeySignals = session?.let { adapter.journeySignals(it) } ?: JourneySignals(0, 0),
                     ),
                 ),
             )
@@ -178,7 +191,7 @@ class PuzzleSessionController<TSession, TResult>(
 
     private fun foldHandoffMs(): Long = if (animationsEnabled() && !FinishMotion.reduced) FOLD_HANDOFF_MS else 0L
 
-    private suspend fun restoreOrCreate(requestedDifficulty: Difficulty, requestedDailyDate: LocalDate?): TSession? {
+    private suspend fun restoreOrCreate(requestedDifficulty: Difficulty, requestedDailyDate: LocalDate?, requestedJourney: JourneyRequest?): TSession? {
         val envelope = sessionStore.activeSession.first()
         if (envelope != null && envelope.gameId == adapter.gameId.key && envelope.mode == null) {
             val restored = adapter.restoreSession(envelope.payload, envelope.elapsedSeconds)
@@ -186,18 +199,20 @@ class PuzzleSessionController<TSession, TResult>(
                 elapsedSeconds = envelope.elapsedSeconds
                 difficulty = adapter.difficultyOf(restored)
                 dailyDate = envelope.dailyDate?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
+                journey = envelope.journey
                 return restored
             }
         }
-        return createFresh(requestedDifficulty, requestedDailyDate)
+        return createFresh(requestedDifficulty, requestedDailyDate, requestedJourney)
     }
 
-    private suspend fun createFresh(requestedDifficulty: Difficulty, requestedDailyDate: LocalDate?): TSession? {
+    private suspend fun createFresh(requestedDifficulty: Difficulty, requestedDailyDate: LocalDate?, requestedJourney: JourneyRequest?): TSession? {
         dailyDate = requestedDailyDate
-        return if (requestedDailyDate != null) {
-            adapter.dailySession(requestedDifficulty, requestedDailyDate)
-        } else {
-            adapter.freshSession(requestedDifficulty)
+        journey = requestedJourney
+        return when {
+            requestedJourney != null -> adapter.journeySession(requestedDifficulty, requestedJourney.puzzleId, requestedJourney.transform)
+            requestedDailyDate != null -> adapter.dailySession(requestedDifficulty, requestedDailyDate)
+            else -> adapter.freshSession(requestedDifficulty)
         }
     }
 
@@ -266,6 +281,9 @@ class PuzzleSessionController<TSession, TResult>(
             dailyDate = dailyDate?.toString(),
             dailyTier = dailyDate?.let { difficulty.key },
             difficulty = difficulty.key,
+            journeyStopId = journey?.stopId,
+            journeyPuzzleId = journey?.puzzleId,
+            journeyTransform = journey?.transform ?: 0,
         )
     }
 

@@ -54,4 +54,12 @@ class ArgsTest {
         assertEquals(null, command.fillTo)
         assertEquals(Runtime.getRuntime().availableProcessors(), command.threads)
     }
+
+    @Test
+    fun `parses journey command with default out and scales paths`() {
+        assertEquals(
+            com.quietgrid.cli.journey.JourneyArgs("animaldoku", "app/src/main/assets", "cli/src/main/resources/journey_rating_scales.json"),
+            com.quietgrid.cli.journey.parseJourneyArgs(arrayOf("journey", "--game", "animaldoku")),
+        )
+    }
 }

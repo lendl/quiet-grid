@@ -65,6 +65,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.core.difficultyColor
 import com.quietgrid.app.core.formatElapsed
 import com.quietgrid.app.core.gameDifficultyLabelRes
+import com.quietgrid.app.core.journey.JOURNEY_GAMES
 import com.quietgrid.app.data.ActiveSessionEnvelope
 import com.quietgrid.app.data.DifficultyStats
 import com.quietgrid.app.data.RepositoriesViewModel
@@ -96,6 +97,7 @@ import com.quietgrid.app.ui.components.StatGroup
 import com.quietgrid.app.ui.components.StatItem
 import com.quietgrid.app.ui.components.QuickStartSheet
 import com.quietgrid.app.ui.components.ReplacePuzzleSheet
+import com.quietgrid.app.ui.journey.JourneyCard
 import kotlinx.coroutines.launch
 
 private enum class GamePageTab { PLAY, RULES, STATS, SETTINGS }
@@ -107,6 +109,7 @@ fun PuzzlePickerScreen(
     onResumeActiveGame: (GameId) -> Unit,
     onStartChallenger: () -> Unit,
     onStartEndless: () -> Unit = {},
+    onOpenJourney: (Int?) -> Unit = {},
 ) {
     val repositories: RepositoriesViewModel = hiltViewModel()
     val settings by repositories.settingsRepository.settings.collectAsState(initial = null)
@@ -207,6 +210,7 @@ fun PuzzlePickerScreen(
                     requestStartChallenger = requestStartChallenger,
                     requestStartEndless = requestStartEndless,
                     endlessCopy = endlessCopy,
+                    onOpenJourney = onOpenJourney,
                 )
                 GamePageTab.RULES -> HowToPlayScreen(gameId)
                 GamePageTab.STATS -> GameStatsTab(gameId, endlessCopy)
@@ -312,6 +316,7 @@ private fun GamePlayPickerTab(
     requestStartChallenger: () -> Unit,
     requestStartEndless: () -> Unit,
     endlessCopy: EndlessModeCopy?,
+    onOpenJourney: (Int?) -> Unit,
 ) {
     val repositories: RepositoriesViewModel = hiltViewModel()
     val stats by remember(repositories, gameId) { repositories.statsRepository.statsFor(gameId) }.collectAsState(initial = null)
@@ -333,6 +338,9 @@ private fun GamePlayPickerTab(
             )
             if (activeSession != null) {
                 ContinueButton(gameId, activeSession, endlessCopy, onResume)
+            }
+            if (gameId in JOURNEY_GAMES) {
+                JourneyCard(gameId, onOpen = onOpenJourney)
             }
             pickableDifficultiesFor(gameId).chunked(2).forEach { pair ->
                 Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(10.dp)) {

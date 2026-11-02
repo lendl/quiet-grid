@@ -2,6 +2,7 @@ package com.quietgrid.app.session
 
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.journey.JourneySignals
 import java.time.LocalDate
 
 data class PuzzleOutcome(
@@ -12,6 +13,7 @@ data class PuzzleOutcome(
     val lossReason: String?,
     val isFirstSolve: Boolean,
     val isNewHighScore: Boolean,
+    val journeySignals: JourneySignals = JourneySignals(0, 0),
 )
 
 interface PuzzleAdapter<TSession, TResult> {
@@ -38,4 +40,8 @@ interface PuzzleAdapter<TSession, TResult> {
     suspend fun dailySession(difficulty: Difficulty, date: LocalDate): TSession? = null
 
     fun dailyShareDetail(session: TSession): String? = null
+
+    suspend fun journeySession(difficulty: Difficulty, puzzleId: String, transform: Int): TSession? = null
+
+    fun journeySignals(session: TSession): JourneySignals = JourneySignals(0, 0)
 }

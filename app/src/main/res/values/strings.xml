@@ -2092,4 +2092,63 @@
     <string name="halloween_character_moon">Sleepy full moon</string>
     <string name="daily_reminder_title_halloween">Halloween puzzles</string>
     <string name="daily_reminder_text_halloween">A few quiet puzzles for Halloween: %1$s</string>
+    <string name="journey_title">Journey</string>
+    <string name="journey_chapter">Chapter %1$d</string>
+    <string name="journey_stop">Stop %1$d</string>
+    <string name="journey_continue">Continue</string>
+    <string name="journey_skipped">Skipped</string>
+    <string name="journey_up_next">Up next</string>
+    <string name="journey_play">Play</string>
+    <string name="journey_replay">Replay</string>
+    <string name="journey_skip">Skip</string>
+    <string name="journey_card_position">Chapter %1$d · Stop %2$d</string>
+    <string name="journey_card_stars">%1$d of %2$d stars</string>
+    <string name="journey_stop_description">Stop %1$d, %2$s, %3$s, %4$d of 3 stars</string>
+    <string name="journey_state_cleared">Cleared</string>
+    <string name="journey_state_open">Open</string>
+    <string name="journey_state_later">Opens later</string>
+    <string name="journey_complete">Every stop cleared</string>
+    <string name="journey_board_cleared">Board cleared</string>
+    <string name="journey_goal_clear">Clear the board</string>
+    <string name="journey_goal_clean">No hints or mistakes</string>
+    <string name="journey_goal_time">Under %1$s</string>
+    <string name="journey_next_stop">Next stop</string>
+    <string name="journey_replay_stars">Replay for 3 stars</string>
+    <string name="journey_map">Map</string>
+    <string name="journey_back_to_map">Back to map</string>
+    <string name="journey_best_stars">Best: %1$d of 3 stars</string>
+    <string name="journey_star_earned">Star earned</string>
+    <string name="journey_star_missed">Star not earned</string>
+    <string name="journey_goal_met">Met</string>
+    <string name="journey_goal_missed">Not met</string>
+    <plurals name="journey_hints">
+        <item quantity="one">%d hint</item>
+        <item quantity="other">%d hints</item>
+    </plurals>
+    <plurals name="journey_mistakes">
+        <item quantity="one">%d mistake</item>
+        <item quantity="other">%d mistakes</item>
+    </plurals>
+    <plurals name="journey_chapter_stop_count">
+        <item quantity="one">%1$d stop</item>
+        <item quantity="other">%1$d stops</item>
+    </plurals>
+    <string name="journey_chapter_tiers">%1$s to %2$s</string>
+    <string name="journey_chapter_complete">Complete</string>
+    <string name="journey_chapter_in_progress">In progress</string>
+    <string name="journey_chapter_open">Open</string>
+    <string name="journey_open_note">Every chapter is open.</string>
+    <string name="journey_chapter_description">Chapter %1$d, %2$s, %3$d of %4$d stars</string>
+    <string name="journey_map_star_count">%1$d/%2$d</string>
+    <string name="journey_stop_meta_arrows">%1$d×%2$d · %3$d arrows</string>
+    <string name="journey_stop_meta_grid">%1$d×%1$d</string>
+    <string name="journey_stop_target">target %1$s</string>
+    <plurals name="journey_stop_best">
+        <item quantity="one">Best %1$s · %2$d star</item>
+        <item quantity="other">Best %1$s · %2$d stars</item>
+    </plurals>
+    <string name="journey_stop_not_played">Not played yet</string>
+    <string name="journey_stop_skipped_now">Skipped for now</string>
+    <string name="journey_goal_chip_clear">Clear</string>
+    <string name="journey_goal_chip_clean">Clean</string>
 </resources>

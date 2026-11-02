@@ -44,6 +44,12 @@ object ArrowEscapePuzzleBank {
         return candidates.ifEmpty { pool }.random()
     }
 
+    suspend fun puzzleById(context: Context, difficulty: Difficulty, id: String): ArrowEscapePuzzleEntry? =
+        pool(context, tierBankAsset(difficulty), difficulty).firstOrNull { it.id == id }
+
+    suspend fun ratedPool(context: Context, difficulty: Difficulty): List<Pair<String, Int>> =
+        pool(context, tierBankAsset(difficulty), difficulty).mapNotNull { entry -> entry.rating?.let { entry.id to it } }
+
     suspend fun halloweenPuzzle(context: Context, difficulty: Difficulty, playedIds: Set<String>): ArrowEscapePuzzleEntry? =
         pool(context, HALLOWEEN_BANK_ASSET, difficulty).firstOrNull { it.id !in playedIds }
 }

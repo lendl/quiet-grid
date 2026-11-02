@@ -27,6 +27,7 @@ data class PlayRecordEntity(
     val puzzlesSolved: Int? = null,
     val dailyDate: String? = null,
     val shareDetail: String? = null,
+    val journeyStop: String? = null,
 )
 
 fun PlayRecord.toEntity(): PlayRecordEntity = PlayRecordEntity(
@@ -42,6 +43,7 @@ fun PlayRecord.toEntity(): PlayRecordEntity = PlayRecordEntity(
     puzzlesSolved = puzzlesSolved,
     dailyDate = dailyDate,
     shareDetail = shareDetail,
+    journeyStop = journeyStop,
 )
 
 fun PlayRecordEntity.toRecord(): PlayRecord = PlayRecord(
@@ -57,4 +59,5 @@ fun PlayRecordEntity.toRecord(): PlayRecord = PlayRecord(
     puzzlesSolved = puzzlesSolved,
     dailyDate = dailyDate,
     shareDetail = shareDetail,
+    journeyStop = journeyStop,
 )

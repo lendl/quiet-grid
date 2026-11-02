@@ -17,6 +17,7 @@ data class AnimalDokuSession(
     val cells: List<List<AnimalDokuCellState>>,
     val lives: Int,
     val status: AnimalDokuStatus,
+    val hintsUsed: Int = 0,
 )
 
 @Serializable
@@ -25,6 +26,7 @@ data class AnimalDokuPersistedSession(
     val cells: List<Int>,
     val lives: Int,
     val status: String,
+    val hintsUsed: Int = 0,
 )
 
 fun createAnimalDokuSession(puzzle: AnimalDokuPuzzleEntry): AnimalDokuSession = AnimalDokuSession(

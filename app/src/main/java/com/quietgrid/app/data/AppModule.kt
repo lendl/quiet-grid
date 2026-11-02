@@ -22,10 +22,13 @@ object AppModule {
     @Singleton
     fun provideQuietGridDatabase(@ApplicationContext context: Context): QuietGridDatabase =
         Room.databaseBuilder(context, QuietGridDatabase::class.java, "quiet_grid.db")
-            .addMigrations(MIGRATION_2_3)
+            .addMigrations(MIGRATION_2_3, MIGRATION_3_4)
             .fallbackToDestructiveMigration(dropAllTables = false)
             .build()
 
     @Provides
     fun providePlayHistoryDao(database: QuietGridDatabase): PlayHistoryDao = database.playHistoryDao()
+
+    @Provides
+    fun provideJourneyProgressDao(database: QuietGridDatabase): JourneyProgressDao = database.journeyProgressDao()
 }

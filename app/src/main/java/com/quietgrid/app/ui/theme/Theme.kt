@@ -18,6 +18,7 @@ import com.quietgrid.app.data.ThemeMode
 
 val LocalIsPencilTheme = compositionLocalOf { false }
 val LocalIsDarkTheme = compositionLocalOf { false }
+val LocalResolvedTheme = compositionLocalOf { ResolvedTheme.LIGHT }
 
 val PlusJakartaSans = FontFamily(
     Font(R.font.plus_jakarta_sans_regular, FontWeight.Normal),
@@ -300,6 +301,7 @@ fun QuietGridTheme(
     CompositionLocalProvider(
         LocalIsPencilTheme provides (resolvedTheme == ResolvedTheme.PENCIL),
         LocalIsDarkTheme provides (resolvedTheme == ResolvedTheme.DARK),
+        LocalResolvedTheme provides resolvedTheme,
     ) {
         MaterialTheme(
             colorScheme = colorScheme,

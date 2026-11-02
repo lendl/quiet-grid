@@ -1,5 +1,13 @@
 package com.quietgrid.app.nav
 
+import com.quietgrid.app.core.journey.JourneyRequest
+import com.quietgrid.app.ui.journey.JourneyResultScreen
+import com.quietgrid.app.ui.journey.JourneyScreen
+import com.quietgrid.app.ui.journey.JourneyViewModel
+import com.quietgrid.app.ui.journey.map.JourneyMapScreen
+import com.quietgrid.app.core.journey.loadJourneyFile
+import com.quietgrid.app.core.journey.locate
+import com.quietgrid.app.core.journey.JourneySignals
 import com.quietgrid.app.ui.screens.DailyScreen
 import com.quietgrid.app.ui.screens.DailyViewModel
 import androidx.compose.foundation.layout.fillMaxSize
@@ -181,6 +189,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
     val activeMixId by repositories.mixRepository.activeMixId.collectAsState(initial = null)
     val activeMix = mixes.firstOrNull { it.id == activeMixId }
     val resources = LocalContext.current.resources
+    val appContext = LocalContext.current.applicationContext
 
     fun playPreferencesFor(gameId: GameId) =
         resolveGamePlayPreferences(settings, gamePreferenceOverrides[gameId] ?: GamePreferenceOverrides())
@@ -191,9 +200,39 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
         navController.popBackStack(Routes.TABS, inclusive = false)
     }
 
-    fun resumeActiveRoute(gameId: GameId): String =
-        Routes.resume(ActiveSessionSummary(gameId.key, activeSessionState.value?.dailyDate, activeSessionState.value?.mode))
-            ?: Routes.play(gameId, Difficulty.EASY, resume = true)
+    fun journeyBackStack(): List<JourneyBackEntry> = navController.currentBackStack.value.map { entry ->
+        val route = entry.destination.route
+        JourneyBackEntry(route, entry.arguments?.getString("gameId"), if (route == Routes.JOURNEY_MAP) entry.arguments?.getInt("chapter") else null)
+    }
+
+    fun journeyAnchor(gameId: GameId): String = journeyAnchorRoute(gameId.key, journeyBackStack())
+
+    fun goToJourney(gameId: GameId, chapter: Int?) {
+        val plan = journeyReturnPlan(gameId, chapter, journeyBackStack())
+        navController.popBackStack(plan.popTo, inclusive = plan.inclusive)
+        plan.push.forEach { navController.navigate(it) }
+    }
+
+    fun returnToJourney(gameId: GameId, stopId: String) {
+        scope.launch {
+            val chapter = loadJourneyFile(appContext, gameId)?.locate(stopId)?.first?.index
+            goToJourney(gameId, chapter)
+        }
+    }
+
+    fun playJourneyStop(gameId: GameId, difficulty: Difficulty, request: JourneyRequest) {
+        val anchor = journeyAnchor(gameId)
+        navController.navigate(Routes.play(gameId, difficulty, resume = false, journey = request)) {
+            popUpTo(anchor) { inclusive = false }
+        }
+    }
+
+    fun resumeActiveRoute(gameId: GameId): String {
+        val active = activeSessionState.value
+        val summary = active?.copy(gameId = gameId.key, journey = active.journey.takeIf { active.gameId == gameId.key })
+            ?: ActiveSessionSummary(gameId.key, null)
+        return Routes.resume(summary) ?: Routes.play(gameId, Difficulty.EASY, resume = true)
+    }
 
     fun playNextDaily(next: Pair<GameId, Difficulty>?, dailyKey: String?) {
         val date = dailyKey?.let { runCatching { LocalDate.parse(it) }.getOrNull() } ?: return
@@ -312,11 +351,15 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                     title = stringResource(R.string.common_rules),
                     onBack = { navController.popBackStack() },
                 )
+                currentRoute == Routes.JOURNEY || currentRoute == Routes.JOURNEY_MAP -> AppTopBar(
+                    title = stringResource(R.string.journey_title),
+                    onBack = { navController.popBackStack() },
+                )
                 currentRoute == Routes.ANALYZER -> AppTopBar(
                     title = stringResource(R.string.analyzer_title),
                     onBack = { navController.popBackStack() },
                 )
-                currentRoute == Routes.COMPLETION || currentRoute == Routes.LOSS -> Unit
+                currentRoute == Routes.COMPLETION || currentRoute == Routes.LOSS || currentRoute == Routes.JOURNEY_RESULT -> Unit
                 currentRoute == Routes.CHALLENGER || currentRoute == Routes.CHALLENGER_RESULT -> Unit
                 currentRoute == Routes.ENDLESS || currentRoute == Routes.ENDLESS_RESULT || currentRoute == Routes.MINESWEEPER_ENDLESS_RESULT -> Unit
                 currentRoute == Routes.SUPPORT_INFO -> {
@@ -520,8 +563,46 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                             scope.launch { repositories.mixRepository.clearActiveMix() }
                             navController.navigate(Routes.endless(gameId, resume = false))
                         },
+                        onOpenJourney = { chapter ->
+                            navController.navigate(Routes.journey(gameId))
+                            if (chapter != null) navController.navigate(Routes.journeyMap(gameId, chapter))
+                        },
                     )
                 }
+            }
+
+            composable(
+                Routes.JOURNEY,
+                arguments = listOf(navArgument("gameId") { type = NavType.StringType }),
+                enterTransition = { fadeIn(animationSpec = tween(250)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) },
+            ) { entry ->
+                val journeyGameId = GameId.entries.firstOrNull { it.key == entry.arguments?.getString("gameId") } ?: return@composable
+                JourneyScreen(
+                    gameId = journeyGameId,
+                    onOpenChapter = { chapter -> navController.navigate(Routes.journeyMap(journeyGameId, chapter)) },
+                )
+            }
+
+            composable(
+                Routes.JOURNEY_MAP,
+                arguments = listOf(
+                    navArgument("gameId") { type = NavType.StringType },
+                    navArgument("chapter") { type = NavType.IntType },
+                ),
+                enterTransition = { fadeIn(animationSpec = tween(250)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) },
+            ) { entry ->
+                val mapGameId = GameId.entries.firstOrNull { it.key == entry.arguments?.getString("gameId") } ?: return@composable
+                JourneyMapScreen(
+                    gameId = mapGameId,
+                    chapter = entry.arguments?.getInt("chapter") ?: 1,
+                    onPlayStop = { difficulty, request ->
+                        scope.launch { repositories.mixRepository.clearActiveMix() }
+                        playJourneyStop(mapGameId, difficulty, request)
+                    },
+                    onResumeActiveGame = { activeGameId -> navController.navigate(resumeActiveRoute(activeGameId)) },
+                )
             }
 
             composable(
@@ -587,6 +668,9 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                     navArgument("difficulty") { type = NavType.StringType },
                     navArgument("resume") { type = NavType.BoolType },
                     navArgument("daily") { type = NavType.StringType; nullable = true; defaultValue = null },
+                    navArgument("journey") { type = NavType.StringType; nullable = true; defaultValue = null },
+                    navArgument("journeyPuzzle") { type = NavType.StringType; nullable = true; defaultValue = null },
+                    navArgument("transform") { type = NavType.IntType; defaultValue = 0 },
                 ),
                 enterTransition = { fadeIn(animationSpec = tween(250)) },
                 exitTransition = {
@@ -610,6 +694,19 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                     val gameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
                     val dailyKey = entry.arguments?.getString("daily")
                     val dailyDate = dailyKey?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
+                    val journeyRequest = entry.arguments?.getString("journey")?.let { stopId ->
+                        JourneyRequest(stopId, entry.arguments?.getString("journeyPuzzle") ?: stopId, entry.arguments?.getInt("transform") ?: 0)
+                    }
+
+                    fun finishJourney(stopId: String, solved: Boolean, resultDifficulty: Difficulty, elapsedSeconds: Int, reason: String?, score: Int, signals: JourneySignals) {
+                        val route = if (solved) {
+                            Routes.journeyResult(gameId, stopId, elapsedSeconds, signals)
+                        } else {
+                            Routes.loss(gameId, resultDifficulty, elapsedSeconds, reason ?: "abandoned", score, 0, journeyStop = stopId)
+                        }
+                        val anchor = journeyAnchor(gameId)
+                        navController.navigate(route) { popUpTo(anchor) { inclusive = false } }
+                    }
 
                     fun goToCompletion(resultDifficulty: Difficulty, score: Int, accuracyPct: Int, elapsedSeconds: Int, isFirstSolve: Boolean, isNewHighScore: Boolean, bestTile: Int) {
                         navController.navigate(
@@ -757,12 +854,15 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                         difficulty = difficulty,
                                         resume = resume,
                                         dailyDate = dailyDate,
+                                        journey = journeyRequest,
                                         onBack = { navController.popBackStack() },
                                         onFinished = { result ->
-                                            if (result.solved) {
+                                            if (!result.solved) AnalyzerHandoff.set(result.analyzerSnapshot)
+                                            if (journeyRequest != null) {
+                                                finishJourney(journeyRequest.stopId, result.solved, result.difficulty, result.elapsedSeconds, result.lossReason, result.score, result.journeySignals)
+                                            } else if (result.solved) {
                                                 goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
                                             } else {
-                                                AnalyzerHandoff.set(result.analyzerSnapshot)
                                                 goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
                                             }
                                         },
@@ -770,9 +870,12 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                     GameId.ARROWESCAPE -> ArrowEscapePlayScreen(
                                         difficulty = difficulty,
                                         resume = resume,
+                                        journey = journeyRequest,
                                         onBack = { navController.popBackStack() },
                                         onFinished = { result ->
-                                            if (result.solved) {
+                                            if (journeyRequest != null) {
+                                                finishJourney(journeyRequest.stopId, result.solved, result.difficulty, result.elapsedSeconds, result.lossReason, result.score, result.journeySignals)
+                                            } else if (result.solved) {
                                                 goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
                                             } else {
                                                 goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
@@ -998,6 +1101,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                     navArgument("score") { type = NavType.IntType },
                     navArgument("bestTile") { type = NavType.IntType },
                     navArgument("daily") { type = NavType.StringType; nullable = true; defaultValue = null },
+                    navArgument("journey") { type = NavType.StringType; nullable = true; defaultValue = null },
                 ),
                 enterTransition = { EnterTransition.None },
                 exitTransition = { fadeOut(animationSpec = tween(200)) },
@@ -1007,6 +1111,8 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                     LocalAnimatedVisibilityScope provides this,
                 ) {
                     val lossGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
+                    val lossJourneyStop = entry.arguments?.getString("journey")
+                    val journeyViewModel: JourneyViewModel = hiltViewModel()
                     val lossDifficulty = Difficulty.fromKey(entry.arguments?.getString("difficulty") ?: "easy")
                     val resultDailyKey = entry.arguments?.getString("daily")
                     val nextDaily = rememberNextDaily(resultDailyKey, lossGameId, lossDifficulty)
@@ -1022,9 +1128,16 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                             isMixActive = activeMix != null,
                             onAddToMix = { navController.navigate(Routes.addToMix(lossGameId, lossDifficulty)) },
                             onRetry = {
-                                playAgainOrDrawMix {
-                                    navController.navigate(Routes.play(lossGameId, lossDifficulty, resume = false)) {
-                                        popUpTo(Routes.TABS) { inclusive = false }
+                                if (lossJourneyStop != null) {
+                                    scope.launch {
+                                        val target = journeyViewModel.playTarget(lossGameId, lossJourneyStop)
+                                        if (target != null) playJourneyStop(lossGameId, target.first, target.second) else returnToJourney(lossGameId, lossJourneyStop)
+                                    }
+                                } else {
+                                    playAgainOrDrawMix {
+                                        navController.navigate(Routes.play(lossGameId, lossDifficulty, resume = false)) {
+                                            popUpTo(Routes.TABS) { inclusive = false }
+                                        }
                                     }
                                 }
                             },
@@ -1048,8 +1161,38 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                             onBackToDaily = { goToDailyTab() },
                             hasNextDaily = nextDaily != null,
                             onPlayNextDaily = { playNextDaily(nextDaily, resultDailyKey) },
+                            onBackToJourney = lossJourneyStop?.let { stop -> { returnToJourney(lossGameId, stop) } },
                         )
                     }
+                }
+            }
+
+            composable(
+                Routes.JOURNEY_RESULT,
+                arguments = listOf(
+                    navArgument("gameId") { type = NavType.StringType },
+                    navArgument("stopId") { type = NavType.StringType },
+                    navArgument("elapsedSeconds") { type = NavType.IntType },
+                    navArgument("hintsUsed") { type = NavType.IntType },
+                    navArgument("mistakes") { type = NavType.IntType },
+                ),
+                enterTransition = { fadeIn(animationSpec = tween(250)) },
+                exitTransition = { fadeOut(animationSpec = tween(200)) },
+            ) { entry ->
+                val resultGameId = GameId.entries.firstOrNull { it.key == entry.arguments?.getString("gameId") } ?: return@composable
+                val stopId = entry.arguments?.getString("stopId") ?: return@composable
+                ProvideGamePlayPreferences(playPreferencesFor(resultGameId)) {
+                    JourneyResultScreen(
+                        gameId = resultGameId,
+                        stopId = stopId,
+                        elapsedSeconds = entry.arguments?.getInt("elapsedSeconds") ?: 0,
+                        signals = JourneySignals(
+                            hintsUsed = entry.arguments?.getInt("hintsUsed") ?: 0,
+                            mistakes = entry.arguments?.getInt("mistakes") ?: 0,
+                        ),
+                        onPlay = { difficulty, request -> playJourneyStop(resultGameId, difficulty, request) },
+                        onMap = { returnToJourney(resultGameId, stopId) },
+                    )
                 }
             }
 

@@ -27,6 +27,12 @@ object AnimalDokuPuzzleBank {
     suspend fun dailyPool(context: Context, difficulty: Difficulty): List<AnimalDokuPuzzleEntry> =
         load(context)[difficulty.key].orEmpty()
 
+    suspend fun puzzleById(context: Context, difficulty: Difficulty, id: String): AnimalDokuPuzzleEntry? =
+        dailyPool(context, difficulty).firstOrNull { it.id == id }
+
+    suspend fun ratedPool(context: Context, difficulty: Difficulty): List<Pair<String, Int>> =
+        dailyPool(context, difficulty).mapNotNull { entry -> entry.rating?.let { entry.id to it } }
+
     suspend fun randomPuzzle(context: Context, difficulty: Difficulty, recentlyPlayedIds: Set<String> = emptySet()): AnimalDokuPuzzleEntry? {
         val pool = dailyPool(context, difficulty)
         if (pool.isEmpty()) return null

@@ -6,6 +6,7 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.SettingsRepository
 import com.quietgrid.app.testutil.FakeHistoryStore
+import com.quietgrid.app.testutil.FakeJourneyStore
 import com.quietgrid.app.testutil.FakeSessionStore
 import com.quietgrid.app.testutil.FakeStatsStore
 import com.quietgrid.engine.arrowescape.ArrowEscapePieceData
@@ -60,7 +61,7 @@ class ArrowEscapePlayViewModelTest {
     private fun newViewModel(sessionStore: FakeSessionStore = FakeSessionStore(), statsStore: FakeStatsStore = FakeStatsStore()): ArrowEscapePlayViewModel {
         val settingsRepository = mockk<SettingsRepository>(relaxed = true)
         every { settingsRepository.settings } returns MutableStateFlow(AppSettings())
-        return ArrowEscapePlayViewModel(mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), settingsRepository, Difficulty.EASY, resume = false)
+        return ArrowEscapePlayViewModel(mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), settingsRepository, FakeJourneyStore(), Difficulty.EASY, resume = false, journey = null)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)

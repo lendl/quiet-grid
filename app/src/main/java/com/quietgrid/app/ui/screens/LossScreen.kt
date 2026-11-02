@@ -77,6 +77,7 @@ fun LossScreen(
     onBackToDaily: () -> Unit = {},
     hasNextDaily: Boolean = false,
     onPlayNextDaily: () -> Unit = {},
+    onBackToJourney: (() -> Unit)? = null,
 ) {
     val haptics = rememberHapticController()
     LaunchedEffect(Unit) { if (reason != "abandoned") haptics.incorrectFeedback() }
@@ -273,14 +274,16 @@ fun LossScreen(
 
     val entrance = rememberResultEntrance()
 
-    val links = if (dailyDate != null) {
-        dailyResultLinks(hasNextDaily, onShareDaily, onBackToDaily, onTryAnotherGame)
-    } else {
-        buildList {
-            if (!isMixActive) add(ResultLink(R.string.loss_other_difficulty, onOtherDifficulty))
-            add(ResultLink(R.string.loss_try_another_game, onTryAnotherGame))
-        }
-    }
+    val links = lossResultLinks(
+        dailyDate = dailyDate,
+        hasNextDaily = hasNextDaily,
+        isMixActive = isMixActive,
+        onShareDaily = onShareDaily,
+        onBackToDaily = onBackToDaily,
+        onOtherDifficulty = onOtherDifficulty,
+        onTryAnotherGame = onTryAnotherGame,
+        onBackToJourney = onBackToJourney,
+    )
     val primaryAction: @Composable () -> Unit = {
         if (dailyDate != null) {
             DailyResultPrimaryButton(hasNextDaily, onPlayNextDaily, onShareDaily)
@@ -427,6 +430,27 @@ fun LossScreen(
 }
 
 private const val GLYPH_SIZE_FRACTION = 0.42f
+
+internal fun lossResultLinks(
+    dailyDate: String?,
+    hasNextDaily: Boolean,
+    isMixActive: Boolean,
+    onShareDaily: () -> Unit,
+    onBackToDaily: () -> Unit,
+    onOtherDifficulty: () -> Unit,
+    onTryAnotherGame: () -> Unit,
+    onBackToJourney: (() -> Unit)?,
+): List<ResultLink> = when {
+    dailyDate != null -> dailyResultLinks(hasNextDaily, onShareDaily, onBackToDaily, onTryAnotherGame)
+    onBackToJourney != null -> listOf(
+        ResultLink(R.string.journey_back_to_map, onBackToJourney),
+        ResultLink(R.string.loss_try_another_game, onTryAnotherGame),
+    )
+    else -> buildList {
+        if (!isMixActive) add(ResultLink(R.string.loss_other_difficulty, onOtherDifficulty))
+        add(ResultLink(R.string.loss_try_another_game, onTryAnotherGame))
+    }
+}
 
 private val SCORE_ON_LOSS_TRACKED_GAMES = setOf(GameId.GAME_2048)
 

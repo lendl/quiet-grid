@@ -28,6 +28,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.journey.JourneyRequest
 import com.quietgrid.app.ui.components.CollectPuzzleResult
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
 import com.quietgrid.app.ui.components.rememberHapticController
@@ -43,9 +44,10 @@ fun ArrowEscapePlayScreen(
     resume: Boolean,
     onBack: () -> Unit,
     onFinished: (ArrowEscapeResult) -> Unit,
+    journey: JourneyRequest? = null,
 ) {
     val viewModel = hiltViewModel<ArrowEscapePlayViewModel, ArrowEscapePlayViewModel.Factory>(
-        creationCallback = { factory -> factory.create(difficulty, resume) },
+        creationCallback = { factory -> factory.create(difficulty, resume, journey) },
     )
     CollectPuzzleResult(viewModel.result, onFinished)
     val finishing by viewModel.finishing.collectAsState()

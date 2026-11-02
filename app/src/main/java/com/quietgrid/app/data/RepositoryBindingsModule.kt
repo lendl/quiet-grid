@@ -16,4 +16,7 @@ abstract class RepositoryBindingsModule {
 
     @Binds
     abstract fun bindPlayHistoryStore(impl: PlayHistoryRepository): PlayHistoryStore
+
+    @Binds
+    abstract fun bindJourneyProgressStore(impl: JourneyProgressRepository): JourneyProgressStore
 }

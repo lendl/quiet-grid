@@ -141,6 +141,12 @@ fun main(args: Array<String>) {
         return
     }
 
+    if (args.getOrNull(0) == "journey") {
+        val journey = com.quietgrid.cli.journey.parseJourneyArgs(args)
+        com.quietgrid.cli.journey.runJourney(journey.game, journey.outDir, journey.scalesPath)
+        return
+    }
+
     if (args.getOrNull(0) == "minesweeper-endless-bench") {
         val report = com.quietgrid.cli.minesweeper.runMinesweeperEndlessBench(
             sections = optionalFlag(args, "--sections", "100000").toInt(),

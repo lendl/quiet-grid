@@ -2,9 +2,13 @@ package com.quietgrid.app.session
 
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.journey.JourneyRequest
+import com.quietgrid.app.core.journey.JourneySignals
+import com.quietgrid.app.core.journey.JourneyStopProgress
 import com.quietgrid.app.data.ActiveSessionEnvelope
 import com.quietgrid.app.data.DifficultyStats
 import com.quietgrid.app.data.GameStats
+import com.quietgrid.app.data.JourneyProgressStore
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.PlayRecord
 import com.quietgrid.app.data.SESSION_MODE_ENDLESS
@@ -35,6 +39,7 @@ private data class TestResult(
     val lossReason: String?,
     val isFirstSolve: Boolean,
     val isNewHighScore: Boolean,
+    val journeySignals: JourneySignals = JourneySignals(0, 0),
 )
 
 private class FakeSessionStore : SessionStore {
@@ -117,15 +122,46 @@ private class FakeHistoryStore : PlayHistoryStore {
     }
 }
 
+private class FakeJourneyStore(private val history: FakeHistoryStore) : JourneyProgressStore {
+    data class Win(val stopId: String, val signals: JourneySignals, val elapsedSeconds: Int)
+
+    val wins = mutableListOf<Win>()
+    val losses = mutableListOf<String>()
+    val historySizeAtLoss = mutableListOf<Int>()
+
+    override fun progressFor(gameId: GameId): Flow<Map<String, JourneyStopProgress>> = MutableStateFlow(emptyMap())
+
+    override suspend fun recordWin(gameId: GameId, stopId: String, signals: JourneySignals, elapsedSeconds: Int) {
+        wins += Win(stopId, signals, elapsedSeconds)
+    }
+
+    override suspend fun recordLoss(gameId: GameId, stopId: String) {
+        losses += stopId
+        historySizeAtLoss += history.appended.size
+    }
+
+    override suspend fun skip(gameId: GameId, stopId: String) = Unit
+}
+
 private class FakePuzzleAdapter(
     private val freshValue: Int = 0,
     private val restoreValue: TestSession? = null,
     private val puzzleId: String? = null,
     override val gameId: GameId = GameId.TAKUZU,
     private val shareDetail: String? = null,
+    private val signals: JourneySignals = JourneySignals(0, 0),
 ) : PuzzleAdapter<TestSession, TestResult> {
     var freshSessionCalls = 0
         private set
+
+    val journeyCalls = mutableListOf<Triple<Difficulty, String, Int>>()
+
+    override suspend fun journeySession(difficulty: Difficulty, puzzleId: String, transform: Int): TestSession {
+        journeyCalls += Triple(difficulty, puzzleId, transform)
+        return TestSession(freshValue + 2000)
+    }
+
+    override fun journeySignals(session: TestSession): JourneySignals = signals
 
     override suspend fun freshSession(difficulty: Difficulty): TestSession {
         freshSessionCalls++
@@ -161,6 +197,7 @@ private class FakePuzzleAdapter(
         lossReason = outcome.lossReason,
         isFirstSolve = outcome.isFirstSolve,
         isNewHighScore = outcome.isNewHighScore,
+        journeySignals = outcome.journeySignals,
     )
 }
 
@@ -703,5 +740,142 @@ class PuzzleSessionControllerTest {
         runCurrent()
 
         assertTrue(historyStore.appended.isEmpty())
+    }
+
+    private val journeyRequest = JourneyRequest(stopId = "s1", puzzleId = "sib", transform = 2)
+
+    @Test
+    fun `journey start asks the adapter for the journey puzzle`() = runTest {
+        val adapter = FakePuzzleAdapter(freshValue = 1)
+        val controller = PuzzleSessionController(
+            backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), adapter,
+        )
+
+        controller.start(Difficulty.HARD, resume = false, journey = journeyRequest)
+        runCurrent()
+
+        assertEquals(listOf(Triple(Difficulty.HARD, "sib", 2)), adapter.journeyCalls)
+        assertEquals(0, adapter.freshSessionCalls)
+        assertEquals(TestSession(2001), controller.session)
+        assertEquals(journeyRequest, controller.journey)
+    }
+
+    @Test
+    fun `journey fields survive the envelope and a resume`() = runTest {
+        val sessionStore = FakeSessionStore()
+        val first = PuzzleSessionController(
+            backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
+            isAppForeground = { true },
+        )
+        first.start(Difficulty.HARD, resume = false, journey = journeyRequest)
+        advanceTimeBy(15_001)
+
+        val envelope = sessionStore.activeSession.first()!!
+        assertEquals("s1", envelope.journeyStopId)
+        assertEquals("sib", envelope.journeyPuzzleId)
+        assertEquals(2, envelope.journeyTransform)
+
+        val resumed = PuzzleSessionController(
+            backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(restoreValue = TestSession(9)),
+        )
+        resumed.start(Difficulty.EASY, resume = true)
+        runCurrent()
+
+        assertEquals(TestSession(9), resumed.session)
+        assertEquals(journeyRequest, resumed.journey)
+    }
+
+    @Test
+    fun `journey win records the stop in history and stars in the store`() = runTest {
+        val history = FakeHistoryStore()
+        val journeyStore = FakeJourneyStore(history)
+        val signals = JourneySignals(hintsUsed = 1, mistakes = 2)
+        val controller = PuzzleSessionController(
+            backgroundScope, FakeSessionStore(), FakeStatsStore(), history, FakePuzzleAdapter(puzzleId = "sib", signals = signals),
+            isAppForeground = { true },
+            journeyStore = journeyStore,
+        )
+        controller.start(Difficulty.HARD, resume = false, journey = journeyRequest)
+        advanceTimeBy(5_001)
+
+        controller.finishAsWin()
+        runCurrent()
+
+        assertEquals("s1", history.appended.single().journeyStop)
+        assertEquals("sib", history.appended.single().puzzleId)
+        assertEquals(listOf(FakeJourneyStore.Win("s1", signals, 5)), journeyStore.wins)
+    }
+
+    @Test
+    fun `journey loss records a loss and abandoning records nothing in the store`() = runTest {
+        val history = FakeHistoryStore()
+        val journeyStore = FakeJourneyStore(history)
+        val lost = PuzzleSessionController(
+            backgroundScope, FakeSessionStore(), FakeStatsStore(), history, FakePuzzleAdapter(),
+            journeyStore = journeyStore,
+        )
+        lost.start(Difficulty.HARD, resume = false, journey = journeyRequest)
+        runCurrent()
+        lost.finishAsLoss("rule_failure")
+        runCurrent()
+
+        assertEquals(listOf("s1"), journeyStore.losses)
+        assertEquals(listOf(1), journeyStore.historySizeAtLoss)
+
+        val abandoned = PuzzleSessionController(
+            backgroundScope, FakeSessionStore(), FakeStatsStore(), history, FakePuzzleAdapter(),
+            journeyStore = journeyStore,
+        )
+        abandoned.start(Difficulty.HARD, resume = false, journey = journeyRequest)
+        runCurrent()
+        abandoned.endPuzzle()
+        runCurrent()
+
+        assertEquals(listOf("s1"), journeyStore.losses)
+        assertTrue(journeyStore.wins.isEmpty())
+        assertEquals(listOf("s1", "s1"), history.appended.map { it.journeyStop })
+    }
+
+    @Test
+    fun `non-journey finishes leave the journey store alone`() = runTest {
+        val history = FakeHistoryStore()
+        val journeyStore = FakeJourneyStore(history)
+        val controller = PuzzleSessionController(
+            backgroundScope, FakeSessionStore(), FakeStatsStore(), history, FakePuzzleAdapter(),
+            journeyStore = journeyStore,
+        )
+        controller.start(Difficulty.HARD, resume = false)
+        runCurrent()
+        controller.finishAsWin()
+        runCurrent()
+
+        assertTrue(journeyStore.wins.isEmpty())
+        assertNull(history.appended.single().journeyStop)
+    }
+
+    @Test
+    fun `finish outcome carries the adapter's journey signals`() = runTest {
+        val signals = JourneySignals(hintsUsed = 1, mistakes = 2)
+        val won = PuzzleSessionController(
+            backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(signals = signals),
+        )
+        val lost = PuzzleSessionController(
+            backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(signals = signals),
+        )
+        won.start(Difficulty.HARD, resume = false, journey = journeyRequest)
+        lost.start(Difficulty.HARD, resume = false, journey = journeyRequest)
+        runCurrent()
+
+        val emitted = mutableListOf<TestResult>()
+        val wonJob = launch { won.result.collect { emitted += it } }
+        val lostJob = launch { lost.result.collect { emitted += it } }
+        won.finishAsWin()
+        lost.finishAsLoss("rule_failure")
+        advanceTimeBy(500)
+        runCurrent()
+
+        assertEquals(listOf(signals, signals), emitted.map { it.journeySignals })
+        wonJob.cancel()
+        lostJob.cancel()
     }
 }

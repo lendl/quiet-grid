@@ -9,6 +9,7 @@ data class AnimalDokuPuzzleEntry(
     val difficulty: String,
     val regions: List<List<Int>>,
     val solution: List<Int>,
+    val rating: Int? = null,
 )
 
 private val ORTHOGONAL_DELTAS = listOf(-1 to 0, 1 to 0, 0 to -1, 0 to 1)

@@ -7,9 +7,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
-import com.quietgrid.app.core.daily.selectDaily
-import java.time.LocalDate
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.daily.selectDaily
+import com.quietgrid.app.core.journey.JourneyRequest
+import com.quietgrid.app.core.journey.JourneySignals
+import com.quietgrid.app.data.JourneyProgressStore
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
@@ -18,6 +20,8 @@ import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
 import com.quietgrid.engine.animaldoku.AnimalDokuHint
+import com.quietgrid.engine.animaldoku.transformed
+import com.quietgrid.engine.journey.gridTransformById
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -30,6 +34,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import java.time.LocalDate
 
 private val json = Json { ignoreUnknownKeys = true }
 private const val ANIMALDOKU_BASE_SCORE = 1000
@@ -45,6 +50,7 @@ data class AnimalDokuResult(
     val isFirstSolve: Boolean = false,
     val isNewHighScore: Boolean = false,
     val analyzerSnapshot: String? = null,
+    val journeySignals: JourneySignals = JourneySignals(0, 0),
 )
 
 data class AnimalDokuOpenEvent(val row: Int, val col: Int, val wasCorrect: Boolean)
@@ -61,7 +67,7 @@ internal fun decodeAnimalDokuCells(flat: List<Int>, size: Int): List<List<Animal
     return List(size) { row -> List(size) { col -> states[flat[row * size + col]] } }
 }
 
-private class AnimalDokuPuzzleAdapter(
+internal class AnimalDokuPuzzleAdapter(
     private val appContext: android.content.Context,
     private val historyStore: PlayHistoryStore,
 ) : PuzzleAdapter<AnimalDokuSession, AnimalDokuResult> {
@@ -78,6 +84,12 @@ private class AnimalDokuPuzzleAdapter(
         return createAnimalDokuSession(puzzle)
     }
 
+    override suspend fun journeySession(difficulty: Difficulty, puzzleId: String, transform: Int): AnimalDokuSession? =
+        AnimalDokuPuzzleBank.puzzleById(appContext, difficulty, puzzleId)?.transformed(gridTransformById(transform))?.let(::createAnimalDokuSession)
+
+    override fun journeySignals(session: AnimalDokuSession): JourneySignals =
+        JourneySignals(session.hintsUsed, ANIMALDOKU_STARTING_LIVES - session.lives)
+
     override fun restoreSession(payload: String, elapsedSeconds: Double): AnimalDokuSession? = runCatching {
         val persisted = json.decodeFromString<AnimalDokuPersistedSession>(payload)
         if (persisted.status != AnimalDokuStatus.PLAYING.name) return@runCatching null
@@ -86,6 +98,7 @@ private class AnimalDokuPuzzleAdapter(
             cells = decodeAnimalDokuCells(persisted.cells, persisted.puzzle.size),
             lives = persisted.lives,
             status = AnimalDokuStatus.valueOf(persisted.status),
+            hintsUsed = persisted.hintsUsed,
         )
     }.getOrNull()
 
@@ -100,6 +113,7 @@ private class AnimalDokuPuzzleAdapter(
             cells = encodeCells(session.cells),
             lives = session.lives,
             status = session.status.name,
+            hintsUsed = session.hintsUsed,
         ),
     )
 
@@ -117,6 +131,7 @@ private class AnimalDokuPuzzleAdapter(
         isFirstSolve = outcome.isFirstSolve,
         isNewHighScore = outcome.isNewHighScore,
         analyzerSnapshot = session?.let { encode(it) },
+        journeySignals = outcome.journeySignals,
     )
 }
 
@@ -126,14 +141,16 @@ class AnimalDokuPlayViewModel @AssistedInject constructor(
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
+    journeyStore: JourneyProgressStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
     @Assisted dailyDate: LocalDate?,
+    @Assisted journey: JourneyRequest?,
 ) : ViewModel() {
 
     @AssistedFactory
     interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean, dailyDate: LocalDate?): AnimalDokuPlayViewModel
+        fun create(requestedDifficulty: Difficulty, resume: Boolean, dailyDate: LocalDate?, journey: JourneyRequest?): AnimalDokuPlayViewModel
     }
 
     private val controller = PuzzleSessionController(
@@ -142,6 +159,7 @@ class AnimalDokuPlayViewModel @AssistedInject constructor(
         statsStore = statsRepository,
         historyStore = historyRepository,
         adapter = AnimalDokuPuzzleAdapter(appContext, historyRepository),
+        journeyStore = journeyStore,
     )
 
     val session get() = controller.session
@@ -180,12 +198,14 @@ class AnimalDokuPlayViewModel @AssistedInject constructor(
         hintJob = viewModelScope.launch {
             val next = withContext(hintDispatcher) { findAnimalDokuSessionHint(current) }
             isComputingHint = false
-            if (!controller.isFinalized && session == current) hint = next
+            if (controller.isFinalized || session != current) return@launch
+            hint = next
+            if (next != null) controller.updateSession(current.copy(hintsUsed = current.hintsUsed + 1))
         }
     }
 
     init {
-        controller.start(requestedDifficulty, resume, dailyDate)
+        controller.start(requestedDifficulty, resume, dailyDate, journey)
     }
 
     fun onCellTap(row: Int, col: Int) {

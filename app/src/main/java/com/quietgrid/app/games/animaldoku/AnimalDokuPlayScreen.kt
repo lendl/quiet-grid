@@ -24,6 +24,7 @@ import com.quietgrid.app.ui.seasonal.rememberHalloweenActive
 import com.quietgrid.engine.animaldoku.AnimalDokuHint
 import com.quietgrid.engine.animaldoku.AnimalDokuUnit
 import com.quietgrid.engine.animaldoku.AnimalDokuUnitKind
+import com.quietgrid.app.core.journey.JourneyRequest
 import java.time.LocalDate
 
 @Composable
@@ -33,9 +34,10 @@ fun AnimalDokuPlayScreen(
     dailyDate: LocalDate? = null,
     onBack: () -> Unit,
     onFinished: (AnimalDokuResult) -> Unit,
+    journey: JourneyRequest? = null,
 ) {
     val viewModel = hiltViewModel<AnimalDokuPlayViewModel, AnimalDokuPlayViewModel.Factory>(
-        creationCallback = { factory -> factory.create(difficulty, resume, dailyDate) },
+        creationCallback = { factory -> factory.create(difficulty, resume, dailyDate, journey) },
     )
     CollectPuzzleResult(viewModel.result, onFinished)
     val finishing by viewModel.finishing.collectAsState()

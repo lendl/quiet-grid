@@ -8,6 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.journey.JourneyRequest
+import com.quietgrid.app.core.journey.JourneySignals
+import com.quietgrid.app.data.JourneyProgressStore
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.SettingsRepository
@@ -19,6 +22,8 @@ import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
 import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
+import com.quietgrid.engine.arrowescape.transformed
+import com.quietgrid.engine.journey.gridTransformById
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -43,11 +48,12 @@ data class ArrowEscapeResult(
     val lossReason: String?,
     val isFirstSolve: Boolean = false,
     val isNewHighScore: Boolean = false,
+    val journeySignals: JourneySignals = JourneySignals(0, 0),
 )
 
 data class ArrowEscapeTapEvent(val id: Int, val pieceIndex: Int, val removed: Boolean)
 
-private class ArrowEscapePuzzleAdapter(
+internal class ArrowEscapePuzzleAdapter(
     private val appContext: android.content.Context,
     private val historyStore: PlayHistoryStore,
     private val settingsRepository: SettingsRepository,
@@ -66,6 +72,12 @@ private class ArrowEscapePuzzleAdapter(
         if (!settingsRepository.isHalloweenActive(today)) return null
         return ArrowEscapePuzzleBank.halloweenPuzzle(appContext, difficulty, historyStore.puzzleIdsPlayedOn(gameId, today))
     }
+
+    override suspend fun journeySession(difficulty: Difficulty, puzzleId: String, transform: Int): ArrowEscapeSession? =
+        ArrowEscapePuzzleBank.puzzleById(appContext, difficulty, puzzleId)?.transformed(gridTransformById(transform))?.let(::createArrowEscapeSession)
+
+    override fun journeySignals(session: ArrowEscapeSession): JourneySignals =
+        JourneySignals(session.hintsUsed, ARROW_ESCAPE_STARTING_LIVES - session.lives)
 
     override fun restoreSession(payload: String, elapsedSeconds: Double): ArrowEscapeSession? = runCatching {
         val persisted = json.decodeFromString<ArrowEscapePersistedSession>(payload)
@@ -115,6 +127,7 @@ private class ArrowEscapePuzzleAdapter(
         lossReason = outcome.lossReason,
         isFirstSolve = outcome.isFirstSolve,
         isNewHighScore = outcome.isNewHighScore,
+        journeySignals = outcome.journeySignals,
     )
 }
 
@@ -125,13 +138,15 @@ class ArrowEscapePlayViewModel @AssistedInject constructor(
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     settingsRepository: SettingsRepository,
+    journeyStore: JourneyProgressStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
+    @Assisted journey: JourneyRequest?,
 ) : ViewModel() {
 
     @AssistedFactory
     interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean): ArrowEscapePlayViewModel
+        fun create(requestedDifficulty: Difficulty, resume: Boolean, journey: JourneyRequest?): ArrowEscapePlayViewModel
     }
 
     private val controller = PuzzleSessionController(
@@ -140,6 +155,7 @@ class ArrowEscapePlayViewModel @AssistedInject constructor(
         statsStore = statsRepository,
         historyStore = historyRepository,
         adapter = ArrowEscapePuzzleAdapter(appContext, historyRepository, settingsRepository),
+        journeyStore = journeyStore,
     )
 
     val session get() = controller.session
@@ -157,7 +173,7 @@ class ArrowEscapePlayViewModel @AssistedInject constructor(
     private var tapEventSeq = 0
 
     init {
-        controller.start(requestedDifficulty, resume)
+        controller.start(requestedDifficulty, resume, journey = journey)
     }
 
     fun onPieceTap(pieceIndex: Int) {

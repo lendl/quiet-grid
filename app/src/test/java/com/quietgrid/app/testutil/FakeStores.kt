@@ -2,9 +2,12 @@ package com.quietgrid.app.testutil
 
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.journey.JourneySignals
+import com.quietgrid.app.core.journey.JourneyStopProgress
 import com.quietgrid.app.data.ActiveSessionEnvelope
 import com.quietgrid.app.data.EndlessStats
 import com.quietgrid.app.data.GameStats
+import com.quietgrid.app.data.JourneyProgressStore
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.PlayRecord
 import com.quietgrid.app.data.SessionStore
@@ -85,6 +88,27 @@ class FakeStatsStore : StatsStore {
     override suspend fun recordEndlessResult(gameId: GameId, score: Int, level: Int) {
         val existing = endlessStats[gameId] ?: EndlessStats()
         endlessStats[gameId] = EndlessStats(maxOf(existing.bestScore, score), maxOf(existing.bestLevel, level))
+    }
+}
+
+class FakeJourneyStore : JourneyProgressStore {
+    val progress = MutableStateFlow<Map<String, JourneyStopProgress>>(emptyMap())
+    val wins = mutableListOf<String>()
+    val losses = mutableListOf<String>()
+    val skips = mutableListOf<String>()
+
+    override fun progressFor(gameId: GameId): Flow<Map<String, JourneyStopProgress>> = progress
+
+    override suspend fun recordWin(gameId: GameId, stopId: String, signals: JourneySignals, elapsedSeconds: Int) {
+        wins += stopId
+    }
+
+    override suspend fun recordLoss(gameId: GameId, stopId: String) {
+        losses += stopId
+    }
+
+    override suspend fun skip(gameId: GameId, stopId: String) {
+        skips += stopId
     }
 }
 

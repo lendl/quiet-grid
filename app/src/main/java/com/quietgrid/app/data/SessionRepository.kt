@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.quietgrid.app.core.journey.JourneyRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -25,11 +26,26 @@ data class ActiveSessionEnvelope(
     val dailyTier: String? = null,
     val mode: String? = null,
     val difficulty: String? = null,
+    val journeyStopId: String? = null,
+    val journeyPuzzleId: String? = null,
+    val journeyTransform: Int = 0,
 )
 
 const val SESSION_MODE_ENDLESS = "endless"
 
-data class ActiveSessionSummary(val gameId: String, val dailyDate: String?, val mode: String? = null, val difficulty: String? = null)
+data class ActiveSessionSummary(
+    val gameId: String,
+    val dailyDate: String?,
+    val mode: String? = null,
+    val difficulty: String? = null,
+    val journey: JourneyRequest? = null,
+)
+
+val ActiveSessionEnvelope.journey: JourneyRequest?
+    get() = journeyStopId?.let { JourneyRequest(it, journeyPuzzleId ?: it, journeyTransform) }
+
+fun ActiveSessionEnvelope.toSummary(): ActiveSessionSummary =
+    ActiveSessionSummary(gameId, dailyDate, mode, difficulty ?: dailyTier, journey)
 
 interface SessionStore {
     val activeSession: Flow<ActiveSessionEnvelope?>
@@ -49,7 +65,7 @@ class SessionRepository @Inject constructor(private val dataStore: DataStore<Pre
         .flowOn(Dispatchers.Default)
 
     val activeSessionSummary: Flow<ActiveSessionSummary?> = activeSession
-        .map { envelope -> envelope?.let { ActiveSessionSummary(it.gameId, it.dailyDate, it.mode, it.difficulty ?: it.dailyTier) } }
+        .map { envelope -> envelope?.toSummary() }
         .distinctUntilChanged()
 
     override suspend fun save(envelope: ActiveSessionEnvelope) {

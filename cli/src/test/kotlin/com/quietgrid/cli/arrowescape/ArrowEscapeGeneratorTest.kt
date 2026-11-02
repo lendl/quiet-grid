@@ -74,7 +74,8 @@ class ArrowEscapeGeneratorTest {
 
     @Test
     fun `expert puzzles are mostly blocked at the start`() {
-        val generated = firstSuccessfulGeneration(20, 20, Difficulty.EXPERT, 7)
+        val size = arrowEscapeSizesForDifficulty(Difficulty.EXPERT).first()
+        val generated = firstSuccessfulGeneration(size, size, Difficulty.EXPERT, 7)
         assertTrue(generated.profile.borderExitShare <= 0.15)
         assertTrue(generated.profile.meanBlockers >= 2.0)
     }

@@ -37,6 +37,7 @@ data class PlayRecord(
     val puzzlesSolved: Int? = null,
     val dailyDate: String? = null,
     val shareDetail: String? = null,
+    val journeyStop: String? = null,
 )
 
 interface PlayHistoryStore {

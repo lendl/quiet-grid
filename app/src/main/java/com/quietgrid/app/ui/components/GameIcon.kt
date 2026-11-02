@@ -51,6 +51,14 @@ fun glyphPaintColor(paint: GlyphPaint, tile: Color, ink: Color, isPencilTheme: B
     }
 }
 
+fun flatGlyphColor(paint: GlyphPaint, flat: Color): Color? = when (paint) {
+    GlyphPaint.CUTOUT -> null
+    GlyphPaint.ACCENT, GlyphPaint.MARK, GlyphPaint.LINE_ACCENT -> flat
+    GlyphPaint.NEUTRAL -> flat.copy(alpha = flat.alpha * 0.6f)
+    GlyphPaint.SMALL, GlyphPaint.LINE -> flat.copy(alpha = flat.alpha * 0.8f)
+    GlyphPaint.EMPTY -> flat.copy(alpha = flat.alpha * 0.3f)
+}
+
 fun gameIconTile(gameId: GameId, isPencilTheme: Boolean): Color? =
     if (isPencilTheme) PENCIL_TILE_COLOR else GAME_ICON_HUES[gameId]
 
@@ -80,6 +88,7 @@ fun DrawScope.drawGameGlyph(
     isPencilTheme: Boolean,
     textMeasurer: TextMeasurer,
     paths: Map<GlyphPath, Path>,
+    flatColor: Color? = null,
 ) {
     val ink = if (isPencilTheme) PENCIL_INK_COLOR else TILE_INK_COLOR
     val glyphSize = size.minDimension * GLYPH_FRACTION
@@ -87,7 +96,7 @@ fun DrawScope.drawGameGlyph(
     val origin = Offset((size.width - glyphSize) / 2, (size.height - glyphSize) / 2)
 
     GAME_ICON_GLYPHS[gameId].orEmpty().forEach { shape ->
-        val color = glyphPaintColor(shape.paint, tile, ink, isPencilTheme)
+        val color = if (flatColor != null) flatGlyphColor(shape.paint, flatColor) ?: return@forEach else glyphPaintColor(shape.paint, tile, ink, isPencilTheme)
         when (shape) {
             is GlyphText -> {
                 val fontSize = (shape.size * unit).toSp()

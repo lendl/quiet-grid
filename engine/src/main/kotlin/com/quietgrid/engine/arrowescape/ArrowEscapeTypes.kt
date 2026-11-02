@@ -24,6 +24,7 @@ data class ArrowEscapePuzzleEntry(
     val pieces: List<ArrowEscapePieceData>,
     val shape: String? = null,
     val mask: List<String>? = null,
+    val rating: Int? = null,
 )
 
 const val ARROW_ESCAPE_MASK_ACTIVE = '#'
