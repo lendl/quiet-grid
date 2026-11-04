@@ -13,8 +13,11 @@ import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.StatsStore
 import com.quietgrid.app.session.AppForeground
 import com.quietgrid.app.session.ChallengerRunController
+import com.quietgrid.engine.sudoku.SudokuLayout
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -47,6 +50,8 @@ class SudokuChallengerViewModel @Inject constructor(
 
     private val undoHistory = mutableListOf<SudokuSession>()
     private var advancing = false
+    private var pendingUnitKeys = mutableSetOf<SudokuUnitKey>()
+    private var validationJob: Job? = null
 
     init {
         viewModelScope.launch {
@@ -98,7 +103,14 @@ class SudokuChallengerViewModel @Inject constructor(
         val current = session ?: return
         val previous = undoHistory.removeLastOrNull() ?: return
         canUndo = undoHistory.isNotEmpty()
+        cancelPendingValidation()
         controller.session = current.copy(puzzleSession = previous.copy(accuracyDrops = current.puzzleSession.accuracyDrops))
+    }
+
+    private fun cancelPendingValidation() {
+        validationJob?.cancel()
+        validationJob = null
+        pendingUnitKeys = mutableSetOf()
     }
 
     private fun commitMove(current: SudokuChallengerSession, updated: SudokuSession, row: Int, col: Int) {
@@ -106,17 +118,36 @@ class SudokuChallengerViewModel @Inject constructor(
         if (undoHistory.size > MAX_UNDO_HISTORY) undoHistory.removeAt(0)
         canUndo = true
         val refreshed = refreshSudokuAutoNotes(updated)
-        if (refreshed.board[row][col] == null) {
-            controller.session = current.copy(puzzleSession = refreshed)
+        controller.session = current.copy(puzzleSession = refreshed)
+
+        val solution = refreshed.puzzle.solution
+        for (key in sudokuTouchedUnitKeys(row, col, SudokuLayout.forSize(refreshed.board.size))) {
+            val before = getCompletedSudokuUnitState(current.puzzleSession.board, solution, key)
+            val after = getCompletedSudokuUnitState(refreshed.board, solution, key)
+            if (before != SudokuUnitState.INCOMPLETE || after != SudokuUnitState.INCOMPLETE) pendingUnitKeys.add(key)
+        }
+        if (pendingUnitKeys.isEmpty()) return
+
+        validationJob?.cancel()
+        if (isSudokuSolved(refreshed.board, solution)) {
+            runFinalizeValidation()
         } else {
-            applyValidationAndAdvance(current, refreshed, row, col)
+            validationJob = viewModelScope.launch {
+                delay(SUDOKU_VALIDATION_DELAY_MS)
+                runFinalizeValidation()
+            }
         }
     }
 
-    private fun applyValidationAndAdvance(current: SudokuChallengerSession, updatedPuzzleSession: SudokuSession, row: Int, col: Int) {
-        val unitKeys = listOf("r$row", "c$col", "b${sudokuBoxIndex(row, col)}")
-        val result = applySudokuFinalizeValidation(updatedPuzzleSession, updatedPuzzleSession.board, unitKeys)
-        val newPenalties = result.session.accuracyDrops - updatedPuzzleSession.accuracyDrops
+    private fun runFinalizeValidation() {
+        if (!acceptsInput) return
+        val current = session ?: return
+        val unitKeys = pendingUnitKeys.toList()
+        pendingUnitKeys = mutableSetOf()
+
+        val puzzleSession = current.puzzleSession
+        val result = applySudokuFinalizeValidation(puzzleSession, puzzleSession.board, unitKeys)
+        val newPenalties = result.session.accuracyDrops - puzzleSession.accuracyDrops
         val livesRemaining = current.livesRemaining - newPenalties
         if (newPenalties > 0) wrongMoveTrigger++
 

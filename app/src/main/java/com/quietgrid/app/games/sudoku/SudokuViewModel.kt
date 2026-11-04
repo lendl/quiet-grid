@@ -40,7 +40,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 private val json = Json { ignoreUnknownKeys = true }
-private const val VALIDATION_DELAY_MS = 800L
+internal const val SUDOKU_VALIDATION_DELAY_MS = 800L
 internal const val MAX_UNDO_HISTORY = 50
 
 data class SudokuFeedbackEvent(val id: Int, val correct: Boolean, val incorrect: Boolean)
@@ -292,7 +292,7 @@ class SudokuPlayViewModel @AssistedInject constructor(
 
         validationJob?.cancel()
         validationJob = viewModelScope.launch {
-            delay(VALIDATION_DELAY_MS)
+            delay(SUDOKU_VALIDATION_DELAY_MS)
             runFinalizeValidation()
         }
     }

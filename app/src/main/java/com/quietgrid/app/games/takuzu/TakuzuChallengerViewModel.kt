@@ -15,6 +15,8 @@ import com.quietgrid.app.session.AppForeground
 import com.quietgrid.app.session.ChallengerRunController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -41,6 +43,11 @@ class TakuzuChallengerViewModel @Inject constructor(
     var wrongMoveTrigger by mutableStateOf(0)
         private set
 
+    var showMistakes = true
+
+    private var pendingLineKeys = mutableSetOf<LineKey>()
+    private var validationJob: Job? = null
+
     init {
         viewModelScope.launch {
             val firstPuzzle = TakuzuPuzzleBank.randomPuzzle(appContext, Difficulty.EASY)
@@ -54,9 +61,30 @@ class TakuzuChallengerViewModel @Inject constructor(
         if (controller.isFinalized) return
         val current = session ?: return
         val updated = applyTakuzuPressCell(current.puzzleSession, row, col) ?: return
-        val lineKeys = listOf("r$row", "c$col")
-        val result = applyTakuzuFinalizeValidation(updated, updated.board, lineKeys)
-        if (result.session.accuracyDrops > updated.accuracyDrops) wrongMoveTrigger++
+        controller.session = current.copy(puzzleSession = updated)
+
+        pendingLineKeys.add("r$row")
+        pendingLineKeys.add("c$col")
+        validationJob?.cancel()
+        if (isBoardSolved(updated.board, updated.solution)) {
+            runFinalizeValidation()
+        } else {
+            validationJob = viewModelScope.launch {
+                delay(TAKUZU_VALIDATION_DELAY_MS)
+                runFinalizeValidation()
+            }
+        }
+    }
+
+    private fun runFinalizeValidation() {
+        if (controller.isFinalized) return
+        val current = session ?: return
+        val lineKeys = pendingLineKeys.toList()
+        pendingLineKeys = mutableSetOf()
+
+        val puzzleSession = current.puzzleSession
+        val result = applyTakuzuFinalizeValidation(puzzleSession, puzzleSession.board, lineKeys, showMistakes)
+        if (result.session.accuracyDrops > puzzleSession.accuracyDrops) wrongMoveTrigger++
 
         val withValidation = current.copy(puzzleSession = result.session)
         controller.session = withValidation

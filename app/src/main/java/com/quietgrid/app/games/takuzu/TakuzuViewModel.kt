@@ -39,7 +39,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 private val json = Json { ignoreUnknownKeys = true }
-private const val VALIDATION_DELAY_MS = 800L
+internal const val TAKUZU_VALIDATION_DELAY_MS = 800L
 
 data class TakuzuFeedbackEvent(val id: Int, val correct: Boolean, val incorrect: Boolean)
 
@@ -212,7 +212,7 @@ class TakuzuPlayViewModel @AssistedInject constructor(
 
         validationJob?.cancel()
         validationJob = viewModelScope.launch {
-            delay(VALIDATION_DELAY_MS)
+            delay(TAKUZU_VALIDATION_DELAY_MS)
             runFinalizeValidation()
         }
     }

@@ -82,6 +82,11 @@ class SudokuChallengerViewModelTest {
     ) =
         SudokuChallengerViewModel(mockk<Context>(relaxed = true), statsStore, historyStore, appForeground)
 
+    private fun advancePastValidation() {
+        mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(SUDOKU_VALIDATION_DELAY_MS)
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+    }
+
     @Test
     fun `starting fresh loads a puzzle on the Easy tier with starting lives and starting seconds`() {
         val viewModel = newViewModel()
@@ -149,6 +154,7 @@ class SudokuChallengerViewModelTest {
 
         viewModel.onCellPress(0, 0)
         viewModel.onPressDigit(3)
+        advancePastValidation()
         val afterWrong = checkNotNull(viewModel.session)
         assertEquals(SUDOKU_CHALLENGER_STARTING_LIVES - 1, afterWrong.livesRemaining)
         assertTrue(viewModel.canUndo)
@@ -194,6 +200,56 @@ class SudokuChallengerViewModelTest {
     }
 
     @Test
+    fun `a wrong digit is not checked until the validation delay passes`() {
+        coEvery { SudokuPuzzleBank.randomPuzzle(any(), any(), any()) } returns twoEmptyPuzzle
+        val viewModel = newViewModel()
+
+        viewModel.onCellPress(0, 0)
+        viewModel.onPressDigit(3)
+
+        assertEquals(SUDOKU_CHALLENGER_STARTING_LIVES, viewModel.session!!.livesRemaining)
+        assertEquals(0, viewModel.wrongMoveTrigger)
+
+        advancePastValidation()
+
+        assertEquals(SUDOKU_CHALLENGER_STARTING_LIVES - 1, viewModel.session!!.livesRemaining)
+        assertEquals(1, viewModel.wrongMoveTrigger)
+    }
+
+    @Test
+    fun `changing a wrong digit before the delay costs no life`() {
+        coEvery { SudokuPuzzleBank.randomPuzzle(any(), any(), any()) } returns twoEmptyPuzzle
+        val viewModel = newViewModel()
+
+        viewModel.onCellPress(0, 0)
+        viewModel.onPressDigit(3)
+        viewModel.onPressDigit(5)
+        advancePastValidation()
+
+        val session = checkNotNull(viewModel.session)
+        assertEquals(5, session.puzzleSession.board[0][0])
+        assertEquals(SUDOKU_CHALLENGER_STARTING_LIVES, session.livesRemaining)
+        assertEquals(0, session.puzzleSession.accuracyDrops)
+        assertEquals(0, viewModel.wrongMoveTrigger)
+    }
+
+    @Test
+    fun `undoing a wrong digit before the delay costs no life`() {
+        coEvery { SudokuPuzzleBank.randomPuzzle(any(), any(), any()) } returns twoEmptyPuzzle
+        val viewModel = newViewModel()
+
+        viewModel.onCellPress(0, 0)
+        viewModel.onPressDigit(3)
+        viewModel.onUndo()
+        advancePastValidation()
+
+        val session = checkNotNull(viewModel.session)
+        assertNull(session.puzzleSession.board[0][0])
+        assertEquals(SUDOKU_CHALLENGER_STARTING_LIVES, session.livesRemaining)
+        assertEquals(0, viewModel.wrongMoveTrigger)
+    }
+
+    @Test
     fun `filling the last cell wrong invalidates every touched unit at once and exhausts lives`() {
         val statsStore = FakeStatsStore()
         val viewModel = newViewModel(statsStore)
@@ -202,7 +258,7 @@ class SudokuChallengerViewModelTest {
 
         viewModel.onCellPress(0, 0)
         viewModel.onPressDigit(9)
-
+        advancePastValidation()
         mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(500)
         mainDispatcherRule.dispatcher.scheduler.runCurrent()
 

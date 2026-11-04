@@ -103,11 +103,17 @@ class TakuzuChallengerViewModelTest {
         assertEquals(1, session.puzzleHistory.size)
     }
 
+    private fun advancePastValidation() {
+        mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(TAKUZU_VALIDATION_DELAY_MS)
+        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+    }
+
     @Test
     fun `pressing the last cell to a wrong value costs both touched lines as mistakes`() {
         val viewModel = newViewModel(losingTestPuzzle)
 
         viewModel.onCellPress(0, 0)
+        advancePastValidation()
 
         val session = viewModel.session
         checkNotNull(session)
@@ -117,14 +123,56 @@ class TakuzuChallengerViewModelTest {
     }
 
     @Test
+    fun `a completed wrong line is not checked until the validation delay passes`() {
+        val viewModel = newViewModel(losingTestPuzzle)
+
+        viewModel.onCellPress(0, 0)
+
+        assertEquals(0, viewModel.session!!.puzzleSession.accuracyDrops)
+        assertEquals(0, viewModel.wrongMoveTrigger)
+
+        advancePastValidation()
+
+        assertEquals(2, viewModel.session!!.puzzleSession.accuracyDrops)
+    }
+
+    @Test
+    fun `cycling past a wrong value before the delay costs no mistake`() {
+        val viewModel = newViewModel(diagonalBlanksTestPuzzle)
+
+        viewModel.onCellPress(2, 2)
+        viewModel.onCellPress(2, 2)
+        advancePastValidation()
+
+        val session = viewModel.session
+        checkNotNull(session)
+        assertEquals(1, session.puzzleSession.board[2][2])
+        assertEquals(0, session.puzzleSession.accuracyDrops)
+        assertEquals(0, viewModel.wrongMoveTrigger)
+    }
+
+    @Test
+    fun `wrong lines cost nothing when check lines as you go is off`() {
+        val viewModel = newViewModel(losingTestPuzzle)
+        viewModel.showMistakes = false
+
+        viewModel.onCellPress(0, 0)
+        advancePastValidation()
+
+        assertEquals(0, viewModel.session!!.puzzleSession.accuracyDrops)
+        assertEquals(0, viewModel.wrongMoveTrigger)
+    }
+
+    @Test
     fun `mistakes never end the run`() {
         val viewModel = newViewModel(diagonalBlanksTestPuzzle)
         val results = mutableListOf<ChallengerResult>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 
         viewModel.onCellPress(2, 2)
+        advancePastValidation()
         viewModel.onCellPress(3, 3)
-        mainDispatcherRule.dispatcher.scheduler.runCurrent()
+        advancePastValidation()
 
         val session = viewModel.session
         checkNotNull(session)

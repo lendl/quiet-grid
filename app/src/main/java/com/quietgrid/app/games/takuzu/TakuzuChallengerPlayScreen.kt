@@ -3,6 +3,7 @@ package com.quietgrid.app.games.takuzu
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -17,6 +18,7 @@ import com.quietgrid.app.ui.components.PuzzleBoardContainer
 import com.quietgrid.app.ui.components.rememberHapticController
 import com.quietgrid.app.ui.play.GamePlayScaffold
 import com.quietgrid.app.ui.play.InfoItem
+import com.quietgrid.app.ui.play.LocalGamePlayPreferences
 import com.quietgrid.app.ui.play.PlayTimer
 
 @Composable
@@ -31,6 +33,8 @@ fun TakuzuChallengerPlayScreen(
 
     val session = viewModel.session
     val haptics = rememberHapticController()
+    val showMistakes = LocalGamePlayPreferences.current.showMistakes
+    SideEffect { viewModel.showMistakes = showMistakes }
     var boardFlashTrigger by remember { mutableStateOf(0) }
     LaunchedEffect(viewModel.wrongMoveTrigger) {
         if (viewModel.wrongMoveTrigger > 0) {
