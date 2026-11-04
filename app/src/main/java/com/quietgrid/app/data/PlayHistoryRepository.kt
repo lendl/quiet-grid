@@ -38,6 +38,7 @@ data class PlayRecord(
     val dailyDate: String? = null,
     val shareDetail: String? = null,
     val journeyStop: String? = null,
+    val journeyStars: Int? = null,
 )
 
 interface PlayHistoryStore {

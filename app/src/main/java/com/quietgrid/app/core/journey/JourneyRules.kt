@@ -13,12 +13,22 @@ data class JourneyStopProgress(
     val clean: Boolean = false,
     val underTarget: Boolean = false,
     val bestSeconds: Int? = null,
+    val bestScore: Int? = null,
     val skipped: Boolean = false,
     val attempts: Int = 0,
     val nextPuzzleId: String? = null,
 )
 
 data class JourneySignals(val hintsUsed: Int, val mistakes: Int)
+
+data class JourneyRun(val clean: Boolean, val underTarget: Boolean) {
+    val stars: Int get() = 1 + (if (clean) 1 else 0) + (if (underTarget) 1 else 0)
+}
+
+fun journeyRun(signals: JourneySignals, elapsedSeconds: Int, targetSeconds: Int): JourneyRun = JourneyRun(
+    clean = signals.hintsUsed == 0 && signals.mistakes == 0,
+    underTarget = elapsedSeconds < targetSeconds,
+)
 
 private fun JourneyStopProgress?.isSettled(): Boolean = this != null && (cleared || skipped)
 
@@ -30,20 +40,17 @@ fun playableStops(chapter: JourneyChapter, progress: Map<String, JourneyStopProg
 fun currentStop(chapter: JourneyChapter, progress: Map<String, JourneyStopProgress>): JourneyStop? =
     chapter.stops.firstOrNull { !progress[it.puzzleId].isSettled() }
 
-fun applyJourneyWin(old: JourneyStopProgress, signals: JourneySignals, elapsedSeconds: Int, targetSeconds: Int): JourneyStopProgress {
-    val clean = signals.hintsUsed == 0 && signals.mistakes == 0
-    val underTarget = elapsedSeconds < targetSeconds
-    val stars = 1 + (if (clean) 1 else 0) + (if (underTarget) 1 else 0)
-    return old.copy(
-        stars = maxOf(old.stars, stars),
+fun applyJourneyWin(old: JourneyStopProgress, run: JourneyRun, elapsedSeconds: Int, score: Int): JourneyStopProgress =
+    old.copy(
+        stars = maxOf(old.stars, run.stars),
         cleared = true,
-        clean = old.clean || clean,
-        underTarget = old.underTarget || underTarget,
+        clean = old.clean || run.clean,
+        underTarget = old.underTarget || run.underTarget,
         bestSeconds = old.bestSeconds?.let { minOf(it, elapsedSeconds) } ?: elapsedSeconds,
+        bestScore = old.bestScore?.let { maxOf(it, score) } ?: score,
         attempts = old.attempts + 1,
         nextPuzzleId = null,
     )
-}
 
 fun applyJourneyLoss(old: JourneyStopProgress, siblingId: String): JourneyStopProgress =
     old.copy(attempts = old.attempts + 1, nextPuzzleId = siblingId)

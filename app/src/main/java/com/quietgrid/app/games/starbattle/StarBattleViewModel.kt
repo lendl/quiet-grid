@@ -7,6 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.journey.JourneyRequest
+import com.quietgrid.app.core.journey.JourneySignals
+import com.quietgrid.app.data.JourneyProgressStore
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
@@ -17,6 +20,8 @@ import com.quietgrid.app.session.PuzzleSessionController
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import com.quietgrid.engine.journey.gridTransformById
+import com.quietgrid.engine.starbattle.transformed
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -35,6 +40,7 @@ data class StarBattleResult(
     val lossReason: String?,
     val isFirstSolve: Boolean = false,
     val isNewHighScore: Boolean = false,
+    val journeySignals: JourneySignals = JourneySignals(0, 0),
 )
 
 data class StarBattleOpenEvent(val row: Int, val col: Int, val wasCorrect: Boolean)
@@ -51,7 +57,7 @@ private fun decodeCells(flat: List<Int>, size: Int): List<List<StarBattleCellSta
     return List(size) { row -> List(size) { col -> states[flat[row * size + col]] } }
 }
 
-private class StarBattlePuzzleAdapter(
+internal class StarBattlePuzzleAdapter(
     private val appContext: android.content.Context,
     private val historyStore: PlayHistoryStore,
 ) : PuzzleAdapter<StarBattleSession, StarBattleResult> {
@@ -62,6 +68,12 @@ private class StarBattlePuzzleAdapter(
         val puzzle = StarBattlePuzzleBank.randomPuzzle(appContext, difficulty, recentIds) ?: return null
         return createStarBattleSession(puzzle)
     }
+
+    override suspend fun journeySession(difficulty: Difficulty, puzzleId: String, transform: Int): StarBattleSession? =
+        StarBattlePuzzleBank.puzzleById(appContext, difficulty, puzzleId)?.transformed(gridTransformById(transform))?.let(::createStarBattleSession)
+
+    override fun journeySignals(session: StarBattleSession): JourneySignals =
+        JourneySignals(0, STARBATTLE_STARTING_LIVES - session.lives)
 
     override fun restoreSession(payload: String, elapsedSeconds: Double): StarBattleSession? = runCatching {
         val persisted = json.decodeFromString<StarBattlePersistedSession>(payload)
@@ -101,6 +113,7 @@ private class StarBattlePuzzleAdapter(
         lossReason = outcome.lossReason,
         isFirstSolve = outcome.isFirstSolve,
         isNewHighScore = outcome.isNewHighScore,
+        journeySignals = outcome.journeySignals,
     )
 }
 
@@ -110,13 +123,15 @@ class StarBattlePlayViewModel @AssistedInject constructor(
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
+    journeyStore: JourneyProgressStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
+    @Assisted journey: JourneyRequest?,
 ) : ViewModel() {
 
     @AssistedFactory
     interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean): StarBattlePlayViewModel
+        fun create(requestedDifficulty: Difficulty, resume: Boolean, journey: JourneyRequest?): StarBattlePlayViewModel
     }
 
     private val controller = PuzzleSessionController(
@@ -125,18 +140,20 @@ class StarBattlePlayViewModel @AssistedInject constructor(
         statsStore = statsRepository,
         historyStore = historyRepository,
         adapter = StarBattlePuzzleAdapter(appContext, historyRepository),
+        journeyStore = journeyStore,
     )
 
     val session get() = controller.session
     val elapsedSeconds get() = controller.elapsedSeconds
     val result = controller.result
     val finishing = controller.finishing
+    val restarts = controller.restarts
 
     var lastOpenEvent by mutableStateOf<StarBattleOpenEvent?>(null)
         private set
 
     init {
-        controller.start(requestedDifficulty, resume)
+        controller.start(requestedDifficulty, resume, journey = journey)
     }
 
     fun onCellTap(row: Int, col: Int) {
@@ -168,4 +185,6 @@ class StarBattlePlayViewModel @AssistedInject constructor(
     }
 
     fun endPuzzle() = controller.endPuzzle()
+
+    fun restartPuzzle() = controller.restartPuzzle()
 }

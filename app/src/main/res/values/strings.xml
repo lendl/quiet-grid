@@ -2116,6 +2116,7 @@
     <string name="journey_replay_stars">Replay for 3 stars</string>
     <string name="journey_map">Map</string>
     <string name="journey_back_to_map">Back to map</string>
+    <string name="journey_restart_puzzle">Restart puzzle</string>
     <string name="journey_best_stars">Best: %1$d of 3 stars</string>
     <string name="journey_star_earned">Star earned</string>
     <string name="journey_star_missed">Star not earned</string>
@@ -2142,6 +2143,7 @@
     <string name="journey_map_star_count">%1$d/%2$d</string>
     <string name="journey_stop_meta_arrows">%1$d×%2$d · %3$d arrows</string>
     <string name="journey_stop_meta_grid">%1$d×%1$d</string>
+    <string name="journey_stop_meta_rect">%1$d×%2$d</string>
     <string name="journey_stop_target">target %1$s</string>
     <plurals name="journey_stop_best">
         <item quantity="one">Best %1$s · %2$d star</item>

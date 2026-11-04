@@ -41,3 +41,16 @@ fun GridTransform.mapVector(dRow: Int, dCol: Int): Pair<Int, Int> {
     val (row, col) = mapCell(1 + dRow, 1 + dCol, 3, 3)
     return (row - originRow) to (col - originCol)
 }
+
+fun <T> List<List<T>>.movedBy(t: GridTransform): List<List<T>> {
+    val rows = size
+    val cols = firstOrNull()?.size ?: 0
+    val (outRows, outCols) = t.outputSize(rows, cols)
+    val cells = HashMap<Pair<Int, Int>, T>(rows * cols)
+    for (row in 0 until rows) {
+        for (col in 0 until cols) {
+            cells[t.mapCell(row, col, rows, cols)] = this[row][col]
+        }
+    }
+    return List(outRows) { row -> List(outCols) { col -> cells.getValue(row to col) } }
+}

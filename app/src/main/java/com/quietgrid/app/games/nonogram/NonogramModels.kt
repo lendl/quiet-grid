@@ -18,12 +18,14 @@ data class NonogramSession(
     val puzzle: NonogramPuzzle,
     val board: NonogramGrid,
     val solution: List<List<Boolean>>,
+    val hintsUsed: Int = 0,
 )
 
 @Serializable
 data class NonogramPersistedSession(
     val entry: NonogramPuzzleEntry,
     val board: List<Int?>,
+    val hintsUsed: Int = 0,
 )
 
 enum class NonogramInputMode { FILL, CROSS }

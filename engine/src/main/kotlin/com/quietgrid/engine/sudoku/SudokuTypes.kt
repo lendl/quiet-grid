@@ -14,4 +14,5 @@ data class SudokuPuzzleEntry(
     val difficulty: String,
     val givens: List<List<Int?>>,
     val solution: List<List<Int>>,
+    val rating: Int? = null,
 )

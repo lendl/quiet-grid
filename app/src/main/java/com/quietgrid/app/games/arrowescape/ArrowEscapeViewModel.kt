@@ -162,6 +162,7 @@ class ArrowEscapePlayViewModel @AssistedInject constructor(
     val elapsedSeconds get() = controller.elapsedSeconds
     val result = controller.result
     val finishing = controller.finishing
+    val restarts = controller.restarts
 
     var lastTapEvent by mutableStateOf<ArrowEscapeTapEvent?>(null)
         private set
@@ -205,4 +206,11 @@ class ArrowEscapePlayViewModel @AssistedInject constructor(
     }
 
     fun endPuzzle() = controller.endPuzzle()
+
+    fun restartPuzzle() {
+        hintJob?.cancel()
+        hintJob = null
+        isComputingHint = false
+        controller.restartPuzzle()
+    }
 }

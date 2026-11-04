@@ -73,6 +73,9 @@ class PuzzleSessionController<TSession, TResult>(
     private val _finishing = MutableStateFlow<FinishKind?>(null)
     val finishing: StateFlow<FinishKind?> = _finishing
 
+    private val _restarts = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val restarts: SharedFlow<Unit> = _restarts
+
     fun start(requestedDifficulty: Difficulty, resume: Boolean, requestedDailyDate: LocalDate? = null, journey: JourneyRequest? = null) {
         difficulty = requestedDifficulty
         scope.launch {
@@ -97,6 +100,16 @@ class PuzzleSessionController<TSession, TResult>(
         finishAsLoss(ABANDONED_REASON)
     }
 
+    fun restartPuzzle() {
+        if (finalized || session == null) return
+        finalized = true
+        scope.launch {
+            recordLoss(ABANDONED_REASON)
+            sessionStore.clear()
+            _restarts.emit(Unit)
+        }
+    }
+
     fun finishAsWin() {
         if (finalized) return
         finalized = true
@@ -106,6 +119,7 @@ class PuzzleSessionController<TSession, TResult>(
         scope.launch {
             val previous = statsStore.statsFor(adapter.gameId).first().forDifficulty(difficulty)
             statsStore.recordResult(adapter.gameId, difficulty, solved = true, score = score)
+            val journeyStars = journey?.let { journeyStore?.recordWin(adapter.gameId, it.stopId, adapter.journeySignals(current), elapsedSeconds.toInt(), score) }
             if (!GameCatalog.get(adapter.gameId).beta) {
                 historyStore.appendRecord(
                     PlayRecord(
@@ -120,10 +134,10 @@ class PuzzleSessionController<TSession, TResult>(
                         dailyDate = dailyDate?.toString(),
                         shareDetail = if (dailyDate != null) adapter.dailyShareDetail(current) else null,
                         journeyStop = journey?.stopId,
+                        journeyStars = journeyStars,
                     ),
                 )
             }
-            journey?.let { journeyStore?.recordWin(adapter.gameId, it.stopId, adapter.journeySignals(current), elapsedSeconds.toInt()) }
             sessionStore.clear()
             delay(foldHandoffMs())
             _result.emit(
@@ -149,26 +163,7 @@ class PuzzleSessionController<TSession, TResult>(
         finalized = true
         _finishing.value = if (reason == ABANDONED_REASON) FinishKind.Abandoned else FinishKind.Loss
         scope.launch {
-            val score = session?.let { adapter.scoreOnLoss(it, difficulty, elapsedSeconds.toInt()) } ?: 0
-            statsStore.recordResult(adapter.gameId, difficulty, solved = false, score = score)
-            if (!GameCatalog.get(adapter.gameId).beta) {
-                historyStore.appendRecord(
-                    PlayRecord(
-                        gameId = adapter.gameId.key,
-                        difficulty = difficulty.key,
-                        puzzleId = session?.let { adapter.puzzleIdOf(it) },
-                        solved = false,
-                        score = score,
-                        elapsedSeconds = elapsedSeconds.toInt(),
-                        timestampMillis = System.currentTimeMillis(),
-                        lossReason = reason,
-                        dailyDate = dailyDate?.toString(),
-                        shareDetail = if (dailyDate != null) session?.let { adapter.dailyShareDetail(it) } else null,
-                        journeyStop = journey?.stopId,
-                    ),
-                )
-            }
-            if (reason != ABANDONED_REASON) journey?.let { journeyStore?.recordLoss(adapter.gameId, it.stopId) }
+            val score = recordLoss(reason)
             sessionStore.clear()
             delay(foldHandoffMs())
             _result.emit(
@@ -187,6 +182,30 @@ class PuzzleSessionController<TSession, TResult>(
                 ),
             )
         }
+    }
+
+    private suspend fun recordLoss(reason: String): Int {
+        val score = session?.let { adapter.scoreOnLoss(it, difficulty, elapsedSeconds.toInt()) } ?: 0
+        statsStore.recordResult(adapter.gameId, difficulty, solved = false, score = score)
+        if (!GameCatalog.get(adapter.gameId).beta) {
+            historyStore.appendRecord(
+                PlayRecord(
+                    gameId = adapter.gameId.key,
+                    difficulty = difficulty.key,
+                    puzzleId = session?.let { adapter.puzzleIdOf(it) },
+                    solved = false,
+                    score = score,
+                    elapsedSeconds = elapsedSeconds.toInt(),
+                    timestampMillis = System.currentTimeMillis(),
+                    lossReason = reason,
+                    dailyDate = dailyDate?.toString(),
+                    shareDetail = if (dailyDate != null) session?.let { adapter.dailyShareDetail(it) } else null,
+                    journeyStop = journey?.stopId,
+                ),
+            )
+        }
+        if (reason != ABANDONED_REASON) journey?.let { journeyStore?.recordLoss(adapter.gameId, it.stopId) }
+        return score
     }
 
     private fun foldHandoffMs(): Long = if (animationsEnabled() && !FinishMotion.reduced) FOLD_HANDOFF_MS else 0L

@@ -20,6 +20,9 @@ class JourneyRulesTest {
 
     private val clean = JourneySignals(hintsUsed = 0, mistakes = 0)
 
+    private fun win(old: JourneyStopProgress, signals: JourneySignals, elapsedSeconds: Int, targetSeconds: Int, score: Int = 0) =
+        applyJourneyWin(old, journeyRun(signals, elapsedSeconds, targetSeconds), elapsedSeconds, score)
+
     @Test
     fun `fresh chapter opens the first four stops`() {
         assertEquals(ids(1, 2, 3, 4), playableStops(chapter, emptyMap()))
@@ -52,7 +55,7 @@ class JourneyRulesTest {
 
     @Test
     fun `clean fast win earns three stars`() {
-        val won = applyJourneyWin(JourneyStopProgress(), clean, elapsedSeconds = 60, targetSeconds = 90)
+        val won = win(JourneyStopProgress(), clean, elapsedSeconds = 60, targetSeconds = 90)
         assertEquals(3, won.stars)
         assertTrue(won.cleared)
         assertTrue(won.clean)
@@ -63,7 +66,7 @@ class JourneyRulesTest {
 
     @Test
     fun `win with a hint earns two at most`() {
-        val won = applyJourneyWin(JourneyStopProgress(), JourneySignals(hintsUsed = 1, mistakes = 0), 60, 90)
+        val won = win(JourneyStopProgress(), JourneySignals(hintsUsed = 1, mistakes = 0), 60, 90)
         assertEquals(2, won.stars)
         assertFalse(won.clean)
         assertTrue(won.underTarget)
@@ -71,7 +74,7 @@ class JourneyRulesTest {
 
     @Test
     fun `slow win with a mistake earns one`() {
-        val won = applyJourneyWin(JourneyStopProgress(), JourneySignals(hintsUsed = 0, mistakes = 1), 200, 90)
+        val won = win(JourneyStopProgress(), JourneySignals(hintsUsed = 0, mistakes = 1), 200, 90)
         assertEquals(1, won.stars)
         assertTrue(won.cleared)
         assertFalse(won.clean)
@@ -80,27 +83,35 @@ class JourneyRulesTest {
 
     @Test
     fun `elapsed equal to target is not under target`() {
-        val won = applyJourneyWin(JourneyStopProgress(), clean, elapsedSeconds = 90, targetSeconds = 90)
+        val won = win(JourneyStopProgress(), clean, elapsedSeconds = 90, targetSeconds = 90)
         assertFalse(won.underTarget)
         assertEquals(2, won.stars)
     }
 
     @Test
     fun `a worse replay never lowers stars or flags`() {
-        val best = applyJourneyWin(JourneyStopProgress(), clean, 50, 90)
-        val replay = applyJourneyWin(best, JourneySignals(hintsUsed = 2, mistakes = 3), 300, 90)
+        val best = win(JourneyStopProgress(), clean, 50, 90, score = 800)
+        val replay = win(best, JourneySignals(hintsUsed = 2, mistakes = 3), 300, 90, score = 200)
         assertEquals(3, replay.stars)
         assertTrue(replay.cleared)
         assertTrue(replay.clean)
         assertTrue(replay.underTarget)
         assertEquals(50, replay.bestSeconds)
+        assertEquals(800, replay.bestScore)
         assertEquals(2, replay.attempts)
+    }
+
+    @Test
+    fun `a higher scoring replay raises the best score`() {
+        val first = win(JourneyStopProgress(), clean, 50, 90, score = 400)
+        assertEquals(400, first.bestScore)
+        assertEquals(900, win(first, clean, 40, 90, score = 900).bestScore)
     }
 
     @Test
     fun `win clears a pending sibling`() {
         val lost = applyJourneyLoss(JourneyStopProgress(), "sib")
-        assertNull(applyJourneyWin(lost, clean, 60, 90).nextPuzzleId)
+        assertNull(win(lost, clean, 60, 90).nextPuzzleId)
     }
 
     @Test

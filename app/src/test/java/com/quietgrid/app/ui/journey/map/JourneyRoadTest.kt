@@ -41,13 +41,13 @@ class JourneyRoadTest {
     }
 
     @Test
-    fun `road extends past both ends`() {
+    fun `road leads in below the first stop and ends at the last stop`() {
         val layout = journeyRoadLayout(stopCount = 25, width = 390f)
-        assertEquals(27, layout.full.size)
+        assertEquals(26, layout.full.size)
         assertEquals(layout.stops, layout.full.subList(1, 26))
         assertTrue(layout.full.first().y > layout.stops.first().y)
-        assertTrue(layout.full.last().y < layout.stops.last().y)
-        assertTrue(layout.full.first().y <= layout.height && layout.full.last().y >= 0f)
+        assertEquals(layout.stops.last(), layout.full.last())
+        assertTrue(layout.full.first().y <= layout.height)
     }
 
     @Test

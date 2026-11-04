@@ -11,6 +11,7 @@ data class JourneyProgressEntity(
     val clean: Boolean,
     val underTarget: Boolean,
     val bestSeconds: Int?,
+    val bestScore: Int?,
     val skipped: Boolean,
     val attempts: Int,
     val nextPuzzleId: String?,

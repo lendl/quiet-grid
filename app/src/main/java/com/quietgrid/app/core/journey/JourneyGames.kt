@@ -5,6 +5,12 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.games.animaldoku.AnimalDokuPuzzleBank
 import com.quietgrid.app.games.arrowescape.ArrowEscapePuzzleBank
+import com.quietgrid.app.games.killersudoku.KillerSudokuPuzzleBank
+import com.quietgrid.app.games.minisudoku.MiniSudokuPuzzleBank
+import com.quietgrid.app.games.nonogram.NonogramPuzzleBank
+import com.quietgrid.app.games.starbattle.StarBattlePuzzleBank
+import com.quietgrid.app.games.sudoku.SudokuPuzzleBank
+import com.quietgrid.app.games.takuzu.TakuzuPuzzleBank
 import com.quietgrid.engine.journey.JourneyChapter
 import com.quietgrid.engine.journey.JourneyFile
 import com.quietgrid.engine.journey.JourneyStop
@@ -14,7 +20,7 @@ import kotlinx.serialization.json.Json
 import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 
-val JOURNEY_GAMES: Set<GameId> = setOf(GameId.ANIMALDOKU, GameId.ARROWESCAPE)
+val JOURNEY_GAMES: Set<GameId> = setOf(GameId.ANIMALDOKU, GameId.ARROWESCAPE, GameId.STARBATTLE, GameId.SUDOKU, GameId.MINISUDOKU, GameId.KILLERSUDOKU, GameId.TAKUZU, GameId.NONOGRAM)
 
 fun journeyScope(gameId: GameId): String = gameId.key
 
@@ -40,6 +46,12 @@ suspend fun loadJourneyFile(context: Context, gameId: GameId): JourneyFile? {
 suspend fun journeyRatedPool(context: Context, gameId: GameId, difficulty: Difficulty): List<Pair<String, Int>> = when (gameId) {
     GameId.ANIMALDOKU -> AnimalDokuPuzzleBank.ratedPool(context, difficulty)
     GameId.ARROWESCAPE -> ArrowEscapePuzzleBank.ratedPool(context, difficulty)
+    GameId.STARBATTLE -> StarBattlePuzzleBank.ratedPool(context, difficulty)
+    GameId.SUDOKU -> SudokuPuzzleBank.ratedPool(context, difficulty)
+    GameId.MINISUDOKU -> MiniSudokuPuzzleBank.ratedPool(context, difficulty)
+    GameId.KILLERSUDOKU -> KillerSudokuPuzzleBank.ratedPool(context, difficulty)
+    GameId.TAKUZU -> TakuzuPuzzleBank.ratedPool(context, difficulty)
+    GameId.NONOGRAM -> NonogramPuzzleBank.ratedPool(context, difficulty)
     else -> emptyList()
 }
 

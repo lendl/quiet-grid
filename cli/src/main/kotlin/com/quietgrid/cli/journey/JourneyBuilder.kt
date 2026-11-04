@@ -9,42 +9,61 @@ import com.quietgrid.engine.journey.JourneyStop
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
-const val JOURNEY_STOPS_PER_CHAPTER = 25
-const val JOURNEY_MAX_STOPS_PER_CHAPTER = 30
-const val JOURNEY_PUZZLES_PER_BAND = 50
+const val JOURNEY_STOPS_PER_CHAPTER = 60
+const val JOURNEY_MAX_STOPS_PER_CHAPTER = 70
+const val JOURNEY_PUZZLES_PER_BAND = 120
+const val JOURNEY_MAX_CHAPTERS = 10
+const val JOURNEY_MIN_CHAPTERS = 4
 
 data class RatedPuzzle(val id: String, val difficulty: String, val rating: Int)
 
 private val byRatingThenId = compareBy<RatedPuzzle>({ it.rating }, { it.id })
 
 fun journeyBands(puzzleCount: Int): List<IntRange> {
-    val count = maxOf(1, puzzleCount / JOURNEY_PUZZLES_PER_BAND)
+    val count = (puzzleCount / JOURNEY_PUZZLES_PER_BAND).coerceIn(JOURNEY_MIN_CHAPTERS, JOURNEY_MAX_CHAPTERS)
     val span = JOURNEY_RATING_MAX - JOURNEY_RATING_MIN
     val edges = (0..count).map { JOURNEY_RATING_MIN + (it * span / count.toDouble()).roundToInt() }
     return (0 until count).map { i -> edges[i]..if (i == count - 1) JOURNEY_RATING_MAX else edges[i + 1] - 1 }
 }
 
-private fun spreadStops(puzzles: List<RatedPuzzle>): List<RatedPuzzle> {
+fun journeyStopCount(bandSize: Int, keepSiblings: Boolean): Int =
+    minOf(JOURNEY_STOPS_PER_CHAPTER, if (keepSiblings) (bandSize + 1) / 2 else bandSize)
+
+private fun spreadStops(puzzles: List<RatedPuzzle>, keepSiblings: Boolean): List<RatedPuzzle> {
     val sorted = puzzles.sortedWith(byRatingThenId)
-    if (sorted.size <= JOURNEY_STOPS_PER_CHAPTER) return sorted
-    val last = JOURNEY_STOPS_PER_CHAPTER - 1
+    val count = journeyStopCount(sorted.size, keepSiblings)
+    if (count >= sorted.size) return sorted
+    if (count == 1) return listOf(sorted[sorted.size / 2])
+    val last = count - 1
     return (0..last).map { sorted[(it * (sorted.size - 1) / last.toDouble()).roundToInt()] }
 }
 
 private fun RatedPuzzle.toStop(target: JourneyTargetSeconds, replaces: String? = null): JourneyStop =
     JourneyStop(id, difficulty, rating, targetSecondsFor(rating, target), replaces)
 
-private fun chaptersFor(bands: List<IntRange>, puzzles: List<RatedPuzzle>, firstIndex: Int, target: JourneyTargetSeconds): List<JourneyChapter> =
+private fun chaptersFor(
+    bands: List<IntRange>,
+    puzzles: List<RatedPuzzle>,
+    firstIndex: Int,
+    target: JourneyTargetSeconds,
+    keepSiblings: Boolean,
+): List<JourneyChapter> =
     bands.mapNotNull { band -> puzzles.filter { it.rating in band }.takeIf { it.isNotEmpty() }?.let { band to it } }
         .mapIndexed { offset, (band, inBand) ->
-            JourneyChapter(firstIndex + offset, band.first, band.last, spreadStops(inBand).map { it.toStop(target) })
+            JourneyChapter(firstIndex + offset, band.first, band.last, spreadStops(inBand, keepSiblings).map { it.toStop(target) })
         }
 
-fun buildJourney(game: String, puzzles: List<RatedPuzzle>, target: JourneyTargetSeconds): JourneyFile =
-    JourneyFile(game, chaptersFor(journeyBands(puzzles.size), puzzles, 1, target))
+fun buildJourney(game: String, puzzles: List<RatedPuzzle>, target: JourneyTargetSeconds, keepSiblings: Boolean = false): JourneyFile =
+    JourneyFile(game, chaptersFor(journeyBands(puzzles.size), puzzles, 1, target, keepSiblings))
 
-fun mergeJourney(existing: JourneyFile, puzzles: List<RatedPuzzle>, newIds: Set<String>, target: JourneyTargetSeconds): JourneyFile {
-    if (existing.chapters.isEmpty()) return buildJourney(existing.game, puzzles, target)
+fun mergeJourney(
+    existing: JourneyFile,
+    puzzles: List<RatedPuzzle>,
+    newIds: Set<String>,
+    target: JourneyTargetSeconds,
+    keepSiblings: Boolean = false,
+): JourneyFile {
+    if (existing.chapters.isEmpty()) return buildJourney(existing.game, puzzles, target, keepSiblings)
     val byId = puzzles.associateBy { it.id }
     val used = existing.chapters.flatMap { chapter -> chapter.stops.map { it.puzzleId } }.filter { it in byId }.toMutableSet()
     val merged = existing.chapters.map { chapter ->
@@ -76,7 +95,7 @@ fun mergeJourney(existing: JourneyFile, puzzles: List<RatedPuzzle>, newIds: Set<
         .takeWhile { it <= highest }
         .map { it until it + width }
         .toList()
-    return existing.copy(chapters = merged + chaptersFor(bands, above, top.index + 1, target))
+    return existing.copy(chapters = merged + chaptersFor(bands, above, top.index + 1, target, keepSiblings))
 }
 
 const val JOURNEY_REPLAY_RATING_TOLERANCE = 0.05

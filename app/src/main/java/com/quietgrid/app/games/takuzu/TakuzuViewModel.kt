@@ -10,6 +10,9 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.daily.selectDaily
 import java.time.LocalDate
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.journey.JourneyRequest
+import com.quietgrid.app.core.journey.JourneySignals
+import com.quietgrid.app.data.JourneyProgressStore
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
@@ -17,7 +20,9 @@ import com.quietgrid.app.data.recentlyPlayedPuzzleIds
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
+import com.quietgrid.engine.journey.gridTransformById
 import com.quietgrid.engine.takuzu.TakuzuGrid
+import com.quietgrid.engine.takuzu.transformed
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -48,9 +53,10 @@ data class TakuzuResult(
     val isFirstSolve: Boolean = false,
     val isNewHighScore: Boolean = false,
     val analyzerSnapshot: String? = null,
+    val journeySignals: JourneySignals = JourneySignals(0, 0),
 )
 
-private class TakuzuPuzzleAdapter(
+internal class TakuzuPuzzleAdapter(
     private val appContext: Context,
     private val historyStore: PlayHistoryStore,
 ) : PuzzleAdapter<TakuzuSession, TakuzuResult> {
@@ -67,6 +73,11 @@ private class TakuzuPuzzleAdapter(
         return createTakuzuSession(puzzle)
     }
 
+    override suspend fun journeySession(difficulty: Difficulty, puzzleId: String, transform: Int): TakuzuSession? =
+        TakuzuPuzzleBank.puzzleById(appContext, difficulty, puzzleId)?.transformed(gridTransformById(transform))?.let(::createTakuzuSession)
+
+    override fun journeySignals(session: TakuzuSession): JourneySignals = JourneySignals(session.hintsUsed, session.accuracyDrops)
+
     override fun restoreSession(payload: String, elapsedSeconds: Double): TakuzuSession? {
         val persisted = runCatching { json.decodeFromString<TakuzuPersistedSession>(payload) }.getOrNull() ?: return null
         val size = persisted.puzzle.size
@@ -78,6 +89,7 @@ private class TakuzuPuzzleAdapter(
             finishedCells = List(size) { r -> List(size) { c -> persisted.finishedCells[r * size + c] } },
             accuracyDrops = persisted.accuracyDrops,
             penalizedLineKeys = persisted.penalizedLineKeys,
+            hintsUsed = persisted.hintsUsed,
         )
     }
 
@@ -92,6 +104,7 @@ private class TakuzuPuzzleAdapter(
             finishedCells = session.finishedCells.flatten(),
             accuracyDrops = session.accuracyDrops,
             penalizedLineKeys = session.penalizedLineKeys,
+            hintsUsed = session.hintsUsed,
         ),
     )
 
@@ -115,6 +128,7 @@ private class TakuzuPuzzleAdapter(
         isFirstSolve = outcome.isFirstSolve,
         isNewHighScore = outcome.isNewHighScore,
         analyzerSnapshot = session?.let { analyzerSnapshotFor(it, outcome.solved) },
+        journeySignals = outcome.journeySignals,
     )
 }
 
@@ -124,14 +138,16 @@ class TakuzuPlayViewModel @AssistedInject constructor(
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
+    journeyStore: JourneyProgressStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
     @Assisted dailyDate: LocalDate?,
+    @Assisted journey: JourneyRequest?,
 ) : ViewModel() {
 
     @AssistedFactory
     interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean, dailyDate: LocalDate?): TakuzuPlayViewModel
+        fun create(requestedDifficulty: Difficulty, resume: Boolean, dailyDate: LocalDate?, journey: JourneyRequest?): TakuzuPlayViewModel
     }
 
     private val controller = PuzzleSessionController(
@@ -140,12 +156,14 @@ class TakuzuPlayViewModel @AssistedInject constructor(
         statsStore = statsRepository,
         historyStore = historyRepository,
         adapter = TakuzuPuzzleAdapter(appContext, historyRepository),
+        journeyStore = journeyStore,
     )
 
     val session get() = controller.session
     val elapsedSeconds get() = controller.elapsedSeconds
     val result = controller.result
     val finishing = controller.finishing
+    val restarts = controller.restarts
 
     var feedbackCorrectRows by mutableStateOf<Set<Int>>(emptySet())
         private set
@@ -172,7 +190,7 @@ class TakuzuPlayViewModel @AssistedInject constructor(
     private var hintJob: Job? = null
 
     init {
-        controller.start(requestedDifficulty, resume, dailyDate)
+        controller.start(requestedDifficulty, resume, dailyDate, journey)
     }
 
     private fun clearHint() {
@@ -238,6 +256,12 @@ class TakuzuPlayViewModel @AssistedInject constructor(
 
     fun endPuzzle() = controller.endPuzzle()
 
+    fun restartPuzzle() {
+        validationJob?.cancel()
+        clearHint()
+        controller.restartPuzzle()
+    }
+
     fun toggleNextMoveHint() {
         if (controller.isFinalized || isComputingHint) return
         if (nextMoveHint != null) {
@@ -249,7 +273,10 @@ class TakuzuPlayViewModel @AssistedInject constructor(
         hintJob = viewModelScope.launch {
             val hint = withContext(hintDispatcher) { getTakuzuNextMoveHint(current.board, current.solution) }
             isComputingHint = false
-            if (!controller.isFinalized && session == current) nextMoveHint = hint
+            if (!controller.isFinalized && session == current) {
+                nextMoveHint = hint
+                if (hint != null) controller.updateSession(current.copy(hintsUsed = current.hintsUsed + 1))
+            }
         }
     }
 }

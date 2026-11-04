@@ -53,6 +53,7 @@ import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.formatElapsed
 import com.quietgrid.app.data.PlayRecord
 import com.quietgrid.app.data.isLegacyMigratedTimestamp
+import com.quietgrid.app.ui.journey.JOURNEY_MAX_STARS_PER_STOP
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -273,6 +274,9 @@ private fun LogDetailSheet(record: PlayRecord, onDismiss: () -> Unit) {
             } else {
                 DetailRow(stringResource(difficultyLabelRes(gameId, Difficulty.fromKey(record.difficulty))), "")
                 DetailRow(stringResource(if (record.solved) R.string.logs_result_won else R.string.logs_result_lost), formatElapsed(record.elapsedSeconds))
+                record.journeyStars?.let { stars ->
+                    DetailRow(stringResource(R.string.journey_title), stringResource(R.string.journey_card_stars, stars, JOURNEY_MAX_STARS_PER_STOP))
+                }
                 if (!record.solved) {
                     record.lossReason?.let { reason -> DetailRow(stringResource(R.string.logs_detail_ended_by), stringResource(logsReasonLabelRes(reason))) }
                 }

@@ -12,4 +12,5 @@ data class TakuzuPuzzleEntry(
     val difficulty: String,
     val solution: String,
     val mask: String,
+    val rating: Int? = null,
 )

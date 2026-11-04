@@ -23,6 +23,12 @@ object KillerSudokuPuzzleBank {
         }
     }
 
+    suspend fun puzzleById(context: Context, difficulty: Difficulty, id: String): KillerSudokuPuzzleEntry? =
+        load(context)[difficulty.key]?.firstOrNull { it.id == id }
+
+    suspend fun ratedPool(context: Context, difficulty: Difficulty): List<Pair<String, Int>> =
+        load(context)[difficulty.key].orEmpty().mapNotNull { entry -> entry.rating?.let { entry.id to it } }
+
     suspend fun randomPuzzle(context: Context, difficulty: Difficulty, recentlyPlayedIds: Set<String> = emptySet()): KillerSudokuPuzzleEntry? {
         val pool = load(context)[difficulty.key].orEmpty()
         if (pool.isEmpty()) return null

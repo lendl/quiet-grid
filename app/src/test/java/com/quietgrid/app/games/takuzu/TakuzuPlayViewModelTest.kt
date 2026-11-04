@@ -4,6 +4,7 @@ import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.testutil.FakeHistoryStore
+import com.quietgrid.app.testutil.FakeJourneyStore
 import com.quietgrid.app.testutil.FakeSessionStore
 import com.quietgrid.app.testutil.FakeStatsStore
 import com.quietgrid.engine.takuzu.TakuzuPuzzleEntry
@@ -66,7 +67,7 @@ class TakuzuPlayViewModelTest {
     }
 
     private fun newViewModel(sessionStore: FakeSessionStore = FakeSessionStore(), statsStore: FakeStatsStore = FakeStatsStore()) =
-        TakuzuPlayViewModel(mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), Difficulty.EASY, resume = false, dailyDate = null)
+        TakuzuPlayViewModel(mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), FakeJourneyStore(), Difficulty.EASY, resume = false, dailyDate = null, journey = null)
 
     @Test
     fun `starting fresh loads the mocked puzzle with only the ungiven cell blank`() {

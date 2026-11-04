@@ -22,6 +22,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.journey.JourneyRequest
 import com.quietgrid.app.ui.components.CollectPuzzleResult
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
 import com.quietgrid.app.ui.components.rememberHapticController
@@ -36,11 +37,14 @@ fun StarBattlePlayScreen(
     resume: Boolean,
     onBack: () -> Unit,
     onFinished: (StarBattleResult) -> Unit,
+    journey: JourneyRequest? = null,
+    onRestarted: () -> Unit = {},
 ) {
     val viewModel = hiltViewModel<StarBattlePlayViewModel, StarBattlePlayViewModel.Factory>(
-        creationCallback = { factory -> factory.create(difficulty, resume) },
+        creationCallback = { factory -> factory.create(difficulty, resume, journey) },
     )
     CollectPuzzleResult(viewModel.result, onFinished)
+    CollectPuzzleResult(viewModel.restarts) { onRestarted() }
     val finishing by viewModel.finishing.collectAsState()
 
     val session = viewModel.session
@@ -68,6 +72,7 @@ fun StarBattlePlayScreen(
         finishing = finishing,
         foldRows = session?.puzzle?.size,
         foldCols = session?.puzzle?.size,
+        onRestartPuzzle = if (journey != null) viewModel::restartPuzzle else null,
         difficulty = session?.let { Difficulty.fromKey(it.puzzle.difficulty) },
         info = if (session == null) {
             emptyList()

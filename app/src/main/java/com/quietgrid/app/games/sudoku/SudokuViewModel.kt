@@ -10,6 +10,9 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.daily.selectDaily
 import java.time.LocalDate
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.journey.JourneyRequest
+import com.quietgrid.app.core.journey.JourneySignals
+import com.quietgrid.app.data.JourneyProgressStore
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
@@ -19,6 +22,8 @@ import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
 import com.quietgrid.engine.sudoku.SudokuGrid
 import com.quietgrid.engine.sudoku.SudokuLayout
+import com.quietgrid.engine.journey.gridTransformById
+import com.quietgrid.engine.sudoku.transformed
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -49,9 +54,10 @@ data class SudokuResult(
     val lossReason: String?,
     val isFirstSolve: Boolean = false,
     val isNewHighScore: Boolean = false,
+    val journeySignals: JourneySignals = JourneySignals(0, 0),
 )
 
-private class SudokuPuzzleAdapter(
+internal class SudokuPuzzleAdapter(
     private val appContext: Context,
     private val historyStore: PlayHistoryStore,
     private val variant: SudokuVariant,
@@ -69,6 +75,11 @@ private class SudokuPuzzleAdapter(
         return createSudokuSession(entry)
     }
 
+    override suspend fun journeySession(difficulty: Difficulty, puzzleId: String, transform: Int): SudokuSession? =
+        variant.bank.puzzleById(appContext, difficulty, puzzleId)?.transformed(gridTransformById(transform))?.let(::createSudokuSession)
+
+    override fun journeySignals(session: SudokuSession): JourneySignals = JourneySignals(session.hintsUsed, session.accuracyDrops)
+
     override fun restoreSession(payload: String, elapsedSeconds: Double): SudokuSession? {
         val persisted = runCatching { json.decodeFromString<SudokuPersistedSession>(payload) }.getOrNull() ?: return null
         val size = persisted.puzzle.givens.size
@@ -82,6 +93,7 @@ private class SudokuPuzzleAdapter(
             finishedCells = List(size) { r -> List(size) { c -> persisted.finishedCells[r * size + c] } },
             penalizedUnitKeys = persisted.penalizedUnitKeys,
             autoCandidateMode = persisted.autoCandidateMode,
+            hintsUsed = persisted.hintsUsed,
         )
     }
 
@@ -99,6 +111,7 @@ private class SudokuPuzzleAdapter(
             finishedCells = session.finishedCells.flatten(),
             penalizedUnitKeys = session.penalizedUnitKeys,
             autoCandidateMode = session.autoCandidateMode,
+            hintsUsed = session.hintsUsed,
         ),
     )
 
@@ -116,6 +129,7 @@ private class SudokuPuzzleAdapter(
         lossReason = outcome.lossReason,
         isFirstSolve = outcome.isFirstSolve,
         isNewHighScore = outcome.isNewHighScore,
+        journeySignals = outcome.journeySignals,
     )
 }
 
@@ -125,15 +139,17 @@ class SudokuPlayViewModel @AssistedInject constructor(
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
+    journeyStore: JourneyProgressStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
     @Assisted dailyDate: LocalDate?,
     @Assisted variant: SudokuVariant,
+    @Assisted journey: JourneyRequest?,
 ) : ViewModel() {
 
     @AssistedFactory
     interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean, dailyDate: LocalDate?, variant: SudokuVariant): SudokuPlayViewModel
+        fun create(requestedDifficulty: Difficulty, resume: Boolean, dailyDate: LocalDate?, variant: SudokuVariant, journey: JourneyRequest?): SudokuPlayViewModel
     }
 
     private val controller = PuzzleSessionController(
@@ -142,12 +158,14 @@ class SudokuPlayViewModel @AssistedInject constructor(
         statsStore = statsRepository,
         historyStore = historyRepository,
         adapter = SudokuPuzzleAdapter(appContext, historyRepository, variant),
+        journeyStore = journeyStore,
     )
 
     val session get() = controller.session
     val elapsedSeconds get() = controller.elapsedSeconds
     val result = controller.result
     val finishing = controller.finishing
+    val restarts = controller.restarts
 
     var selectedCell by mutableStateOf<Pair<Int, Int>?>(null)
         private set
@@ -185,7 +203,7 @@ class SudokuPlayViewModel @AssistedInject constructor(
     private val undoHistory = mutableListOf<SudokuSession>()
 
     init {
-        controller.start(requestedDifficulty, resume, dailyDate)
+        controller.start(requestedDifficulty, resume, dailyDate, journey)
     }
 
     private fun clearHint() {
@@ -322,6 +340,12 @@ class SudokuPlayViewModel @AssistedInject constructor(
 
     fun endPuzzle() = controller.endPuzzle()
 
+    fun restartPuzzle() {
+        validationJob?.cancel()
+        clearHint()
+        controller.restartPuzzle()
+    }
+
     fun toggleNextMoveHint() {
         if (controller.isFinalized || isComputingHint) return
         if (nextMoveHintActive) {
@@ -334,7 +358,10 @@ class SudokuPlayViewModel @AssistedInject constructor(
         hintJob = viewModelScope.launch {
             val hint = withContext(hintDispatcher) { getSudokuNextMoveHint(current.board) }
             isComputingHint = false
-            if (!controller.isFinalized && session == current && nextMoveHintActive) nextMoveHint = hint
+            if (!controller.isFinalized && session == current && nextMoveHintActive) {
+                nextMoveHint = hint
+                if (hint != null) controller.updateSession(current.copy(hintsUsed = current.hintsUsed + 1))
+            }
         }
     }
 }

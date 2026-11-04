@@ -13,6 +13,7 @@ data class TakuzuSession(
     val finishedCells: List<List<Boolean>>,
     val accuracyDrops: Int,
     val penalizedLineKeys: List<String>,
+    val hintsUsed: Int = 0,
 )
 
 @Serializable
@@ -22,6 +23,7 @@ data class TakuzuPersistedSession(
     val finishedCells: List<Boolean>,
     val accuracyDrops: Int,
     val penalizedLineKeys: List<String>,
+    val hintsUsed: Int = 0,
 )
 
 enum class CompletedLineState { INCOMPLETE, CORRECT, INCORRECT }

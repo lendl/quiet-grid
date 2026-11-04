@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.core.journey.JourneyRequest
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.games.sudoku.SudokuDock
 import com.quietgrid.app.games.sudoku.SudokuHouseRefUi
@@ -42,11 +43,14 @@ fun KillerSudokuPlayScreen(
     resume: Boolean,
     onBack: () -> Unit,
     onFinished: (KillerSudokuResult) -> Unit,
+    journey: JourneyRequest? = null,
+    onRestarted: () -> Unit = {},
 ) {
     val viewModel = hiltViewModel<KillerSudokuPlayViewModel, KillerSudokuPlayViewModel.Factory>(
-        creationCallback = { factory -> factory.create(difficulty, resume) },
+        creationCallback = { factory -> factory.create(difficulty, resume, journey) },
     )
     CollectPuzzleResult(viewModel.result, onFinished)
+    CollectPuzzleResult(viewModel.restarts) { onRestarted() }
     val finishing by viewModel.finishing.collectAsState()
 
     val session = viewModel.session
@@ -74,6 +78,7 @@ fun KillerSudokuPlayScreen(
         timer = PlayTimer.Elapsed(viewModel.elapsedSeconds.toInt()),
         onBack = onBack,
         onEndPuzzle = { viewModel.endPuzzle() },
+        onRestartPuzzle = if (journey != null) viewModel::restartPuzzle else null,
         finishing = finishing,
         foldRows = session?.grid?.board?.size,
         foldCols = session?.grid?.board?.firstOrNull()?.size,

@@ -16,6 +16,7 @@ data class SudokuSession(
     val finishedCells: List<List<Boolean>>,
     val penalizedUnitKeys: List<String>,
     val autoCandidateMode: Boolean = false,
+    val hintsUsed: Int = 0,
 )
 
 @Serializable
@@ -28,4 +29,5 @@ data class SudokuPersistedSession(
     val finishedCells: List<Boolean>,
     val penalizedUnitKeys: List<String>,
     val autoCandidateMode: Boolean = false,
+    val hintsUsed: Int = 0,
 )

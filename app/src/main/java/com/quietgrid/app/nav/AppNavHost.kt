@@ -731,12 +731,16 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                         difficulty = difficulty,
                                         resume = resume,
                                         dailyDate = dailyDate,
+                                        journey = journeyRequest,
+                                        onRestarted = { journeyRequest?.let { playJourneyStop(gameId, difficulty, it) } },
                                         onBack = { navController.popBackStack() },
                                         onFinished = { result ->
-                                            if (result.solved) {
+                                            if (!result.solved) AnalyzerHandoff.set(result.analyzerSnapshot)
+                                            if (journeyRequest != null) {
+                                                finishJourney(journeyRequest.stopId, result.solved, result.difficulty, result.elapsedSeconds, result.lossReason, result.score, result.journeySignals)
+                                            } else if (result.solved) {
                                                 goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
                                             } else {
-                                                AnalyzerHandoff.set(result.analyzerSnapshot)
                                                 goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
                                             }
                                         },
@@ -744,9 +748,13 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                     GameId.NONOGRAM -> NonogramPlayScreen(
                                         difficulty = difficulty,
                                         resume = resume,
+                                        journey = journeyRequest,
+                                        onRestarted = { journeyRequest?.let { playJourneyStop(gameId, difficulty, it) } },
                                         onBack = { navController.popBackStack() },
                                         onFinished = { result ->
-                                            if (result.solved) {
+                                            if (journeyRequest != null) {
+                                                finishJourney(journeyRequest.stopId, result.solved, result.difficulty, result.elapsedSeconds, result.lossReason, result.score, result.journeySignals)
+                                            } else if (result.solved) {
                                                 CompletionExtras.set(CompletionHighlight.Picture(result.solution))
                                                 goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
                                             } else {
@@ -770,9 +778,13 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                         difficulty = difficulty,
                                         resume = resume,
                                         dailyDate = dailyDate,
+                                        journey = journeyRequest,
+                                        onRestarted = { journeyRequest?.let { playJourneyStop(gameId, difficulty, it) } },
                                         onBack = { navController.popBackStack() },
                                         onFinished = { result ->
-                                            if (result.solved) {
+                                            if (journeyRequest != null) {
+                                                finishJourney(journeyRequest.stopId, result.solved, result.difficulty, result.elapsedSeconds, result.lossReason, result.score, result.journeySignals)
+                                            } else if (result.solved) {
                                                 goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
                                             } else {
                                                 goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
@@ -784,9 +796,13 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                         resume = resume,
                                         dailyDate = dailyDate,
                                         variant = SudokuVariant.MINI,
+                                        journey = journeyRequest,
+                                        onRestarted = { journeyRequest?.let { playJourneyStop(gameId, difficulty, it) } },
                                         onBack = { navController.popBackStack() },
                                         onFinished = { result ->
-                                            if (result.solved) {
+                                            if (journeyRequest != null) {
+                                                finishJourney(journeyRequest.stopId, result.solved, result.difficulty, result.elapsedSeconds, result.lossReason, result.score, result.journeySignals)
+                                            } else if (result.solved) {
                                                 goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
                                             } else {
                                                 goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
@@ -855,6 +871,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                         resume = resume,
                                         dailyDate = dailyDate,
                                         journey = journeyRequest,
+                                        onRestarted = { journeyRequest?.let { playJourneyStop(gameId, difficulty, it) } },
                                         onBack = { navController.popBackStack() },
                                         onFinished = { result ->
                                             if (!result.solved) AnalyzerHandoff.set(result.analyzerSnapshot)
@@ -871,6 +888,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                         difficulty = difficulty,
                                         resume = resume,
                                         journey = journeyRequest,
+                                        onRestarted = { journeyRequest?.let { playJourneyStop(gameId, difficulty, it) } },
                                         onBack = { navController.popBackStack() },
                                         onFinished = { result ->
                                             if (journeyRequest != null) {
@@ -909,9 +927,13 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                     GameId.STARBATTLE -> StarBattlePlayScreen(
                                         difficulty = difficulty,
                                         resume = resume,
+                                        journey = journeyRequest,
+                                        onRestarted = { journeyRequest?.let { playJourneyStop(gameId, difficulty, it) } },
                                         onBack = { navController.popBackStack() },
                                         onFinished = { result ->
-                                            if (result.solved) {
+                                            if (journeyRequest != null) {
+                                                finishJourney(journeyRequest.stopId, result.solved, result.difficulty, result.elapsedSeconds, result.lossReason, result.score, result.journeySignals)
+                                            } else if (result.solved) {
                                                 goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
                                             } else {
                                                 goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
@@ -970,9 +992,13 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                     GameId.KILLERSUDOKU -> KillerSudokuPlayScreen(
                                         difficulty = difficulty,
                                         resume = resume,
+                                        journey = journeyRequest,
+                                        onRestarted = { journeyRequest?.let { playJourneyStop(gameId, difficulty, it) } },
                                         onBack = { navController.popBackStack() },
                                         onFinished = { result ->
-                                            if (result.solved) {
+                                            if (journeyRequest != null) {
+                                                finishJourney(journeyRequest.stopId, result.solved, result.difficulty, result.elapsedSeconds, result.lossReason, result.score, result.journeySignals)
+                                            } else if (result.solved) {
                                                 goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
                                             } else {
                                                 goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)

@@ -64,8 +64,8 @@ private fun <T> runJourneyFor(bank: JourneyBank<T>, outDir: String, scalesPath: 
     val puzzles = rated.values.flatten().map { RatedPuzzle(bank.id(it), bank.difficulty(it), bank.rating(it)!!) }
     val journeyFile = File("$outDir/journey_${bank.game}.json")
     val existing = journeyFile.takeIf { it.exists() }?.let { journeyJson.decodeFromString(JourneyFile.serializer(), it.readText()) }
-    val journey = existing?.let { mergeJourney(it, puzzles, newIds, gameScale.targetSeconds) }
-        ?: buildJourney(bank.game, puzzles, gameScale.targetSeconds)
+    val journey = existing?.let { mergeJourney(it, puzzles, newIds, gameScale.targetSeconds, bank.keepSiblings) }
+        ?: buildJourney(bank.game, puzzles, gameScale.targetSeconds, bank.keepSiblings)
     validateJourney(journey, puzzles.map { it.id }.toSet())
     val entryById = entries.associateBy(bank.id)
     val replayById = journey.chapters.flatMap { it.stops }.parallelStream().map { stop ->

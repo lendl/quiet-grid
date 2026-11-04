@@ -1,8 +1,7 @@
 package com.quietgrid.app.ui.journey
 
 import com.quietgrid.app.core.journey.JourneySignals
-import com.quietgrid.app.core.journey.JourneyStopProgress
-import com.quietgrid.app.core.journey.applyJourneyWin
+import com.quietgrid.app.core.journey.journeyRun
 
 enum class JourneyGoalKind { CLEAR, CLEAN, TIME }
 
@@ -25,7 +24,7 @@ fun journeyResultModel(rows: List<JourneyStopRow>, stopId: String, elapsedSecond
     val index = rows.indexOfFirst { it.stop.puzzleId == stopId }
     if (index < 0) return null
     val row = rows[index]
-    val run = applyJourneyWin(JourneyStopProgress(), signals, elapsedSeconds, row.stop.targetSeconds)
+    val run = journeyRun(signals, elapsedSeconds, row.stop.targetSeconds)
     val bestStars = maxOf(row.progress.stars, run.stars)
     return JourneyResultModel(
         chapterIndex = row.chapterIndex,

@@ -123,7 +123,7 @@ private class FakeHistoryStore : PlayHistoryStore {
 }
 
 private class FakeJourneyStore(private val history: FakeHistoryStore) : JourneyProgressStore {
-    data class Win(val stopId: String, val signals: JourneySignals, val elapsedSeconds: Int)
+    data class Win(val stopId: String, val signals: JourneySignals, val elapsedSeconds: Int, val score: Int)
 
     val wins = mutableListOf<Win>()
     val losses = mutableListOf<String>()
@@ -131,8 +131,9 @@ private class FakeJourneyStore(private val history: FakeHistoryStore) : JourneyP
 
     override fun progressFor(gameId: GameId): Flow<Map<String, JourneyStopProgress>> = MutableStateFlow(emptyMap())
 
-    override suspend fun recordWin(gameId: GameId, stopId: String, signals: JourneySignals, elapsedSeconds: Int) {
-        wins += Win(stopId, signals, elapsedSeconds)
+    override suspend fun recordWin(gameId: GameId, stopId: String, signals: JourneySignals, elapsedSeconds: Int, score: Int): Int {
+        wins += Win(stopId, signals, elapsedSeconds, score)
+        return 2
     }
 
     override suspend fun recordLoss(gameId: GameId, stopId: String) {
@@ -803,7 +804,8 @@ class PuzzleSessionControllerTest {
 
         assertEquals("s1", history.appended.single().journeyStop)
         assertEquals("sib", history.appended.single().puzzleId)
-        assertEquals(listOf(FakeJourneyStore.Win("s1", signals, 5)), journeyStore.wins)
+        assertEquals(2, history.appended.single().journeyStars)
+        assertEquals(listOf(FakeJourneyStore.Win("s1", signals, 5, 95)), journeyStore.wins)
     }
 
     @Test
@@ -834,6 +836,41 @@ class PuzzleSessionControllerTest {
         assertEquals(listOf("s1"), journeyStore.losses)
         assertTrue(journeyStore.wins.isEmpty())
         assertEquals(listOf("s1", "s1"), history.appended.map { it.journeyStop })
+        assertEquals(listOf(null, null), history.appended.map { it.journeyStars })
+    }
+
+    @Test
+    fun `restartPuzzle records an abandoned attempt and signals a restart without a result or fold`() = runTest {
+        val history = FakeHistoryStore()
+        val journeyStore = FakeJourneyStore(history)
+        val sessionStore = FakeSessionStore()
+        val controller = PuzzleSessionController(
+            backgroundScope, sessionStore, FakeStatsStore(), history, FakePuzzleAdapter(),
+            animationsEnabled = { true },
+            journeyStore = journeyStore,
+        )
+        controller.start(Difficulty.HARD, resume = false, journey = journeyRequest)
+        runCurrent()
+
+        var restarts = 0
+        var emitted: TestResult? = null
+        val restartJob = launch { controller.restarts.collect { restarts++ } }
+        val resultJob = launch { controller.result.collect { emitted = it } }
+
+        controller.restartPuzzle()
+        controller.restartPuzzle()
+        runCurrent()
+
+        assertEquals(1, restarts)
+        assertNull(emitted)
+        assertNull(controller.finishing.value)
+        assertTrue(controller.isFinalized)
+        assertTrue(sessionStore.cleared)
+        assertEquals("abandoned", history.appended.single().lossReason)
+        assertEquals("s1", history.appended.single().journeyStop)
+        assertTrue(journeyStore.losses.isEmpty())
+        restartJob.cancel()
+        resultJob.cancel()
     }
 
     @Test

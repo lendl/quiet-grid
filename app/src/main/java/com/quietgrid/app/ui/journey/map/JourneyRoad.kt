@@ -26,7 +26,7 @@ fun journeyRoadLayout(stopCount: Int, width: Float): JourneyRoadLayout {
         y = height - JOURNEY_ROAD_MARGIN - i * JOURNEY_STOP_SPACING,
     )
     val stops = (0 until stopCount).map(::point)
-    return JourneyRoadLayout(width, height, stops, listOf(point(-1)) + stops + point(stopCount))
+    return JourneyRoadLayout(width, height, stops, listOf(point(-1)) + stops)
 }
 
 fun smoothRoadPath(points: List<RoadPoint>, segments: Int = points.size - 1): String {

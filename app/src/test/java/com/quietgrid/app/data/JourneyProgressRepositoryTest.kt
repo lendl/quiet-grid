@@ -71,13 +71,15 @@ class JourneyProgressRepositoryTest {
 
     @Test
     fun `win then loss keep stars and point the stop at a sibling`() = runBlocking {
-        repository.recordWin(game, "s1", JourneySignals(hintsUsed = 0, mistakes = 0), elapsedSeconds = 60)
+        val runStars = repository.recordWin(game, "s1", JourneySignals(hintsUsed = 0, mistakes = 0), elapsedSeconds = 60, score = 750)
         repository.recordLoss(game, "s1")
 
         val progress = repository.progressFor(game).first().getValue("s1")
+        assertEquals(3, runStars)
         assertEquals(3, progress.stars)
         assertTrue(progress.cleared)
         assertEquals(60, progress.bestSeconds)
+        assertEquals(750, progress.bestScore)
         assertEquals(2, progress.attempts)
         assertEquals("sib-near", progress.nextPuzzleId)
     }
@@ -95,8 +97,8 @@ class JourneyProgressRepositoryTest {
 
     @Test
     fun `win uses the stop's target time`() = runBlocking {
-        repository.recordWin(game, "s3", JourneySignals(hintsUsed = 0, mistakes = 0), elapsedSeconds = 100)
-        repository.recordWin(game, "s2", JourneySignals(hintsUsed = 0, mistakes = 0), elapsedSeconds = 100)
+        repository.recordWin(game, "s3", JourneySignals(hintsUsed = 0, mistakes = 0), elapsedSeconds = 100, score = 0)
+        repository.recordWin(game, "s2", JourneySignals(hintsUsed = 0, mistakes = 0), elapsedSeconds = 100, score = 0)
 
         val progress = repository.progressFor(game).first()
         assertTrue(progress.getValue("s3").underTarget)
@@ -116,7 +118,7 @@ class JourneyProgressRepositoryTest {
     @Test
     fun `progress under a replaced id moves to the new id`() = runBlocking {
         database.journeyProgressDao().upsert(
-            JourneyProgressEntity(game.key, "old3", 2, true, true, false, 80, false, 1, null, 1000),
+            JourneyProgressEntity(game.key, "old3", 2, true, true, false, 80, null, false, 1, null, 1000),
         )
 
         val progress = repository.progressFor(game).first()
@@ -129,8 +131,8 @@ class JourneyProgressRepositoryTest {
     @Test
     fun `replaced id does not overwrite progress already on the new id`() = runBlocking {
         val dao = database.journeyProgressDao()
-        dao.upsert(JourneyProgressEntity(game.key, "old3", 1, true, false, false, 200, false, 1, null, 1000))
-        dao.upsert(JourneyProgressEntity(game.key, "s3", 3, true, true, true, 50, false, 1, null, 2000))
+        dao.upsert(JourneyProgressEntity(game.key, "old3", 1, true, false, false, 200, null, false, 1, null, 1000))
+        dao.upsert(JourneyProgressEntity(game.key, "s3", 3, true, true, true, 50, null, false, 1, null, 2000))
 
         assertEquals(3, repository.progressFor(game).first().getValue("s3").stars)
     }

@@ -22,21 +22,45 @@ class JourneyBuilderTest {
     @Test
     fun `bands are contiguous and cover the scale`() {
         val bands = journeyBands(500)
-        assertEquals(10, bands.size)
+        assertEquals(4, bands.size)
         assertEquals(100, bands.first().first)
         assertEquals(1000, bands.last().last)
         bands.zipWithNext().forEach { (a, b) -> assertEquals(a.last + 1, b.first) }
-        assertEquals(listOf(100..1000), journeyBands(10))
     }
 
     @Test
-    fun `first build spreads 25 stops sorted by rating then id`() {
-        val puzzles = uniform(500)
+    fun `band count stays between the chapter floor and cap`() {
+        assertEquals(JOURNEY_MIN_CHAPTERS, journeyBands(10).size)
+        assertEquals(JOURNEY_MIN_CHAPTERS, journeyBands(210).size)
+        assertEquals(JOURNEY_MAX_CHAPTERS, journeyBands(1200).size)
+        assertEquals(JOURNEY_MAX_CHAPTERS, journeyBands(5000).size)
+    }
+
+    @Test
+    fun `games that keep siblings use at most half a band as stops`() {
+        assertEquals(26, journeyStopCount(52, keepSiblings = true))
+        assertEquals(27, journeyStopCount(53, keepSiblings = true))
+        assertEquals(52, journeyStopCount(52, keepSiblings = false))
+        assertEquals(JOURNEY_STOPS_PER_CHAPTER, journeyStopCount(200, keepSiblings = true))
+        assertEquals(1, journeyStopCount(1, keepSiblings = true))
+
+        val puzzles = (0 until 52).map { RatedPuzzle("s%02d".format(it), "easy", 100 + it) }
+        val file = buildJourney("g", puzzles, target, keepSiblings = true)
+        val stops = file.chapters.single().stops
+        assertEquals(26, stops.size)
+        assertEquals("s00", stops.first().puzzleId)
+        assertEquals("s51", stops.last().puzzleId)
+        assertEquals(52, buildJourney("g", puzzles, target).chapters.single().stops.size)
+    }
+
+    @Test
+    fun `first build spreads 60 stops sorted by rating then id`() {
+        val puzzles = uniform(1200)
         val file = buildJourney("g", puzzles, target)
         assertEquals(10, file.chapters.size)
         assertEquals((1..10).toList(), file.chapters.map { it.index })
         file.chapters.forEach { chapter ->
-            assertEquals(25, chapter.stops.size)
+            assertEquals(60, chapter.stops.size)
             chapter.stops.zipWithNext().forEach { (a, b) -> assertTrue(a.rating <= b.rating) }
             chapter.stops.forEach { assertTrue(it.rating in chapter.minRating..chapter.maxRating) }
         }
@@ -45,13 +69,13 @@ class JourneyBuilderTest {
 
     @Test
     fun `small band takes every puzzle and empty bands are dropped`() {
-        val low = (0 until 90).map { RatedPuzzle("l%02d".format(it), "easy", 100 + it * 200 / 89) }
+        val low = (0 until 230).map { RatedPuzzle("l%03d".format(it), "easy", 100 + it * 200 / 229) }
         val high = (0 until 10).map { RatedPuzzle("h%02d".format(it), "easy", 900 + it * 10) }
         val file = buildJourney("g", low + high, target)
-        assertEquals(listOf(100..549, 550..1000), file.chapters.map { it.minRating..it.maxRating })
-        assertEquals(listOf(25, 10), file.chapters.map { it.stops.size })
+        assertEquals(listOf(100..324, 775..1000), file.chapters.map { it.minRating..it.maxRating })
+        assertEquals(listOf(60, 10), file.chapters.map { it.stops.size })
 
-        val lumped = buildJourney("g", (0 until 100).map { RatedPuzzle("x%03d".format(it), "easy", 100 + it) }, target)
+        val lumped = buildJourney("g", (0 until 300).map { RatedPuzzle("x%03d".format(it), "easy", 100 + it % 200) }, target)
         assertEquals(1, lumped.chapters.size)
         assertEquals(1, lumped.chapters.single().index)
     }
@@ -91,7 +115,7 @@ class JourneyBuilderTest {
 
     @Test
     fun `missing stop with no unused band puzzle is dropped`() {
-        val puzzles = uniform(25)
+        val puzzles = (0 until 25).map { RatedPuzzle("p%04d".format(it), "easy", 100 + it) }
         val built = buildJourney("g", puzzles, target)
         assertEquals(25, built.chapters.single().stops.size)
         val merged = mergeJourney(built, puzzles.drop(1), emptySet(), target)
@@ -99,16 +123,16 @@ class JourneyBuilderTest {
     }
 
     @Test
-    fun `new puzzles fill the widest gaps and append up to 30`() {
-        val existingStops = (0 until 25).map { JourneyStop("s%02d".format(it), "easy", 100 + it * 10, 100) }
+    fun `new puzzles fill the widest gaps and append up to 70`() {
+        val existingStops = (0 until 65).map { JourneyStop("s%02d".format(it), "easy", 100 + it * 5, 100) }
         val existing = JourneyFile("g", listOf(JourneyChapter(1, 100, 1000, existingStops)))
         val fresh = listOf(345, 350, 360, 500, 700, 900, 1000, 990).mapIndexed { i, rating -> RatedPuzzle("n$i", "easy", rating) }
         val puzzles = existingStops.map { RatedPuzzle(it.puzzleId, it.difficulty, it.rating) } + fresh
         val merged = mergeJourney(existing, puzzles, fresh.map { it.id }.toSet(), target)
         val stops = merged.chapters.single().stops
-        assertEquals(30, stops.size)
-        assertEquals(existingStops.map { it.puzzleId }, stops.take(25).map { it.puzzleId })
-        assertEquals("n6", stops[25].puzzleId)
+        assertEquals(JOURNEY_MAX_STOPS_PER_CHAPTER, stops.size)
+        assertEquals(existingStops.map { it.puzzleId }, stops.take(65).map { it.puzzleId })
+        assertEquals(listOf("n6", "n4", "n5", "n3", "n7"), stops.drop(65).map { it.puzzleId })
     }
 
     @Test
@@ -119,7 +143,7 @@ class JourneyBuilderTest {
         val merged = mergeJourney(built, puzzles + higher, higher.map { it.id }.toSet(), target)
         val added = merged.chapters.drop(built.chapters.size)
         assertTrue(added.isNotEmpty())
-        assertEquals(11, added.first().index)
+        assertEquals(built.chapters.size + 1, added.first().index)
         assertEquals(1001, added.first().minRating)
         assertEquals(built.chapters, merged.chapters.take(built.chapters.size))
     }

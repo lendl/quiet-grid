@@ -2,6 +2,9 @@ package com.quietgrid.cli.journey
 
 import com.quietgrid.engine.animaldoku.AnimalDokuPuzzleEntry
 import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
+import com.quietgrid.engine.killersudoku.KillerSudokuPuzzleEntry
+import com.quietgrid.engine.starbattle.StarBattlePuzzleEntry
+import com.quietgrid.engine.sudoku.SudokuPuzzleEntry
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
@@ -25,6 +28,12 @@ class JourneyBankFieldsTest {
     @Test
     fun `every committed journey bank object uses only fields its model knows`() {
         assertKnownFields("animaldoku_puzzles.json", AnimalDokuPuzzleEntry.serializer())
+        assertKnownFields("starbattle_puzzles.json", StarBattlePuzzleEntry.serializer())
+        assertKnownFields("sudoku_puzzles.json", SudokuPuzzleEntry.serializer())
+        assertKnownFields("minisudoku_puzzles.json", SudokuPuzzleEntry.serializer())
+        assertKnownFields("killersudoku_puzzles.json", KillerSudokuPuzzleEntry.serializer())
+        assertKnownFields("takuzu_puzzles.json", com.quietgrid.engine.takuzu.TakuzuPuzzleEntry.serializer())
+        assertKnownFields("nonogram_puzzles.json", com.quietgrid.engine.nonogram.NonogramPuzzleEntry.serializer())
         listOf("easy", "medium", "hard", "expert", "halloween").forEach { suffix ->
             val file = if (suffix == "halloween") "arrowescape_halloween_puzzles.json" else "arrowescape_puzzles_$suffix.json"
             assertKnownFields(file, ArrowEscapePuzzleEntry.serializer())

@@ -45,11 +45,13 @@ fun ArrowEscapePlayScreen(
     onBack: () -> Unit,
     onFinished: (ArrowEscapeResult) -> Unit,
     journey: JourneyRequest? = null,
+    onRestarted: () -> Unit = {},
 ) {
     val viewModel = hiltViewModel<ArrowEscapePlayViewModel, ArrowEscapePlayViewModel.Factory>(
         creationCallback = { factory -> factory.create(difficulty, resume, journey) },
     )
     CollectPuzzleResult(viewModel.result, onFinished)
+    CollectPuzzleResult(viewModel.restarts) { onRestarted() }
     val finishing by viewModel.finishing.collectAsState()
 
     var visibleBounds by remember { mutableStateOf<Rect?>(null) }
@@ -100,6 +102,7 @@ fun ArrowEscapePlayScreen(
         finishing = finishing,
         foldRows = viewport?.rows,
         foldCols = viewport?.cols,
+        onRestartPuzzle = if (journey != null) viewModel::restartPuzzle else null,
         difficulty = session?.let { Difficulty.fromKey(it.puzzle.difficulty) },
         boardAspectRatio = viewport?.aspectRatio ?: 1f,
         hint = PlayHintAction(

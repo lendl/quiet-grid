@@ -27,6 +27,12 @@ open class SudokuEntryBank(private val assetName: String) {
     suspend fun dailyPool(context: Context, difficulty: Difficulty): List<SudokuPuzzleEntry> =
         load(context)[difficulty.key].orEmpty()
 
+    suspend fun puzzleById(context: Context, difficulty: Difficulty, id: String): SudokuPuzzleEntry? =
+        dailyPool(context, difficulty).firstOrNull { it.id == id }
+
+    suspend fun ratedPool(context: Context, difficulty: Difficulty): List<Pair<String, Int>> =
+        dailyPool(context, difficulty).mapNotNull { entry -> entry.rating?.let { entry.id to it } }
+
     suspend fun randomPuzzle(context: Context, difficulty: Difficulty, recentlyPlayedIds: Set<String> = emptySet()): SudokuPuzzleEntry? {
         val pool = dailyPool(context, difficulty)
         if (pool.isEmpty()) return null

@@ -8,6 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.journey.JourneyRequest
+import com.quietgrid.app.core.journey.JourneySignals
+import com.quietgrid.app.data.JourneyProgressStore
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
@@ -15,7 +18,9 @@ import com.quietgrid.app.data.recentlyPlayedPuzzleIds
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
+import com.quietgrid.engine.journey.gridTransformById
 import com.quietgrid.engine.nonogram.NonogramPuzzleEntry
+import com.quietgrid.engine.nonogram.transformed
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -41,9 +46,10 @@ data class NonogramResult(
     val isFirstSolve: Boolean = false,
     val isNewHighScore: Boolean = false,
     val solution: List<List<Boolean>> = emptyList(),
+    val journeySignals: JourneySignals = JourneySignals(0, 0),
 )
 
-private class NonogramPuzzleAdapter(
+internal class NonogramPuzzleAdapter(
     private val appContext: Context,
     private val historyStore: PlayHistoryStore,
 ) : PuzzleAdapter<NonogramSession, NonogramResult> {
@@ -55,6 +61,11 @@ private class NonogramPuzzleAdapter(
         return createNonogramSession(entry)
     }
 
+    override suspend fun journeySession(difficulty: Difficulty, puzzleId: String, transform: Int): NonogramSession? =
+        NonogramPuzzleBank.puzzleById(appContext, difficulty, puzzleId)?.transformed(gridTransformById(transform))?.let(::createNonogramSession)
+
+    override fun journeySignals(session: NonogramSession): JourneySignals = JourneySignals(session.hintsUsed, 0)
+
     override fun restoreSession(payload: String, elapsedSeconds: Double): NonogramSession? {
         val persisted = runCatching { json.decodeFromString<NonogramPersistedSession>(payload) }.getOrNull() ?: return null
         val puzzle = buildNonogramPuzzle(persisted.entry)
@@ -63,6 +74,7 @@ private class NonogramPuzzleAdapter(
             puzzle = puzzle,
             board = List(persisted.entry.rows) { r -> List(cols) { c -> persisted.board[r * cols + c] } },
             solution = persisted.entry.solution,
+            hintsUsed = persisted.hintsUsed,
         )
     }
 
@@ -78,7 +90,7 @@ private class NonogramPuzzleAdapter(
             cols = session.puzzle.cols,
             solution = session.solution,
         )
-        return json.encodeToString(NonogramPersistedSession(entry = entry, board = session.board.flatten()))
+        return json.encodeToString(NonogramPersistedSession(entry = entry, board = session.board.flatten(), hintsUsed = session.hintsUsed))
     }
 
     override fun puzzleIdOf(session: NonogramSession): String? = session.puzzle.id
@@ -95,6 +107,7 @@ private class NonogramPuzzleAdapter(
         isFirstSolve = outcome.isFirstSolve,
         isNewHighScore = outcome.isNewHighScore,
         solution = session?.solution ?: emptyList(),
+        journeySignals = outcome.journeySignals,
     )
 }
 
@@ -104,13 +117,15 @@ class NonogramPlayViewModel @AssistedInject constructor(
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
+    journeyStore: JourneyProgressStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
+    @Assisted journey: JourneyRequest?,
 ) : ViewModel() {
 
     @AssistedFactory
     interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean): NonogramPlayViewModel
+        fun create(requestedDifficulty: Difficulty, resume: Boolean, journey: JourneyRequest?): NonogramPlayViewModel
     }
 
     private val controller = PuzzleSessionController(
@@ -119,12 +134,14 @@ class NonogramPlayViewModel @AssistedInject constructor(
         statsStore = statsRepository,
         historyStore = historyRepository,
         adapter = NonogramPuzzleAdapter(appContext, historyRepository),
+        journeyStore = journeyStore,
     )
 
     val session get() = controller.session
     val elapsedSeconds get() = controller.elapsedSeconds
     val result = controller.result
     val finishing = controller.finishing
+    val restarts = controller.restarts
 
     var inputMode by mutableStateOf(NonogramInputMode.FILL)
     var nextMoveHint by mutableStateOf<NonogramNextMoveHint?>(null)
@@ -138,7 +155,7 @@ class NonogramPlayViewModel @AssistedInject constructor(
     private var hintJob: Job? = null
 
     init {
-        controller.start(requestedDifficulty, resume)
+        controller.start(requestedDifficulty, resume, journey = journey)
     }
 
     private fun clearHint() {
@@ -179,7 +196,10 @@ class NonogramPlayViewModel @AssistedInject constructor(
         hintJob = viewModelScope.launch {
             val hint = withContext(hintDispatcher) { getNonogramNextMoveHint(current.puzzle, current.board, current.solution) }
             isComputingHint = false
-            if (!controller.isFinalized && session == current && nextMoveHintActive) nextMoveHint = hint
+            if (!controller.isFinalized && session == current && nextMoveHintActive) {
+                nextMoveHint = hint
+                if (hint != null) controller.updateSession(current.copy(hintsUsed = current.hintsUsed + 1))
+            }
         }
     }
 
@@ -190,4 +210,9 @@ class NonogramPlayViewModel @AssistedInject constructor(
     }
 
     fun endPuzzle() = controller.endPuzzle()
+
+    fun restartPuzzle() {
+        clearHint()
+        controller.restartPuzzle()
+    }
 }

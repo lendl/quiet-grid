@@ -25,6 +25,11 @@ class JourneyAssetsTest {
     private fun bankRows(game: String): List<BankRow> = when (game) {
         "animaldoku" -> rows(journeyBank(game) as JourneyBank<com.quietgrid.engine.animaldoku.AnimalDokuPuzzleEntry>) { it.difficulty }
         "arrowescape" -> rows(journeyBank(game) as JourneyBank<ArrowEscapePuzzleEntry>) { it.difficulty }
+        "starbattle" -> rows(journeyBank(game) as JourneyBank<com.quietgrid.engine.starbattle.StarBattlePuzzleEntry>) { it.difficulty }
+        "sudoku", "minisudoku" -> rows(journeyBank(game) as JourneyBank<com.quietgrid.engine.sudoku.SudokuPuzzleEntry>) { it.difficulty }
+        "killersudoku" -> rows(journeyBank(game) as JourneyBank<com.quietgrid.engine.killersudoku.KillerSudokuPuzzleEntry>) { it.difficulty }
+        "takuzu" -> rows(journeyBank(game) as JourneyBank<com.quietgrid.engine.takuzu.TakuzuPuzzleEntry>) { it.difficulty }
+        "nonogram" -> rows(journeyBank(game) as JourneyBank<com.quietgrid.engine.nonogram.NonogramPuzzleEntry>) { it.difficulty }
         else -> error(game)
     }
 

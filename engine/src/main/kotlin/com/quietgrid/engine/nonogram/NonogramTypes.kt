@@ -12,4 +12,5 @@ data class NonogramPuzzleEntry(
     val rows: Int,
     val cols: Int,
     val solution: List<List<Boolean>>,
+    val rating: Int? = null,
 )

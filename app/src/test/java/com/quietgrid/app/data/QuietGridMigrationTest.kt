@@ -38,6 +38,17 @@ class QuietGridMigrationTest {
 
     private fun createVersion3Database() = createLegacyDatabase(3) { db -> MIGRATION_2_3.migrate(db) }
 
+    private fun createVersion4Database() = createLegacyDatabase(4) { db ->
+        MIGRATION_2_3.migrate(db)
+        MIGRATION_3_4.migrate(db)
+        db.execSQL("INSERT INTO journey_progress (scope, puzzleId, stars, cleared, clean, underTarget, bestSeconds, skipped, attempts, nextPuzzleId, lastPlayedMillis) VALUES ('animaldoku', 'ad-1', 2, 1, 1, 0, 95, 0, 1, NULL, 3000)")
+    }
+
+    private fun openDatabase() = Room.databaseBuilder(context, QuietGridDatabase::class.java, DB_NAME)
+        .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+        .allowMainThreadQueries()
+        .build()
+
     private fun createLegacyDatabase(version: Int, upgrade: (SupportSQLiteDatabase) -> Unit) {
         val config = SupportSQLiteOpenHelper.Configuration.builder(context)
             .name(DB_NAME)
@@ -63,10 +74,7 @@ class QuietGridMigrationTest {
     fun `migration keeps existing records and adds nullable daily columns`() = runBlocking {
         createVersion2Database()
 
-        val database = Room.databaseBuilder(context, QuietGridDatabase::class.java, DB_NAME)
-            .addMigrations(MIGRATION_2_3, MIGRATION_3_4)
-            .allowMainThreadQueries()
-            .build()
+        val database = openDatabase()
 
         val records = database.playHistoryDao().allRecords().first()
         assertEquals(1, records.size)
@@ -97,10 +105,7 @@ class QuietGridMigrationTest {
     fun `migration 3 to 4 keeps records and adds journey progress`() = runBlocking {
         createVersion3Database()
 
-        val database = Room.databaseBuilder(context, QuietGridDatabase::class.java, DB_NAME)
-            .addMigrations(MIGRATION_2_3, MIGRATION_3_4)
-            .allowMainThreadQueries()
-            .build()
+        val database = openDatabase()
 
         val records = database.playHistoryDao().allRecords().first()
         assertEquals(listOf("s-1"), records.map { it.puzzleId })
@@ -114,6 +119,7 @@ class QuietGridMigrationTest {
             clean = true,
             underTarget = false,
             bestSeconds = 95,
+            bestScore = 640,
             skipped = false,
             attempts = 1,
             nextPuzzleId = null,
@@ -122,6 +128,39 @@ class QuietGridMigrationTest {
         database.journeyProgressDao().upsert(progress)
         assertEquals(progress, database.journeyProgressDao().get("animaldoku", "ad-1"))
         assertEquals(listOf(progress), database.journeyProgressDao().progressFor("animaldoku").first())
+        database.close()
+    }
+
+    @Test
+    fun `migration 4 to 5 keeps journey progress and adds score and stars columns`() = runBlocking {
+        createVersion4Database()
+
+        val database = openDatabase()
+
+        val record = database.playHistoryDao().allRecords().first().single()
+        assertEquals("s-1", record.puzzleId)
+        assertNull(record.journeyStars)
+
+        val progress = database.journeyProgressDao().get("animaldoku", "ad-1")!!
+        assertEquals(2, progress.stars)
+        assertEquals(95, progress.bestSeconds)
+        assertNull(progress.bestScore)
+
+        database.playHistoryDao().insert(
+            PlayRecordEntity(
+                gameId = "animaldoku",
+                difficulty = "easy",
+                puzzleId = "ad-2",
+                solved = true,
+                score = 500,
+                elapsedSeconds = 40,
+                timestampMillis = 4000,
+                lossReason = null,
+                journeyStop = "ad-2",
+                journeyStars = 3,
+            ),
+        )
+        assertEquals(3, database.playHistoryDao().allRecords().first().first { it.puzzleId == "ad-2" }.journeyStars)
         database.close()
     }
 }

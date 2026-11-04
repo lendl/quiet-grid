@@ -166,6 +166,7 @@ class AnimalDokuPlayViewModel @AssistedInject constructor(
     val elapsedSeconds get() = controller.elapsedSeconds
     val result = controller.result
     val finishing = controller.finishing
+    val restarts = controller.restarts
 
     var lastOpenEvent by mutableStateOf<AnimalDokuOpenEvent?>(null)
         private set
@@ -242,5 +243,10 @@ class AnimalDokuPlayViewModel @AssistedInject constructor(
     fun endPuzzle() {
         clearHint()
         controller.endPuzzle()
+    }
+
+    fun restartPuzzle() {
+        clearHint()
+        controller.restartPuzzle()
     }
 }

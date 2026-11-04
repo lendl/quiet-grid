@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.core.journey.JourneyRequest
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.ui.components.CollectPuzzleResult
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
@@ -26,11 +27,14 @@ fun NonogramPlayScreen(
     resume: Boolean,
     onBack: () -> Unit,
     onFinished: (NonogramResult) -> Unit,
+    journey: JourneyRequest? = null,
+    onRestarted: () -> Unit = {},
 ) {
     val viewModel = hiltViewModel<NonogramPlayViewModel, NonogramPlayViewModel.Factory>(
-        creationCallback = { factory -> factory.create(difficulty, resume) },
+        creationCallback = { factory -> factory.create(difficulty, resume, journey) },
     )
     CollectPuzzleResult(viewModel.result, onFinished)
+    CollectPuzzleResult(viewModel.restarts) { onRestarted() }
     val finishing by viewModel.finishing.collectAsState()
 
     val session = viewModel.session
@@ -43,6 +47,7 @@ fun NonogramPlayScreen(
         timer = PlayTimer.Elapsed(viewModel.elapsedSeconds.toInt()),
         onBack = onBack,
         onEndPuzzle = { viewModel.endPuzzle() },
+        onRestartPuzzle = if (journey != null) viewModel::restartPuzzle else null,
         finishing = finishing,
         foldRows = session?.puzzle?.rows,
         foldCols = session?.puzzle?.cols,

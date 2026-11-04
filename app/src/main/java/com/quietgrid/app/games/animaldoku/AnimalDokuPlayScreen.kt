@@ -35,11 +35,13 @@ fun AnimalDokuPlayScreen(
     onBack: () -> Unit,
     onFinished: (AnimalDokuResult) -> Unit,
     journey: JourneyRequest? = null,
+    onRestarted: () -> Unit = {},
 ) {
     val viewModel = hiltViewModel<AnimalDokuPlayViewModel, AnimalDokuPlayViewModel.Factory>(
         creationCallback = { factory -> factory.create(difficulty, resume, dailyDate, journey) },
     )
     CollectPuzzleResult(viewModel.result, onFinished)
+    CollectPuzzleResult(viewModel.restarts) { onRestarted() }
     val finishing by viewModel.finishing.collectAsState()
 
     val session = viewModel.session
@@ -69,6 +71,7 @@ fun AnimalDokuPlayScreen(
         finishing = finishing,
         foldRows = session?.puzzle?.size,
         foldCols = session?.puzzle?.size,
+        onRestartPuzzle = if (journey != null) viewModel::restartPuzzle else null,
         difficulty = session?.let { Difficulty.fromKey(it.puzzle.difficulty) },
         hint = PlayHintAction(
             active = hint != null,

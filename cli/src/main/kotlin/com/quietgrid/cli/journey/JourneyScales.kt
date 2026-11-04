@@ -12,7 +12,14 @@ import java.io.File
 import kotlin.math.roundToInt
 
 @Serializable
-data class JourneyTargetSeconds(val atMinRating: Int, val atMaxRating: Int)
+data class TargetPoint(val rating: Int, val seconds: Int)
+
+@Serializable
+data class JourneyTargetSeconds(val points: List<TargetPoint>) {
+    constructor(atMinRating: Int, atMaxRating: Int) : this(
+        listOf(TargetPoint(JOURNEY_RATING_MIN, atMinRating), TargetPoint(JOURNEY_RATING_MAX, atMaxRating)),
+    )
+}
 
 @Serializable
 data class JourneyGameScale(
@@ -47,7 +54,13 @@ fun buildRatingScale(raws: List<Long>): List<RatingPoint> {
 }
 
 fun targetSecondsFor(rating: Int, target: JourneyTargetSeconds): Int {
-    val fraction = (rating - JOURNEY_RATING_MIN).toDouble() / (JOURNEY_RATING_MAX - JOURNEY_RATING_MIN)
-    val seconds = target.atMinRating + fraction * (target.atMaxRating - target.atMinRating)
+    val points = target.points.sortedBy { it.rating }
+    val lower = points.lastOrNull { it.rating <= rating } ?: points.first()
+    val upper = points.firstOrNull { it.rating >= rating } ?: points.last()
+    val seconds = if (upper.rating == lower.rating) {
+        lower.seconds.toDouble()
+    } else {
+        lower.seconds + (rating - lower.rating).toDouble() / (upper.rating - lower.rating) * (upper.seconds - lower.seconds)
+    }
     return (seconds / 10).roundToInt() * 10
 }

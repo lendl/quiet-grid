@@ -47,6 +47,9 @@ fun JourneyStopCard(
         when (preview) {
             is JourneyBoardPreviewData.Arrows -> stringResource(R.string.journey_stop_meta_arrows, preview.cols, preview.rows, preview.pieces.size)
             is JourneyBoardPreviewData.Regions -> stringResource(R.string.journey_stop_meta_grid, preview.size)
+            is JourneyBoardPreviewData.Digits -> stringResource(R.string.journey_stop_meta_grid, preview.size)
+            is JourneyBoardPreviewData.Cages -> stringResource(R.string.journey_stop_meta_grid, preview.size)
+            is JourneyBoardPreviewData.EmptyGrid -> stringResource(R.string.journey_stop_meta_rect, preview.cols, preview.rows)
             null -> null
         },
         stringResource(R.string.journey_stop_target, formatElapsed(row.stop.targetSeconds)),

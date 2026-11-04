@@ -8,6 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.journey.JourneyRequest
+import com.quietgrid.app.core.journey.JourneySignals
+import com.quietgrid.app.data.JourneyProgressStore
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
@@ -29,6 +32,8 @@ import com.quietgrid.app.games.sudoku.sudokuTouchedUnitKeys
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
+import com.quietgrid.engine.journey.gridTransformById
+import com.quietgrid.engine.killersudoku.transformed
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -59,9 +64,10 @@ data class KillerSudokuResult(
     val lossReason: String?,
     val isFirstSolve: Boolean = false,
     val isNewHighScore: Boolean = false,
+    val journeySignals: JourneySignals = JourneySignals(0, 0),
 )
 
-private class KillerSudokuPuzzleAdapter(
+internal class KillerSudokuPuzzleAdapter(
     private val appContext: Context,
     private val historyStore: PlayHistoryStore,
 ) : PuzzleAdapter<KillerSudokuSession, KillerSudokuResult> {
@@ -72,6 +78,12 @@ private class KillerSudokuPuzzleAdapter(
         val entry = KillerSudokuPuzzleBank.randomPuzzle(appContext, difficulty, recentIds) ?: return null
         return createKillerSudokuSession(entry)
     }
+
+    override suspend fun journeySession(difficulty: Difficulty, puzzleId: String, transform: Int): KillerSudokuSession? =
+        KillerSudokuPuzzleBank.puzzleById(appContext, difficulty, puzzleId)?.transformed(gridTransformById(transform))?.let(::createKillerSudokuSession)
+
+    override fun journeySignals(session: KillerSudokuSession): JourneySignals =
+        JourneySignals(session.grid.hintsUsed, session.grid.accuracyDrops)
 
     override fun restoreSession(payload: String, elapsedSeconds: Double): KillerSudokuSession? {
         val persisted = runCatching { json.decodeFromString<KillerSudokuPersistedSession>(payload) }.getOrNull() ?: return null
@@ -86,6 +98,7 @@ private class KillerSudokuPuzzleAdapter(
                 finishedCells = List(9) { r -> List(9) { c -> persisted.finishedCells[r * 9 + c] } },
                 penalizedUnitKeys = persisted.penalizedUnitKeys,
                 autoCandidateMode = persisted.autoCandidateMode,
+                hintsUsed = persisted.hintsUsed,
             ),
         )
     }
@@ -104,6 +117,7 @@ private class KillerSudokuPuzzleAdapter(
             finishedCells = session.grid.finishedCells.flatten(),
             penalizedUnitKeys = session.grid.penalizedUnitKeys,
             autoCandidateMode = session.grid.autoCandidateMode,
+            hintsUsed = session.grid.hintsUsed,
         ),
     )
 
@@ -121,6 +135,7 @@ private class KillerSudokuPuzzleAdapter(
         lossReason = outcome.lossReason,
         isFirstSolve = outcome.isFirstSolve,
         isNewHighScore = outcome.isNewHighScore,
+        journeySignals = outcome.journeySignals,
     )
 }
 
@@ -130,13 +145,15 @@ class KillerSudokuPlayViewModel @AssistedInject constructor(
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
+    journeyStore: JourneyProgressStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
+    @Assisted journey: JourneyRequest?,
 ) : ViewModel() {
 
     @AssistedFactory
     interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean): KillerSudokuPlayViewModel
+        fun create(requestedDifficulty: Difficulty, resume: Boolean, journey: JourneyRequest?): KillerSudokuPlayViewModel
     }
 
     private val controller = PuzzleSessionController(
@@ -145,12 +162,14 @@ class KillerSudokuPlayViewModel @AssistedInject constructor(
         statsStore = statsRepository,
         historyStore = historyRepository,
         adapter = KillerSudokuPuzzleAdapter(appContext, historyRepository),
+        journeyStore = journeyStore,
     )
 
     val session get() = controller.session
     val elapsedSeconds get() = controller.elapsedSeconds
     val result = controller.result
     val finishing = controller.finishing
+    val restarts = controller.restarts
 
     var selectedCell by mutableStateOf<Pair<Int, Int>?>(null)
         private set
@@ -188,7 +207,7 @@ class KillerSudokuPlayViewModel @AssistedInject constructor(
     private val undoHistory = mutableListOf<KillerSudokuSession>()
 
     init {
-        controller.start(requestedDifficulty, resume, null)
+        controller.start(requestedDifficulty, resume, null, journey)
     }
 
     private fun clearHint() {
@@ -333,6 +352,12 @@ class KillerSudokuPlayViewModel @AssistedInject constructor(
 
     fun endPuzzle() = controller.endPuzzle()
 
+    fun restartPuzzle() {
+        validationJob?.cancel()
+        clearHint()
+        controller.restartPuzzle()
+    }
+
     fun toggleHint() {
         if (controller.isFinalized || isComputingHint) return
         if (hintActive) {
@@ -345,7 +370,10 @@ class KillerSudokuPlayViewModel @AssistedInject constructor(
         hintJob = viewModelScope.launch {
             val computed = withContext(hintDispatcher) { getKillerSudokuHint(current.layout, current.grid.board) }
             isComputingHint = false
-            if (!controller.isFinalized && session == current && hintActive) hint = computed
+            if (!controller.isFinalized && session == current && hintActive) {
+                hint = computed
+                if (computed != null) controller.updateSession(current.copy(grid = current.grid.copy(hintsUsed = current.grid.hintsUsed + 1)))
+            }
         }
     }
 }

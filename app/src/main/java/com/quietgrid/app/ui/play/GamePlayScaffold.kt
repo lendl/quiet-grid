@@ -78,6 +78,7 @@ fun GamePlayScaffold(
     finishing: FinishKind? = null,
     foldRows: Int? = null,
     foldCols: Int? = null,
+    onRestartPuzzle: (() -> Unit)? = null,
     board: @Composable BoxScope.(PlaySizeClass) -> Unit,
 ) {
     var showEndDialog by remember { mutableStateOf(false) }
@@ -117,6 +118,7 @@ fun GamePlayScaffold(
             rulesOpen = !rulesOpen
         },
         onEndPuzzle = { if (preferences.confirmEndPuzzle) showEndDialog = true else onEndPuzzle() },
+        onRestartPuzzle = onRestartPuzzle,
     )
     val stripItems = playContextItems(gameId, difficulty) + info
     val contentDirection = LocalLayoutDirection.current

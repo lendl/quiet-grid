@@ -20,6 +20,7 @@ import androidx.compose.material.icons.automirrored.outlined.HelpOutline
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Flag
 import androidx.compose.material.icons.outlined.Lightbulb
+import androidx.compose.material.icons.outlined.RestartAlt
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -58,6 +59,7 @@ internal class PlayChromeActions(
     val onBack: () -> Unit,
     val onToggleRules: () -> Unit,
     val onEndPuzzle: () -> Unit,
+    val onRestartPuzzle: (() -> Unit)? = null,
 )
 
 @Composable
@@ -110,7 +112,7 @@ private fun PlayTrailingActions(metrics: PlayMetrics, actions: PlayChromeActions
         metrics = metrics,
         onClick = actions.onToggleRules,
     )
-    PlayOverflowMenu(metrics, actions.onEndPuzzle)
+    PlayOverflowMenu(metrics, actions.onEndPuzzle, actions.onRestartPuzzle)
 }
 
 @Composable
@@ -206,7 +208,7 @@ private fun PlayToggleIconButton(
 }
 
 @Composable
-private fun PlayOverflowMenu(metrics: PlayMetrics, onEndPuzzle: () -> Unit) {
+private fun PlayOverflowMenu(metrics: PlayMetrics, onEndPuzzle: () -> Unit, onRestartPuzzle: (() -> Unit)?) {
     var expanded by remember { mutableStateOf(false) }
     Box {
         PlayToggleIconButton(
@@ -216,6 +218,16 @@ private fun PlayOverflowMenu(metrics: PlayMetrics, onEndPuzzle: () -> Unit) {
             metrics = metrics,
         ) { expanded = true }
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            if (onRestartPuzzle != null) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.journey_restart_puzzle)) },
+                    leadingIcon = { Icon(Icons.Outlined.RestartAlt, contentDescription = null) },
+                    onClick = {
+                        expanded = false
+                        onRestartPuzzle()
+                    },
+                )
+            }
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.common_end_puzzle)) },
                 leadingIcon = { Icon(Icons.Outlined.Flag, contentDescription = null) },

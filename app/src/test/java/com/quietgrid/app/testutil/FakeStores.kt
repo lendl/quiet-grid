@@ -99,8 +99,9 @@ class FakeJourneyStore : JourneyProgressStore {
 
     override fun progressFor(gameId: GameId): Flow<Map<String, JourneyStopProgress>> = progress
 
-    override suspend fun recordWin(gameId: GameId, stopId: String, signals: JourneySignals, elapsedSeconds: Int) {
+    override suspend fun recordWin(gameId: GameId, stopId: String, signals: JourneySignals, elapsedSeconds: Int, score: Int): Int {
         wins += stopId
+        return 1
     }
 
     override suspend fun recordLoss(gameId: GameId, stopId: String) {

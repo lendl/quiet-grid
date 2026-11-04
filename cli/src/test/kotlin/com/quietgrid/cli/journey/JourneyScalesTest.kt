@@ -43,11 +43,22 @@ class JourneyScalesTest {
     }
 
     @Test
+    fun `target seconds follows each segment between points`() {
+        val target = JourneyTargetSeconds(listOf(TargetPoint(600, 60), TargetPoint(100, 20), TargetPoint(610, 180), TargetPoint(1000, 480)))
+        assertEquals(20, targetSecondsFor(50, target))
+        assertEquals(40, targetSecondsFor(350, target))
+        assertEquals(60, targetSecondsFor(600, target))
+        assertEquals(120, targetSecondsFor(605, target))
+        assertEquals(180, targetSecondsFor(610, target))
+        assertEquals(480, targetSecondsFor(1200, target))
+    }
+
+    @Test
     fun `scales round-trip through the file`() {
         val file = File.createTempFile("journey_scales", ".json").apply { deleteOnExit() }
         val scales = mapOf(
             "b" to JourneyGameScale(JourneyTargetSeconds(60, 900), listOf(RatingPoint(1, 100), RatingPoint(9, 1000))),
-            "a" to JourneyGameScale(JourneyTargetSeconds(120, 1200)),
+            "a" to JourneyGameScale(JourneyTargetSeconds(listOf(TargetPoint(100, 20), TargetPoint(500, 60), TargetPoint(1000, 1200)))),
         )
         writeJourneyScales(file.path, scales)
         assertEquals(scales, readJourneyScales(file.path))

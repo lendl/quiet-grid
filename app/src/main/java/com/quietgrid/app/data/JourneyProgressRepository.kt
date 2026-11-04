@@ -8,6 +8,7 @@ import com.quietgrid.app.core.journey.JourneyStopProgress
 import com.quietgrid.app.core.journey.applyJourneyLoss
 import com.quietgrid.app.core.journey.applyJourneyWin
 import com.quietgrid.app.core.journey.journeyRatedPool
+import com.quietgrid.app.core.journey.journeyRun
 import com.quietgrid.app.core.journey.journeyScope
 import com.quietgrid.app.core.journey.journeySiblingSeed
 import com.quietgrid.app.core.journey.loadJourneyFile
@@ -25,7 +26,7 @@ import javax.inject.Singleton
 
 interface JourneyProgressStore {
     fun progressFor(gameId: GameId): Flow<Map<String, JourneyStopProgress>>
-    suspend fun recordWin(gameId: GameId, stopId: String, signals: JourneySignals, elapsedSeconds: Int)
+    suspend fun recordWin(gameId: GameId, stopId: String, signals: JourneySignals, elapsedSeconds: Int, score: Int): Int
     suspend fun recordLoss(gameId: GameId, stopId: String)
     suspend fun skip(gameId: GameId, stopId: String)
 }
@@ -56,9 +57,11 @@ class JourneyProgressRepository(
         emitAll(dao.progressFor(journeyScope(gameId)).map { rows -> rows.associate { it.puzzleId to it.toProgress() } })
     }
 
-    override suspend fun recordWin(gameId: GameId, stopId: String, signals: JourneySignals, elapsedSeconds: Int) {
+    override suspend fun recordWin(gameId: GameId, stopId: String, signals: JourneySignals, elapsedSeconds: Int, score: Int): Int {
         val target = journeyFile(gameId)?.locate(stopId)?.second?.targetSeconds ?: 0
-        save(gameId, stopId, applyJourneyWin(current(gameId, stopId), signals, elapsedSeconds, target))
+        val run = journeyRun(signals, elapsedSeconds, target)
+        save(gameId, stopId, applyJourneyWin(current(gameId, stopId), run, elapsedSeconds, score))
+        return run.stars
     }
 
     override suspend fun recordLoss(gameId: GameId, stopId: String) {
@@ -105,6 +108,7 @@ private fun JourneyProgressEntity.toProgress(): JourneyStopProgress = JourneySto
     clean = clean,
     underTarget = underTarget,
     bestSeconds = bestSeconds,
+    bestScore = bestScore,
     skipped = skipped,
     attempts = attempts,
     nextPuzzleId = nextPuzzleId,
@@ -118,6 +122,7 @@ private fun JourneyStopProgress.toEntity(scope: String, puzzleId: String, now: L
     clean = clean,
     underTarget = underTarget,
     bestSeconds = bestSeconds,
+    bestScore = bestScore,
     skipped = skipped,
     attempts = attempts,
     nextPuzzleId = nextPuzzleId,

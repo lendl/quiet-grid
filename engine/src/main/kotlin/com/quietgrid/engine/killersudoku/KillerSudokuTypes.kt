@@ -14,6 +14,7 @@ data class KillerSudokuPuzzleEntry(
     val difficulty: String,
     val cages: List<KillerSudokuCage>,
     val solution: List<List<Int>>,
+    val rating: Int? = null,
 )
 
 class KillerCageLayout(val cages: List<KillerSudokuCage>) {
