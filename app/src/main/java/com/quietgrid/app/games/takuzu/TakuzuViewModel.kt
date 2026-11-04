@@ -275,7 +275,7 @@ class TakuzuPlayViewModel @AssistedInject constructor(
             isComputingHint = false
             if (!controller.isFinalized && session == current) {
                 nextMoveHint = hint
-                if (hint != null) controller.updateSession(current.copy(hintsUsed = current.hintsUsed + 1))
+                controller.updateSession(current.copy(hintsUsed = current.hintsUsed + 1))
             }
         }
     }

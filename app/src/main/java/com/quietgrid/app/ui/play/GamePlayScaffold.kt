@@ -141,7 +141,7 @@ fun GamePlayScaffold(
         }
         val message = hintMessage
         val hintCard: HintCardSlot? = when {
-            !hintCardVisible || message == null -> null
+            !hintCardVisible -> null
             mirrored -> { cardMaxHeight, cardExpandedMaxHeight, cardModifier ->
                 Box(cardModifier.foldChrome(fold)) {
                     InContentDirection {
