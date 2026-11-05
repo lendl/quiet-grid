@@ -204,7 +204,9 @@ class PuzzleSessionController<TSession, TResult>(
                 ),
             )
         }
-        if (reason != ABANDONED_REASON) journey?.let { journeyStore?.recordLoss(adapter.gameId, it.stopId) }
+        journey?.let {
+            if (reason == ABANDONED_REASON) journeyStore?.recordAbandon(adapter.gameId, it.stopId) else journeyStore?.recordLoss(adapter.gameId, it.stopId)
+        }
         return score
     }
 

@@ -70,7 +70,7 @@ class JourneyProgressRepositoryTest {
     }
 
     @Test
-    fun `win then loss keep stars and point the stop at a sibling`() = runBlocking {
+    fun `win then loss on the replay keep stars and move on to another sibling`() = runBlocking {
         val runStars = repository.recordWin(game, "s1", JourneySignals(hintsUsed = 0, mistakes = 0), elapsedSeconds = 60, score = 750)
         repository.recordLoss(game, "s1")
 
@@ -81,7 +81,66 @@ class JourneyProgressRepositoryTest {
         assertEquals(60, progress.bestSeconds)
         assertEquals(750, progress.bestScore)
         assertEquals(2, progress.attempts)
-        assertEquals("sib-near", progress.nextPuzzleId)
+        assertEquals("sib-far", progress.nextPuzzleId)
+    }
+
+    @Test
+    fun `each win lines up a different sibling for the replay`() = runBlocking {
+        val signals = JourneySignals(hintsUsed = 0, mistakes = 0)
+        repository.recordWin(game, "s1", signals, elapsedSeconds = 60, score = 0)
+        val firstReplay = repository.progressFor(game).first().getValue("s1").nextPuzzleId
+        repository.recordWin(game, "s1", signals, elapsedSeconds = 60, score = 0)
+        val secondReplay = repository.progressFor(game).first().getValue("s1").nextPuzzleId
+
+        assertEquals("sib-near", firstReplay)
+        assertEquals("sib-far", secondReplay)
+    }
+
+    @Test
+    fun `a stop cleared without a lined-up replay gets one when progress loads`() = runBlocking {
+        database.journeyProgressDao().upsert(
+            JourneyProgressEntity(game.key, "s1", 2, true, true, false, 80, null, false, 1, null, 1000),
+        )
+
+        assertEquals("sib-near", repository.progressFor(game).first().getValue("s1").nextPuzzleId)
+    }
+
+    @Test
+    fun `ending a replay of a cleared stop lines up a different sibling`() = runBlocking {
+        repository.recordWin(game, "s1", JourneySignals(hintsUsed = 0, mistakes = 0), elapsedSeconds = 60, score = 0)
+        repository.recordAbandon(game, "s1")
+
+        val progress = repository.progressFor(game).first().getValue("s1")
+        assertEquals("sib-far", progress.nextPuzzleId)
+        assertEquals(1, progress.attempts)
+    }
+
+    @Test
+    fun `ending an uncleared stop lines up a sibling without settling the stop`() = runBlocking {
+        repository.recordAbandon(game, "s1")
+        val first = repository.progressFor(game).first().getValue("s1")
+        repository.recordAbandon(game, "s1")
+        val second = repository.progressFor(game).first().getValue("s1")
+
+        assertEquals("sib-near", first.nextPuzzleId)
+        assertEquals("sib-far", second.nextPuzzleId)
+        assertFalse(second.cleared)
+        assertFalse(second.skipped)
+        assertEquals(0, second.attempts)
+    }
+
+    @Test
+    fun `win without any sibling leaves the replay on the stop itself`() = runBlocking {
+        val bare = JourneyProgressRepository(
+            dao = database.journeyProgressDao(),
+            historyStore = history,
+            journeyFile = { if (it == game) file else null },
+            ratedPool = { _, _ -> emptyList() },
+            clock = { 5000L },
+        )
+        bare.recordWin(game, "s1", JourneySignals(hintsUsed = 0, mistakes = 0), elapsedSeconds = 60, score = 0)
+
+        assertNull(bare.progressFor(game).first().getValue("s1").nextPuzzleId)
     }
 
     @Test

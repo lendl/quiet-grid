@@ -39,12 +39,14 @@ fun journeyRows(file: JourneyFile, progress: Map<String, JourneyStopProgress>): 
         }
     }
 
-fun journeyRequestFor(row: JourneyStopRow): JourneyRequest =
-    if (row.progress.cleared) {
-        JourneyRequest(row.stop.puzzleId, row.stop.puzzleId, replayTransform(row.progress.attempts, row.stop.replayTransforms))
-    } else {
-        JourneyRequest(row.stop.puzzleId, row.progress.nextPuzzleId ?: row.stop.puzzleId, 0)
+fun journeyRequestFor(row: JourneyStopRow): JourneyRequest {
+    val next = row.progress.nextPuzzleId
+    return when {
+        next != null -> JourneyRequest(row.stop.puzzleId, next, 0)
+        row.progress.cleared -> JourneyRequest(row.stop.puzzleId, row.stop.puzzleId, replayTransform(row.progress.attempts, row.stop.replayTransforms))
+        else -> JourneyRequest(row.stop.puzzleId, row.stop.puzzleId, 0)
     }
+}
 
 enum class JourneyChapterStatus { COMPLETE, IN_PROGRESS, OPEN }
 

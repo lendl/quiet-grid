@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -55,11 +56,10 @@ class NonogramChallengerViewModelTest {
         NonogramChallengerViewModel(mockk<Context>(relaxed = true), statsStore, historyStore, appForeground)
 
     @Test
-    fun `starting fresh loads a puzzle on the Easy tier with starting lives and starting seconds`() {
+    fun `starting fresh loads a puzzle on the Easy tier with starting seconds`() {
         val viewModel = newViewModel()
 
         assertEquals(Difficulty.EASY, viewModel.session?.tier)
-        assertEquals(NONOGRAM_CHALLENGER_STARTING_LIVES, viewModel.session?.livesRemaining)
         assertEquals(NONOGRAM_CHALLENGER_STARTING_SECONDS, viewModel.session?.secondsRemaining)
     }
 
@@ -74,20 +74,17 @@ class NonogramChallengerViewModelTest {
         checkNotNull(session)
         assertEquals(1, session.puzzlesSolved)
         assertEquals(NONOGRAM_CHALLENGER_STARTING_SECONDS + NONOGRAM_CHALLENGER_BONUS_SECONDS, session.secondsRemaining, 0.0)
-        assertEquals(NONOGRAM_CHALLENGER_STARTING_LIVES, session.livesRemaining)
         assertEquals(1, session.puzzleHistory.size)
     }
 
     @Test
-    fun `tapping a cell the solution marks blank costs a life without applying the fill`() {
+    fun `tapping a cell the solution marks blank fills it like the normal game`() {
         val viewModel = newViewModel()
 
         viewModel.onCellTap(0, 1)
 
-        val session = viewModel.session
-        checkNotNull(session)
-        assertEquals(NONOGRAM_CHALLENGER_STARTING_LIVES - 1, session.livesRemaining)
-        assertEquals(null, session.puzzleSession.board[0][1])
+        val session = checkNotNull(viewModel.session)
+        assertEquals(1, session.puzzleSession.board[0][1])
         assertEquals(0, session.puzzlesSolved)
     }
 
@@ -95,46 +92,26 @@ class NonogramChallengerViewModelTest {
     fun `dragging across both correct cells solves the puzzle`() {
         val viewModel = newViewModel()
 
-        viewModel.onDragStart()
         viewModel.onDragPaint(listOf(0 to 0))
         viewModel.onDragPaint(listOf(1 to 1))
 
         val session = checkNotNull(viewModel.session)
         assertEquals(1, session.puzzlesSolved)
-        assertEquals(NONOGRAM_CHALLENGER_STARTING_LIVES, session.livesRemaining)
     }
 
     @Test
-    fun `a drag stops at its first wrong cell and costs one life`() {
+    fun `a drag paints every cell it crosses, right or wrong`() {
         val viewModel = newViewModel()
 
-        viewModel.onDragStart()
-        viewModel.onDragPaint(listOf(0 to 1))
-        viewModel.onDragPaint(listOf(1 to 0))
-        viewModel.onDragPaint(listOf(1 to 1))
+        viewModel.onDragPaint(listOf(0 to 1, 1 to 0))
 
         val session = checkNotNull(viewModel.session)
-        assertEquals(NONOGRAM_CHALLENGER_STARTING_LIVES - 1, session.livesRemaining)
-        assertEquals(null, session.puzzleSession.board[1][0])
-        assertEquals(null, session.puzzleSession.board[1][1])
+        assertEquals(1, session.puzzleSession.board[0][1])
+        assertEquals(1, session.puzzleSession.board[1][0])
     }
 
     @Test
-    fun `a new drag after a wrong cell paints again`() {
-        val viewModel = newViewModel()
-
-        viewModel.onDragStart()
-        viewModel.onDragPaint(listOf(0 to 1))
-        viewModel.onDragStart()
-        viewModel.onDragPaint(listOf(0 to 0))
-
-        val session = checkNotNull(viewModel.session)
-        assertEquals(NONOGRAM_CHALLENGER_STARTING_LIVES - 1, session.livesRemaining)
-        assertEquals(1, session.puzzleSession.board[0][0])
-    }
-
-    @Test
-    fun `three wrong taps on the same cell exhaust all lives and finalize the run`() {
+    fun `a wrong fill never ends the run and can be undone before solving`() {
         val statsStore = FakeStatsStore()
         val viewModel = newViewModel(statsStore)
         val results = mutableListOf<ChallengerResult>()
@@ -142,17 +119,15 @@ class NonogramChallengerViewModelTest {
 
         viewModel.onCellTap(0, 1)
         viewModel.onCellTap(0, 1)
-        viewModel.onCellTap(0, 1)
-
         mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(500)
         mainDispatcherRule.dispatcher.scheduler.runCurrent()
 
-        assertEquals(1, results.size)
-        assertEquals("lives_exhausted", results.single().reason)
+        assertTrue(results.isEmpty())
+        assertEquals(0, runBlocking { statsStore.challengerStatsFor(GameId.NONOGRAM).first() }.played)
 
-        val recorded = runBlocking { statsStore.challengerStatsFor(GameId.NONOGRAM).first() }
-        assertEquals(1, recorded.played)
-        assertEquals(0, recorded.solved)
+        viewModel.onCellTap(0, 0)
+        viewModel.onCellTap(1, 1)
+        assertEquals(1, checkNotNull(viewModel.session).puzzlesSolved)
 
         collectJob.cancel()
     }

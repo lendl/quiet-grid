@@ -939,6 +939,17 @@
     <string name="animaldoku_hint_line_confined_to_region_body">Wszystkie otwarte pola w %1$s leżą w %2$s, więc zwierzę tego obszaru jest w %1$s. Oznacz znakiem X resztę obszaru.</string>
     <string name="animaldoku_hint_regions_fill_lines_body">Otwarte pola w %1$s leżą wyłącznie w %2$s, więc te linie należą do tych obszarów. Oznacz znakiem X pozostałe pola w %2$s.</string>
     <string name="animaldoku_hint_lines_fill_regions_body">Otwarte pola w %1$s leżą wyłącznie w %2$s, więc tam są zwierzęta tych obszarów. Oznacz znakiem X resztę tych obszarów.</string>
+    <string name="animaldoku_hint_chain_body">Wypróbuj wyblakłe zwierzę: w %1$s nie zostałoby żadne otwarte pole. Oznacz więc jego pole znakiem X.</string>
+    <string name="animaldoku_hint_chain_long_body">Wypróbuj wyblakłe zwierzę: wymusiłoby ustawienie innych zwierząt i w %1$s nie zostałoby żadne otwarte pole. Oznacz więc jego pole znakiem X.</string>
+    <string name="animaldoku_chain_suppose_title">Załóżmy, że tu stoi zwierzę</string>
+    <string name="animaldoku_chain_suppose_body">Wypróbuj wyblakłe zwierzę. Żadne inne zwierzę nie mogłoby wtedy dzielić z nim wiersza, kolumny ani obszaru ani go dotykać. Sprawdź, co z tego wynika.</string>
+    <string name="animaldoku_chain_forced_title">To wymusza zwierzę</string>
+    <string name="animaldoku_chain_forced_again_title">I kolejne</string>
+    <string name="animaldoku_chain_forced_body">Wyblakłe zwierzęta zostawiają w %1$s tylko jedno otwarte pole, więc musiałoby tam stać zwierzę.</string>
+    <string name="animaldoku_chain_stuck_title">Ślepy zaułek</string>
+    <string name="animaldoku_chain_stuck_body">Wyblakłe zwierzęta blokują teraz każde otwarte pole w %1$s. Każdy wiersz, kolumna i obszar potrzebuje jednego zwierzęcia, więc to niemożliwe.</string>
+    <string name="animaldoku_chain_conclusion_title">Założenie było więc błędne</string>
+    <string name="animaldoku_chain_conclusion_body">W wypróbowanym polu nie może stać żadne zwierzę. Oznacz je znakiem X.</string>
     <string name="animaldoku_hint_wrong_mark_body">To pole jest oznaczone znakiem X, ale tu powinno być zwierzę. Stuknij je, aby usunąć oznaczenie.</string>
     <string name="animaldoku_hint_reveal_body">Stąd nie ma już prostego kroku. W podświetlonym polu powinno być zwierzę.</string>
     <string name="animaldoku_loss_abandoned_eyebrow">Łamigłówka zakończona</string>
@@ -1063,8 +1074,6 @@
     <string name="nonogram_challenger_tier_label">Poziom</string>
     <string name="nonogram_challenger_result_time_up_title">Koniec czasu!</string>
     <string name="nonogram_challenger_result_time_up_body">Czas minął. Oto podsumowanie Twojego podejścia.</string>
-    <string name="nonogram_challenger_result_lives_exhausted_title">Koniec żyć!</string>
-    <string name="nonogram_challenger_result_lives_exhausted_body">Trzy błędy zakończyły Twoje podejście.</string>
     <string name="nonogram_challenger_result_abandoned_title">Podejście przerwane</string>
     <string name="nonogram_challenger_result_abandoned_body">Podejście zostało przerwane przed czasem.</string>
     <string name="nonogram_challenger_result_new_high_score">Nowy rekord!</string>
@@ -1162,6 +1171,10 @@
     <string name="analyzer_step_of">Krok %1$d z %2$d</string>
     <string name="analyzer_back">Poprzedni krok</string>
     <string name="analyzer_next">Kolejny krok</string>
+    <string name="analyzer_auto_play">Odtwarzaj automatycznie</string>
+    <string name="analyzer_show_steps">Pokaż każdy krok</string>
+    <string name="analyzer_hide_steps">Ukryj kroki</string>
+    <string name="analyzer_detail_progress">%1$d z %2$d</string>
 
     <!-- Puzzle Mix editor -->
     <string name="mix_editor_title_edit">Edytuj Miks</string>
@@ -1459,4 +1472,73 @@
     <string name="halloween_character_moon">Senny księżyc w pełni</string>
     <string name="daily_reminder_title_halloween">Łamigłówki na Halloween</string>
     <string name="daily_reminder_text_halloween">Kilka spokojnych łamigłówek na Halloween: %1$s</string>
+    <string name="journey_title">Podróż</string>
+    <string name="journey_chapter">Rozdział %1$d</string>
+    <string name="journey_stop">Przystanek %1$d</string>
+    <string name="journey_continue">Kontynuuj</string>
+    <string name="journey_skipped">Pominięty</string>
+    <string name="journey_up_next">Następny</string>
+    <string name="journey_play">Graj</string>
+    <string name="journey_replay">Zagraj ponownie</string>
+    <string name="journey_skip">Pomiń</string>
+    <string name="journey_card_position">Rozdział %1$d · Przystanek %2$d</string>
+    <string name="journey_card_stars">Gwiazdki: %1$d z %2$d</string>
+    <string name="journey_stop_description">Przystanek %1$d, %2$s, %3$s, gwiazdki: %4$d z 3</string>
+    <string name="journey_state_cleared">Ukończony</string>
+    <string name="journey_state_open">Otwarty</string>
+    <string name="journey_state_later">Otworzy się później</string>
+    <string name="journey_complete">Wszystkie przystanki ukończone</string>
+    <string name="journey_board_cleared">Łamigłówka rozwiązana</string>
+    <string name="journey_goal_clear">Rozwiąż łamigłówkę</string>
+    <string name="journey_goal_clean">Bez podpowiedzi i błędów</string>
+    <string name="journey_goal_time">Poniżej %1$s</string>
+    <string name="journey_next_stop">Następny przystanek</string>
+    <string name="journey_replay_stars">Zagraj ponownie po 3 gwiazdki</string>
+    <string name="journey_map">Mapa</string>
+    <string name="journey_back_to_map">Wróć do mapy</string>
+    <string name="journey_new_puzzle">Nowa łamigłówka</string>
+    <string name="journey_best_stars">Najlepszy wynik: gwiazdki %1$d z 3</string>
+    <string name="journey_star_earned">Gwiazdka zdobyta</string>
+    <string name="journey_star_missed">Gwiazdka niezdobyta</string>
+    <string name="journey_goal_met">Spełniony</string>
+    <string name="journey_goal_missed">Niespełniony</string>
+    <plurals name="journey_hints">
+        <item quantity="one">%d podpowiedź</item>
+        <item quantity="few">%d podpowiedzi</item>
+        <item quantity="many">%d podpowiedzi</item>
+        <item quantity="other">%d podpowiedzi</item>
+    </plurals>
+    <plurals name="journey_mistakes">
+        <item quantity="one">%d błąd</item>
+        <item quantity="few">%d błędy</item>
+        <item quantity="many">%d błędów</item>
+        <item quantity="other">%d błędu</item>
+    </plurals>
+    <plurals name="journey_chapter_stop_count">
+        <item quantity="one">%1$d przystanek</item>
+        <item quantity="few">%1$d przystanki</item>
+        <item quantity="many">%1$d przystanków</item>
+        <item quantity="other">%1$d przystanku</item>
+    </plurals>
+    <string name="journey_chapter_tiers">%1$s – %2$s</string>
+    <string name="journey_chapter_complete">Ukończony</string>
+    <string name="journey_chapter_in_progress">W toku</string>
+    <string name="journey_chapter_open">Otwarty</string>
+    <string name="journey_open_note">Wszystkie rozdziały są otwarte.</string>
+    <string name="journey_chapter_description">Rozdział %1$d, %2$s, gwiazdki: %3$d z %4$d</string>
+    <string name="journey_map_star_count">%1$d/%2$d</string>
+    <string name="journey_stop_meta_arrows">%1$d×%2$d · strzałki: %3$d</string>
+    <string name="journey_stop_meta_grid">%1$d×%1$d</string>
+    <string name="journey_stop_meta_rect">%1$d×%2$d</string>
+    <string name="journey_stop_target">cel %1$s</string>
+    <plurals name="journey_stop_best">
+        <item quantity="one">Rekord %1$s · %2$d gwiazdka</item>
+        <item quantity="few">Rekord %1$s · %2$d gwiazdki</item>
+        <item quantity="many">Rekord %1$s · %2$d gwiazdek</item>
+        <item quantity="other">Rekord %1$s · %2$d gwiazdki</item>
+    </plurals>
+    <string name="journey_stop_not_played">Jeszcze nie zagrany</string>
+    <string name="journey_stop_skipped_now">Na razie pominięty</string>
+    <string name="journey_goal_chip_clear">Rozwiązane</string>
+    <string name="journey_goal_chip_clean">Bezbłędnie</string>
 </resources>

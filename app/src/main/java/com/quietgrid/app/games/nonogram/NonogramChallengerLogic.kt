@@ -2,7 +2,6 @@ package com.quietgrid.app.games.nonogram
 
 import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.Difficulty
-import com.quietgrid.engine.nonogram.NonogramCellValue
 import com.quietgrid.engine.nonogram.NonogramPuzzleEntry
 
 private val NONOGRAM_CHALLENGER_TIER_ORDER = listOf(Difficulty.EASY, Difficulty.MEDIUM, Difficulty.HARD, Difficulty.EXPERT)
@@ -10,7 +9,6 @@ private val NONOGRAM_CHALLENGER_TIER_ORDER = listOf(Difficulty.EASY, Difficulty.
 fun createInitialNonogramChallengerSession(firstPuzzle: NonogramPuzzleEntry): NonogramChallengerSession =
     NonogramChallengerSession(
         puzzleSession = createNonogramSession(firstPuzzle),
-        livesRemaining = NONOGRAM_CHALLENGER_STARTING_LIVES,
         tier = Difficulty.EASY,
         solvesInTier = 0,
         puzzlesSolved = 0,
@@ -59,33 +57,3 @@ fun tickNonogramChallenger(session: NonogramChallengerSession): NonogramChalleng
     secondsRemaining = session.secondsRemaining - 1.0,
     secondsOnCurrentPuzzle = session.secondsOnCurrentPuzzle + 1.0,
 )
-
-private fun nonogramChallengerNextValue(current: NonogramCellValue, mode: NonogramInputMode): NonogramCellValue = when (mode) {
-    NonogramInputMode.FILL -> if (current == 1) null else 1
-    NonogramInputMode.CROSS -> if (current == 0) null else 0
-}
-
-data class NonogramChallengerTapResult(val session: NonogramChallengerSession, val wasWrong: Boolean)
-
-fun applyNonogramChallengerTap(session: NonogramChallengerSession, row: Int, col: Int, mode: NonogramInputMode): NonogramChallengerTapResult {
-    val puzzleSession = session.puzzleSession
-    val current = puzzleSession.board[row][col]
-    val next = nonogramChallengerNextValue(current, mode)
-    if (next == current) return NonogramChallengerTapResult(session, wasWrong = false)
-    if (mode == NonogramInputMode.FILL && next == 1 && !puzzleSession.solution[row][col]) {
-        return NonogramChallengerTapResult(session, wasWrong = true)
-    }
-    val updatedPuzzleSession = applyNonogramTap(puzzleSession, row, col, mode) ?: puzzleSession
-    return NonogramChallengerTapResult(session.copy(puzzleSession = updatedPuzzleSession), wasWrong = false)
-}
-
-fun applyNonogramChallengerPaint(session: NonogramChallengerSession, row: Int, col: Int, mode: NonogramInputMode): NonogramChallengerTapResult {
-    val puzzleSession = session.puzzleSession
-    val value = if (mode == NonogramInputMode.FILL) 1 else 0
-    if (puzzleSession.board[row][col] == value) return NonogramChallengerTapResult(session, wasWrong = false)
-    if (value == 1 && !puzzleSession.solution[row][col]) {
-        return NonogramChallengerTapResult(session, wasWrong = true)
-    }
-    val updatedPuzzleSession = applyNonogramPaint(puzzleSession, listOf(row to col), value) ?: puzzleSession
-    return NonogramChallengerTapResult(session.copy(puzzleSession = updatedPuzzleSession), wasWrong = false)
-}

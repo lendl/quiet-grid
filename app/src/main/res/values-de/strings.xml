@@ -509,8 +509,6 @@
     <string name="nonogram_challenger_tier_label">Stufe</string>
     <string name="nonogram_challenger_result_time_up_title">Zeit abgelaufen!</string>
     <string name="nonogram_challenger_result_time_up_body">Die Zeit ist abgelaufen. So lief dein Durchlauf.</string>
-    <string name="nonogram_challenger_result_lives_exhausted_title">Keine Leben mehr!</string>
-    <string name="nonogram_challenger_result_lives_exhausted_body">Drei Fehler haben deinen Durchlauf beendet.</string>
     <string name="nonogram_challenger_result_abandoned_title">Durchlauf beendet</string>
     <string name="nonogram_challenger_result_abandoned_body">Du hast den Durchlauf vorzeitig beendet.</string>
     <string name="nonogram_challenger_result_new_high_score">Neuer Highscore!</string>
@@ -936,6 +934,17 @@
     <string name="animaldoku_hint_line_confined_to_region_body">Alle offenen Zellen in %1$s liegen in %2$s, also steht das Tier dieser Region in %1$s. Markiere den Rest der Region mit X.</string>
     <string name="animaldoku_hint_regions_fill_lines_body">Die offenen Zellen in %1$s liegen alle in %2$s, also gehören diese Linien ihnen. Markiere die anderen Zellen in %2$s mit X.</string>
     <string name="animaldoku_hint_lines_fill_regions_body">Die offenen Zellen in %1$s liegen alle in %2$s, also stehen die Tiere dieser Regionen dort. Markiere den Rest dieser Regionen mit X.</string>
+    <string name="animaldoku_hint_chain_body">Probiere das verblasste Tier aus: Dann bliebe in %1$s keine offene Zelle mehr. Markiere seine Zelle also mit X.</string>
+    <string name="animaldoku_hint_chain_long_body">Probiere das verblasste Tier aus: Es würde andere Tiere festlegen, und in %1$s bliebe keine offene Zelle mehr. Markiere seine Zelle also mit X.</string>
+    <string name="animaldoku_chain_suppose_title">Angenommen, hier steht ein Tier</string>
+    <string name="animaldoku_chain_suppose_body">Probiere das verblasste Tier aus. Dann dürfte kein anderes Tier seine Zeile, Spalte oder Region teilen oder es berühren. Verfolge, was daraus folgt.</string>
+    <string name="animaldoku_chain_forced_title">Das erzwingt ein Tier</string>
+    <string name="animaldoku_chain_forced_again_title">Und noch eines</string>
+    <string name="animaldoku_chain_forced_body">Die verblassten Tiere lassen in %1$s nur eine offene Zelle übrig, also müsste dort ein Tier stehen.</string>
+    <string name="animaldoku_chain_stuck_title">Sackgasse</string>
+    <string name="animaldoku_chain_stuck_body">Die verblassten Tiere blockieren jetzt jede offene Zelle in %1$s. Jede Zeile, Spalte und Region braucht ein Tier, also kann das nicht sein.</string>
+    <string name="animaldoku_chain_conclusion_title">Die Annahme war also falsch</string>
+    <string name="animaldoku_chain_conclusion_body">In die ausprobierte Zelle kann kein Tier. Markiere sie mit X.</string>
     <string name="animaldoku_hint_wrong_mark_body">Diese Zelle ist mit X markiert, aber hier gehört ein Tier hin. Tippe darauf, um die Markierung zu entfernen.</string>
     <string name="animaldoku_hint_reveal_body">Von hier aus gibt es keinen einfachen Schritt mehr. In die hervorgehobene Zelle gehört ein Tier.</string>
     <string name="animaldoku_loss_abandoned_eyebrow">Rätsel beendet</string>
@@ -1131,6 +1140,10 @@
     <string name="analyzer_step_of">Schritt %1$d von %2$d</string>
     <string name="analyzer_back">Vorheriger Schritt</string>
     <string name="analyzer_next">Nächster Schritt</string>
+    <string name="analyzer_auto_play">Automatisch abspielen</string>
+    <string name="analyzer_show_steps">Jeden Schritt zeigen</string>
+    <string name="analyzer_hide_steps">Schritte ausblenden</string>
+    <string name="analyzer_detail_progress">%1$d von %2$d</string>
 
     <!-- Puzzle Mix editor -->
     <string name="mix_editor_title_edit">Mix Bearbeiten</string>
@@ -1428,4 +1441,65 @@
     <string name="halloween_character_moon">Schläfriger Vollmond</string>
     <string name="daily_reminder_title_halloween">Halloween-Rätsel</string>
     <string name="daily_reminder_text_halloween">Ein paar ruhige Rätsel für Halloween: %1$s</string>
+    <string name="journey_title">Reise</string>
+    <string name="journey_chapter">Kapitel %1$d</string>
+    <string name="journey_stop">Station %1$d</string>
+    <string name="journey_continue">Weiter</string>
+    <string name="journey_skipped">Übersprungen</string>
+    <string name="journey_up_next">Als Nächstes</string>
+    <string name="journey_play">Spielen</string>
+    <string name="journey_replay">Nochmal spielen</string>
+    <string name="journey_skip">Überspringen</string>
+    <string name="journey_card_position">Kapitel %1$d · Station %2$d</string>
+    <string name="journey_card_stars">%1$d von %2$d Sternen</string>
+    <string name="journey_stop_description">Station %1$d, %2$s, %3$s, %4$d von 3 Sternen</string>
+    <string name="journey_state_cleared">Geschafft</string>
+    <string name="journey_state_open">Offen</string>
+    <string name="journey_state_later">Später verfügbar</string>
+    <string name="journey_complete">Alle Stationen geschafft</string>
+    <string name="journey_board_cleared">Rätsel gelöst</string>
+    <string name="journey_goal_clear">Rätsel lösen</string>
+    <string name="journey_goal_clean">Keine Hinweise oder Fehler</string>
+    <string name="journey_goal_time">Unter %1$s</string>
+    <string name="journey_next_stop">Nächste Station</string>
+    <string name="journey_replay_stars">Für 3 Sterne nochmal spielen</string>
+    <string name="journey_map">Karte</string>
+    <string name="journey_back_to_map">Zurück zur Karte</string>
+    <string name="journey_new_puzzle">Neues Rätsel</string>
+    <string name="journey_best_stars">Bestes Ergebnis: %1$d von 3 Sternen</string>
+    <string name="journey_star_earned">Stern verdient</string>
+    <string name="journey_star_missed">Stern nicht verdient</string>
+    <string name="journey_goal_met">Erfüllt</string>
+    <string name="journey_goal_missed">Nicht erfüllt</string>
+    <plurals name="journey_hints">
+        <item quantity="one">%d Hinweis</item>
+        <item quantity="other">%d Hinweise</item>
+    </plurals>
+    <plurals name="journey_mistakes">
+        <item quantity="one">%d Fehler</item>
+        <item quantity="other">%d Fehler</item>
+    </plurals>
+    <plurals name="journey_chapter_stop_count">
+        <item quantity="one">%1$d Station</item>
+        <item quantity="other">%1$d Stationen</item>
+    </plurals>
+    <string name="journey_chapter_tiers">%1$s bis %2$s</string>
+    <string name="journey_chapter_complete">Abgeschlossen</string>
+    <string name="journey_chapter_in_progress">Begonnen</string>
+    <string name="journey_chapter_open">Offen</string>
+    <string name="journey_open_note">Alle Kapitel sind offen.</string>
+    <string name="journey_chapter_description">Kapitel %1$d, %2$s, %3$d von %4$d Sternen</string>
+    <string name="journey_map_star_count">%1$d/%2$d</string>
+    <string name="journey_stop_meta_arrows">%1$d×%2$d · %3$d Pfeile</string>
+    <string name="journey_stop_meta_grid">%1$d×%1$d</string>
+    <string name="journey_stop_meta_rect">%1$d×%2$d</string>
+    <string name="journey_stop_target">Ziel %1$s</string>
+    <plurals name="journey_stop_best">
+        <item quantity="one">Bestzeit %1$s · %2$d Stern</item>
+        <item quantity="other">Bestzeit %1$s · %2$d Sterne</item>
+    </plurals>
+    <string name="journey_stop_not_played">Noch nicht gespielt</string>
+    <string name="journey_stop_skipped_now">Vorerst übersprungen</string>
+    <string name="journey_goal_chip_clear">Gelöst</string>
+    <string name="journey_goal_chip_clean">Fehlerfrei</string>
 </resources>

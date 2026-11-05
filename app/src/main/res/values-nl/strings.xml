@@ -837,6 +837,17 @@
     <string name="animaldoku_hint_line_confined_to_region_body">Alle open cellen in %1$s horen bij %2$s, dus het dier van die regio staat in %1$s. Zet een X in de rest van de regio.</string>
     <string name="animaldoku_hint_regions_fill_lines_body">De open cellen van %1$s liggen allemaal in %2$s, dus die lijnen zijn voor hen. Zet een X in de andere cellen van %2$s.</string>
     <string name="animaldoku_hint_lines_fill_regions_body">De open cellen in %1$s horen allemaal bij %2$s, dus de dieren van die regio\'s staan daar. Zet een X in de rest van die regio\'s.</string>
+    <string name="animaldoku_hint_chain_body">Probeer het vervaagde dier: dan blijft er in %1$s geen open cel over. Zet dus een X in zijn cel.</string>
+    <string name="animaldoku_hint_chain_long_body">Probeer het vervaagde dier: het dwingt andere dieren op hun plek en dan blijft er in %1$s geen open cel over. Zet dus een X in zijn cel.</string>
+    <string name="animaldoku_chain_suppose_title">Stel dat hier een dier staat</string>
+    <string name="animaldoku_chain_suppose_body">Probeer het vervaagde dier. Geen ander dier mag dan zijn rij, kolom of regio delen of het raken. Volg wat daaruit volgt.</string>
+    <string name="animaldoku_chain_forced_title">Dat dwingt een dier af</string>
+    <string name="animaldoku_chain_forced_again_title">En nog een</string>
+    <string name="animaldoku_chain_forced_body">De vervaagde dieren laten in %1$s maar één open cel over, dus daar zou een dier moeten staan.</string>
+    <string name="animaldoku_chain_stuck_title">Vast</string>
+    <string name="animaldoku_chain_stuck_body">De vervaagde dieren blokkeren nu elke open cel in %1$s. Elke rij, kolom en regio heeft één dier nodig, dus dit kan niet.</string>
+    <string name="animaldoku_chain_conclusion_title">De gok was dus fout</string>
+    <string name="animaldoku_chain_conclusion_body">Er kan geen dier in de cel die je probeerde. Zet er een X in.</string>
     <string name="animaldoku_hint_wrong_mark_body">Deze cel heeft een X, maar hier hoort een dier. Tik erop om de X te wissen.</string>
     <string name="animaldoku_hint_reveal_body">Vanaf hier is er geen eenvoudige stap meer. In de uitgelichte cel hoort een dier.</string>
     <string name="animaldoku_loss_abandoned_eyebrow">Puzzel beëindigd</string>
@@ -1056,8 +1067,6 @@
     <string name="nonogram_challenger_tier_label">Niveau</string>
     <string name="nonogram_challenger_result_time_up_title">Tijd om!</string>
     <string name="nonogram_challenger_result_time_up_body">De tijd is om. Zo verliep je ronde.</string>
-    <string name="nonogram_challenger_result_lives_exhausted_title">Geen levens meer!</string>
-    <string name="nonogram_challenger_result_lives_exhausted_body">Drie fouten beëindigden je ronde.</string>
     <string name="nonogram_challenger_result_abandoned_title">Ronde beëindigd</string>
     <string name="nonogram_challenger_result_abandoned_body">Je hebt de ronde vroegtijdig gestopt.</string>
     <string name="nonogram_challenger_result_new_high_score">Nieuwe topscore!</string>
@@ -1136,6 +1145,10 @@
     <string name="analyzer_step_of">Stap %1$d van %2$d</string>
     <string name="analyzer_back">Vorige stap</string>
     <string name="analyzer_next">Volgende stap</string>
+    <string name="analyzer_auto_play">Automatisch afspelen</string>
+    <string name="analyzer_show_steps">Elke stap tonen</string>
+    <string name="analyzer_hide_steps">Stappen verbergen</string>
+    <string name="analyzer_detail_progress">%1$d van %2$d</string>
 
     <!-- Puzzle Mix editor -->
     <string name="mix_editor_title_edit">Mix Bewerken</string>
@@ -1434,4 +1447,65 @@
     <string name="halloween_character_moon">Slaperige volle maan</string>
     <string name="daily_reminder_title_halloween">Halloweenpuzzels</string>
     <string name="daily_reminder_text_halloween">Een paar rustige puzzels voor Halloween: %1$s</string>
+    <string name="journey_title">Reis</string>
+    <string name="journey_chapter">Hoofdstuk %1$d</string>
+    <string name="journey_stop">Halte %1$d</string>
+    <string name="journey_continue">Doorgaan</string>
+    <string name="journey_skipped">Overgeslagen</string>
+    <string name="journey_up_next">Volgende</string>
+    <string name="journey_play">Spelen</string>
+    <string name="journey_replay">Opnieuw spelen</string>
+    <string name="journey_skip">Overslaan</string>
+    <string name="journey_card_position">Hoofdstuk %1$d · Halte %2$d</string>
+    <string name="journey_card_stars">%1$d van %2$d sterren</string>
+    <string name="journey_stop_description">Halte %1$d, %2$s, %3$s, %4$d van 3 sterren</string>
+    <string name="journey_state_cleared">Gehaald</string>
+    <string name="journey_state_open">Open</string>
+    <string name="journey_state_later">Later beschikbaar</string>
+    <string name="journey_complete">Alle haltes gehaald</string>
+    <string name="journey_board_cleared">Puzzel opgelost</string>
+    <string name="journey_goal_clear">Los de puzzel op</string>
+    <string name="journey_goal_clean">Geen hints of fouten</string>
+    <string name="journey_goal_time">Binnen %1$s</string>
+    <string name="journey_next_stop">Volgende halte</string>
+    <string name="journey_replay_stars">Opnieuw spelen voor 3 sterren</string>
+    <string name="journey_map">Kaart</string>
+    <string name="journey_back_to_map">Terug naar kaart</string>
+    <string name="journey_new_puzzle">Nieuwe puzzel</string>
+    <string name="journey_best_stars">Beste: %1$d van 3 sterren</string>
+    <string name="journey_star_earned">Ster verdiend</string>
+    <string name="journey_star_missed">Ster niet verdiend</string>
+    <string name="journey_goal_met">Gehaald</string>
+    <string name="journey_goal_missed">Niet gehaald</string>
+    <plurals name="journey_hints">
+        <item quantity="one">%d hint</item>
+        <item quantity="other">%d hints</item>
+    </plurals>
+    <plurals name="journey_mistakes">
+        <item quantity="one">%d fout</item>
+        <item quantity="other">%d fouten</item>
+    </plurals>
+    <plurals name="journey_chapter_stop_count">
+        <item quantity="one">%1$d halte</item>
+        <item quantity="other">%1$d haltes</item>
+    </plurals>
+    <string name="journey_chapter_tiers">%1$s tot %2$s</string>
+    <string name="journey_chapter_complete">Voltooid</string>
+    <string name="journey_chapter_in_progress">Bezig</string>
+    <string name="journey_chapter_open">Open</string>
+    <string name="journey_open_note">Elk hoofdstuk is open.</string>
+    <string name="journey_chapter_description">Hoofdstuk %1$d, %2$s, %3$d van %4$d sterren</string>
+    <string name="journey_map_star_count">%1$d/%2$d</string>
+    <string name="journey_stop_meta_arrows">%1$d×%2$d · %3$d pijlen</string>
+    <string name="journey_stop_meta_grid">%1$d×%1$d</string>
+    <string name="journey_stop_meta_rect">%1$d×%2$d</string>
+    <string name="journey_stop_target">doel %1$s</string>
+    <plurals name="journey_stop_best">
+        <item quantity="one">Beste %1$s · %2$d ster</item>
+        <item quantity="other">Beste %1$s · %2$d sterren</item>
+    </plurals>
+    <string name="journey_stop_not_played">Nog niet gespeeld</string>
+    <string name="journey_stop_skipped_now">Voorlopig overgeslagen</string>
+    <string name="journey_goal_chip_clear">Opgelost</string>
+    <string name="journey_goal_chip_clean">Foutloos</string>
 </resources>

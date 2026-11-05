@@ -40,7 +40,7 @@ fun playableStops(chapter: JourneyChapter, progress: Map<String, JourneyStopProg
 fun currentStop(chapter: JourneyChapter, progress: Map<String, JourneyStopProgress>): JourneyStop? =
     chapter.stops.firstOrNull { !progress[it.puzzleId].isSettled() }
 
-fun applyJourneyWin(old: JourneyStopProgress, run: JourneyRun, elapsedSeconds: Int, score: Int): JourneyStopProgress =
+fun applyJourneyWin(old: JourneyStopProgress, run: JourneyRun, elapsedSeconds: Int, score: Int, replayPuzzleId: String? = null): JourneyStopProgress =
     old.copy(
         stars = maxOf(old.stars, run.stars),
         cleared = true,
@@ -49,7 +49,7 @@ fun applyJourneyWin(old: JourneyStopProgress, run: JourneyRun, elapsedSeconds: I
         bestSeconds = old.bestSeconds?.let { minOf(it, elapsedSeconds) } ?: elapsedSeconds,
         bestScore = old.bestScore?.let { maxOf(it, score) } ?: score,
         attempts = old.attempts + 1,
-        nextPuzzleId = null,
+        nextPuzzleId = replayPuzzleId,
     )
 
 fun applyJourneyLoss(old: JourneyStopProgress, siblingId: String): JourneyStopProgress =

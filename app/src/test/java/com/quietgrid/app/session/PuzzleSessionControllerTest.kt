@@ -127,6 +127,7 @@ private class FakeJourneyStore(private val history: FakeHistoryStore) : JourneyP
 
     val wins = mutableListOf<Win>()
     val losses = mutableListOf<String>()
+    val abandons = mutableListOf<String>()
     val historySizeAtLoss = mutableListOf<Int>()
 
     override fun progressFor(gameId: GameId): Flow<Map<String, JourneyStopProgress>> = MutableStateFlow(emptyMap())
@@ -139,6 +140,10 @@ private class FakeJourneyStore(private val history: FakeHistoryStore) : JourneyP
     override suspend fun recordLoss(gameId: GameId, stopId: String) {
         losses += stopId
         historySizeAtLoss += history.appended.size
+    }
+
+    override suspend fun recordAbandon(gameId: GameId, stopId: String) {
+        abandons += stopId
     }
 
     override suspend fun skip(gameId: GameId, stopId: String) = Unit
@@ -809,7 +814,7 @@ class PuzzleSessionControllerTest {
     }
 
     @Test
-    fun `journey loss records a loss and abandoning records nothing in the store`() = runTest {
+    fun `journey loss records a loss and abandoning records an abandon`() = runTest {
         val history = FakeHistoryStore()
         val journeyStore = FakeJourneyStore(history)
         val lost = PuzzleSessionController(
@@ -834,6 +839,7 @@ class PuzzleSessionControllerTest {
         runCurrent()
 
         assertEquals(listOf("s1"), journeyStore.losses)
+        assertEquals(listOf("s1"), journeyStore.abandons)
         assertTrue(journeyStore.wins.isEmpty())
         assertEquals(listOf("s1", "s1"), history.appended.map { it.journeyStop })
         assertEquals(listOf(null, null), history.appended.map { it.journeyStars })
@@ -869,6 +875,7 @@ class PuzzleSessionControllerTest {
         assertEquals("abandoned", history.appended.single().lossReason)
         assertEquals("s1", history.appended.single().journeyStop)
         assertTrue(journeyStore.losses.isEmpty())
+        assertEquals(listOf("s1"), journeyStore.abandons)
         restartJob.cancel()
         resultJob.cancel()
     }

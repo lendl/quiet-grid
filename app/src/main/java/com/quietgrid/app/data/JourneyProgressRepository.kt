@@ -14,7 +14,9 @@ import com.quietgrid.app.core.journey.journeySiblingSeed
 import com.quietgrid.app.core.journey.loadJourneyFile
 import com.quietgrid.app.core.journey.locate
 import com.quietgrid.app.core.journey.pickJourneySibling
+import com.quietgrid.engine.journey.JourneyChapter
 import com.quietgrid.engine.journey.JourneyFile
+import com.quietgrid.engine.journey.JourneyStop
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
@@ -28,6 +30,7 @@ interface JourneyProgressStore {
     fun progressFor(gameId: GameId): Flow<Map<String, JourneyStopProgress>>
     suspend fun recordWin(gameId: GameId, stopId: String, signals: JourneySignals, elapsedSeconds: Int, score: Int): Int
     suspend fun recordLoss(gameId: GameId, stopId: String)
+    suspend fun recordAbandon(gameId: GameId, stopId: String)
     suspend fun skip(gameId: GameId, stopId: String)
 }
 
@@ -54,29 +57,55 @@ class JourneyProgressRepository(
 
     override fun progressFor(gameId: GameId): Flow<Map<String, JourneyStopProgress>> = flow {
         applyReplacements(gameId)
+        lineUpMissingReplays(gameId)
         emitAll(dao.progressFor(journeyScope(gameId)).map { rows -> rows.associate { it.puzzleId to it.toProgress() } })
     }
 
     override suspend fun recordWin(gameId: GameId, stopId: String, signals: JourneySignals, elapsedSeconds: Int, score: Int): Int {
-        val target = journeyFile(gameId)?.locate(stopId)?.second?.targetSeconds ?: 0
-        val run = journeyRun(signals, elapsedSeconds, target)
-        save(gameId, stopId, applyJourneyWin(current(gameId, stopId), run, elapsedSeconds, score))
+        val old = current(gameId, stopId)
+        val located = journeyFile(gameId)?.locate(stopId)
+        val run = journeyRun(signals, elapsedSeconds, located?.second?.targetSeconds ?: 0)
+        val replay = located?.let { (chapter, stop) -> nextSibling(gameId, chapter, stop, old, playedIds(gameId)) }?.takeIf { it != stopId }
+        save(gameId, stopId, applyJourneyWin(old, run, elapsedSeconds, score, replay))
         return run.stars
     }
 
     override suspend fun recordLoss(gameId: GameId, stopId: String) {
         val old = current(gameId, stopId)
         val (chapter, stop) = journeyFile(gameId)?.locate(stopId) ?: return save(gameId, stopId, applyJourneyLoss(old, stopId))
-        val played = historyStore.recordsFor(gameId).first().mapNotNullTo(HashSet()) { it.puzzleId }
-        val sibling = pickJourneySibling(
+        save(gameId, stopId, applyJourneyLoss(old, nextSibling(gameId, chapter, stop, old, playedIds(gameId))))
+    }
+
+    override suspend fun recordAbandon(gameId: GameId, stopId: String) {
+        val old = current(gameId, stopId)
+        val (chapter, stop) = journeyFile(gameId)?.locate(stopId) ?: return
+        val replay = nextSibling(gameId, chapter, stop, old, playedIds(gameId)).takeIf { it != stopId }
+        save(gameId, stopId, old.copy(nextPuzzleId = replay))
+    }
+
+    private suspend fun lineUpMissingReplays(gameId: GameId) {
+        val missing = dao.progressFor(journeyScope(gameId)).first().filter { it.cleared && it.nextPuzzleId == null }
+        if (missing.isEmpty()) return
+        val file = journeyFile(gameId) ?: return
+        val played = playedIds(gameId)
+        missing.forEach { row ->
+            val (chapter, stop) = file.locate(row.puzzleId) ?: return@forEach
+            val replay = nextSibling(gameId, chapter, stop, row.toProgress(), played).takeIf { it != stop.puzzleId } ?: return@forEach
+            dao.upsert(row.copy(nextPuzzleId = replay))
+        }
+    }
+
+    private suspend fun playedIds(gameId: GameId): Set<String> =
+        historyStore.recordsFor(gameId).first().mapNotNullTo(HashSet()) { it.puzzleId }
+
+    private suspend fun nextSibling(gameId: GameId, chapter: JourneyChapter, stop: JourneyStop, old: JourneyStopProgress, played: Set<String>): String =
+        pickJourneySibling(
             stop = stop,
             chapter = chapter,
             pool = ratedPool(gameId, Difficulty.fromKey(stop.difficulty)),
-            playedIds = played,
-            seed = journeySiblingSeed(journeyScope(gameId), stopId, old.attempts + 1),
+            playedIds = played + listOfNotNull(old.nextPuzzleId),
+            seed = journeySiblingSeed(journeyScope(gameId), stop.puzzleId, old.attempts + 1),
         )
-        save(gameId, stopId, applyJourneyLoss(old, sibling))
-    }
 
     override suspend fun skip(gameId: GameId, stopId: String) {
         save(gameId, stopId, current(gameId, stopId).copy(skipped = true))

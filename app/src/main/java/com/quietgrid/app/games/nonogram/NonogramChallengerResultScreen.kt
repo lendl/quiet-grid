@@ -23,10 +23,6 @@ fun NonogramChallengerResultScreen(
     val titleRes: Int
     val bodyRes: Int
     when (reason) {
-        "lives_exhausted" -> {
-            titleRes = R.string.nonogram_challenger_result_lives_exhausted_title
-            bodyRes = R.string.nonogram_challenger_result_lives_exhausted_body
-        }
         "abandoned" -> {
             titleRes = R.string.nonogram_challenger_result_abandoned_title
             bodyRes = R.string.nonogram_challenger_result_abandoned_body
@@ -58,7 +54,7 @@ fun NonogramChallengerResultScreen(
         previousBest = previousBest,
         fastestSolveSeconds = fastestSolveSeconds,
         reason = reason,
-        startingLives = NONOGRAM_CHALLENGER_STARTING_LIVES,
+        startingLives = 0,
         solvesPerTier = NONOGRAM_CHALLENGER_SOLVES_PER_TIER,
         isMixActive = isMixActive,
         onPlayAgain = onPlayAgain,

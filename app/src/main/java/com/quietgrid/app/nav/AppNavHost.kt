@@ -200,7 +200,9 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
         navController.popBackStack(Routes.TABS, inclusive = false)
     }
 
-    fun journeyBackStack(): List<JourneyBackEntry> = navController.currentBackStack.value.map { entry ->
+    fun journeyBackStack(): List<JourneyBackEntry> = listOf(Routes.PICKER, Routes.JOURNEY, Routes.JOURNEY_MAP).mapNotNull { route ->
+        runCatching { navController.getBackStackEntry(route) }.getOrNull()
+    }.map { entry ->
         val route = entry.destination.route
         JourneyBackEntry(route, entry.arguments?.getString("gameId"), if (route == Routes.JOURNEY_MAP) entry.arguments?.getInt("chapter") else null)
     }
@@ -697,6 +699,15 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                     val journeyRequest = entry.arguments?.getString("journey")?.let { stopId ->
                         JourneyRequest(stopId, entry.arguments?.getString("journeyPuzzle") ?: stopId, entry.arguments?.getInt("transform") ?: 0)
                     }
+                    val journeyViewModel: JourneyViewModel = hiltViewModel()
+
+                    fun restartJourney() {
+                        val request = journeyRequest ?: return
+                        scope.launch {
+                            val target = journeyViewModel.playTarget(gameId, request.stopId)
+                            playJourneyStop(gameId, target?.first ?: difficulty, target?.second ?: request)
+                        }
+                    }
 
                     fun finishJourney(stopId: String, solved: Boolean, resultDifficulty: Difficulty, elapsedSeconds: Int, reason: String?, score: Int, signals: JourneySignals) {
                         val route = if (solved) {
@@ -732,7 +743,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                         resume = resume,
                                         dailyDate = dailyDate,
                                         journey = journeyRequest,
-                                        onRestarted = { journeyRequest?.let { playJourneyStop(gameId, difficulty, it) } },
+                                        onRestarted = { restartJourney() },
                                         onBack = { navController.popBackStack() },
                                         onFinished = { result ->
                                             if (!result.solved) AnalyzerHandoff.set(result.analyzerSnapshot)
@@ -749,7 +760,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                         difficulty = difficulty,
                                         resume = resume,
                                         journey = journeyRequest,
-                                        onRestarted = { journeyRequest?.let { playJourneyStop(gameId, difficulty, it) } },
+                                        onRestarted = { restartJourney() },
                                         onBack = { navController.popBackStack() },
                                         onFinished = { result ->
                                             if (journeyRequest != null) {
@@ -779,7 +790,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                         resume = resume,
                                         dailyDate = dailyDate,
                                         journey = journeyRequest,
-                                        onRestarted = { journeyRequest?.let { playJourneyStop(gameId, difficulty, it) } },
+                                        onRestarted = { restartJourney() },
                                         onBack = { navController.popBackStack() },
                                         onFinished = { result ->
                                             if (journeyRequest != null) {
@@ -797,7 +808,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                         dailyDate = dailyDate,
                                         variant = SudokuVariant.MINI,
                                         journey = journeyRequest,
-                                        onRestarted = { journeyRequest?.let { playJourneyStop(gameId, difficulty, it) } },
+                                        onRestarted = { restartJourney() },
                                         onBack = { navController.popBackStack() },
                                         onFinished = { result ->
                                             if (journeyRequest != null) {
@@ -871,7 +882,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                         resume = resume,
                                         dailyDate = dailyDate,
                                         journey = journeyRequest,
-                                        onRestarted = { journeyRequest?.let { playJourneyStop(gameId, difficulty, it) } },
+                                        onRestarted = { restartJourney() },
                                         onBack = { navController.popBackStack() },
                                         onFinished = { result ->
                                             if (!result.solved) AnalyzerHandoff.set(result.analyzerSnapshot)
@@ -888,7 +899,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                         difficulty = difficulty,
                                         resume = resume,
                                         journey = journeyRequest,
-                                        onRestarted = { journeyRequest?.let { playJourneyStop(gameId, difficulty, it) } },
+                                        onRestarted = { restartJourney() },
                                         onBack = { navController.popBackStack() },
                                         onFinished = { result ->
                                             if (journeyRequest != null) {
@@ -928,7 +939,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                         difficulty = difficulty,
                                         resume = resume,
                                         journey = journeyRequest,
-                                        onRestarted = { journeyRequest?.let { playJourneyStop(gameId, difficulty, it) } },
+                                        onRestarted = { restartJourney() },
                                         onBack = { navController.popBackStack() },
                                         onFinished = { result ->
                                             if (journeyRequest != null) {
@@ -993,7 +1004,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                         difficulty = difficulty,
                                         resume = resume,
                                         journey = journeyRequest,
-                                        onRestarted = { journeyRequest?.let { playJourneyStop(gameId, difficulty, it) } },
+                                        onRestarted = { restartJourney() },
                                         onBack = { navController.popBackStack() },
                                         onFinished = { result ->
                                             if (journeyRequest != null) {

@@ -857,6 +857,17 @@
     <string name="animaldoku_hint_line_confined_to_region_body">Todas las celdas libres de %1$s pertenecen a %2$s, así que el animal de esa región está en %1$s. Marca con X el resto de la región.</string>
     <string name="animaldoku_hint_regions_fill_lines_body">Las celdas libres de %1$s están todas en %2$s, así que esas líneas les pertenecen. Marca con X las demás celdas de %2$s.</string>
     <string name="animaldoku_hint_lines_fill_regions_body">Las celdas libres de %1$s pertenecen todas a %2$s, así que los animales de esas regiones están ahí. Marca con X el resto de esas regiones.</string>
+    <string name="animaldoku_hint_chain_body">Prueba el animal atenuado: dejaría %1$s sin ninguna celda libre. Así que marca su celda con X.</string>
+    <string name="animaldoku_hint_chain_long_body">Prueba el animal atenuado: obligaría a colocar otros animales y dejaría %1$s sin ninguna celda libre. Así que marca su celda con X.</string>
+    <string name="animaldoku_chain_suppose_title">Supón que aquí va un animal</string>
+    <string name="animaldoku_chain_suppose_body">Prueba el animal atenuado. Ningún otro animal podría compartir su fila, columna o región, ni tocarlo. Sigue lo que eso obliga.</string>
+    <string name="animaldoku_chain_forced_title">Eso obliga a poner un animal</string>
+    <string name="animaldoku_chain_forced_again_title">Y otro más</string>
+    <string name="animaldoku_chain_forced_body">Los animales atenuados dejan una sola celda libre en %1$s, así que ahí tendría que ir un animal.</string>
+    <string name="animaldoku_chain_stuck_title">Sin salida</string>
+    <string name="animaldoku_chain_stuck_body">Los animales atenuados bloquean ahora todas las celdas libres de %1$s. Cada fila, columna y región necesita un animal, así que esto no puede ser.</string>
+    <string name="animaldoku_chain_conclusion_title">Así que la suposición era errónea</string>
+    <string name="animaldoku_chain_conclusion_body">Ningún animal puede ir en la celda que probaste. Márcala con X.</string>
     <string name="animaldoku_hint_wrong_mark_body">Esta celda tiene una X, pero aquí va un animal. Tócala para quitar la marca.</string>
     <string name="animaldoku_hint_reveal_body">Desde aquí no queda ningún paso sencillo. En la celda resaltada va un animal.</string>
     <string name="animaldoku_loss_abandoned_eyebrow">Puzzle terminado</string>
@@ -933,8 +944,6 @@
     <string name="nonogram_challenger_tier_label">Nivel</string>
     <string name="nonogram_challenger_result_time_up_title">¡Se acabó el tiempo!</string>
     <string name="nonogram_challenger_result_time_up_body">Se acabó el tiempo. Así fue tu partida.</string>
-    <string name="nonogram_challenger_result_lives_exhausted_title">¡Sin vidas!</string>
-    <string name="nonogram_challenger_result_lives_exhausted_body">Tres errores terminaron tu partida.</string>
     <string name="nonogram_challenger_result_abandoned_title">Partida terminada</string>
     <string name="nonogram_challenger_result_abandoned_body">Detuviste la partida antes de tiempo.</string>
     <string name="nonogram_challenger_result_new_high_score">¡Nueva puntuación máxima!</string>
@@ -1138,6 +1147,10 @@
     <string name="analyzer_step_of">Paso %1$d de %2$d</string>
     <string name="analyzer_back">Paso anterior</string>
     <string name="analyzer_next">Paso siguiente</string>
+    <string name="analyzer_auto_play">Reproducción automática</string>
+    <string name="analyzer_show_steps">Mostrar cada paso</string>
+    <string name="analyzer_hide_steps">Ocultar pasos</string>
+    <string name="analyzer_detail_progress">%1$d de %2$d</string>
 
     <!-- Puzzle Mix editor -->
     <string name="mix_editor_title_edit">Editar Mix</string>
@@ -1435,4 +1448,69 @@
     <string name="halloween_character_moon">Luna llena somnolienta</string>
     <string name="daily_reminder_title_halloween">Puzzles de Halloween</string>
     <string name="daily_reminder_text_halloween">Unos puzzles tranquilos para Halloween: %1$s</string>
+    <string name="journey_title">Viaje</string>
+    <string name="journey_chapter">Capítulo %1$d</string>
+    <string name="journey_stop">Parada %1$d</string>
+    <string name="journey_continue">Continuar</string>
+    <string name="journey_skipped">Saltada</string>
+    <string name="journey_up_next">A continuación</string>
+    <string name="journey_play">Jugar</string>
+    <string name="journey_replay">Repetir</string>
+    <string name="journey_skip">Saltar</string>
+    <string name="journey_card_position">Capítulo %1$d · Parada %2$d</string>
+    <string name="journey_card_stars">%1$d de %2$d estrellas</string>
+    <string name="journey_stop_description">Parada %1$d, %2$s, %3$s, %4$d de 3 estrellas</string>
+    <string name="journey_state_cleared">Superada</string>
+    <string name="journey_state_open">Abierta</string>
+    <string name="journey_state_later">Se abre más tarde</string>
+    <string name="journey_complete">Todas las paradas superadas</string>
+    <string name="journey_board_cleared">Puzzle resuelto</string>
+    <string name="journey_goal_clear">Resolver el puzzle</string>
+    <string name="journey_goal_clean">Sin pistas ni errores</string>
+    <string name="journey_goal_time">Menos de %1$s</string>
+    <string name="journey_next_stop">Siguiente parada</string>
+    <string name="journey_replay_stars">Repite para 3 estrellas</string>
+    <string name="journey_map">Mapa</string>
+    <string name="journey_back_to_map">Volver al mapa</string>
+    <string name="journey_new_puzzle">Nuevo puzzle</string>
+    <string name="journey_best_stars">Mejor: %1$d de 3 estrellas</string>
+    <string name="journey_star_earned">Estrella conseguida</string>
+    <string name="journey_star_missed">Estrella no conseguida</string>
+    <string name="journey_goal_met">Cumplido</string>
+    <string name="journey_goal_missed">No cumplido</string>
+    <plurals name="journey_hints">
+        <item quantity="one">%d pista</item>
+        <item quantity="many">%d pistas</item>
+        <item quantity="other">%d pistas</item>
+    </plurals>
+    <plurals name="journey_mistakes">
+        <item quantity="one">%d error</item>
+        <item quantity="many">%d errores</item>
+        <item quantity="other">%d errores</item>
+    </plurals>
+    <plurals name="journey_chapter_stop_count">
+        <item quantity="one">%1$d parada</item>
+        <item quantity="many">%1$d paradas</item>
+        <item quantity="other">%1$d paradas</item>
+    </plurals>
+    <string name="journey_chapter_tiers">De %1$s a %2$s</string>
+    <string name="journey_chapter_complete">Completado</string>
+    <string name="journey_chapter_in_progress">En curso</string>
+    <string name="journey_chapter_open">Abierto</string>
+    <string name="journey_open_note">Todos los capítulos están abiertos.</string>
+    <string name="journey_chapter_description">Capítulo %1$d, %2$s, %3$d de %4$d estrellas</string>
+    <string name="journey_map_star_count">%1$d/%2$d</string>
+    <string name="journey_stop_meta_arrows">%1$d×%2$d · %3$d flechas</string>
+    <string name="journey_stop_meta_grid">%1$d×%1$d</string>
+    <string name="journey_stop_meta_rect">%1$d×%2$d</string>
+    <string name="journey_stop_target">objetivo %1$s</string>
+    <plurals name="journey_stop_best">
+        <item quantity="one">Mejor %1$s · %2$d estrella</item>
+        <item quantity="many">Mejor %1$s · %2$d estrellas</item>
+        <item quantity="other">Mejor %1$s · %2$d estrellas</item>
+    </plurals>
+    <string name="journey_stop_not_played">Aún sin jugar</string>
+    <string name="journey_stop_skipped_now">Saltada por ahora</string>
+    <string name="journey_goal_chip_clear">Resuelto</string>
+    <string name="journey_goal_chip_clean">Sin errores</string>
 </resources>

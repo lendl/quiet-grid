@@ -40,9 +40,6 @@ class NonogramChallengerViewModel @Inject constructor(
 
     var inputMode by mutableStateOf(NonogramInputMode.FILL)
 
-    var wrongTapTrigger by mutableStateOf(0)
-        private set
-
     init {
         viewModelScope.launch {
             val firstPuzzle = NonogramPuzzleBank.randomPuzzle(appContext, Difficulty.EASY)
@@ -52,43 +49,27 @@ class NonogramChallengerViewModel @Inject constructor(
         }
     }
 
-    private var dragHalted = false
     private var advancing = false
 
     fun onCellTap(row: Int, col: Int) {
         if (controller.isFinalized || advancing) return
         val current = session ?: return
-        applyTapResult(current, applyNonogramChallengerTap(current, row, col, inputMode))
-    }
-
-    fun onDragStart() {
-        dragHalted = false
+        val updated = applyNonogramTap(current.puzzleSession, row, col, inputMode) ?: return
+        applyPuzzleSession(current, updated)
     }
 
     fun onDragPaint(cells: List<Pair<Int, Int>>) {
-        for ((row, col) in cells) {
-            if (controller.isFinalized || advancing || dragHalted) return
-            val current = session ?: return
-            val paintResult = applyNonogramChallengerPaint(current, row, col, inputMode)
-            if (paintResult.wasWrong) dragHalted = true
-            applyTapResult(current, paintResult)
-        }
+        if (controller.isFinalized || advancing || cells.isEmpty()) return
+        val current = session ?: return
+        val value = if (inputMode == NonogramInputMode.FILL) 1 else 0
+        val updated = applyNonogramPaint(current.puzzleSession, cells, value) ?: return
+        applyPuzzleSession(current, updated)
     }
 
-    private fun applyTapResult(current: NonogramChallengerSession, tapResult: NonogramChallengerTapResult) {
-        if (tapResult.wasWrong) {
-            wrongTapTrigger++
-            val livesRemaining = current.livesRemaining - 1
-            val withLoss = current.copy(livesRemaining = livesRemaining)
-            controller.session = withLoss
-            if (livesRemaining <= 0) controller.finalizeRun(withLoss, "lives_exhausted")
-            return
-        }
-
-        controller.session = tapResult.session
-        if (isNonogramSolved(tapResult.session.puzzleSession.board, tapResult.session.puzzleSession.solution)) {
-            onSolved(tapResult.session)
-        }
+    private fun applyPuzzleSession(current: NonogramChallengerSession, puzzleSession: NonogramSession) {
+        val next = current.copy(puzzleSession = puzzleSession)
+        controller.session = next
+        if (isNonogramSolved(puzzleSession.board, puzzleSession.solution)) onSolved(next)
     }
 
     private fun onSolved(withTap: NonogramChallengerSession) {

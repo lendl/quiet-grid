@@ -220,7 +220,7 @@ private fun PlayOverflowMenu(metrics: PlayMetrics, onEndPuzzle: () -> Unit, onRe
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             if (onRestartPuzzle != null) {
                 DropdownMenuItem(
-                    text = { Text(stringResource(R.string.journey_restart_puzzle)) },
+                    text = { Text(stringResource(R.string.journey_new_puzzle)) },
                     leadingIcon = { Icon(Icons.Outlined.RestartAlt, contentDescription = null) },
                     onClick = {
                         expanded = false

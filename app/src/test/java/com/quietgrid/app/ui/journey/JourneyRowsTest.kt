@@ -77,6 +77,15 @@ class JourneyRowsTest {
     }
 
     @Test
+    fun `cleared stop with a lined-up sibling replays the sibling untransformed`() {
+        val withTransforms = file.copy(
+            chapters = file.chapters.map { chapter -> chapter.copy(stops = chapter.stops.map { it.copy(replayTransforms = listOf(2, 5)) }) },
+        )
+        val rows = journeyRows(withTransforms, mapOf("c1-s1" to JourneyStopProgress(stars = 2, cleared = true, attempts = 3, nextPuzzleId = "sib")))
+        assertEquals(JourneyRequest("c1-s1", "sib", 0), journeyRequestFor(rows.first()))
+    }
+
+    @Test
     fun `uncleared stop request never transforms`() {
         val withTransforms = file.copy(
             chapters = file.chapters.map { chapter -> chapter.copy(stops = chapter.stops.map { it.copy(replayTransforms = listOf(2, 5)) }) },

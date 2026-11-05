@@ -108,6 +108,8 @@ class FakeJourneyStore : JourneyProgressStore {
         losses += stopId
     }
 
+    override suspend fun recordAbandon(gameId: GameId, stopId: String) = Unit
+
     override suspend fun skip(gameId: GameId, stopId: String) {
         skips += stopId
     }

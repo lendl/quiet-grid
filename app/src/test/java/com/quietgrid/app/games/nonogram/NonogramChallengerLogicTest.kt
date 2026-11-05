@@ -4,9 +4,6 @@ import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.engine.nonogram.NonogramPuzzleEntry
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
 private fun testPuzzle(id: String, difficulty: String) = NonogramPuzzleEntry(
@@ -20,7 +17,7 @@ private fun testPuzzle(id: String, difficulty: String) = NonogramPuzzleEntry(
 class NonogramChallengerLogicTest {
 
     @Test
-    fun `createInitialNonogramChallengerSession starts on Easy with full lives and starting clock`() {
+    fun `createInitialNonogramChallengerSession starts on Easy with the starting clock`() {
         val puzzle = testPuzzle("p1", "easy")
 
         val session = createInitialNonogramChallengerSession(puzzle)
@@ -30,7 +27,6 @@ class NonogramChallengerLogicTest {
         assertEquals(0, session.puzzlesSolved)
         assertEquals(0, session.score)
         assertEquals(NONOGRAM_CHALLENGER_STARTING_SECONDS, session.secondsRemaining, 0.0)
-        assertEquals(NONOGRAM_CHALLENGER_STARTING_LIVES, session.livesRemaining)
         assertEquals(setOf("p1"), session.servedPuzzleIds)
     }
 
@@ -51,14 +47,13 @@ class NonogramChallengerLogicTest {
     }
 
     @Test
-    fun `advanceNonogramChallengerAfterSolve keeps lives, adds bonus time, and loads the next puzzle`() {
-        val initial = createInitialNonogramChallengerSession(testPuzzle("p1", "easy")).copy(livesRemaining = 2)
+    fun `advanceNonogramChallengerAfterSolve adds bonus time and loads the next puzzle`() {
+        val initial = createInitialNonogramChallengerSession(testPuzzle("p1", "easy"))
         val nextPuzzle = testPuzzle("p2", "easy")
 
         val advanced = advanceNonogramChallengerAfterSolve(initial, nextTier = Difficulty.EASY, nextSolvesInTier = 1, nextPuzzle = nextPuzzle)
 
         assertEquals(1, advanced.puzzlesSolved)
-        assertEquals(2, advanced.livesRemaining)
         assertEquals("p2", advanced.puzzleSession.puzzle.id)
         assertEquals(NONOGRAM_CHALLENGER_STARTING_SECONDS + NONOGRAM_CHALLENGER_BONUS_SECONDS, advanced.secondsRemaining, 0.0)
         assertEquals(0.0, advanced.secondsOnCurrentPuzzle, 0.0)
@@ -74,66 +69,5 @@ class NonogramChallengerLogicTest {
 
         assertEquals(NONOGRAM_CHALLENGER_STARTING_SECONDS - 1.0, ticked.secondsRemaining, 0.0)
         assertEquals(1.0, ticked.secondsOnCurrentPuzzle, 0.0)
-    }
-
-    @Test
-    fun `applyNonogramChallengerTap fills a correct cell and reports no wrongness`() {
-        val session = createInitialNonogramChallengerSession(testPuzzle("p1", "easy"))
-
-        val result = applyNonogramChallengerTap(session, row = 0, col = 0, mode = NonogramInputMode.FILL)
-
-        assertFalse(result.wasWrong)
-        assertEquals(1, result.session.puzzleSession.board[0][0])
-    }
-
-    @Test
-    fun `applyNonogramChallengerTap reports wrongness and reverts a fill where the solution is blank`() {
-        val session = createInitialNonogramChallengerSession(testPuzzle("p1", "easy"))
-
-        val result = applyNonogramChallengerTap(session, row = 0, col = 1, mode = NonogramInputMode.FILL)
-
-        assertTrue(result.wasWrong)
-        assertNull(result.session.puzzleSession.board[0][1])
-    }
-
-    @Test
-    fun `applyNonogramChallengerPaint fills a correct cell and reports no wrongness`() {
-        val session = createInitialNonogramChallengerSession(testPuzzle("p1", "easy"))
-
-        val result = applyNonogramChallengerPaint(session, row = 0, col = 0, mode = NonogramInputMode.FILL)
-
-        assertFalse(result.wasWrong)
-        assertEquals(1, result.session.puzzleSession.board[0][0])
-    }
-
-    @Test
-    fun `applyNonogramChallengerPaint reports wrongness without filling a cell the solution marks blank`() {
-        val session = createInitialNonogramChallengerSession(testPuzzle("p1", "easy"))
-
-        val result = applyNonogramChallengerPaint(session, row = 0, col = 1, mode = NonogramInputMode.FILL)
-
-        assertTrue(result.wasWrong)
-        assertNull(result.session.puzzleSession.board[0][1])
-    }
-
-    @Test
-    fun `applyNonogramChallengerPaint never clears a filled cell in FILL mode`() {
-        val session = createInitialNonogramChallengerSession(testPuzzle("p1", "easy"))
-        val filled = applyNonogramChallengerPaint(session, row = 0, col = 0, mode = NonogramInputMode.FILL).session
-
-        val result = applyNonogramChallengerPaint(filled, row = 0, col = 0, mode = NonogramInputMode.FILL)
-
-        assertFalse(result.wasWrong)
-        assertEquals(1, result.session.puzzleSession.board[0][0])
-    }
-
-    @Test
-    fun `applyNonogramChallengerPaint crosses any cell in CROSS mode without wrongness`() {
-        val session = createInitialNonogramChallengerSession(testPuzzle("p1", "easy"))
-
-        val result = applyNonogramChallengerPaint(session, row = 0, col = 0, mode = NonogramInputMode.CROSS)
-
-        assertFalse(result.wasWrong)
-        assertEquals(0, result.session.puzzleSession.board[0][0])
     }
 }

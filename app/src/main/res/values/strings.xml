@@ -1097,8 +1097,6 @@
     <string name="nonogram_challenger_tier_label">Tier</string>
     <string name="nonogram_challenger_result_time_up_title">Time\'s up!</string>
     <string name="nonogram_challenger_result_time_up_body">The clock ran out. Here\'s how your run went.</string>
-    <string name="nonogram_challenger_result_lives_exhausted_title">Out of lives!</string>
-    <string name="nonogram_challenger_result_lives_exhausted_body">Three mistakes ended your run.</string>
     <string name="nonogram_challenger_result_abandoned_title">Run ended</string>
     <string name="nonogram_challenger_result_abandoned_body">You stopped the run early.</string>
     <string name="nonogram_challenger_result_new_high_score">New high score!</string>
@@ -2116,7 +2114,7 @@
     <string name="journey_replay_stars">Replay for 3 stars</string>
     <string name="journey_map">Map</string>
     <string name="journey_back_to_map">Back to map</string>
-    <string name="journey_restart_puzzle">Restart puzzle</string>
+    <string name="journey_new_puzzle">New puzzle</string>
     <string name="journey_best_stars">Best: %1$d of 3 stars</string>
     <string name="journey_star_earned">Star earned</string>
     <string name="journey_star_missed">Star not earned</string>
