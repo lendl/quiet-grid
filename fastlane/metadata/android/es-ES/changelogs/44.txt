@@ -1,0 +1,7 @@
+Versión 1.14.0
+
+- Nuevo: Viaje. Capítulos de puzzles cada vez más difíciles, con hasta 3 estrellas por parada. En 8 juegos, de Sudoku a Escape de Flechas.
+- Animal Doku: las pistas y la solución paso a paso explican los pasos "¿y si...?" uno a uno.
+- Escape de Flechas: puzzles Experto más grandes y difíciles.
+- Challenger: Takuzu ya no termina tras tres errores, y Sudoku, Takuzu y Adivina la Palabra se juegan como puzzles normales.
+- Corrección de errores y mejoras de estabilidad

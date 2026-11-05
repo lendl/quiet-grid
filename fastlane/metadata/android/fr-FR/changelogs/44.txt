@@ -1,0 +1,7 @@
+Version 1.14.0
+
+- Nouveau : Voyage. Chapitres de puzzles de plus en plus difficiles, avec jusqu'à 3 étoiles par étape. Dans 8 jeux, du Sudoku à Évasion des Flèches.
+- Animal Doku : les indices et la résolution expliquent les étapes "et si..." une par une.
+- Évasion des Flèches : puzzles Expert plus grands et plus durs.
+- Challenger : Takuzu ne s'arrête plus après trois erreurs, et Sudoku, Takuzu et Devine le Mot se jouent comme des puzzles normaux.
+- Corrections et améliorations de stabilité

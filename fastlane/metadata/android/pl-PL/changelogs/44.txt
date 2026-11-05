@@ -1,0 +1,7 @@
+Wersja 1.14.0
+
+- Nowość: Podróż. Rozdziały coraz trudniejszych łamigłówek, do 3 gwiazdek na przystanek. W 8 grach, od Sudoku po Ucieczkę strzałek.
+- Zwierzęce Doku: podpowiedzi i rozwiązanie krok po kroku wyjaśniają kroki "a co, jeśli" jeden po drugim.
+- Ucieczka strzałek: większe i trudniejsze łamigłówki na poziomie Ekspert.
+- Pretendent: Takuzu nie kończy się już po trzech błędach, a Sudoku, Takuzu i Zgadnij słowo działają jak zwykłe łamigłówki.
+- Poprawki błędów i większa stabilność

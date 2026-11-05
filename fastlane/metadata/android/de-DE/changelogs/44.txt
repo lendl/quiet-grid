@@ -1,0 +1,7 @@
+Version 1.14.0
+
+- Neu: Reise. Kapitel mit Rätseln, die langsam schwerer werden, und bis zu 3 Sterne pro Station. In 8 Spielen, von Sudoku bis Pfeilflucht.
+- Animal Doku: Hinweise und die Lösung Schritt für Schritt erklären "Was wäre, wenn"-Schritte einzeln.
+- Pfeilflucht: größere, schwerere Rätsel auf Experte.
+- Challenger: Takuzu endet nicht mehr nach drei Fehlern, und Sudoku, Takuzu und Wort erraten spielen sich wie normale Rätsel.
+- Fehlerbehebungen und Stabilitätsverbesserungen

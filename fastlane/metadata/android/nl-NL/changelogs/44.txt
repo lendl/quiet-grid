@@ -1,0 +1,7 @@
+Versie 1.14.0
+
+- Nieuw: Reis. Hoofdstukken met puzzels die langzaam moeilijker worden, met tot 3 sterren per halte. In 8 spellen, van Sudoku tot Pijlenvlucht.
+- Animal Doku: hints en de stap-voor-stap-oplossing leggen "wat als"-stappen één voor één uit.
+- Pijlenvlucht: grotere, moeilijkere Expert-puzzels.
+- Challenger: Takuzu stopt niet meer na drie fouten, en Sudoku, Takuzu en Woord Raden spelen als gewone puzzels.
+- Bugfixes en stabiliteitsverbeteringen

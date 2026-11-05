@@ -1,0 +1,7 @@
+Version 1.14.0
+
+- New: Journey. Chapters of puzzles that slowly get harder, with up to 3 stars per stop. Available in 8 games, from Sudoku to Arrow Escape.
+- Animal Doku: hints and the solve walkthrough explain "what if" steps one at a time.
+- Arrow Escape: bigger, harder Expert puzzles.
+- Challenger: Takuzu no longer ends after three mistakes, and Sudoku, Takuzu and Word Guess play like normal puzzles.
+- Bug fixes and stability improvements

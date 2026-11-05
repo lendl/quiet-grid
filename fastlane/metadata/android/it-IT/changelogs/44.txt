@@ -1,0 +1,7 @@
+Versione 1.14.0
+
+- Novità: Viaggio. Capitoli di puzzle sempre più difficili, con fino a 3 stelle per tappa. In 8 giochi, da Sudoku a Fuga delle frecce.
+- Animal Doku: i suggerimenti e la soluzione spiegano i passi "e se..." uno alla volta.
+- Fuga delle frecce: puzzle Esperto più grandi e difficili.
+- Challenger: Takuzu non finisce più dopo tre errori, e Sudoku, Takuzu e Indovina la parola si giocano come i puzzle normali.
+- Correzioni e miglioramenti di stabilità

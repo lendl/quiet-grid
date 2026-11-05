@@ -1,0 +1,7 @@
+Versão 1.14.0
+
+- Novo: Jornada. Capítulos de quebra-cabeças cada vez mais difíceis, com até 3 estrelas por parada. Em 8 jogos, do Sudoku ao Escape das Setas.
+- Animal Doku: as dicas e a solução passo a passo explicam os passos "e se..." um a um.
+- Escape das Setas: quebra-cabeças Especialista maiores e mais difíceis.
+- Desafiante: Takuzu não termina mais após três erros, e Sudoku, Takuzu e Adivinhe a Palavra funcionam como quebra-cabeças normais.
+- Correções de bugs e melhorias de estabilidade
