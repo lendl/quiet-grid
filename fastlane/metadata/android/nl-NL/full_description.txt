@@ -3,6 +3,9 @@
 <p><b>ELKE DAG EEN NIEUWE PUZZEL</b><br>
 Kies zelf welke spellen je elke dag een nieuwe puzzel geven, in elke moeilijkheidsgraad. Deel je resultaat als je klaar bent, en krijg een optionele herinnering als je nog niet hebt gespeeld.</p>
 
+<p><b>REIS</b><br>
+Reis door hoofdstukken met puzzels die langzaam moeilijker worden, en verdien tot drie sterren per halte. In 8 spellen, van Sudoku tot Pijlenvlucht.</p>
+
 <p><b>EERLIJKE PUZZELS</b></p>
 <ul>
 <li>Vier niveaus, van Makkelijk tot Expert, ingedeeld op de logica die een puzzel vraagt, niet op het aantal lege vakjes.</li>
@@ -19,7 +22,7 @@ Kies zelf welke spellen je elke dag een nieuwe puzzel geven, in elke moeilijkhei
 <li><b>Mini Sudoku</b> — Snelle 4×4- en 6×6-sudoku's voor een korte pauze.</li>
 <li><b>Takuzu (Binairo)</b> — Vul het raster met nullen en enen. Evenveel van elk, nooit drie op een rij, geen gelijke rijen.</li>
 <li><b>Nonogram (Hanjie)</b> — Onthul een verborgen afbeelding met de cijferhints bij elke rij en kolom.</li>
-<li><b>Mijnenveger</b> — Open elk veilig vakje zonder een mijn te raken.</li>
+<li><b>Mijnenveger</b> — Open elk veilig vakje zonder een mijn te raken. Klassieke borden los je altijd op zonder te gokken, en er is een eindeloze modus.</li>
 <li><b>Star Battle</b> — Plaats sterren in elke rij, kolom en regio, zonder dat twee sterren elkaar raken.</li>
 <li><b>Animal Doku</b> — Eén dier per rij, kolom en gekleurde regio, nooit naast elkaar, ook niet diagonaal.</li>
 </ul>
@@ -42,10 +45,7 @@ Kies zelf welke spellen je elke dag een nieuwe puzzel geven, in elke moeilijkhei
 </ul>
 
 <p><b>HELEMAAL VAN JOU</b><br>
-Zeven kleurthema's, waaronder Potlood: een grijstintenthema als op papier, prettig voor kleurenblinde spelers. Speel in het Engels, Nederlands, Duits, Frans, Spaans, Italiaans, Portugees of Pools, en kies de taal voor woordpuzzels apart.</p>
+Zeven kleurthema's, waaronder Potlood: een grijstintenthema als op papier, prettig voor kleurenblinde spelers. Geef je favoriete spellen een ster, stel hints, timer en indeling per spel in en speel verder via een widget op je startscherm. Speel in 8 talen en kies de taal voor woordpuzzels apart.</p>
 
-<p><b>RUSTIG VAN OPZET</b><br>
-Quiet Grid is gemaakt voor rustige, gefocuste puzzeltijd. De timer kun je verbergen. Dagelijkse puzzels, streaks en herinneringen gelden alleen voor de spellen die je zelf kiest. Tijdsdruk alleen als je zelf de Challenger-modus start.</p>
-
-<p><b>PRIVÉ EN OPEN SOURCE</b><br>
-Geen advertenties, geen tracking, geen account en geen internettoestemming. De enige toestemming die de app vraagt is voor meldingen, voor optionele dagelijkse herinneringen. Open source onder GPLv3.</p>
+<p><b>RUSTIG, PRIVÉ EN OPEN SOURCE</b><br>
+Gemaakt voor rustige puzzeltijd: tijdsdruk is er alleen als je zelf de Challenger-modus start. Geen advertenties, geen tracking, geen account en geen internettoestemming. De enige toestemming die de app vraagt is voor meldingen, voor optionele dagelijkse herinneringen. Open source onder GPLv3.</p>

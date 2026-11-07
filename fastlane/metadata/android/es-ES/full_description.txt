@@ -3,6 +3,9 @@
 <p><b>UN PUZZLE NUEVO CADA DÍA</b><br>
 Elige qué juegos te dan un puzzle nuevo cada día, en cada dificultad. Comparte tu resultado al terminar y recibe un recordatorio opcional si aún no has jugado.</p>
 
+<p><b>VIAJE</b><br>
+Avanza por capítulos de puzzles cada vez más difíciles y gana hasta tres estrellas en cada parada. En 8 juegos, de Sudoku a Escape de Flechas.</p>
+
 <p><b>PUZZLES JUSTOS</b></p>
 <ul>
 <li>Cuatro niveles, de Fácil a Experto, clasificados según la lógica que necesita cada puzzle, no según cuántas casillas están vacías.</li>
@@ -19,7 +22,7 @@ Elige qué juegos te dan un puzzle nuevo cada día, en cada dificultad. Comparte
 <li><b>Mini Sudoku</b> — Sudokus rápidos de 4×4 y 6×6 para una pausa corta.</li>
 <li><b>Takuzu (Binairo)</b> — Llena la cuadrícula con 0 y 1. El mismo número de cada uno, nunca tres seguidos, ninguna fila idéntica.</li>
 <li><b>Nonograma (Hanjie)</b> — Descubre una imagen oculta con las pistas numéricas de cada fila y columna.</li>
-<li><b>Buscaminas</b> — Descubre todas las casillas seguras sin tocar ninguna mina.</li>
+<li><b>Buscaminas</b> — Descubre todas las casillas seguras sin tocar ninguna mina. Los tableros clásicos nunca obligan a adivinar, y hay un modo sin fin.</li>
 <li><b>Batalla de Estrellas</b> — Coloca estrellas en cada fila, columna y región, sin que dos se toquen.</li>
 <li><b>Animal Doku</b> — Un animal por fila, columna y región de color, sin tocarse nunca, ni siquiera en diagonal.</li>
 </ul>
@@ -42,10 +45,7 @@ Elige qué juegos te dan un puzzle nuevo cada día, en cada dificultad. Comparte
 </ul>
 
 <p><b>A TU MANERA</b><br>
-Siete temas de color, entre ellos Lápiz, un tema en escala de grises con aspecto de papel, ideal para jugadores daltónicos. Juega en inglés, neerlandés, alemán, francés, español, italiano, portugués o polaco, y elige por separado el idioma de los juegos de palabras.</p>
+Siete temas de color, entre ellos Lápiz, un tema en escala de grises con aspecto de papel, ideal para jugadores daltónicos. Marca tus juegos favoritos con una estrella, ajusta pistas, temporizador y diseño en cada juego, y retoma un puzzle desde un widget en la pantalla de inicio. Juega en 8 idiomas y elige por separado el idioma de los juegos de palabras.</p>
 
-<p><b>CALMA POR DISEÑO</b><br>
-Quiet Grid está hecho para ratos de puzzles tranquilos y concentrados. Oculta el temporizador si lo prefieres. Los puzzles diarios, las rachas y los recordatorios solo se aplican a los juegos que tú eliges. Presión de tiempo solo si inicias tú el modo Challenger.</p>
-
-<p><b>PRIVADO Y DE CÓDIGO ABIERTO</b><br>
-Sin anuncios, sin rastreo, sin cuenta y sin permiso de internet. El único permiso que pide es el de notificaciones, para los recordatorios diarios opcionales. Código abierto bajo GPLv3.</p>
+<p><b>TRANQUILO, PRIVADO Y DE CÓDIGO ABIERTO</b><br>
+Hecho para ratos tranquilos: solo hay presión de tiempo si inicias tú el modo Challenger. Sin anuncios, sin rastreo, sin cuenta y sin permiso de internet. El único permiso que pide es el de notificaciones, para los recordatorios diarios opcionales. Código abierto bajo GPLv3.</p>

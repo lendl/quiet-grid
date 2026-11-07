@@ -3,6 +3,9 @@
 <p><b>UN NUOVO PUZZLE OGNI GIORNO</b><br>
 Scegli quali giochi ti danno un nuovo puzzle ogni giorno, in ogni difficoltà. Condividi il risultato quando hai finito e ricevi un promemoria facoltativo se non hai ancora giocato.</p>
 
+<p><b>VIAGGIO</b><br>
+Attraversa capitoli di puzzle sempre più difficili e guadagna fino a tre stelle a ogni tappa. In 8 giochi, da Sudoku a Fuga delle frecce.</p>
+
 <p><b>PUZZLE LEALI</b></p>
 <ul>
 <li>Quattro livelli, da Facile a Esperto, classificati in base alla logica che ogni puzzle richiede, non a quante caselle sono vuote.</li>
@@ -19,7 +22,7 @@ Scegli quali giochi ti danno un nuovo puzzle ogni giorno, in ogni difficoltà. C
 <li><b>Mini Sudoku</b> — Sudoku veloci 4×4 e 6×6 per una breve pausa.</li>
 <li><b>Takuzu (Binairo)</b> — Riempi la griglia con 0 e 1. Stesso numero di ciascuno, mai tre di fila, nessuna riga identica.</li>
 <li><b>Nonogram (Hanjie)</b> — Svela un'immagine nascosta con gli indizi numerici di ogni riga e colonna.</li>
-<li><b>Campo minato</b> — Scopri tutte le caselle sicure senza colpire una mina.</li>
+<li><b>Campo minato</b> — Scopri tutte le caselle sicure senza colpire una mina. Le griglie classiche non richiedono mai di tirare a indovinare, e c'è una modalità infinita.</li>
 <li><b>Battaglia di stelle</b> — Metti le stelle in ogni riga, colonna e regione, senza che due si tocchino.</li>
 <li><b>Animal Doku</b> — Un animale per riga, colonna e regione colorata, mai a contatto, nemmeno in diagonale.</li>
 </ul>
@@ -42,10 +45,7 @@ Scegli quali giochi ti danno un nuovo puzzle ogni giorno, in ogni difficoltà. C
 </ul>
 
 <p><b>A MODO TUO</b><br>
-Sette temi di colore, tra cui Matita, un tema in scala di grigi effetto carta, adatto ai giocatori daltonici. Gioca in inglese, olandese, tedesco, francese, spagnolo, italiano, portoghese o polacco, e scegli a parte la lingua dei giochi di parole.</p>
+Sette temi di colore, tra cui Matita, un tema in scala di grigi effetto carta, adatto ai giocatori daltonici. Segna con una stella i tuoi giochi preferiti, imposta suggerimenti, timer e layout per ogni gioco e riprendi un puzzle da un widget nella schermata Home. Gioca in 8 lingue e scegli a parte la lingua dei giochi di parole.</p>
 
-<p><b>CALMO PER SCELTA</b><br>
-Quiet Grid è pensato per momenti di puzzle calmi e concentrati. Nascondi il timer se preferisci. Puzzle giornalieri, serie e promemoria valgono solo per i giochi che scegli tu. Pressione del tempo solo se avvii tu la modalità Challenger.</p>
-
-<p><b>PRIVATO E OPEN SOURCE</b><br>
-Niente pubblicità, niente tracciamento, niente account e nessun permesso internet. L'unico permesso richiesto è quello per le notifiche, per i promemoria giornalieri facoltativi. Open source con licenza GPLv3.</p>
+<p><b>CALMO, PRIVATO E OPEN SOURCE</b><br>
+Pensato per momenti tranquilli: la pressione del tempo c'è solo se avvii tu la modalità Challenger. Niente pubblicità, niente tracciamento, niente account e nessun permesso internet. L'unico permesso richiesto è quello per le notifiche, per i promemoria giornalieri facoltativi. Open source con licenza GPLv3.</p>

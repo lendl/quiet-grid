@@ -3,6 +3,9 @@
 <p><b>NOWA ŁAMIGŁÓWKA CODZIENNIE</b><br>
 Wybierz, które gry mają codziennie dawać Ci nową łamigłówkę, na każdym poziomie trudności. Udostępnij wynik po ukończeniu i włącz opcjonalne przypomnienie, gdy dzisiejsza łamigłówka wciąż czeka.</p>
 
+<p><b>PODRÓŻ</b><br>
+Przemierzaj rozdziały coraz trudniejszych łamigłówek i zdobywaj do trzech gwiazdek na każdym przystanku. W 8 grach, od Sudoku po Ucieczkę strzałek.</p>
+
 <p><b>UCZCIWE ŁAMIGŁÓWKI</b></p>
 <ul>
 <li>Cztery poziomy: Łatwy, Średni, Trudny i Ekspert, oceniane według logiki, jakiej wymaga łamigłówka, a nie liczby pustych pól.</li>
@@ -19,7 +22,7 @@ Wybierz, które gry mają codziennie dawać Ci nową łamigłówkę, na każdym 
 <li><b>Mini Sudoku</b> — Szybkie sudoku 4×4 i 6×6 na krótką przerwę.</li>
 <li><b>Takuzu (Binairo)</b> — Wypełnij siatkę zerami i jedynkami. Tyle samo jednych i drugich, nigdy trzy z rzędu, żadnych identycznych wierszy.</li>
 <li><b>Nonogram (Hanjie)</b> — Odkryj ukryty obrazek dzięki wskazówkom liczbowym przy każdym wierszu i kolumnie.</li>
-<li><b>Saper</b> — Odkryj wszystkie bezpieczne pola, nie trafiając na minę.</li>
+<li><b>Saper</b> — Odkryj wszystkie bezpieczne pola, nie trafiając na minę. Klasyczne plansze nigdy nie wymagają zgadywania, jest też tryb bez końca.</li>
 <li><b>Bitwa gwiazd</b> — Rozmieść gwiazdy w każdym wierszu, kolumnie i obszarze tak, aby żadne dwie się nie stykały.</li>
 <li><b>Zwierzęce Doku</b> — Jedno zwierzę w każdym wierszu, kolumnie i kolorowym obszarze, bez stykania się, nawet po przekątnej.</li>
 </ul>
@@ -42,10 +45,7 @@ Wybierz, które gry mają codziennie dawać Ci nową łamigłówkę, na każdym 
 </ul>
 
 <p><b>PO SWOJEMU</b><br>
-Siedem motywów kolorystycznych, w tym Ołówek: motyw w odcieniach szarości przypominający papier, przyjazny dla osób z daltonizmem. Graj po angielsku, niderlandzku, niemiecku, francusku, hiszpańsku, włosku, portugalsku lub polsku, a język gier słownych wybierz osobno.</p>
+Siedem motywów kolorystycznych, w tym Ołówek: motyw w odcieniach szarości przypominający papier, przyjazny dla osób z daltonizmem. Oznacz ulubione gry gwiazdką, ustaw podpowiedzi, stoper i układ osobno dla każdej gry i wracaj do łamigłówki z widżetu na ekranie głównym. Graj w 8 językach, a język gier słownych wybierz osobno.</p>
 
-<p><b>SPOKÓJ Z ZAŁOŻENIA</b><br>
-Quiet Grid powstało z myślą o spokojnym, skupionym czasie z łamigłówkami. Ukryj stoper, jeśli wolisz. Codzienne łamigłówki, serie i przypomnienia dotyczą tylko wybranych przez Ciebie gier. Presja czasu tylko wtedy, gdy samodzielnie włączysz tryb Pretendent.</p>
-
-<p><b>PRYWATNIE I OPEN SOURCE</b><br>
-Bez reklam, bez śledzenia, bez konta i bez uprawnienia do internetu. Jedyne uprawnienie, o które prosi aplikacja, to powiadomienia – do opcjonalnych codziennych przypomnień. Open source na licencji GPLv3.</p>
+<p><b>SPOKOJNIE, PRYWATNIE I OPEN SOURCE</b><br>
+Stworzone z myślą o spokojnym czasie z łamigłówkami: presja czasu pojawia się tylko wtedy, gdy samodzielnie włączysz tryb Pretendent. Bez reklam, bez śledzenia, bez konta i bez uprawnienia do internetu. Jedyne uprawnienie, o które prosi aplikacja, to powiadomienia – do opcjonalnych codziennych przypomnień. Open source na licencji GPLv3.</p>

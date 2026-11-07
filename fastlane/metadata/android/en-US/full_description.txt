@@ -3,6 +3,9 @@
 <p><b>A FRESH PUZZLE EVERY DAY</b><br>
 Choose which games give you a new puzzle every day, in every difficulty. Share your result when you're done, and get an optional reminder if you haven't played yet.</p>
 
+<p><b>JOURNEY</b><br>
+Work your way through chapters of puzzles that slowly get harder, and earn up to three stars at every stop. In 8 games, from Sudoku to Arrow Escape.</p>
+
 <p><b>PUZZLES THAT PLAY FAIR</b></p>
 <ul>
 <li>Four levels, Easy to Expert, graded by the logic each puzzle needs, not by how many squares are empty.</li>
@@ -19,7 +22,7 @@ Choose which games give you a new puzzle every day, in every difficulty. Share y
 <li><b>Mini Sudoku</b> — Quick 4×4 and 6×6 Sudoku for a short break.</li>
 <li><b>Takuzu (Binairo)</b> — Fill the grid with 0s and 1s. Equal counts, no three in a row, no identical rows.</li>
 <li><b>Nonogram (Hanjie)</b> — Reveal a hidden picture using the number clues on each row and column.</li>
-<li><b>Minesweeper</b> — Uncover every safe cell without hitting a mine.</li>
+<li><b>Minesweeper</b> — Uncover every safe cell without hitting a mine. Classic boards never need a guess, and there's an Endless mode.</li>
 <li><b>Star Battle</b> — Place stars in every row, column and region, with no two touching.</li>
 <li><b>Animal Doku</b> — One animal per row, column and colored region, never touching, not even diagonally.</li>
 </ul>
@@ -42,10 +45,7 @@ Choose which games give you a new puzzle every day, in every difficulty. Share y
 </ul>
 
 <p><b>MAKE IT YOURS</b><br>
-Seven color themes, including Pencil, a paper-like grayscale theme that works well for colorblind players. Play in English, Dutch, German, French, Spanish, Italian, Portuguese or Polish, and pick the language for word puzzles separately.</p>
+Seven color themes, including Pencil, a paper-like grayscale theme that works well for colorblind players. Star your favorite games, set hints, timer and layout per game, and continue a puzzle from a home screen widget. Play in 8 languages, and pick the language for word puzzles separately.</p>
 
-<p><b>CALM BY DESIGN</b><br>
-Quiet Grid is made for calm, focused puzzle time. Hide the timer if you prefer. Daily puzzles, streaks and reminders only apply to the games you choose. Time pressure only when you start Challenger mode yourself.</p>
-
-<p><b>PRIVATE AND OPEN SOURCE</b><br>
-No ads, no tracking, no account, and no internet permission. The only permission it asks for is notifications, for optional daily reminders. Open source under GPLv3.</p>
+<p><b>CALM, PRIVATE AND OPEN SOURCE</b><br>
+Made for calm puzzle time: time pressure only comes when you start Challenger mode yourself. No ads, no tracking, no account, and no internet permission. The only permission it asks for is notifications, for optional daily reminders. Open source under GPLv3.</p>

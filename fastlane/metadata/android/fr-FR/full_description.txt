@@ -3,13 +3,16 @@
 <p><b>UN NOUVEAU PUZZLE CHAQUE JOUR</b><br>
 Choisissez les jeux qui vous proposent un nouveau puzzle chaque jour, dans chaque difficulté. Partagez votre résultat une fois terminé et recevez un rappel facultatif si vous n'avez pas encore joué.</p>
 
+<p><b>VOYAGE</b><br>
+Parcourez des chapitres de puzzles de plus en plus difficiles et gagnez jusqu'à trois étoiles à chaque étape. Dans 8 jeux, du Sudoku à Évasion des Flèches.</p>
+
 <p><b>DES PUZZLES ÉQUITABLES</b></p>
 <ul>
 <li>Quatre niveaux, de Facile à Expert, classés selon la logique requise par chaque puzzle, et non selon le nombre de cases vides.</li>
-<li>Besoin d'un coup de pouce ? Un indice vous montre l'étape suivante.</li>
+<li>Bloqué ? Un indice vous montre l'étape suivante.</li>
 <li>Mode Challenger : résolvez un maximum de puzzles avant la fin du temps imparti.</li>
 <li>Créez des Mixes de vos jeux et difficultés préférés et enchaînez-les.</li>
-<li>Suivez vos victoires, séries et scores pour chaque jeu et chaque difficulté, avec l'historique complet de chaque puzzle joué.</li>
+<li>Suivez vos victoires, séries et scores, avec l'historique complet de chaque puzzle joué.</li>
 </ul>
 
 <p><b>PUZZLES LOGIQUES</b></p>
@@ -19,7 +22,7 @@ Choisissez les jeux qui vous proposent un nouveau puzzle chaque jour, dans chaqu
 <li><b>Mini Sudoku</b> — Des Sudoku rapides en 4×4 et 6×6 pour une courte pause.</li>
 <li><b>Takuzu (Binairo)</b> — Remplissez la grille de 0 et de 1. Autant de chaque, jamais trois à la suite, aucune ligne identique.</li>
 <li><b>Nonogramme (Hanjie)</b> — Révélez une image cachée grâce aux indices chiffrés de chaque ligne et colonne.</li>
-<li><b>Démineur</b> — Découvrez toutes les cases sûres sans toucher de mine.</li>
+<li><b>Démineur</b> — Découvrez toutes les cases sûres sans toucher de mine. Les grilles classiques se résolvent sans deviner, et il y a un mode infini.</li>
 <li><b>Star Battle</b> — Placez des étoiles dans chaque ligne, colonne et région, sans que deux se touchent.</li>
 <li><b>Animal Doku</b> — Un animal par ligne, colonne et région colorée, jamais en contact, même en diagonale.</li>
 </ul>
@@ -42,10 +45,7 @@ Choisissez les jeux qui vous proposent un nouveau puzzle chaque jour, dans chaqu
 </ul>
 
 <p><b>À VOTRE GOÛT</b><br>
-Sept thèmes de couleurs, dont Crayon, un thème en niveaux de gris façon papier, adapté aux joueurs daltoniens. Jouez en anglais, néerlandais, allemand, français, espagnol, italien, portugais ou polonais, et choisissez séparément la langue des jeux de mots.</p>
+Sept thèmes de couleurs, dont Crayon, un thème en niveaux de gris façon papier, adapté aux joueurs daltoniens. Mettez vos jeux préférés en favoris, réglez indices, minuterie et disposition par jeu, et reprenez un puzzle depuis un widget sur l'écran d'accueil. Jouez en 8 langues et choisissez séparément celle des jeux de mots.</p>
 
-<p><b>CALME PAR NATURE</b><br>
-Quiet Grid est conçu pour des moments de puzzle calmes et concentrés. Masquez la minuterie si vous préférez. Puzzles quotidiens, séries et rappels ne concernent que les jeux que vous choisissez. La pression du temps uniquement si vous lancez vous-même le mode Challenger.</p>
-
-<p><b>PRIVÉ ET OPEN SOURCE</b><br>
-Pas de publicité, pas de pistage, pas de compte et pas d'autorisation internet. La seule autorisation demandée concerne les notifications, pour les rappels quotidiens facultatifs. Open source sous licence GPLv3.</p>
+<p><b>CALME, PRIVÉ ET OPEN SOURCE</b><br>
+Conçu pour des moments calmes : la pression du temps n'existe que si vous lancez vous-même le mode Challenger. Pas de publicité, pas de pistage, pas de compte et pas d'autorisation internet. La seule autorisation demandée concerne les notifications, pour les rappels quotidiens facultatifs. Open source sous licence GPLv3.</p>

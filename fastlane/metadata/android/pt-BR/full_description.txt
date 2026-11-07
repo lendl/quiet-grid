@@ -3,6 +3,9 @@
 <p><b>UM QUEBRA-CABEÇA NOVO TODO DIA</b><br>
 Escolha quais jogos oferecem um quebra-cabeça novo todo dia, em cada dificuldade. Compartilhe seu resultado ao terminar e receba um lembrete opcional se ainda não tiver jogado.</p>
 
+<p><b>JORNADA</b><br>
+Avance por capítulos de quebra-cabeças cada vez mais difíceis e ganhe até três estrelas em cada parada. Em 8 jogos, do Sudoku ao Escape das Setas.</p>
+
 <p><b>QUEBRA-CABEÇAS JUSTOS</b></p>
 <ul>
 <li>Quatro níveis, de Fácil a Especialista, classificados pela lógica que cada quebra-cabeça exige, não pela quantidade de casas vazias.</li>
@@ -19,7 +22,7 @@ Escolha quais jogos oferecem um quebra-cabeça novo todo dia, em cada dificuldad
 <li><b>Mini Sudoku</b> — Sudokus rápidos de 4×4 e 6×6 para uma pausa curta.</li>
 <li><b>Takuzu (Binairo)</b> — Preencha a grade com 0 e 1. A mesma quantidade de cada, nunca três seguidos, nenhuma linha idêntica.</li>
 <li><b>Nonograma (Hanjie)</b> — Revele uma imagem escondida usando as pistas numéricas de cada linha e coluna.</li>
-<li><b>Campo Minado</b> — Descubra todas as casas seguras sem acertar uma mina.</li>
+<li><b>Campo Minado</b> — Descubra todas as casas seguras sem acertar uma mina. Os tabuleiros clássicos nunca exigem palpites, e há um modo infinito.</li>
 <li><b>Batalha de Estrelas</b> — Coloque estrelas em cada linha, coluna e região, sem que duas se toquem.</li>
 <li><b>Animal Doku</b> — Um animal por linha, coluna e região colorida, sem nunca se tocarem, nem na diagonal.</li>
 </ul>
@@ -42,10 +45,7 @@ Escolha quais jogos oferecem um quebra-cabeça novo todo dia, em cada dificuldad
 </ul>
 
 <p><b>DO SEU JEITO</b><br>
-Sete temas de cores, incluindo Lápis, um tema em tons de cinza com aparência de papel, ótimo para jogadores daltônicos. Jogue em inglês, holandês, alemão, francês, espanhol, italiano, português ou polonês, e escolha separadamente o idioma dos jogos de palavras.</p>
+Sete temas de cores, incluindo Lápis, um tema em tons de cinza com aparência de papel, ótimo para jogadores daltônicos. Marque seus jogos favoritos com uma estrela, ajuste dicas, cronômetro e layout em cada jogo e continue um quebra-cabeça por um widget na tela inicial. Jogue em 8 idiomas e escolha separadamente o idioma dos jogos de palavras.</p>
 
-<p><b>CALMO POR NATUREZA</b><br>
-Quiet Grid foi feito para momentos de quebra-cabeça calmos e focados. Oculte o cronômetro se preferir. Quebra-cabeças diários, sequências e lembretes valem só para os jogos que você escolher. Pressão de tempo só quando você iniciar o modo Desafiante por conta própria.</p>
-
-<p><b>PRIVADO E DE CÓDIGO ABERTO</b><br>
-Sem anúncios, sem rastreamento, sem conta e sem permissão de internet. A única permissão que o app pede é a de notificações, para lembretes diários opcionais. Código aberto sob a licença GPLv3.</p>
+<p><b>CALMO, PRIVADO E DE CÓDIGO ABERTO</b><br>
+Feito para momentos tranquilos: só há pressão de tempo quando você inicia o modo Desafiante por conta própria. Sem anúncios, sem rastreamento, sem conta e sem permissão de internet. A única permissão que o app pede é a de notificações, para lembretes diários opcionais. Código aberto sob a licença GPLv3.</p>
