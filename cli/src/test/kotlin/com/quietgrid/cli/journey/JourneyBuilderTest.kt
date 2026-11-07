@@ -123,7 +123,7 @@ class JourneyBuilderTest {
     }
 
     @Test
-    fun `new puzzles fill the widest gaps and append up to 70`() {
+    fun `new puzzles fill the widest gaps up to 70`() {
         val existingStops = (0 until 65).map { JourneyStop("s%02d".format(it), "easy", 100 + it * 5, 100) }
         val existing = JourneyFile("g", listOf(JourneyChapter(1, 100, 1000, existingStops)))
         val fresh = listOf(345, 350, 360, 500, 700, 900, 1000, 990).mapIndexed { i, rating -> RatedPuzzle("n$i", "easy", rating) }
@@ -132,7 +132,17 @@ class JourneyBuilderTest {
         val stops = merged.chapters.single().stops
         assertEquals(JOURNEY_MAX_STOPS_PER_CHAPTER, stops.size)
         assertEquals(existingStops.map { it.puzzleId }, stops.take(65).map { it.puzzleId })
-        assertEquals(listOf("n6", "n4", "n5", "n3", "n7"), stops.drop(65).map { it.puzzleId })
+        assertEquals(listOf("n3", "n4", "n5", "n7", "n6"), stops.drop(65).map { it.puzzleId })
+    }
+
+    @Test
+    fun `new stops are slotted in by rating and old stops keep their order`() {
+        val existingStops = listOf(100, 300, 200, 500).mapIndexed { i, rating -> JourneyStop("s$i", "easy", rating, 100) }
+        val existing = JourneyFile("g", listOf(JourneyChapter(1, 100, 1000, existingStops)))
+        val fresh = listOf(250, 150, 600, 500).mapIndexed { i, rating -> RatedPuzzle("n$i", "easy", rating) }
+        val puzzles = existingStops.map { RatedPuzzle(it.puzzleId, it.difficulty, it.rating) } + fresh
+        val merged = mergeJourney(existing, puzzles, fresh.map { it.id }.toSet(), target)
+        assertEquals(listOf("s0", "n1", "n0", "s1", "s2", "s3", "n3", "n2"), merged.chapters.single().stops.map { it.puzzleId })
     }
 
     @Test

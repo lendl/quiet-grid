@@ -11,7 +11,7 @@ import com.quietgrid.engine.nonogram.isDegenerateNonogramPuzzle
 import kotlin.random.Random
 
 fun nonogramSizesForDifficulty(difficulty: Difficulty): List<Pair<Int, Int>> = when (difficulty) {
-    Difficulty.EASY -> listOf(10 to 5, 10 to 10)
+    Difficulty.EASY -> listOf(10 to 5)
     Difficulty.MEDIUM -> listOf(10 to 5, 10 to 10)
     Difficulty.HARD -> listOf(10 to 5, 10 to 10)
     // 10x5 can only reach expert via the rare PROBING path - classifyNonogramDifficulty

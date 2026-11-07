@@ -56,6 +56,16 @@ private fun chaptersFor(
 fun buildJourney(game: String, puzzles: List<RatedPuzzle>, target: JourneyTargetSeconds, keepSiblings: Boolean = false): JourneyFile =
     JourneyFile(game, chaptersFor(journeyBands(puzzles.size), puzzles, 1, target, keepSiblings))
 
+private fun slotInByRating(kept: List<JourneyStop>, added: List<JourneyStop>): List<JourneyStop> {
+    val pending = ArrayDeque(added.sortedWith(compareBy<JourneyStop>({ it.rating }, { it.puzzleId })))
+    val result = mutableListOf<JourneyStop>()
+    kept.forEach { stop ->
+        while (pending.isNotEmpty() && pending.first().rating < stop.rating) result += pending.removeFirst()
+        result += stop
+    }
+    return result + pending
+}
+
 fun mergeJourney(
     existing: JourneyFile,
     puzzles: List<RatedPuzzle>,
@@ -77,6 +87,7 @@ fun mergeJourney(
             used += replacement.id
             replacement.toStop(target, stop.puzzleId)
         }.toMutableList()
+        val keptCount = stops.size
         val fresh = puzzles.filter { it.id in newIds && it.rating in band && it.id !in used }.toMutableList()
         while (stops.size < JOURNEY_MAX_STOPS_PER_CHAPTER && fresh.isNotEmpty()) {
             val gap = { puzzle: RatedPuzzle -> stops.minOfOrNull { abs(it.rating - puzzle.rating) } ?: Int.MAX_VALUE }
@@ -85,7 +96,7 @@ fun mergeJourney(
             used += pick.id
             stops += pick.toStop(target)
         }
-        chapter.copy(stops = stops)
+        chapter.copy(stops = slotInByRating(stops.take(keptCount), stops.drop(keptCount)))
     }
     val top = merged.last()
     val width = top.maxRating - top.minRating + 1

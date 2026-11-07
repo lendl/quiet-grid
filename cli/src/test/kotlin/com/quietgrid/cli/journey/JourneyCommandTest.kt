@@ -64,7 +64,7 @@ class JourneyCommandTest {
         runJourney("animaldoku", dir.path, scalesPath)
         assertNotNull(readBank().first { it.id == target.id }.rating)
         val stopsAfter = readJourney().chapters.map { chapter -> chapter.stops.map { it.puzzleId } }
-        stopsBefore.forEachIndexed { index, ids -> assertEquals(ids, stopsAfter[index].take(ids.size)) }
+        stopsBefore.forEachIndexed { index, ids -> assertEquals(ids, stopsAfter[index].filter { it in ids.toSet() }) }
     }
 
     @Test
