@@ -3,6 +3,7 @@ package com.quietgrid.cli.journey
 import com.quietgrid.cli.readPuzzleEntries
 import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
 import com.quietgrid.engine.core.Difficulty
+import com.quietgrid.engine.journey.GridTransform
 import com.quietgrid.engine.journey.JourneyFile
 import com.quietgrid.engine.journey.gridTransformById
 import kotlinx.serialization.json.Json
@@ -95,10 +96,11 @@ class JourneyAssetsTest {
             val scale = scales.getValue(game).scale
             val check = replayTransformCheck(game, assets, scale)
             journey(game).chapters.flatMap { it.stops }.parallelStream().forEach { stop ->
+                val ownRating = check(stop.puzzleId, GridTransform.IDENTITY)!!
                 stop.replayTransforms.forEach { id ->
                     val rating = check(stop.puzzleId, gridTransformById(id))
                     assertTrue("$game ${stop.puzzleId} transform $id unsolvable", rating != null)
-                    assertTrue("$game ${stop.puzzleId} transform $id rated $rating vs ${stop.rating}", abs(rating!! - stop.rating) <= stop.rating * 0.05)
+                    assertTrue("$game ${stop.puzzleId} transform $id rated $rating vs $ownRating", abs(rating!! - ownRating) <= ownRating * 0.05)
                 }
             }
         }

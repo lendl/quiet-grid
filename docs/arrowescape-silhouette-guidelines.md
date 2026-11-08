@@ -82,20 +82,20 @@ Knowing these steps explains most design rules below. The code is in `cli/src/ma
 | Tier | Target active cells | Size cap |
 |---|---|---|
 | Easy | 100-144 | 60 rows x 45 columns |
-| Medium | 324-576 | 60 rows x 45 columns |
-| Hard | 625-900 | 60 rows x 45 columns |
+| Medium | 324-900 | 60 rows x 45 columns |
+| Hard | 961-1369 | 60 rows x 45 columns |
 | Expert | 1500-2100 | 80 rows x 60 columns |
 
 If the cap stops the growth before the target, the board stays smaller than its tier asks for. Avoid shapes that do this, because their boards end up smaller than the rest of the tier. A square shape tops out at about 1750 cells at the 60x60 Expert cap; only tall shapes reach the top of the Expert range.
 
-Every Expert puzzle must also hold at least 140 arrows (`ARROW_ESCAPE_SILHOUETTE_EXPERT_MIN_PIECES`). The generator throws away Expert fills with fewer arrows, and `ArrowEscapeBankVerificationTest` checks the bank for it. A shape that is too small for 140 arrows at the cap can't be Expert: generating it just reports 0 puzzles. Wide shapes are the usual case: the turtle (991 cells at the cap) has no Expert puzzles, and fish (1172) and runner (1285) only reach 140 arrows on some fills.
+Every Hard puzzle must hold at least 100 arrows (`ARROW_ESCAPE_SILHOUETTE_HARD_MIN_PIECES`) and every Expert puzzle at least 140 (`ARROW_ESCAPE_SILHOUETTE_EXPERT_MIN_PIECES`). The generator throws away fills with fewer arrows, and `ArrowEscapeBankVerificationTest` checks the bank for it. A shape that is too small for 140 arrows at the cap can't be Expert: generating it just reports 0 puzzles. Wide shapes are the usual case: the turtle (991 cells at the cap) has no Expert puzzles, and fish (1172) and runner (1285) only reach 140 arrows on some fills.
 
 Expert also has to pass two gates in `classifyArrowEscapeDifficulty`, on top of the free-share floors: free share below `ARROW_ESCAPE_EXPERT_FREE_SHARE_CEILING` (0.15) and trail share at most `ARROW_ESCAPE_EXPERT_TRAIL_CEILING` (0.25). Trail share is how often a player who always takes the arrow next to the one just removed finds such an arrow. The generator lowers it with `reduceArrowEscapeTrail` after the fill. About a quarter of Expert fills pass, and the share depends on the shape: in calibration, rocket, octopus and elephant passed much less often than turtle, pine or runner.
 
 ## Design rules
 
 - **Square or tall.** Keep `width / height` at or below about 1.1. Wide shapes hit the column cap early. A 100x62 turtle tops out at 573 cells at Hard's 45-column cap and 991 cells at Expert's 60-column cap, which is too small for both tiers.
-- **Fill at least 45% of the box.** At 60x60 a shape needs about 42% fill to reach the 1500-cell Expert minimum, and at 45x45 about 31% to reach Hard's 625. Rings, thin letters and stick figures fall short. Thicken them, or accept that they can't be Expert.
+- **Fill at least 45% of the box.** At 60x60 a shape needs about 42% fill to reach the 1500-cell Expert minimum, and at 60x45 about 36% to reach Hard's 961. Rings, thin letters and stick figures fall short. Thicken them, or accept that they can't be Expert.
 - **No thin parts.** At `minRows`, every leg, stem, ear, handle and neck must be at least 2 cells thick. Thinner parts break off and are removed as specks, or they connect only through a corner. As a rule of thumb, nothing should be thinner than `height / minRows * 2` units.
 - **Holes must be big.** A cut hole needs to be at least 3 cells across at `minRows`. Smaller holes get filled, or show up only at some board sizes.
 - **No detail that depends on size.** The same shape is drawn at 12 rows and at 50 rows. If a feature shows only on big boards, the shape will look different between tiers. Leave it out.
@@ -119,7 +119,7 @@ Expert also has to pass two gates in `classifyArrowEscapeDifficulty`, on top of 
 
 A shape with a `season` never goes into the main bank. `--shape all` skips it, and generating it by id writes to `arrowescape_<season>_puzzles.json` instead of the per-tier main bank `arrowescape_puzzles_<tier>.json`. The app serves that bank only on its day: the Halloween bank on October 31, while "Seasonal touches" is on in Settings, as the first new puzzle of each tier that the player hasn't played that day.
 
-The Halloween bank holds one puzzle per tier, each with its own shape: `witchhat` (Easy), `bat` (Medium), `jackolantern` (Hard) and `cauldron` (Expert). The bat is too wide for Hard or Expert, so keep it on Medium or below. The jack-o'-lantern reads by its cut-out eyes and mouth, which is how it avoids the plain pumpkin's `apple` problem. Regenerate a tier with:
+The Halloween bank holds at least one puzzle per tier: `witchhat` (Easy), `bat` and `jackolantern` (Medium), and `cauldron` (one Hard board and one bigger Expert board). The bat is too wide for Hard or Expert, so keep it on Medium or below. The jack-o'-lantern reads by its cut-out eyes and mouth, which is how it avoids the plain pumpkin's `apple` problem. Regenerate a tier with:
 `./gradlew :cli:run --args="generate --game arrowescape --difficulty <tier> --count 1 --shape <id> --out app/src/main/assets"`
 
 ## Shapes that work and shapes that don't

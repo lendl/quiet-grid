@@ -12,9 +12,9 @@ data class ArrowEscapeDifficultyProfile(
     val trailShare: Double,
 )
 
-data class ArrowEscapeFreeShareFloors(val easy: Double, val medium: Double, val hard: Double)
+data class ArrowEscapeFreeShareFloors(val easy: Double, val medium: Double)
 
-val ARROW_ESCAPE_FREE_SHARE_FLOORS = ArrowEscapeFreeShareFloors(easy = 0.52, medium = 0.40, hard = 0.29)
+val ARROW_ESCAPE_FREE_SHARE_FLOORS = ArrowEscapeFreeShareFloors(easy = 0.52, medium = 0.29)
 
 const val ARROW_ESCAPE_EXPERT_TRAIL_CEILING = 0.25
 
@@ -54,7 +54,6 @@ fun classifyArrowEscapeDifficulty(
 ): Difficulty = when {
     profile.freeShare >= floors.easy -> Difficulty.EASY
     profile.freeShare >= floors.medium -> Difficulty.MEDIUM
-    profile.freeShare >= floors.hard -> Difficulty.HARD
     profile.freeShare >= expertFreeShareCeiling -> Difficulty.HARD
     profile.trailShare > expertTrailCeiling -> Difficulty.HARD
     else -> Difficulty.EXPERT

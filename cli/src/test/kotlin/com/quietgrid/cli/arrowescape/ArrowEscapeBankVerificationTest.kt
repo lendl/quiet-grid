@@ -53,6 +53,13 @@ class ArrowEscapeBankVerificationTest {
     }
 
     @Test
+    fun `every hard puzzle has at least the hard arrow minimum`() {
+        bank.filter { it.difficulty == Difficulty.HARD.key }.forEach { entry ->
+            assertTrue("${entry.id} has ${entry.pieces.size} arrows", entry.pieces.size >= ARROW_ESCAPE_SILHOUETTE_HARD_MIN_PIECES)
+        }
+    }
+
+    @Test
     fun `every expert puzzle has at least the expert arrow minimum`() {
         bank.filter { it.difficulty == Difficulty.EXPERT.key }.forEach { entry ->
             assertTrue("${entry.id} has ${entry.pieces.size} arrows", entry.pieces.size >= ARROW_ESCAPE_SILHOUETTE_EXPERT_MIN_PIECES)

@@ -53,9 +53,8 @@ class ArrowEscapeDifficultyProfileTest {
         fun at(share: Double) = classifyArrowEscapeDifficulty(ArrowEscapeDifficultyProfile(10, 3, share, 0.1, 2.0, 0.0))
         assertEquals(Difficulty.EASY, at(0.52))
         assertEquals(Difficulty.MEDIUM, at(0.5199))
-        assertEquals(Difficulty.MEDIUM, at(0.40))
-        assertEquals(Difficulty.HARD, at(0.3999))
-        assertEquals(Difficulty.HARD, at(0.29))
+        assertEquals(Difficulty.MEDIUM, at(0.29))
+        assertEquals(Difficulty.HARD, at(0.2899))
         assertEquals(Difficulty.HARD, at(ARROW_ESCAPE_EXPERT_FREE_SHARE_CEILING))
         assertEquals(Difficulty.EXPERT, at(ARROW_ESCAPE_EXPERT_FREE_SHARE_CEILING - 0.0001))
     }

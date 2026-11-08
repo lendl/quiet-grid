@@ -70,7 +70,8 @@ private fun <T> runJourneyFor(bank: JourneyBank<T>, outDir: String, scalesPath: 
     val entryById = entries.associateBy(bank.id)
     val replayById = journey.chapters.flatMap { it.stops }.parallelStream().map { stop ->
         val entry = entryById.getValue(stop.puzzleId)
-        stop.puzzleId to allowedReplayTransforms(bank.replayCandidates(entry), stop.rating) { bank.replayRating(entry, it, gameScale.scale) }
+        val ownRating = gameScale.scale.rate(bank.rawScore(entry))
+        stop.puzzleId to allowedReplayTransforms(bank.replayCandidates(entry), ownRating) { bank.replayRating(entry, it, gameScale.scale) }
     }.toList().toMap()
     val withReplays = withReplayTransforms(journey) { replayById.getValue(it.puzzleId) }
     journeyFile.writeText(journeyJson.encodeToString(JourneyFile.serializer(), withReplays))

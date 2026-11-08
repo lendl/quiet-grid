@@ -45,10 +45,10 @@ class ArrowEscapeGeneratorTest {
 
     @Test
     fun `generateArrowEscapePuzzle produces a full-coverage entry classified at the target difficulty`() {
-        val result = firstSuccessfulGeneration(16, 16, Difficulty.HARD, 1)
+        val result = firstSuccessfulGeneration(20, 20, Difficulty.HARD, 1)
         val covered = result.pieces.sumOf { it.cells.size }
-        val allowedUncovered = kotlin.math.ceil(16 * 16 * ARROW_ESCAPE_EMPTY_CELL_TOLERANCE).toInt()
-        assertTrue(covered >= 16 * 16 - allowedUncovered)
+        val allowedUncovered = kotlin.math.ceil(20 * 20 * ARROW_ESCAPE_EMPTY_CELL_TOLERANCE).toInt()
+        assertTrue(covered >= 20 * 20 - allowedUncovered)
         assertEquals(Difficulty.HARD, result.difficulty)
         assertTrue(result.dedupeKey.isNotEmpty())
     }

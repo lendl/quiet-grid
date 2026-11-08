@@ -49,7 +49,7 @@ class ArrowEscapeSilhouetteGeneratorTest {
 
     @Test
     fun `no silhouette arrow points back into its own body`() {
-        val params = ARROW_ESCAPE_SILHOUETTE_FILL_PARAMS_BY_DIFFICULTY.getValue(Difficulty.MEDIUM)
+        val params = ARROW_ESCAPE_FILL_PARAMS_BY_DIFFICULTY.getValue(Difficulty.MEDIUM)
         for (silhouette in silhouettes) {
             val mask = rasterizeSilhouette(silhouette, silhouette.minRows + 4)
             val active = mask.active.map { it.row to it.col }.toSet()
