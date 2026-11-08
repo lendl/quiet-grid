@@ -503,6 +503,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                 ) {
                     AnimatedContent(
                         targetState = selectedTab,
+                        modifier = Modifier.fillMaxSize(),
                         label = "bottomNavTabCrossfade",
                         transitionSpec = { fadeIn(animationSpec = tween(180)) togetherWith fadeOut(animationSpec = tween(150)) },
                     ) { tab ->
