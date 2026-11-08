@@ -25,6 +25,7 @@ enum class GameId(val key: String) {
     KILLERSUDOKU("killersudoku"),
     MINISUDOKU("minisudoku"),
     LINKS("links"),
+    BLOCKESCAPE("blockescape"),
 }
 
 enum class GameCategory(@param:StringRes val labelRes: Int) {
@@ -65,6 +66,7 @@ object GameCatalog {
         GameMeta(GameId.SEQUENCEMEMORY, R.string.sequencememory_title, R.string.sequencememory_tagline, setOf(GameCategory.MEMORY)),
         GameMeta(GameId.HASHI, R.string.hashi_title, R.string.hashi_tagline, setOf(GameCategory.LOGIC, GameCategory.SPATIAL), beta = true),
         GameMeta(GameId.LINKS, R.string.links_title, R.string.links_tagline, setOf(GameCategory.LOGIC, GameCategory.SPATIAL), beta = true),
+        GameMeta(GameId.BLOCKESCAPE, R.string.blockescape_title, R.string.blockescape_tagline, setOf(GameCategory.LOGIC, GameCategory.SPATIAL), beta = true),
         GameMeta(GameId.KILLERSUDOKU, R.string.killersudoku_title, R.string.killersudoku_tagline, setOf(GameCategory.LOGIC)),
     )
 
@@ -74,12 +76,12 @@ object GameCatalog {
         games.filter { !it.beta || betaGamesEnabled }.map { it.id }.toSet()
 }
 
-val CHALLENGER_CAPABLE_GAMES: Set<GameId> = setOf(GameId.CHIMPTEST, GameId.WORDGUESS, GameId.ANIMALDOKU, GameId.STARBATTLE, GameId.SUDOKU, GameId.TAKUZU, GameId.NONOGRAM)
+val CHALLENGER_CAPABLE_GAMES: Set<GameId> = setOf(GameId.CHIMPTEST, GameId.WORDGUESS, GameId.ANIMALDOKU, GameId.STARBATTLE, GameId.SUDOKU, GameId.TAKUZU, GameId.NONOGRAM, GameId.BLOCKESCAPE)
 
 val HINT_CAPABLE_GAMES: Set<GameId> = setOf(
     GameId.TAKUZU, GameId.NONOGRAM, GameId.MINESWEEPER, GameId.SUDOKU, GameId.MINISUDOKU, GameId.WORDSEARCH,
     GameId.ARROWESCAPE, GameId.THEMECLEAR, GameId.WHODIDIT, GameId.HASHI, GameId.KILLERSUDOKU, GameId.ANIMALDOKU,
-    GameId.LINKS,
+    GameId.LINKS, GameId.BLOCKESCAPE,
 )
 
 val PHONE_PORTRAIT_ONLY_GAMES: Set<GameId> = setOf(GameId.WORDGUESS, GameId.GUESSBYNUMBERS)

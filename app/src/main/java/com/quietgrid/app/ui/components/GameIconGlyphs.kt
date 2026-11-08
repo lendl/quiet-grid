@@ -45,6 +45,7 @@ internal val GAME_ICON_HUES: Map<GameId, Color> = mapOf(
     GameId.SEQUENCEMEMORY to Color(0xFFCC4F8F),
     GameId.HASHI to Color(0xFF3E7C66),
     GameId.LINKS to Color(0xFF2F7FB8),
+    GameId.BLOCKESCAPE to Color(0xFFB8664E),
     GameId.KILLERSUDOKU to Color(0xFF5F9334),
 )
 
@@ -247,6 +248,12 @@ internal val GAME_ICON_GLYPHS: Map<GameId, List<GlyphShape>> = mapOf(
         GlyphRect(13f, 1.5f, 9.5f, 9.5f, 4f, GlyphPaint.ACCENT),
         GlyphRect(1.5f, 13f, 9.5f, 9.5f, 4f, GlyphPaint.EMPTY),
         GlyphRect(13f, 13f, 9.5f, 9.5f, 4f, GlyphPaint.NEUTRAL),
+    ),
+    GameId.BLOCKESCAPE to listOf(
+        GlyphRect(2f, 2f, 13f, 5.5f, 2f, GlyphPaint.NEUTRAL),
+        GlyphRect(16.5f, 2f, 5.5f, 13f, 2f, GlyphPaint.NEUTRAL),
+        GlyphRect(2f, 9.25f, 11f, 5.5f, 2f, GlyphPaint.ACCENT),
+        GlyphRect(9f, 16.5f, 13f, 5.5f, 2f, GlyphPaint.NEUTRAL),
     ),
     GameId.LINKS to listOf(
         GlyphPath("M5 5 H12 V12 H19 V19", GlyphPaint.LINE_ACCENT, strokeWidth = 3.2f),

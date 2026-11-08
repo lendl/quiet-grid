@@ -73,6 +73,7 @@ import com.quietgrid.app.data.SESSION_MODE_ENDLESS
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyDescriptionRes
 import com.quietgrid.app.games.hashi.hashiDifficultyDescriptionRes
 import com.quietgrid.app.games.links.linksDifficultyDescriptionRes
+import com.quietgrid.app.games.blockescape.blockEscapeDifficultyDescriptionRes
 import com.quietgrid.app.games.arrowescape.arrowEscapeDifficultyDescriptionRes
 import com.quietgrid.app.games.blockfill.blockFillDifficultyDescriptionRes
 import com.quietgrid.app.games.chimptest.chimpDifficultyDescriptionRes
@@ -303,6 +304,7 @@ private fun difficultyDescriptionRes(gameId: GameId, difficulty: Difficulty): In
     GameId.SEQUENCEMEMORY -> sequenceMemoryDifficultyDescriptionRes(difficulty)
     GameId.HASHI -> hashiDifficultyDescriptionRes(difficulty)
     GameId.LINKS -> linksDifficultyDescriptionRes(difficulty)
+    GameId.BLOCKESCAPE -> blockEscapeDifficultyDescriptionRes(difficulty)
     GameId.KILLERSUDOKU -> killerSudokuDifficultyDescriptionRes(difficulty)
     GameId.MINISUDOKU -> miniSudokuDifficultyDescriptionRes(difficulty)
 }
@@ -365,6 +367,7 @@ private fun GamePlayPickerTab(
                 GameId.SUDOKU -> R.string.sudoku_challenger_label
                 GameId.TAKUZU -> R.string.takuzu_challenger_label
                 GameId.NONOGRAM -> R.string.nonogram_challenger_label
+                GameId.BLOCKESCAPE -> R.string.blockescape_challenger_label
                 else -> null
             }
             val challengerDescriptionRes = when (gameId) {
@@ -375,6 +378,7 @@ private fun GamePlayPickerTab(
                 GameId.SUDOKU -> R.string.sudoku_challenger_description
                 GameId.TAKUZU -> R.string.takuzu_challenger_description
                 GameId.NONOGRAM -> R.string.nonogram_challenger_description
+                GameId.BLOCKESCAPE -> R.string.blockescape_challenger_description
                 else -> null
             }
             if (challengerLabelRes != null && challengerDescriptionRes != null) {
@@ -559,6 +563,7 @@ private fun GameStatsTab(gameId: GameId, endlessCopy: EndlessModeCopy?) {
             GameId.SUDOKU -> R.string.sudoku_challenger_stats_title
             GameId.TAKUZU -> R.string.takuzu_challenger_stats_title
             GameId.NONOGRAM -> R.string.nonogram_challenger_stats_title
+            GameId.BLOCKESCAPE -> R.string.blockescape_challenger_stats_title
             else -> null
         }
         val challengerStatsBestRunRes = when (gameId) {
@@ -569,6 +574,7 @@ private fun GameStatsTab(gameId: GameId, endlessCopy: EndlessModeCopy?) {
             GameId.SUDOKU -> R.string.sudoku_challenger_stats_best_run
             GameId.TAKUZU -> R.string.takuzu_challenger_stats_best_run
             GameId.NONOGRAM -> R.string.nonogram_challenger_stats_best_run
+            GameId.BLOCKESCAPE -> R.string.blockescape_challenger_stats_best_run
             else -> null
         }
         val challengerSolvedLabelRes = when (gameId) {
@@ -579,6 +585,7 @@ private fun GameStatsTab(gameId: GameId, endlessCopy: EndlessModeCopy?) {
             GameId.SUDOKU -> R.string.sudoku_challenger_result_puzzles_solved
             GameId.TAKUZU -> R.string.takuzu_challenger_result_puzzles_solved
             GameId.NONOGRAM -> R.string.nonogram_challenger_result_puzzles_solved
+            GameId.BLOCKESCAPE -> R.string.blockescape_challenger_result_puzzles_solved
             else -> null
         }
         val challengerScoreLabelRes = when (gameId) {
@@ -589,6 +596,7 @@ private fun GameStatsTab(gameId: GameId, endlessCopy: EndlessModeCopy?) {
             GameId.SUDOKU -> R.string.sudoku_challenger_result_score
             GameId.TAKUZU -> R.string.takuzu_challenger_result_score
             GameId.NONOGRAM -> R.string.nonogram_challenger_result_score
+            GameId.BLOCKESCAPE -> R.string.blockescape_challenger_result_score
             else -> null
         }
         if (challengerStatsTitleRes != null && challengerStatsBestRunRes != null && challengerSolvedLabelRes != null && challengerScoreLabelRes != null) {

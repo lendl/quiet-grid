@@ -88,6 +88,9 @@ import com.quietgrid.app.games.chimptest.ChimpTestChallengerResultScreen
 import com.quietgrid.app.games.arrowescape.ArrowEscapePlayScreen
 import com.quietgrid.app.games.hashi.HashiPlayScreen
 import com.quietgrid.app.games.links.LinksPlayScreen
+import com.quietgrid.app.games.blockescape.BlockEscapeChallengerPlayScreen
+import com.quietgrid.app.games.blockescape.BlockEscapeChallengerResultScreen
+import com.quietgrid.app.games.blockescape.BlockEscapePlayScreen
 import com.quietgrid.app.games.blockfill.BLOCKFILL_ENDLESS_REASON_STUCK
 import com.quietgrid.app.games.blockfill.BlockFillEndlessPlayScreen
 import com.quietgrid.app.games.blockfill.BlockFillEndlessResult
@@ -935,6 +938,18 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                             }
                                         },
                                     )
+                                    GameId.BLOCKESCAPE -> BlockEscapePlayScreen(
+                                        difficulty = difficulty,
+                                        resume = resume,
+                                        onBack = { navController.popBackStack() },
+                                        onFinished = { result ->
+                                            if (result.solved) {
+                                                goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
+                                            } else {
+                                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
+                                            }
+                                        },
+                                    )
                                     GameId.STARBATTLE -> StarBattlePlayScreen(
                                         difficulty = difficulty,
                                         resume = resume,
@@ -1300,6 +1315,14 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                 ) { popUpTo(Routes.TABS) { inclusive = false } }
                             },
                         )
+                        GameId.BLOCKESCAPE -> BlockEscapeChallengerPlayScreen(
+                            onFinished = { result ->
+                                ChallengerExtras.set(ChallengerRunDetails(result.puzzleHistory, result.solvesInTier))
+                                navController.navigate(
+                                    Routes.challengerResult(challengerGameId, result.puzzlesSolved, result.tierReached, result.score, result.isNewHighScore, result.reason, result.previousBest, result.fastestSolveSeconds),
+                                ) { popUpTo(Routes.TABS) { inclusive = false } }
+                            },
+                        )
                         else -> Unit
                     }
                 }
@@ -1528,6 +1551,29 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                 onTryAnotherGame = { endMixAndGoToGames() },
                             )
                             GameId.TAKUZU -> TakuzuChallengerResultScreen(
+                                puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
+                                tierReached = Difficulty.fromKey(entry.arguments?.getString("tier") ?: "easy"),
+                                score = entry.arguments?.getInt("score") ?: 0,
+                                isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
+                                reason = entry.arguments?.getString("reason") ?: "time_up",
+                                previousBest = previousBest,
+                                fastestSolveSeconds = fastestSolveSeconds,
+                                isMixActive = activeMix != null,
+                                onPlayAgain = {
+                                    playAgainOrDrawMix {
+                                        navController.navigate(Routes.challenger(resultGameId)) {
+                                            popUpTo(Routes.TABS) { inclusive = false }
+                                        }
+                                    }
+                                },
+                                onBackToPuzzles = {
+                                    navController.navigate(Routes.picker(resultGameId)) {
+                                        popUpTo(Routes.TABS) { inclusive = false }
+                                    }
+                                },
+                                onTryAnotherGame = { endMixAndGoToGames() },
+                            )
+                            GameId.BLOCKESCAPE -> BlockEscapeChallengerResultScreen(
                                 puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
                                 tierReached = Difficulty.fromKey(entry.arguments?.getString("tier") ?: "easy"),
                                 score = entry.arguments?.getInt("score") ?: 0,

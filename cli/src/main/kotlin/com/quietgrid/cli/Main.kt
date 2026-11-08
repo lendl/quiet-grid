@@ -14,6 +14,7 @@ import com.quietgrid.cli.whodidit.generateWhoDidItPuzzle
 import com.quietgrid.cli.arrowescape.arrowEscapeSizesForDifficulty
 import com.quietgrid.cli.hashi.generateHashiPuzzle
 import com.quietgrid.cli.links.generateLinksPuzzle
+import com.quietgrid.cli.blockescape.generateBlockEscapeEntry
 import com.quietgrid.cli.starbattle.generateStarBattleK1PuzzleForTier
 import com.quietgrid.cli.starbattle.generateStarBattleSolution
 import com.quietgrid.cli.starbattle.growStarBattleRegions
@@ -25,6 +26,7 @@ import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
 import com.quietgrid.engine.core.Difficulty
 import com.quietgrid.engine.hashi.HashiPuzzleEntry
 import com.quietgrid.engine.links.LinksPuzzleEntry
+import com.quietgrid.engine.blockescape.BlockEscapePuzzleEntry
 import com.quietgrid.engine.killersudoku.KillerSudokuPuzzleEntry
 import com.quietgrid.engine.starbattle.StarBattlePuzzleEntry
 import com.quietgrid.engine.starbattle.STARBATTLE_K2_SIZES_BY_GRADE
@@ -444,6 +446,22 @@ fun main(args: Array<String>) {
             state.save()
             appendPuzzleEntries(outFile, entries, LinksPuzzleEntry.serializer()) { it.id }
             println("Generated ${entries.size}/$requested links puzzles at $difficulty into $outFile")
+        }
+        "blockescape" -> {
+            val outFile = "${command.outDir}/blockescape_puzzles.json"
+            val existing = readPuzzleEntries(outFile, BlockEscapePuzzleEntry.serializer())
+            val existingIds = existing.map { it.id }.toMutableSet()
+            val requested = command.fillTo?.let { target -> maxOf(0, target - existing.count { it.difficulty == difficulty.key }) } ?: command.count
+            val entries = mutableListOf<BlockEscapePuzzleEntry>()
+            var attempts = 0
+            while (entries.size < requested && attempts < requested * 10) {
+                attempts++
+                val candidate = generateBlockEscapeEntry(difficulty) ?: continue
+                if (!existingIds.add(candidate.id)) continue
+                entries += candidate
+            }
+            appendPuzzleEntries(outFile, entries, BlockEscapePuzzleEntry.serializer()) { it.id }
+            println("Generated ${entries.size}/$requested blockescape puzzles at $difficulty into $outFile")
         }
         "themeclear" -> {
             val locale = command.locale
