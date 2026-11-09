@@ -46,6 +46,7 @@ internal val GAME_ICON_HUES: Map<GameId, Color> = mapOf(
     GameId.HASHI to Color(0xFF3E7C66),
     GameId.LINKS to Color(0xFF2F7FB8),
     GameId.BLOCKESCAPE to Color(0xFFB8664E),
+    GameId.WORDSWAP to Color(0xFF8A6BBE),
     GameId.KILLERSUDOKU to Color(0xFF5F9334),
 )
 
@@ -254,6 +255,21 @@ internal val GAME_ICON_GLYPHS: Map<GameId, List<GlyphShape>> = mapOf(
         GlyphRect(16.5f, 2f, 5.5f, 13f, 2f, GlyphPaint.NEUTRAL),
         GlyphRect(2f, 9.25f, 11f, 5.5f, 2f, GlyphPaint.ACCENT),
         GlyphRect(9f, 16.5f, 13f, 5.5f, 2f, GlyphPaint.NEUTRAL),
+    ),
+    GameId.WORDSWAP to listOf(
+        GlyphRect(1.5f, 1.5f, 6f, 6f, 1.5f, GlyphPaint.ACCENT),
+        GlyphText(4.5f, 4.7f, "S", 4.4f, GlyphPaint.CUTOUT),
+        GlyphRect(9f, 1.5f, 6f, 6f, 1.5f, GlyphPaint.NEUTRAL),
+        GlyphText(12f, 4.7f, "W", 4.4f, GlyphPaint.MARK),
+        GlyphRect(16.5f, 1.5f, 6f, 6f, 1.5f, GlyphPaint.NEUTRAL),
+        GlyphText(19.5f, 4.7f, "A", 4.4f, GlyphPaint.MARK),
+        GlyphRect(1.5f, 9f, 6f, 6f, 1.5f, GlyphPaint.NEUTRAL),
+        GlyphRect(16.5f, 9f, 6f, 6f, 1.5f, GlyphPaint.NEUTRAL),
+        GlyphText(19.5f, 12.2f, "P", 4.4f, GlyphPaint.MARK),
+        GlyphRect(1.5f, 16.5f, 6f, 6f, 1.5f, GlyphPaint.NEUTRAL),
+        GlyphRect(9f, 16.5f, 6f, 6f, 1.5f, GlyphPaint.NEUTRAL),
+        GlyphRect(16.5f, 16.5f, 6f, 6f, 1.5f, GlyphPaint.ACCENT),
+        GlyphPath("M8.5 9.5 Q12 12 15.5 14.5", GlyphPaint.LINE_ACCENT, strokeWidth = 1.6f),
     ),
     GameId.LINKS to listOf(
         GlyphPath("M5 5 H12 V12 H19 V19", GlyphPaint.LINE_ACCENT, strokeWidth = 3.2f),

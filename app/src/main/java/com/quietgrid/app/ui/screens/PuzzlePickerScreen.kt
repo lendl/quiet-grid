@@ -74,6 +74,7 @@ import com.quietgrid.app.games.animaldoku.animalDokuDifficultyDescriptionRes
 import com.quietgrid.app.games.hashi.hashiDifficultyDescriptionRes
 import com.quietgrid.app.games.links.linksDifficultyDescriptionRes
 import com.quietgrid.app.games.blockescape.blockEscapeDifficultyDescriptionRes
+import com.quietgrid.app.games.wordswap.wordSwapDifficultyDescriptionRes
 import com.quietgrid.app.games.arrowescape.arrowEscapeDifficultyDescriptionRes
 import com.quietgrid.app.games.blockfill.blockFillDifficultyDescriptionRes
 import com.quietgrid.app.games.chimptest.chimpDifficultyDescriptionRes
@@ -305,6 +306,7 @@ private fun difficultyDescriptionRes(gameId: GameId, difficulty: Difficulty): In
     GameId.HASHI -> hashiDifficultyDescriptionRes(difficulty)
     GameId.LINKS -> linksDifficultyDescriptionRes(difficulty)
     GameId.BLOCKESCAPE -> blockEscapeDifficultyDescriptionRes(difficulty)
+    GameId.WORDSWAP -> wordSwapDifficultyDescriptionRes(difficulty)
     GameId.KILLERSUDOKU -> killerSudokuDifficultyDescriptionRes(difficulty)
     GameId.MINISUDOKU -> miniSudokuDifficultyDescriptionRes(difficulty)
 }

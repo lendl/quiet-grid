@@ -1,0 +1,13 @@
+# Extra words kept out of Word Swap boards on top of wordguess_blocklist_en.txt:
+# profanity, slurs, sexual and drug terms, violence, and common first names.
+anal anus arse arses ass asses bastard bastards bitch bitches bitching bloody bollocks boner boob boobs booze breast breasts bugger bum butt butts
+cock cocks cocky coke condom crap crappy cum cunt damn damned dick dicks dildo dope drunk dyke erotic fag fags faggot fart farts fuck fucks fucked fucker fucking
+gay gays god goddamn hell heroin homo hooker horny jerk jizz kill killed killer killers killing kills kinky knob lesbian lust meth naked nazi nazis nigga nipple nipples nude nudes nudity orgasm orgy
+pee peeing penis pimp piss pissed porn porno prick pubic puke pussy queer rape raped rapes rapist rectum retard sadist screw screwed scrotum semen sex sexy shag shit shits shitty skank slut sluts smut sperm stoned suck sucks sucked tit tits titty tosser turd twat urine vagina wank wanker weed whore whores
+gun guns shoot shot rifle bomb bombs bullet bullets corpse dead death die died dies murder murders stab stabbed suicide torture
+beer booze vodka whisky whiskey wine drunk liquor
+bob don mac bro dude abe ali ann anna ben bill billy carl dan dave eve fred gary greg jack jake jane jim joe john jon josh kate ken kim leo lisa liz max meg mike nick pam pat paul pete phil ray rob ron sam sean ted tim tom tony walt
+graham phoebe berg tutti kiddo golly oops
+incest tampon herpes racist racial farted fart drug drugs uterus groin bosom moron idiot weirdo gypsy turk swedes afghan imam rabbi pope sahib eunuch nuke sniper stalag hernia polio septic senile insane savage swine thug sordid psycho maniac slag scab snot dung filth butch
+anders elmer hogan fowler kyle lewis nelson morris moses harper mayer heller hodges lulu beth brad jess val noel orion mama momma papa daddy babe hon
+std ltd inc etc iii asap aka tel reg rec sec col cal sen hes tis las pas ems ids abs ops bub git psst ssh shh duh huh ugh dunno kinda sorta dudes bros cetera hallo raj tao tau eta yon thee thou thy thine ere

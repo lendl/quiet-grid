@@ -138,6 +138,7 @@ fun main(args: Array<String>) {
                 com.quietgrid.engine.sudoku.gradeMiniSudoku(it)
             }
             "links" -> com.quietgrid.cli.links.runLinksRegrade(path, write = "--write" in args)
+            "wordswap" -> com.quietgrid.cli.wordswap.runWordSwapRegrade(path, write = "--write" in args)
             else -> error("Regrade not implemented for game '$game'")
         }
         return
@@ -427,6 +428,29 @@ fun main(args: Array<String>) {
             state.save()
             appendPuzzleEntries("${command.outDir}/hashi_puzzles.json", entries, HashiPuzzleEntry.serializer()) { it.id }
             println("Generated ${entries.size}/${command.count} hashi puzzles at $difficulty into ${command.outDir}/hashi_puzzles.json")
+        }
+        "wordswap" -> {
+            val outFile = "${command.outDir}/wordswap_puzzles.json"
+            val existing = readPuzzleEntries(outFile, com.quietgrid.engine.wordswap.WordSwapPuzzleEntry.serializer())
+            val seenSolutions = existing.mapTo(HashSet()) { it.solution }
+            val requested = command.fillTo?.let { target -> maxOf(0, target - existing.count { it.difficulty == difficulty.key }) } ?: command.count
+            val entries = java.util.Collections.synchronizedList(mutableListOf<com.quietgrid.engine.wordswap.WordSwapPuzzleEntry>())
+            val attempts = java.util.concurrent.atomic.AtomicInteger()
+            val maxAttempts = requested * 400
+            val workers = (1..command.threads).map { worker ->
+                Thread {
+                    val random = Random(System.nanoTime() + worker)
+                    while (entries.size < requested && attempts.incrementAndGet() < maxAttempts) {
+                        val candidate = com.quietgrid.cli.wordswap.generateWordSwapPuzzle(difficulty, random) ?: continue
+                        synchronized(seenSolutions) {
+                            if (entries.size < requested && seenSolutions.add(candidate.solution)) entries += candidate
+                        }
+                    }
+                }.also { it.start() }
+            }
+            workers.forEach { it.join() }
+            appendPuzzleEntries(outFile, entries.toList(), com.quietgrid.engine.wordswap.WordSwapPuzzleEntry.serializer()) { it.id }
+            println("Generated ${entries.size}/$requested wordswap puzzles at $difficulty into $outFile (${attempts.get()} attempts)")
         }
         "links" -> {
             val state = GenerationState("${command.outDir}/.generation-state/links.json")

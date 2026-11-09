@@ -75,6 +75,7 @@ fun HowToPlayScreen(gameId: GameId) {
             GameId.HASHI -> HashiHowToPlay()
             GameId.LINKS -> LinksHowToPlay()
             GameId.BLOCKESCAPE -> BlockEscapeHowToPlay()
+            GameId.WORDSWAP -> WordSwapHowToPlay()
             GameId.KILLERSUDOKU -> KillerSudokuHowToPlay()
             GameId.MINISUDOKU -> SudokuHowToPlay(goalRes = R.string.minisudoku_how_to_play_goal)
         }
@@ -703,6 +704,31 @@ private fun BlockEscapeHowToPlay() {
     HorizontalDivider(Modifier.padding(vertical = 20.dp))
     Accordion(stringResource(R.string.how_to_play_scoring_title)) {
         BodyText(stringResource(R.string.blockescape_how_to_play_scoring))
+    }
+}
+
+@Composable
+private fun WordSwapHowToPlay() {
+    SectionHeader(Icons.Outlined.EmojiEvents, stringResource(R.string.how_to_play_goal_title))
+    BodyText(stringResource(R.string.wordswap_how_to_play_goal))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.PanTool, stringResource(R.string.how_to_play_controls_title))
+    BodyText(stringResource(R.string.wordswap_how_to_play_controls))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.WarningAmber, stringResource(R.string.how_to_play_wrong_move_title))
+    BodyText(stringResource(R.string.wordswap_how_to_play_wrong_move))
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    SectionHeader(Icons.Outlined.Description, stringResource(R.string.how_to_play_rules_title))
+    RuleRow(1, R.string.wordswap_rule_1_title, R.string.wordswap_rule_1_body)
+    RuleRow(2, R.string.wordswap_rule_2_title, R.string.wordswap_rule_2_body)
+    RuleRow(3, R.string.wordswap_rule_3_title, R.string.wordswap_rule_3_body)
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    Accordion(stringResource(R.string.how_to_play_scoring_title)) {
+        BodyText(stringResource(R.string.wordswap_how_to_play_scoring))
     }
 }
 

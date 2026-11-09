@@ -26,6 +26,7 @@ enum class GameId(val key: String) {
     MINISUDOKU("minisudoku"),
     LINKS("links"),
     BLOCKESCAPE("blockescape"),
+    WORDSWAP("wordswap"),
 }
 
 enum class GameCategory(@param:StringRes val labelRes: Int) {
@@ -67,6 +68,7 @@ object GameCatalog {
         GameMeta(GameId.HASHI, R.string.hashi_title, R.string.hashi_tagline, setOf(GameCategory.LOGIC, GameCategory.SPATIAL), beta = true),
         GameMeta(GameId.LINKS, R.string.links_title, R.string.links_tagline, setOf(GameCategory.LOGIC, GameCategory.SPATIAL), beta = true),
         GameMeta(GameId.BLOCKESCAPE, R.string.blockescape_title, R.string.blockescape_tagline, setOf(GameCategory.LOGIC, GameCategory.SPATIAL), beta = true),
+        GameMeta(GameId.WORDSWAP, R.string.wordswap_title, R.string.wordswap_tagline, setOf(GameCategory.WORD), beta = true),
         GameMeta(GameId.KILLERSUDOKU, R.string.killersudoku_title, R.string.killersudoku_tagline, setOf(GameCategory.LOGIC)),
     )
 
@@ -81,7 +83,7 @@ val CHALLENGER_CAPABLE_GAMES: Set<GameId> = setOf(GameId.CHIMPTEST, GameId.WORDG
 val HINT_CAPABLE_GAMES: Set<GameId> = setOf(
     GameId.TAKUZU, GameId.NONOGRAM, GameId.MINESWEEPER, GameId.SUDOKU, GameId.MINISUDOKU, GameId.WORDSEARCH,
     GameId.ARROWESCAPE, GameId.THEMECLEAR, GameId.WHODIDIT, GameId.HASHI, GameId.KILLERSUDOKU, GameId.ANIMALDOKU,
-    GameId.LINKS, GameId.BLOCKESCAPE,
+    GameId.LINKS, GameId.BLOCKESCAPE, GameId.WORDSWAP,
 )
 
 val PHONE_PORTRAIT_ONLY_GAMES: Set<GameId> = setOf(GameId.WORDGUESS, GameId.GUESSBYNUMBERS)
