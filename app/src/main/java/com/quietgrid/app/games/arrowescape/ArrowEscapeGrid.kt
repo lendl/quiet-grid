@@ -9,11 +9,13 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -23,6 +25,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -30,11 +33,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import com.quietgrid.app.ui.theme.LocalIsPencilTheme
@@ -51,6 +58,8 @@ import kotlin.math.exp
 import kotlin.math.sin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
+const val ARROW_ESCAPE_BOARD_TAG = "arrowescape_board"
 
 private val TAP_TOLERANCE = 12.dp
 private val MIN_DOT_RADIUS = 1.dp
@@ -186,6 +195,70 @@ private fun headPath(tip: Offset, direction: Offset, headLength: Float, headHalf
     }
 }
 
+private class ArrowStyle(
+    val lineWidth: Float,
+    val headLength: Float,
+    val headHalfWidth: Float,
+    val headCornerInset: Float,
+    val cornerRadius: Float,
+) {
+    val lineStroke = Stroke(width = lineWidth, cap = StrokeCap.Round, join = StrokeJoin.Round)
+    val headOutline = Stroke(width = headCornerInset * 2f, join = StrokeJoin.Round)
+}
+
+private fun Density.arrowStyle(cellSizePx: Float): ArrowStyle {
+    val lineWidth = maxOf(cellSizePx * 0.115f, MIN_LINE_STROKE.toPx())
+    return ArrowStyle(
+        lineWidth = lineWidth,
+        headLength = cellSizePx * 0.46f,
+        headHalfWidth = maxOf(cellSizePx * 0.27f, lineWidth * 1.6f),
+        headCornerInset = lineWidth * 0.35f,
+        cornerRadius = cellSizePx * 0.3f,
+    )
+}
+
+private class ArrowShape(val shaft: Path, val head: Path)
+
+private fun arrowShape(
+    piece: ArrowEscapePiece,
+    corridorSize: Int,
+    cellSizePx: Float,
+    style: ArrowStyle,
+    travelled: Float = 0f,
+    shift: Offset = Offset.Zero,
+): ArrowShape {
+    val direction = directionVector(piece.headDirection)
+    val basePoints = piece.cells.map { cellCenter(it, cellSizePx) + shift }
+    val stubEnd = basePoints.last() + direction * (cellSizePx * (piece.cells.size + corridorSize + 3))
+    val extendedPoints = basePoints + stubEnd
+    val cum = cumulativeArcLengths(extendedPoints)
+    val pieceLength = cum[basePoints.lastIndex]
+
+    val tailArc = travelled.coerceAtLeast(0f)
+    val headArc = pieceLength + travelled
+
+    val visiblePoints = buildList {
+        add(pointAtArc(extendedPoints, cum, tailArc))
+        for (i in extendedPoints.indices) {
+            if (cum[i] > tailArc && cum[i] < headArc) add(extendedPoints[i])
+        }
+        add(pointAtArc(extendedPoints, cum, headArc))
+    }
+
+    val tip = visiblePoints.last() + direction * (cellSizePx * 0.42f)
+    val shaftEnd = tip - direction * (style.headLength - style.lineWidth * 0.5f)
+    return ArrowShape(
+        shaft = shaftPath(visiblePoints, shaftEnd, style.cornerRadius),
+        head = headPath(tip, direction, style.headLength, style.headHalfWidth, style.headCornerInset),
+    )
+}
+
+private fun DrawScope.drawArrow(shape: ArrowShape, color: Color, style: ArrowStyle) {
+    drawPath(shape.shaft, color, style = style.lineStroke)
+    drawPath(shape.head, color)
+    drawPath(shape.head, color, style = style.headOutline)
+}
+
 @Composable
 fun ArrowEscapeGrid(
     puzzle: ArrowEscapePuzzleEntry,
@@ -216,6 +289,8 @@ fun ArrowEscapeGrid(
     val currentRemoved by rememberUpdatedState(removedIndices)
     val currentWrong by rememberUpdatedState(wrongIndices)
     val hintedIndex = selectedIndex?.takeIf { it !in wrongIndices && it !in removedIndices }
+    val currentHinted by rememberUpdatedState(hintedIndex)
+    val animating by remember(puzzle) { derivedStateOf { flyOuts.keys + bumps.keys + knocks.keys } }
 
     LaunchedEffect(removedIndices) {
         val newlyRemoved = removedIndices - previousRemoved
@@ -320,6 +395,7 @@ fun ArrowEscapeGrid(
         Box(
             Modifier
                 .size(cellSize * viewport.cols, cellSize * viewport.rows)
+                .testTag(ARROW_ESCAPE_BOARD_TAG)
                 .pointerInput(puzzle, cellSizePx, viewport) {
                     val toleranceCells = TAP_TOLERANCE.toPx() / cellSizePx
                     detectTapGestures { tapOffset ->
@@ -338,25 +414,10 @@ fun ArrowEscapeGrid(
                 }
                 .drawWithContent {
                     drawContent()
+                    val moving = animating
+                    if (moving.isEmpty() && hintedIndex == null && laneGlows.isEmpty()) return@drawWithContent
                     translate(left = -viewportOrigin.x, top = -viewportOrigin.y) {
-                        val dotRadius = maxOf(cellSizePx * 0.05f, MIN_DOT_RADIUS.toPx())
-                        for (row in 0 until puzzle.rows) {
-                            for (col in 0 until puzzle.cols) {
-                                if (!puzzle.isActiveCell(row, col)) continue
-                                drawCircle(
-                                    dotColor,
-                                    radius = dotRadius,
-                                    center = Offset(cellSizePx * (col + 0.5f), cellSizePx * (row + 0.5f)),
-                                )
-                            }
-                        }
-                        val lineWidth = maxOf(cellSizePx * 0.115f, MIN_LINE_STROKE.toPx())
-                        val headLength = cellSizePx * 0.46f
-                        val headHalfWidth = maxOf(cellSizePx * 0.27f, lineWidth * 1.6f)
-                        val headCornerInset = lineWidth * 0.35f
-                        val cornerRadius = cellSizePx * 0.3f
-                        val lineStroke = Stroke(width = lineWidth, cap = StrokeCap.Round, join = StrokeJoin.Round)
-                        val headOutline = Stroke(width = headCornerInset * 2f, join = StrokeJoin.Round)
+                        val style = arrowStyle(cellSizePx)
 
                         laneGlows.forEach { (index, glow) ->
                             val piece = pieces[index]
@@ -367,15 +428,16 @@ fun ArrowEscapeGrid(
                                 laneColor.copy(alpha = 0.3f * (1f - glow.value)),
                                 start = start,
                                 end = end,
-                                strokeWidth = lineWidth * 2.4f,
+                                strokeWidth = style.lineWidth * 2.4f,
                                 cap = StrokeCap.Round,
                             )
                         }
 
-                        pieces.forEachIndexed { index, piece ->
+                        val live = if (hintedIndex != null) moving + hintedIndex else moving
+                        for (index in live.sorted()) {
+                            val piece = pieces[index]
                             val escape = flyOuts[index]
-                            if (index in removedIndices && escape == null) return@forEachIndexed
-                            val direction = directionVector(piece.headDirection)
+                            if (index in removedIndices && escape == null) continue
                             val hinted = index == hintedIndex && escape == null
                             val wrong = index in wrongIndices || escape?.autoExit == true
                             var color = when {
@@ -410,39 +472,48 @@ fun ArrowEscapeGrid(
                                 color = lerp(color, errorColor, (1f - ms / 450f).coerceAtLeast(0f))
                             }
 
-                            val basePoints = piece.cells.map { cellCenter(it, cellSizePx) + shift }
-                            val stubEnd = basePoints.last() + direction * (cellSizePx * (piece.cells.size + corridorSizes[index] + 3))
-                            val extendedPoints = basePoints + stubEnd
-                            val cum = cumulativeArcLengths(extendedPoints)
-                            val pieceLength = cum[basePoints.lastIndex]
-
-                            val tailArc = travelled.coerceAtLeast(0f)
-                            val headArc = pieceLength + travelled
-
-                            val visiblePoints = buildList {
-                                add(pointAtArc(extendedPoints, cum, tailArc))
-                                for (i in extendedPoints.indices) {
-                                    if (cum[i] > tailArc && cum[i] < headArc) add(extendedPoints[i])
-                                }
-                                add(pointAtArc(extendedPoints, cum, headArc))
-                            }
-
                             val pieceColor = color.copy(alpha = color.alpha * alpha)
-                            val tip = visiblePoints.last() + direction * (cellSizePx * 0.42f)
-                            val shaftEnd = tip - direction * (headLength - lineWidth * 0.5f)
-                            val head = headPath(tip, direction, headLength, headHalfWidth, headCornerInset)
-                            val shaft = shaftPath(visiblePoints, shaftEnd, cornerRadius)
+                            val shape = arrowShape(piece, corridorSizes[index], cellSizePx, style, travelled, shift)
                             if (hinted) {
-                                val halo = Stroke(width = lineWidth * 3.2f, cap = StrokeCap.Round, join = StrokeJoin.Round)
-                                drawPath(shaft, hintColor.copy(alpha = 0.22f), style = halo)
-                                drawPath(head, hintColor.copy(alpha = 0.22f), style = halo)
+                                val halo = Stroke(width = style.lineWidth * 3.2f, cap = StrokeCap.Round, join = StrokeJoin.Round)
+                                drawPath(shape.shaft, hintColor.copy(alpha = 0.22f), style = halo)
+                                drawPath(shape.head, hintColor.copy(alpha = 0.22f), style = halo)
                             }
-                            drawPath(shaft, pieceColor, style = lineStroke)
-                            drawPath(head, pieceColor)
-                            drawPath(head, pieceColor, style = headOutline)
+                            drawArrow(shape, pieceColor, style)
                         }
                     }
                 },
-        )
+        ) {
+            Spacer(
+                Modifier
+                    .matchParentSize()
+                    .graphicsLayer()
+                    .drawWithCache {
+                        val style = arrowStyle(cellSizePx)
+                        val restShapes = pieces.mapIndexed { index, piece -> arrowShape(piece, corridorSizes[index], cellSizePx, style) }
+                        val dotRadius = maxOf(cellSizePx * 0.05f, MIN_DOT_RADIUS.toPx())
+                        val dotCenters = buildList {
+                            for (row in 0 until puzzle.rows) {
+                                for (col in 0 until puzzle.cols) {
+                                    if (puzzle.isActiveCell(row, col)) add(Offset(cellSizePx * (col + 0.5f), cellSizePx * (row + 0.5f)))
+                                }
+                            }
+                        }
+                        onDrawBehind {
+                            val removed = currentRemoved
+                            val wrong = currentWrong
+                            val hinted = currentHinted
+                            val moving = animating
+                            translate(left = -viewportOrigin.x, top = -viewportOrigin.y) {
+                                for (center in dotCenters) drawCircle(dotColor, radius = dotRadius, center = center)
+                                restShapes.forEachIndexed { index, shape ->
+                                    if (index in removed || index in moving || index == hinted) return@forEachIndexed
+                                    drawArrow(shape, if (index in wrong) wrongColor else lineColor, style)
+                                }
+                            }
+                        }
+                    },
+            )
+        }
     }
 }

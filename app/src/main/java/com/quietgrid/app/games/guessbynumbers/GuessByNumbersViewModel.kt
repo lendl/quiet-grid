@@ -64,7 +64,7 @@ private class GuessByNumbersPuzzleAdapter(
         )
     }
 
-    override fun restoreSession(payload: String, elapsedSeconds: Double): GuessByNumbersSession? {
+    override suspend fun restoreSession(payload: String, elapsedSeconds: Double): GuessByNumbersSession? {
         val persisted = runCatching { json.decodeFromString<GuessByNumbersPersistedSession>(payload) }.getOrNull() ?: return null
         if (persisted.status != GuessByNumbersStatus.PLAYING) return null
         return GuessByNumbersSession(

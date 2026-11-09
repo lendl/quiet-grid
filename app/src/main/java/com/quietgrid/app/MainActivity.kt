@@ -14,6 +14,8 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -21,7 +23,10 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.core.AppLocale
@@ -104,10 +109,12 @@ class MainActivity : ComponentActivity() {
                     firstFrameReady = true
                 }
                 CompositionLocalProvider(LocalHapticsEnabled provides settings.hapticsEnabled) {
-                    AppNavHost(
-                        launchRequest = launchRequest.value,
-                        onLaunchRequestHandled = { launchRequest.value = null },
-                    )
+                    Box(Modifier.fillMaxSize().semantics { testTagsAsResourceId = true }) {
+                        AppNavHost(
+                            launchRequest = launchRequest.value,
+                            onLaunchRequestHandled = { launchRequest.value = null },
+                        )
+                    }
                 }
             }
         }

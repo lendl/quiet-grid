@@ -80,7 +80,7 @@ internal class SudokuPuzzleAdapter(
 
     override fun journeySignals(session: SudokuSession): JourneySignals = JourneySignals(session.hintsUsed, session.accuracyDrops)
 
-    override fun restoreSession(payload: String, elapsedSeconds: Double): SudokuSession? {
+    override suspend fun restoreSession(payload: String, elapsedSeconds: Double): SudokuSession? {
         val persisted = runCatching { json.decodeFromString<SudokuPersistedSession>(payload) }.getOrNull() ?: return null
         val size = persisted.puzzle.givens.size
         if (persisted.board.size != size * size) return null

@@ -42,7 +42,7 @@ private class ChimpTestPuzzleAdapter : PuzzleAdapter<ChimpTestSession, ChimpTest
     override suspend fun freshSession(difficulty: Difficulty): ChimpTestSession =
         createChimpTestSession(difficulty)
 
-    override fun restoreSession(payload: String, elapsedSeconds: Double): ChimpTestSession? {
+    override suspend fun restoreSession(payload: String, elapsedSeconds: Double): ChimpTestSession? {
         val restored = runCatching { json.decodeFromString<ChimpTestSession>(payload) }.getOrNull() ?: return null
         return restored.copy(
             cells = generateChimpTestCells(restored.currentCount, restored.puzzle.gridSize),

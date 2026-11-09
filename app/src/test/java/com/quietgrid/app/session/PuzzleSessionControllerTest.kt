@@ -174,7 +174,7 @@ private class FakePuzzleAdapter(
         return TestSession(freshValue)
     }
 
-    override fun restoreSession(payload: String, elapsedSeconds: Double): TestSession? = restoreValue
+    override suspend fun restoreSession(payload: String, elapsedSeconds: Double): TestSession? = restoreValue
 
     var dailySessionCalls = 0
         private set

@@ -66,7 +66,7 @@ internal class NonogramPuzzleAdapter(
 
     override fun journeySignals(session: NonogramSession): JourneySignals = JourneySignals(session.hintsUsed, 0)
 
-    override fun restoreSession(payload: String, elapsedSeconds: Double): NonogramSession? {
+    override suspend fun restoreSession(payload: String, elapsedSeconds: Double): NonogramSession? {
         val persisted = runCatching { json.decodeFromString<NonogramPersistedSession>(payload) }.getOrNull() ?: return null
         val puzzle = buildNonogramPuzzle(persisted.entry)
         val cols = persisted.entry.cols

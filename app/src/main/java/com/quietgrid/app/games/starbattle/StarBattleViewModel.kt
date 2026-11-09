@@ -75,7 +75,7 @@ internal class StarBattlePuzzleAdapter(
     override fun journeySignals(session: StarBattleSession): JourneySignals =
         JourneySignals(0, STARBATTLE_STARTING_LIVES - session.lives)
 
-    override fun restoreSession(payload: String, elapsedSeconds: Double): StarBattleSession? = runCatching {
+    override suspend fun restoreSession(payload: String, elapsedSeconds: Double): StarBattleSession? = runCatching {
         val persisted = json.decodeFromString<StarBattlePersistedSession>(payload)
         if (persisted.status != StarBattleStatus.PLAYING.name) return@runCatching null
         StarBattleSession(

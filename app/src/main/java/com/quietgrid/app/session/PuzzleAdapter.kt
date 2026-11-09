@@ -21,7 +21,7 @@ interface PuzzleAdapter<TSession, TResult> {
 
     suspend fun freshSession(difficulty: Difficulty): TSession?
 
-    fun restoreSession(payload: String, elapsedSeconds: Double): TSession?
+    suspend fun restoreSession(payload: String, elapsedSeconds: Double): TSession?
 
     fun difficultyOf(session: TSession): Difficulty
 

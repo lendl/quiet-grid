@@ -15,11 +15,15 @@ data class ArrowEscapeSession(
     val status: ArrowEscapeStatus,
     val hintsUsed: Int,
     val wrongIndices: Set<Int>,
+    val transform: Int = 0,
 )
 
 @Serializable
 data class ArrowEscapePersistedSession(
-    val puzzle: ArrowEscapePuzzleEntry,
+    val puzzle: ArrowEscapePuzzleEntry? = null,
+    val puzzleId: String? = null,
+    val difficulty: String? = null,
+    val transform: Int = 0,
     val removedIndices: List<Int>,
     val lives: Int,
     val selectedIndex: Int?,
@@ -28,7 +32,7 @@ data class ArrowEscapePersistedSession(
     val wrongIndices: List<Int> = emptyList(),
 )
 
-fun createArrowEscapeSession(puzzle: ArrowEscapePuzzleEntry): ArrowEscapeSession = ArrowEscapeSession(
+fun createArrowEscapeSession(puzzle: ArrowEscapePuzzleEntry, transform: Int = 0): ArrowEscapeSession = ArrowEscapeSession(
     puzzle = puzzle,
     removedIndices = emptySet(),
     lives = ARROW_ESCAPE_STARTING_LIVES,
@@ -36,4 +40,5 @@ fun createArrowEscapeSession(puzzle: ArrowEscapePuzzleEntry): ArrowEscapeSession
     status = ArrowEscapeStatus.PLAYING,
     hintsUsed = 0,
     wrongIndices = emptySet(),
+    transform = transform,
 )

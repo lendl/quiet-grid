@@ -36,7 +36,7 @@ private class BlockFillPuzzleAdapter : PuzzleAdapter<BlockFillSession, BlockFill
     override suspend fun freshSession(difficulty: Difficulty): BlockFillSession =
         createBlockFillSession(difficulty.key)
 
-    override fun restoreSession(payload: String, elapsedSeconds: Double): BlockFillSession? {
+    override suspend fun restoreSession(payload: String, elapsedSeconds: Double): BlockFillSession? {
         val persisted = runCatching { json.decodeFromString<BlockFillPersistedSession>(payload) }.getOrNull() ?: return null
         if (persisted.status != BlockFillStatus.PLAYING) return null
         return BlockFillSession(

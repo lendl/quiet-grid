@@ -78,7 +78,7 @@ internal class TakuzuPuzzleAdapter(
 
     override fun journeySignals(session: TakuzuSession): JourneySignals = JourneySignals(session.hintsUsed, session.accuracyDrops)
 
-    override fun restoreSession(payload: String, elapsedSeconds: Double): TakuzuSession? {
+    override suspend fun restoreSession(payload: String, elapsedSeconds: Double): TakuzuSession? {
         val persisted = runCatching { json.decodeFromString<TakuzuPersistedSession>(payload) }.getOrNull() ?: return null
         val size = persisted.puzzle.size
         return TakuzuSession(

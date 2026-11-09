@@ -55,7 +55,7 @@ private class BlockEscapePuzzleAdapter(
         return createBlockEscapeSession(puzzle)
     }
 
-    override fun restoreSession(payload: String, elapsedSeconds: Double): BlockEscapeSession? = runCatching {
+    override suspend fun restoreSession(payload: String, elapsedSeconds: Double): BlockEscapeSession? = runCatching {
         val persisted = json.decodeFromString<BlockEscapePersistedSession>(payload)
         if (persisted.status != BlockEscapeStatus.PLAYING.name) return@runCatching null
         BlockEscapeSession(

@@ -14,12 +14,15 @@ import kotlin.math.sqrt
 
 data class ArrowEscapeAttemptResult(val session: ArrowEscapeSession, val removed: Boolean)
 
-fun applyArrowEscapeAttempt(session: ArrowEscapeSession, pieceIndex: Int): ArrowEscapeAttemptResult? {
+fun applyArrowEscapeAttempt(
+    session: ArrowEscapeSession,
+    pieceIndex: Int,
+    pieces: List<ArrowEscapePiece> = session.puzzle.pieces.map { it.toPiece() },
+    ownerLookup: Map<Pair<Int, Int>, Int> = buildCellOwnerMap(pieces),
+): ArrowEscapeAttemptResult? {
     if (session.status != ArrowEscapeStatus.PLAYING) return null
     if (pieceIndex in session.removedIndices || pieceIndex in session.wrongIndices) return null
 
-    val pieces = session.puzzle.pieces.map { it.toPiece() }
-    val ownerLookup = buildCellOwnerMap(pieces)
     val rows = session.puzzle.rows
     val cols = session.puzzle.cols
     val removable = isPieceRemovable(pieceIndex, pieces, session.removedIndices, ownerLookup, rows, cols)

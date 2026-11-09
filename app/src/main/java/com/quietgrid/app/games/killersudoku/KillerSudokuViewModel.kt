@@ -85,7 +85,7 @@ internal class KillerSudokuPuzzleAdapter(
     override fun journeySignals(session: KillerSudokuSession): JourneySignals =
         JourneySignals(session.grid.hintsUsed, session.grid.accuracyDrops)
 
-    override fun restoreSession(payload: String, elapsedSeconds: Double): KillerSudokuSession? {
+    override suspend fun restoreSession(payload: String, elapsedSeconds: Double): KillerSudokuSession? {
         val persisted = runCatching { json.decodeFromString<KillerSudokuPersistedSession>(payload) }.getOrNull() ?: return null
         return KillerSudokuSession(
             puzzle = persisted.puzzle,

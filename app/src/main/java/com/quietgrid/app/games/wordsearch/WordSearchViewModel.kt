@@ -103,7 +103,7 @@ private class WordSearchPuzzleAdapter(
         )
     }
 
-    override fun restoreSession(payload: String, elapsedSeconds: Double): WordSearchSession? {
+    override suspend fun restoreSession(payload: String, elapsedSeconds: Double): WordSearchSession? {
         val persisted = runCatching { json.decodeFromString<WordSearchPersistedSession>(payload) }.getOrNull() ?: return null
         return WordSearchSession(
             puzzle = persisted.puzzle,

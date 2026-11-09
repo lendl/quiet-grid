@@ -44,7 +44,7 @@ private class MinesweeperPuzzleAdapter : PuzzleAdapter<MinesweeperSession, Mines
     override suspend fun freshSession(difficulty: Difficulty): MinesweeperSession =
         createMinesweeperSession(difficulty)
 
-    override fun restoreSession(payload: String, elapsedSeconds: Double): MinesweeperSession? {
+    override suspend fun restoreSession(payload: String, elapsedSeconds: Double): MinesweeperSession? {
         val persisted = runCatching { json.decodeFromString<MinesweeperPersistedSession>(payload) }.getOrNull()
             ?: return null
         if (persisted.board.status != MinesweeperStatus.PLAYING) return null

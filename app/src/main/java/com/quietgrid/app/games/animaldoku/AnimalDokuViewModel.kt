@@ -90,7 +90,7 @@ internal class AnimalDokuPuzzleAdapter(
     override fun journeySignals(session: AnimalDokuSession): JourneySignals =
         JourneySignals(session.hintsUsed, ANIMALDOKU_STARTING_LIVES - session.lives)
 
-    override fun restoreSession(payload: String, elapsedSeconds: Double): AnimalDokuSession? = runCatching {
+    override suspend fun restoreSession(payload: String, elapsedSeconds: Double): AnimalDokuSession? = runCatching {
         val persisted = json.decodeFromString<AnimalDokuPersistedSession>(payload)
         if (persisted.status != AnimalDokuStatus.PLAYING.name) return@runCatching null
         AnimalDokuSession(

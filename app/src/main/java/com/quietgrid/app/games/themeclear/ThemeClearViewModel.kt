@@ -64,7 +64,7 @@ private class ThemeClearPuzzleAdapter(
         return themeClearNewSession(entry)
     }
 
-    override fun restoreSession(payload: String, elapsedSeconds: Double): ThemeClearSession? {
+    override suspend fun restoreSession(payload: String, elapsedSeconds: Double): ThemeClearSession? {
         val persisted = runCatching { json.decodeFromString(ThemeClearPersistedSession.serializer(), payload) }.getOrNull() ?: return null
         return ThemeClearSession(
             puzzle = persisted.puzzle,

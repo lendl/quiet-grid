@@ -62,7 +62,7 @@ private class WhoDidItPuzzleAdapter(
         return createWhoDidItSession(puzzle)
     }
 
-    override fun restoreSession(payload: String, elapsedSeconds: Double): WhoDidItSession? = runCatching {
+    override suspend fun restoreSession(payload: String, elapsedSeconds: Double): WhoDidItSession? = runCatching {
         val persisted = json.decodeFromString<WhoDidItPersistedSession>(payload)
         if (persisted.status != WhoDidItStatus.PLAYING.name) return@runCatching null
         if (!isPlayable(persisted.puzzle)) return@runCatching null

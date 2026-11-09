@@ -60,7 +60,7 @@ private class HashiPuzzleAdapter(
         return createHashiSession(puzzle)
     }
 
-    override fun restoreSession(payload: String, elapsedSeconds: Double): HashiSession? = runCatching {
+    override suspend fun restoreSession(payload: String, elapsedSeconds: Double): HashiSession? = runCatching {
         val persisted = json.decodeFromString<HashiPersistedSession>(payload)
         if (persisted.status != HashiStatus.PLAYING.name) return@runCatching null
         val board = persisted.puzzle.toBoard()

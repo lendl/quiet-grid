@@ -70,7 +70,7 @@ class TakuzuJourneyTest {
         assertEquals(2, viewModel.session?.hintsUsed)
 
         val adapter = TakuzuPuzzleAdapter(context, FakeHistoryStore())
-        assertEquals(2, adapter.restoreSession(adapter.encode(viewModel.session!!), 0.0)?.hintsUsed)
+        assertEquals(2, kotlinx.coroutines.runBlocking { adapter.restoreSession(adapter.encode(viewModel.session!!), 0.0) }?.hintsUsed)
     }
 
     @Test

@@ -21,8 +21,12 @@ import com.quietgrid.app.data.recentlyPlayedPuzzleIds
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
+import com.quietgrid.engine.arrowescape.ArrowEscapePiece
 import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
+import com.quietgrid.engine.arrowescape.buildCellOwnerMap
+import com.quietgrid.engine.arrowescape.toPiece
 import com.quietgrid.engine.arrowescape.transformed
+import com.quietgrid.engine.journey.GridTransform
 import com.quietgrid.engine.journey.gridTransformById
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -53,6 +57,11 @@ data class ArrowEscapeResult(
 
 data class ArrowEscapeTapEvent(val id: Int, val pieceIndex: Int, val removed: Boolean)
 
+private class ParsedArrowEscapePuzzle(val puzzle: ArrowEscapePuzzleEntry) {
+    val pieces: List<ArrowEscapePiece> = puzzle.pieces.map { it.toPiece() }
+    val ownerLookup: Map<Pair<Int, Int>, Int> = buildCellOwnerMap(pieces)
+}
+
 internal class ArrowEscapePuzzleAdapter(
     private val appContext: android.content.Context,
     private val historyStore: PlayHistoryStore,
@@ -74,24 +83,45 @@ internal class ArrowEscapePuzzleAdapter(
     }
 
     override suspend fun journeySession(difficulty: Difficulty, puzzleId: String, transform: Int): ArrowEscapeSession? =
-        ArrowEscapePuzzleBank.puzzleById(appContext, difficulty, puzzleId)?.transformed(gridTransformById(transform))?.let(::createArrowEscapeSession)
+        bankPuzzle(difficulty, puzzleId, transform)?.let { createArrowEscapeSession(it, transform) }
+
+    private suspend fun bankPuzzle(difficulty: Difficulty, puzzleId: String, transform: Int): ArrowEscapePuzzleEntry? =
+        ArrowEscapePuzzleBank.puzzleById(appContext, difficulty, puzzleId)?.transformed(gridTransformById(transform))
 
     override fun journeySignals(session: ArrowEscapeSession): JourneySignals =
         JourneySignals(session.hintsUsed, ARROW_ESCAPE_STARTING_LIVES - session.lives)
 
-    override fun restoreSession(payload: String, elapsedSeconds: Double): ArrowEscapeSession? = runCatching {
-        val persisted = json.decodeFromString<ArrowEscapePersistedSession>(payload)
-        if (persisted.status != ArrowEscapeStatus.PLAYING.name) return@runCatching null
-        ArrowEscapeSession(
-            puzzle = persisted.puzzle,
+    override suspend fun restoreSession(payload: String, elapsedSeconds: Double): ArrowEscapeSession? {
+        val persisted = runCatching { json.decodeFromString<ArrowEscapePersistedSession>(payload) }.getOrNull() ?: return null
+        if (persisted.status != ArrowEscapeStatus.PLAYING.name) return null
+        val puzzle = persisted.puzzle ?: savedBankPuzzle(persisted) ?: return null
+        val transform = if (persisted.puzzle != null) inlinePuzzleTransform(persisted.puzzle) else persisted.transform
+        val pieceRange = puzzle.pieces.indices
+        val indices = persisted.removedIndices + persisted.wrongIndices + listOfNotNull(persisted.selectedIndex)
+        if (indices.any { it !in pieceRange }) return null
+        return ArrowEscapeSession(
+            puzzle = puzzle,
             removedIndices = persisted.removedIndices.toSet(),
             lives = persisted.lives,
             selectedIndex = persisted.selectedIndex,
-            status = ArrowEscapeStatus.valueOf(persisted.status),
+            status = ArrowEscapeStatus.PLAYING,
             hintsUsed = persisted.hintsUsed,
             wrongIndices = persisted.wrongIndices.toSet(),
+            transform = transform,
         )
-    }.getOrNull()
+    }
+
+    private suspend fun savedBankPuzzle(persisted: ArrowEscapePersistedSession): ArrowEscapePuzzleEntry? {
+        val puzzleId = persisted.puzzleId ?: return null
+        val difficulty = Difficulty.entries.firstOrNull { it.key == persisted.difficulty } ?: return null
+        return bankPuzzle(difficulty, puzzleId, persisted.transform)
+    }
+
+    private suspend fun inlinePuzzleTransform(puzzle: ArrowEscapePuzzleEntry): Int {
+        val difficulty = Difficulty.entries.firstOrNull { it.key == puzzle.difficulty } ?: return 0
+        val original = ArrowEscapePuzzleBank.puzzleById(appContext, difficulty, puzzle.id) ?: return 0
+        return GridTransform.entries.firstOrNull { original.transformed(it) == puzzle }?.id ?: 0
+    }
 
     override fun difficultyOf(session: ArrowEscapeSession): Difficulty = Difficulty.fromKey(session.puzzle.difficulty)
 
@@ -99,7 +129,9 @@ internal class ArrowEscapePuzzleAdapter(
 
     override fun encode(session: ArrowEscapeSession): String = json.encodeToString(
         ArrowEscapePersistedSession(
-            puzzle = session.puzzle,
+            puzzleId = session.puzzle.id,
+            difficulty = session.puzzle.difficulty,
+            transform = session.transform,
             removedIndices = session.removedIndices.toList(),
             lives = session.lives,
             selectedIndex = session.selectedIndex,
@@ -172,6 +204,10 @@ class ArrowEscapePlayViewModel @AssistedInject constructor(
     internal var hintDispatcher: CoroutineDispatcher = Dispatchers.Default
     private var hintJob: Job? = null
     private var tapEventSeq = 0
+    private var parsedPuzzle: ParsedArrowEscapePuzzle? = null
+
+    private fun parsedPuzzleFor(puzzle: ArrowEscapePuzzleEntry): ParsedArrowEscapePuzzle =
+        parsedPuzzle?.takeIf { it.puzzle === puzzle } ?: ParsedArrowEscapePuzzle(puzzle).also { parsedPuzzle = it }
 
     init {
         controller.start(requestedDifficulty, resume, journey = journey)
@@ -180,7 +216,8 @@ class ArrowEscapePlayViewModel @AssistedInject constructor(
     fun onPieceTap(pieceIndex: Int) {
         if (controller.isFinalized) return
         val current = session ?: return
-        val attempt = applyArrowEscapeAttempt(current, pieceIndex) ?: return
+        val parsed = parsedPuzzleFor(current.puzzle)
+        val attempt = applyArrowEscapeAttempt(current, pieceIndex, parsed.pieces, parsed.ownerLookup) ?: return
         hintJob?.cancel()
         hintJob = null
         isComputingHint = false

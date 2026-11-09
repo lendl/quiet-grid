@@ -82,7 +82,7 @@ private class WordGuessPuzzleAdapter(
     override fun dailyShareDetail(session: WordGuessSession): String =
         wordGuessShareGrid(session.guesses.map { it.feedback })
 
-    override fun restoreSession(payload: String, elapsedSeconds: Double): WordGuessSession? {
+    override suspend fun restoreSession(payload: String, elapsedSeconds: Double): WordGuessSession? {
         val persisted = runCatching { json.decodeFromString<WordGuessPersistedSession>(payload) }.getOrNull() ?: return null
         if (persisted.status != WordGuessStatus.PLAYING) return null
         return WordGuessSession(

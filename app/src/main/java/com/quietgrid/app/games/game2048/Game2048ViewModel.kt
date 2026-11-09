@@ -40,7 +40,7 @@ private class Game2048PuzzleAdapter : PuzzleAdapter<Game2048Session, Game2048Res
     override suspend fun freshSession(difficulty: Difficulty): Game2048Session =
         createGame2048Session(difficulty)
 
-    override fun restoreSession(payload: String, elapsedSeconds: Double): Game2048Session? {
+    override suspend fun restoreSession(payload: String, elapsedSeconds: Double): Game2048Session? {
         val persisted = runCatching { json.decodeFromString<Game2048PersistedSession>(payload) }.getOrNull()
             ?: return null
         if (persisted.board.status != Game2048Status.PLAYING) return null

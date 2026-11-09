@@ -56,7 +56,7 @@ private class WordSwapPuzzleAdapter(
         return createWordSwapSession(puzzle)
     }
 
-    override fun restoreSession(payload: String, elapsedSeconds: Double): WordSwapSession? = runCatching {
+    override suspend fun restoreSession(payload: String, elapsedSeconds: Double): WordSwapSession? = runCatching {
         val persisted = json.decodeFromString<WordSwapPersistedSession>(payload)
         if (persisted.status != WordSwapStatus.PLAYING.name) return@runCatching null
         WordSwapSession(

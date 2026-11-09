@@ -111,7 +111,7 @@ class KillerSudokuJourneyTest {
         assertEquals(2, viewModel.session?.grid?.hintsUsed)
 
         val adapter = KillerSudokuPuzzleAdapter(context, FakeHistoryStore())
-        assertEquals(2, adapter.restoreSession(adapter.encode(viewModel.session!!), 0.0)?.grid?.hintsUsed)
+        assertEquals(2, kotlinx.coroutines.runBlocking { adapter.restoreSession(adapter.encode(viewModel.session!!), 0.0) }?.grid?.hintsUsed)
     }
 
     @Test

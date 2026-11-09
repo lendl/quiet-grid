@@ -45,7 +45,7 @@ private class NBackPuzzleAdapter : PuzzleAdapter<NBackSession, NBackResult> {
     override suspend fun freshSession(difficulty: Difficulty): NBackSession =
         createNBackSession(difficulty)
 
-    override fun restoreSession(payload: String, elapsedSeconds: Double): NBackSession? = null
+    override suspend fun restoreSession(payload: String, elapsedSeconds: Double): NBackSession? = null
 
     override fun difficultyOf(session: NBackSession): Difficulty = session.difficulty
 

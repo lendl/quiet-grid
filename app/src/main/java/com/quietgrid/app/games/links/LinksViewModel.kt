@@ -55,7 +55,7 @@ private class LinksPuzzleAdapter(
         return createLinksSession(puzzle)
     }
 
-    override fun restoreSession(payload: String, elapsedSeconds: Double): LinksSession? = runCatching {
+    override suspend fun restoreSession(payload: String, elapsedSeconds: Double): LinksSession? = runCatching {
         val persisted = json.decodeFromString<LinksPersistedSession>(payload)
         if (persisted.status != LinksStatus.PLAYING.name) return@runCatching null
         LinksSession(

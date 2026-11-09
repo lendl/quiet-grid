@@ -52,7 +52,7 @@ private class SequenceMemoryPuzzleAdapter : PuzzleAdapter<SequenceMemorySession,
 
     override suspend fun freshSession(difficulty: Difficulty): SequenceMemorySession = createSequenceMemorySession(difficulty)
 
-    override fun restoreSession(payload: String, elapsedSeconds: Double): SequenceMemorySession? =
+    override suspend fun restoreSession(payload: String, elapsedSeconds: Double): SequenceMemorySession? =
         runCatching { json.decodeFromString<SequenceMemorySession>(payload) }
             .getOrNull()
             ?.takeIf(::isRestorableSequenceMemorySession)

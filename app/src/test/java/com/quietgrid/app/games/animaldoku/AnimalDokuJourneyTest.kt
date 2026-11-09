@@ -82,14 +82,14 @@ class AnimalDokuJourneyTest {
 
         val adapter = AnimalDokuPuzzleAdapter(context, FakeHistoryStore())
         val session = viewModel.session!!
-        assertEquals(2, adapter.restoreSession(adapter.encode(session), 0.0)?.hintsUsed)
+        assertEquals(2, kotlinx.coroutines.runBlocking { adapter.restoreSession(adapter.encode(session), 0.0) }?.hintsUsed)
     }
 
     @Test
     fun `saved sessions from before hint counting restore with zero hints`() {
         val adapter = AnimalDokuPuzzleAdapter(context, FakeHistoryStore())
         val encoded = adapter.encode(createAnimalDokuSession(JOURNEY_PUZZLE)).replace(",\"hintsUsed\":0", "")
-        assertEquals(0, adapter.restoreSession(encoded, 0.0)?.hintsUsed)
+        assertEquals(0, kotlinx.coroutines.runBlocking { adapter.restoreSession(encoded, 0.0) }?.hintsUsed)
     }
 
     @Test
