@@ -47,6 +47,7 @@ internal val GAME_ICON_HUES: Map<GameId, Color> = mapOf(
     GameId.LINKS to Color(0xFF2F7FB8),
     GameId.BLOCKESCAPE to Color(0xFFB8664E),
     GameId.WORDSWAP to Color(0xFF8A6BBE),
+    GameId.CIRCUIT to Color(0xFFB0782A),
     GameId.KILLERSUDOKU to Color(0xFF5F9334),
 )
 
@@ -277,6 +278,15 @@ internal val GAME_ICON_GLYPHS: Map<GameId, List<GlyphShape>> = mapOf(
         GlyphOval(19f, 19f, 3.5f, 3.5f, GlyphPaint.ACCENT),
         GlyphOval(19f, 5f, 3.5f, 3.5f, GlyphPaint.NEUTRAL),
         GlyphOval(5f, 19f, 3.5f, 3.5f, GlyphPaint.NEUTRAL),
+    ),
+    GameId.CIRCUIT to listOf(
+        GlyphRect(1.5f, 1.5f, 9.5f, 9.5f, 2.5f, GlyphPaint.NEUTRAL),
+        GlyphRect(13f, 1.5f, 9.5f, 9.5f, 2.5f, GlyphPaint.NEUTRAL),
+        GlyphRect(1.5f, 13f, 9.5f, 9.5f, 2.5f, GlyphPaint.NEUTRAL),
+        GlyphRect(13f, 13f, 9.5f, 9.5f, 2.5f, GlyphPaint.EMPTY),
+        GlyphPath("M6.25 17.75 V6.25 H17.75 V12.5", GlyphPaint.LINE_ACCENT, strokeWidth = 2.6f),
+        GlyphOval(6.25f, 17.75f, 2.4f, 2.4f, GlyphPaint.ACCENT),
+        GlyphOval(17.75f, 12.5f, 2.4f, 2.4f, GlyphPaint.ACCENT),
     ),
     GameId.HASHI to listOf(
         GlyphPath("M8.5 3.9 H15.5 M8.5 6.6 H15.5", GlyphPaint.LINE, strokeWidth = 1.5f),

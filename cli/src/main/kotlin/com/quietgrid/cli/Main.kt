@@ -12,6 +12,7 @@ import com.quietgrid.cli.sudoku.generateSudokuPuzzle
 import com.quietgrid.cli.takuzu.generateTakuzuPuzzle
 import com.quietgrid.cli.whodidit.generateWhoDidItPuzzle
 import com.quietgrid.cli.arrowescape.arrowEscapeSizesForDifficulty
+import com.quietgrid.cli.circuit.generateCircuitPuzzle
 import com.quietgrid.cli.hashi.generateHashiPuzzle
 import com.quietgrid.cli.links.generateLinksPuzzle
 import com.quietgrid.cli.blockescape.generateBlockEscapeEntry
@@ -24,6 +25,7 @@ import com.quietgrid.engine.animaldoku.ANIMALDOKU_SIZES_BY_DIFFICULTY
 import com.quietgrid.engine.animaldoku.AnimalDokuPuzzleEntry
 import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
 import com.quietgrid.engine.core.Difficulty
+import com.quietgrid.engine.circuit.CircuitPuzzleEntry
 import com.quietgrid.engine.hashi.HashiPuzzleEntry
 import com.quietgrid.engine.links.LinksPuzzleEntry
 import com.quietgrid.engine.blockescape.BlockEscapePuzzleEntry
@@ -139,6 +141,7 @@ fun main(args: Array<String>) {
             }
             "links" -> com.quietgrid.cli.links.runLinksRegrade(path, write = "--write" in args)
             "wordswap" -> com.quietgrid.cli.wordswap.runWordSwapRegrade(path, write = "--write" in args)
+            "circuit" -> com.quietgrid.cli.circuit.runCircuitRegrade(path, write = "--write" in args)
             else -> error("Regrade not implemented for game '$game'")
         }
         return
@@ -451,6 +454,25 @@ fun main(args: Array<String>) {
             workers.forEach { it.join() }
             appendPuzzleEntries(outFile, entries.toList(), com.quietgrid.engine.wordswap.WordSwapPuzzleEntry.serializer()) { it.id }
             println("Generated ${entries.size}/$requested wordswap puzzles at $difficulty into $outFile (${attempts.get()} attempts)")
+        }
+        "circuit" -> {
+            val state = GenerationState("${command.outDir}/.generation-state/circuit.json")
+            val outFile = "${command.outDir}/circuit_puzzles.json"
+            val existing = readPuzzleEntries(outFile, CircuitPuzzleEntry.serializer())
+            val existingIds = existing.map { it.id }.toSet()
+            val requested = command.fillTo?.let { target -> maxOf(0, target - existing.count { it.difficulty == difficulty.key }) } ?: command.count
+            val entries = mutableListOf<CircuitPuzzleEntry>()
+            var attempts = 0
+            while (entries.size < requested && attempts < requested * 10) {
+                attempts++
+                val candidate = generateCircuitPuzzle(difficulty) ?: continue
+                if (candidate.id in existingIds || state.hasTried(candidate.id)) continue
+                state.recordTried(candidate.id, "valid")
+                entries += candidate
+            }
+            state.save()
+            appendPuzzleEntries(outFile, entries, CircuitPuzzleEntry.serializer()) { it.id }
+            println("Generated ${entries.size}/$requested circuit puzzles at $difficulty into $outFile")
         }
         "links" -> {
             val state = GenerationState("${command.outDir}/.generation-state/links.json")

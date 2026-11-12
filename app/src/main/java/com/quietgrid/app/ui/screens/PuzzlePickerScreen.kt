@@ -71,6 +71,7 @@ import com.quietgrid.app.data.DifficultyStats
 import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.data.SESSION_MODE_ENDLESS
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyDescriptionRes
+import com.quietgrid.app.games.circuit.circuitDifficultyDescriptionRes
 import com.quietgrid.app.games.hashi.hashiDifficultyDescriptionRes
 import com.quietgrid.app.games.links.linksDifficultyDescriptionRes
 import com.quietgrid.app.games.blockescape.blockEscapeDifficultyDescriptionRes
@@ -304,6 +305,7 @@ private fun difficultyDescriptionRes(gameId: GameId, difficulty: Difficulty): In
     GameId.THEMECLEAR -> themeClearDifficultyDescriptionRes(difficulty)
     GameId.SEQUENCEMEMORY -> sequenceMemoryDifficultyDescriptionRes(difficulty)
     GameId.HASHI -> hashiDifficultyDescriptionRes(difficulty)
+    GameId.CIRCUIT -> circuitDifficultyDescriptionRes(difficulty)
     GameId.LINKS -> linksDifficultyDescriptionRes(difficulty)
     GameId.BLOCKESCAPE -> blockEscapeDifficultyDescriptionRes(difficulty)
     GameId.WORDSWAP -> wordSwapDifficultyDescriptionRes(difficulty)

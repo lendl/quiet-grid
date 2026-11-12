@@ -57,6 +57,7 @@ import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.ui.theme.LocalIsDarkTheme
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyLabelRes
 import com.quietgrid.app.games.arrowescape.arrowEscapeDifficultyLabelRes
+import com.quietgrid.app.games.circuit.circuitDifficultyLabelRes
 import com.quietgrid.app.games.hashi.hashiDifficultyLabelRes
 import com.quietgrid.app.games.links.linksDifficultyLabelRes
 import com.quietgrid.app.games.blockescape.blockEscapeDifficultyLabelRes
@@ -151,6 +152,7 @@ fun CompletionScreen(
         GameId.THEMECLEAR -> themeClearDifficultyLabelRes(difficulty)
         GameId.SEQUENCEMEMORY -> sequenceMemoryDifficultyLabelRes(difficulty)
         GameId.HASHI -> hashiDifficultyLabelRes(difficulty)
+        GameId.CIRCUIT -> circuitDifficultyLabelRes(difficulty)
         GameId.LINKS -> linksDifficultyLabelRes(difficulty)
         GameId.BLOCKESCAPE -> blockEscapeDifficultyLabelRes(difficulty)
         GameId.WORDSWAP -> wordSwapDifficultyLabelRes(difficulty)

@@ -5,6 +5,7 @@ import com.quietgrid.app.games.animaldoku.AnimalDokuQuickStart
 import com.quietgrid.app.games.arrowescape.ArrowEscapeQuickStart
 import com.quietgrid.app.games.blockfill.BlockFillQuickStart
 import com.quietgrid.app.games.chimptest.ChimpTestQuickStart
+import com.quietgrid.app.games.circuit.CircuitQuickStart
 import com.quietgrid.app.games.game2048.Game2048QuickStart
 import com.quietgrid.app.games.guessbynumbers.GuessByNumbersQuickStart
 import com.quietgrid.app.games.hashi.HashiQuickStart
@@ -47,6 +48,7 @@ internal fun quickStartFor(gameId: GameId): QuickStartContent = when (gameId) {
     GameId.LINKS -> LinksQuickStart
     GameId.BLOCKESCAPE -> BlockEscapeQuickStart
     GameId.WORDSWAP -> WordSwapQuickStart
+    GameId.CIRCUIT -> CircuitQuickStart
     GameId.KILLERSUDOKU -> KillerSudokuQuickStart
     GameId.MINISUDOKU -> MiniSudokuQuickStart
 }
