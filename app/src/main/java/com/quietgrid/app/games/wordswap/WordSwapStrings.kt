@@ -5,13 +5,6 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.ui.components.QuickRule
 import com.quietgrid.app.ui.components.QuickStartContent
 
-fun wordSwapDifficultyLabelRes(difficulty: Difficulty): Int = when (difficulty) {
-    Difficulty.EASY -> R.string.wordswap_difficulty_easy
-    Difficulty.MEDIUM -> R.string.wordswap_difficulty_medium
-    Difficulty.HARD -> R.string.wordswap_difficulty_hard
-    Difficulty.EXPERT -> R.string.wordswap_difficulty_expert
-}
-
 fun wordSwapDifficultyDescriptionRes(difficulty: Difficulty): Int = when (difficulty) {
     Difficulty.EASY -> R.string.wordswap_difficulty_desc_easy
     Difficulty.MEDIUM -> R.string.wordswap_difficulty_desc_medium

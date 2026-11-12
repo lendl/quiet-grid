@@ -6,13 +6,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.StatsStore
 import com.quietgrid.app.session.AppForeground
 import com.quietgrid.app.session.ChallengerRunController
+import com.quietgrid.app.session.challengerTierAfterSolve
+import com.quietgrid.app.session.creditSolve
+import com.quietgrid.app.session.tick
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
@@ -26,13 +28,13 @@ class StarBattleChallengerViewModel @Inject constructor(
     appForeground: AppForeground,
 ) : ViewModel() {
 
-    private val controller = ChallengerRunController(
+    private val controller = ChallengerRunController<StarBattleChallengerSession>(
         scope = viewModelScope,
         gameId = GameId.STARBATTLE,
         statsStore = statsStore,
         historyStore = historyStore,
         appForeground = appForeground,
-        tick = ::tickStarBattleChallenger,
+        tick = { it.tick() },
     )
 
     val session get() = controller.session
@@ -74,17 +76,11 @@ class StarBattleChallengerViewModel @Inject constructor(
             StarBattleStatus.WON -> {
                 val withOpen = current.copy(puzzleSession = opened.session)
                 controller.session = withOpen
-                val (nextTier, nextSolvesInTier) = starBattleChallengerTierAfterSolve(current.tier, current.solvesInTier)
+                val (nextTier, nextSolvesInTier) = challengerTierAfterSolve(STARBATTLE_CHALLENGER_CONFIG, current.tier, current.solvesInTier)
                 viewModelScope.launch {
                     val nextPuzzle = StarBattlePuzzleBank.randomPuzzle(appContext, nextTier, withOpen.servedPuzzleIds)
                     if (nextPuzzle == null) {
-                        val creditedScore = withOpen.score + starBattleScore(withOpen.puzzleSession.lives, withOpen.secondsOnCurrentPuzzle.toInt())
-                        val credited = withOpen.copy(
-                            puzzlesSolved = withOpen.puzzlesSolved + 1,
-                            score = creditedScore,
-                            fastestSolveSeconds = starBattleChallengerFastestSolve(withOpen),
-                            puzzleHistory = withOpen.puzzleHistory + ChallengerPuzzleSolve(withOpen.tier, withOpen.secondsOnCurrentPuzzle),
-                        )
+                        val credited = withOpen.creditSolve(starBattleChallengerPuzzleScore(withOpen))
                         controller.finalizeRun(credited, "bank_exhausted")
                     } else {
                         controller.session = advanceStarBattleChallengerAfterSolve(withOpen, nextTier, nextSolvesInTier, nextPuzzle)

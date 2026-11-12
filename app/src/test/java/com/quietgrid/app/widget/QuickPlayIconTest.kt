@@ -5,7 +5,7 @@ import android.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.test.core.app.ApplicationProvider
 import com.quietgrid.app.core.GameId
-import com.quietgrid.app.ui.components.GAME_ICON_HUES
+import com.quietgrid.app.games.GameRegistry
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,7 +24,7 @@ class QuickPlayIconTest {
         assertEquals(96, bitmap.width)
         assertEquals(96, bitmap.height)
         assertEquals(0, Color.alpha(bitmap.getPixel(0, 0)))
-        assertEquals(GAME_ICON_HUES.getValue(GameId.SUDOKU).toArgb(), bitmap.getPixel(48, 2))
+        assertEquals(GameRegistry.of(GameId.SUDOKU).iconHue.toArgb(), bitmap.getPixel(48, 2))
     }
 
     @Test

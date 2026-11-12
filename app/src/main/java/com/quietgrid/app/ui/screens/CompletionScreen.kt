@@ -24,7 +24,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +46,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
@@ -54,31 +54,9 @@ import com.quietgrid.app.core.difficultyColor
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.core.formatElapsed
 import com.quietgrid.app.data.RepositoriesViewModel
+import com.quietgrid.app.games.GameRegistry
+import com.quietgrid.app.games.gameDifficultyLabelRes
 import com.quietgrid.app.ui.theme.LocalIsDarkTheme
-import com.quietgrid.app.games.animaldoku.animalDokuDifficultyLabelRes
-import com.quietgrid.app.games.arrowescape.arrowEscapeDifficultyLabelRes
-import com.quietgrid.app.games.circuit.circuitDifficultyLabelRes
-import com.quietgrid.app.games.hashi.hashiDifficultyLabelRes
-import com.quietgrid.app.games.links.linksDifficultyLabelRes
-import com.quietgrid.app.games.blockescape.blockEscapeDifficultyLabelRes
-import com.quietgrid.app.games.wordswap.wordSwapDifficultyLabelRes
-import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
-import com.quietgrid.app.games.chimptest.chimpDifficultyLabelRes
-import com.quietgrid.app.games.game2048.game2048DifficultyLabelRes
-import com.quietgrid.app.games.guessbynumbers.guessByNumbersDifficultyLabelRes
-import com.quietgrid.app.games.minesweeper.minesweeperDifficultyLabelRes
-import com.quietgrid.app.games.nback.nbackDifficultyLabelRes
-import com.quietgrid.app.games.nonogram.nonogramDifficultyLabelRes
-import com.quietgrid.app.games.sequencememory.sequenceMemoryDifficultyLabelRes
-import com.quietgrid.app.games.starbattle.starBattleDifficultyLabelRes
-import com.quietgrid.app.games.whodidit.whoDidItDifficultyLabelRes
-import com.quietgrid.app.games.minisudoku.miniSudokuDifficultyLabelRes
-import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
-import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
-import com.quietgrid.app.games.themeclear.themeClearDifficultyLabelRes
-import com.quietgrid.app.games.killersudoku.killerSudokuDifficultyLabelRes
-import com.quietgrid.app.games.wordguess.wordGuessDifficultyLabelRes
-import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
 import com.quietgrid.app.ui.components.BadgePill
 import com.quietgrid.app.ui.components.OutlinedGlowButton
 import com.quietgrid.app.ui.components.rememberHapticController
@@ -134,34 +112,9 @@ fun CompletionScreen(
             bodyRes = R.string.completion_solved_body
         }
     }
-    val difficultyLabelRes = when (gameId) {
-        GameId.TAKUZU -> takuzuDifficultyLabelRes(difficulty)
-        GameId.NONOGRAM -> nonogramDifficultyLabelRes(difficulty)
-        GameId.MINESWEEPER -> minesweeperDifficultyLabelRes(difficulty)
-        GameId.SUDOKU -> sudokuDifficultyLabelRes(difficulty)
-        GameId.WORDSEARCH -> wordSearchDifficultyLabelRes(difficulty)
-        GameId.BLOCKFILL -> blockFillDifficultyLabelRes(difficulty)
-        GameId.WORDGUESS -> wordGuessDifficultyLabelRes(difficulty)
-        GameId.ANIMALDOKU -> animalDokuDifficultyLabelRes(difficulty)
-        GameId.ARROWESCAPE -> arrowEscapeDifficultyLabelRes(difficulty)
-        GameId.GAME_2048 -> game2048DifficultyLabelRes(difficulty)
-        GameId.STARBATTLE -> starBattleDifficultyLabelRes(difficulty)
-        GameId.WHODIDIT -> whoDidItDifficultyLabelRes(difficulty)
-        GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyLabelRes(difficulty)
-        GameId.NBACK -> nbackDifficultyLabelRes(difficulty)
-        GameId.THEMECLEAR -> themeClearDifficultyLabelRes(difficulty)
-        GameId.SEQUENCEMEMORY -> sequenceMemoryDifficultyLabelRes(difficulty)
-        GameId.HASHI -> hashiDifficultyLabelRes(difficulty)
-        GameId.CIRCUIT -> circuitDifficultyLabelRes(difficulty)
-        GameId.LINKS -> linksDifficultyLabelRes(difficulty)
-        GameId.BLOCKESCAPE -> blockEscapeDifficultyLabelRes(difficulty)
-        GameId.WORDSWAP -> wordSwapDifficultyLabelRes(difficulty)
-        GameId.KILLERSUDOKU -> killerSudokuDifficultyLabelRes(difficulty)
-        GameId.MINISUDOKU -> miniSudokuDifficultyLabelRes(difficulty)
-        else -> chimpDifficultyLabelRes(difficulty)
-    }
+    val difficultyLabelRes = gameDifficultyLabelRes(gameId, difficulty)
     val accentColor = difficultyColor(difficulty)
-    val isFlawless = gameId in FLAWLESS_ELIGIBLE_GAMES && accuracyPct == 100
+    val isFlawless = GameRegistry.of(gameId).capabilities.flawlessEligible && accuracyPct == 100
 
     val highlight = remember { CompletionExtras.consume() }
     val picture = (highlight as? CompletionHighlight.Picture)?.solution?.takeIf { it.isNotEmpty() }
@@ -172,13 +125,13 @@ fun CompletionScreen(
     val repositories: RepositoriesViewModel = hiltViewModel()
     val halloween = rememberHalloweenCharacter()?.takeIf { picture == null }
     val bodyText = stringResource(halloween?.lineRes?.takeIf { !isNewHighScore && !isFirstSolve } ?: bodyRes)
-    val stats by remember(repositories, gameId) { repositories.statsRepository.statsFor(gameId) }.collectAsState(initial = null)
+    val stats by remember(repositories, gameId) { repositories.statsRepository.statsFor(gameId) }.collectAsStateWithLifecycle(initialValue = null)
     val streak = stats?.forDifficulty(difficulty)?.currentStreak ?: 0
 
     val gameRecords by remember(repositories, gameId) { repositories.playHistoryRepository.recordsFor(gameId) }
-        .collectAsState(initial = emptyList())
+        .collectAsStateWithLifecycle(initialValue = emptyList())
     val allHistoryRecords by remember(repositories) { repositories.playHistoryRepository.allRecords() }
-        .collectAsState(initial = emptyList())
+        .collectAsStateWithLifecycle(initialValue = emptyList())
     val currentWinTimestamp = remember(gameRecords) { gameRecords.maxOfOrNull { it.timestampMillis } ?: 0L }
     val gameMilestone = remember(gameRecords) { milestoneReached(gameRecords.count { it.solved }) }
     val difficultyMilestone = remember(gameRecords, difficulty) {
@@ -495,11 +448,11 @@ private fun WinHeroFigure(
 @Composable
 private fun WinMetaItems(gameId: GameId, elapsedSeconds: Int, accuracyPct: Int, bestTile: Int) {
     MetaItem(stringResource(R.string.completion_elapsed_time), formatElapsed(elapsedSeconds))
-    if (gameId in ACCURACY_TRACKED_GAMES) {
+    if (GameRegistry.of(gameId).capabilities.accuracyTracked) {
         ResultMetaDivider()
         MetaItem(stringResource(R.string.completion_accuracy), "$accuracyPct%")
     }
-    if (gameId in BEST_TILE_TRACKED_GAMES) {
+    if (GameRegistry.of(gameId).capabilities.bestTileTracked) {
         ResultMetaDivider()
         MetaItem(stringResource(R.string.completion_best_tile), bestTile.toString())
     }
@@ -537,10 +490,6 @@ private fun WinHighlights(caseSolvedText: String?, nbackBreakdown: CompletionHig
     }
 }
 
-
-private val FLAWLESS_ELIGIBLE_GAMES = setOf(GameId.TAKUZU, GameId.SUDOKU, GameId.KILLERSUDOKU, GameId.MINISUDOKU, GameId.LINKS)
-private val ACCURACY_TRACKED_GAMES = setOf(GameId.TAKUZU, GameId.SUDOKU, GameId.KILLERSUDOKU, GameId.MINISUDOKU, GameId.WORDSEARCH, GameId.NBACK, GameId.LINKS, GameId.WORDSWAP)
-private val BEST_TILE_TRACKED_GAMES = setOf(GameId.GAME_2048)
 
 @Composable
 private fun NonogramMiniPicture(solution: List<List<Boolean>>, fillColor: Color, modifier: Modifier = Modifier) {

@@ -40,7 +40,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,6 +56,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameCatalog
@@ -64,14 +64,15 @@ import com.quietgrid.app.core.GameId
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.core.difficultyColor
 import com.quietgrid.app.core.formatElapsed
-import com.quietgrid.app.core.gameDifficultyLabelRes
 import com.quietgrid.app.core.journey.JOURNEY_GAMES
 import com.quietgrid.app.data.ActiveSessionEnvelope
 import com.quietgrid.app.data.DifficultyStats
 import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.data.SESSION_MODE_ENDLESS
+import com.quietgrid.app.games.GameRegistry
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyDescriptionRes
 import com.quietgrid.app.games.circuit.circuitDifficultyDescriptionRes
+import com.quietgrid.app.games.gameDifficultyLabelRes
 import com.quietgrid.app.games.hashi.hashiDifficultyDescriptionRes
 import com.quietgrid.app.games.links.linksDifficultyDescriptionRes
 import com.quietgrid.app.games.blockescape.blockEscapeDifficultyDescriptionRes
@@ -95,7 +96,6 @@ import com.quietgrid.app.games.themeclear.themeClearDifficultyDescriptionRes
 import com.quietgrid.app.games.wordguess.wordGuessDifficultyDescriptionRes
 import com.quietgrid.app.games.wordsearch.wordSearchDifficultyDescriptionRes
 import com.quietgrid.app.ui.components.pressScale
-import com.quietgrid.app.ui.components.quickStartFor
 import com.quietgrid.app.ui.components.StatGroup
 import com.quietgrid.app.ui.components.StatItem
 import com.quietgrid.app.ui.components.QuickStartSheet
@@ -115,8 +115,8 @@ fun PuzzlePickerScreen(
     onOpenJourney: (Int?) -> Unit = {},
 ) {
     val repositories: RepositoriesViewModel = hiltViewModel()
-    val settings by repositories.settingsRepository.settings.collectAsState(initial = null)
-    val activeSession by repositories.sessionRepository.activeSession.collectAsState(initial = null)
+    val settings by repositories.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = null)
+    val activeSession by repositories.sessionRepository.activeSession.collectAsStateWithLifecycle(initialValue = null)
     val activeGameKey = activeSession?.gameId
     val coroutineScope = rememberCoroutineScope()
     var showQuickStart by remember(gameId) { mutableStateOf(false) }
@@ -144,7 +144,7 @@ fun PuzzlePickerScreen(
 
     if (showQuickStart) {
         QuickStartSheet(
-            content = quickStartFor(gameId),
+            content = GameRegistry.of(gameId).quickStart,
             onDismiss = {
                 showQuickStart = false
                 coroutineScope.launch { repositories.settingsRepository.markQuickStartSeen(gameId) }
@@ -325,7 +325,7 @@ private fun GamePlayPickerTab(
     onOpenJourney: (Int?) -> Unit,
 ) {
     val repositories: RepositoriesViewModel = hiltViewModel()
-    val stats by remember(repositories, gameId) { repositories.statsRepository.statsFor(gameId) }.collectAsState(initial = null)
+    val stats by remember(repositories, gameId) { repositories.statsRepository.statsFor(gameId) }.collectAsStateWithLifecycle(initialValue = null)
 
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
         Column(
@@ -363,31 +363,11 @@ private fun GamePlayPickerTab(
                     if (pair.size == 1) Spacer(Modifier.weight(1f))
                 }
             }
-            val challengerLabelRes = when (gameId) {
-                GameId.ANIMALDOKU -> R.string.animaldoku_challenger_label
-                GameId.WORDGUESS -> R.string.wordguess_challenger_label
-                GameId.CHIMPTEST -> R.string.chimp_challenger_label
-                GameId.STARBATTLE -> R.string.starbattle_challenger_label
-                GameId.SUDOKU -> R.string.sudoku_challenger_label
-                GameId.TAKUZU -> R.string.takuzu_challenger_label
-                GameId.NONOGRAM -> R.string.nonogram_challenger_label
-                GameId.BLOCKESCAPE -> R.string.blockescape_challenger_label
-                else -> null
-            }
-            val challengerDescriptionRes = when (gameId) {
-                GameId.ANIMALDOKU -> R.string.animaldoku_challenger_description
-                GameId.WORDGUESS -> R.string.wordguess_challenger_description
-                GameId.CHIMPTEST -> R.string.chimp_challenger_description
-                GameId.STARBATTLE -> R.string.starbattle_challenger_description
-                GameId.SUDOKU -> R.string.sudoku_challenger_description
-                GameId.TAKUZU -> R.string.takuzu_challenger_description
-                GameId.NONOGRAM -> R.string.nonogram_challenger_description
-                GameId.BLOCKESCAPE -> R.string.blockescape_challenger_description
-                else -> null
-            }
+            val challengerLabelRes = GameRegistry.of(gameId).challenger?.let { R.string.challenger_label }
+            val challengerDescriptionRes = GameRegistry.of(gameId).challenger?.descriptionRes
             if (challengerLabelRes != null && challengerDescriptionRes != null) {
                 val challengerStats by remember(repositories, gameId) { repositories.statsRepository.challengerStatsFor(gameId) }
-                    .collectAsState(initial = null)
+                    .collectAsStateWithLifecycle(initialValue = null)
                 val bestScore = challengerStats?.bestScore ?: 0
                 PickerModeTile(
                     stringResource(challengerLabelRes),
@@ -398,7 +378,7 @@ private fun GamePlayPickerTab(
             }
             if (endlessCopy != null) {
                 val endlessStats by remember(repositories, gameId) { repositories.statsRepository.endlessStatsFor(gameId) }
-                    .collectAsState(initial = null)
+                    .collectAsStateWithLifecycle(initialValue = null)
                 val bestScore = endlessStats?.bestScore ?: 0
                 PickerModeTile(
                     stringResource(endlessCopy.label),
@@ -552,60 +532,20 @@ private fun PickerModeTile(label: String, description: String, detail: String?, 
 @Composable
 private fun GameStatsTab(gameId: GameId, endlessCopy: EndlessModeCopy?) {
     val repositories: RepositoriesViewModel = hiltViewModel()
-    val stats by remember(repositories, gameId) { repositories.statsRepository.statsFor(gameId) }.collectAsState(initial = null)
+    val stats by remember(repositories, gameId) { repositories.statsRepository.statsFor(gameId) }.collectAsStateWithLifecycle(initialValue = null)
     val currentStats = stats ?: return
     val overview = remember(currentStats) { buildStatsOverview(gameId, mapOf(gameId to currentStats)) }
 
     Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(16.dp)) {
         StatsOverviewContent(overview)
 
-        val challengerStatsTitleRes = when (gameId) {
-            GameId.ANIMALDOKU -> R.string.animaldoku_challenger_stats_title
-            GameId.WORDGUESS -> R.string.wordguess_challenger_stats_title
-            GameId.CHIMPTEST -> R.string.chimp_challenger_stats_title
-            GameId.STARBATTLE -> R.string.starbattle_challenger_stats_title
-            GameId.SUDOKU -> R.string.sudoku_challenger_stats_title
-            GameId.TAKUZU -> R.string.takuzu_challenger_stats_title
-            GameId.NONOGRAM -> R.string.nonogram_challenger_stats_title
-            GameId.BLOCKESCAPE -> R.string.blockescape_challenger_stats_title
-            else -> null
-        }
-        val challengerStatsBestRunRes = when (gameId) {
-            GameId.ANIMALDOKU -> R.string.animaldoku_challenger_stats_best_run
-            GameId.WORDGUESS -> R.string.wordguess_challenger_stats_best_run
-            GameId.CHIMPTEST -> R.string.chimp_challenger_stats_best_run
-            GameId.STARBATTLE -> R.string.starbattle_challenger_stats_best_run
-            GameId.SUDOKU -> R.string.sudoku_challenger_stats_best_run
-            GameId.TAKUZU -> R.string.takuzu_challenger_stats_best_run
-            GameId.NONOGRAM -> R.string.nonogram_challenger_stats_best_run
-            GameId.BLOCKESCAPE -> R.string.blockescape_challenger_stats_best_run
-            else -> null
-        }
-        val challengerSolvedLabelRes = when (gameId) {
-            GameId.ANIMALDOKU -> R.string.animaldoku_challenger_result_puzzles_solved
-            GameId.WORDGUESS -> R.string.wordguess_challenger_result_puzzles_solved
-            GameId.CHIMPTEST -> R.string.chimp_challenger_result_puzzles_solved
-            GameId.STARBATTLE -> R.string.starbattle_challenger_result_puzzles_solved
-            GameId.SUDOKU -> R.string.sudoku_challenger_result_puzzles_solved
-            GameId.TAKUZU -> R.string.takuzu_challenger_result_puzzles_solved
-            GameId.NONOGRAM -> R.string.nonogram_challenger_result_puzzles_solved
-            GameId.BLOCKESCAPE -> R.string.blockescape_challenger_result_puzzles_solved
-            else -> null
-        }
-        val challengerScoreLabelRes = when (gameId) {
-            GameId.ANIMALDOKU -> R.string.animaldoku_challenger_result_score
-            GameId.WORDGUESS -> R.string.wordguess_challenger_result_score
-            GameId.CHIMPTEST -> R.string.chimp_challenger_result_score
-            GameId.STARBATTLE -> R.string.starbattle_challenger_result_score
-            GameId.SUDOKU -> R.string.sudoku_challenger_result_score
-            GameId.TAKUZU -> R.string.takuzu_challenger_result_score
-            GameId.NONOGRAM -> R.string.nonogram_challenger_result_score
-            GameId.BLOCKESCAPE -> R.string.blockescape_challenger_result_score
-            else -> null
-        }
+        val challengerStatsTitleRes = GameRegistry.of(gameId).challenger?.let { R.string.challenger_stats_title }
+        val challengerStatsBestRunRes = GameRegistry.of(gameId).challenger?.let { R.string.challenger_stats_best_run }
+        val challengerSolvedLabelRes = GameRegistry.of(gameId).challenger?.puzzlesSolvedLabelRes
+        val challengerScoreLabelRes = GameRegistry.of(gameId).challenger?.let { R.string.challenger_result_score }
         if (challengerStatsTitleRes != null && challengerStatsBestRunRes != null && challengerSolvedLabelRes != null && challengerScoreLabelRes != null) {
             val challengerStats by remember(repositories, gameId) { repositories.statsRepository.challengerStatsFor(gameId) }
-                .collectAsState(initial = null)
+                .collectAsStateWithLifecycle(initialValue = null)
             challengerStats?.let { current ->
                 HorizontalDivider(Modifier.padding(top = 20.dp))
                 Text(
@@ -631,7 +571,7 @@ private fun GameStatsTab(gameId: GameId, endlessCopy: EndlessModeCopy?) {
         }
         if (endlessCopy != null) {
             val endlessStats by remember(repositories, gameId) { repositories.statsRepository.endlessStatsFor(gameId) }
-                .collectAsState(initial = null)
+                .collectAsStateWithLifecycle(initialValue = null)
             endlessStats?.let { current ->
                 HorizontalDivider(Modifier.padding(top = 20.dp))
                 Text(

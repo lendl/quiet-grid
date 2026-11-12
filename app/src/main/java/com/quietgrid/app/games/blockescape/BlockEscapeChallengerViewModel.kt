@@ -12,6 +12,8 @@ import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.StatsStore
 import com.quietgrid.app.session.AppForeground
 import com.quietgrid.app.session.ChallengerRunController
+import com.quietgrid.app.session.challengerTierAfterSolve
+import com.quietgrid.app.session.tick
 import com.quietgrid.engine.blockescape.BlockEscapeMove
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -26,13 +28,13 @@ class BlockEscapeChallengerViewModel @Inject constructor(
     appForeground: AppForeground,
 ) : ViewModel() {
 
-    private val controller = ChallengerRunController(
+    private val controller = ChallengerRunController<BlockEscapeChallengerSession>(
         scope = viewModelScope,
         gameId = GameId.BLOCKESCAPE,
         statsStore = statsStore,
         historyStore = historyStore,
         appForeground = appForeground,
-        tick = ::tickBlockEscapeChallenger,
+        tick = { it.tick() },
     )
 
     val session get() = controller.session
@@ -75,7 +77,7 @@ class BlockEscapeChallengerViewModel @Inject constructor(
     private fun onSolved(solved: BlockEscapeChallengerSession) {
         undoHistory.clear()
         canUndo = false
-        val (nextTier, nextSolvesInTier) = blockEscapeChallengerTierAfterSolve(solved.tier, solved.solvesInTier)
+        val (nextTier, nextSolvesInTier) = challengerTierAfterSolve(BLOCKESCAPE_CHALLENGER_CONFIG, solved.tier, solved.solvesInTier)
         viewModelScope.launch {
             val nextPuzzle = BlockEscapePuzzleBank.randomPuzzle(appContext, nextTier, solved.servedPuzzleIds)
             if (nextPuzzle == null || nextPuzzle.id in solved.servedPuzzleIds) {

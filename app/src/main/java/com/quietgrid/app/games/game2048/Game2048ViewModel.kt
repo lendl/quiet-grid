@@ -10,6 +10,7 @@ import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
+import com.quietgrid.app.session.LossReason
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
@@ -28,7 +29,7 @@ data class Game2048Result(
     val solved: Boolean,
     val score: Int,
     val elapsedSeconds: Int,
-    val lossReason: String?,
+    val lossReason: LossReason?,
     val isFirstSolve: Boolean = false,
     val isNewHighScore: Boolean = false,
     val bestTile: Int = 0,
@@ -124,7 +125,7 @@ class Game2048PlayViewModel @AssistedInject constructor(
             }
             Game2048Status.LOST -> {
                 controller.updateSession(updated, persist = false)
-                controller.finishAsLoss("no-moves-left")
+                controller.finishAsLoss(LossReason.NO_MOVES_LEFT)
             }
             Game2048Status.PLAYING -> controller.updateSession(updated)
         }

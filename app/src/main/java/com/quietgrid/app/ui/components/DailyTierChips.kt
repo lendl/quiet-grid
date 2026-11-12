@@ -21,7 +21,7 @@ import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.daily.DailyTierStatus
 import com.quietgrid.app.core.daily.DailyTierUi
 import com.quietgrid.app.core.formatElapsed
-import com.quietgrid.app.core.gameDifficultyLabelRes
+import com.quietgrid.app.games.gameDifficultyLabelRes
 
 @Composable
 fun DailyTierChips(gameId: GameId, tiers: List<DailyTierUi>, onTierClick: (DailyTierUi) -> Unit) {

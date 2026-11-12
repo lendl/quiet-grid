@@ -30,6 +30,7 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.Dp
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.games.GameRegistry
 import com.quietgrid.app.ui.theme.LocalIsPencilTheme
 import com.quietgrid.app.ui.theme.PlusJakartaSans
 
@@ -60,10 +61,10 @@ fun flatGlyphColor(paint: GlyphPaint, flat: Color): Color? = when (paint) {
 }
 
 fun gameIconTile(gameId: GameId, isPencilTheme: Boolean): Color? =
-    if (isPencilTheme) PENCIL_TILE_COLOR else GAME_ICON_HUES[gameId]
+    if (isPencilTheme) PENCIL_TILE_COLOR else GameRegistry.of(gameId).iconHue
 
 fun glyphPathsFor(gameId: GameId): Map<GlyphPath, Path> =
-    GAME_ICON_GLYPHS[gameId].orEmpty().filterIsInstance<GlyphPath>().associateWith { PathParser().parsePathString(it.pathData).toPath() }
+    GameRegistry.of(gameId).iconGlyph.filterIsInstance<GlyphPath>().associateWith { PathParser().parsePathString(it.pathData).toPath() }
 
 @Composable
 fun GameIcon(gameId: GameId, size: Dp, modifier: Modifier = Modifier) {
@@ -95,7 +96,7 @@ fun DrawScope.drawGameGlyph(
     val unit = glyphSize / GLYPH_UNITS
     val origin = Offset((size.width - glyphSize) / 2, (size.height - glyphSize) / 2)
 
-    GAME_ICON_GLYPHS[gameId].orEmpty().forEach { shape ->
+    GameRegistry.of(gameId).iconGlyph.forEach { shape ->
         val color = if (flatColor != null) flatGlyphColor(shape.paint, flatColor) ?: return@forEach else glyphPaintColor(shape.paint, tile, ink, isPencilTheme)
         when (shape) {
             is GlyphText -> {

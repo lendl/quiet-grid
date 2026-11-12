@@ -36,7 +36,7 @@ private data class TestSession(val value: Int, val meaningful: Boolean = true)
 private data class TestResult(
     val solved: Boolean,
     val score: Int,
-    val lossReason: String?,
+    val lossReason: LossReason?,
     val isFirstSolve: Boolean,
     val isNewHighScore: Boolean,
     val journeySignals: JourneySignals = JourneySignals(0, 0),
@@ -564,7 +564,7 @@ class PuzzleSessionControllerTest {
         runCurrent()
 
         assertEquals(false, emitted?.solved)
-        assertEquals("abandoned", emitted?.lossReason)
+        assertEquals(LossReason.ABANDONED, emitted?.lossReason)
         collectJob.cancel()
     }
 
@@ -666,7 +666,7 @@ class PuzzleSessionControllerTest {
 
         assertNull(abandoned.finishing.value)
         abandoned.endPuzzle()
-        failed.finishAsLoss("rule_failure")
+        failed.finishAsLoss(LossReason.RULE_FAILURE)
 
         assertEquals(FinishKind.Abandoned, abandoned.finishing.value)
         assertEquals(FinishKind.Loss, failed.finishing.value)
@@ -687,7 +687,7 @@ class PuzzleSessionControllerTest {
         controller.endPuzzle()
         runCurrent()
 
-        assertEquals("abandoned", emitted?.lossReason)
+        assertEquals(LossReason.ABANDONED, emitted?.lossReason)
         collectJob.cancel()
     }
 
@@ -823,7 +823,7 @@ class PuzzleSessionControllerTest {
         )
         lost.start(Difficulty.HARD, resume = false, journey = journeyRequest)
         runCurrent()
-        lost.finishAsLoss("rule_failure")
+        lost.finishAsLoss(LossReason.RULE_FAILURE)
         runCurrent()
 
         assertEquals(listOf("s1"), journeyStore.losses)
@@ -914,7 +914,7 @@ class PuzzleSessionControllerTest {
         val wonJob = launch { won.result.collect { emitted += it } }
         val lostJob = launch { lost.result.collect { emitted += it } }
         won.finishAsWin()
-        lost.finishAsLoss("rule_failure")
+        lost.finishAsLoss(LossReason.RULE_FAILURE)
         advanceTimeBy(500)
         runCurrent()
 

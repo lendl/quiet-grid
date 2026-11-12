@@ -10,6 +10,7 @@ import com.quietgrid.app.data.toSummary
 import com.quietgrid.app.data.SESSION_MODE_ENDLESS
 import com.quietgrid.app.games.blockfill.BlockFillEndlessResult
 import com.quietgrid.app.games.minesweeper.MinesweeperEndlessResult
+import com.quietgrid.app.session.LossReason
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -102,8 +103,8 @@ class RoutesTest {
     fun `loss route carries the journey stop`() {
         assertEquals(
             "loss/arrowescape/hard/30/out_of_lives/0/0?journey=ae-1",
-            Routes.loss(GameId.ARROWESCAPE, Difficulty.HARD, 30, "out_of_lives", 0, 0, journeyStop = "ae-1"),
+            Routes.loss(GameId.ARROWESCAPE, Difficulty.HARD, 30, LossReason.OUT_OF_LIVES, 0, 0, journeyStop = "ae-1"),
         )
-        assertEquals("loss/sudoku/easy/30/abandoned/0/0?daily=2026-10-07", Routes.loss(GameId.SUDOKU, Difficulty.EASY, 30, "abandoned", 0, 0, daily = "2026-10-07"))
+        assertEquals("loss/sudoku/easy/30/abandoned/0/0?daily=2026-10-07", Routes.loss(GameId.SUDOKU, Difficulty.EASY, 30, LossReason.ABANDONED, 0, 0, daily = "2026-10-07"))
     }
 }

@@ -6,13 +6,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.StatsStore
 import com.quietgrid.app.session.AppForeground
 import com.quietgrid.app.session.ChallengerRunController
+import com.quietgrid.app.session.challengerTierAfterSolve
+import com.quietgrid.app.session.creditSolve
+import com.quietgrid.app.session.tick
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
@@ -26,13 +28,13 @@ class NonogramChallengerViewModel @Inject constructor(
     appForeground: AppForeground,
 ) : ViewModel() {
 
-    private val controller = ChallengerRunController(
+    private val controller = ChallengerRunController<NonogramChallengerSession>(
         scope = viewModelScope,
         gameId = GameId.NONOGRAM,
         statsStore = statsStore,
         historyStore = historyStore,
         appForeground = appForeground,
-        tick = ::tickNonogramChallenger,
+        tick = { it.tick() },
     )
 
     val session get() = controller.session
@@ -73,18 +75,12 @@ class NonogramChallengerViewModel @Inject constructor(
     }
 
     private fun onSolved(withTap: NonogramChallengerSession) {
-        val (nextTier, nextSolvesInTier) = nonogramChallengerTierAfterSolve(withTap.tier, withTap.solvesInTier)
+        val (nextTier, nextSolvesInTier) = challengerTierAfterSolve(NONOGRAM_CHALLENGER_CONFIG, withTap.tier, withTap.solvesInTier)
         advancing = true
         viewModelScope.launch {
             val nextPuzzle = NonogramPuzzleBank.randomPuzzle(appContext, nextTier, withTap.servedPuzzleIds)
             if (nextPuzzle == null) {
-                val creditedScore = withTap.score + nonogramScore(withTap.secondsOnCurrentPuzzle.toInt())
-                val credited = withTap.copy(
-                    puzzlesSolved = withTap.puzzlesSolved + 1,
-                    score = creditedScore,
-                    fastestSolveSeconds = nonogramChallengerFastestSolve(withTap),
-                    puzzleHistory = withTap.puzzleHistory + ChallengerPuzzleSolve(withTap.tier, withTap.secondsOnCurrentPuzzle),
-                )
+                val credited = withTap.creditSolve(nonogramChallengerPuzzleScore(withTap))
                 controller.finalizeRun(credited, "bank_exhausted")
             } else {
                 controller.session = advanceNonogramChallengerAfterSolve(withTap, nextTier, nextSolvesInTier, nextPuzzle)

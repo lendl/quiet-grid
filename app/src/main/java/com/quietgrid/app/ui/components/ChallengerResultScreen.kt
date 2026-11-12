@@ -34,29 +34,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.difficultyColor
 import com.quietgrid.app.core.formatElapsed
+import com.quietgrid.app.games.ChallengerEndCopy
+import com.quietgrid.app.games.ChallengerSpec
+import com.quietgrid.app.games.gameDifficultyLabelRes
 import com.quietgrid.app.ui.screens.ChallengerExtras
 import com.quietgrid.app.ui.screens.mixAwarePrimaryLabel
 import kotlin.math.roundToInt
 
-data class ChallengerResultStrings(
-    val titleRes: Int,
-    val bodyRes: Int,
-    val puzzlesSolvedLabelRes: Int,
-    val scoreLabelRes: Int,
-    val fastestSolveLabelRes: Int,
-    val newHighScoreBadgeRes: Int,
-    val offBestRes: Int,
-    val playAgainRes: Int,
-    val backToPuzzlesRes: Int,
-    val tryAnotherGameRes: Int,
-)
-
 @Composable
 fun ChallengerResultScreen(
-    strings: ChallengerResultStrings,
-    difficultyLabelRes: (Difficulty) -> Int,
+    gameId: GameId,
+    spec: ChallengerSpec,
     puzzlesSolved: Int,
     tierReached: Difficulty,
     score: Int,
@@ -64,13 +55,17 @@ fun ChallengerResultScreen(
     previousBest: Int,
     fastestSolveSeconds: Double?,
     reason: String,
-    startingLives: Int,
-    solvesPerTier: Int,
     isMixActive: Boolean,
     onPlayAgain: () -> Unit,
     onBackToPuzzles: () -> Unit,
     onTryAnotherGame: () -> Unit,
 ) {
+    val endCopy = spec.endCopy[reason] ?: if (reason == "abandoned") {
+        ChallengerEndCopy(R.string.challenger_result_abandoned_title, R.string.challenger_result_abandoned_body)
+    } else {
+        ChallengerEndCopy(R.string.challenger_result_time_up_title, R.string.challenger_result_time_up_body)
+    }
+    val difficultyLabelRes: (Difficulty) -> Int = { gameDifficultyLabelRes(gameId, it) }
     val reduceMotion = rememberReduceMotion()
     val runDetails = remember { ChallengerExtras.consume() }
     val puzzleHistory = runDetails.puzzleHistory
@@ -115,7 +110,7 @@ fun ChallengerResultScreen(
             ) {
                 BadgePill(
                     emoji = "🏆",
-                    text = stringResource(strings.newHighScoreBadgeRes),
+                    text = stringResource(R.string.challenger_result_new_high_score),
                     borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
                     textColor = MaterialTheme.colorScheme.primary,
                 )
@@ -132,9 +127,9 @@ fun ChallengerResultScreen(
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(stringResource(strings.titleRes), style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center)
+                Text(stringResource(endCopy.titleRes), style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center)
                 Text(
-                    stringResource(strings.bodyRes),
+                    stringResource(endCopy.bodyRes),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
@@ -143,7 +138,7 @@ fun ChallengerResultScreen(
 
                 if (!isNewHighScore && previousBest > 0) {
                     Text(
-                        stringResource(strings.offBestRes, previousBest - score),
+                        stringResource(R.string.challenger_result_off_best, previousBest - score),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(top = 8.dp),
@@ -152,7 +147,7 @@ fun ChallengerResultScreen(
 
                 if (reason == "lives_exhausted") {
                     Row(Modifier.padding(top = 12.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                        repeat(startingLives) {
+                        repeat(spec.config.startingLives) {
                             ChallengerHeartIcon(filled = false)
                         }
                     }
@@ -161,7 +156,7 @@ fun ChallengerResultScreen(
                 ChallengerTierProgressBar(
                     tierReached = tierReached,
                     solvesInTier = runDetails.solvesInTier,
-                    solvesPerTier = solvesPerTier,
+                    solvesPerTier = spec.config.solvesPerTier,
                     difficultyLabelRes = difficultyLabelRes,
                     reduceMotion = reduceMotion,
                     modifier = Modifier.padding(top = 20.dp),
@@ -171,10 +166,10 @@ fun ChallengerResultScreen(
                     Modifier.padding(top = 20.dp),
                     horizontalArrangement = Arrangement.spacedBy(18.dp),
                 ) {
-                    ResultMetaItem(stringResource(strings.puzzlesSolvedLabelRes), puzzlesSolved.toString())
-                    ResultMetaItem(stringResource(strings.scoreLabelRes), score.toString())
+                    ResultMetaItem(stringResource(spec.puzzlesSolvedLabelRes), puzzlesSolved.toString())
+                    ResultMetaItem(stringResource(R.string.challenger_result_score), score.toString())
                     if (fastestSolveSeconds != null) {
-                        ResultMetaItem(stringResource(strings.fastestSolveLabelRes), formatElapsed(fastestSolveSeconds.roundToInt()))
+                        ResultMetaItem(stringResource(R.string.challenger_result_fastest_solve), formatElapsed(fastestSolveSeconds.roundToInt()))
                     }
                 }
 
@@ -211,7 +206,7 @@ fun ChallengerResultScreen(
 
                 OutlinedGlowButton(onClick = onPlayAgain, modifier = Modifier.padding(top = 24.dp)) {
                     Text(
-                        stringResource(mixAwarePrimaryLabel(isMixActive, strings.playAgainRes)),
+                        stringResource(mixAwarePrimaryLabel(isMixActive, R.string.challenger_play_again)),
                         fontWeight = FontWeight.Bold,
                     )
                 }
@@ -221,10 +216,10 @@ fun ChallengerResultScreen(
                     horizontalArrangement = Arrangement.Center,
                 ) {
                     TextButton(onClick = onBackToPuzzles) {
-                        Text(stringResource(strings.backToPuzzlesRes), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.challenger_back_to_puzzles), color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     TextButton(onClick = onTryAnotherGame) {
-                        Text(stringResource(strings.tryAnotherGameRes), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.challenger_try_another_game), color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             }

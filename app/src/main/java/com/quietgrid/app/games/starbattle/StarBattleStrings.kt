@@ -9,13 +9,6 @@ import com.quietgrid.app.games.animaldoku.PlacementRegionPicture
 import com.quietgrid.app.ui.components.QuickRule
 import com.quietgrid.app.ui.components.QuickStartContent
 
-fun starBattleDifficultyLabelRes(difficulty: Difficulty): Int = when (difficulty) {
-    Difficulty.EASY -> R.string.starbattle_difficulty_easy
-    Difficulty.MEDIUM -> R.string.starbattle_difficulty_medium
-    Difficulty.HARD -> R.string.starbattle_difficulty_hard
-    Difficulty.EXPERT -> R.string.starbattle_difficulty_expert
-}
-
 fun starBattleDifficultyDescriptionRes(difficulty: Difficulty): Int = when (difficulty) {
     Difficulty.EASY -> R.string.starbattle_difficulty_desc_easy
     Difficulty.MEDIUM -> R.string.starbattle_difficulty_desc_medium

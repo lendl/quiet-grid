@@ -77,10 +77,10 @@ class StatsTableWordBreakTest {
             StatsDifficultyRow(
                 difficulty = difficulty,
                 labelRes = when (difficulty) {
-                    Difficulty.EASY -> R.string.sudoku_difficulty_easy
-                    Difficulty.MEDIUM -> R.string.sudoku_difficulty_medium
-                    Difficulty.HARD -> R.string.sudoku_difficulty_hard
-                    Difficulty.EXPERT -> R.string.sudoku_difficulty_expert
+                    Difficulty.EASY -> R.string.difficulty_easy
+                    Difficulty.MEDIUM -> R.string.difficulty_medium
+                    Difficulty.HARD -> R.string.difficulty_hard
+                    Difficulty.EXPERT -> R.string.difficulty_expert
                 },
                 played = 135,
                 solved = 120,

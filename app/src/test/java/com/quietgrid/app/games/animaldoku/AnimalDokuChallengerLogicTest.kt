@@ -3,6 +3,8 @@ package com.quietgrid.app.games.animaldoku
 
 import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.session.challengerTierAfterSolve
+import com.quietgrid.app.session.tick
 import com.quietgrid.engine.animaldoku.AnimalDokuPuzzleEntry
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -35,7 +37,7 @@ class AnimalDokuChallengerLogicTest {
 
     @Test
     fun `tierAfterSolve stays on the same tier before the solve threshold`() {
-        val (tier, solves) = tierAfterSolve(Difficulty.EASY, solvesInTier = 0)
+        val (tier, solves) = challengerTierAfterSolve(ANIMALDOKU_CHALLENGER_CONFIG, Difficulty.EASY, solvesInTier = 0)
 
         assertEquals(Difficulty.EASY, tier)
         assertEquals(1, solves)
@@ -43,7 +45,7 @@ class AnimalDokuChallengerLogicTest {
 
     @Test
     fun `tierAfterSolve advances tier once the threshold is reached`() {
-        val (tier, solves) = tierAfterSolve(Difficulty.EASY, solvesInTier = ANIMALDOKU_CHALLENGER_SOLVES_PER_TIER - 1)
+        val (tier, solves) = challengerTierAfterSolve(ANIMALDOKU_CHALLENGER_CONFIG, Difficulty.EASY, solvesInTier = ANIMALDOKU_CHALLENGER_SOLVES_PER_TIER - 1)
 
         assertEquals(Difficulty.MEDIUM, tier)
         assertEquals(0, solves)
@@ -51,7 +53,7 @@ class AnimalDokuChallengerLogicTest {
 
     @Test
     fun `tierAfterSolve stays on Expert once reached`() {
-        val (tier, solves) = tierAfterSolve(Difficulty.EXPERT, solvesInTier = ANIMALDOKU_CHALLENGER_SOLVES_PER_TIER - 1)
+        val (tier, solves) = challengerTierAfterSolve(ANIMALDOKU_CHALLENGER_CONFIG, Difficulty.EXPERT, solvesInTier = ANIMALDOKU_CHALLENGER_SOLVES_PER_TIER - 1)
 
         assertEquals(Difficulty.EXPERT, tier)
         assertEquals(ANIMALDOKU_CHALLENGER_SOLVES_PER_TIER, solves)
@@ -80,7 +82,7 @@ class AnimalDokuChallengerLogicTest {
     fun `tickChallenger counts the clock down and the current puzzle up`() {
         val initial = createInitialChallengerSession(testPuzzle("p1", "easy"))
 
-        val ticked = tickChallenger(initial)
+        val ticked = initial.tick()
 
         assertEquals(ANIMALDOKU_CHALLENGER_STARTING_SECONDS - 1.0, ticked.secondsRemaining, 0.0)
         assertEquals(1.0, ticked.secondsOnCurrentPuzzle, 0.0)

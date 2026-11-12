@@ -26,7 +26,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -43,6 +42,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
@@ -75,8 +75,8 @@ fun JourneyMapScreen(
 ) {
     val viewModel: JourneyViewModel = hiltViewModel()
     val repositories: RepositoriesViewModel = hiltViewModel()
-    val state by remember(viewModel, gameId) { viewModel.state(gameId) }.collectAsState(initial = null)
-    val activeSession by repositories.sessionRepository.activeSession.collectAsState(initial = null)
+    val state by remember(viewModel, gameId) { viewModel.state(gameId) }.collectAsStateWithLifecycle(initialValue = null)
+    val activeSession by repositories.sessionRepository.activeSession.collectAsStateWithLifecycle(initialValue = null)
     val reduceMotion = rememberReduceMotion()
     var pendingRow by remember(gameId) { mutableStateOf<JourneyStopRow?>(null) }
     var selectedId by remember(gameId, chapter) { mutableStateOf<String?>(null) }

@@ -1,6 +1,11 @@
 package com.quietgrid.app.nav
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.core.journey.JourneyRequest
+import com.quietgrid.app.games.GameRegistry
+import com.quietgrid.app.games.PlayRequest
+import com.quietgrid.app.session.LossReason
+import com.quietgrid.app.ui.components.ChallengerResultScreen
 import com.quietgrid.app.ui.journey.JourneyResultScreen
 import com.quietgrid.app.ui.journey.JourneyScreen
 import com.quietgrid.app.ui.journey.JourneyViewModel
@@ -46,7 +51,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -80,19 +84,6 @@ import com.quietgrid.app.data.GamePreferenceOverrides
 import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.data.resolveGamePlayPreferences
 import com.quietgrid.app.games.animaldoku.AnimalDokuAnalyzerScreen
-import com.quietgrid.app.games.animaldoku.AnimalDokuChallengerPlayScreen
-import com.quietgrid.app.games.animaldoku.AnimalDokuChallengerResultScreen
-import com.quietgrid.app.games.animaldoku.AnimalDokuPlayScreen
-import com.quietgrid.app.games.chimptest.ChimpTestChallengerPlayScreen
-import com.quietgrid.app.games.chimptest.ChimpTestChallengerResultScreen
-import com.quietgrid.app.games.arrowescape.ArrowEscapePlayScreen
-import com.quietgrid.app.games.circuit.CircuitPlayScreen
-import com.quietgrid.app.games.hashi.HashiPlayScreen
-import com.quietgrid.app.games.links.LinksPlayScreen
-import com.quietgrid.app.games.blockescape.BlockEscapeChallengerPlayScreen
-import com.quietgrid.app.games.blockescape.BlockEscapeChallengerResultScreen
-import com.quietgrid.app.games.blockescape.BlockEscapePlayScreen
-import com.quietgrid.app.games.wordswap.WordSwapPlayScreen
 import com.quietgrid.app.games.blockfill.BLOCKFILL_ENDLESS_REASON_STUCK
 import com.quietgrid.app.games.blockfill.BlockFillEndlessPlayScreen
 import com.quietgrid.app.games.blockfill.BlockFillEndlessResult
@@ -101,36 +92,7 @@ import com.quietgrid.app.games.minesweeper.MinesweeperEndlessPlayScreen
 import com.quietgrid.app.games.minesweeper.MinesweeperEndlessResult
 import com.quietgrid.app.games.minesweeper.MinesweeperEndlessResultScreen
 import com.quietgrid.app.games.blockfill.BlockFillEndlessResultScreen
-import com.quietgrid.app.games.blockfill.BlockFillPlayScreen
-import com.quietgrid.app.games.chimptest.ChimpTestPlayScreen
-import com.quietgrid.app.games.game2048.Game2048PlayScreen
-import com.quietgrid.app.games.nback.NBackPlayScreen
-import com.quietgrid.app.games.sequencememory.SequenceMemoryPlayScreen
-import com.quietgrid.app.games.guessbynumbers.GuessByNumbersPlayScreen
-import com.quietgrid.app.games.minesweeper.MinesweeperPlayScreen
-import com.quietgrid.app.games.nonogram.NonogramChallengerPlayScreen
-import com.quietgrid.app.games.nonogram.NonogramChallengerResultScreen
-import com.quietgrid.app.games.nonogram.NonogramPlayScreen
-import com.quietgrid.app.games.starbattle.StarBattleChallengerPlayScreen
-import com.quietgrid.app.games.starbattle.StarBattleChallengerResultScreen
-import com.quietgrid.app.games.starbattle.StarBattlePlayScreen
-import com.quietgrid.app.games.whodidit.WhoDidItPlayScreen
-import com.quietgrid.app.games.whodidit.WhoDidItText
-import com.quietgrid.app.games.sudoku.SudokuChallengerPlayScreen
-import com.quietgrid.app.games.sudoku.SudokuChallengerResultScreen
-import com.quietgrid.app.games.sudoku.SudokuPlayScreen
-import com.quietgrid.app.games.sudoku.SudokuVariant
 import com.quietgrid.app.games.takuzu.TakuzuAnalyzerScreen
-import com.quietgrid.app.games.takuzu.TakuzuChallengerPlayScreen
-import com.quietgrid.app.games.takuzu.TakuzuChallengerResultScreen
-import com.quietgrid.app.games.takuzu.TakuzuPlayScreen
-import com.quietgrid.app.games.themeclear.ThemeClearPlayScreen
-import com.quietgrid.app.games.killersudoku.KillerSudokuPlayScreen
-import com.quietgrid.app.games.wordguess.WordGuessChallengerPlayScreen
-import com.quietgrid.app.games.wordguess.WordGuessChallengerResultScreen
-import com.quietgrid.app.games.wordguess.WordGuessPlayScreen
-import com.quietgrid.app.core.themes.themeIcon
-import com.quietgrid.app.games.wordsearch.WordSearchPlayScreen
 import com.quietgrid.app.ui.components.AppTab
 import com.quietgrid.app.ui.components.AppTopBar
 import com.quietgrid.app.ui.components.GamePageTopBar
@@ -144,8 +106,6 @@ import com.quietgrid.app.ui.screens.NewMixScreen
 import com.quietgrid.app.ui.screens.AnalyzerHandoff
 import com.quietgrid.app.ui.screens.ChallengerExtras
 import com.quietgrid.app.ui.screens.ChallengerRunDetails
-import com.quietgrid.app.ui.screens.CompletionExtras
-import com.quietgrid.app.ui.screens.CompletionHighlight
 import com.quietgrid.app.ui.screens.CompletionScreen
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -185,13 +145,13 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
     var selectedTab by remember { mutableStateOf(AppTab.GAMES) }
     val scope = rememberCoroutineScope()
     val repositories: RepositoriesViewModel = hiltViewModel()
-    val settings by repositories.settingsRepository.settings.collectAsState(initial = AppSettings())
-    val gamePreferenceOverrides by repositories.gamePreferencesRepository.allOverrides.collectAsState(initial = emptyMap())
-    val activeSessionState = repositories.sessionRepository.activeSessionSummary.collectAsState(initial = null)
+    val settings by repositories.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = AppSettings())
+    val gamePreferenceOverrides by repositories.gamePreferencesRepository.allOverrides.collectAsStateWithLifecycle(initialValue = emptyMap())
+    val activeSessionState = repositories.sessionRepository.activeSessionSummary.collectAsStateWithLifecycle(initialValue = null)
     fun activeGameKey(): String? = activeSessionState.value?.gameId
 
-    val mixes by repositories.mixRepository.mixes.collectAsState(initial = emptyList())
-    val activeMixId by repositories.mixRepository.activeMixId.collectAsState(initial = null)
+    val mixes by repositories.mixRepository.mixes.collectAsStateWithLifecycle(initialValue = emptyList())
+    val activeMixId by repositories.mixRepository.activeMixId.collectAsStateWithLifecycle(initialValue = null)
     val activeMix = mixes.firstOrNull { it.id == activeMixId }
     val resources = LocalContext.current.resources
     val appContext = LocalContext.current.applicationContext
@@ -715,11 +675,11 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                         }
                     }
 
-                    fun finishJourney(stopId: String, solved: Boolean, resultDifficulty: Difficulty, elapsedSeconds: Int, reason: String?, score: Int, signals: JourneySignals) {
+                    fun finishJourney(stopId: String, solved: Boolean, resultDifficulty: Difficulty, elapsedSeconds: Int, reason: LossReason?, score: Int, signals: JourneySignals) {
                         val route = if (solved) {
                             Routes.journeyResult(gameId, stopId, elapsedSeconds, signals)
                         } else {
-                            Routes.loss(gameId, resultDifficulty, elapsedSeconds, reason ?: "abandoned", score, 0, journeyStop = stopId)
+                            Routes.loss(gameId, resultDifficulty, elapsedSeconds, reason ?: LossReason.ABANDONED, score, 0, journeyStop = stopId)
                         }
                         val anchor = journeyAnchor(gameId)
                         navController.navigate(route) { popUpTo(anchor) { inclusive = false } }
@@ -731,67 +691,19 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                         ) { popUpTo(Routes.TABS) { inclusive = false } }
                     }
 
-                    fun goToLoss(resultDifficulty: Difficulty, elapsedSeconds: Int, reason: String, score: Int, bestTile: Int) {
+                    fun goToLoss(resultDifficulty: Difficulty, elapsedSeconds: Int, reason: LossReason, score: Int, bestTile: Int) {
                         navController.navigate(
                             Routes.loss(gameId, resultDifficulty, elapsedSeconds, reason, score, bestTile, daily = dailyKey),
                         ) { popUpTo(Routes.TABS) { inclusive = false } }
                     }
 
-                    val whoDidItResources = LocalContext.current.resources
                     val playPreferences = playPreferencesFor(gameId)
-                    val keepAwake = playPreferences.keepScreenOn || gameId == GameId.NBACK
+                    val keepAwake = playPreferences.keepScreenOn || GameRegistry.of(gameId).capabilities.alwaysKeepScreenOn
                     ProvideGamePlayPreferences(playPreferences) {
                         Column(Modifier.fillMaxSize().then(if (keepAwake) Modifier.keepScreenOn() else Modifier)) {
                             Box(Modifier.weight(1f)) {
-                                when (gameId) {
-                                    GameId.TAKUZU -> TakuzuPlayScreen(
-                                        difficulty = difficulty,
-                                        resume = resume,
-                                        dailyDate = dailyDate,
-                                        journey = journeyRequest,
-                                        onRestarted = { restartJourney() },
-                                        onBack = { navController.popBackStack() },
-                                        onFinished = { result ->
-                                            if (!result.solved) AnalyzerHandoff.set(result.analyzerSnapshot)
-                                            if (journeyRequest != null) {
-                                                finishJourney(journeyRequest.stopId, result.solved, result.difficulty, result.elapsedSeconds, result.lossReason, result.score, result.journeySignals)
-                                            } else if (result.solved) {
-                                                goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                            } else {
-                                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                            }
-                                        },
-                                    )
-                                    GameId.NONOGRAM -> NonogramPlayScreen(
-                                        difficulty = difficulty,
-                                        resume = resume,
-                                        journey = journeyRequest,
-                                        onRestarted = { restartJourney() },
-                                        onBack = { navController.popBackStack() },
-                                        onFinished = { result ->
-                                            if (journeyRequest != null) {
-                                                finishJourney(journeyRequest.stopId, result.solved, result.difficulty, result.elapsedSeconds, result.lossReason, result.score, result.journeySignals)
-                                            } else if (result.solved) {
-                                                CompletionExtras.set(CompletionHighlight.Picture(result.solution))
-                                                goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                            } else {
-                                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                            }
-                                        },
-                                    )
-                                    GameId.MINESWEEPER -> MinesweeperPlayScreen(
-                                        difficulty = difficulty,
-                                        resume = resume,
-                                        onBack = { navController.popBackStack() },
-                                        onFinished = { result ->
-                                            if (result.solved) {
-                                                goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                            } else {
-                                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                            }
-                                        },
-                                    )
-                                    GameId.SUDOKU -> SudokuPlayScreen(
+                                GameRegistry.of(gameId).PlayScreen(
+                                    PlayRequest(
                                         difficulty = difficulty,
                                         resume = resume,
                                         dailyDate = dailyDate,
@@ -802,302 +714,13 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                             if (journeyRequest != null) {
                                                 finishJourney(journeyRequest.stopId, result.solved, result.difficulty, result.elapsedSeconds, result.lossReason, result.score, result.journeySignals)
                                             } else if (result.solved) {
-                                                goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
+                                                goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, result.bestTile)
                                             } else {
-                                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
+                                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: LossReason.ABANDONED, result.score, result.bestTile)
                                             }
                                         },
-                                    )
-                                    GameId.MINISUDOKU -> SudokuPlayScreen(
-                                        difficulty = difficulty,
-                                        resume = resume,
-                                        dailyDate = dailyDate,
-                                        variant = SudokuVariant.MINI,
-                                        journey = journeyRequest,
-                                        onRestarted = { restartJourney() },
-                                        onBack = { navController.popBackStack() },
-                                        onFinished = { result ->
-                                            if (journeyRequest != null) {
-                                                finishJourney(journeyRequest.stopId, result.solved, result.difficulty, result.elapsedSeconds, result.lossReason, result.score, result.journeySignals)
-                                            } else if (result.solved) {
-                                                goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                            } else {
-                                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                            }
-                                        },
-                                    )
-                                    GameId.WORDSEARCH -> WordSearchPlayScreen(
-                                        difficulty = difficulty,
-                                        resume = resume,
-                                        dailyDate = dailyDate,
-                                        onBack = { navController.popBackStack() },
-                                        onFinished = { result ->
-                                            if (result.solved) {
-                                                themeIcon(result.themeId)?.let { CompletionExtras.set(CompletionHighlight.ThemeIcon(it)) }
-                                                goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                            } else {
-                                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                            }
-                                        },
-                                    )
-                                    GameId.BLOCKFILL -> BlockFillPlayScreen(
-                                        difficulty = difficulty,
-                                        resume = resume,
-                                        onBack = { navController.popBackStack() },
-                                        onFinished = { result ->
-                                            if (result.solved) {
-                                                goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                            } else {
-                                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                            }
-                                        },
-                                    )
-                                    GameId.WORDGUESS -> WordGuessPlayScreen(
-                                        difficulty = difficulty,
-                                        resume = resume,
-                                        dailyDate = dailyDate,
-                                        onBack = { navController.popBackStack() },
-                                        onFinished = { result ->
-                                            if (result.solved) {
-                                                goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                            } else {
-                                                if (result.targetWord.isNotEmpty()) {
-                                                    CompletionExtras.set(CompletionHighlight.RevealWord(result.targetWord))
-                                                }
-                                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                            }
-                                        },
-                                    )
-                                    GameId.GUESSBYNUMBERS -> GuessByNumbersPlayScreen(
-                                        difficulty = difficulty,
-                                        resume = resume,
-                                        onBack = { navController.popBackStack() },
-                                        onFinished = { result ->
-                                            if (result.solved) {
-                                                goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                            } else {
-                                                if (result.targetWord.isNotEmpty()) {
-                                                    CompletionExtras.set(CompletionHighlight.RevealWord(result.targetWord))
-                                                }
-                                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                            }
-                                        },
-                                    )
-                                    GameId.ANIMALDOKU -> AnimalDokuPlayScreen(
-                                        difficulty = difficulty,
-                                        resume = resume,
-                                        dailyDate = dailyDate,
-                                        journey = journeyRequest,
-                                        onRestarted = { restartJourney() },
-                                        onBack = { navController.popBackStack() },
-                                        onFinished = { result ->
-                                            if (!result.solved) AnalyzerHandoff.set(result.analyzerSnapshot)
-                                            if (journeyRequest != null) {
-                                                finishJourney(journeyRequest.stopId, result.solved, result.difficulty, result.elapsedSeconds, result.lossReason, result.score, result.journeySignals)
-                                            } else if (result.solved) {
-                                                goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                            } else {
-                                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                            }
-                                        },
-                                    )
-                                    GameId.ARROWESCAPE -> ArrowEscapePlayScreen(
-                                        difficulty = difficulty,
-                                        resume = resume,
-                                        journey = journeyRequest,
-                                        onRestarted = { restartJourney() },
-                                        onBack = { navController.popBackStack() },
-                                        onFinished = { result ->
-                                            if (journeyRequest != null) {
-                                                finishJourney(journeyRequest.stopId, result.solved, result.difficulty, result.elapsedSeconds, result.lossReason, result.score, result.journeySignals)
-                                            } else if (result.solved) {
-                                                goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                            } else {
-                                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                            }
-                                        },
-                                    )
-                                    GameId.HASHI -> HashiPlayScreen(
-                                        difficulty = difficulty,
-                                        resume = resume,
-                                        onBack = { navController.popBackStack() },
-                                        onFinished = { result ->
-                                            if (result.solved) {
-                                                goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                            } else {
-                                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                            }
-                                        },
-                                    )
-                                    GameId.WORDSWAP -> WordSwapPlayScreen(
-                                        difficulty = difficulty,
-                                        resume = resume,
-                                        onBack = { navController.popBackStack() },
-                                        onFinished = { result ->
-                                            if (result.solved) {
-                                                goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                            } else {
-                                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                            }
-                                        },
-                                    )
-                                    GameId.CIRCUIT -> CircuitPlayScreen(
-                                        difficulty = difficulty,
-                                        resume = resume,
-                                        onBack = { navController.popBackStack() },
-                                        onFinished = { result ->
-                                            if (result.solved) {
-                                                goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                            } else {
-                                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                            }
-                                        },
-                                    )
-                                    GameId.LINKS -> LinksPlayScreen(
-                                        difficulty = difficulty,
-                                        resume = resume,
-                                        onBack = { navController.popBackStack() },
-                                        onFinished = { result ->
-                                            if (result.solved) {
-                                                goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                            } else {
-                                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                            }
-                                        },
-                                    )
-                                    GameId.BLOCKESCAPE -> BlockEscapePlayScreen(
-                                        difficulty = difficulty,
-                                        resume = resume,
-                                        onBack = { navController.popBackStack() },
-                                        onFinished = { result ->
-                                            if (result.solved) {
-                                                goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                            } else {
-                                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                            }
-                                        },
-                                    )
-                                    GameId.STARBATTLE -> StarBattlePlayScreen(
-                                        difficulty = difficulty,
-                                        resume = resume,
-                                        journey = journeyRequest,
-                                        onRestarted = { restartJourney() },
-                                        onBack = { navController.popBackStack() },
-                                        onFinished = { result ->
-                                            if (journeyRequest != null) {
-                                                finishJourney(journeyRequest.stopId, result.solved, result.difficulty, result.elapsedSeconds, result.lossReason, result.score, result.journeySignals)
-                                            } else if (result.solved) {
-                                                goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                            } else {
-                                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                            }
-                                        },
-                                    )
-                                    GameId.WHODIDIT -> WhoDidItPlayScreen(
-                                        difficulty = difficulty,
-                                        resume = resume,
-                                        dailyDate = dailyDate,
-                                        onBack = { navController.popBackStack() },
-                                        onFinished = { result ->
-                                            val revealPuzzle = result.reveal
-                                            if (result.solved) {
-                                                if (revealPuzzle != null) {
-                                                    CompletionExtras.set(CompletionHighlight.CaseSolved(WhoDidItText(whoDidItResources, revealPuzzle).reveal()))
-                                                }
-                                                goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                            } else {
-                                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                            }
-                                        },
-                                    )
-                                    GameId.GAME_2048 -> Game2048PlayScreen(
-                                        difficulty = difficulty,
-                                        resume = resume,
-                                        onBack = { navController.popBackStack() },
-                                        onFinished = { result ->
-                                            if (result.solved) {
-                                                goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, result.bestTile)
-                                            } else {
-                                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, result.bestTile)
-                                            }
-                                        },
-                                    )
-                                    GameId.NBACK -> NBackPlayScreen(
-                                        difficulty = difficulty,
-                                        resume = resume,
-                                        onBack = { navController.popBackStack() },
-                                        onFinished = { result ->
-                                            if (result.solved) {
-                                                CompletionExtras.set(
-                                                    CompletionHighlight.NBackBreakdown(
-                                                        hits = result.hits,
-                                                        misses = result.misses,
-                                                        falsePositives = result.falsePositives,
-                                                        avgReactionTimeMs = result.averageReactionTimeMs,
-                                                    ),
-                                                )
-                                                goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                            } else {
-                                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                            }
-                                        },
-                                    )
-                                    GameId.KILLERSUDOKU -> KillerSudokuPlayScreen(
-                                        difficulty = difficulty,
-                                        resume = resume,
-                                        journey = journeyRequest,
-                                        onRestarted = { restartJourney() },
-                                        onBack = { navController.popBackStack() },
-                                        onFinished = { result ->
-                                            if (journeyRequest != null) {
-                                                finishJourney(journeyRequest.stopId, result.solved, result.difficulty, result.elapsedSeconds, result.lossReason, result.score, result.journeySignals)
-                                            } else if (result.solved) {
-                                                goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                            } else {
-                                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                            }
-                                        },
-                                    )
-                                    GameId.THEMECLEAR -> ThemeClearPlayScreen(
-                                        difficulty = difficulty,
-                                        resume = resume,
-                                        onBack = { navController.popBackStack() },
-                                        onFinished = { result ->
-                                            if (result.solved) {
-                                                goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                            } else {
-                                                if (result.intendedWords.isNotEmpty()) {
-                                                    CompletionExtras.set(CompletionHighlight.RevealWordList(result.intendedWords))
-                                                }
-                                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                            }
-                                        },
-                                    )
-                                    GameId.SEQUENCEMEMORY -> SequenceMemoryPlayScreen(
-                                        difficulty = difficulty,
-                                        resume = resume,
-                                        onBack = { navController.popBackStack() },
-                                        onFinished = { result ->
-                                            if (result.solved) {
-                                                goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                            } else {
-                                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                            }
-                                        },
-                                    )
-                                    else -> ChimpTestPlayScreen(
-                                        difficulty = difficulty,
-                                        resume = resume,
-                                        onBack = { navController.popBackStack() },
-                                        onFinished = { result ->
-                                            if (result.solved) {
-                                                goToCompletion(result.difficulty, result.score, 100, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, 0)
-                                            } else {
-                                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: "abandoned", result.score, 0)
-                                            }
-                                        },
-                                    )
-                                }
+                                    ),
+                                )
                             }
                         }
                     }
@@ -1201,7 +824,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                             gameId = lossGameId,
                             difficulty = lossDifficulty,
                             elapsedSeconds = entry.arguments?.getInt("elapsedSeconds") ?: 0,
-                            reason = entry.arguments?.getString("reason") ?: "abandoned",
+                            reason = LossReason.fromKey(entry.arguments?.getString("reason")) ?: LossReason.ABANDONED,
                             score = entry.arguments?.getInt("score") ?: 0,
                             bestTile = entry.arguments?.getInt("bestTile") ?: 0,
                             isMixActive = activeMix != null,
@@ -1285,72 +908,11 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                 val playPreferences = playPreferencesFor(challengerGameId)
                 if (playPreferences.keepScreenOn) Box(Modifier.keepScreenOn())
                 ProvideGamePlayPreferences(playPreferences) {
-                    when (challengerGameId) {
-                        GameId.ANIMALDOKU -> AnimalDokuChallengerPlayScreen(
-                            onFinished = { result ->
-                                ChallengerExtras.set(ChallengerRunDetails(result.puzzleHistory, result.solvesInTier))
-                                navController.navigate(
-                                    Routes.challengerResult(challengerGameId, result.puzzlesSolved, result.tierReached, result.score, result.isNewHighScore, result.reason, result.previousBest, result.fastestSolveSeconds),
-                                ) { popUpTo(Routes.TABS) { inclusive = false } }
-                            },
-                        )
-                        GameId.WORDGUESS -> WordGuessChallengerPlayScreen(
-                            onFinished = { result ->
-                                ChallengerExtras.set(ChallengerRunDetails(result.puzzleHistory, result.solvesInTier))
-                                navController.navigate(
-                                    Routes.challengerResult(challengerGameId, result.puzzlesSolved, result.tierReached, result.score, result.isNewHighScore, result.reason, result.previousBest, result.fastestSolveSeconds),
-                                ) { popUpTo(Routes.TABS) { inclusive = false } }
-                            },
-                        )
-                        GameId.CHIMPTEST -> ChimpTestChallengerPlayScreen(
-                            onFinished = { result ->
-                                ChallengerExtras.set(ChallengerRunDetails(result.puzzleHistory, result.solvesInTier))
-                                navController.navigate(
-                                    Routes.challengerResult(challengerGameId, result.puzzlesSolved, result.tierReached, result.score, result.isNewHighScore, result.reason, result.previousBest, result.fastestSolveSeconds),
-                                ) { popUpTo(Routes.TABS) { inclusive = false } }
-                            },
-                        )
-                        GameId.STARBATTLE -> StarBattleChallengerPlayScreen(
-                            onFinished = { result ->
-                                ChallengerExtras.set(ChallengerRunDetails(result.puzzleHistory, result.solvesInTier))
-                                navController.navigate(
-                                    Routes.challengerResult(challengerGameId, result.puzzlesSolved, result.tierReached, result.score, result.isNewHighScore, result.reason, result.previousBest, result.fastestSolveSeconds),
-                                ) { popUpTo(Routes.TABS) { inclusive = false } }
-                            },
-                        )
-                        GameId.SUDOKU -> SudokuChallengerPlayScreen(
-                            onFinished = { result ->
-                                ChallengerExtras.set(ChallengerRunDetails(result.puzzleHistory, result.solvesInTier))
-                                navController.navigate(
-                                    Routes.challengerResult(challengerGameId, result.puzzlesSolved, result.tierReached, result.score, result.isNewHighScore, result.reason, result.previousBest, result.fastestSolveSeconds),
-                                ) { popUpTo(Routes.TABS) { inclusive = false } }
-                            },
-                        )
-                        GameId.TAKUZU -> TakuzuChallengerPlayScreen(
-                            onFinished = { result ->
-                                ChallengerExtras.set(ChallengerRunDetails(result.puzzleHistory, result.solvesInTier))
-                                navController.navigate(
-                                    Routes.challengerResult(challengerGameId, result.puzzlesSolved, result.tierReached, result.score, result.isNewHighScore, result.reason, result.previousBest, result.fastestSolveSeconds),
-                                ) { popUpTo(Routes.TABS) { inclusive = false } }
-                            },
-                        )
-                        GameId.NONOGRAM -> NonogramChallengerPlayScreen(
-                            onFinished = { result ->
-                                ChallengerExtras.set(ChallengerRunDetails(result.puzzleHistory, result.solvesInTier))
-                                navController.navigate(
-                                    Routes.challengerResult(challengerGameId, result.puzzlesSolved, result.tierReached, result.score, result.isNewHighScore, result.reason, result.previousBest, result.fastestSolveSeconds),
-                                ) { popUpTo(Routes.TABS) { inclusive = false } }
-                            },
-                        )
-                        GameId.BLOCKESCAPE -> BlockEscapeChallengerPlayScreen(
-                            onFinished = { result ->
-                                ChallengerExtras.set(ChallengerRunDetails(result.puzzleHistory, result.solvesInTier))
-                                navController.navigate(
-                                    Routes.challengerResult(challengerGameId, result.puzzlesSolved, result.tierReached, result.score, result.isNewHighScore, result.reason, result.previousBest, result.fastestSolveSeconds),
-                                ) { popUpTo(Routes.TABS) { inclusive = false } }
-                            },
-                        )
-                        else -> Unit
+                    GameRegistry.of(challengerGameId).challenger?.playScreen?.invoke { result ->
+                        ChallengerExtras.set(ChallengerRunDetails(result.puzzleHistory, result.solvesInTier))
+                        navController.navigate(
+                            Routes.challengerResult(challengerGameId, result.puzzlesSolved, result.tierReached, result.score, result.isNewHighScore, result.reason, result.previousBest, result.fastestSolveSeconds),
+                        ) { popUpTo(Routes.TABS) { inclusive = false } }
                     }
                 }
             }
@@ -1484,8 +1046,10 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                     val previousBest = entry.arguments?.getInt("previousBest") ?: 0
                     val fastestSolveSeconds = entry.arguments?.getFloat("fastestSolveSeconds")?.takeIf { it >= 0f }?.toDouble()
                     ProvideGamePlayPreferences(playPreferencesFor(resultGameId)) {
-                        when (resultGameId) {
-                            GameId.ANIMALDOKU -> AnimalDokuChallengerResultScreen(
+                        GameRegistry.of(resultGameId).challenger?.let { spec ->
+                            ChallengerResultScreen(
+                                gameId = resultGameId,
+                                spec = spec,
                                 puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
                                 tierReached = Difficulty.fromKey(entry.arguments?.getString("tier") ?: "easy"),
                                 score = entry.arguments?.getInt("score") ?: 0,
@@ -1508,168 +1072,6 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                 },
                                 onTryAnotherGame = { endMixAndGoToGames() },
                             )
-                            GameId.WORDGUESS -> WordGuessChallengerResultScreen(
-                                puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
-                                tierReached = Difficulty.fromKey(entry.arguments?.getString("tier") ?: "easy"),
-                                score = entry.arguments?.getInt("score") ?: 0,
-                                isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
-                                reason = entry.arguments?.getString("reason") ?: "time_up",
-                                previousBest = previousBest,
-                                fastestSolveSeconds = fastestSolveSeconds,
-                                isMixActive = activeMix != null,
-                                onPlayAgain = {
-                                    playAgainOrDrawMix {
-                                        navController.navigate(Routes.challenger(resultGameId)) {
-                                            popUpTo(Routes.TABS) { inclusive = false }
-                                        }
-                                    }
-                                },
-                                onBackToPuzzles = {
-                                    navController.navigate(Routes.picker(resultGameId)) {
-                                        popUpTo(Routes.TABS) { inclusive = false }
-                                    }
-                                },
-                                onTryAnotherGame = { endMixAndGoToGames() },
-                            )
-                            GameId.CHIMPTEST -> ChimpTestChallengerResultScreen(
-                                puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
-                                tierReached = Difficulty.fromKey(entry.arguments?.getString("tier") ?: "easy"),
-                                score = entry.arguments?.getInt("score") ?: 0,
-                                isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
-                                reason = entry.arguments?.getString("reason") ?: "time_up",
-                                previousBest = previousBest,
-                                fastestSolveSeconds = fastestSolveSeconds,
-                                isMixActive = activeMix != null,
-                                onPlayAgain = {
-                                    playAgainOrDrawMix {
-                                        navController.navigate(Routes.challenger(resultGameId)) {
-                                            popUpTo(Routes.TABS) { inclusive = false }
-                                        }
-                                    }
-                                },
-                                onBackToPuzzles = {
-                                    navController.navigate(Routes.picker(resultGameId)) {
-                                        popUpTo(Routes.TABS) { inclusive = false }
-                                    }
-                                },
-                                onTryAnotherGame = { endMixAndGoToGames() },
-                            )
-                            GameId.SUDOKU -> SudokuChallengerResultScreen(
-                                puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
-                                tierReached = Difficulty.fromKey(entry.arguments?.getString("tier") ?: "easy"),
-                                score = entry.arguments?.getInt("score") ?: 0,
-                                isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
-                                reason = entry.arguments?.getString("reason") ?: "time_up",
-                                previousBest = previousBest,
-                                fastestSolveSeconds = fastestSolveSeconds,
-                                isMixActive = activeMix != null,
-                                onPlayAgain = {
-                                    playAgainOrDrawMix {
-                                        navController.navigate(Routes.challenger(resultGameId)) {
-                                            popUpTo(Routes.TABS) { inclusive = false }
-                                        }
-                                    }
-                                },
-                                onBackToPuzzles = {
-                                    navController.navigate(Routes.picker(resultGameId)) {
-                                        popUpTo(Routes.TABS) { inclusive = false }
-                                    }
-                                },
-                                onTryAnotherGame = { endMixAndGoToGames() },
-                            )
-                            GameId.TAKUZU -> TakuzuChallengerResultScreen(
-                                puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
-                                tierReached = Difficulty.fromKey(entry.arguments?.getString("tier") ?: "easy"),
-                                score = entry.arguments?.getInt("score") ?: 0,
-                                isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
-                                reason = entry.arguments?.getString("reason") ?: "time_up",
-                                previousBest = previousBest,
-                                fastestSolveSeconds = fastestSolveSeconds,
-                                isMixActive = activeMix != null,
-                                onPlayAgain = {
-                                    playAgainOrDrawMix {
-                                        navController.navigate(Routes.challenger(resultGameId)) {
-                                            popUpTo(Routes.TABS) { inclusive = false }
-                                        }
-                                    }
-                                },
-                                onBackToPuzzles = {
-                                    navController.navigate(Routes.picker(resultGameId)) {
-                                        popUpTo(Routes.TABS) { inclusive = false }
-                                    }
-                                },
-                                onTryAnotherGame = { endMixAndGoToGames() },
-                            )
-                            GameId.BLOCKESCAPE -> BlockEscapeChallengerResultScreen(
-                                puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
-                                tierReached = Difficulty.fromKey(entry.arguments?.getString("tier") ?: "easy"),
-                                score = entry.arguments?.getInt("score") ?: 0,
-                                isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
-                                reason = entry.arguments?.getString("reason") ?: "time_up",
-                                previousBest = previousBest,
-                                fastestSolveSeconds = fastestSolveSeconds,
-                                isMixActive = activeMix != null,
-                                onPlayAgain = {
-                                    playAgainOrDrawMix {
-                                        navController.navigate(Routes.challenger(resultGameId)) {
-                                            popUpTo(Routes.TABS) { inclusive = false }
-                                        }
-                                    }
-                                },
-                                onBackToPuzzles = {
-                                    navController.navigate(Routes.picker(resultGameId)) {
-                                        popUpTo(Routes.TABS) { inclusive = false }
-                                    }
-                                },
-                                onTryAnotherGame = { endMixAndGoToGames() },
-                            )
-                            GameId.NONOGRAM -> NonogramChallengerResultScreen(
-                                puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
-                                tierReached = Difficulty.fromKey(entry.arguments?.getString("tier") ?: "easy"),
-                                score = entry.arguments?.getInt("score") ?: 0,
-                                isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
-                                reason = entry.arguments?.getString("reason") ?: "time_up",
-                                previousBest = previousBest,
-                                fastestSolveSeconds = fastestSolveSeconds,
-                                isMixActive = activeMix != null,
-                                onPlayAgain = {
-                                    playAgainOrDrawMix {
-                                        navController.navigate(Routes.challenger(resultGameId)) {
-                                            popUpTo(Routes.TABS) { inclusive = false }
-                                        }
-                                    }
-                                },
-                                onBackToPuzzles = {
-                                    navController.navigate(Routes.picker(resultGameId)) {
-                                        popUpTo(Routes.TABS) { inclusive = false }
-                                    }
-                                },
-                                onTryAnotherGame = { endMixAndGoToGames() },
-                            )
-                            GameId.STARBATTLE -> StarBattleChallengerResultScreen(
-                                puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
-                                tierReached = Difficulty.fromKey(entry.arguments?.getString("tier") ?: "easy"),
-                                score = entry.arguments?.getInt("score") ?: 0,
-                                isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
-                                reason = entry.arguments?.getString("reason") ?: "time_up",
-                                previousBest = previousBest,
-                                fastestSolveSeconds = fastestSolveSeconds,
-                                isMixActive = activeMix != null,
-                                onPlayAgain = {
-                                    playAgainOrDrawMix {
-                                        navController.navigate(Routes.challenger(resultGameId)) {
-                                            popUpTo(Routes.TABS) { inclusive = false }
-                                        }
-                                    }
-                                },
-                                onBackToPuzzles = {
-                                    navController.navigate(Routes.picker(resultGameId)) {
-                                        popUpTo(Routes.TABS) { inclusive = false }
-                                    }
-                                },
-                                onTryAnotherGame = { endMixAndGoToGames() },
-                            )
-                            else -> Unit
                         }
                     }
                 }
@@ -1776,7 +1178,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
 private fun rememberNextDaily(dailyKey: String?, finishedGameId: GameId, finishedDifficulty: Difficulty): Pair<GameId, Difficulty>? {
     if (dailyKey == null) return null
     val dailyViewModel: DailyViewModel = hiltViewModel()
-    val dailyState by dailyViewModel.state.collectAsState()
+    val dailyState by dailyViewModel.state.collectAsStateWithLifecycle()
     if (dailyState.loading || dailyState.today.toString() != dailyKey) return null
     return remember(dailyState.games, finishedGameId, finishedDifficulty) {
         nextUnplayedDaily(dailyState.games, finishedGameId, finishedDifficulty)

@@ -5,11 +5,8 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.games.sudoku.SudokuBoxRulePicture
 import com.quietgrid.app.games.sudoku.SudokuColumnRulePicture
 import com.quietgrid.app.games.sudoku.SudokuRowRulePicture
-import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
 import com.quietgrid.app.ui.components.QuickRule
 import com.quietgrid.app.ui.components.QuickStartContent
-
-fun miniSudokuDifficultyLabelRes(difficulty: Difficulty): Int = sudokuDifficultyLabelRes(difficulty)
 
 fun miniSudokuDifficultyDescriptionRes(difficulty: Difficulty): Int = when (difficulty) {
     Difficulty.EASY -> R.string.minisudoku_difficulty_desc_easy

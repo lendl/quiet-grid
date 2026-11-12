@@ -15,6 +15,7 @@ import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
 import com.quietgrid.app.data.recentlyPlayedPuzzleIds
+import com.quietgrid.app.session.LossReason
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
@@ -42,7 +43,7 @@ data class NonogramResult(
     val solved: Boolean,
     val score: Int,
     val elapsedSeconds: Int,
-    val lossReason: String?,
+    val lossReason: LossReason?,
     val isFirstSolve: Boolean = false,
     val isNewHighScore: Boolean = false,
     val solution: List<List<Boolean>> = emptyList(),

@@ -1,7 +1,7 @@
 package com.quietgrid.app.ui.journey.map
 
 import com.quietgrid.app.core.GameId
-import com.quietgrid.app.ui.components.GAME_ICON_GLYPHS
+import com.quietgrid.app.games.GameRegistry
 import kotlin.math.hypot
 import kotlin.math.roundToInt
 import kotlin.random.Random
@@ -16,7 +16,7 @@ private const val GLYPH_ATTEMPTS_PER_PAGE = 4000
 data class GlyphPlacement(val gameId: GameId, val x: Float, val y: Float, val size: Float)
 
 fun journeyGlyphs(layout: JourneyRoadLayout, seed: Int): List<GlyphPlacement> {
-    val games = GameId.entries.filter { it != GameId.SUDOKU && GAME_ICON_GLYPHS.containsKey(it) }
+    val games = GameId.entries.filter { it != GameId.SUDOKU && GameRegistry.of(it).iconGlyph.isNotEmpty() }
     if (games.size < 2 || layout.width < GLYPH_MAX_SIZE) return emptyList()
     val random = Random(seed * 17 + 5)
     val samples = layout.roadSamples()

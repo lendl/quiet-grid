@@ -1,10 +1,9 @@
 package com.quietgrid.app.games.wordguess
 
-import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.session.advanceAfterSolve
+import com.quietgrid.app.session.startChallengerSession
 import com.quietgrid.engine.wordguess.WordGuessPuzzleEntry
-
-private val WORDGUESS_CHALLENGER_TIER_ORDER = listOf(Difficulty.EASY, Difficulty.MEDIUM, Difficulty.HARD, Difficulty.EXPERT)
 
 private fun sessionFromEntry(entry: WordGuessPuzzleEntry): WordGuessSession = WordGuessSession(
     puzzleId = entry.id,
@@ -16,54 +15,6 @@ private fun sessionFromEntry(entry: WordGuessPuzzleEntry): WordGuessSession = Wo
     status = WordGuessStatus.PLAYING,
 )
 
-fun createInitialWordGuessChallengerSession(firstPuzzle: WordGuessPuzzleEntry): WordGuessChallengerSession =
-    WordGuessChallengerSession(
-        puzzleSession = sessionFromEntry(firstPuzzle),
-        livesRemaining = WORDGUESS_CHALLENGER_STARTING_LIVES,
-        tier = Difficulty.EASY,
-        solvesInTier = 0,
-        puzzlesSolved = 0,
-        score = 0,
-        secondsRemaining = WORDGUESS_CHALLENGER_STARTING_SECONDS,
-        secondsOnCurrentPuzzle = 0.0,
-        servedPuzzleIds = setOf(firstPuzzle.id),
-    )
-
-fun wordGuessChallengerTierAfterSolve(currentTier: Difficulty, solvesInTier: Int): Pair<Difficulty, Int> {
-    val nextSolves = solvesInTier + 1
-    val currentIndex = WORDGUESS_CHALLENGER_TIER_ORDER.indexOf(currentTier)
-    return if (nextSolves >= WORDGUESS_CHALLENGER_SOLVES_PER_TIER && currentIndex < WORDGUESS_CHALLENGER_TIER_ORDER.lastIndex) {
-        WORDGUESS_CHALLENGER_TIER_ORDER[currentIndex + 1] to 0
-    } else {
-        currentTier to nextSolves
-    }
-}
-
-fun wordGuessChallengerFastestSolve(session: WordGuessChallengerSession): Double =
-    session.fastestSolveSeconds?.let { minOf(it, session.secondsOnCurrentPuzzle) } ?: session.secondsOnCurrentPuzzle
-
-fun advanceWordGuessChallengerAfterSolve(
-    session: WordGuessChallengerSession,
-    nextTier: Difficulty,
-    nextSolvesInTier: Int,
-    nextPuzzle: WordGuessPuzzleEntry,
-): WordGuessChallengerSession {
-    val gainedScore = computeWordGuessScore(session.puzzleSession.difficulty, session.puzzleSession.guesses.size, session.secondsOnCurrentPuzzle.toInt())
-    val fastestSolveSeconds = wordGuessChallengerFastestSolve(session)
-    return session.copy(
-        puzzleSession = sessionFromEntry(nextPuzzle),
-        tier = nextTier,
-        solvesInTier = nextSolvesInTier,
-        puzzlesSolved = session.puzzlesSolved + 1,
-        score = session.score + gainedScore,
-        secondsRemaining = session.secondsRemaining + WORDGUESS_CHALLENGER_BONUS_SECONDS,
-        secondsOnCurrentPuzzle = 0.0,
-        servedPuzzleIds = session.servedPuzzleIds + nextPuzzle.id,
-        fastestSolveSeconds = fastestSolveSeconds,
-        puzzleHistory = session.puzzleHistory + ChallengerPuzzleSolve(session.tier, session.secondsOnCurrentPuzzle),
-    )
-}
-
 fun advanceWordGuessChallengerAfterLoss(
     session: WordGuessChallengerSession,
     nextPuzzle: WordGuessPuzzleEntry,
@@ -73,7 +24,22 @@ fun advanceWordGuessChallengerAfterLoss(
     servedPuzzleIds = session.servedPuzzleIds + nextPuzzle.id,
 )
 
-fun tickWordGuessChallenger(session: WordGuessChallengerSession): WordGuessChallengerSession = session.copy(
-    secondsRemaining = session.secondsRemaining - 1.0,
-    secondsOnCurrentPuzzle = session.secondsOnCurrentPuzzle + 1.0,
+fun createInitialWordGuessChallengerSession(firstPuzzle: WordGuessPuzzleEntry): WordGuessChallengerSession =
+    startChallengerSession(WORDGUESS_CHALLENGER_CONFIG, sessionFromEntry(firstPuzzle), firstPuzzle.id)
+
+fun wordGuessChallengerPuzzleScore(session: WordGuessChallengerSession): Int =
+    computeWordGuessScore(session.puzzleSession.difficulty, session.puzzleSession.guesses.size, session.secondsOnCurrentPuzzle.toInt())
+
+fun advanceWordGuessChallengerAfterSolve(
+    session: WordGuessChallengerSession,
+    nextTier: Difficulty,
+    nextSolvesInTier: Int,
+    nextPuzzle: WordGuessPuzzleEntry,
+): WordGuessChallengerSession = session.advanceAfterSolve(
+    config = WORDGUESS_CHALLENGER_CONFIG,
+    gainedScore = wordGuessChallengerPuzzleScore(session),
+    nextTier = nextTier,
+    nextSolvesInTier = nextSolvesInTier,
+    nextPuzzleSession = sessionFromEntry(nextPuzzle),
+    nextPuzzleId = nextPuzzle.id,
 )

@@ -6,6 +6,7 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.SettingsRepository
 import com.quietgrid.app.data.ThemePreferencesRepository
+import com.quietgrid.app.session.LossReason
 import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeSessionStore
 import com.quietgrid.app.testutil.FakeStatsStore
@@ -121,7 +122,7 @@ class WordSearchPlayViewModelTest {
         mainDispatcherRule.dispatcher.scheduler.runCurrent()
 
         assertTrue(sessionStore.cleared)
-        assertEquals("abandoned", results.single().lossReason)
+        assertEquals(LossReason.ABANDONED, results.single().lossReason)
         collectJob.cancel()
     }
 

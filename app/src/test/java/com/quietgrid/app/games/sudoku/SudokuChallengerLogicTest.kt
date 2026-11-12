@@ -2,6 +2,8 @@ package com.quietgrid.app.games.sudoku
 
 import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.session.challengerTierAfterSolve
+import com.quietgrid.app.session.tick
 import com.quietgrid.engine.sudoku.SudokuPuzzleEntry
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -42,7 +44,7 @@ class SudokuChallengerLogicTest {
 
     @Test
     fun `sudokuChallengerTierAfterSolve stays on the same tier before the solve threshold`() {
-        val (tier, solves) = sudokuChallengerTierAfterSolve(Difficulty.EASY, solvesInTier = 0)
+        val (tier, solves) = challengerTierAfterSolve(SUDOKU_CHALLENGER_CONFIG, Difficulty.EASY, solvesInTier = 0)
 
         assertEquals(Difficulty.EASY, tier)
         assertEquals(1, solves)
@@ -50,7 +52,7 @@ class SudokuChallengerLogicTest {
 
     @Test
     fun `sudokuChallengerTierAfterSolve advances tier once the threshold is reached`() {
-        val (tier, solves) = sudokuChallengerTierAfterSolve(Difficulty.EASY, solvesInTier = SUDOKU_CHALLENGER_SOLVES_PER_TIER - 1)
+        val (tier, solves) = challengerTierAfterSolve(SUDOKU_CHALLENGER_CONFIG, Difficulty.EASY, solvesInTier = SUDOKU_CHALLENGER_SOLVES_PER_TIER - 1)
 
         assertEquals(Difficulty.MEDIUM, tier)
         assertEquals(0, solves)
@@ -76,7 +78,7 @@ class SudokuChallengerLogicTest {
     fun `tickSudokuChallenger counts the clock down and the current puzzle up`() {
         val initial = createInitialSudokuChallengerSession(testPuzzle("p1", "easy"))
 
-        val ticked = tickSudokuChallenger(initial)
+        val ticked = initial.tick()
 
         assertEquals(SUDOKU_CHALLENGER_STARTING_SECONDS - 1.0, ticked.secondsRemaining, 0.0)
         assertEquals(1.0, ticked.secondsOnCurrentPuzzle, 0.0)

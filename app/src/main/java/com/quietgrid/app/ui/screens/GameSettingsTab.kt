@@ -23,7 +23,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -43,6 +42,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
@@ -51,13 +51,12 @@ import com.quietgrid.app.core.themes.sparseTiers
 import com.quietgrid.app.core.themes.themeIcon
 import com.quietgrid.app.core.themes.themeLabelRes
 import com.quietgrid.app.data.RepositoriesViewModel
+import com.quietgrid.app.games.GameRegistry
 import com.quietgrid.app.games.themeclear.ThemeClearPuzzleBank
 import com.quietgrid.app.games.themeclear.currentThemeClearLocale
 import com.quietgrid.app.games.wordsearch.WordSearchPuzzleBank
 import com.quietgrid.app.games.wordsearch.currentWordSearchLocale
 import kotlinx.coroutines.launch
-
-private val THEMED_GAMES = setOf(GameId.WORDSEARCH, GameId.THEMECLEAR)
 
 private val COUNT_COLUMN_WIDTH = 38.dp
 
@@ -83,7 +82,7 @@ private fun themeLabel(context: Context, themeId: String): String = context.getS
 
 @Composable
 fun GameSettingsTab(gameId: GameId) {
-    if (gameId in THEMED_GAMES) {
+    if (GameRegistry.of(gameId).capabilities.themed) {
         ThemeSelectionSection(gameId) {
             GamePreferencesSection(gameId)
             HorizontalDivider(Modifier.padding(vertical = 12.dp))
@@ -106,14 +105,14 @@ private fun ThemeSelectionSection(gameId: GameId, header: @Composable () -> Unit
     val repositories: RepositoriesViewModel = hiltViewModel()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val settings by repositories.settingsRepository.settings.collectAsState(initial = null)
+    val settings by repositories.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = null)
     val puzzleLanguage = settings?.puzzleLanguage ?: return
     val locale = themeLocaleFor(gameId, puzzleLanguage)
     val counts by produceState<List<ThemeCount>?>(null, gameId, locale) {
         value = themeCountsFor(gameId, context, locale)
     }
     val excludedFlow = remember(gameId, locale) { repositories.themePreferencesRepository.excludedThemes(gameId, locale) }
-    val excluded by excludedFlow.collectAsState(initial = null)
+    val excluded by excludedFlow.collectAsStateWithLifecycle(initialValue = null)
     var openThemeId by rememberSaveable(gameId) { mutableStateOf<String?>(null) }
     val currentCounts = counts ?: return
     val currentExcluded = excluded ?: return

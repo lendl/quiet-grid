@@ -18,13 +18,6 @@ import com.quietgrid.app.ui.components.QuickRule
 import com.quietgrid.app.ui.components.QuickStartContent
 import com.quietgrid.app.ui.components.QuickStartExample
 
-fun guessByNumbersDifficultyLabelRes(difficulty: Difficulty): Int = when (difficulty) {
-    Difficulty.EASY -> R.string.guessbynumbers_difficulty_easy
-    Difficulty.MEDIUM -> R.string.guessbynumbers_difficulty_medium
-    Difficulty.HARD -> R.string.guessbynumbers_difficulty_hard
-    Difficulty.EXPERT -> R.string.guessbynumbers_difficulty_expert
-}
-
 fun guessByNumbersDifficultyDescriptionRes(difficulty: Difficulty): Int = when (difficulty) {
     Difficulty.EASY -> R.string.guessbynumbers_difficulty_desc_easy
     Difficulty.MEDIUM -> R.string.guessbynumbers_difficulty_desc_medium

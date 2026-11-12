@@ -27,7 +27,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,15 +43,16 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
-import com.quietgrid.app.core.gameDifficultyLabelRes
+import com.quietgrid.app.games.gameDifficultyLabelRes
 
 @Composable
 fun JourneyScreen(gameId: GameId, onOpenChapter: (Int) -> Unit) {
     val viewModel: JourneyViewModel = hiltViewModel()
-    val state by remember(viewModel, gameId) { viewModel.state(gameId) }.collectAsState(initial = null)
+    val state by remember(viewModel, gameId) { viewModel.state(gameId) }.collectAsStateWithLifecycle(initialValue = null)
     val current = state ?: return
     val chapters = remember(current.rows) { journeyChapterSummaries(current.rows) }
     JourneyChapterList(gameId, chapters, onOpenChapter)

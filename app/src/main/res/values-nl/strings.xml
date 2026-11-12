@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="loss_abandoned_eyebrow">Puzzel beëindigd</string>
+    <string name="loss_abandoned_title">Puzzel niet af</string>
+    <string name="loss_abandoned_body">Je hebt deze puzzel beëindigd voordat hij was opgelost.</string>
+    <string name="difficulty_easy">Makkelijk</string>
+    <string name="difficulty_medium">Gemiddeld</string>
+    <string name="difficulty_hard">Moeilijk</string>
+    <string name="difficulty_expert">Expert</string>
     <string name="app_name">Quiet Grid</string>
 
     <string name="tab_games">Spellen</string>
@@ -339,10 +346,6 @@
     <string name="chimp_title">Chimp Test</string>
     <string name="chimp_short_title">Chimp</string>
     <string name="chimp_tagline">Tik de cijfers op volgorde aan voordat ze verdwijnen.</string>
-    <string name="chimp_difficulty_easy">Makkelijk</string>
-    <string name="chimp_difficulty_medium">Gemiddeld</string>
-    <string name="chimp_difficulty_hard">Moeilijk</string>
-    <string name="chimp_difficulty_expert">Expert</string>
     <string name="chimp_difficulty_desc_easy">4×4 raster. Onthoud tot 7 cijfers.</string>
     <string name="chimp_difficulty_desc_medium">5×5 raster. Onthoud tot 9 cijfers.</string>
     <string name="chimp_difficulty_desc_hard">6×6 raster. Onthoud tot 11 cijfers.</string>
@@ -363,7 +366,6 @@
     <string name="chimp_tip_group_title">Nabijgelegen cijfers groeperen</string>
     <string name="chimp_tip_group_body">Let op clusters van opeenvolgende cijfers. Buren na elkaar aantikken is sneller dan dwars door het raster springen.</string>
     <string name="chimp_how_to_play_scoring">De score is gebaseerd op de totale tijd over alle rondes. Sneller tikken levert een hogere score op.</string>
-    <string name="chimp_loss_abandoned_eyebrow">Puzzel beëindigd</string>
     <string name="chimp_loss_abandoned_title">Puzzel niet af</string>
     <string name="chimp_loss_abandoned_body">Je hebt deze puzzel beëindigd voordat hij was opgelost.</string>
     <string name="chimp_loss_rule_failure_eyebrow">Puzzel verloren</string>
@@ -372,10 +374,6 @@
 
     <!-- Takuzu -->
     <string name="takuzu_tagline">Vul het rooster met 0 en 1 via logica.</string>
-    <string name="takuzu_difficulty_easy">Makkelijk</string>
-    <string name="takuzu_difficulty_medium">Gemiddeld</string>
-    <string name="takuzu_difficulty_hard">Moeilijk</string>
-    <string name="takuzu_difficulty_expert">Expert</string>
     <string name="takuzu_difficulty_desc_easy">Meer startcellen en mildere deducties.</string>
     <string name="takuzu_difficulty_desc_medium">Gebalanceerde openingen die je vragen iets verder vooruit te lezen.</string>
     <string name="takuzu_difficulty_desc_hard">Strakkere opzetten met minder vrije informatie en sterkere patroonherkenning.</string>
@@ -425,9 +423,6 @@
     <string name="takuzu_how_to_play_scoring">Start op 10.000 en daalt terwijl de timer loopt. Elke fout voltooide lijn kost 500 punten. De score daalt trager bij hogere moeilijkheden.</string>
     <string name="takuzu_tip_watch_flashes_title">Let op flitsen</string>
     <string name="takuzu_tip_watch_flashes_body">Wanneer je een rij of kolom correct voltooit, lichten alle cellen kort op als bevestiging.</string>
-    <string name="takuzu_loss_abandoned_eyebrow">Puzzel beëindigd</string>
-    <string name="takuzu_loss_abandoned_title">Puzzel niet af</string>
-    <string name="takuzu_loss_abandoned_body">Je hebt deze puzzel beëindigd voordat hij was opgelost.</string>
     <string name="analyzer_title">Bekijk de oplossing stap voor stap</string>
     <string name="analyzer_load_failed">Kon de oplossing voor deze puzzel niet laden.</string>
     <string name="analyzer_already_solved">Deze puzzel was al volledig opgelost.</string>
@@ -436,10 +431,6 @@
 
     <!-- Nonogram -->
     <string name="nonogram_tagline">Vul cellen om aan de rij- en kolomhints te voldoen.</string>
-    <string name="nonogram_difficulty_easy">Makkelijk</string>
-    <string name="nonogram_difficulty_medium">Gemiddeld</string>
-    <string name="nonogram_difficulty_hard">Moeilijk</string>
-    <string name="nonogram_difficulty_expert">Expert</string>
     <string name="nonogram_difficulty_desc_easy">Kleine hintpatronen met duidelijke openingen.</string>
     <string name="nonogram_difficulty_desc_medium">Uitgebalanceerde rasters die gestage deductie vereisen.</string>
     <string name="nonogram_difficulty_desc_hard">Krappere hintsets die diepere overlapcontroles vereisen.</string>
@@ -480,19 +471,12 @@
     <string name="nonogram_hint_reveal_fill_body">Vul de gemarkeerde cel.</string>
     <string name="nonogram_hint_reveal_empty_body">Markeer de gemarkeerde cel als leeg.</string>
     <string name="nonogram_how_to_play_scoring">De score begint op 10.000 en daalt terwijl de tijd loopt. Sneller oplossen levert een hogere score op.</string>
-    <string name="nonogram_loss_abandoned_eyebrow">Puzzel beëindigd</string>
-    <string name="nonogram_loss_abandoned_title">Puzzel niet af</string>
-    <string name="nonogram_loss_abandoned_body">Je hebt deze puzzel beëindigd voordat hij was opgelost.</string>
     <string name="nonogram_input_mode_fill">Vullen</string>
     <string name="nonogram_input_mode_cross">Leeg markeren</string>
 
     <!-- Minesweeper -->
     <string name="minesweeper_title">Mijnenveger</string>
     <string name="minesweeper_tagline">Maak het rooster vrij zonder een mijn te openen.</string>
-    <string name="minesweeper_difficulty_easy">Makkelijk</string>
-    <string name="minesweeper_difficulty_medium">Gemiddeld</string>
-    <string name="minesweeper_difficulty_hard">Moeilijk</string>
-    <string name="minesweeper_difficulty_expert">Expert</string>
     <string name="minesweeper_difficulty_desc_easy">Meer ademruimte voor vroeg scannen en rustig aanwijzingen lezen.</string>
     <string name="minesweeper_difficulty_desc_medium">Een gebalanceerd bord met meer mijnen en minder veilige openingen.</string>
     <string name="minesweeper_difficulty_desc_hard">Strakkere ruimtes die zorgvuldig markeren en aanwijzingen volgen belonen.</string>
@@ -557,10 +541,6 @@
     <!-- Sudoku -->
     <string name="sudoku_title">Sudoku</string>
     <string name="sudoku_tagline">Plaats de cijfers 1 tot en met 9 zodat elke rij, kolom en box geldig blijft.</string>
-    <string name="sudoku_difficulty_easy">Makkelijk</string>
-    <string name="sudoku_difficulty_medium">Gemiddeld</string>
-    <string name="sudoku_difficulty_hard">Moeilijk</string>
-    <string name="sudoku_difficulty_expert">Expert</string>
     <string name="sudoku_difficulty_desc_easy">Startroosters bedoeld voor logisch oplossen met eerst singles.</string>
     <string name="sudoku_difficulty_desc_medium">Gebalanceerde roosters die kunnen uitgroeien tot technieken met notities.</string>
     <string name="sudoku_difficulty_desc_hard">Schaarse roosters bedoeld voor rijkere zetanalyse en validatie.</string>
@@ -624,17 +604,12 @@
     <string name="sudoku_tip_1_body">Kies één rij, één kolom of één box en vraag je af welke cijfers nog ontbreken. Kleine, lokale controles blijven makkelijker te vertrouwen dan brede gissingen.</string>
     <string name="sudoku_tip_2_title">Notities houden moeilijke cellen eerlijk</string>
     <string name="sudoku_tip_2_body">Als een cel nog meerdere geldige cijfers heeft, schakel dan naar notitiemodus in plaats van te gokken. Genoteerde kandidaten maken hidden singles en andere gedwongen plaatsingen veel gemakkelijker te herkennen.</string>
-    <string name="sudoku_loss_abandoned_eyebrow">Puzzel beëindigd</string>
     <string name="sudoku_loss_abandoned_title">Sudoku-sessie beëindigd</string>
     <string name="sudoku_loss_abandoned_body">Je hebt deze Sudoku-sessie beëindigd voordat het rooster opgelost was.</string>
 
     <!-- Word Search -->
     <string name="wordsearch_title">Woordzoeker</string>
     <string name="wordsearch_tagline">Trek woorden in rechte lijnen en los het verborgen bonuswoord op in het raster.</string>
-    <string name="wordsearch_difficulty_easy">Makkelijk</string>
-    <string name="wordsearch_difficulty_medium">Gemiddeld</string>
-    <string name="wordsearch_difficulty_hard">Moeilijk</string>
-    <string name="wordsearch_difficulty_expert">Expert</string>
     <string name="wordsearch_difficulty_desc_easy">Horizontale en verticale voorwaartse woorden met ruime afstand.</string>
     <string name="wordsearch_difficulty_desc_medium">Voegt diagonale voorwaartse woorden en krappere clusters toe.</string>
     <string name="wordsearch_difficulty_desc_hard">Alle richtingen, ook achterwaarts, met dichtere overlap.</string>
@@ -669,17 +644,12 @@
     <string name="wordsearch_tip_2_title">Voltooi één lijn tegelijk</string>
     <string name="wordsearch_tip_2_body">Begin een selectie, sleep naar het eindpunt en bevestig. Een nieuwe selectie starten vervangt de tijdelijke selectie.</string>
     <string name="wordsearch_how_to_play_scoring">Begint op 15.000 en daalt terwijl de tijd loopt. Elk woord dat nog niet gevonden is bij het oplossen van het verborgen woord levert een bonus van 300 punten op. Elke verkeerde tik op het verborgen woord kost 500 punten en 10%% nauwkeurigheid.</string>
-    <string name="wordsearch_loss_abandoned_eyebrow">Puzzel beëindigd</string>
     <string name="wordsearch_loss_abandoned_title">Woordzoeker-sessie beëindigd</string>
     <string name="wordsearch_loss_abandoned_body">Je hebt deze Woordzoeker-sessie beëindigd voordat je alle woorden en het verborgen woord had opgelost.</string>
 
     <!-- Block Fill -->
     <string name="blockfill_title">Block Fill</string>
     <string name="blockfill_tagline">Sleep stukken op het bord en maak volle lijnen leeg.</string>
-    <string name="blockfill_difficulty_easy">Makkelijk</string>
-    <string name="blockfill_difficulty_medium">Gemiddeld</string>
-    <string name="blockfill_difficulty_hard">Moeilijk</string>
-    <string name="blockfill_difficulty_expert">Expert</string>
     <string name="blockfill_difficulty_desc_easy">Een klein startpatroon en makkelijk te plaatsen stukken. Probeer 1000 punten te halen.</string>
     <string name="blockfill_difficulty_desc_medium">Een iets groter patroon en meer verschillende vormen. Probeer 1500 punten te halen.</string>
     <string name="blockfill_difficulty_desc_hard">Een groter patroon, onhandige vormen en sets die planning vragen. Probeer 2000 punten te halen.</string>
@@ -759,10 +729,6 @@
     <string name="blockfill_loss_rule_failure_body">Geen van je overgebleven stukken kon ergens op het bord geplaatst worden.</string>
     <string name="wordguess_title">Woord Raden</string>
     <string name="wordguess_tagline">Raad het verborgen woord in zes pogingen.</string>
-    <string name="wordguess_difficulty_easy">Makkelijk</string>
-    <string name="wordguess_difficulty_medium">Gemiddeld</string>
-    <string name="wordguess_difficulty_hard">Moeilijk</string>
-    <string name="wordguess_difficulty_expert">Expert</string>
     <string name="wordguess_difficulty_desc_easy">Woorden van 5 letters, veelvoorkomende woordenschat.</string>
     <string name="wordguess_difficulty_desc_medium">Woorden van 5 letters, bredere woordenschat met zeldzamere woorden.</string>
     <string name="wordguess_difficulty_desc_hard">Woorden van 6 letters, veelvoorkomende woordenschat.</string>
@@ -796,10 +762,6 @@
     <!-- AnimalDoku -->
     <string name="animaldoku_title">Animal Doku</string>
     <string name="animaldoku_tagline">Plaats één dier per rij, kolom en gekleurde regio.</string>
-    <string name="animaldoku_difficulty_easy">Makkelijk</string>
-    <string name="animaldoku_difficulty_medium">Gemiddeld</string>
-    <string name="animaldoku_difficulty_hard">Moeilijk</string>
-    <string name="animaldoku_difficulty_expert">Expert</string>
     <string name="animaldoku_difficulty_desc_easy">Kleine roosters opgelost met eenvoudige rij-, kolom- en regiocontroles.</string>
     <string name="animaldoku_difficulty_desc_medium">Iets grotere roosters waarbij je paren van mogelijke plekken tegen elkaar moet afwegen.</string>
     <string name="animaldoku_difficulty_desc_hard">Grotere, krappere roosters die korte redeneerketens vereisen om elk dier te plaatsen.</string>
@@ -856,74 +818,35 @@
     <string name="animaldoku_loss_rule_failure_eyebrow">Puzzel verloren</string>
     <string name="animaldoku_loss_rule_failure_title">Geen levens meer</string>
     <string name="animaldoku_loss_rule_failure_body">Drie foute openingen kostten je al je levens en beëindigden de puzzel.</string>
-    <string name="animaldoku_challenger_label">Challenger</string>
-    <string name="animaldoku_challenger_description">Los zoveel mogelijk puzzels op voordat de tijd om is.</string>
-    <string name="animaldoku_challenger_solved_label">Opgelost</string>
-    <string name="animaldoku_challenger_tier_label">Niveau</string>
-    <string name="animaldoku_challenger_result_time_up_title">Tijd om!</string>
-    <string name="animaldoku_challenger_result_time_up_body">De tijd is om. Zo verliep je ronde.</string>
-    <string name="animaldoku_challenger_result_lives_exhausted_title">Geen levens meer!</string>
+    <string name="challenger_label">Challenger</string>
+    <string name="challenger_solved_label">Opgelost</string>
+    <string name="challenger_tier_label">Niveau</string>
+    <string name="challenger_result_time_up_title">Tijd om!</string>
+    <string name="challenger_result_time_up_body">De tijd is om. Zo verliep je ronde.</string>
+    <string name="challenger_result_abandoned_title">Ronde beëindigd</string>
+    <string name="challenger_result_abandoned_body">Je hebt de ronde vroegtijdig gestopt.</string>
+    <string name="challenger_result_lives_exhausted_title">Geen levens meer!</string>
+    <string name="challenger_result_new_high_score">Nieuwe topscore!</string>
+    <string name="challenger_result_puzzles_solved">Puzzels opgelost</string>
+    <string name="challenger_result_score">Score</string>
+    <string name="challenger_result_fastest_solve">Snelste oplossing</string>
+    <string name="challenger_result_off_best">%1$d punten onder je topscore</string>
+    <string name="challenger_play_again">Opnieuw spelen</string>
+    <string name="challenger_back_to_puzzles">Terug naar puzzels</string>
+    <string name="challenger_try_another_game">Ander spel proberen</string>
+    <string name="challenger_stats_title">Challenger</string>
+    <string name="challenger_stats_best_run">Beste ronde</string>
+    <string name="challenger_description">Los zoveel mogelijk puzzels op voordat de tijd om is.</string>
     <string name="animaldoku_challenger_result_lives_exhausted_body">Drie foute openingen beëindigden je ronde.</string>
-    <string name="animaldoku_challenger_result_abandoned_title">Ronde beëindigd</string>
-    <string name="animaldoku_challenger_result_abandoned_body">Je hebt de ronde vroegtijdig gestopt.</string>
-    <string name="animaldoku_challenger_result_new_high_score">Nieuwe topscore!</string>
-    <string name="animaldoku_challenger_result_puzzles_solved">Puzzels opgelost</string>
-    <string name="animaldoku_challenger_result_score">Score</string>
-    <string name="animaldoku_challenger_result_fastest_solve">Snelste oplossing</string>
-    <string name="animaldoku_challenger_result_off_best">%1$d punten onder je topscore</string>
-    <string name="animaldoku_challenger_play_again">Opnieuw spelen</string>
-    <string name="animaldoku_challenger_back_to_puzzles">Terug naar puzzels</string>
-    <string name="animaldoku_challenger_try_another_game">Ander spel proberen</string>
-    <string name="animaldoku_challenger_stats_title">Challenger</string>
-    <string name="animaldoku_challenger_stats_best_run">Beste ronde</string>
-    <string name="wordguess_challenger_label">Challenger</string>
     <string name="wordguess_challenger_description">Raad zoveel mogelijk woorden voordat de tijd om is.</string>
-    <string name="wordguess_challenger_solved_label">Opgelost</string>
-    <string name="wordguess_challenger_tier_label">Niveau</string>
-    <string name="wordguess_challenger_result_time_up_title">Tijd om!</string>
-    <string name="wordguess_challenger_result_time_up_body">De tijd is om. Zo verliep je ronde.</string>
-    <string name="wordguess_challenger_result_lives_exhausted_title">Geen levens meer!</string>
     <string name="wordguess_challenger_result_lives_exhausted_body">Drie gemiste woorden beëindigden je ronde.</string>
-    <string name="wordguess_challenger_result_abandoned_title">Ronde beëindigd</string>
-    <string name="wordguess_challenger_result_abandoned_body">Je hebt de ronde vroegtijdig gestopt.</string>
-    <string name="wordguess_challenger_result_new_high_score">Nieuwe topscore!</string>
     <string name="wordguess_challenger_result_puzzles_solved">Woorden opgelost</string>
-    <string name="wordguess_challenger_result_score">Score</string>
-    <string name="wordguess_challenger_result_fastest_solve">Snelste oplossing</string>
-    <string name="wordguess_challenger_result_off_best">%1$d punten onder je topscore</string>
-    <string name="wordguess_challenger_play_again">Opnieuw spelen</string>
-    <string name="wordguess_challenger_back_to_puzzles">Terug naar puzzels</string>
-    <string name="wordguess_challenger_try_another_game">Ander spel proberen</string>
-    <string name="wordguess_challenger_stats_title">Challenger</string>
-    <string name="wordguess_challenger_stats_best_run">Beste ronde</string>
-    <string name="chimp_challenger_label">Challenger</string>
     <string name="chimp_challenger_description">Onthoud en tik zoveel mogelijk reeksen voordat de tijd om is.</string>
-    <string name="chimp_challenger_solved_label">Opgelost</string>
-    <string name="chimp_challenger_tier_label">Niveau</string>
     <string name="challenger_result_puzzle_breakdown_heading">Puzzeloverzicht</string>
-    <string name="chimp_challenger_result_time_up_title">Tijd om!</string>
-    <string name="chimp_challenger_result_time_up_body">De tijd is om. Zo verliep je ronde.</string>
-    <string name="chimp_challenger_result_lives_exhausted_title">Geen levens meer!</string>
     <string name="chimp_challenger_result_lives_exhausted_body">Drie foute tikken beëindigden je ronde.</string>
-    <string name="chimp_challenger_result_abandoned_title">Ronde beëindigd</string>
-    <string name="chimp_challenger_result_abandoned_body">Je hebt de ronde vroegtijdig gestopt.</string>
-    <string name="chimp_challenger_result_new_high_score">Nieuwe topscore!</string>
-    <string name="chimp_challenger_result_puzzles_solved">Puzzels opgelost</string>
-    <string name="chimp_challenger_result_score">Score</string>
-    <string name="chimp_challenger_result_fastest_solve">Snelste oplossing</string>
-    <string name="chimp_challenger_result_off_best">%1$d punten onder je topscore</string>
-    <string name="chimp_challenger_play_again">Opnieuw spelen</string>
-    <string name="chimp_challenger_back_to_puzzles">Terug naar puzzels</string>
-    <string name="chimp_challenger_try_another_game">Ander spel proberen</string>
-    <string name="chimp_challenger_stats_title">Challenger</string>
-    <string name="chimp_challenger_stats_best_run">Beste ronde</string>
 
     <string name="arrowescape_title">Pijlenvlucht</string>
     <string name="arrowescape_tagline">Maak het bord leeg, één pijl per keer.</string>
-    <string name="arrowescape_difficulty_easy">Makkelijk</string>
-    <string name="arrowescape_difficulty_medium">Gemiddeld</string>
-    <string name="arrowescape_difficulty_hard">Moeilijk</string>
-    <string name="arrowescape_difficulty_expert">Expert</string>
     <string name="arrowescape_difficulty_desc_easy">Een rustig bord met weinig geblokkeerde paden.</string>
     <string name="arrowescape_difficulty_desc_medium">Een paar stukken blokkeren elkaar — denk een paar zetten vooruit.</string>
     <string name="arrowescape_difficulty_desc_hard">Meerdere pijlen blokkeren tegelijk meerdere andere. Kijk goed voor je tikt.</string>
@@ -949,10 +872,6 @@
     <!-- 2048 -->
     <string name="game2048_title">2048</string>
     <string name="game2048_tagline">Voeg tegels samen om 2048 te bereiken.</string>
-    <string name="game2048_difficulty_easy">Makkelijk</string>
-    <string name="game2048_difficulty_medium">Gemiddeld</string>
-    <string name="game2048_difficulty_hard">Moeilijk</string>
-    <string name="game2048_difficulty_expert">Expert</string>
     <string name="game2048_difficulty_desc_easy">Groter 5x5-bord geeft je meer ruimte om te manoeuvreren.</string>
     <string name="game2048_difficulty_desc_medium">Klassiek 4x4-bord, de originele 2048-indeling.</string>
     <string name="game2048_difficulty_desc_hard">Hetzelfde 4x4-bord, maar met meer onhandige 4-tegels.</string>
@@ -990,10 +909,6 @@
     <!-- Cijfers Raden -->
     <string name="guessbynumbers_title">Cijfers Raden</string>
     <string name="guessbynumbers_tagline">Ontrafel het verborgen woord met slechts twee getallen.</string>
-    <string name="guessbynumbers_difficulty_easy">Makkelijk</string>
-    <string name="guessbynumbers_difficulty_medium">Gemiddeld</string>
-    <string name="guessbynumbers_difficulty_hard">Moeilijk</string>
-    <string name="guessbynumbers_difficulty_expert">Expert</string>
     <string name="guessbynumbers_difficulty_desc_easy">Woorden van 5 letters, veelvoorkomende woordenschat.</string>
     <string name="guessbynumbers_difficulty_desc_medium">Woorden van 5 letters, bredere woordenschat met zeldzamere woorden.</string>
     <string name="guessbynumbers_difficulty_desc_hard">Woorden van 6 letters, veelvoorkomende woordenschat.</string>
@@ -1029,10 +944,6 @@
     <!-- Star Battle -->
     <string name="starbattle_title">Star Battle</string>
     <string name="starbattle_tagline">Plaats je sterren, houd ze uit elkaar</string>
-    <string name="starbattle_difficulty_easy">Makkelijk</string>
-    <string name="starbattle_difficulty_medium">Gemiddeld</string>
-    <string name="starbattle_difficulty_hard">Moeilijk</string>
-    <string name="starbattle_difficulty_expert">Expert</string>
     <string name="starbattle_difficulty_desc_easy">Eén ster per rij, kolom en regio</string>
     <string name="starbattle_difficulty_desc_medium">Sommige puzzels vragen twee sterren per lijn</string>
     <string name="starbattle_difficulty_desc_hard">Diepere deducties, soms met twee sterren per lijn</string>
@@ -1061,85 +972,12 @@
     <string name="starbattle_quickstart_hook">Geen twee sterren mogen elkaar raken, ook niet diagonaal.</string>
 
     <!-- Challenger mode -->
-    <string name="nonogram_challenger_label">Challenger</string>
-    <string name="nonogram_challenger_description">Los zoveel mogelijk puzzels op voordat de tijd om is.</string>
-    <string name="nonogram_challenger_solved_label">Opgelost</string>
-    <string name="nonogram_challenger_tier_label">Niveau</string>
-    <string name="nonogram_challenger_result_time_up_title">Tijd om!</string>
-    <string name="nonogram_challenger_result_time_up_body">De tijd is om. Zo verliep je ronde.</string>
-    <string name="nonogram_challenger_result_abandoned_title">Ronde beëindigd</string>
-    <string name="nonogram_challenger_result_abandoned_body">Je hebt de ronde vroegtijdig gestopt.</string>
-    <string name="nonogram_challenger_result_new_high_score">Nieuwe topscore!</string>
-    <string name="nonogram_challenger_result_puzzles_solved">Puzzels opgelost</string>
-    <string name="nonogram_challenger_result_score">Score</string>
-    <string name="nonogram_challenger_result_fastest_solve">Snelste oplossing</string>
-    <string name="nonogram_challenger_result_off_best">%1$d punten onder je topscore</string>
-    <string name="nonogram_challenger_play_again">Opnieuw spelen</string>
-    <string name="nonogram_challenger_back_to_puzzles">Terug naar puzzels</string>
-    <string name="nonogram_challenger_try_another_game">Ander spel proberen</string>
-    <string name="nonogram_challenger_stats_title">Challenger</string>
-    <string name="nonogram_challenger_stats_best_run">Beste ronde</string>
 
-    <string name="sudoku_challenger_label">Challenger</string>
-    <string name="sudoku_challenger_description">Los zoveel mogelijk puzzels op voordat de tijd om is.</string>
-    <string name="sudoku_challenger_solved_label">Opgelost</string>
-    <string name="sudoku_challenger_tier_label">Niveau</string>
-    <string name="sudoku_challenger_result_time_up_title">Tijd om!</string>
-    <string name="sudoku_challenger_result_time_up_body">De tijd is om. Zo verliep je ronde.</string>
-    <string name="sudoku_challenger_result_lives_exhausted_title">Geen levens meer!</string>
     <string name="sudoku_challenger_result_lives_exhausted_body">Drie fouten beëindigden je ronde.</string>
-    <string name="sudoku_challenger_result_abandoned_title">Ronde beëindigd</string>
-    <string name="sudoku_challenger_result_abandoned_body">Je hebt de ronde vroegtijdig gestopt.</string>
-    <string name="sudoku_challenger_result_new_high_score">Nieuwe topscore!</string>
-    <string name="sudoku_challenger_result_puzzles_solved">Puzzels opgelost</string>
-    <string name="sudoku_challenger_result_score">Score</string>
-    <string name="sudoku_challenger_result_fastest_solve">Snelste oplossing</string>
-    <string name="sudoku_challenger_result_off_best">%1$d punten onder je topscore</string>
-    <string name="sudoku_challenger_play_again">Opnieuw spelen</string>
-    <string name="sudoku_challenger_back_to_puzzles">Terug naar puzzels</string>
-    <string name="sudoku_challenger_try_another_game">Ander spel proberen</string>
-    <string name="sudoku_challenger_stats_title">Challenger</string>
-    <string name="sudoku_challenger_stats_best_run">Beste ronde</string>
 
-    <string name="takuzu_challenger_label">Challenger</string>
-    <string name="takuzu_challenger_description">Los zoveel mogelijk puzzels op voordat de tijd om is.</string>
-    <string name="takuzu_challenger_solved_label">Opgelost</string>
-    <string name="takuzu_challenger_tier_label">Niveau</string>
-    <string name="takuzu_challenger_result_time_up_title">Tijd om!</string>
-    <string name="takuzu_challenger_result_time_up_body">De tijd is om. Zo verliep je ronde.</string>
-    <string name="takuzu_challenger_result_abandoned_title">Ronde beëindigd</string>
-    <string name="takuzu_challenger_result_abandoned_body">Je hebt de ronde vroegtijdig gestopt.</string>
-    <string name="takuzu_challenger_result_new_high_score">Nieuwe topscore!</string>
-    <string name="takuzu_challenger_result_puzzles_solved">Puzzels opgelost</string>
-    <string name="takuzu_challenger_result_score">Score</string>
-    <string name="takuzu_challenger_result_fastest_solve">Snelste oplossing</string>
-    <string name="takuzu_challenger_result_off_best">%1$d punten onder je topscore</string>
-    <string name="takuzu_challenger_play_again">Opnieuw spelen</string>
-    <string name="takuzu_challenger_back_to_puzzles">Terug naar puzzels</string>
-    <string name="takuzu_challenger_try_another_game">Ander spel proberen</string>
-    <string name="takuzu_challenger_stats_title">Challenger</string>
-    <string name="takuzu_challenger_stats_best_run">Beste ronde</string>
 
-    <string name="starbattle_challenger_label">Challenger</string>
-    <string name="starbattle_challenger_description">Los zoveel mogelijk puzzels op voordat de tijd om is.</string>
-    <string name="starbattle_challenger_solved_label">Opgelost</string>
-    <string name="starbattle_challenger_tier_label">Niveau</string>
-    <string name="starbattle_challenger_result_time_up_title">Tijd om!</string>
-    <string name="starbattle_challenger_result_time_up_body">De tijd is om. Zo verliep je ronde.</string>
     <string name="starbattle_challenger_result_hearts_exhausted_title">Geen levens meer!</string>
     <string name="starbattle_challenger_result_hearts_exhausted_body">Drie foute openingen beëindigden je ronde.</string>
-    <string name="starbattle_challenger_result_abandoned_title">Ronde beëindigd</string>
-    <string name="starbattle_challenger_result_abandoned_body">Je hebt de ronde vroegtijdig gestopt.</string>
-    <string name="starbattle_challenger_result_new_high_score">Nieuwe topscore!</string>
-    <string name="starbattle_challenger_result_puzzles_solved">Puzzels opgelost</string>
-    <string name="starbattle_challenger_result_score">Score</string>
-    <string name="starbattle_challenger_result_fastest_solve">Snelste oplossing</string>
-    <string name="starbattle_challenger_result_off_best">%1$d punten onder je topscore</string>
-    <string name="starbattle_challenger_play_again">Opnieuw spelen</string>
-    <string name="starbattle_challenger_back_to_puzzles">Terug naar puzzels</string>
-    <string name="starbattle_challenger_try_another_game">Ander spel proberen</string>
-    <string name="starbattle_challenger_stats_title">Challenger</string>
-    <string name="starbattle_challenger_stats_best_run">Beste ronde</string>
 
     <!-- Analyzer -->
     <string name="analyzer_step_of">Stap %1$d van %2$d</string>
@@ -1226,10 +1064,6 @@
 
     <string name="themeclear_title">Thema Wissen</string>
     <string name="themeclear_tagline">Wis het raster met woorden uit één thema</string>
-    <string name="themeclear_difficulty_easy">Makkelijk</string>
-    <string name="themeclear_difficulty_medium">Gemiddeld</string>
-    <string name="themeclear_difficulty_hard">Moeilijk</string>
-    <string name="themeclear_difficulty_expert">Expert</string>
     <string name="themeclear_difficulty_desc_easy">Klein raster, een paar woorden</string>
     <string name="themeclear_difficulty_desc_medium">Meer letters, met wat verleidelijke foute keuzes</string>
     <string name="themeclear_difficulty_desc_hard">Groter raster, woorden die elkaar blokkeren</string>
@@ -1253,9 +1087,7 @@
     <string name="themeclear_tip_2_body">De puzzel is gemaakt met specifieke woorden, maar elke combinatie van themawoorden die alle letters gebruikt, wint.</string>
     <string name="themeclear_tip_3_title">Schud voor een frisse blik</string>
     <string name="themeclear_tip_3_body">Zit je vast? Schud de letters. Op nieuwe plekken zie je misschien woorden die je eerder miste.</string>
-    <string name="themeclear_loss_abandoned_eyebrow">Puzzel beëindigd</string>
     <string name="themeclear_loss_abandoned_title">Puzzel onvoltooid</string>
-    <string name="themeclear_loss_abandoned_body">Je hebt deze puzzel beëindigd voordat hij was opgelost.</string>
     <string name="themeclear_reveal_words_label">De woorden van de puzzel waren</string>
     <string name="themeclear_hint_show">Hint tonen</string>
     <string name="themeclear_hint_hide">Hint verbergen</string>
@@ -1340,14 +1172,8 @@
     <string name="minisudoku_quickstart_bullet_2">Boxen zijn 2×2 op 4×4-rasters en 2×3 op 6×6-rasters.</string>
     <string name="minisudoku_quickstart_hook">Een snelle sudoku voor als een volledig raster te veel is.</string>
     <string name="minisudoku_how_to_play_goal">Plaats elk cijfer precies één keer in elke rij, kolom en box. Makkelijk gebruikt een 4×4-raster met cijfers 1-4 en 2×2-boxen. Gemiddeld, Moeilijk en Expert gebruiken een 6×6-raster met cijfers 1-6 en 2×3-boxen.</string>
-    <string name="minisudoku_loss_abandoned_title">Puzzel niet af</string>
-    <string name="minisudoku_loss_abandoned_body">Je hebt deze puzzel beëindigd voordat hij was opgelost.</string>
     <string name="sequencememory_title">Reeks Onthouden</string>
     <string name="sequencememory_tagline">Kijk hoe de vakjes oplichten en herhaal dan de reeks.</string>
-    <string name="sequencememory_difficulty_easy">Makkelijk</string>
-    <string name="sequencememory_difficulty_medium">Gemiddeld</string>
-    <string name="sequencememory_difficulty_hard">Moeilijk</string>
-    <string name="sequencememory_difficulty_expert">Expert</string>
     <string name="sequencememory_difficulty_desc_easy">4 vakjes in een rustig tempo. Herhaal tot 8 stappen.</string>
     <string name="sequencememory_difficulty_desc_medium">4 vakjes die sneller oplichten. Herhaal tot 12 stappen.</string>
     <string name="sequencememory_difficulty_desc_hard">6 vakjes en nog sneller. Herhaal tot 14 stappen.</string>
@@ -1384,10 +1210,6 @@
     <string name="sequencememory_loss_rule_failure_body">Je hebt een verkeerd vakje aangetikt.</string>
     <string name="killersudoku_title">Killer Sudoku</string>
     <string name="killersudoku_tagline">Sudoku zonder startcijfers, alleen de sommen van de kooien wijzen je de weg.</string>
-    <string name="killersudoku_difficulty_easy">Makkelijk</string>
-    <string name="killersudoku_difficulty_medium">Gemiddeld</string>
-    <string name="killersudoku_difficulty_hard">Moeilijk</string>
-    <string name="killersudoku_difficulty_expert">Expert</string>
     <string name="killersudoku_difficulty_desc_easy">Kleine kooien met weinig manieren om op de som uit te komen.</string>
     <string name="killersudoku_difficulty_desc_medium">Grotere kooien en je eerste regel van 45.</string>
     <string name="killersudoku_difficulty_desc_hard">Sommen die alleen kloppen over meerdere rijen of kolommen.</string>
@@ -1427,9 +1249,6 @@
     <string name="killersudoku_hint_rule_of_45_body">Elke rij, kolom en box telt op tot 45. Trek je de kooien binnen %1$s af, dan blijven de cellen over die naar binnen of buiten uitsteken, en dat komt uit op %2$d voor %3$s.</string>
     <string name="killersudoku_hint_rule_of_45_multi_house_body">Samen tellen %1$s op tot %2$d. Trek je de kooien erbinnen af, dan blijven de cellen over die naar binnen of buiten uitsteken, en dat komt uit op %3$d voor %4$s.</string>
     <string name="killersudoku_hint_classic_body">%1$s op de gemarkeerde cellen laat %2$d over voor %3$s.</string>
-    <string name="killersudoku_loss_abandoned_eyebrow">Puzzel beëindigd</string>
-    <string name="killersudoku_loss_abandoned_title">Puzzel niet af</string>
-    <string name="killersudoku_loss_abandoned_body">Je hebt deze puzzel beëindigd voordat hij was opgelost.</string>
     <string name="killersudoku_how_to_play_scoring">Start op 10.000 en daalt terwijl de timer loopt. Elke fout voltooide rij, kolom of box kost 500 punten. De score daalt trager bij hogere moeilijkheden.</string>
     <string name="settings_seasonal_label">Seizoensaccenten</string>
     <string name="settings_seasonal_detail">Een klein Halloween-accent op 31 oktober: een rustige winanimatie en een pompoenherinnering.</string>

@@ -3,12 +3,12 @@ package com.quietgrid.app.games.minesweeper
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
@@ -33,7 +33,7 @@ fun MinesweeperPlayScreen(
         creationCallback = { factory -> factory.create(difficulty, resume) },
     )
     CollectPuzzleResult(viewModel.result, onFinished)
-    val finishing by viewModel.finishing.collectAsState()
+    val finishing by viewModel.finishing.collectAsStateWithLifecycle()
 
     val session = viewModel.session
     val haptics = rememberHapticController()

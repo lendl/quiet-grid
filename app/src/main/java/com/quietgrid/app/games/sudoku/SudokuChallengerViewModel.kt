@@ -6,13 +6,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.StatsStore
 import com.quietgrid.app.session.AppForeground
 import com.quietgrid.app.session.ChallengerRunController
+import com.quietgrid.app.session.challengerTierAfterSolve
+import com.quietgrid.app.session.creditSolve
+import com.quietgrid.app.session.tick
 import com.quietgrid.engine.sudoku.SudokuLayout
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -29,13 +31,13 @@ class SudokuChallengerViewModel @Inject constructor(
     appForeground: AppForeground,
 ) : ViewModel() {
 
-    private val controller = ChallengerRunController(
+    private val controller = ChallengerRunController<SudokuChallengerSession>(
         scope = viewModelScope,
         gameId = GameId.SUDOKU,
         statsStore = statsStore,
         historyStore = historyStore,
         appForeground = appForeground,
-        tick = ::tickSudokuChallenger,
+        tick = { it.tick() },
     )
 
     val session get() = controller.session
@@ -162,18 +164,12 @@ class SudokuChallengerViewModel @Inject constructor(
     }
 
     private fun onSolved(withValidation: SudokuChallengerSession) {
-        val (nextTier, nextSolvesInTier) = sudokuChallengerTierAfterSolve(withValidation.tier, withValidation.solvesInTier)
+        val (nextTier, nextSolvesInTier) = challengerTierAfterSolve(SUDOKU_CHALLENGER_CONFIG, withValidation.tier, withValidation.solvesInTier)
         advancing = true
         viewModelScope.launch {
             val nextPuzzle = SudokuPuzzleBank.randomPuzzle(appContext, nextTier, withValidation.servedPuzzleIds)
             if (nextPuzzle == null) {
-                val creditedScore = withValidation.score + sudokuScore(withValidation.tier, withValidation.secondsOnCurrentPuzzle.toInt(), withValidation.puzzleSession.accuracyDrops)
-                val credited = withValidation.copy(
-                    puzzlesSolved = withValidation.puzzlesSolved + 1,
-                    score = creditedScore,
-                    fastestSolveSeconds = sudokuChallengerFastestSolve(withValidation),
-                    puzzleHistory = withValidation.puzzleHistory + ChallengerPuzzleSolve(withValidation.tier, withValidation.secondsOnCurrentPuzzle),
-                )
+                val credited = withValidation.creditSolve(sudokuChallengerPuzzleScore(withValidation))
                 controller.finalizeRun(credited, "bank_exhausted")
             } else {
                 controller.session = advanceSudokuChallengerAfterSolve(withValidation, nextTier, nextSolvesInTier, nextPuzzle)

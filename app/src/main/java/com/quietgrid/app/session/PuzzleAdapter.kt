@@ -10,7 +10,7 @@ data class PuzzleOutcome(
     val solved: Boolean,
     val score: Int,
     val elapsedSeconds: Int,
-    val lossReason: String?,
+    val lossReason: LossReason?,
     val isFirstSolve: Boolean,
     val isNewHighScore: Boolean,
     val journeySignals: JourneySignals = JourneySignals(0, 0),

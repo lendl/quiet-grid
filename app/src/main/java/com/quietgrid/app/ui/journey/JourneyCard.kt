@@ -14,7 +14,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -23,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.ui.components.pressScale
@@ -30,7 +30,7 @@ import com.quietgrid.app.ui.components.pressScale
 @Composable
 fun JourneyCard(gameId: GameId, onOpen: (Int?) -> Unit) {
     val viewModel: JourneyViewModel = hiltViewModel()
-    val state by remember(viewModel, gameId) { viewModel.state(gameId) }.collectAsState(initial = null)
+    val state by remember(viewModel, gameId) { viewModel.state(gameId) }.collectAsStateWithLifecycle(initialValue = null)
     val summary = state?.summary ?: return
     val chapterIndex = summary.chapterIndex
     val stopNumber = summary.stopNumber

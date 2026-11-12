@@ -2,6 +2,8 @@ package com.quietgrid.app.games.takuzu
 
 import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.session.challengerTierAfterSolve
+import com.quietgrid.app.session.tick
 import com.quietgrid.engine.takuzu.TakuzuPuzzleEntry
 import com.quietgrid.engine.takuzu.gridToHex
 import com.quietgrid.engine.takuzu.maskToHex
@@ -47,7 +49,7 @@ class TakuzuChallengerLogicTest {
 
     @Test
     fun `takuzuChallengerTierAfterSolve stays on the same tier before the solve threshold`() {
-        val (tier, solves) = takuzuChallengerTierAfterSolve(Difficulty.EASY, solvesInTier = 0)
+        val (tier, solves) = challengerTierAfterSolve(TAKUZU_CHALLENGER_CONFIG, Difficulty.EASY, solvesInTier = 0)
 
         assertEquals(Difficulty.EASY, tier)
         assertEquals(1, solves)
@@ -55,7 +57,7 @@ class TakuzuChallengerLogicTest {
 
     @Test
     fun `takuzuChallengerTierAfterSolve advances tier once the threshold is reached`() {
-        val (tier, solves) = takuzuChallengerTierAfterSolve(Difficulty.EASY, solvesInTier = TAKUZU_CHALLENGER_SOLVES_PER_TIER - 1)
+        val (tier, solves) = challengerTierAfterSolve(TAKUZU_CHALLENGER_CONFIG, Difficulty.EASY, solvesInTier = TAKUZU_CHALLENGER_SOLVES_PER_TIER - 1)
 
         assertEquals(Difficulty.MEDIUM, tier)
         assertEquals(0, solves)
@@ -80,7 +82,7 @@ class TakuzuChallengerLogicTest {
     fun `tickTakuzuChallenger counts the clock down and the current puzzle up`() {
         val initial = createInitialTakuzuChallengerSession(testPuzzle("p1", "easy"))
 
-        val ticked = tickTakuzuChallenger(initial)
+        val ticked = initial.tick()
 
         assertEquals(TAKUZU_CHALLENGER_STARTING_SECONDS - 1.0, ticked.secondsRemaining, 0.0)
         assertEquals(1.0, ticked.secondsOnCurrentPuzzle, 0.0)

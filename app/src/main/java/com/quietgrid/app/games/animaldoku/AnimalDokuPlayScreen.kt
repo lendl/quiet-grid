@@ -6,9 +6,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
@@ -42,7 +42,7 @@ fun AnimalDokuPlayScreen(
     )
     CollectPuzzleResult(viewModel.result, onFinished)
     CollectPuzzleResult(viewModel.restarts) { onRestarted() }
-    val finishing by viewModel.finishing.collectAsState()
+    val finishing by viewModel.finishing.collectAsStateWithLifecycle()
 
     val session = viewModel.session
     val haptics = rememberHapticController()

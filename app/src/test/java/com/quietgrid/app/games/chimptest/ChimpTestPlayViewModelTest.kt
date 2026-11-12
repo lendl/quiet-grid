@@ -2,6 +2,7 @@ package com.quietgrid.app.games.chimptest
 
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.session.LossReason
 import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeSessionStore
 import com.quietgrid.app.testutil.FakeStatsStore
@@ -51,7 +52,7 @@ class ChimpTestPlayViewModelTest {
         assertTrue(sessionStore.cleared)
         assertEquals(1, results.size)
         assertEquals(false, results.single().solved)
-        assertEquals("rule-failure", results.single().lossReason)
+        assertEquals(LossReason.RULE_FAILURE, results.single().lossReason)
         collectJob.cancel()
     }
 
@@ -67,7 +68,7 @@ class ChimpTestPlayViewModelTest {
         mainDispatcherRule.dispatcher.scheduler.runCurrent()
 
         assertTrue(sessionStore.cleared)
-        assertEquals("abandoned", results.single().lossReason)
+        assertEquals(LossReason.ABANDONED, results.single().lossReason)
         collectJob.cancel()
     }
 }

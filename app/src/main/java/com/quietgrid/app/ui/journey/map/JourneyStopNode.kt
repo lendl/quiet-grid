@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
-import com.quietgrid.app.core.gameDifficultyLabelRes
+import com.quietgrid.app.games.gameDifficultyLabelRes
 import com.quietgrid.app.ui.journey.JourneyStopRow
 import com.quietgrid.app.ui.journey.JourneyStopState
 

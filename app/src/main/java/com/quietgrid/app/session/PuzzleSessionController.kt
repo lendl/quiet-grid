@@ -31,7 +31,6 @@ import java.time.LocalDate
 private const val FOLD_HANDOFF_MS = 1500L
 private const val TICK_INTERVAL_MS = 1000L
 private const val CHECKPOINT_INTERVAL_TICKS = 15
-private const val ABANDONED_REASON = "abandoned"
 
 enum class FinishKind { Win, Loss, Abandoned }
 
@@ -97,14 +96,14 @@ class PuzzleSessionController<TSession, TResult>(
 
     fun endPuzzle() {
         if (finalized) return
-        finishAsLoss(ABANDONED_REASON)
+        finishAsLoss(LossReason.ABANDONED)
     }
 
     fun restartPuzzle() {
         if (finalized || session == null) return
         finalized = true
         scope.launch {
-            recordLoss(ABANDONED_REASON)
+            recordLoss(LossReason.ABANDONED)
             sessionStore.clear()
             _restarts.emit(Unit)
         }
@@ -158,10 +157,10 @@ class PuzzleSessionController<TSession, TResult>(
         }
     }
 
-    fun finishAsLoss(reason: String) {
+    fun finishAsLoss(reason: LossReason) {
         if (finalized) return
         finalized = true
-        _finishing.value = if (reason == ABANDONED_REASON) FinishKind.Abandoned else FinishKind.Loss
+        _finishing.value = if (reason == LossReason.ABANDONED) FinishKind.Abandoned else FinishKind.Loss
         scope.launch {
             val score = recordLoss(reason)
             sessionStore.clear()
@@ -184,7 +183,7 @@ class PuzzleSessionController<TSession, TResult>(
         }
     }
 
-    private suspend fun recordLoss(reason: String): Int {
+    private suspend fun recordLoss(reason: LossReason): Int {
         val score = session?.let { adapter.scoreOnLoss(it, difficulty, elapsedSeconds.toInt()) } ?: 0
         statsStore.recordResult(adapter.gameId, difficulty, solved = false, score = score)
         if (!GameCatalog.get(adapter.gameId).beta) {
@@ -197,7 +196,7 @@ class PuzzleSessionController<TSession, TResult>(
                     score = score,
                     elapsedSeconds = elapsedSeconds.toInt(),
                     timestampMillis = System.currentTimeMillis(),
-                    lossReason = reason,
+                    lossReason = reason.key,
                     dailyDate = dailyDate?.toString(),
                     shareDetail = if (dailyDate != null) session?.let { adapter.dailyShareDetail(it) } else null,
                     journeyStop = journey?.stopId,
@@ -205,7 +204,7 @@ class PuzzleSessionController<TSession, TResult>(
             )
         }
         journey?.let {
-            if (reason == ABANDONED_REASON) journeyStore?.recordAbandon(adapter.gameId, it.stopId) else journeyStore?.recordLoss(adapter.gameId, it.stopId)
+            if (reason == LossReason.ABANDONED) journeyStore?.recordAbandon(adapter.gameId, it.stopId) else journeyStore?.recordLoss(adapter.gameId, it.stopId)
         }
         return score
     }
@@ -257,7 +256,7 @@ class PuzzleSessionController<TSession, TResult>(
                 score = 0,
                 elapsedSeconds = envelope.elapsedSeconds.toInt(),
                 timestampMillis = System.currentTimeMillis(),
-                lossReason = "abandoned",
+                lossReason = LossReason.ABANDONED.key,
                 dailyDate = staleDate,
             ),
         )

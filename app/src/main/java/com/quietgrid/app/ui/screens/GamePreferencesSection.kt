@@ -18,7 +18,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,17 +29,15 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
 import com.quietgrid.app.core.GameId
-import com.quietgrid.app.core.HINT_CAPABLE_GAMES
-import com.quietgrid.app.core.MISTAKE_CHECK_GAMES
-import com.quietgrid.app.core.PHONE_PORTRAIT_ONLY_GAMES
-import com.quietgrid.app.core.ZOOMABLE_GAMES
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.GameToggle
 import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.data.ScreenRotation
 import com.quietgrid.app.data.toggleDefault
+import com.quietgrid.app.games.GameRegistry
 import com.quietgrid.app.ui.play.isPhoneDevice
 import kotlinx.coroutines.launch
 
@@ -81,9 +78,9 @@ internal val GameToggle.detailRes: Int
     }
 
 private fun GameToggle.appliesTo(gameId: GameId): Boolean = when (this) {
-    GameToggle.HINTS -> gameId in HINT_CAPABLE_GAMES
-    GameToggle.MISTAKES -> gameId in MISTAKE_CHECK_GAMES
-    GameToggle.PINCH_ZOOM -> gameId in ZOOMABLE_GAMES
+    GameToggle.HINTS -> GameRegistry.of(gameId).capabilities.hints
+    GameToggle.MISTAKES -> GameRegistry.of(gameId).capabilities.mistakeCheck
+    GameToggle.PINCH_ZOOM -> GameRegistry.of(gameId).capabilities.pinchZoom
     else -> true
 }
 
@@ -95,14 +92,14 @@ private data class PreferenceOption(val label: String, val selected: Boolean, va
 fun GamePreferencesSection(gameId: GameId, modifier: Modifier = Modifier) {
     val repositories: RepositoriesViewModel = hiltViewModel()
     val scope = rememberCoroutineScope()
-    val settings by repositories.settingsRepository.settings.collectAsState(initial = AppSettings())
+    val settings by repositories.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = AppSettings())
     val overridesFlow = remember(gameId) { repositories.gamePreferencesRepository.overrides(gameId) }
-    val overrides by overridesFlow.collectAsState(initial = null)
+    val overrides by overridesFlow.collectAsStateWithLifecycle(initialValue = null)
     val current = overrides ?: return
     val gamePreferences = repositories.gamePreferencesRepository
     val onLabel = stringResource(R.string.game_settings_play_on)
     val offLabel = stringResource(R.string.game_settings_play_off)
-    val portraitOnlyOnPhone = gameId in PHONE_PORTRAIT_ONLY_GAMES &&
+    val portraitOnlyOnPhone = GameRegistry.of(gameId).capabilities.phonePortraitOnly &&
         isPhoneDevice(LocalConfiguration.current.smallestScreenWidthDp)
 
     Column(modifier.fillMaxWidth()) {

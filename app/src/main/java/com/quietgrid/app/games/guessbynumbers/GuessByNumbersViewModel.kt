@@ -15,6 +15,7 @@ import com.quietgrid.app.data.StatsStore
 import com.quietgrid.app.data.recentlyPlayedPuzzleIds
 import com.quietgrid.app.games.wordguess.WordGuessPuzzleBank
 import com.quietgrid.app.games.wordguess.currentWordGuessLocale
+import com.quietgrid.app.session.LossReason
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
@@ -36,7 +37,7 @@ data class GuessByNumbersResult(
     val solved: Boolean,
     val score: Int,
     val elapsedSeconds: Int,
-    val lossReason: String?,
+    val lossReason: LossReason?,
     val isFirstSolve: Boolean = false,
     val isNewHighScore: Boolean = false,
     val targetWord: String = "",
@@ -166,7 +167,7 @@ class GuessByNumbersPlayViewModel @AssistedInject constructor(
                         }
                         GuessByNumbersStatus.LOST -> {
                             controller.updateSession(outcome.session, persist = false)
-                            controller.finishAsLoss("rule-failure")
+                            controller.finishAsLoss(LossReason.RULE_FAILURE)
                         }
                         GuessByNumbersStatus.PLAYING -> {
                             wrongGuessTrigger++

@@ -40,7 +40,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
 import com.quietgrid.app.core.GameId
-import com.quietgrid.app.core.HINT_CAPABLE_GAMES
+import com.quietgrid.app.games.GameRegistry
 import com.quietgrid.app.games.guessbynumbers.GuessByNumbersLetterTile
 import com.quietgrid.app.games.guessbynumbers.GuessByNumbersNumberChip
 import com.quietgrid.app.games.wordguess.WordGuessTile
@@ -146,7 +146,7 @@ private fun TechniqueItem(titleRes: Int, bodyRes: Int) {
 @Composable
 private fun InGameIconsAccordion(gameId: GameId) {
     Accordion(stringResource(R.string.how_to_play_in_game_icons_title)) {
-        if (gameId in HINT_CAPABLE_GAMES) {
+        if (GameRegistry.of(gameId).capabilities.hints) {
             InGameIconRow(Icons.Outlined.Lightbulb, R.string.how_to_play_icon_hint_label, R.string.how_to_play_icon_hint_description)
         }
         InGameIconRow(Icons.Outlined.Flag, R.string.how_to_play_icon_forfeit_label, R.string.how_to_play_icon_forfeit_description)

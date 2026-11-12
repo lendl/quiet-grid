@@ -11,6 +11,7 @@ import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
 import com.quietgrid.app.data.recentlyPlayedPuzzleIds
+import com.quietgrid.app.session.LossReason
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
@@ -36,7 +37,7 @@ data class CircuitResult(
     val solved: Boolean,
     val score: Int,
     val elapsedSeconds: Int,
-    val lossReason: String?,
+    val lossReason: LossReason?,
     val isFirstSolve: Boolean = false,
     val isNewHighScore: Boolean = false,
 )

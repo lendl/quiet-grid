@@ -1,62 +1,28 @@
 package com.quietgrid.app.games.chimptest
 
-import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.Difficulty
-
-private val CHIMPTEST_CHALLENGER_TIER_ORDER = listOf(Difficulty.EASY, Difficulty.MEDIUM, Difficulty.HARD, Difficulty.EXPERT)
+import com.quietgrid.app.session.advanceAfterSolve
+import com.quietgrid.app.session.startChallengerSession
 
 fun createInitialChimpTestChallengerSession(): ChimpTestChallengerSession =
-    ChimpTestChallengerSession(
-        puzzleSession = createChimpTestSession(Difficulty.EASY),
-        livesRemaining = CHIMPTEST_CHALLENGER_STARTING_LIVES,
-        tier = Difficulty.EASY,
-        solvesInTier = 0,
-        puzzlesSolved = 0,
-        score = 0,
-        secondsRemaining = CHIMPTEST_CHALLENGER_STARTING_SECONDS,
-        secondsOnCurrentPuzzle = 0.0,
-    )
+    startChallengerSession(CHIMPTEST_CHALLENGER_CONFIG, createChimpTestSession(Difficulty.EASY))
 
-fun chimpTestChallengerTierAfterSolve(currentTier: Difficulty, solvesInTier: Int): Pair<Difficulty, Int> {
-    val nextSolves = solvesInTier + 1
-    val currentIndex = CHIMPTEST_CHALLENGER_TIER_ORDER.indexOf(currentTier)
-    return if (nextSolves >= CHIMPTEST_CHALLENGER_SOLVES_PER_TIER && currentIndex < CHIMPTEST_CHALLENGER_TIER_ORDER.lastIndex) {
-        CHIMPTEST_CHALLENGER_TIER_ORDER[currentIndex + 1] to 0
-    } else {
-        currentTier to nextSolves
-    }
-}
-
-fun chimpTestChallengerFastestSolve(session: ChimpTestChallengerSession): Double =
-    session.fastestSolveSeconds?.let { minOf(it, session.secondsOnCurrentPuzzle) } ?: session.secondsOnCurrentPuzzle
+fun chimpTestChallengerPuzzleScore(session: ChimpTestChallengerSession): Int = chimpTestScore(session.puzzleSession)
 
 fun advanceChimpTestChallengerAfterSolve(
     session: ChimpTestChallengerSession,
     nextTier: Difficulty,
     nextSolvesInTier: Int,
-): ChimpTestChallengerSession {
-    val gainedScore = chimpTestScore(session.puzzleSession)
-    val fastestSolveSeconds = chimpTestChallengerFastestSolve(session)
-    return session.copy(
-        puzzleSession = createChimpTestSession(nextTier),
-        tier = nextTier,
-        solvesInTier = nextSolvesInTier,
-        puzzlesSolved = session.puzzlesSolved + 1,
-        score = session.score + gainedScore,
-        secondsRemaining = session.secondsRemaining + CHIMPTEST_CHALLENGER_BONUS_SECONDS,
-        secondsOnCurrentPuzzle = 0.0,
-        fastestSolveSeconds = fastestSolveSeconds,
-        puzzleHistory = session.puzzleHistory + ChallengerPuzzleSolve(session.tier, session.secondsOnCurrentPuzzle),
-    )
-}
+): ChimpTestChallengerSession = session.advanceAfterSolve(
+    config = CHIMPTEST_CHALLENGER_CONFIG,
+    gainedScore = chimpTestChallengerPuzzleScore(session),
+    nextTier = nextTier,
+    nextSolvesInTier = nextSolvesInTier,
+    nextPuzzleSession = createChimpTestSession(nextTier),
+)
 
 fun advanceChimpTestChallengerAfterLoss(session: ChimpTestChallengerSession): ChimpTestChallengerSession =
     session.copy(
         puzzleSession = createChimpTestSession(session.tier),
         secondsOnCurrentPuzzle = 0.0,
     )
-
-fun tickChimpTestChallenger(session: ChimpTestChallengerSession): ChimpTestChallengerSession = session.copy(
-    secondsRemaining = session.secondsRemaining - 1.0,
-    secondsOnCurrentPuzzle = session.secondsOnCurrentPuzzle + 1.0,
-)

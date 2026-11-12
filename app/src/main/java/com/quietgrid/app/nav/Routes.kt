@@ -8,6 +8,7 @@ import com.quietgrid.app.data.ActiveSessionSummary
 import com.quietgrid.app.data.SESSION_MODE_ENDLESS
 import com.quietgrid.app.games.blockfill.BlockFillEndlessResult
 import com.quietgrid.app.games.minesweeper.MinesweeperEndlessResult
+import com.quietgrid.app.session.LossReason
 import java.time.LocalDate
 
 object Routes {
@@ -99,14 +100,14 @@ object Routes {
         gameId: GameId,
         difficulty: Difficulty,
         elapsedSeconds: Int,
-        reason: String,
+        reason: LossReason,
         score: Int,
         bestTile: Int,
         daily: String? = null,
         journeyStop: String? = null,
     ): String {
         val query = listOfNotNull(daily?.let { "daily=$it" }, journeyStop?.let { "journey=$it" })
-        return "loss/${gameId.key}/${difficulty.key}/$elapsedSeconds/$reason/$score/$bestTile" +
+        return "loss/${gameId.key}/${difficulty.key}/$elapsedSeconds/${reason.key}/$score/$bestTile" +
             if (query.isEmpty()) "" else query.joinToString("&", prefix = "?")
     }
 

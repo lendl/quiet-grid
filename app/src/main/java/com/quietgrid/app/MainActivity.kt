@@ -20,7 +20,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
@@ -29,6 +28,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.core.AppLocale
 import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.data.ThemeMode
@@ -80,7 +80,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val repositories: RepositoriesViewModel = hiltViewModel()
-            val loadedSettings by repositories.settingsRepository.settings.collectAsState(initial = null)
+            val loadedSettings by repositories.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = null)
             val settings = loadedSettings ?: return@setContent
             val systemDark = isSystemInDarkTheme()
             val resolvedTheme = settings.themeMode.fixedResolvedTheme()

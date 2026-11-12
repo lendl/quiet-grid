@@ -5,13 +5,6 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.ui.components.QuickRule
 import com.quietgrid.app.ui.components.QuickStartContent
 
-fun blockEscapeDifficultyLabelRes(difficulty: Difficulty): Int = when (difficulty) {
-    Difficulty.EASY -> R.string.blockescape_difficulty_easy
-    Difficulty.MEDIUM -> R.string.blockescape_difficulty_medium
-    Difficulty.HARD -> R.string.blockescape_difficulty_hard
-    Difficulty.EXPERT -> R.string.blockescape_difficulty_expert
-}
-
 fun blockEscapeDifficultyDescriptionRes(difficulty: Difficulty): Int = when (difficulty) {
     Difficulty.EASY -> R.string.blockescape_difficulty_desc_easy
     Difficulty.MEDIUM -> R.string.blockescape_difficulty_desc_medium

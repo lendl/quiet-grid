@@ -39,10 +39,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.games.GameRegistry
 import com.quietgrid.app.session.FinishKind
 import com.quietgrid.app.ui.components.EndPuzzleDialog
 import com.quietgrid.app.ui.components.QuickStartContent
-import com.quietgrid.app.ui.components.quickStartFor
 
 const val PLAY_BOARD_TAG = "play_board"
 const val PLAY_HINT_TAG = "play_hint"
@@ -180,7 +180,7 @@ fun GamePlayScaffold(
         }
         if (rulesOpen) {
             RulesPeekOverlay(
-                content = rulesContent ?: quickStartFor(gameId),
+                content = rulesContent ?: GameRegistry.of(gameId).quickStart,
                 cardAlignment = when {
                     !sizeClass.isTablet -> Alignment.TopCenter
                     mirrored -> Alignment.TopStart

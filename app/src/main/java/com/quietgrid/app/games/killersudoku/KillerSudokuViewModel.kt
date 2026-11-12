@@ -29,6 +29,7 @@ import com.quietgrid.app.games.sudoku.sudokuAccuracyPct
 import com.quietgrid.app.games.sudoku.sudokuHasMeaningfulProgress
 import com.quietgrid.app.games.sudoku.sudokuScore
 import com.quietgrid.app.games.sudoku.sudokuTouchedUnitKeys
+import com.quietgrid.app.session.LossReason
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
@@ -61,7 +62,7 @@ data class KillerSudokuResult(
     val score: Int,
     val accuracyPct: Int,
     val elapsedSeconds: Int,
-    val lossReason: String?,
+    val lossReason: LossReason?,
     val isFirstSolve: Boolean = false,
     val isNewHighScore: Boolean = false,
     val journeySignals: JourneySignals = JourneySignals(0, 0),

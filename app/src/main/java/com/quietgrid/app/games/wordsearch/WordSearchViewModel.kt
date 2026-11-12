@@ -18,6 +18,7 @@ import com.quietgrid.app.data.ThemePreferencesRepository
 import com.quietgrid.app.data.isHalloweenActive
 import com.quietgrid.app.data.puzzleIdsPlayedOn
 import com.quietgrid.app.data.recentlyPlayedPuzzleIds
+import com.quietgrid.app.session.LossReason
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
@@ -47,7 +48,7 @@ data class WordSearchResult(
     val score: Int,
     val accuracyPct: Int,
     val elapsedSeconds: Int,
-    val lossReason: String?,
+    val lossReason: LossReason?,
     val isFirstSolve: Boolean = false,
     val isNewHighScore: Boolean = false,
     val words: List<String> = emptyList(),

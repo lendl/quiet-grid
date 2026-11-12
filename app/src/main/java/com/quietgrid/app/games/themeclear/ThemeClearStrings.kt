@@ -13,13 +13,6 @@ fun currentThemeClearLocale(puzzleLanguageOverride: String): String {
     return if (candidate in THEMECLEAR_SUPPORTED_LOCALES) candidate else "en"
 }
 
-fun themeClearDifficultyLabelRes(difficulty: Difficulty): Int = when (difficulty) {
-    Difficulty.EASY -> R.string.themeclear_difficulty_easy
-    Difficulty.MEDIUM -> R.string.themeclear_difficulty_medium
-    Difficulty.HARD -> R.string.themeclear_difficulty_hard
-    Difficulty.EXPERT -> R.string.themeclear_difficulty_expert
-}
-
 fun themeClearDifficultyDescriptionRes(difficulty: Difficulty): Int = when (difficulty) {
     Difficulty.EASY -> R.string.themeclear_difficulty_desc_easy
     Difficulty.MEDIUM -> R.string.themeclear_difficulty_desc_medium

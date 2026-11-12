@@ -1,22 +1,17 @@
 package com.quietgrid.app.games.starbattle
 
-import com.quietgrid.app.core.ChallengerPuzzleSolve
-import com.quietgrid.app.core.Difficulty
-import com.quietgrid.app.session.ChallengerRunState
+import com.quietgrid.app.session.ChallengerConfig
+import com.quietgrid.app.session.ChallengerSession
 
 const val STARBATTLE_CHALLENGER_STARTING_SECONDS = 90.0
 const val STARBATTLE_CHALLENGER_BONUS_SECONDS = 15.0
 const val STARBATTLE_CHALLENGER_SOLVES_PER_TIER = 3
 
-data class StarBattleChallengerSession(
-    val puzzleSession: StarBattleSession,
-    override val tier: Difficulty,
-    override val solvesInTier: Int,
-    override val puzzlesSolved: Int,
-    override val score: Int,
-    override val secondsRemaining: Double,
-    val secondsOnCurrentPuzzle: Double,
-    val servedPuzzleIds: Set<String>,
-    override val fastestSolveSeconds: Double? = null,
-    override val puzzleHistory: List<ChallengerPuzzleSolve> = emptyList(),
-) : ChallengerRunState
+val STARBATTLE_CHALLENGER_CONFIG = ChallengerConfig(
+    startingSeconds = STARBATTLE_CHALLENGER_STARTING_SECONDS,
+    bonusSeconds = STARBATTLE_CHALLENGER_BONUS_SECONDS,
+    solvesPerTier = STARBATTLE_CHALLENGER_SOLVES_PER_TIER,
+    startingLives = STARBATTLE_STARTING_LIVES,
+)
+
+typealias StarBattleChallengerSession = ChallengerSession<StarBattleSession>

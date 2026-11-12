@@ -6,13 +6,6 @@ import com.quietgrid.app.ui.components.QuickRule
 import com.quietgrid.app.ui.components.QuickStartContent
 import com.quietgrid.app.ui.components.QuickStartExample
 
-fun wordSearchDifficultyLabelRes(difficulty: Difficulty): Int = when (difficulty) {
-    Difficulty.EASY -> R.string.wordsearch_difficulty_easy
-    Difficulty.MEDIUM -> R.string.wordsearch_difficulty_medium
-    Difficulty.HARD -> R.string.wordsearch_difficulty_hard
-    Difficulty.EXPERT -> R.string.wordsearch_difficulty_expert
-}
-
 fun wordSearchDifficultyDescriptionRes(difficulty: Difficulty): Int = when (difficulty) {
     Difficulty.EASY -> R.string.wordsearch_difficulty_desc_easy
     Difficulty.MEDIUM -> R.string.wordsearch_difficulty_desc_medium

@@ -8,6 +8,7 @@ Quiet Grid is a native Android app (Kotlin, Jetpack Compose). The repo root is t
 - Install + run on a connected device/emulator: `./gradlew installDebug`
 - Type/compile check (fast, no packaging): `./gradlew compileDebugKotlin`
 - Lint: `./gradlew lint`
+- Static analysis (report-only, never fails the build): `./gradlew detekt` (config `config/detekt/detekt.yml`, reports in `<module>/build/reports/detekt/`)
 - Unit tests: `./gradlew testDebugUnitTest`
 
 ## Shared puzzle engine
@@ -50,6 +51,7 @@ When writing player-facing copy, string resources, loss screens, or how-to-play 
 - Navigation is centralized in `nav/AppNavHost.kt`, using Navigation Compose. Routes are defined in `nav/Routes.kt`.
 - Games are plugin-like modules under `games/<id>/` (e.g. `games/takuzu/`), each with its own `*ViewModel.kt` (session state, persistence), `*Grid.kt` (the board composable), `*PlayScreen.kt` (screen composition + chrome), and `*Strings.kt`/`*Logic.kt`/`*Models.kt`/`*PuzzleBank.kt` as needed.
 - The shell registry at `core/GameCatalog.kt` is the source of truth for installed games (id, title, tagline, beta flag).
+- Each game also has a `games/<id>/<Name>Definition.kt` object implementing `GameDefinition` (`games/GameDefinition.kt`): capabilities, quick start, icon, difficulty labels, play screen, loss copy overrides, and an optional `ChallengerSpec`. They are listed in `games/GameRegistry.kt`; shared screens call `GameRegistry.of(gameId)` instead of switching on `GameId` or keeping `Set<GameId>` lists. `GameRegistryTest` fails if a `GameId` has no definition.
 - Shared chrome lives in `ui/components/`: `GlobalMenu.kt` (top brand bar), `BottomNavBar.kt` (bottom tab bar), `AppTopBar.kt` (back-mode bar for sub-pages), `ZoomableBoardSurface.kt` (pinch-zoom + pan wrapper for boards), `GameBackButton.kt`, `BoardEntrance.kt`, `FeedbackText.kt` (per-cell correct/incorrect spin-shake).
 - Each game's Play screen composes `GamePlayScaffold` (`ui/play/`): top bar (back, centered timer, hint, rules peek, ⋮ menu with End puzzle) → info strip → board (`PuzzleBoardContainer { GameGrid(...) }`) → dock, with the hint card and rules peek as overlays. See `docs/play-screen-standards.md`; every game uses it.
 - The per-game page (`ui/screens/PuzzlePickerScreen.kt`) hosts four tabs — Play (difficulty picker), Rules (`HowToPlayScreen.kt`), Stats (`StatsOverview.kt` scoped to one game), Settings (`GameSettingsTab.kt`: per-game play preferences, plus theme selection for themed games) — matching the shared `GlobalMenu` + `BottomNavBar` chrome used on the main tabs.
@@ -64,7 +66,8 @@ When writing player-facing copy, string resources, loss screens, or how-to-play 
 - Keep puzzle-specific logic inside the owning game package (`games/<id>/`).
 - Treat `res/values*/strings.xml` as the single source of truth for all user-visible copy — never hardcode strings in Composables.
 - When changing a persisted session's data class shape, existing saved sessions may fail to decode; `SessionRepository`/ViewModel `restoreOrCreate()` paths already treat decode failures as "start fresh," so this degrades gracefully rather than crashing — just be aware resuming an in-progress puzzle across the change will silently drop it.
-- New games register in `core/GameCatalog.kt` (app-wide catalog) — no separate engine registry exists in this app.
+- New games register in `core/GameCatalog.kt` (meta) and `games/GameRegistry.kt` (definition). Challenger is generic: a game supplies a `ChallengerSpec` (config, play screen, copy overrides) and a `ChallengerSession<P>` typealias; shared copy uses `challenger_*`, `difficulty_*` and `loss_abandoned_*` keys, with per-game keys only where wording differs.
+- Games must not import other game packages; `AppArchitectureTest` holds the list of existing exceptions and fails on new ones.
 - Every play screen (new or changed) must follow `docs/play-screen-standards.md`: built on `GamePlayScaffold`, same five slots (top bar, info strip, board, dock, overlays), the grid never moves and is never shrunk for optional content, and it works in all six layouts (small/normal phone upright and sideways, tablet landscape and upright). Read it before touching any `*PlayScreen.kt`.
 - Permissions are deny-by-default. The only allowed permissions are listed in `allowedPermissions` in `app/build.gradle.kts`; `checkReleasePermissions` (run by every `assemble` and in CI) fails on anything else, including permissions merged in from libraries. Strip unneeded library permissions with `tools:node="remove"` in `AndroidManifest.xml`. Adding a permission to the allowlist needs a stated reason in the PR.
 - This app was ported from a React Native/Expo version of the same game (now removed from this repo) — when in doubt about intended behavior, wording, or UX for a feature, prefer matching what's described in past session context/commit messages over inventing new behavior.

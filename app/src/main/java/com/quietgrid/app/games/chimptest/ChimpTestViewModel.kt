@@ -10,6 +10,7 @@ import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
+import com.quietgrid.app.session.LossReason
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
@@ -31,7 +32,7 @@ data class ChimpTestResult(
     val solved: Boolean,
     val score: Int,
     val elapsedSeconds: Int,
-    val lossReason: String?,
+    val lossReason: LossReason?,
     val isFirstSolve: Boolean = false,
     val isNewHighScore: Boolean = false,
 )
@@ -120,7 +121,7 @@ class ChimpTestPlayViewModel @AssistedInject constructor(
             controller.updateSession(outcome.session, persist = false)
             viewModelScope.launch {
                 delay(WRONG_TAP_REVEAL_MS)
-                controller.finishAsLoss("rule-failure")
+                controller.finishAsLoss(LossReason.RULE_FAILURE)
             }
             return
         }

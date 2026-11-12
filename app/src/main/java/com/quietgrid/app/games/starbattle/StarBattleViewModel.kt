@@ -14,6 +14,7 @@ import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
 import com.quietgrid.app.data.recentlyPlayedPuzzleIds
+import com.quietgrid.app.session.LossReason
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
@@ -37,7 +38,7 @@ data class StarBattleResult(
     val solved: Boolean,
     val score: Int,
     val elapsedSeconds: Int,
-    val lossReason: String?,
+    val lossReason: LossReason?,
     val isFirstSolve: Boolean = false,
     val isNewHighScore: Boolean = false,
     val journeySignals: JourneySignals = JourneySignals(0, 0),
@@ -179,7 +180,7 @@ class StarBattlePlayViewModel @AssistedInject constructor(
         controller.updateSession(opened.session, persist = stillPlaying)
         when (opened.session.status) {
             StarBattleStatus.WON -> controller.finishAsWin()
-            StarBattleStatus.LOST -> controller.finishAsLoss("hearts_exhausted")
+            StarBattleStatus.LOST -> controller.finishAsLoss(LossReason.HEARTS_EXHAUSTED)
             StarBattleStatus.PLAYING -> Unit
         }
     }

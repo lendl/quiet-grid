@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="loss_abandoned_eyebrow">Puzzle terminé</string>
+    <string name="loss_abandoned_title">Puzzle inachevé</string>
+    <string name="loss_abandoned_body">Tu as terminé ce puzzle avant de le résoudre.</string>
+    <string name="difficulty_easy">Facile</string>
+    <string name="difficulty_medium">Moyen</string>
+    <string name="difficulty_hard">Difficile</string>
+    <string name="difficulty_expert">Expert</string>
     <string name="app_name">Quiet Grid</string>
 
     <string name="tab_games">Jeux</string>
@@ -348,10 +355,6 @@
     <string name="chimp_title">Chimp Test</string>
     <string name="chimp_short_title">Chimp</string>
     <string name="chimp_tagline">Touchez les chiffres dans l\'ordre avant qu\'ils ne disparaissent.</string>
-    <string name="chimp_difficulty_easy">Facile</string>
-    <string name="chimp_difficulty_medium">Moyen</string>
-    <string name="chimp_difficulty_hard">Difficile</string>
-    <string name="chimp_difficulty_expert">Expert</string>
     <string name="chimp_difficulty_desc_easy">Grille 4×4. Mémorisez jusqu\'à 7 chiffres.</string>
     <string name="chimp_difficulty_desc_medium">Grille 5×5. Mémorisez jusqu\'à 9 chiffres.</string>
     <string name="chimp_difficulty_desc_hard">Grille 6×6. Mémorisez jusqu\'à 11 chiffres.</string>
@@ -372,7 +375,6 @@
     <string name="chimp_tip_group_title">Regrouper les chiffres proches</string>
     <string name="chimp_tip_group_body">Repérez les groupes de chiffres consécutifs. Toucher les voisins l\'un après l\'autre est plus rapide que de traverser la grille.</string>
     <string name="chimp_how_to_play_scoring">Le score est basé sur le temps total sur toutes les manches. Toucher plus vite donne un score plus élevé.</string>
-    <string name="chimp_loss_abandoned_eyebrow">Puzzle terminé</string>
     <string name="chimp_loss_abandoned_title">Puzzle inachevé</string>
     <string name="chimp_loss_abandoned_body">Vous avez terminé ce puzzle avant qu\'il ne soit résolu.</string>
     <string name="chimp_loss_rule_failure_eyebrow">Puzzle perdu</string>
@@ -381,10 +383,6 @@
 
     <!-- Takuzu -->
     <string name="takuzu_tagline">Remplis la grille avec des 0 et des 1 par la logique.</string>
-    <string name="takuzu_difficulty_easy">Facile</string>
-    <string name="takuzu_difficulty_medium">Moyen</string>
-    <string name="takuzu_difficulty_hard">Difficile</string>
-    <string name="takuzu_difficulty_expert">Expert</string>
     <string name="takuzu_difficulty_desc_easy">Plus de cases de départ et des déductions plus douces.</string>
     <string name="takuzu_difficulty_desc_medium">Ouvertures équilibrées qui demandent de lire la grille un peu plus loin.</string>
     <string name="takuzu_difficulty_desc_hard">Configurations serrées avec moins d\'informations libres et un travail de motifs plus poussé.</string>
@@ -434,39 +432,32 @@
     <string name="takuzu_how_to_play_scoring">Commence à 10 000 et diminue pendant que le chronomètre tourne. Chaque ligne incorrectement complétée coûte 500 points. Le score diminue plus lentement aux difficultés élevées.</string>
     <string name="takuzu_tip_watch_flashes_title">Surveiller les éclairs</string>
     <string name="takuzu_tip_watch_flashes_body">Quand tu complètes correctement une ligne ou une colonne, toutes ses cases clignotent brièvement en confirmation.</string>
-    <string name="takuzu_loss_abandoned_eyebrow">Puzzle terminé</string>
-    <string name="takuzu_loss_abandoned_title">Puzzle inachevé</string>
-    <string name="takuzu_loss_abandoned_body">Tu as terminé ce puzzle avant de le résoudre.</string>
     <string name="analyzer_title">Revoir la résolution</string>
     <string name="analyzer_load_failed">Impossible de charger la résolution de ce puzzle.</string>
     <string name="analyzer_already_solved">Ce puzzle était déjà entièrement résolu.</string>
     <string name="analyzer_solved_title">Résolu !</string>
     <string name="analyzer_solved_body">Voici la grille complète.</string>
-    <string name="takuzu_challenger_label">Challenger</string>
-    <string name="takuzu_challenger_description">Résous autant de puzzles que possible avant que le temps ne s\'écoule.</string>
-    <string name="takuzu_challenger_solved_label">Résolus</string>
-    <string name="takuzu_challenger_tier_label">Niveau</string>
-    <string name="takuzu_challenger_result_time_up_title">Temps écoulé !</string>
-    <string name="takuzu_challenger_result_time_up_body">Le temps est écoulé. Voici comment s\'est passée ta partie.</string>
-    <string name="takuzu_challenger_result_abandoned_title">Partie terminée</string>
-    <string name="takuzu_challenger_result_abandoned_body">Tu as arrêté la partie avant la fin.</string>
-    <string name="takuzu_challenger_result_new_high_score">Nouveau meilleur score !</string>
-    <string name="takuzu_challenger_result_puzzles_solved">Puzzles résolus</string>
-    <string name="takuzu_challenger_result_score">Score</string>
-    <string name="takuzu_challenger_result_fastest_solve">Résolution la plus rapide</string>
-    <string name="takuzu_challenger_result_off_best">%1$d points de moins que ton record</string>
-    <string name="takuzu_challenger_play_again">Rejouer</string>
-    <string name="takuzu_challenger_back_to_puzzles">Retour aux puzzles</string>
-    <string name="takuzu_challenger_try_another_game">Essayer un autre jeu</string>
-    <string name="takuzu_challenger_stats_title">Challenger</string>
-    <string name="takuzu_challenger_stats_best_run">Meilleure partie</string>
+    <string name="challenger_label">Challenger</string>
+    <string name="challenger_solved_label">Résolus</string>
+    <string name="challenger_tier_label">Niveau</string>
+    <string name="challenger_result_time_up_title">Temps écoulé !</string>
+    <string name="challenger_result_time_up_body">Le temps est écoulé. Voici comment s\'est passée ta partie.</string>
+    <string name="challenger_result_abandoned_title">Partie terminée</string>
+    <string name="challenger_result_abandoned_body">Tu as arrêté la partie avant la fin.</string>
+    <string name="challenger_result_lives_exhausted_title">Plus de vies !</string>
+    <string name="challenger_result_new_high_score">Nouveau meilleur score !</string>
+    <string name="challenger_result_puzzles_solved">Puzzles résolus</string>
+    <string name="challenger_result_score">Score</string>
+    <string name="challenger_result_fastest_solve">Résolution la plus rapide</string>
+    <string name="challenger_result_off_best">%1$d points de moins que ton record</string>
+    <string name="challenger_play_again">Rejouer</string>
+    <string name="challenger_back_to_puzzles">Retour aux puzzles</string>
+    <string name="challenger_try_another_game">Essayer un autre jeu</string>
+    <string name="challenger_stats_title">Challenger</string>
+    <string name="challenger_stats_best_run">Meilleure partie</string>
 
     <!-- Nonogram -->
     <string name="nonogram_tagline">Remplis les cases pour respecter les indices de ligne et de colonne.</string>
-    <string name="nonogram_difficulty_easy">Facile</string>
-    <string name="nonogram_difficulty_medium">Moyen</string>
-    <string name="nonogram_difficulty_hard">Difficile</string>
-    <string name="nonogram_difficulty_expert">Expert</string>
     <string name="nonogram_difficulty_desc_easy">Petits motifs d\'indices avec des ouvertures claires.</string>
     <string name="nonogram_difficulty_desc_medium">Grilles équilibrées demandant une déduction régulière.</string>
     <string name="nonogram_difficulty_desc_hard">Ensembles d\'indices plus serrés nécessitant des vérifications de chevauchement plus poussées.</string>
@@ -507,37 +498,12 @@
     <string name="nonogram_hint_reveal_fill_body">Remplis la case mise en évidence.</string>
     <string name="nonogram_hint_reveal_empty_body">Marque la case mise en évidence comme vide.</string>
     <string name="nonogram_how_to_play_scoring">Le score commence à 10 000 et diminue pendant que le temps s\'écoule. Résoudre plus vite rapporte un score plus élevé.</string>
-    <string name="nonogram_loss_abandoned_eyebrow">Puzzle terminé</string>
-    <string name="nonogram_loss_abandoned_title">Puzzle inachevé</string>
-    <string name="nonogram_loss_abandoned_body">Tu as terminé ce puzzle avant de le résoudre.</string>
     <string name="nonogram_input_mode_fill">Remplir</string>
     <string name="nonogram_input_mode_cross">Marquer vide</string>
-    <string name="nonogram_challenger_label">Challenger</string>
-    <string name="nonogram_challenger_description">Résous autant de puzzles que possible avant que le temps ne s\'écoule.</string>
-    <string name="nonogram_challenger_solved_label">Résolus</string>
-    <string name="nonogram_challenger_tier_label">Niveau</string>
-    <string name="nonogram_challenger_result_time_up_title">Temps écoulé !</string>
-    <string name="nonogram_challenger_result_time_up_body">Le temps est écoulé. Voici comment s\'est passée ta partie.</string>
-    <string name="nonogram_challenger_result_abandoned_title">Partie terminée</string>
-    <string name="nonogram_challenger_result_abandoned_body">Tu as arrêté la partie avant la fin.</string>
-    <string name="nonogram_challenger_result_new_high_score">Nouveau meilleur score !</string>
-    <string name="nonogram_challenger_result_puzzles_solved">Puzzles résolus</string>
-    <string name="nonogram_challenger_result_score">Score</string>
-    <string name="nonogram_challenger_result_fastest_solve">Résolution la plus rapide</string>
-    <string name="nonogram_challenger_result_off_best">%1$d points de moins que ton record</string>
-    <string name="nonogram_challenger_play_again">Rejouer</string>
-    <string name="nonogram_challenger_back_to_puzzles">Retour aux puzzles</string>
-    <string name="nonogram_challenger_try_another_game">Essayer un autre jeu</string>
-    <string name="nonogram_challenger_stats_title">Challenger</string>
-    <string name="nonogram_challenger_stats_best_run">Meilleure partie</string>
 
     <!-- Minesweeper -->
     <string name="minesweeper_title">Démineur</string>
     <string name="minesweeper_tagline">Libérez la grille sans ouvrir de mine.</string>
-    <string name="minesweeper_difficulty_easy">Facile</string>
-    <string name="minesweeper_difficulty_medium">Moyen</string>
-    <string name="minesweeper_difficulty_hard">Difficile</string>
-    <string name="minesweeper_difficulty_expert">Expert</string>
     <string name="minesweeper_difficulty_desc_easy">Plus d\'espace pour explorer tôt et lire les indices tranquillement.</string>
     <string name="minesweeper_difficulty_desc_medium">Un plateau équilibré avec plus de mines et moins d\'ouvertures sûres.</string>
     <string name="minesweeper_difficulty_desc_hard">Des espaces plus serrés qui récompensent un marquage soigneux et un suivi des indices.</string>
@@ -602,10 +568,6 @@
     <!-- Sudoku -->
     <string name="sudoku_title">Sudoku</string>
     <string name="sudoku_tagline">Place les chiffres de 1 à 9 pour que chaque ligne, colonne et boîte reste valide.</string>
-    <string name="sudoku_difficulty_easy">Facile</string>
-    <string name="sudoku_difficulty_medium">Moyen</string>
-    <string name="sudoku_difficulty_hard">Difficile</string>
-    <string name="sudoku_difficulty_expert">Expert</string>
     <string name="sudoku_difficulty_desc_easy">Grilles d\'ouverture pensées pour une résolution humaine centrée sur les singles.</string>
     <string name="sudoku_difficulty_desc_medium">Grilles équilibrées qui peuvent évoluer vers des techniques appuyées par les notes.</string>
     <string name="sudoku_difficulty_desc_hard">Grilles clairsemées réservées à une analyse de coups et à une validation plus riches.</string>
@@ -669,37 +631,14 @@
     <string name="sudoku_tip_1_body">Choisis une ligne, une colonne ou une boîte et demande-toi quels chiffres manquent encore. Les vérifications petites et locales restent plus fiables que les suppositions larges.</string>
     <string name="sudoku_tip_2_title">Les notes gardent les cases difficiles honnêtes</string>
     <string name="sudoku_tip_2_body">Si une case a encore plusieurs chiffres valides, passe en mode notes au lieu de deviner. Les candidats notés rendent les hidden singles et les autres placements forcés bien plus faciles à repérer.</string>
-    <string name="sudoku_loss_abandoned_eyebrow">Puzzle terminé</string>
     <string name="sudoku_loss_abandoned_title">Session Sudoku terminée</string>
     <string name="sudoku_loss_abandoned_body">Tu as arrêté cette session de Sudoku avant de finir la grille.</string>
-    <string name="sudoku_challenger_label">Challenger</string>
-    <string name="sudoku_challenger_description">Résous autant de puzzles que possible avant que le temps ne s\'écoule.</string>
-    <string name="sudoku_challenger_solved_label">Résolus</string>
-    <string name="sudoku_challenger_tier_label">Niveau</string>
-    <string name="sudoku_challenger_result_time_up_title">Temps écoulé !</string>
-    <string name="sudoku_challenger_result_time_up_body">Le temps est écoulé. Voici comment s\'est passée ta partie.</string>
-    <string name="sudoku_challenger_result_lives_exhausted_title">Plus de vies !</string>
+    <string name="challenger_description">Résous autant de puzzles que possible avant que le temps ne s\'écoule.</string>
     <string name="sudoku_challenger_result_lives_exhausted_body">Trois erreurs ont mis fin à ta partie.</string>
-    <string name="sudoku_challenger_result_abandoned_title">Partie terminée</string>
-    <string name="sudoku_challenger_result_abandoned_body">Tu as arrêté la partie avant la fin.</string>
-    <string name="sudoku_challenger_result_new_high_score">Nouveau meilleur score !</string>
-    <string name="sudoku_challenger_result_puzzles_solved">Puzzles résolus</string>
-    <string name="sudoku_challenger_result_score">Score</string>
-    <string name="sudoku_challenger_result_fastest_solve">Résolution la plus rapide</string>
-    <string name="sudoku_challenger_result_off_best">%1$d points de moins que ton record</string>
-    <string name="sudoku_challenger_play_again">Rejouer</string>
-    <string name="sudoku_challenger_back_to_puzzles">Retour aux puzzles</string>
-    <string name="sudoku_challenger_try_another_game">Essayer un autre jeu</string>
-    <string name="sudoku_challenger_stats_title">Challenger</string>
-    <string name="sudoku_challenger_stats_best_run">Meilleure partie</string>
 
     <!-- Word Search -->
     <string name="wordsearch_title">Mots mêlés</string>
     <string name="wordsearch_tagline">Trace les mots en lignes droites et résous le mot bonus caché directement dans la grille.</string>
-    <string name="wordsearch_difficulty_easy">Facile</string>
-    <string name="wordsearch_difficulty_medium">Moyen</string>
-    <string name="wordsearch_difficulty_hard">Difficile</string>
-    <string name="wordsearch_difficulty_expert">Expert</string>
     <string name="wordsearch_difficulty_desc_easy">Mots horizontaux et verticaux vers l\'avant avec un espacement généreux.</string>
     <string name="wordsearch_difficulty_desc_medium">Ajoute des mots diagonaux vers l\'avant et des groupes plus serrés.</string>
     <string name="wordsearch_difficulty_desc_hard">Toutes les directions, y compris à l\'envers, avec des chevauchements plus denses.</string>
@@ -734,17 +673,12 @@
     <string name="wordsearch_tip_2_title">Termine une ligne à la fois</string>
     <string name="wordsearch_tip_2_body">Commence une sélection, fais glisser jusqu\'au point final, puis valide. Démarrer une nouvelle sélection remplace la temporaire.</string>
     <string name="wordsearch_how_to_play_scoring">Commence à 15 000 et diminue pendant que le temps s\'écoule. Chaque mot non trouvé au moment de résoudre le mot caché ajoute un bonus de 300 points. Chaque mauvaise case du mot caché coûte 500 points et 10 %% de précision.</string>
-    <string name="wordsearch_loss_abandoned_eyebrow">Puzzle terminé</string>
     <string name="wordsearch_loss_abandoned_title">Partie de mots mêlés terminée</string>
     <string name="wordsearch_loss_abandoned_body">Vous avez quitté cette partie de mots mêlés avant d\'avoir résolu tous les mots et le mot caché.</string>
 
     <!-- Block Fill -->
     <string name="blockfill_title">Block Fill</string>
     <string name="blockfill_tagline">Glissez les pièces sur la grille et videz des lignes complètes.</string>
-    <string name="blockfill_difficulty_easy">Facile</string>
-    <string name="blockfill_difficulty_medium">Moyen</string>
-    <string name="blockfill_difficulty_hard">Difficile</string>
-    <string name="blockfill_difficulty_expert">Expert</string>
     <string name="blockfill_difficulty_desc_easy">Un petit motif de départ et des pièces faciles à placer. Essayez d\'atteindre 1000 points.</string>
     <string name="blockfill_difficulty_desc_medium">Un motif un peu plus grand et un plus large éventail de formes. Essayez d\'atteindre 1500 points.</string>
     <string name="blockfill_difficulty_desc_hard">Un motif plus grand, des formes gênantes et des lots à planifier. Essayez d\'atteindre 2000 points.</string>
@@ -824,10 +758,6 @@
     <string name="blockfill_loss_rule_failure_body">Aucune de vos pièces restantes ne pouvait être posée nulle part sur la grille.</string>
     <string name="wordguess_title">Devine le Mot</string>
     <string name="wordguess_tagline">Devine le mot caché en six essais.</string>
-    <string name="wordguess_difficulty_easy">Facile</string>
-    <string name="wordguess_difficulty_medium">Moyen</string>
-    <string name="wordguess_difficulty_hard">Difficile</string>
-    <string name="wordguess_difficulty_expert">Expert</string>
     <string name="wordguess_difficulty_desc_easy">Mots de 5 lettres, vocabulaire courant.</string>
     <string name="wordguess_difficulty_desc_medium">Mots de 5 lettres, vocabulaire plus large incluant des mots plus rares.</string>
     <string name="wordguess_difficulty_desc_hard">Mots de 6 lettres, vocabulaire courant.</string>
@@ -861,10 +791,6 @@
     <!-- AnimalDoku -->
     <string name="animaldoku_title">Animal Doku</string>
     <string name="animaldoku_tagline">Place un animal par ligne, colonne et région colorée.</string>
-    <string name="animaldoku_difficulty_easy">Facile</string>
-    <string name="animaldoku_difficulty_medium">Moyen</string>
-    <string name="animaldoku_difficulty_hard">Difficile</string>
-    <string name="animaldoku_difficulty_expert">Expert</string>
     <string name="animaldoku_difficulty_desc_easy">Petites grilles résolues avec des vérifications simples de ligne, colonne et région.</string>
     <string name="animaldoku_difficulty_desc_medium">Grilles un peu plus grandes qui demandent de peser des paires d\'emplacements possibles.</string>
     <string name="animaldoku_difficulty_desc_hard">Grilles plus grandes et plus serrées nécessitant de courtes chaînes de déduction pour placer chaque animal.</string>
@@ -921,74 +847,16 @@
     <string name="animaldoku_loss_rule_failure_eyebrow">Puzzle perdu</string>
     <string name="animaldoku_loss_rule_failure_title">Plus de vies</string>
     <string name="animaldoku_loss_rule_failure_body">Trois ouvertures incorrectes t\'ont coûté toutes tes vies et ont mis fin au puzzle.</string>
-    <string name="animaldoku_challenger_label">Challenger</string>
-    <string name="animaldoku_challenger_description">Résous autant de puzzles que possible avant que le temps ne s\'écoule.</string>
-    <string name="animaldoku_challenger_solved_label">Résolus</string>
-    <string name="animaldoku_challenger_tier_label">Niveau</string>
-    <string name="animaldoku_challenger_result_time_up_title">Temps écoulé !</string>
-    <string name="animaldoku_challenger_result_time_up_body">Le temps est écoulé. Voici comment s\'est passée ta partie.</string>
-    <string name="animaldoku_challenger_result_lives_exhausted_title">Plus de vies !</string>
     <string name="animaldoku_challenger_result_lives_exhausted_body">Trois ouvertures incorrectes ont mis fin à ta partie.</string>
-    <string name="animaldoku_challenger_result_abandoned_title">Partie terminée</string>
-    <string name="animaldoku_challenger_result_abandoned_body">Tu as arrêté la partie avant la fin.</string>
-    <string name="animaldoku_challenger_result_new_high_score">Nouveau meilleur score !</string>
-    <string name="animaldoku_challenger_result_puzzles_solved">Puzzles résolus</string>
-    <string name="animaldoku_challenger_result_score">Score</string>
-    <string name="animaldoku_challenger_result_fastest_solve">Résolution la plus rapide</string>
-    <string name="animaldoku_challenger_result_off_best">%1$d points de moins que ton record</string>
-    <string name="animaldoku_challenger_play_again">Rejouer</string>
-    <string name="animaldoku_challenger_back_to_puzzles">Retour aux puzzles</string>
-    <string name="animaldoku_challenger_try_another_game">Essayer un autre jeu</string>
-    <string name="animaldoku_challenger_stats_title">Challenger</string>
-    <string name="animaldoku_challenger_stats_best_run">Meilleure partie</string>
-    <string name="wordguess_challenger_label">Challenger</string>
     <string name="wordguess_challenger_description">Devine autant de mots que possible avant que le temps ne s\'écoule.</string>
-    <string name="wordguess_challenger_solved_label">Résolus</string>
-    <string name="wordguess_challenger_tier_label">Niveau</string>
-    <string name="wordguess_challenger_result_time_up_title">Temps écoulé !</string>
-    <string name="wordguess_challenger_result_time_up_body">Le temps est écoulé. Voici comment s\'est passée ta partie.</string>
-    <string name="wordguess_challenger_result_lives_exhausted_title">Plus de vies !</string>
     <string name="wordguess_challenger_result_lives_exhausted_body">Trois mots manqués ont mis fin à ta partie.</string>
-    <string name="wordguess_challenger_result_abandoned_title">Partie terminée</string>
-    <string name="wordguess_challenger_result_abandoned_body">Tu as arrêté la partie avant la fin.</string>
-    <string name="wordguess_challenger_result_new_high_score">Nouveau meilleur score !</string>
     <string name="wordguess_challenger_result_puzzles_solved">Mots résolus</string>
-    <string name="wordguess_challenger_result_score">Score</string>
-    <string name="wordguess_challenger_result_fastest_solve">Résolution la plus rapide</string>
-    <string name="wordguess_challenger_result_off_best">%1$d points de moins que ton record</string>
-    <string name="wordguess_challenger_play_again">Rejouer</string>
-    <string name="wordguess_challenger_back_to_puzzles">Retour aux puzzles</string>
-    <string name="wordguess_challenger_try_another_game">Essayer un autre jeu</string>
-    <string name="wordguess_challenger_stats_title">Challenger</string>
-    <string name="wordguess_challenger_stats_best_run">Meilleure partie</string>
-    <string name="chimp_challenger_label">Challenger</string>
     <string name="chimp_challenger_description">Mémorise et touche autant de séquences que possible avant que le temps ne s\'écoule.</string>
-    <string name="chimp_challenger_solved_label">Résolus</string>
-    <string name="chimp_challenger_tier_label">Niveau</string>
     <string name="challenger_result_puzzle_breakdown_heading">Détail des puzzles</string>
-    <string name="chimp_challenger_result_time_up_title">Temps écoulé !</string>
-    <string name="chimp_challenger_result_time_up_body">Le temps est écoulé. Voici comment s\'est passée ta partie.</string>
-    <string name="chimp_challenger_result_lives_exhausted_title">Plus de vies !</string>
     <string name="chimp_challenger_result_lives_exhausted_body">Trois touches incorrectes ont mis fin à ta partie.</string>
-    <string name="chimp_challenger_result_abandoned_title">Partie terminée</string>
-    <string name="chimp_challenger_result_abandoned_body">Tu as arrêté la partie avant la fin.</string>
-    <string name="chimp_challenger_result_new_high_score">Nouveau meilleur score !</string>
-    <string name="chimp_challenger_result_puzzles_solved">Puzzles résolus</string>
-    <string name="chimp_challenger_result_score">Score</string>
-    <string name="chimp_challenger_result_fastest_solve">Résolution la plus rapide</string>
-    <string name="chimp_challenger_result_off_best">%1$d points de moins que ton record</string>
-    <string name="chimp_challenger_play_again">Rejouer</string>
-    <string name="chimp_challenger_back_to_puzzles">Retour aux puzzles</string>
-    <string name="chimp_challenger_try_another_game">Essayer un autre jeu</string>
-    <string name="chimp_challenger_stats_title">Challenger</string>
-    <string name="chimp_challenger_stats_best_run">Meilleure partie</string>
 
     <string name="arrowescape_title">Évasion des Flèches</string>
     <string name="arrowescape_tagline">Vide le plateau, une flèche à la fois.</string>
-    <string name="arrowescape_difficulty_easy">Facile</string>
-    <string name="arrowescape_difficulty_medium">Moyen</string>
-    <string name="arrowescape_difficulty_hard">Difficile</string>
-    <string name="arrowescape_difficulty_expert">Expert</string>
     <string name="arrowescape_difficulty_desc_easy">Un plateau tranquille avec peu de chemins bloqués.</string>
     <string name="arrowescape_difficulty_desc_medium">Quelques pièces se bloquent entre elles — prévois quelques coups à l\'avance.</string>
     <string name="arrowescape_difficulty_desc_hard">Plusieurs flèches en bloquent plusieurs autres à la fois. Regarde bien avant d\'appuyer.</string>
@@ -1014,10 +882,6 @@
     <!-- 2048 -->
     <string name="game2048_title">2048</string>
     <string name="game2048_tagline">Fusionne les tuiles pour atteindre 2048.</string>
-    <string name="game2048_difficulty_easy">Facile</string>
-    <string name="game2048_difficulty_medium">Moyen</string>
-    <string name="game2048_difficulty_hard">Difficile</string>
-    <string name="game2048_difficulty_expert">Expert</string>
     <string name="game2048_difficulty_desc_easy">Un plateau 5x5 plus grand te laisse plus de marge de manœuvre.</string>
     <string name="game2048_difficulty_desc_medium">Plateau classique 4x4, la disposition originale de 2048.</string>
     <string name="game2048_difficulty_desc_hard">Même plateau 4x4, mais avec plus de tuiles 4 gênantes.</string>
@@ -1050,10 +914,6 @@
     <!-- Guess by Numbers -->
     <string name="guessbynumbers_title">Devine par les Nombres</string>
     <string name="guessbynumbers_tagline">Perce le mot caché à l\'aide de seulement deux nombres.</string>
-    <string name="guessbynumbers_difficulty_easy">Facile</string>
-    <string name="guessbynumbers_difficulty_medium">Moyen</string>
-    <string name="guessbynumbers_difficulty_hard">Difficile</string>
-    <string name="guessbynumbers_difficulty_expert">Expert</string>
     <string name="guessbynumbers_difficulty_desc_easy">Mots de 5 lettres, vocabulaire courant.</string>
     <string name="guessbynumbers_difficulty_desc_medium">Mots de 5 lettres, vocabulaire plus large incluant des mots plus rares.</string>
     <string name="guessbynumbers_difficulty_desc_hard">Mots de 6 lettres, vocabulaire courant.</string>
@@ -1082,10 +942,6 @@
     <!-- Star Battle -->
     <string name="starbattle_title">Star Battle</string>
     <string name="starbattle_tagline">Place tes étoiles, garde-les séparées.</string>
-    <string name="starbattle_difficulty_easy">Facile</string>
-    <string name="starbattle_difficulty_medium">Moyen</string>
-    <string name="starbattle_difficulty_hard">Difficile</string>
-    <string name="starbattle_difficulty_expert">Expert</string>
     <string name="starbattle_difficulty_desc_easy">Une étoile par ligne, colonne et région.</string>
     <string name="starbattle_difficulty_desc_medium">Certains puzzles demandent deux étoiles par ligne.</string>
     <string name="starbattle_difficulty_desc_hard">Déductions plus poussées, parfois avec deux étoiles par ligne.</string>
@@ -1107,26 +963,8 @@
     <string name="starbattle_loss_rule_failure_eyebrow">Puzzle perdu</string>
     <string name="starbattle_loss_rule_failure_title">Plus de vies</string>
     <string name="starbattle_loss_rule_failure_body">Trop d\'étoiles ont atterri au mauvais endroit.</string>
-    <string name="starbattle_challenger_label">Challenger</string>
-    <string name="starbattle_challenger_description">Résous autant de puzzles que possible avant que le temps ne s\'écoule.</string>
-    <string name="starbattle_challenger_solved_label">Résolus</string>
-    <string name="starbattle_challenger_tier_label">Niveau</string>
-    <string name="starbattle_challenger_result_time_up_title">Temps écoulé !</string>
-    <string name="starbattle_challenger_result_time_up_body">Le temps est écoulé. Voici comment s\'est passée ta partie.</string>
     <string name="starbattle_challenger_result_hearts_exhausted_title">Plus de vies !</string>
     <string name="starbattle_challenger_result_hearts_exhausted_body">Trois ouvertures incorrectes ont mis fin à ta partie.</string>
-    <string name="starbattle_challenger_result_abandoned_title">Partie terminée</string>
-    <string name="starbattle_challenger_result_abandoned_body">Tu as arrêté la partie avant la fin.</string>
-    <string name="starbattle_challenger_result_new_high_score">Nouveau meilleur score !</string>
-    <string name="starbattle_challenger_result_puzzles_solved">Puzzles résolus</string>
-    <string name="starbattle_challenger_result_score">Score</string>
-    <string name="starbattle_challenger_result_fastest_solve">Résolution la plus rapide</string>
-    <string name="starbattle_challenger_result_off_best">%1$d points de moins que ton record</string>
-    <string name="starbattle_challenger_play_again">Rejouer</string>
-    <string name="starbattle_challenger_back_to_puzzles">Retour aux puzzles</string>
-    <string name="starbattle_challenger_try_another_game">Essayer un autre jeu</string>
-    <string name="starbattle_challenger_stats_title">Challenger</string>
-    <string name="starbattle_challenger_stats_best_run">Meilleure partie</string>
 
     <!-- Logs -->
     <string name="logs_mode_solo">Solo</string>
@@ -1229,10 +1067,6 @@
     <string name="tab_daily">Quotidien</string>
     <string name="themeclear_title">Efface le Thème</string>
     <string name="themeclear_tagline">Vide la grille avec les mots d\'un thème</string>
-    <string name="themeclear_difficulty_easy">Facile</string>
-    <string name="themeclear_difficulty_medium">Moyen</string>
-    <string name="themeclear_difficulty_hard">Difficile</string>
-    <string name="themeclear_difficulty_expert">Expert</string>
     <string name="themeclear_difficulty_desc_easy">Petite grille, quelques mots</string>
     <string name="themeclear_difficulty_desc_medium">Plus de lettres, quelques fausses pistes tentantes</string>
     <string name="themeclear_difficulty_desc_hard">Grille plus grande, des mots qui se bloquent entre eux</string>
@@ -1256,9 +1090,7 @@
     <string name="themeclear_tip_2_body">Le puzzle a été construit avec des mots précis, mais toute combinaison de mots du thème qui utilise chaque lettre gagne.</string>
     <string name="themeclear_tip_3_title">Mélange pour un regard neuf</string>
     <string name="themeclear_tip_3_body">Si tu es bloqué, mélange les lettres. Les voir à d\'autres endroits peut révéler des mots qui t\'avaient échappé.</string>
-    <string name="themeclear_loss_abandoned_eyebrow">Puzzle terminé</string>
     <string name="themeclear_loss_abandoned_title">Puzzle inachevé</string>
-    <string name="themeclear_loss_abandoned_body">Tu as terminé ce puzzle avant de le résoudre.</string>
     <string name="themeclear_reveal_words_label">Les mots du puzzle étaient</string>
     <string name="themeclear_hint_show">Afficher l\'indice</string>
     <string name="themeclear_hint_hide">Masquer l\'indice</string>
@@ -1343,14 +1175,8 @@
     <string name="minisudoku_quickstart_bullet_2">Les boîtes font 2×2 sur les grilles 4×4 et 2×3 sur les grilles 6×6.</string>
     <string name="minisudoku_quickstart_hook">Un Sudoku rapide quand une grille complète, c\'est trop.</string>
     <string name="minisudoku_how_to_play_goal">Place chaque chiffre exactement une fois dans chaque ligne, colonne et boîte. Facile utilise une grille 4×4 avec les chiffres 1 à 4 et des boîtes 2×2. Moyen, Difficile et Expert utilisent une grille 6×6 avec les chiffres 1 à 6 et des boîtes 2×3.</string>
-    <string name="minisudoku_loss_abandoned_title">Puzzle inachevé</string>
-    <string name="minisudoku_loss_abandoned_body">Tu as terminé ce puzzle avant de le résoudre.</string>
     <string name="sequencememory_title">Mémoire de Séquences</string>
     <string name="sequencememory_tagline">Regarde les cases s\'allumer, puis reproduis la séquence.</string>
-    <string name="sequencememory_difficulty_easy">Facile</string>
-    <string name="sequencememory_difficulty_medium">Moyen</string>
-    <string name="sequencememory_difficulty_hard">Difficile</string>
-    <string name="sequencememory_difficulty_expert">Expert</string>
     <string name="sequencememory_difficulty_desc_easy">4 cases à un rythme tranquille. Reproduis jusqu\'à 8 étapes.</string>
     <string name="sequencememory_difficulty_desc_medium">4 cases qui s\'allument plus vite. Reproduis jusqu\'à 12 étapes.</string>
     <string name="sequencememory_difficulty_desc_hard">6 cases, encore plus vite. Reproduis jusqu\'à 14 étapes.</string>
@@ -1387,10 +1213,6 @@
     <string name="sequencememory_loss_rule_failure_body">Tu as touché la mauvaise case.</string>
     <string name="killersudoku_title">Killer Sudoku</string>
     <string name="killersudoku_tagline">Un Sudoku sans chiffres de départ, guidé uniquement par les sommes des cages.</string>
-    <string name="killersudoku_difficulty_easy">Facile</string>
-    <string name="killersudoku_difficulty_medium">Moyen</string>
-    <string name="killersudoku_difficulty_hard">Difficile</string>
-    <string name="killersudoku_difficulty_expert">Expert</string>
     <string name="killersudoku_difficulty_desc_easy">Petites cages avec peu de façons d\'atteindre la somme.</string>
     <string name="killersudoku_difficulty_desc_medium">Des cages plus grandes et ta première règle des 45.</string>
     <string name="killersudoku_difficulty_desc_hard">Des sommes qui ne tombent juste que sur plusieurs lignes ou colonnes.</string>
@@ -1430,9 +1252,6 @@
     <string name="killersudoku_hint_rule_of_45_body">Chaque ligne, colonne et boîte fait 45. En soustrayant les cages contenues dans %1$s, il reste les cases qui dépassent vers l\'intérieur ou l\'extérieur, ce qui donne %2$d pour %3$s.</string>
     <string name="killersudoku_hint_rule_of_45_multi_house_body">Ensemble, %1$s font %2$d. En soustrayant les cages qu\'elles contiennent, il reste les cases qui dépassent vers l\'intérieur ou l\'extérieur, ce qui donne %3$d pour %4$s.</string>
     <string name="killersudoku_hint_classic_body">%1$s sur les cases en surbrillance laisse %2$d pour %3$s.</string>
-    <string name="killersudoku_loss_abandoned_eyebrow">Puzzle terminé</string>
-    <string name="killersudoku_loss_abandoned_title">Puzzle inachevé</string>
-    <string name="killersudoku_loss_abandoned_body">Tu as terminé ce puzzle avant de le résoudre.</string>
     <string name="killersudoku_how_to_play_scoring">Commence à 10 000 et diminue pendant que le chronomètre tourne. Chaque ligne, colonne ou boîte incorrectement complétée coûte 500 points. Le score diminue plus lentement aux difficultés élevées.</string>
     <string name="settings_seasonal_label">Touches saisonnières</string>
     <string name="settings_seasonal_detail">Une petite touche d\'Halloween le 31 octobre : une animation de victoire tout en douceur et un rappel citrouille.</string>

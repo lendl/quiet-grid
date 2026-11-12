@@ -7,8 +7,8 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.formatElapsed
-import com.quietgrid.app.core.gameDifficultyLabelRes
 import com.quietgrid.app.data.PlayHistoryStore
+import com.quietgrid.app.games.gameDifficultyLabelRes
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate
 

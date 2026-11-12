@@ -1,7 +1,8 @@
 package com.quietgrid.app.games.nonogram
 
-import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.session.challengerTierAfterSolve
+import com.quietgrid.app.session.tick
 import com.quietgrid.engine.nonogram.NonogramPuzzleEntry
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -32,7 +33,7 @@ class NonogramChallengerLogicTest {
 
     @Test
     fun `nonogramChallengerTierAfterSolve stays on the same tier before the solve threshold`() {
-        val (tier, solves) = nonogramChallengerTierAfterSolve(Difficulty.EASY, solvesInTier = 0)
+        val (tier, solves) = challengerTierAfterSolve(NONOGRAM_CHALLENGER_CONFIG, Difficulty.EASY, solvesInTier = 0)
 
         assertEquals(Difficulty.EASY, tier)
         assertEquals(1, solves)
@@ -40,7 +41,7 @@ class NonogramChallengerLogicTest {
 
     @Test
     fun `nonogramChallengerTierAfterSolve advances tier once the threshold is reached`() {
-        val (tier, solves) = nonogramChallengerTierAfterSolve(Difficulty.EASY, solvesInTier = NONOGRAM_CHALLENGER_SOLVES_PER_TIER - 1)
+        val (tier, solves) = challengerTierAfterSolve(NONOGRAM_CHALLENGER_CONFIG, Difficulty.EASY, solvesInTier = NONOGRAM_CHALLENGER_SOLVES_PER_TIER - 1)
 
         assertEquals(Difficulty.MEDIUM, tier)
         assertEquals(0, solves)
@@ -65,7 +66,7 @@ class NonogramChallengerLogicTest {
     fun `tickNonogramChallenger counts the clock down and the current puzzle up`() {
         val initial = createInitialNonogramChallengerSession(testPuzzle("p1", "easy"))
 
-        val ticked = tickNonogramChallenger(initial)
+        val ticked = initial.tick()
 
         assertEquals(NONOGRAM_CHALLENGER_STARTING_SECONDS - 1.0, ticked.secondsRemaining, 0.0)
         assertEquals(1.0, ticked.secondsOnCurrentPuzzle, 0.0)

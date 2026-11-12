@@ -29,7 +29,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,13 +48,13 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.difficultyColor
-import com.quietgrid.app.core.gameDifficultyLabelRes
 import com.quietgrid.app.core.mix.Mix
 import com.quietgrid.app.core.mix.MixEntry
 import com.quietgrid.app.core.mix.MixEntryMode
@@ -68,6 +67,7 @@ import com.quietgrid.app.core.mix.groupEntriesByKnownGame
 import com.quietgrid.app.core.mix.missingModeOptionsFor
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.RepositoriesViewModel
+import com.quietgrid.app.games.gameDifficultyLabelRes
 import kotlinx.coroutines.launch
 
 internal const val MIX_NAME_FIELD_TEST_TAG = "mix_name_field"
@@ -93,8 +93,8 @@ internal fun MixEditorContent(
     renameTrigger: Int = 0,
     deleteTrigger: Int = 0,
 ) {
-    val settings by repositories.settingsRepository.settings.collectAsState(initial = AppSettings())
-    val mixes by repositories.mixRepository.mixes.collectAsState(initial = emptyList())
+    val settings by repositories.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = AppSettings())
+    val mixes by repositories.mixRepository.mixes.collectAsStateWithLifecycle(initialValue = emptyList())
     val existing = remember(mixId, mixes) { mixes.firstOrNull { it.id == mixId } }
     val coroutineScope = rememberCoroutineScope()
 

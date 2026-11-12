@@ -38,59 +38,11 @@ import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.difficultyColor
 import com.quietgrid.app.data.GameStats
+import com.quietgrid.app.games.gameDifficultyLabelRes
 import com.quietgrid.app.ui.components.StatGroup
 import com.quietgrid.app.ui.components.StatItem
-import com.quietgrid.app.games.animaldoku.animalDokuDifficultyLabelRes
-import com.quietgrid.app.games.arrowescape.arrowEscapeDifficultyLabelRes
-import com.quietgrid.app.games.circuit.circuitDifficultyLabelRes
-import com.quietgrid.app.games.hashi.hashiDifficultyLabelRes
-import com.quietgrid.app.games.links.linksDifficultyLabelRes
-import com.quietgrid.app.games.blockescape.blockEscapeDifficultyLabelRes
-import com.quietgrid.app.games.wordswap.wordSwapDifficultyLabelRes
-import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
-import com.quietgrid.app.games.chimptest.chimpDifficultyLabelRes
-import com.quietgrid.app.games.game2048.game2048DifficultyLabelRes
-import com.quietgrid.app.games.guessbynumbers.guessByNumbersDifficultyLabelRes
-import com.quietgrid.app.games.minesweeper.minesweeperDifficultyLabelRes
-import com.quietgrid.app.games.nback.nbackDifficultyLabelRes
-import com.quietgrid.app.games.nonogram.nonogramDifficultyLabelRes
-import com.quietgrid.app.games.sequencememory.sequenceMemoryDifficultyLabelRes
-import com.quietgrid.app.games.starbattle.starBattleDifficultyLabelRes
-import com.quietgrid.app.games.whodidit.whoDidItDifficultyLabelRes
-import com.quietgrid.app.games.minisudoku.miniSudokuDifficultyLabelRes
-import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
-import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
-import com.quietgrid.app.games.themeclear.themeClearDifficultyLabelRes
-import com.quietgrid.app.games.killersudoku.killerSudokuDifficultyLabelRes
-import com.quietgrid.app.games.wordguess.wordGuessDifficultyLabelRes
-import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
 
-fun difficultyLabelRes(gameId: GameId, difficulty: Difficulty): Int = when (gameId) {
-    GameId.TAKUZU -> takuzuDifficultyLabelRes(difficulty)
-    GameId.NONOGRAM -> nonogramDifficultyLabelRes(difficulty)
-    GameId.MINESWEEPER -> minesweeperDifficultyLabelRes(difficulty)
-    GameId.SUDOKU -> sudokuDifficultyLabelRes(difficulty)
-    GameId.WORDSEARCH -> wordSearchDifficultyLabelRes(difficulty)
-    GameId.CHIMPTEST -> chimpDifficultyLabelRes(difficulty)
-    GameId.BLOCKFILL -> blockFillDifficultyLabelRes(difficulty)
-    GameId.WORDGUESS -> wordGuessDifficultyLabelRes(difficulty)
-    GameId.ANIMALDOKU -> animalDokuDifficultyLabelRes(difficulty)
-    GameId.ARROWESCAPE -> arrowEscapeDifficultyLabelRes(difficulty)
-    GameId.GAME_2048 -> game2048DifficultyLabelRes(difficulty)
-    GameId.STARBATTLE -> starBattleDifficultyLabelRes(difficulty)
-    GameId.WHODIDIT -> whoDidItDifficultyLabelRes(difficulty)
-    GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyLabelRes(difficulty)
-    GameId.NBACK -> nbackDifficultyLabelRes(difficulty)
-    GameId.THEMECLEAR -> themeClearDifficultyLabelRes(difficulty)
-    GameId.SEQUENCEMEMORY -> sequenceMemoryDifficultyLabelRes(difficulty)
-    GameId.HASHI -> hashiDifficultyLabelRes(difficulty)
-    GameId.CIRCUIT -> circuitDifficultyLabelRes(difficulty)
-    GameId.LINKS -> linksDifficultyLabelRes(difficulty)
-    GameId.BLOCKESCAPE -> blockEscapeDifficultyLabelRes(difficulty)
-    GameId.WORDSWAP -> wordSwapDifficultyLabelRes(difficulty)
-    GameId.KILLERSUDOKU -> killerSudokuDifficultyLabelRes(difficulty)
-    GameId.MINISUDOKU -> miniSudokuDifficultyLabelRes(difficulty)
-}
+fun difficultyLabelRes(gameId: GameId, difficulty: Difficulty): Int = gameDifficultyLabelRes(gameId, difficulty)
 
 internal const val STATS_DIFFICULTY_TABLE_TAG = "stats-difficulty-table"
 

@@ -197,6 +197,7 @@ dependencies {
     implementation("androidx.profileinstaller:profileinstaller:1.4.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.11.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.11.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.11.0")
     implementation("androidx.lifecycle:lifecycle-process:2.11.0")
     implementation("androidx.navigation:navigation-compose:2.10.2")
     implementation("androidx.datastore:datastore-preferences:1.3.0")
@@ -225,6 +226,7 @@ dependencies {
     testImplementation("io.github.takahirom.roborazzi:roborazzi-compose:1.77.0")
     testImplementation("com.google.dagger:hilt-android-testing:2.60.1")
     kspTest("com.google.dagger:hilt-android-compiler:2.60.1")
+    testImplementation("com.lemonappdev:konsist:0.18.1")
 
     androidTestImplementation(platform("androidx.compose:compose-bom:2026.09.00"))
     androidTestImplementation("androidx.test.ext:junit:1.3.0")

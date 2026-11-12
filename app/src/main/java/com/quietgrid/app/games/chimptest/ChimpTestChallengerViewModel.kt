@@ -10,6 +10,8 @@ import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.StatsStore
 import com.quietgrid.app.session.AppForeground
 import com.quietgrid.app.session.ChallengerRunController
+import com.quietgrid.app.session.challengerTierAfterSolve
+import com.quietgrid.app.session.tick
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -25,13 +27,13 @@ class ChimpTestChallengerViewModel @Inject constructor(
     appForeground: AppForeground,
 ) : ViewModel() {
 
-    private val controller = ChallengerRunController(
+    private val controller = ChallengerRunController<ChimpTestChallengerSession>(
         scope = viewModelScope,
         gameId = GameId.CHIMPTEST,
         statsStore = statsStore,
         historyStore = historyStore,
         appForeground = appForeground,
-        tick = ::tickChimpTestChallenger,
+        tick = { it.tick() },
     )
 
     val session get() = controller.session
@@ -75,7 +77,7 @@ class ChimpTestChallengerViewModel @Inject constructor(
             val withWin = current.copy(puzzleSession = outcome.session)
             controller.session = withWin
             correctTapTrigger++
-            val (nextTier, nextSolvesInTier) = chimpTestChallengerTierAfterSolve(withWin.tier, withWin.solvesInTier)
+            val (nextTier, nextSolvesInTier) = challengerTierAfterSolve(CHIMPTEST_CHALLENGER_CONFIG, withWin.tier, withWin.solvesInTier)
             viewModelScope.launch {
                 delay(CHALLENGER_SOLVE_ADVANCE_DELAY_MS)
                 controller.session = advanceChimpTestChallengerAfterSolve(withWin, nextTier, nextSolvesInTier)

@@ -27,7 +27,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +42,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameCategory
@@ -59,7 +59,7 @@ fun GamesScreen(
     onOpenAccount: () -> Unit,
 ) {
     val repositories: RepositoriesViewModel = hiltViewModel()
-    val loadedSettings by repositories.settingsRepository.settings.collectAsState(initial = null)
+    val loadedSettings by repositories.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = null)
     val settings = loadedSettings ?: AppSettings()
 
     var selectedCategory by remember { mutableStateOf<GameCategory?>(null) }

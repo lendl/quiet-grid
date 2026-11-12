@@ -3,6 +3,7 @@ package com.quietgrid.app.games.nback
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.session.AppForeground
+import com.quietgrid.app.session.LossReason
 import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeSessionStore
 import com.quietgrid.app.testutil.FakeStatsStore
@@ -93,7 +94,7 @@ class NBackPlayViewModelTest {
         mainDispatcherRule.dispatcher.scheduler.runCurrent()
 
         assertTrue(sessionStore.cleared)
-        assertEquals("abandoned", results.single().lossReason)
+        assertEquals(LossReason.ABANDONED, results.single().lossReason)
         collectJob.cancel()
     }
 

@@ -13,8 +13,8 @@ import com.quietgrid.app.LaunchRequest
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
-import com.quietgrid.app.core.gameDifficultyLabelRes
 import com.quietgrid.app.data.ThemeMode
+import com.quietgrid.app.games.gameDifficultyLabelRes
 import com.quietgrid.app.toIntent
 import org.junit.Test
 import org.junit.runner.RunWith

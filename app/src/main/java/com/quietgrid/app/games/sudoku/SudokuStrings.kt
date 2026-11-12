@@ -5,13 +5,6 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.ui.components.QuickRule
 import com.quietgrid.app.ui.components.QuickStartContent
 
-fun sudokuDifficultyLabelRes(difficulty: Difficulty): Int = when (difficulty) {
-    Difficulty.EASY -> R.string.sudoku_difficulty_easy
-    Difficulty.MEDIUM -> R.string.sudoku_difficulty_medium
-    Difficulty.HARD -> R.string.sudoku_difficulty_hard
-    Difficulty.EXPERT -> R.string.sudoku_difficulty_expert
-}
-
 fun sudokuDifficultyDescriptionRes(difficulty: Difficulty): Int = when (difficulty) {
     Difficulty.EASY -> R.string.sudoku_difficulty_desc_easy
     Difficulty.MEDIUM -> R.string.sudoku_difficulty_desc_medium

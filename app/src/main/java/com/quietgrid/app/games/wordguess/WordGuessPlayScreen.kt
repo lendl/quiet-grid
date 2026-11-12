@@ -6,9 +6,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
@@ -35,7 +35,7 @@ fun WordGuessPlayScreen(
         creationCallback = { factory -> factory.create(difficulty, resume, dailyDate) },
     )
     CollectPuzzleResult(viewModel.result, onFinished)
-    val finishing by viewModel.finishing.collectAsState()
+    val finishing by viewModel.finishing.collectAsStateWithLifecycle()
 
     var currentInput by remember { mutableStateOf("") }
     var invalidFlash by remember { mutableStateOf(false) }
@@ -125,13 +125,6 @@ fun WordGuessPlayScreen(
             }
         },
     )
-}
-
-fun wordGuessDifficultyLabelRes(difficulty: Difficulty): Int = when (difficulty) {
-    Difficulty.EASY -> R.string.wordguess_difficulty_easy
-    Difficulty.MEDIUM -> R.string.wordguess_difficulty_medium
-    Difficulty.HARD -> R.string.wordguess_difficulty_hard
-    Difficulty.EXPERT -> R.string.wordguess_difficulty_expert
 }
 
 fun wordGuessDifficultyDescriptionRes(difficulty: Difficulty): Int = when (difficulty) {

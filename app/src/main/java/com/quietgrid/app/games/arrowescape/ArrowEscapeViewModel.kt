@@ -18,6 +18,7 @@ import com.quietgrid.app.data.StatsStore
 import com.quietgrid.app.data.isHalloweenActive
 import com.quietgrid.app.data.puzzleIdsPlayedOn
 import com.quietgrid.app.data.recentlyPlayedPuzzleIds
+import com.quietgrid.app.session.LossReason
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
@@ -49,7 +50,7 @@ data class ArrowEscapeResult(
     val solved: Boolean,
     val score: Int,
     val elapsedSeconds: Int,
-    val lossReason: String?,
+    val lossReason: LossReason?,
     val isFirstSolve: Boolean = false,
     val isNewHighScore: Boolean = false,
     val journeySignals: JourneySignals = JourneySignals(0, 0),
@@ -226,7 +227,7 @@ class ArrowEscapePlayViewModel @AssistedInject constructor(
         controller.updateSession(attempt.session, persist = stillPlaying)
         when (attempt.session.status) {
             ArrowEscapeStatus.WON -> controller.finishAsWin()
-            ArrowEscapeStatus.LOST -> controller.finishAsLoss("out_of_lives")
+            ArrowEscapeStatus.LOST -> controller.finishAsLoss(LossReason.OUT_OF_LIVES)
             ArrowEscapeStatus.PLAYING -> Unit
         }
     }

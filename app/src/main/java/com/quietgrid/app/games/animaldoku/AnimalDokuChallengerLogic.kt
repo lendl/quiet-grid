@@ -1,61 +1,26 @@
-// app/src/main/java/com/quietgrid/app/games/animaldoku/AnimalDokuChallengerLogic.kt
 package com.quietgrid.app.games.animaldoku
 
-import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.session.advanceAfterSolve
+import com.quietgrid.app.session.startChallengerSession
 import com.quietgrid.engine.animaldoku.AnimalDokuPuzzleEntry
 
-private val ANIMALDOKU_CHALLENGER_TIER_ORDER = listOf(Difficulty.EASY, Difficulty.MEDIUM, Difficulty.HARD, Difficulty.EXPERT)
-
 fun createInitialChallengerSession(firstPuzzle: AnimalDokuPuzzleEntry): AnimalDokuChallengerSession =
-    AnimalDokuChallengerSession(
-        puzzleSession = createAnimalDokuSession(firstPuzzle),
-        tier = Difficulty.EASY,
-        solvesInTier = 0,
-        puzzlesSolved = 0,
-        score = 0,
-        secondsRemaining = ANIMALDOKU_CHALLENGER_STARTING_SECONDS,
-        secondsOnCurrentPuzzle = 0.0,
-        servedPuzzleIds = setOf(firstPuzzle.id),
-    )
+    startChallengerSession(ANIMALDOKU_CHALLENGER_CONFIG, createAnimalDokuSession(firstPuzzle), firstPuzzle.id)
 
-fun tierAfterSolve(currentTier: Difficulty, solvesInTier: Int): Pair<Difficulty, Int> {
-    val nextSolves = solvesInTier + 1
-    val currentIndex = ANIMALDOKU_CHALLENGER_TIER_ORDER.indexOf(currentTier)
-    return if (nextSolves >= ANIMALDOKU_CHALLENGER_SOLVES_PER_TIER && currentIndex < ANIMALDOKU_CHALLENGER_TIER_ORDER.lastIndex) {
-        ANIMALDOKU_CHALLENGER_TIER_ORDER[currentIndex + 1] to 0
-    } else {
-        currentTier to nextSolves
-    }
-}
+fun animalDokuChallengerPuzzleScore(session: AnimalDokuChallengerSession): Int =
+    animalDokuScore(session.puzzleSession.lives, session.secondsOnCurrentPuzzle.toInt())
 
 fun advanceChallengerAfterSolve(
     session: AnimalDokuChallengerSession,
     nextTier: Difficulty,
     nextSolvesInTier: Int,
     nextPuzzle: AnimalDokuPuzzleEntry,
-): AnimalDokuChallengerSession {
-    val livesCarried = session.puzzleSession.lives
-    val gainedScore = animalDokuScore(livesCarried, session.secondsOnCurrentPuzzle.toInt())
-    val fastestSolveSeconds = animalDokuChallengerFastestSolve(session)
-    return session.copy(
-        puzzleSession = createAnimalDokuSession(nextPuzzle).copy(lives = livesCarried),
-        tier = nextTier,
-        solvesInTier = nextSolvesInTier,
-        puzzlesSolved = session.puzzlesSolved + 1,
-        score = session.score + gainedScore,
-        secondsRemaining = session.secondsRemaining + ANIMALDOKU_CHALLENGER_BONUS_SECONDS,
-        secondsOnCurrentPuzzle = 0.0,
-        servedPuzzleIds = session.servedPuzzleIds + nextPuzzle.id,
-        fastestSolveSeconds = fastestSolveSeconds,
-        puzzleHistory = session.puzzleHistory + ChallengerPuzzleSolve(session.tier, session.secondsOnCurrentPuzzle),
-    )
-}
-
-fun animalDokuChallengerFastestSolve(session: AnimalDokuChallengerSession): Double =
-    session.fastestSolveSeconds?.let { minOf(it, session.secondsOnCurrentPuzzle) } ?: session.secondsOnCurrentPuzzle
-
-fun tickChallenger(session: AnimalDokuChallengerSession): AnimalDokuChallengerSession = session.copy(
-    secondsRemaining = session.secondsRemaining - 1.0,
-    secondsOnCurrentPuzzle = session.secondsOnCurrentPuzzle + 1.0,
+): AnimalDokuChallengerSession = session.advanceAfterSolve(
+    config = ANIMALDOKU_CHALLENGER_CONFIG,
+    gainedScore = animalDokuChallengerPuzzleScore(session),
+    nextTier = nextTier,
+    nextSolvesInTier = nextSolvesInTier,
+    nextPuzzleSession = createAnimalDokuSession(nextPuzzle).copy(lives = session.puzzleSession.lives),
+    nextPuzzleId = nextPuzzle.id,
 )

@@ -5,6 +5,7 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.ActiveSessionEnvelope
 import com.quietgrid.app.session.AppForeground
+import com.quietgrid.app.session.LossReason
 import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeSessionStore
 import com.quietgrid.app.testutil.FakeStatsStore
@@ -125,7 +126,7 @@ class SequenceMemoryPlayViewModelTest {
 
         val result = results.single()
         assertFalse(result.solved)
-        assertEquals("rule-failure", result.lossReason)
+        assertEquals(LossReason.RULE_FAILURE, result.lossReason)
         collectJob.cancel()
     }
 
@@ -159,7 +160,7 @@ class SequenceMemoryPlayViewModelTest {
         advance(500)
 
         assertTrue(sessionStore.cleared)
-        assertEquals("abandoned", results.single().lossReason)
+        assertEquals(LossReason.ABANDONED, results.single().lossReason)
         collectJob.cancel()
     }
 

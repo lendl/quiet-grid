@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.R
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.standardDifficultyLabelRes
 import com.quietgrid.app.session.ChallengerResult
 import com.quietgrid.app.ui.components.CollectPuzzleResult
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
@@ -44,8 +45,8 @@ fun ChimpTestChallengerPlayScreen(
     } else {
         listOf(
             heartsInfo(session.livesRemaining, CHIMPTEST_CHALLENGER_STARTING_LIVES, viewModel.wrongTapTrigger),
-            InfoItem.Label("${stringResource(R.string.chimp_challenger_tier_label)}: ${stringResource(chimpDifficultyLabelRes(session.tier))}"),
-            InfoItem.Label("${stringResource(R.string.chimp_challenger_solved_label)}: ${session.puzzlesSolved}"),
+            InfoItem.Label("${stringResource(R.string.challenger_tier_label)}: ${stringResource(standardDifficultyLabelRes(session.tier))}"),
+            InfoItem.Label("${stringResource(R.string.challenger_solved_label)}: ${session.puzzlesSolved}"),
         )
     }
 

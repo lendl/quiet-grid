@@ -53,7 +53,7 @@ The play screen never shows the difficulty when the player just picked it. It sh
 - The ? button toggles a card that drops down under the top bar (beside the rail when sideways). The board and dock behind it dim. Any tap or Back closes it.
 - The card shows the game's picture rules side by side: a small drawing of each rule with a short title, separated by thin dividers, then a "Full rules" button that opens the game's Rules page (`Routes.RULES`, the same content as the Rules tab, with a back arrow to the puzzle). It deliberately isn't the game page itself: its Play tab could start or resume a second copy of the running puzzle.
 - Picture rules come from `QuickStartContent.rules` (`QuickRule(titleRes) { drawing }`). Draw each one with the game's own cell colors, about 40 high. Games without picture rules fall back to the quick-start text (goal, bullets, tip).
-- Every new game must be registered in `quickStartFor` (`ui/components/QuickStartRegistry.kt`) and should get 2 or 3 picture rules.
+- Every new game sets `quickStart` on its `GameDefinition` (`games/<id>/<Name>Definition.kt`, registered in `games/GameRegistry.kt`) and should get 2 or 3 picture rules.
 
 ## Dock types
 
@@ -102,9 +102,9 @@ Timer, hint button, screen rotation, keep screen awake, vibration, check lines a
 ## Checklist for a new game
 
 - [ ] Uses `GamePlayScaffold`, with no custom header, timer, end button or end dialog.
-- [ ] Has `QuickStartContent` registered in `quickStartFor`, with 2 or 3 picture rules in `rules`.
+- [ ] Has `QuickStartContent` set as `quickStart` on its `GameDefinition`, with 2 or 3 picture rules in `rules`.
 - [ ] Passes `difficulty` from the session. The strip shows only game state, never the title.
-- [ ] The hint, if the game has one, uses `hint` / `hintMessage`, and the game is listed in `HINT_CAPABLE_GAMES` (`core/GameCatalog.kt`) so its Settings tab offers the hint preference. Likewise list it in `ZOOMABLE_GAMES` if its board is zoomable and in `MISTAKE_CHECK_GAMES` if it flags wrong lines.
+- [ ] The hint, if the game has one, uses `hint` / `hintMessage`, and its `GameDefinition` sets `capabilities = GameCapabilities(hints = true)` so its Settings tab offers the hint preference. Likewise set `pinchZoom = true` if its board is zoomable and `mistakeCheck = true` if it flags wrong lines.
 - [ ] The dock type fits how the player uses it.
 - [ ] `dockHeight` covers the essential controls, and nothing in the dock grows past its box.
 - [ ] Checked in all six layouts: small and normal phone each upright and sideways, and tablet in landscape and upright. `GamePlayScaffoldTest` shows how to cover them with Robolectric qualifiers.

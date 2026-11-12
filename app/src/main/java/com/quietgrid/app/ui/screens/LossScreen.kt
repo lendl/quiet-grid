@@ -34,30 +34,9 @@ import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.formatElapsed
-import com.quietgrid.app.games.animaldoku.animalDokuDifficultyLabelRes
-import com.quietgrid.app.games.arrowescape.arrowEscapeDifficultyLabelRes
-import com.quietgrid.app.games.circuit.circuitDifficultyLabelRes
-import com.quietgrid.app.games.hashi.hashiDifficultyLabelRes
-import com.quietgrid.app.games.links.linksDifficultyLabelRes
-import com.quietgrid.app.games.blockescape.blockEscapeDifficultyLabelRes
-import com.quietgrid.app.games.wordswap.wordSwapDifficultyLabelRes
-import com.quietgrid.app.games.blockfill.blockFillDifficultyLabelRes
-import com.quietgrid.app.games.chimptest.chimpDifficultyLabelRes
-import com.quietgrid.app.games.game2048.game2048DifficultyLabelRes
-import com.quietgrid.app.games.guessbynumbers.guessByNumbersDifficultyLabelRes
-import com.quietgrid.app.games.minesweeper.minesweeperDifficultyLabelRes
-import com.quietgrid.app.games.nback.nbackDifficultyLabelRes
-import com.quietgrid.app.games.nonogram.nonogramDifficultyLabelRes
-import com.quietgrid.app.games.sequencememory.sequenceMemoryDifficultyLabelRes
-import com.quietgrid.app.games.starbattle.starBattleDifficultyLabelRes
-import com.quietgrid.app.games.whodidit.whoDidItDifficultyLabelRes
-import com.quietgrid.app.games.minisudoku.miniSudokuDifficultyLabelRes
-import com.quietgrid.app.games.sudoku.sudokuDifficultyLabelRes
-import com.quietgrid.app.games.takuzu.takuzuDifficultyLabelRes
-import com.quietgrid.app.games.themeclear.themeClearDifficultyLabelRes
-import com.quietgrid.app.games.killersudoku.killerSudokuDifficultyLabelRes
-import com.quietgrid.app.games.wordguess.wordGuessDifficultyLabelRes
-import com.quietgrid.app.games.wordsearch.wordSearchDifficultyLabelRes
+import com.quietgrid.app.games.GameRegistry
+import com.quietgrid.app.games.gameDifficultyLabelRes
+import com.quietgrid.app.session.LossReason
 import com.quietgrid.app.ui.components.OutlinedGlowButton
 import com.quietgrid.app.ui.components.rememberHapticController
 
@@ -66,7 +45,7 @@ fun LossScreen(
     gameId: GameId,
     difficulty: Difficulty,
     elapsedSeconds: Int,
-    reason: String,
+    reason: LossReason,
     score: Int,
     bestTile: Int,
     isMixActive: Boolean,
@@ -83,209 +62,13 @@ fun LossScreen(
     onBackToJourney: (() -> Unit)? = null,
 ) {
     val haptics = rememberHapticController()
-    LaunchedEffect(Unit) { if (reason != "abandoned") haptics.incorrectFeedback() }
-    val eyebrowRes: Int
-    val titleRes: Int
-    val bodyRes: Int
-    when {
-        gameId == GameId.TAKUZU -> {
-            eyebrowRes = R.string.takuzu_loss_abandoned_eyebrow
-            titleRes = R.string.takuzu_loss_abandoned_title
-            bodyRes = R.string.takuzu_loss_abandoned_body
-        }
-        gameId == GameId.NONOGRAM -> {
-            eyebrowRes = R.string.nonogram_loss_abandoned_eyebrow
-            titleRes = R.string.nonogram_loss_abandoned_title
-            bodyRes = R.string.nonogram_loss_abandoned_body
-        }
-        gameId == GameId.MINESWEEPER && reason == "abandoned" -> {
-            eyebrowRes = R.string.minesweeper_loss_abandoned_eyebrow
-            titleRes = R.string.minesweeper_loss_abandoned_title
-            bodyRes = R.string.minesweeper_loss_abandoned_body
-        }
-        gameId == GameId.MINESWEEPER -> {
-            eyebrowRes = R.string.minesweeper_loss_rule_failure_eyebrow
-            titleRes = R.string.minesweeper_loss_rule_failure_title
-            bodyRes = R.string.minesweeper_loss_rule_failure_body
-        }
-        gameId == GameId.SUDOKU -> {
-            eyebrowRes = R.string.sudoku_loss_abandoned_eyebrow
-            titleRes = R.string.sudoku_loss_abandoned_title
-            bodyRes = R.string.sudoku_loss_abandoned_body
-        }
-        gameId == GameId.MINISUDOKU -> {
-            eyebrowRes = R.string.sudoku_loss_abandoned_eyebrow
-            titleRes = R.string.minisudoku_loss_abandoned_title
-            bodyRes = R.string.minisudoku_loss_abandoned_body
-        }
-        gameId == GameId.WORDSEARCH -> {
-            eyebrowRes = R.string.wordsearch_loss_abandoned_eyebrow
-            titleRes = R.string.wordsearch_loss_abandoned_title
-            bodyRes = R.string.wordsearch_loss_abandoned_body
-        }
-        gameId == GameId.BLOCKFILL && reason == "abandoned" -> {
-            eyebrowRes = R.string.blockfill_loss_abandoned_eyebrow
-            titleRes = R.string.blockfill_loss_abandoned_title
-            bodyRes = R.string.blockfill_loss_abandoned_body
-        }
-        gameId == GameId.BLOCKFILL -> {
-            eyebrowRes = R.string.blockfill_loss_rule_failure_eyebrow
-            titleRes = R.string.blockfill_loss_rule_failure_title
-            bodyRes = R.string.blockfill_loss_rule_failure_body
-        }
-        gameId == GameId.WORDGUESS && reason == "abandoned" -> {
-            eyebrowRes = R.string.wordguess_loss_abandoned_eyebrow
-            titleRes = R.string.wordguess_loss_abandoned_title
-            bodyRes = R.string.wordguess_loss_abandoned_body
-        }
-        gameId == GameId.WORDGUESS -> {
-            eyebrowRes = R.string.wordguess_loss_rule_failure_eyebrow
-            titleRes = R.string.wordguess_loss_rule_failure_title
-            bodyRes = R.string.wordguess_loss_rule_failure_body
-        }
-        gameId == GameId.ANIMALDOKU && reason == "abandoned" -> {
-            eyebrowRes = R.string.animaldoku_loss_abandoned_eyebrow
-            titleRes = R.string.animaldoku_loss_abandoned_title
-            bodyRes = R.string.animaldoku_loss_abandoned_body
-        }
-        gameId == GameId.ANIMALDOKU -> {
-            eyebrowRes = R.string.animaldoku_loss_rule_failure_eyebrow
-            titleRes = R.string.animaldoku_loss_rule_failure_title
-            bodyRes = R.string.animaldoku_loss_rule_failure_body
-        }
-        gameId == GameId.STARBATTLE && reason == "abandoned" -> {
-            eyebrowRes = R.string.starbattle_loss_abandoned_eyebrow
-            titleRes = R.string.starbattle_loss_abandoned_title
-            bodyRes = R.string.starbattle_loss_abandoned_body
-        }
-        gameId == GameId.STARBATTLE -> {
-            eyebrowRes = R.string.starbattle_loss_rule_failure_eyebrow
-            titleRes = R.string.starbattle_loss_rule_failure_title
-            bodyRes = R.string.starbattle_loss_rule_failure_body
-        }
-        gameId == GameId.WHODIDIT && reason == "abandoned" -> {
-            eyebrowRes = R.string.whodidit_loss_abandoned_eyebrow
-            titleRes = R.string.whodidit_loss_abandoned_title
-            bodyRes = R.string.whodidit_loss_abandoned_body
-        }
-        gameId == GameId.ARROWESCAPE && reason == "abandoned" -> {
-            eyebrowRes = R.string.arrowescape_loss_abandoned_eyebrow
-            titleRes = R.string.arrowescape_loss_abandoned_title
-            bodyRes = R.string.arrowescape_loss_abandoned_body
-        }
-        gameId == GameId.ARROWESCAPE -> {
-            eyebrowRes = R.string.arrowescape_loss_rule_failure_eyebrow
-            titleRes = R.string.arrowescape_loss_rule_failure_title
-            bodyRes = R.string.arrowescape_loss_rule_failure_body
-        }
-        gameId == GameId.GAME_2048 && reason == "abandoned" -> {
-            eyebrowRes = R.string.game2048_loss_abandoned_eyebrow
-            titleRes = R.string.game2048_loss_abandoned_title
-            bodyRes = R.string.game2048_loss_abandoned_body
-        }
-        gameId == GameId.GAME_2048 -> {
-            eyebrowRes = R.string.game2048_loss_rule_failure_eyebrow
-            titleRes = R.string.game2048_loss_rule_failure_title
-            bodyRes = R.string.game2048_loss_rule_failure_body
-        }
-        gameId == GameId.GUESSBYNUMBERS && reason == "abandoned" -> {
-            eyebrowRes = R.string.guessbynumbers_loss_abandoned_eyebrow
-            titleRes = R.string.guessbynumbers_loss_abandoned_title
-            bodyRes = R.string.guessbynumbers_loss_abandoned_body
-        }
-        gameId == GameId.GUESSBYNUMBERS -> {
-            eyebrowRes = R.string.guessbynumbers_loss_rule_failure_eyebrow
-            titleRes = R.string.guessbynumbers_loss_rule_failure_title
-            bodyRes = R.string.guessbynumbers_loss_rule_failure_body
-        }
-        gameId == GameId.HASHI -> {
-            eyebrowRes = R.string.hashi_loss_abandoned_eyebrow
-            titleRes = R.string.hashi_loss_abandoned_title
-            bodyRes = R.string.hashi_loss_abandoned_body
-        }
-        gameId == GameId.CIRCUIT -> {
-            eyebrowRes = R.string.circuit_loss_abandoned_eyebrow
-            titleRes = R.string.circuit_loss_abandoned_title
-            bodyRes = R.string.circuit_loss_abandoned_body
-        }
-        gameId == GameId.LINKS -> {
-            eyebrowRes = R.string.links_loss_abandoned_eyebrow
-            titleRes = R.string.links_loss_abandoned_title
-            bodyRes = R.string.links_loss_abandoned_body
-        }
-        gameId == GameId.BLOCKESCAPE -> {
-            eyebrowRes = R.string.blockescape_loss_abandoned_eyebrow
-            titleRes = R.string.blockescape_loss_abandoned_title
-            bodyRes = R.string.blockescape_loss_abandoned_body
-        }
-        gameId == GameId.WORDSWAP -> {
-            eyebrowRes = R.string.wordswap_loss_abandoned_eyebrow
-            titleRes = R.string.wordswap_loss_abandoned_title
-            bodyRes = R.string.wordswap_loss_abandoned_body
-        }
-        gameId == GameId.KILLERSUDOKU -> {
-            eyebrowRes = R.string.killersudoku_loss_abandoned_eyebrow
-            titleRes = R.string.killersudoku_loss_abandoned_title
-            bodyRes = R.string.killersudoku_loss_abandoned_body
-        }
-        gameId == GameId.THEMECLEAR -> {
-            eyebrowRes = R.string.themeclear_loss_abandoned_eyebrow
-            titleRes = R.string.themeclear_loss_abandoned_title
-            bodyRes = R.string.themeclear_loss_abandoned_body
-        }
-        gameId == GameId.NBACK -> {
-            eyebrowRes = R.string.nback_loss_abandoned_eyebrow
-            titleRes = R.string.nback_loss_abandoned_title
-            bodyRes = R.string.nback_loss_abandoned_body
-        }
-        gameId == GameId.SEQUENCEMEMORY && reason == "abandoned" -> {
-            eyebrowRes = R.string.sequencememory_loss_abandoned_eyebrow
-            titleRes = R.string.sequencememory_loss_abandoned_title
-            bodyRes = R.string.sequencememory_loss_abandoned_body
-        }
-        gameId == GameId.SEQUENCEMEMORY -> {
-            eyebrowRes = R.string.sequencememory_loss_rule_failure_eyebrow
-            titleRes = R.string.sequencememory_loss_rule_failure_title
-            bodyRes = R.string.sequencememory_loss_rule_failure_body
-        }
-        reason == "abandoned" -> {
-            eyebrowRes = R.string.chimp_loss_abandoned_eyebrow
-            titleRes = R.string.chimp_loss_abandoned_title
-            bodyRes = R.string.chimp_loss_abandoned_body
-        }
-        else -> {
-            eyebrowRes = R.string.chimp_loss_rule_failure_eyebrow
-            titleRes = R.string.chimp_loss_rule_failure_title
-            bodyRes = R.string.chimp_loss_rule_failure_body
-        }
-    }
-    val difficultyLabelRes = when (gameId) {
-        GameId.TAKUZU -> takuzuDifficultyLabelRes(difficulty)
-        GameId.NONOGRAM -> nonogramDifficultyLabelRes(difficulty)
-        GameId.MINESWEEPER -> minesweeperDifficultyLabelRes(difficulty)
-        GameId.SUDOKU -> sudokuDifficultyLabelRes(difficulty)
-        GameId.WORDSEARCH -> wordSearchDifficultyLabelRes(difficulty)
-        GameId.BLOCKFILL -> blockFillDifficultyLabelRes(difficulty)
-        GameId.WORDGUESS -> wordGuessDifficultyLabelRes(difficulty)
-        GameId.ANIMALDOKU -> animalDokuDifficultyLabelRes(difficulty)
-        GameId.ARROWESCAPE -> arrowEscapeDifficultyLabelRes(difficulty)
-        GameId.GAME_2048 -> game2048DifficultyLabelRes(difficulty)
-        GameId.STARBATTLE -> starBattleDifficultyLabelRes(difficulty)
-        GameId.WHODIDIT -> whoDidItDifficultyLabelRes(difficulty)
-        GameId.GUESSBYNUMBERS -> guessByNumbersDifficultyLabelRes(difficulty)
-        GameId.NBACK -> nbackDifficultyLabelRes(difficulty)
-        GameId.THEMECLEAR -> themeClearDifficultyLabelRes(difficulty)
-        GameId.SEQUENCEMEMORY -> sequenceMemoryDifficultyLabelRes(difficulty)
-        GameId.HASHI -> hashiDifficultyLabelRes(difficulty)
-        GameId.CIRCUIT -> circuitDifficultyLabelRes(difficulty)
-        GameId.LINKS -> linksDifficultyLabelRes(difficulty)
-        GameId.BLOCKESCAPE -> blockEscapeDifficultyLabelRes(difficulty)
-        GameId.WORDSWAP -> wordSwapDifficultyLabelRes(difficulty)
-        GameId.KILLERSUDOKU -> killerSudokuDifficultyLabelRes(difficulty)
-        GameId.MINISUDOKU -> miniSudokuDifficultyLabelRes(difficulty)
-        else -> chimpDifficultyLabelRes(difficulty)
-    }
-    val abandoned = reason == "abandoned"
+    LaunchedEffect(Unit) { if (reason != LossReason.ABANDONED) haptics.incorrectFeedback() }
+    val lossCopy = GameRegistry.of(gameId).lossCopy(reason)
+    val eyebrowRes = lossCopy.eyebrowRes
+    val titleRes = lossCopy.titleRes
+    val bodyRes = lossCopy.bodyRes
+    val difficultyLabelRes = gameDifficultyLabelRes(gameId, difficulty)
+    val abandoned = reason == LossReason.ABANDONED
     val errorColor = MaterialTheme.colorScheme.error
 
     val highlight = remember { CompletionExtras.consume() }
@@ -473,8 +256,6 @@ internal fun lossResultLinks(
     }
 }
 
-private val SCORE_ON_LOSS_TRACKED_GAMES = setOf(GameId.GAME_2048)
-
 @Composable
 private fun LossReveals(revealWord: String?, revealWordList: List<String>?, centered: Boolean) {
     if (revealWord != null) {
@@ -511,7 +292,7 @@ private fun LossMetaItems(gameId: GameId, difficultyLabelRes: Int, elapsedSecond
     MetaItem(stringResource(R.string.loss_difficulty), stringResource(difficultyLabelRes))
     ResultMetaDivider()
     MetaItem(stringResource(R.string.loss_elapsed_time), formatElapsed(elapsedSeconds))
-    if (gameId in SCORE_ON_LOSS_TRACKED_GAMES) {
+    if (GameRegistry.of(gameId).capabilities.scoreOnLossTracked) {
         ResultMetaDivider()
         MetaItem(stringResource(R.string.completion_score), score.toString())
         ResultMetaDivider()

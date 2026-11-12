@@ -29,7 +29,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,6 +49,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
@@ -71,7 +71,7 @@ fun JourneyResultScreen(
     onMap: () -> Unit,
 ) {
     val viewModel: JourneyViewModel = hiltViewModel()
-    val state by remember(viewModel, gameId) { viewModel.state(gameId) }.collectAsState(initial = null)
+    val state by remember(viewModel, gameId) { viewModel.state(gameId) }.collectAsStateWithLifecycle(initialValue = null)
     val rows = state?.rows ?: return
     val model = remember(rows, stopId, elapsedSeconds, signals) { journeyResultModel(rows, stopId, elapsedSeconds, signals) }
     if (model == null) {

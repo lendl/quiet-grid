@@ -7,6 +7,7 @@ import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.SettingsRepository
 import com.quietgrid.app.games.wordguess.WordGuessPuzzleBank
 import com.quietgrid.app.games.wordguess.currentWordGuessLocale
+import com.quietgrid.app.session.LossReason
 import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeSessionStore
 import com.quietgrid.app.testutil.FakeStatsStore
@@ -110,7 +111,7 @@ class GuessByNumbersPlayViewModelTest {
         mainDispatcherRule.dispatcher.scheduler.runCurrent()
 
         assertTrue(sessionStore.cleared)
-        assertEquals("abandoned", results.single().lossReason)
+        assertEquals(LossReason.ABANDONED, results.single().lossReason)
         collectJob.cancel()
     }
 }

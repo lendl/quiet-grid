@@ -4,7 +4,6 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -24,6 +23,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.core.isHalloween
 import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.ui.theme.LocalIsDarkTheme
@@ -64,7 +64,7 @@ fun rememberHalloweenActive(): Boolean {
     if (!isHalloween(today)) return false
     val repositories: RepositoriesViewModel = hiltViewModel()
     val enabled by remember(repositories) { repositories.settingsRepository.settings.map { it.seasonalTouchesEnabled } }
-        .collectAsState(initial = true)
+        .collectAsStateWithLifecycle(initialValue = true)
     return enabled
 }
 

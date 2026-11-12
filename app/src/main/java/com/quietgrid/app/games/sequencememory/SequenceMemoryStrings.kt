@@ -5,13 +5,6 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.ui.components.QuickRule
 import com.quietgrid.app.ui.components.QuickStartContent
 
-fun sequenceMemoryDifficultyLabelRes(difficulty: Difficulty): Int = when (difficulty) {
-    Difficulty.EASY -> R.string.sequencememory_difficulty_easy
-    Difficulty.MEDIUM -> R.string.sequencememory_difficulty_medium
-    Difficulty.HARD -> R.string.sequencememory_difficulty_hard
-    Difficulty.EXPERT -> R.string.sequencememory_difficulty_expert
-}
-
 fun sequenceMemoryDifficultyDescriptionRes(difficulty: Difficulty): Int = when (difficulty) {
     Difficulty.EASY -> R.string.sequencememory_difficulty_desc_easy
     Difficulty.MEDIUM -> R.string.sequencememory_difficulty_desc_medium

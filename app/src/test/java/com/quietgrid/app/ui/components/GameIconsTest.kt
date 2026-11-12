@@ -2,6 +2,7 @@ package com.quietgrid.app.ui.components
 
 import androidx.compose.ui.graphics.Color
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.games.GameRegistry
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -9,16 +10,15 @@ import org.junit.Test
 class GameIconsTest {
 
     @Test
-    fun `every game has a hue and a glyph`() {
+    fun `every game has a glyph`() {
         GameId.entries.forEach { id ->
-            assertTrue("$id hue", GAME_ICON_HUES.containsKey(id))
-            assertTrue("$id glyph", GAME_ICON_GLYPHS[id].orEmpty().isNotEmpty())
+            assertTrue("$id glyph", GameRegistry.of(id).iconGlyph.isNotEmpty())
         }
     }
 
     @Test
     fun `animal doku is a two by two board with a paw in the top left cell`() {
-        val shapes = GAME_ICON_GLYPHS.getValue(GameId.ANIMALDOKU)
+        val shapes = GameRegistry.of(GameId.ANIMALDOKU).iconGlyph
         val cells = shapes.filterIsInstance<GlyphRect>()
         assertEquals(4, cells.size)
         assertTrue(cells.all { it.width == 9.5f && it.height == 9.5f })
@@ -31,7 +31,7 @@ class GameIconsTest {
 
     @Test
     fun `word guess shows guessed letters in its rows`() {
-        val letters = GAME_ICON_GLYPHS.getValue(GameId.WORDGUESS).filterIsInstance<GlyphText>()
+        val letters = GameRegistry.of(GameId.WORDGUESS).iconGlyph.filterIsInstance<GlyphText>()
         assertEquals("CATCAR", letters.joinToString("") { it.text })
         assertTrue(letters.all { it.size >= 5f })
     }

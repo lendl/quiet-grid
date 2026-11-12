@@ -1,6 +1,8 @@
 package com.quietgrid.app.games.blockescape
 
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.session.challengerTierAfterSolve
+import com.quietgrid.app.session.tick
 import com.quietgrid.engine.blockescape.BlockEscapeBlock
 import com.quietgrid.engine.blockescape.BlockEscapePuzzleEntry
 import org.junit.Assert.assertEquals
@@ -16,15 +18,15 @@ class BlockEscapeChallengerLogicTest {
 
     @Test
     fun `three solves move the run up a tier and expert is the last tier`() {
-        assertEquals(Difficulty.EASY to 1, blockEscapeChallengerTierAfterSolve(Difficulty.EASY, 0))
-        assertEquals(Difficulty.MEDIUM to 0, blockEscapeChallengerTierAfterSolve(Difficulty.EASY, 2))
-        assertEquals(Difficulty.EXPERT to 3, blockEscapeChallengerTierAfterSolve(Difficulty.EXPERT, 2))
+        assertEquals(Difficulty.EASY to 1, challengerTierAfterSolve(BLOCKESCAPE_CHALLENGER_CONFIG, Difficulty.EASY, 0))
+        assertEquals(Difficulty.MEDIUM to 0, challengerTierAfterSolve(BLOCKESCAPE_CHALLENGER_CONFIG, Difficulty.EASY, 2))
+        assertEquals(Difficulty.EXPERT to 3, challengerTierAfterSolve(BLOCKESCAPE_CHALLENGER_CONFIG, Difficulty.EXPERT, 2))
     }
 
     @Test
     fun `a solve adds score, bonus time and the next puzzle`() {
         val start = createInitialBlockEscapeChallengerSession(puzzle("a"))
-        val ticked = (1..10).fold(start) { session, _ -> tickBlockEscapeChallenger(session) }
+        val ticked = (1..10).fold(start) { session, _ -> session.tick() }
         val solved = ticked.copy(puzzleSession = ticked.puzzleSession.copy(moves = 2))
         val next = advanceBlockEscapeChallengerAfterSolve(solved, Difficulty.EASY, 1, puzzle("b"))
         assertEquals(1, next.puzzlesSolved)

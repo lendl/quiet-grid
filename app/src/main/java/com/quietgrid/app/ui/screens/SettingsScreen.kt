@@ -33,7 +33,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +46,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
 import com.quietgrid.app.core.AppLocale
 import com.quietgrid.app.core.localeFlagEmoji
@@ -149,7 +149,7 @@ fun PreferencesSection() {
     val repositories: RepositoriesViewModel = hiltViewModel()
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val settings by repositories.settingsRepository.settings.collectAsState(initial = AppSettings())
+    val settings by repositories.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = AppSettings())
     var themeMenuOpen by remember { mutableStateOf(false) }
     var languageMenuOpen by remember { mutableStateOf(false) }
     var puzzleLanguageMenuOpen by remember { mutableStateOf(false) }

@@ -26,7 +26,7 @@ class StatsOverviewContentTest {
             rows = listOf(
                 StatsDifficultyRow(
                     difficulty = Difficulty.EXPERT,
-                    labelRes = R.string.sudoku_difficulty_expert,
+                    labelRes = R.string.difficulty_expert,
                     played = 5,
                     solved = 3,
                     bestScore = 0,

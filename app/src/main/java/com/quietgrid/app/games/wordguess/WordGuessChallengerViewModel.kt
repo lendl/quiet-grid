@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.quietgrid.app.core.ChallengerPuzzleSolve
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.PlayHistoryStore
@@ -14,6 +13,9 @@ import com.quietgrid.app.data.SettingsRepository
 import com.quietgrid.app.data.StatsStore
 import com.quietgrid.app.session.AppForeground
 import com.quietgrid.app.session.ChallengerRunController
+import com.quietgrid.app.session.challengerTierAfterSolve
+import com.quietgrid.app.session.creditSolve
+import com.quietgrid.app.session.tick
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
@@ -33,13 +35,13 @@ class WordGuessChallengerViewModel @Inject constructor(
     appForeground: AppForeground,
 ) : ViewModel() {
 
-    private val controller = ChallengerRunController(
+    private val controller = ChallengerRunController<WordGuessChallengerSession>(
         scope = viewModelScope,
         gameId = GameId.WORDGUESS,
         statsStore = statsStore,
         historyStore = historyStore,
         appForeground = appForeground,
-        tick = ::tickWordGuessChallenger,
+        tick = { it.tick() },
     )
 
     val session get() = controller.session
@@ -86,18 +88,12 @@ class WordGuessChallengerViewModel @Inject constructor(
     private fun onWon(withGuess: WordGuessChallengerSession) {
         puzzleWonTrigger++
         controller.session = withGuess
-        val (nextTier, nextSolvesInTier) = wordGuessChallengerTierAfterSolve(withGuess.tier, withGuess.solvesInTier)
+        val (nextTier, nextSolvesInTier) = challengerTierAfterSolve(WORDGUESS_CHALLENGER_CONFIG, withGuess.tier, withGuess.solvesInTier)
         viewModelScope.launch {
             delay(CHALLENGER_SOLVE_ADVANCE_DELAY_MS)
             val nextPuzzle = WordGuessPuzzleBank.randomPuzzle(appContext, locale, nextTier, withGuess.servedPuzzleIds)
             if (nextPuzzle == null) {
-                val creditedScore = withGuess.score + computeWordGuessScore(withGuess.puzzleSession.difficulty, withGuess.puzzleSession.guesses.size, withGuess.secondsOnCurrentPuzzle.toInt())
-                val credited = withGuess.copy(
-                    puzzlesSolved = withGuess.puzzlesSolved + 1,
-                    score = creditedScore,
-                    fastestSolveSeconds = wordGuessChallengerFastestSolve(withGuess),
-                    puzzleHistory = withGuess.puzzleHistory + ChallengerPuzzleSolve(withGuess.tier, withGuess.secondsOnCurrentPuzzle),
-                )
+                val credited = withGuess.creditSolve(wordGuessChallengerPuzzleScore(withGuess))
                 controller.finalizeRun(credited, "bank_exhausted")
             } else {
                 controller.session = advanceWordGuessChallengerAfterSolve(withGuess, nextTier, nextSolvesInTier, nextPuzzle)

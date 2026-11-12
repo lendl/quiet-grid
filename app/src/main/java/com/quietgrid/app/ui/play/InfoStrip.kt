@@ -24,10 +24,10 @@ import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
-import com.quietgrid.app.core.gameDifficultyLabelRes
 import com.quietgrid.app.core.localeFlagEmoji
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.core.os.ConfigurationCompat
+import com.quietgrid.app.games.gameDifficultyLabelRes
 import com.quietgrid.app.ui.components.ChallengerHeartIcon
 
 @Composable

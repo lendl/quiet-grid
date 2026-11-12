@@ -3,6 +3,7 @@ package com.quietgrid.app.games.sudoku
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.session.LossReason
 import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeJourneyStore
 import com.quietgrid.app.testutil.FakeSessionStore
@@ -103,7 +104,7 @@ class SudokuPlayViewModelTest {
         mainDispatcherRule.dispatcher.scheduler.runCurrent()
 
         assertTrue(sessionStore.cleared)
-        assertEquals("abandoned", results.single().lossReason)
+        assertEquals(LossReason.ABANDONED, results.single().lossReason)
         collectJob.cancel()
     }
 
