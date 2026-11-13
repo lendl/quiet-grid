@@ -6,6 +6,7 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import com.quietgrid.app.R
 import com.quietgrid.app.core.mix.Mix
 import com.quietgrid.app.core.mix.MixEntry
@@ -29,12 +30,25 @@ class MixesScreenTest {
     )
 
     @Test
-    fun `empty mixes list renders the empty-state text`() {
+    fun `empty mixes list explains what a mix is`() {
         composeRule.setContent {
             MixesScreen(mixes = emptyList(), onPlay = {}, onEdit = {}, onNewMix = {}, onOpenAccount = {})
         }
 
-        composeRule.onNodeWithText(composeRule.activity.getString(R.string.mix_empty_state)).assertIsDisplayed()
+        composeRule.onNodeWithText(composeRule.activity.getString(R.string.mix_empty_title)).assertIsDisplayed()
+        composeRule.onNodeWithText(composeRule.activity.getString(R.string.mix_empty_example_name)).assertIsDisplayed()
+    }
+
+    @Test
+    fun `tapping create a mix on the empty state invokes onNewMix`() {
+        var newMixTapped = false
+        composeRule.setContent {
+            MixesScreen(mixes = emptyList(), onPlay = {}, onEdit = {}, onNewMix = { newMixTapped = true }, onOpenAccount = {})
+        }
+
+        composeRule.onNodeWithText(composeRule.activity.getString(R.string.mix_empty_create)).performScrollTo().performClick()
+
+        assertEquals(true, newMixTapped)
     }
 
     @Test

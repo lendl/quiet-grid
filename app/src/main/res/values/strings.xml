@@ -60,6 +60,13 @@
     <string name="mix_edit_content_description">Edit mix</string>
     <string name="mix_empty_state">No mixes yet. Build one from your favorite games and difficulties.</string>
     <string name="mix_new_content_description">New mix</string>
+    <string name="mix_empty_title">Stay in the flow</string>
+    <string name="mix_empty_body">Keep playing your favorite games without stopping to choose. Put them in a mix once, and the next puzzle is always one tap away.</string>
+    <string name="mix_empty_create">Create a mix</string>
+    <string name="mix_empty_add_hint">Or, after any puzzle, open the menu and choose Add to Mix.</string>
+    <string name="mix_empty_example_name">Morning Mix</string>
+    <string name="mix_empty_example_label">Example</string>
+    <string name="mix_empty_next_up">Next up: %1$s, %2$s</string>
     <string name="mix_default_name">My Mix #%1$d</string>
     <string name="game_takuzu_name">Takuzu</string>
     <string name="game_nonogram_name">Nonogram</string>

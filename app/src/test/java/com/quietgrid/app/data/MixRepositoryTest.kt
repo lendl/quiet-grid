@@ -93,6 +93,40 @@ class MixRepositoryTest {
     }
 
     @Test
+    fun `deleteMixIfEmpty removes a mix with no entries`() = runTest {
+        val repository = MixRepository(newDataStore(backgroundScope))
+        val emptyMix = sampleMix.copy(id = "mix-2", entries = emptyList())
+        repository.saveMix(sampleMix)
+        repository.saveMix(emptyMix)
+
+        repository.deleteMixIfEmpty(emptyMix.id)
+
+        assertEquals(listOf(sampleMix), repository.mixes.first())
+    }
+
+    @Test
+    fun `deleteMixIfEmpty keeps a mix that has entries`() = runTest {
+        val repository = MixRepository(newDataStore(backgroundScope))
+        repository.saveMix(sampleMix)
+
+        repository.deleteMixIfEmpty(sampleMix.id)
+
+        assertEquals(listOf(sampleMix), repository.mixes.first())
+    }
+
+    @Test
+    fun `deleteMixIfEmpty clears activeMixId when it removes the active mix`() = runTest {
+        val repository = MixRepository(newDataStore(backgroundScope))
+        val emptyMix = sampleMix.copy(entries = emptyList())
+        repository.saveMix(emptyMix)
+        repository.setActiveMix(emptyMix.id)
+
+        repository.deleteMixIfEmpty(emptyMix.id)
+
+        assertNull(repository.activeMixId.first())
+    }
+
+    @Test
     fun `setPuzzleMembership adds to selected mixes and removes from deselected ones`() = runTest {
         val repository = MixRepository(newDataStore(backgroundScope))
         val wordsearchEasy = MixEntry(gameId = "wordsearch", mode = MixEntryMode.PUZZLE, difficulty = "easy", weight = 1)

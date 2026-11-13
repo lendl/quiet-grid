@@ -49,17 +49,10 @@ fun MixesScreen(
             }
         }
 
-        LazyColumn(contentPadding = PaddingValues(top = 8.dp, bottom = 16.dp)) {
-            if (mixes.isEmpty()) {
-                item {
-                    Text(
-                        stringResource(R.string.mix_empty_state),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
-                    )
-                }
-            } else {
+        if (mixes.isEmpty()) {
+            MixesEmptyState(onNewMix = onNewMix, modifier = Modifier.weight(1f))
+        } else {
+            LazyColumn(contentPadding = PaddingValues(top = 8.dp, bottom = 16.dp)) {
                 itemsIndexed(mixes) { index, mix ->
                     MixListRow(mix = mix, showDivider = index > 0, onPlay = { onPlay(mix) }, onEdit = { onEdit(mix.id) })
                 }

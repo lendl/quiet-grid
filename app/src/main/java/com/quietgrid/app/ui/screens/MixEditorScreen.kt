@@ -75,6 +75,7 @@ private const val MAX_MIX_ENTRY_WEIGHT = 10
 
 @Composable
 fun MixEditorScreen(mixId: String, onDone: () -> Unit, renameTrigger: Int = 0, deleteTrigger: Int = 0) {
+    hiltViewModel<EmptyMixCleanupViewModel, EmptyMixCleanupViewModel.Factory>(creationCallback = { factory -> factory.create(mixId) })
     val repositories: RepositoriesViewModel = hiltViewModel()
     MixEditorContent(
         mixId = mixId,

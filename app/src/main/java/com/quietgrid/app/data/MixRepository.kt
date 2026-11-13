@@ -1,6 +1,7 @@
 package com.quietgrid.app.data
 
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -62,12 +63,21 @@ class MixRepository @Inject constructor(private val dataStore: DataStore<Prefere
     }
 
     suspend fun deleteMix(mixId: String) {
+        dataStore.edit { prefs -> prefs.removeMix(mixId) }
+    }
+
+    suspend fun deleteMixIfEmpty(mixId: String) {
         dataStore.edit { prefs ->
-            val updated = prefs.decodeMixes().mixes.filterNot { it.id == mixId }
-            prefs[MIXES_KEY] = mixJson.encodeToString(MixesEnvelope(updated))
-            if (prefs[ACTIVE_MIX_ID_KEY] == mixId) prefs.remove(ACTIVE_MIX_ID_KEY)
-            if (prefs[LAST_STARTED_MIX_ID_KEY] == mixId) prefs.remove(LAST_STARTED_MIX_ID_KEY)
+            val isEmpty = prefs.decodeMixes().mixes.any { it.id == mixId && it.entries.isEmpty() }
+            if (isEmpty) prefs.removeMix(mixId)
         }
+    }
+
+    private fun MutablePreferences.removeMix(mixId: String) {
+        val updated = decodeMixes().mixes.filterNot { it.id == mixId }
+        this[MIXES_KEY] = mixJson.encodeToString(MixesEnvelope(updated))
+        if (this[ACTIVE_MIX_ID_KEY] == mixId) remove(ACTIVE_MIX_ID_KEY)
+        if (this[LAST_STARTED_MIX_ID_KEY] == mixId) remove(LAST_STARTED_MIX_ID_KEY)
     }
 
     suspend fun setActiveMix(mixId: String) {
