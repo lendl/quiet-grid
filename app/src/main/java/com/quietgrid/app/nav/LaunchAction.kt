@@ -8,7 +8,7 @@ sealed interface LaunchAction {
     data object OpenMixesTab : LaunchAction
     data object OpenTabs : LaunchAction
     data object Stay : LaunchAction
-    data class Navigate(val route: String, val endsMix: Boolean) : LaunchAction
+    data class Navigate(val route: Any, val endsMix: Boolean) : LaunchAction
     data class StartMix(val mixId: String) : LaunchAction
 }
 
@@ -23,8 +23,8 @@ fun launchAction(
     LaunchRequest.Resume -> if (onPlayScreen) {
         LaunchAction.Stay
     } else {
-        activeSession?.let { Routes.resume(it) }?.let { LaunchAction.Navigate(it, endsMix = false) } ?: LaunchAction.OpenTabs
+        activeSession?.let { resumeRoute(it) }?.let { LaunchAction.Navigate(it, endsMix = false) } ?: LaunchAction.OpenTabs
     }
-    is LaunchRequest.StartGame -> LaunchAction.Navigate(Routes.play(request.gameId, request.difficulty, resume = false), endsMix = true)
+    is LaunchRequest.StartGame -> LaunchAction.Navigate(PlayRoute.of(request.gameId, request.difficulty, resume = false), endsMix = true)
     is LaunchRequest.StartMix -> if (request.mixId in existingMixIds) LaunchAction.StartMix(request.mixId) else LaunchAction.OpenTabs
 }

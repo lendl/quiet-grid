@@ -1,5 +1,8 @@
 package com.quietgrid.app.session
 
+import androidx.annotation.Keep
+
+@Keep
 enum class LossReason(val key: String) {
     ABANDONED("abandoned"),
     RULE_FAILURE("rule-failure"),

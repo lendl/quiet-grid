@@ -47,7 +47,6 @@ fun LossScreen(
     elapsedSeconds: Int,
     reason: LossReason,
     score: Int,
-    bestTile: Int,
     isMixActive: Boolean,
     onAddToMix: () -> Unit,
     onRetry: () -> Unit,
@@ -74,6 +73,7 @@ fun LossScreen(
     val highlight = remember { CompletionExtras.consume() }
     val revealWord = (highlight as? CompletionHighlight.RevealWord)?.word?.takeIf { it.isNotEmpty() }
     val revealWordList = (highlight as? CompletionHighlight.RevealWordList)?.words?.takeIf { it.isNotEmpty() }
+    val bestTile = (highlight as? CompletionHighlight.BestTile)?.tile
     val analyzerSnapshot = rememberSaveable { mutableStateOf(AnalyzerHandoff.consume()) }.value
 
     val entrance = rememberResultEntrance()
@@ -288,13 +288,15 @@ private fun RevealedAnswer(labelRes: Int, answer: String, centered: Boolean) {
 }
 
 @Composable
-private fun LossMetaItems(gameId: GameId, difficultyLabelRes: Int, elapsedSeconds: Int, score: Int, bestTile: Int) {
+private fun LossMetaItems(gameId: GameId, difficultyLabelRes: Int, elapsedSeconds: Int, score: Int, bestTile: Int?) {
     MetaItem(stringResource(R.string.loss_difficulty), stringResource(difficultyLabelRes))
     ResultMetaDivider()
     MetaItem(stringResource(R.string.loss_elapsed_time), formatElapsed(elapsedSeconds))
     if (GameRegistry.of(gameId).capabilities.scoreOnLossTracked) {
         ResultMetaDivider()
         MetaItem(stringResource(R.string.completion_score), score.toString())
+    }
+    if (bestTile != null) {
         ResultMetaDivider()
         MetaItem(stringResource(R.string.completion_best_tile), bestTile.toString())
     }

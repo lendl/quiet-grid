@@ -13,11 +13,12 @@ import com.quietgrid.app.ui.components.GlyphPaint
 import com.quietgrid.app.ui.components.GlyphRect
 import com.quietgrid.app.ui.components.GlyphShape
 import com.quietgrid.app.ui.components.GlyphText
+import com.quietgrid.app.ui.screens.CompletionExtras
+import com.quietgrid.app.ui.screens.CompletionHighlight
 
 object Game2048Definition : GameDefinition {
     override val id = GameId.GAME_2048
     override val capabilities = GameCapabilities(
-        bestTileTracked = true,
         scoreOnLossTracked = true,
     )
     override val abandonedCopy = LossCopy(R.string.game2048_loss_rule_failure_eyebrow, R.string.game2048_loss_rule_failure_title, R.string.game2048_loss_rule_failure_body)
@@ -39,6 +40,7 @@ object Game2048Definition : GameDefinition {
             resume = request.resume,
             onBack = request.onBack,
             onFinished = { result ->
+                CompletionExtras.set(CompletionHighlight.BestTile(result.bestTile))
                 request.onFinished(
                     GameFinish(
                         difficulty = result.difficulty,
@@ -49,7 +51,6 @@ object Game2048Definition : GameDefinition {
                         isFirstSolve = result.isFirstSolve,
                         isNewHighScore = result.isNewHighScore,
                         lossReason = result.lossReason,
-                        bestTile = result.bestTile,
                     ),
                 )
             },

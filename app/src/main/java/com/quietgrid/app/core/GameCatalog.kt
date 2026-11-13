@@ -1,8 +1,10 @@
 package com.quietgrid.app.core
 
+import androidx.annotation.Keep
 import androidx.annotation.StringRes
 import com.quietgrid.app.R
 
+@Keep
 enum class GameId(val key: String) {
     CHIMPTEST("chimptest"),
     TAKUZU("takuzu"),

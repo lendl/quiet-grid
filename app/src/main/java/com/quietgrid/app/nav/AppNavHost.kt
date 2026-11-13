@@ -1,43 +1,22 @@
 package com.quietgrid.app.nav
 
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.quietgrid.app.core.journey.JourneyRequest
-import com.quietgrid.app.games.GameRegistry
-import com.quietgrid.app.games.PlayRequest
-import com.quietgrid.app.session.LossReason
-import com.quietgrid.app.ui.components.ChallengerResultScreen
-import com.quietgrid.app.ui.journey.JourneyResultScreen
-import com.quietgrid.app.ui.journey.JourneyScreen
-import com.quietgrid.app.ui.journey.JourneyViewModel
-import com.quietgrid.app.ui.journey.map.JourneyMapScreen
-import com.quietgrid.app.core.journey.loadJourneyFile
-import com.quietgrid.app.core.journey.locate
-import com.quietgrid.app.core.journey.JourneySignals
-import com.quietgrid.app.ui.screens.DailyScreen
-import com.quietgrid.app.ui.screens.DailyViewModel
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.Box
-import androidx.compose.ui.platform.LocalContext
-import com.quietgrid.app.core.daily.nextUnplayedDaily
-import com.quietgrid.app.core.daily.shareDailyResult
-import java.time.LocalDate
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.animation.core.snap
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -47,90 +26,55 @@ import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDrawerState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.keepScreenOn
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.navigation.NavType
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
+import androidx.navigation.toRoute
+import com.quietgrid.app.LaunchRequest
 import com.quietgrid.app.R
-import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.mix.Mix
-import com.quietgrid.app.core.mix.MixMode
-import com.quietgrid.app.core.mix.drawWeighted
 import com.quietgrid.app.core.mix.nextMixName
-import com.quietgrid.app.core.mix.resolvedCandidates
-import com.quietgrid.app.LaunchRequest
-import com.quietgrid.app.data.ActiveSessionSummary
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.GamePreferenceOverrides
 import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.data.resolveGamePlayPreferences
-import com.quietgrid.app.games.animaldoku.AnimalDokuAnalyzerScreen
-import com.quietgrid.app.games.blockfill.BLOCKFILL_ENDLESS_REASON_STUCK
-import com.quietgrid.app.games.blockfill.BlockFillEndlessPlayScreen
-import com.quietgrid.app.games.blockfill.BlockFillEndlessResult
-import com.quietgrid.app.games.minesweeper.MINESWEEPER_ENDLESS_REASON_ENDED
-import com.quietgrid.app.games.minesweeper.MinesweeperEndlessPlayScreen
-import com.quietgrid.app.games.minesweeper.MinesweeperEndlessResult
-import com.quietgrid.app.games.minesweeper.MinesweeperEndlessResultScreen
-import com.quietgrid.app.games.blockfill.BlockFillEndlessResultScreen
-import com.quietgrid.app.games.takuzu.TakuzuAnalyzerScreen
 import com.quietgrid.app.ui.components.AppTab
 import com.quietgrid.app.ui.components.AppTopBar
-import com.quietgrid.app.ui.components.GamePageTopBar
-import com.quietgrid.app.ui.components.ReplacePuzzleSheet
 import com.quietgrid.app.ui.components.BottomNavBar
 import com.quietgrid.app.ui.components.ContinueSessionMiniBar
+import com.quietgrid.app.ui.components.GamePageTopBar
+import com.quietgrid.app.ui.components.ReplacePuzzleSheet
 import com.quietgrid.app.ui.components.pressScale
+import com.quietgrid.app.ui.play.LocalOpenGameRules
 import com.quietgrid.app.ui.screens.AccountDrawerContent
-import com.quietgrid.app.ui.screens.AddToMixScreen
-import com.quietgrid.app.ui.screens.NewMixScreen
-import com.quietgrid.app.ui.screens.AnalyzerHandoff
-import com.quietgrid.app.ui.screens.ChallengerExtras
-import com.quietgrid.app.ui.screens.ChallengerRunDetails
-import com.quietgrid.app.ui.screens.CompletionScreen
+import com.quietgrid.app.ui.screens.DailyScreen
+import com.quietgrid.app.ui.screens.GamesScreen
+import com.quietgrid.app.ui.screens.MixesScreen
+import com.quietgrid.app.ui.screens.StatsScreen
+import com.quietgrid.app.ui.screens.supportInfoTitleRes
+import java.util.UUID
+import kotlin.reflect.KClass
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import com.quietgrid.app.ui.screens.GamesScreen
-import com.quietgrid.app.ui.screens.LossScreen
-import com.quietgrid.app.ui.screens.MixEditorScreen
-import com.quietgrid.app.ui.screens.MixesScreen
-import com.quietgrid.app.ui.screens.AboutPageScreen
-import com.quietgrid.app.ui.screens.PuzzlePickerScreen
-import com.quietgrid.app.ui.screens.SettingsPageScreen
-import com.quietgrid.app.ui.screens.StatsScreen
-import com.quietgrid.app.ui.screens.SupportInfoScreen
-import com.quietgrid.app.ui.screens.SupportPageScreen
-import com.quietgrid.app.ui.screens.TrustPageScreen
-import com.quietgrid.app.ui.screens.supportInfoTitleRes
-import com.quietgrid.app.ui.play.LocalOpenGameRules
-import com.quietgrid.app.ui.play.LocalPlayContext
-import com.quietgrid.app.ui.play.PlayContext
-import com.quietgrid.app.ui.play.ProvideGamePlayPreferences
-import com.quietgrid.app.ui.screens.HowToPlayScreen
-import com.quietgrid.app.session.FinishMotion
-import java.util.UUID
-
-private const val FOLD_TAIL_MS = 300
-private val RESULT_ROUTES = setOf(Routes.COMPLETION, Routes.LOSS)
 
 val LocalSharedTransitionScope = compositionLocalOf<SharedTransitionScope?> { null }
 val LocalAnimatedVisibilityScope = compositionLocalOf<AnimatedVisibilityScope?> { null }
@@ -140,131 +84,58 @@ val LocalAnimatedVisibilityScope = compositionLocalOf<AnimatedVisibilityScope?> 
 fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () -> Unit = {}) {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = backStackEntry?.destination?.route
-    val isTabsRoute = currentRoute == Routes.TABS || currentRoute == null
     var selectedTab by remember { mutableStateOf(AppTab.GAMES) }
     val scope = rememberCoroutineScope()
     val repositories: RepositoriesViewModel = hiltViewModel()
-    val settings by repositories.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = AppSettings())
-    val gamePreferenceOverrides by repositories.gamePreferencesRepository.allOverrides.collectAsStateWithLifecycle(initialValue = emptyMap())
+    val settingsState = repositories.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = AppSettings())
+    val overridesState = repositories.gamePreferencesRepository.allOverrides.collectAsStateWithLifecycle(initialValue = emptyMap())
     val activeSessionState = repositories.sessionRepository.activeSessionSummary.collectAsStateWithLifecycle(initialValue = null)
-    fun activeGameKey(): String? = activeSessionState.value?.gameId
+    val mixesState = repositories.mixRepository.mixes.collectAsStateWithLifecycle(initialValue = emptyList())
+    val activeMixIdState = repositories.mixRepository.activeMixId.collectAsStateWithLifecycle(initialValue = null)
+    val activeMixState = remember { derivedStateOf { mixesState.value.firstOrNull { it.id == activeMixIdState.value } } }
+    val mixes = mixesState.value
+    val settings = settingsState.value
+    val context = LocalContext.current
+    val appContext = context.applicationContext
 
-    val mixes by repositories.mixRepository.mixes.collectAsStateWithLifecycle(initialValue = emptyList())
-    val activeMixId by repositories.mixRepository.activeMixId.collectAsStateWithLifecycle(initialValue = null)
-    val activeMix = mixes.firstOrNull { it.id == activeMixId }
-    val resources = LocalContext.current.resources
-    val appContext = LocalContext.current.applicationContext
-
-    fun playPreferencesFor(gameId: GameId) =
-        resolveGamePlayPreferences(settings, gamePreferenceOverrides[gameId] ?: GamePreferenceOverrides())
-
-    fun endMixAndGoToGames() {
-        scope.launch { repositories.mixRepository.clearActiveMix() }
-        selectedTab = AppTab.GAMES
-        navController.popBackStack(Routes.TABS, inclusive = false)
-    }
-
-    fun journeyBackStack(): List<JourneyBackEntry> = listOf(Routes.PICKER, Routes.JOURNEY, Routes.JOURNEY_MAP).mapNotNull { route ->
-        runCatching { navController.getBackStackEntry(route) }.getOrNull()
-    }.map { entry ->
-        val route = entry.destination.route
-        JourneyBackEntry(route, entry.arguments?.getString("gameId"), if (route == Routes.JOURNEY_MAP) entry.arguments?.getInt("chapter") else null)
-    }
-
-    fun journeyAnchor(gameId: GameId): String = journeyAnchorRoute(gameId.key, journeyBackStack())
-
-    fun goToJourney(gameId: GameId, chapter: Int?) {
-        val plan = journeyReturnPlan(gameId, chapter, journeyBackStack())
-        navController.popBackStack(plan.popTo, inclusive = plan.inclusive)
-        plan.push.forEach { navController.navigate(it) }
-    }
-
-    fun returnToJourney(gameId: GameId, stopId: String) {
-        scope.launch {
-            val chapter = loadJourneyFile(appContext, gameId)?.locate(stopId)?.first?.index
-            goToJourney(gameId, chapter)
-        }
-    }
-
-    fun playJourneyStop(gameId: GameId, difficulty: Difficulty, request: JourneyRequest) {
-        val anchor = journeyAnchor(gameId)
-        navController.navigate(Routes.play(gameId, difficulty, resume = false, journey = request)) {
-            popUpTo(anchor) { inclusive = false }
-        }
-    }
-
-    fun resumeActiveRoute(gameId: GameId): String {
-        val active = activeSessionState.value
-        val summary = active?.copy(gameId = gameId.key, journey = active.journey.takeIf { active.gameId == gameId.key })
-            ?: ActiveSessionSummary(gameId.key, null)
-        return Routes.resume(summary) ?: Routes.play(gameId, Difficulty.EASY, resume = true)
-    }
-
-    fun playNextDaily(next: Pair<GameId, Difficulty>?, dailyKey: String?) {
-        val date = dailyKey?.let { runCatching { LocalDate.parse(it) }.getOrNull() } ?: return
-        val (gameId, difficulty) = next ?: return
-        navController.navigate(Routes.play(gameId, difficulty, resume = false, daily = date)) {
-            popUpTo(Routes.TABS) { inclusive = false }
-        }
-    }
-
-    fun goToDailyTab() {
-        selectedTab = AppTab.DAILY
-        navController.popBackStack(Routes.TABS, inclusive = false)
+    val navigator = remember(navController) {
+        AppNavigator(
+            navController = navController,
+            scope = scope,
+            repositories = repositories,
+            appContext = appContext,
+            activeSession = activeSessionState,
+            activeMixState = activeMixState,
+            resolvePreferences = { gameId -> resolveGamePlayPreferences(settingsState.value, overridesState.value[gameId] ?: GamePreferenceOverrides()) },
+            selectTab = { tab -> selectedTab = tab },
+        )
     }
 
     var pendingMixToStart by remember { mutableStateOf<Mix?>(null) }
-    var pendingDailyRoute by remember { mutableStateOf<String?>(null) }
+    var pendingDailyRoute by remember { mutableStateOf<Any?>(null) }
     val accountDrawerState = rememberDrawerState(DrawerValue.Closed)
-    var mixEditorRenameTrigger by remember { mutableStateOf(0) }
-    var mixEditorDeleteTrigger by remember { mutableStateOf(0) }
+    val mixEditorTriggers = remember { MixEditorTriggers() }
 
-    fun goToMixDraw(mix: Mix) {
-        scope.launch {
-            val enabledGameIds = GameCatalog.enabledGameIds(repositories.settingsRepository.settings.first().betaGamesEnabled)
-            val candidate = drawWeighted(mix.resolvedCandidates().filter { it.gameId in enabledGameIds })
-            if (candidate == null) {
-                repositories.mixRepository.clearActiveMix()
-                selectedTab = AppTab.GAMES
-                navController.popBackStack(Routes.TABS, inclusive = false)
-                return@launch
-            }
-            val route = when (val mode = candidate.mode) {
-                is MixMode.Puzzle -> Routes.play(candidate.gameId, mode.difficulty, resume = false)
-                MixMode.Challenger -> Routes.challenger(candidate.gameId)
-            }
-            navController.navigate(route) { popUpTo(Routes.TABS) { inclusive = false } }
-        }
-    }
-
-    fun startMix(mix: Mix) {
-        scope.launch { repositories.mixRepository.setActiveMix(mix.id) }
-        goToMixDraw(mix)
-    }
-
-    fun playAgainOrDrawMix(fallback: () -> Unit) {
-        val mix = activeMix
-        if (mix != null) goToMixDraw(mix) else fallback()
-    }
+    val destination = backStackEntry?.destination
+    fun isOn(route: KClass<*>): Boolean = destination?.hasRoute(route) == true
+    val isTabsRoute = destination == null || isOn(TabsRoute::class)
 
     LaunchRequestEffect(launchRequest, onLaunchRequestHandled) { request ->
         val session = repositories.sessionRepository.activeSessionSummary.first()
         val currentMixes = repositories.mixRepository.mixes.first()
-        val onPlayScreen = navController.currentDestination?.route in setOf(Routes.PLAY, Routes.CHALLENGER, Routes.ENDLESS)
+        val onPlayScreen = navController.currentDestination?.let { current ->
+            current.hasRoute<PlayRoute>() || current.hasRoute<ChallengerRoute>() || current.hasRoute<EndlessRoute>()
+        } == true
         when (val action = launchAction(request, session, currentMixes.map { it.id }.toSet(), onPlayScreen)) {
-            LaunchAction.OpenDailyTab -> goToDailyTab()
-            LaunchAction.OpenMixesTab -> {
-                selectedTab = AppTab.MIXES
-                navController.popBackStack(Routes.TABS, inclusive = false)
-            }
-            LaunchAction.OpenTabs -> navController.popBackStack(Routes.TABS, inclusive = false)
+            LaunchAction.OpenDailyTab -> navigator.openTab(AppTab.DAILY)
+            LaunchAction.OpenMixesTab -> navigator.openTab(AppTab.MIXES)
+            LaunchAction.OpenTabs -> navigator.popToTabs()
             LaunchAction.Stay -> Unit
             is LaunchAction.Navigate -> {
                 if (action.endsMix) repositories.mixRepository.clearActiveMix()
-                navController.navigate(action.route) { popUpTo(Routes.TABS) { inclusive = false } }
+                navigator.navigateFromTabs(action.route)
             }
-            is LaunchAction.StartMix -> currentMixes.firstOrNull { it.id == action.mixId }?.let { startMix(it) }
+            is LaunchAction.StartMix -> currentMixes.firstOrNull { it.id == action.mixId }?.let { navigator.startMix(it) }
         }
     }
 
@@ -274,873 +145,121 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
         drawerContent = {
             ModalDrawerSheet {
                 AccountDrawerContent(
-                    onOpenSettings = {
-                        scope.launch { accountDrawerState.close() }
-                        navController.navigate(Routes.SETTINGS)
-                    },
-                    onOpenSupport = {
-                        scope.launch { accountDrawerState.close() }
-                        navController.navigate(Routes.SUPPORT)
-                    },
-                    onOpenTrust = {
-                        scope.launch { accountDrawerState.close() }
-                        navController.navigate(Routes.TRUST)
-                    },
-                    onOpenAbout = {
-                        scope.launch { accountDrawerState.close() }
-                        navController.navigate(Routes.ABOUT)
-                    },
+                    onOpenSettings = { openFromDrawer(navigator, accountDrawerState, SettingsRoute) },
+                    onOpenSupport = { openFromDrawer(navigator, accountDrawerState, SupportRoute) },
+                    onOpenTrust = { openFromDrawer(navigator, accountDrawerState, TrustRoute) },
+                    onOpenAbout = { openFromDrawer(navigator, accountDrawerState, AboutRoute) },
                 )
             }
         },
     ) {
-    Scaffold(
-        topBar = {
-            when {
-                isTabsRoute -> Unit
-                currentRoute == Routes.PICKER -> {
-                    val pickerGameId = GameId.entries.firstOrNull {
-                        it.key == backStackEntry?.arguments?.getString("gameId")
-                    }
-                    if (pickerGameId != null) {
-                        GamePageTopBar(
-                            pickerGameId,
-                            isFavorite = pickerGameId.key in settings.favoriteGameIds,
-                            onFavoriteChange = { favorite -> scope.launch { repositories.settingsRepository.setFavorite(pickerGameId, favorite) } },
-                            onBack = { navController.popBackStack() },
-                        )
-                    } else {
-                        AppTopBar(onBack = { navController.popBackStack() })
-                    }
-                }
-                currentRoute == Routes.PLAY -> Unit
-                currentRoute == Routes.RULES -> AppTopBar(
-                    title = stringResource(R.string.common_rules),
-                    onBack = { navController.popBackStack() },
+        Scaffold(
+            topBar = {
+                AppNavTopBar(
+                    entry = backStackEntry,
+                    isTabsRoute = isTabsRoute,
+                    isOn = ::isOn,
+                    navigator = navigator,
+                    favoriteGameIds = settings.favoriteGameIds,
+                    mixes = mixes,
+                    mixEditorTriggers = mixEditorTriggers,
                 )
-                currentRoute == Routes.JOURNEY || currentRoute == Routes.JOURNEY_MAP -> AppTopBar(
-                    title = stringResource(R.string.journey_title),
-                    onBack = { navController.popBackStack() },
-                )
-                currentRoute == Routes.ANALYZER -> AppTopBar(
-                    title = stringResource(R.string.analyzer_title),
-                    onBack = { navController.popBackStack() },
-                )
-                currentRoute == Routes.COMPLETION || currentRoute == Routes.LOSS || currentRoute == Routes.JOURNEY_RESULT -> Unit
-                currentRoute == Routes.CHALLENGER || currentRoute == Routes.CHALLENGER_RESULT -> Unit
-                currentRoute == Routes.ENDLESS || currentRoute == Routes.ENDLESS_RESULT || currentRoute == Routes.MINESWEEPER_ENDLESS_RESULT -> Unit
-                currentRoute == Routes.SUPPORT_INFO -> {
-                    val infoKey = backStackEntry?.arguments?.getString("key")
-                    val infoTitleRes = infoKey?.let { supportInfoTitleRes(it) }
-                    AppTopBar(
-                        title = infoTitleRes?.let { stringResource(it) },
-                        onBack = { navController.popBackStack() },
-                    )
-                }
-                currentRoute == Routes.MIX_EDITOR -> {
-                    val editingMixId = backStackEntry?.arguments?.getString("mixId")
-                    val editingMixName = mixes.firstOrNull { it.id == editingMixId }?.name
-                    AppTopBar(
-                        title = editingMixName ?: stringResource(R.string.mix_editor_title_edit),
-                        onBack = { navController.popBackStack() },
-                        actions = {
-                            val renameInteractionSource = remember { MutableInteractionSource() }
-                            IconButton(
-                                onClick = { mixEditorRenameTrigger++ },
-                                interactionSource = renameInteractionSource,
-                                modifier = Modifier.pressScale(renameInteractionSource),
-                            ) {
-                                Icon(Icons.Filled.Create, contentDescription = stringResource(R.string.mix_rename_content_description))
-                            }
-                            val deleteInteractionSource = remember { MutableInteractionSource() }
-                            IconButton(
-                                onClick = { mixEditorDeleteTrigger++ },
-                                interactionSource = deleteInteractionSource,
-                                modifier = Modifier.pressScale(deleteInteractionSource),
-                            ) {
-                                Icon(
-                                    Icons.Filled.Delete,
-                                    contentDescription = stringResource(R.string.mix_delete_button),
-                                    tint = MaterialTheme.colorScheme.error,
-                                )
-                            }
-                        },
-                    )
-                }
-                currentRoute == Routes.ADD_TO_MIX -> {
-                    AppTopBar(
-                        title = stringResource(R.string.mix_add_to_mix),
-                        onBack = { navController.popBackStack() },
-                    )
-                }
-                currentRoute == Routes.ADD_TO_NEW_MIX -> {
-                    AppTopBar(
-                        title = stringResource(R.string.add_to_mix_new_mix),
-                        onBack = { navController.popBackStack() },
-                    )
-                }
-                currentRoute == Routes.SETTINGS -> {
-                    AppTopBar(
-                        title = stringResource(R.string.account_preferences_section),
-                        onBack = { navController.popBackStack() },
-                    )
-                }
-                currentRoute == Routes.SUPPORT -> {
-                    AppTopBar(
-                        title = stringResource(R.string.support_support_section),
-                        onBack = { navController.popBackStack() },
-                    )
-                }
-                currentRoute == Routes.TRUST -> {
-                    AppTopBar(
-                        title = stringResource(R.string.support_trust_section),
-                        onBack = { navController.popBackStack() },
-                    )
-                }
-                currentRoute == Routes.ABOUT -> {
-                    AppTopBar(
-                        title = stringResource(R.string.support_about_section),
-                        onBack = { navController.popBackStack() },
-                    )
-                }
-                else -> AppTopBar(onBack = { navController.popBackStack() })
-            }
-        },
-        bottomBar = {
-            if (isTabsRoute || currentRoute == Routes.PICKER || currentRoute == Routes.SUPPORT_INFO) {
-                Column {
-                    val continueGameKey = activeGameKey()
-                    if (isTabsRoute && continueGameKey != null) {
-                        val activeGameId = GameId.entries.firstOrNull { it.key == continueGameKey }
-                        val activeGameTitle = activeGameId
-                            ?.let { stringResource(GameCatalog.games.first { meta -> meta.id == it }.titleRes) }
-                        if (activeGameId != null && activeGameTitle != null) {
+            },
+            bottomBar = {
+                if (isTabsRoute || isOn(PickerRoute::class) || isOn(SupportInfoRoute::class)) {
+                    Column {
+                        val activeGameId = navigator.activeGameKey()?.let { key -> GameId.entries.firstOrNull { it.key == key } }
+                        if (isTabsRoute && activeGameId != null) {
                             ContinueSessionMiniBar(
-                                gameTitle = activeGameTitle,
-                                onClick = {
-                                    navController.navigate(resumeActiveRoute(activeGameId))
-                                },
+                                gameTitle = stringResource(GameCatalog.get(activeGameId).titleRes),
+                                onClick = { navigator.resumeActiveGame(activeGameId) },
                             )
                         }
+                        BottomNavBar(
+                            selectedTab = selectedTab,
+                            onSelectTab = { tab ->
+                                selectedTab = tab
+                                if (!isOn(TabsRoute::class)) navigator.popToTabs()
+                            },
+                        )
                     }
-                    BottomNavBar(
-                        selectedTab = selectedTab,
-                        onSelectTab = { tab ->
-                            selectedTab = tab
-                            if (currentRoute != Routes.TABS) {
-                                navController.popBackStack(Routes.TABS, inclusive = false)
-                            }
-                        },
-                    )
                 }
-            }
-        },
-    ) { padding ->
-        CompositionLocalProvider(LocalOpenGameRules provides { gameId -> navController.navigate(Routes.rules(gameId)) }) {
-        SharedTransitionLayout {
-            NavHost(
-                navController = navController,
-                startDestination = Routes.TABS,
-                modifier = Modifier.padding(padding),
-                predictivePopEnterTransition = { fadeIn(animationSpec = tween(250)) },
-                predictivePopExitTransition = { fadeOut(animationSpec = tween(200)) },
-            ) {
-            composable(
-                Routes.RULES,
-                arguments = listOf(navArgument("gameId") { type = NavType.StringType }),
-                enterTransition = { fadeIn(animationSpec = tween(250)) },
-                exitTransition = { fadeOut(animationSpec = tween(200)) },
-            ) { entry ->
-                val rulesGameId = GameId.entries.firstOrNull { it.key == entry.arguments?.getString("gameId") }
-                if (rulesGameId != null) HowToPlayScreen(rulesGameId)
-            }
-            composable(
-                Routes.TABS,
-                enterTransition = { fadeIn(animationSpec = tween(250)) },
-                exitTransition = { fadeOut(animationSpec = tween(200)) },
-            ) {
-                CompositionLocalProvider(
-                    LocalSharedTransitionScope provides this@SharedTransitionLayout,
-                    LocalAnimatedVisibilityScope provides this,
-                ) {
-                    AnimatedContent(
-                        targetState = selectedTab,
-                        modifier = Modifier.fillMaxSize(),
-                        label = "bottomNavTabCrossfade",
-                        transitionSpec = { fadeIn(animationSpec = tween(180)) togetherWith fadeOut(animationSpec = tween(150)) },
-                    ) { tab ->
-                        when (tab) {
-                            AppTab.DAILY -> DailyScreen(
-                                onOpenAccount = { scope.launch { accountDrawerState.open() } },
-                                onStartDaily = { gameId, difficulty, date ->
-                                    val route = Routes.play(gameId, difficulty, resume = false, daily = date)
-                                    if (activeGameKey() != null) pendingDailyRoute = route else navController.navigate(route)
-                                },
-                                onResumeDaily = { gameId -> navController.navigate(resumeActiveRoute(gameId)) },
-                            )
-                            AppTab.GAMES -> GamesScreen(
-                                onOpenGame = { gameId -> navController.navigate(Routes.picker(gameId)) },
-                                onOpenAccount = { scope.launch { accountDrawerState.open() } },
-                            )
-                            AppTab.MIXES -> MixesScreen(
-                                mixes = mixes,
-                                onPlay = { mix -> if (activeGameKey() != null) pendingMixToStart = mix else startMix(mix) },
-                                onEdit = { mixId -> navController.navigate(Routes.mixEditor(mixId)) },
-                                onNewMix = {
-                                    scope.launch {
-                                        val newMix = Mix(
-                                            id = UUID.randomUUID().toString(),
-                                            name = nextMixName(mixes.map { it.name }) { resources.getString(R.string.mix_default_name, it) },
-                                            entries = emptyList(),
+            },
+        ) { padding ->
+            CompositionLocalProvider(LocalOpenGameRules provides { gameId -> navigator.navigate(RulesRoute(gameId)) }) {
+                SharedTransitionLayout {
+                    NavHost(
+                        navController = navController,
+                        startDestination = TabsRoute,
+                        modifier = Modifier.padding(padding),
+                        enterTransition = { fadeIn(animationSpec = tween(250)) },
+                        exitTransition = { fadeOut(animationSpec = tween(200)) },
+                        predictivePopEnterTransition = { fadeIn(animationSpec = tween(250)) },
+                        predictivePopExitTransition = { fadeOut(animationSpec = tween(200)) },
+                    ) {
+                        composable<TabsRoute> {
+                            CompositionLocalProvider(
+                                LocalSharedTransitionScope provides this@SharedTransitionLayout,
+                                LocalAnimatedVisibilityScope provides this,
+                            ) {
+                                AnimatedContent(
+                                    targetState = selectedTab,
+                                    modifier = Modifier.fillMaxSize(),
+                                    label = "bottomNavTabCrossfade",
+                                    transitionSpec = { fadeIn(animationSpec = tween(180)) togetherWith fadeOut(animationSpec = tween(150)) },
+                                ) { tab ->
+                                    val openAccount: () -> Unit = { scope.launch { accountDrawerState.open() } }
+                                    when (tab) {
+                                        AppTab.DAILY -> DailyScreen(
+                                            onOpenAccount = openAccount,
+                                            onStartDaily = { gameId, difficulty, date ->
+                                                val route = PlayRoute.of(gameId, difficulty, resume = false, daily = date)
+                                                if (navigator.activeGameKey() != null) pendingDailyRoute = route else navigator.navigate(route)
+                                            },
+                                            onResumeDaily = { gameId -> navigator.resumeActiveGame(gameId) },
                                         )
-                                        repositories.mixRepository.saveMix(newMix)
-                                        navController.navigate(Routes.mixEditor(newMix.id))
+                                        AppTab.GAMES -> GamesScreen(
+                                            onOpenGame = { gameId -> navigator.navigate(PickerRoute(gameId)) },
+                                            onOpenAccount = openAccount,
+                                        )
+                                        AppTab.MIXES -> MixesScreen(
+                                            mixes = mixes,
+                                            onPlay = { mix -> if (navigator.activeGameKey() != null) pendingMixToStart = mix else navigator.startMix(mix) },
+                                            onEdit = { mixId -> navigator.navigate(MixEditorRoute(mixId)) },
+                                            onNewMix = {
+                                                scope.launch {
+                                                    val newMix = Mix(
+                                                        id = UUID.randomUUID().toString(),
+                                                        name = nextMixName(mixes.map { it.name }) { context.resources.getString(R.string.mix_default_name, it) },
+                                                        entries = emptyList(),
+                                                    )
+                                                    repositories.mixRepository.saveMix(newMix)
+                                                    navigator.navigate(MixEditorRoute(newMix.id))
+                                                }
+                                            },
+                                            onOpenAccount = openAccount,
+                                        )
+                                        AppTab.STATS -> StatsScreen(onOpenAccount = openAccount)
                                     }
-                                },
-                                onOpenAccount = { scope.launch { accountDrawerState.open() } },
-                            )
-                            AppTab.STATS -> StatsScreen(onOpenAccount = { scope.launch { accountDrawerState.open() } })
-                        }
-                    }
-                }
-            }
-
-            composable(
-                Routes.PICKER,
-                arguments = listOf(navArgument("gameId") { type = NavType.StringType }),
-                enterTransition = { fadeIn(animationSpec = tween(250)) },
-                exitTransition = { fadeOut(animationSpec = tween(200)) },
-            ) { entry ->
-                CompositionLocalProvider(
-                    LocalSharedTransitionScope provides this@SharedTransitionLayout,
-                    LocalAnimatedVisibilityScope provides this,
-                ) {
-                    val gameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
-                    PuzzlePickerScreen(
-                        gameId = gameId,
-                        onPickDifficulty = { difficulty ->
-                            scope.launch { repositories.mixRepository.clearActiveMix() }
-                            navController.navigate(Routes.play(gameId, difficulty, resume = false))
-                        },
-                        onResumeActiveGame = { activeGameId -> navController.navigate(resumeActiveRoute(activeGameId)) },
-                        onStartChallenger = {
-                            scope.launch { repositories.mixRepository.clearActiveMix() }
-                            navController.navigate(Routes.challenger(gameId))
-                        },
-                        onStartEndless = {
-                            scope.launch { repositories.mixRepository.clearActiveMix() }
-                            navController.navigate(Routes.endless(gameId, resume = false))
-                        },
-                        onOpenJourney = { chapter ->
-                            navController.navigate(Routes.journey(gameId))
-                            if (chapter != null) navController.navigate(Routes.journeyMap(gameId, chapter))
-                        },
-                    )
-                }
-            }
-
-            composable(
-                Routes.JOURNEY,
-                arguments = listOf(navArgument("gameId") { type = NavType.StringType }),
-                enterTransition = { fadeIn(animationSpec = tween(250)) },
-                exitTransition = { fadeOut(animationSpec = tween(200)) },
-            ) { entry ->
-                val journeyGameId = GameId.entries.firstOrNull { it.key == entry.arguments?.getString("gameId") } ?: return@composable
-                JourneyScreen(
-                    gameId = journeyGameId,
-                    onOpenChapter = { chapter -> navController.navigate(Routes.journeyMap(journeyGameId, chapter)) },
-                )
-            }
-
-            composable(
-                Routes.JOURNEY_MAP,
-                arguments = listOf(
-                    navArgument("gameId") { type = NavType.StringType },
-                    navArgument("chapter") { type = NavType.IntType },
-                ),
-                enterTransition = { fadeIn(animationSpec = tween(250)) },
-                exitTransition = { fadeOut(animationSpec = tween(200)) },
-            ) { entry ->
-                val mapGameId = GameId.entries.firstOrNull { it.key == entry.arguments?.getString("gameId") } ?: return@composable
-                JourneyMapScreen(
-                    gameId = mapGameId,
-                    chapter = entry.arguments?.getInt("chapter") ?: 1,
-                    onPlayStop = { difficulty, request ->
-                        scope.launch { repositories.mixRepository.clearActiveMix() }
-                        playJourneyStop(mapGameId, difficulty, request)
-                    },
-                    onResumeActiveGame = { activeGameId -> navController.navigate(resumeActiveRoute(activeGameId)) },
-                )
-            }
-
-            composable(
-                Routes.MIX_EDITOR,
-                arguments = listOf(navArgument("mixId") { type = NavType.StringType }),
-                enterTransition = { fadeIn(animationSpec = tween(250)) },
-                exitTransition = { fadeOut(animationSpec = tween(200)) },
-            ) { entry ->
-                val mixId = entry.arguments?.getString("mixId") ?: return@composable
-                LaunchedEffect(mixId) {
-                    mixEditorRenameTrigger = 0
-                    mixEditorDeleteTrigger = 0
-                }
-                MixEditorScreen(
-                    mixId = mixId,
-                    onDone = { navController.popBackStack() },
-                    renameTrigger = mixEditorRenameTrigger,
-                    deleteTrigger = mixEditorDeleteTrigger,
-                )
-            }
-
-            composable(
-                Routes.ADD_TO_MIX,
-                arguments = listOf(
-                    navArgument("gameId") { type = NavType.StringType },
-                    navArgument("difficulty") { type = NavType.StringType },
-                ),
-                enterTransition = { fadeIn(animationSpec = tween(250)) },
-                exitTransition = { fadeOut(animationSpec = tween(200)) },
-            ) { entry ->
-                val gameId = GameId.entries.firstOrNull { it.key == entry.arguments?.getString("gameId") } ?: return@composable
-                val difficulty = Difficulty.fromKey(entry.arguments?.getString("difficulty") ?: "easy")
-                AddToMixScreen(
-                    gameId = gameId,
-                    difficulty = difficulty,
-                    onDone = { navController.popBackStack() },
-                    onNewMix = { navController.navigate(Routes.addToNewMix(gameId, difficulty)) },
-                )
-            }
-
-            composable(
-                Routes.ADD_TO_NEW_MIX,
-                arguments = listOf(
-                    navArgument("gameId") { type = NavType.StringType },
-                    navArgument("difficulty") { type = NavType.StringType },
-                ),
-                enterTransition = { fadeIn(animationSpec = tween(250)) },
-                exitTransition = { fadeOut(animationSpec = tween(200)) },
-            ) { entry ->
-                val gameId = GameId.entries.firstOrNull { it.key == entry.arguments?.getString("gameId") } ?: return@composable
-                val difficulty = Difficulty.fromKey(entry.arguments?.getString("difficulty") ?: "easy")
-                NewMixScreen(
-                    gameId = gameId,
-                    difficulty = difficulty,
-                    onCreated = { navController.popBackStack(Routes.ADD_TO_MIX, inclusive = true) },
-                )
-            }
-
-            composable(
-                Routes.PLAY,
-                arguments = listOf(
-                    navArgument("gameId") { type = NavType.StringType },
-                    navArgument("difficulty") { type = NavType.StringType },
-                    navArgument("resume") { type = NavType.BoolType },
-                    navArgument("daily") { type = NavType.StringType; nullable = true; defaultValue = null },
-                    navArgument("journey") { type = NavType.StringType; nullable = true; defaultValue = null },
-                    navArgument("journeyPuzzle") { type = NavType.StringType; nullable = true; defaultValue = null },
-                    navArgument("transform") { type = NavType.IntType; defaultValue = 0 },
-                ),
-                enterTransition = { fadeIn(animationSpec = tween(250)) },
-                exitTransition = {
-                    if (targetState.destination.route in RESULT_ROUTES) {
-                        fadeOut(animationSpec = snap(delayMillis = if (FinishMotion.reduced) 0 else FOLD_TAIL_MS))
-                    } else {
-                        fadeOut(animationSpec = tween(200))
-                    }
-                },
-            ) { entry ->
-                CompositionLocalProvider(
-                    LocalSharedTransitionScope provides this@SharedTransitionLayout,
-                    LocalAnimatedVisibilityScope provides this,
-                    LocalPlayContext provides PlayContext(
-                        dailyKey = entry.arguments?.getString("daily"),
-                        fromMix = activeMix != null,
-                    ),
-                ) {
-                    val difficulty = Difficulty.fromKey(entry.arguments?.getString("difficulty") ?: "easy")
-                    val resume = entry.arguments?.getBoolean("resume") ?: false
-                    val gameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
-                    val dailyKey = entry.arguments?.getString("daily")
-                    val dailyDate = dailyKey?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
-                    val journeyRequest = entry.arguments?.getString("journey")?.let { stopId ->
-                        JourneyRequest(stopId, entry.arguments?.getString("journeyPuzzle") ?: stopId, entry.arguments?.getInt("transform") ?: 0)
-                    }
-                    val journeyViewModel: JourneyViewModel = hiltViewModel()
-
-                    fun restartJourney() {
-                        val request = journeyRequest ?: return
-                        scope.launch {
-                            val target = journeyViewModel.playTarget(gameId, request.stopId)
-                            playJourneyStop(gameId, target?.first ?: difficulty, target?.second ?: request)
-                        }
-                    }
-
-                    fun finishJourney(stopId: String, solved: Boolean, resultDifficulty: Difficulty, elapsedSeconds: Int, reason: LossReason?, score: Int, signals: JourneySignals) {
-                        val route = if (solved) {
-                            Routes.journeyResult(gameId, stopId, elapsedSeconds, signals)
-                        } else {
-                            Routes.loss(gameId, resultDifficulty, elapsedSeconds, reason ?: LossReason.ABANDONED, score, 0, journeyStop = stopId)
-                        }
-                        val anchor = journeyAnchor(gameId)
-                        navController.navigate(route) { popUpTo(anchor) { inclusive = false } }
-                    }
-
-                    fun goToCompletion(resultDifficulty: Difficulty, score: Int, accuracyPct: Int, elapsedSeconds: Int, isFirstSolve: Boolean, isNewHighScore: Boolean, bestTile: Int) {
-                        navController.navigate(
-                            Routes.completion(gameId, resultDifficulty, score, accuracyPct, elapsedSeconds, isFirstSolve, isNewHighScore, bestTile, daily = dailyKey),
-                        ) { popUpTo(Routes.TABS) { inclusive = false } }
-                    }
-
-                    fun goToLoss(resultDifficulty: Difficulty, elapsedSeconds: Int, reason: LossReason, score: Int, bestTile: Int) {
-                        navController.navigate(
-                            Routes.loss(gameId, resultDifficulty, elapsedSeconds, reason, score, bestTile, daily = dailyKey),
-                        ) { popUpTo(Routes.TABS) { inclusive = false } }
-                    }
-
-                    val playPreferences = playPreferencesFor(gameId)
-                    val keepAwake = playPreferences.keepScreenOn || GameRegistry.of(gameId).capabilities.alwaysKeepScreenOn
-                    ProvideGamePlayPreferences(playPreferences) {
-                        Column(Modifier.fillMaxSize().then(if (keepAwake) Modifier.keepScreenOn() else Modifier)) {
-                            Box(Modifier.weight(1f)) {
-                                GameRegistry.of(gameId).PlayScreen(
-                                    PlayRequest(
-                                        difficulty = difficulty,
-                                        resume = resume,
-                                        dailyDate = dailyDate,
-                                        journey = journeyRequest,
-                                        onRestarted = { restartJourney() },
-                                        onBack = { navController.popBackStack() },
-                                        onFinished = { result ->
-                                            if (journeyRequest != null) {
-                                                finishJourney(journeyRequest.stopId, result.solved, result.difficulty, result.elapsedSeconds, result.lossReason, result.score, result.journeySignals)
-                                            } else if (result.solved) {
-                                                goToCompletion(result.difficulty, result.score, result.accuracyPct, result.elapsedSeconds, result.isFirstSolve, result.isNewHighScore, result.bestTile)
-                                            } else {
-                                                goToLoss(result.difficulty, result.elapsedSeconds, result.lossReason ?: LossReason.ABANDONED, result.score, result.bestTile)
-                                            }
-                                        },
-                                    ),
-                                )
+                                }
                             }
                         }
+                        gamePageGraph(navigator, this@SharedTransitionLayout)
+                        journeyGraph(navigator)
+                        mixGraph(navigator, mixEditorTriggers)
+                        playGraph(navigator, this@SharedTransitionLayout)
+                        challengerGraph(navigator, this@SharedTransitionLayout)
+                        endlessGraph(navigator)
+                        accountGraph(navigator)
                     }
                 }
-            }
-
-            composable(
-                Routes.COMPLETION,
-                arguments = listOf(
-                    navArgument("gameId") { type = NavType.StringType },
-                    navArgument("difficulty") { type = NavType.StringType },
-                    navArgument("score") { type = NavType.IntType },
-                    navArgument("accuracyPct") { type = NavType.IntType },
-                    navArgument("elapsedSeconds") { type = NavType.IntType },
-                    navArgument("isFirstSolve") { type = NavType.BoolType },
-                    navArgument("isNewHighScore") { type = NavType.BoolType },
-                    navArgument("bestTile") { type = NavType.IntType },
-                    navArgument("daily") { type = NavType.StringType; nullable = true; defaultValue = null },
-                ),
-                enterTransition = { EnterTransition.None },
-                exitTransition = { fadeOut(animationSpec = tween(200)) },
-            ) { entry ->
-                CompositionLocalProvider(
-                    LocalSharedTransitionScope provides this@SharedTransitionLayout,
-                    LocalAnimatedVisibilityScope provides this,
-                ) {
-                    val completionGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
-                    val completionDifficulty = Difficulty.fromKey(entry.arguments?.getString("difficulty") ?: "easy")
-                    val resultDailyKey = entry.arguments?.getString("daily")
-                    val nextDaily = rememberNextDaily(resultDailyKey, completionGameId, completionDifficulty)
-                    val resultContext = LocalContext.current
-                    ProvideGamePlayPreferences(playPreferencesFor(completionGameId)) {
-                        CompletionScreen(
-                            gameId = completionGameId,
-                            difficulty = completionDifficulty,
-                            score = entry.arguments?.getInt("score") ?: 0,
-                            accuracyPct = entry.arguments?.getInt("accuracyPct") ?: 100,
-                            elapsedSeconds = entry.arguments?.getInt("elapsedSeconds") ?: 0,
-                            bestTile = entry.arguments?.getInt("bestTile") ?: 0,
-                            isFirstSolve = entry.arguments?.getBoolean("isFirstSolve") ?: false,
-                            isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
-                            isMixActive = activeMix != null,
-                            onAddToMix = { navController.navigate(Routes.addToMix(completionGameId, completionDifficulty)) },
-                            onPlayAgain = {
-                                playAgainOrDrawMix {
-                                    navController.navigate(Routes.play(completionGameId, completionDifficulty, resume = false)) {
-                                        popUpTo(Routes.TABS) { inclusive = false }
-                                    }
-                                }
-                            },
-                            onOtherDifficulty = {
-                                navController.navigate(Routes.picker(completionGameId)) {
-                                    popUpTo(Routes.TABS) { inclusive = false }
-                                }
-                            },
-                            onTryAnotherGame = { endMixAndGoToGames() },
-                            dailyDate = resultDailyKey,
-                            onShareDaily = {
-                                if (resultDailyKey != null) {
-                                    scope.launch {
-                                        shareDailyResult(resultContext, repositories.playHistoryRepository, completionGameId, completionDifficulty, resultDailyKey)
-                                    }
-                                }
-                            },
-                            onBackToDaily = { goToDailyTab() },
-                            hasNextDaily = nextDaily != null,
-                            onPlayNextDaily = { playNextDaily(nextDaily, resultDailyKey) },
-                        )
-                    }
-                }
-            }
-
-            composable(
-                Routes.LOSS,
-                arguments = listOf(
-                    navArgument("gameId") { type = NavType.StringType },
-                    navArgument("difficulty") { type = NavType.StringType },
-                    navArgument("elapsedSeconds") { type = NavType.IntType },
-                    navArgument("reason") { type = NavType.StringType },
-                    navArgument("score") { type = NavType.IntType },
-                    navArgument("bestTile") { type = NavType.IntType },
-                    navArgument("daily") { type = NavType.StringType; nullable = true; defaultValue = null },
-                    navArgument("journey") { type = NavType.StringType; nullable = true; defaultValue = null },
-                ),
-                enterTransition = { EnterTransition.None },
-                exitTransition = { fadeOut(animationSpec = tween(200)) },
-            ) { entry ->
-                CompositionLocalProvider(
-                    LocalSharedTransitionScope provides this@SharedTransitionLayout,
-                    LocalAnimatedVisibilityScope provides this,
-                ) {
-                    val lossGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
-                    val lossJourneyStop = entry.arguments?.getString("journey")
-                    val journeyViewModel: JourneyViewModel = hiltViewModel()
-                    val lossDifficulty = Difficulty.fromKey(entry.arguments?.getString("difficulty") ?: "easy")
-                    val resultDailyKey = entry.arguments?.getString("daily")
-                    val nextDaily = rememberNextDaily(resultDailyKey, lossGameId, lossDifficulty)
-                    val resultContext = LocalContext.current
-                    ProvideGamePlayPreferences(playPreferencesFor(lossGameId)) {
-                        LossScreen(
-                            gameId = lossGameId,
-                            difficulty = lossDifficulty,
-                            elapsedSeconds = entry.arguments?.getInt("elapsedSeconds") ?: 0,
-                            reason = LossReason.fromKey(entry.arguments?.getString("reason")) ?: LossReason.ABANDONED,
-                            score = entry.arguments?.getInt("score") ?: 0,
-                            bestTile = entry.arguments?.getInt("bestTile") ?: 0,
-                            isMixActive = activeMix != null,
-                            onAddToMix = { navController.navigate(Routes.addToMix(lossGameId, lossDifficulty)) },
-                            onRetry = {
-                                if (lossJourneyStop != null) {
-                                    scope.launch {
-                                        val target = journeyViewModel.playTarget(lossGameId, lossJourneyStop)
-                                        if (target != null) playJourneyStop(lossGameId, target.first, target.second) else returnToJourney(lossGameId, lossJourneyStop)
-                                    }
-                                } else {
-                                    playAgainOrDrawMix {
-                                        navController.navigate(Routes.play(lossGameId, lossDifficulty, resume = false)) {
-                                            popUpTo(Routes.TABS) { inclusive = false }
-                                        }
-                                    }
-                                }
-                            },
-                            onOtherDifficulty = {
-                                navController.navigate(Routes.picker(lossGameId)) {
-                                    popUpTo(Routes.TABS) { inclusive = false }
-                                }
-                            },
-                            onTryAnotherGame = { endMixAndGoToGames() },
-                            onWalkThroughSolve = {
-                                navController.navigate(Routes.analyzer(lossGameId))
-                            },
-                            dailyDate = resultDailyKey,
-                            onShareDaily = {
-                                if (resultDailyKey != null) {
-                                    scope.launch {
-                                        shareDailyResult(resultContext, repositories.playHistoryRepository, lossGameId, lossDifficulty, resultDailyKey)
-                                    }
-                                }
-                            },
-                            onBackToDaily = { goToDailyTab() },
-                            hasNextDaily = nextDaily != null,
-                            onPlayNextDaily = { playNextDaily(nextDaily, resultDailyKey) },
-                            onBackToJourney = lossJourneyStop?.let { stop -> { returnToJourney(lossGameId, stop) } },
-                        )
-                    }
-                }
-            }
-
-            composable(
-                Routes.JOURNEY_RESULT,
-                arguments = listOf(
-                    navArgument("gameId") { type = NavType.StringType },
-                    navArgument("stopId") { type = NavType.StringType },
-                    navArgument("elapsedSeconds") { type = NavType.IntType },
-                    navArgument("hintsUsed") { type = NavType.IntType },
-                    navArgument("mistakes") { type = NavType.IntType },
-                ),
-                enterTransition = { fadeIn(animationSpec = tween(250)) },
-                exitTransition = { fadeOut(animationSpec = tween(200)) },
-            ) { entry ->
-                val resultGameId = GameId.entries.firstOrNull { it.key == entry.arguments?.getString("gameId") } ?: return@composable
-                val stopId = entry.arguments?.getString("stopId") ?: return@composable
-                ProvideGamePlayPreferences(playPreferencesFor(resultGameId)) {
-                    JourneyResultScreen(
-                        gameId = resultGameId,
-                        stopId = stopId,
-                        elapsedSeconds = entry.arguments?.getInt("elapsedSeconds") ?: 0,
-                        signals = JourneySignals(
-                            hintsUsed = entry.arguments?.getInt("hintsUsed") ?: 0,
-                            mistakes = entry.arguments?.getInt("mistakes") ?: 0,
-                        ),
-                        onPlay = { difficulty, request -> playJourneyStop(resultGameId, difficulty, request) },
-                        onMap = { returnToJourney(resultGameId, stopId) },
-                    )
-                }
-            }
-
-            composable(
-                Routes.CHALLENGER,
-                arguments = listOf(navArgument("gameId") { type = NavType.StringType }),
-                enterTransition = { fadeIn(animationSpec = tween(250)) },
-                exitTransition = { fadeOut(animationSpec = tween(200)) },
-            ) { entry ->
-                val challengerGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
-                val playPreferences = playPreferencesFor(challengerGameId)
-                if (playPreferences.keepScreenOn) Box(Modifier.keepScreenOn())
-                ProvideGamePlayPreferences(playPreferences) {
-                    GameRegistry.of(challengerGameId).challenger?.playScreen?.invoke { result ->
-                        ChallengerExtras.set(ChallengerRunDetails(result.puzzleHistory, result.solvesInTier))
-                        navController.navigate(
-                            Routes.challengerResult(challengerGameId, result.puzzlesSolved, result.tierReached, result.score, result.isNewHighScore, result.reason, result.previousBest, result.fastestSolveSeconds),
-                        ) { popUpTo(Routes.TABS) { inclusive = false } }
-                    }
-                }
-            }
-
-            composable(
-                Routes.ENDLESS,
-                arguments = listOf(
-                    navArgument("gameId") { type = NavType.StringType },
-                    navArgument("resume") { type = NavType.BoolType },
-                ),
-                enterTransition = { fadeIn(animationSpec = tween(250)) },
-                exitTransition = { fadeOut(animationSpec = tween(200)) },
-            ) { entry ->
-                val endlessGameId = if (entry.arguments?.getString("gameId") == GameId.MINESWEEPER.key) GameId.MINESWEEPER else GameId.BLOCKFILL
-                val playPreferences = playPreferencesFor(endlessGameId)
-                if (playPreferences.keepScreenOn) Box(Modifier.keepScreenOn())
-                val endlessResume = entry.arguments?.getBoolean("resume") ?: false
-                ProvideGamePlayPreferences(playPreferences) {
-                    if (endlessGameId == GameId.MINESWEEPER) {
-                        MinesweeperEndlessPlayScreen(
-                            resume = endlessResume,
-                            onBack = { navController.popBackStack() },
-                            onFinished = { result ->
-                                navController.navigate(Routes.minesweeperEndlessResult(result)) { popUpTo(Routes.TABS) { inclusive = false } }
-                            },
-                        )
-                    } else {
-                        BlockFillEndlessPlayScreen(
-                            resume = endlessResume,
-                            onBack = { navController.popBackStack() },
-                            onFinished = { result ->
-                                navController.navigate(Routes.endlessResult(result)) { popUpTo(Routes.TABS) { inclusive = false } }
-                            },
-                        )
-                    }
-                }
-            }
-
-            composable(
-                Routes.MINESWEEPER_ENDLESS_RESULT,
-                arguments = listOf(
-                    navArgument("score") { type = NavType.IntType },
-                    navArgument("ring") { type = NavType.IntType },
-                    navArgument("elapsedSeconds") { type = NavType.IntType },
-                    navArgument("isNewBest") { type = NavType.BoolType },
-                    navArgument("previousBest") { type = NavType.IntType },
-                    navArgument("reason") { type = NavType.StringType },
-                ),
-                enterTransition = { fadeIn(animationSpec = tween(250)) },
-                exitTransition = { fadeOut(animationSpec = tween(200)) },
-            ) { entry ->
-                val args = entry.arguments
-                ProvideGamePlayPreferences(playPreferencesFor(GameId.MINESWEEPER)) {
-                    MinesweeperEndlessResultScreen(
-                        result = MinesweeperEndlessResult(
-                            score = args?.getInt("score") ?: 0,
-                            ring = args?.getInt("ring") ?: 0,
-                            elapsedSeconds = args?.getInt("elapsedSeconds") ?: 0,
-                            isNewBest = args?.getBoolean("isNewBest") ?: false,
-                            previousBest = args?.getInt("previousBest") ?: 0,
-                            reason = args?.getString("reason") ?: MINESWEEPER_ENDLESS_REASON_ENDED,
-                        ),
-                        onPlayAgain = {
-                            navController.navigate(Routes.endless(GameId.MINESWEEPER, resume = false)) { popUpTo(Routes.TABS) { inclusive = false } }
-                        },
-                        onBack = {
-                            navController.navigate(Routes.picker(GameId.MINESWEEPER)) { popUpTo(Routes.TABS) { inclusive = false } }
-                        },
-                        onTryAnotherGame = { endMixAndGoToGames() },
-                    )
-                }
-            }
-
-            composable(
-                Routes.ENDLESS_RESULT,
-                arguments = listOf(
-                    navArgument("score") { type = NavType.IntType },
-                    navArgument("level") { type = NavType.IntType },
-                    navArgument("lines") { type = NavType.IntType },
-                    navArgument("moves") { type = NavType.IntType },
-                    navArgument("isNewBest") { type = NavType.BoolType },
-                    navArgument("previousBest") { type = NavType.IntType },
-                    navArgument("reason") { type = NavType.StringType },
-                ),
-                enterTransition = { fadeIn(animationSpec = tween(250)) },
-                exitTransition = { fadeOut(animationSpec = tween(200)) },
-            ) { entry ->
-                val args = entry.arguments
-                ProvideGamePlayPreferences(playPreferencesFor(GameId.BLOCKFILL)) {
-                    BlockFillEndlessResultScreen(
-                        result = BlockFillEndlessResult(
-                            score = args?.getInt("score") ?: 0,
-                            levelReached = args?.getInt("level") ?: 1,
-                            linesCleared = args?.getInt("lines") ?: 0,
-                            moves = args?.getInt("moves") ?: 0,
-                            isNewBest = args?.getBoolean("isNewBest") ?: false,
-                            previousBest = args?.getInt("previousBest") ?: 0,
-                            reason = args?.getString("reason") ?: BLOCKFILL_ENDLESS_REASON_STUCK,
-                        ),
-                        onPlayAgain = {
-                            navController.navigate(Routes.endless(GameId.BLOCKFILL, resume = false)) { popUpTo(Routes.TABS) { inclusive = false } }
-                        },
-                        onBack = {
-                            navController.navigate(Routes.picker(GameId.BLOCKFILL)) { popUpTo(Routes.TABS) { inclusive = false } }
-                        },
-                        onTryAnotherGame = { endMixAndGoToGames() },
-                    )
-                }
-            }
-
-            composable(
-                Routes.CHALLENGER_RESULT,
-                arguments = listOf(
-                    navArgument("gameId") { type = NavType.StringType },
-                    navArgument("puzzlesSolved") { type = NavType.IntType },
-                    navArgument("tier") { type = NavType.StringType },
-                    navArgument("score") { type = NavType.IntType },
-                    navArgument("isNewHighScore") { type = NavType.BoolType },
-                    navArgument("reason") { type = NavType.StringType },
-                    navArgument("previousBest") { type = NavType.IntType },
-                    navArgument("fastestSolveSeconds") { type = NavType.FloatType },
-                ),
-                enterTransition = { fadeIn(animationSpec = tween(250)) },
-                exitTransition = { fadeOut(animationSpec = tween(200)) },
-            ) { entry ->
-                CompositionLocalProvider(
-                    LocalSharedTransitionScope provides this@SharedTransitionLayout,
-                    LocalAnimatedVisibilityScope provides this,
-                ) {
-                    val resultGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
-                    val previousBest = entry.arguments?.getInt("previousBest") ?: 0
-                    val fastestSolveSeconds = entry.arguments?.getFloat("fastestSolveSeconds")?.takeIf { it >= 0f }?.toDouble()
-                    ProvideGamePlayPreferences(playPreferencesFor(resultGameId)) {
-                        GameRegistry.of(resultGameId).challenger?.let { spec ->
-                            ChallengerResultScreen(
-                                gameId = resultGameId,
-                                spec = spec,
-                                puzzlesSolved = entry.arguments?.getInt("puzzlesSolved") ?: 0,
-                                tierReached = Difficulty.fromKey(entry.arguments?.getString("tier") ?: "easy"),
-                                score = entry.arguments?.getInt("score") ?: 0,
-                                isNewHighScore = entry.arguments?.getBoolean("isNewHighScore") ?: false,
-                                reason = entry.arguments?.getString("reason") ?: "time_up",
-                                previousBest = previousBest,
-                                fastestSolveSeconds = fastestSolveSeconds,
-                                isMixActive = activeMix != null,
-                                onPlayAgain = {
-                                    playAgainOrDrawMix {
-                                        navController.navigate(Routes.challenger(resultGameId)) {
-                                            popUpTo(Routes.TABS) { inclusive = false }
-                                        }
-                                    }
-                                },
-                                onBackToPuzzles = {
-                                    navController.navigate(Routes.picker(resultGameId)) {
-                                        popUpTo(Routes.TABS) { inclusive = false }
-                                    }
-                                },
-                                onTryAnotherGame = { endMixAndGoToGames() },
-                            )
-                        }
-                    }
-                }
-            }
-
-            composable(
-                Routes.ANALYZER,
-                arguments = listOf(navArgument("gameId") { type = NavType.StringType }),
-                enterTransition = { fadeIn(animationSpec = tween(250)) },
-                exitTransition = { fadeOut(animationSpec = tween(200)) },
-            ) { entry ->
-                val analyzerGameId = GameId.entries.first { it.key == entry.arguments?.getString("gameId") }
-                val analyzerSnapshot = rememberSaveable { mutableStateOf(AnalyzerHandoff.consume()) }.value
-                when (analyzerGameId) {
-                    GameId.TAKUZU -> TakuzuAnalyzerScreen(snapshot = analyzerSnapshot)
-                    GameId.ANIMALDOKU -> AnimalDokuAnalyzerScreen(snapshot = analyzerSnapshot)
-                    else -> Unit
-                }
-            }
-
-            composable(
-                Routes.SUPPORT_INFO,
-                arguments = listOf(navArgument("key") { type = NavType.StringType }),
-                enterTransition = { fadeIn(animationSpec = tween(250)) },
-                exitTransition = { fadeOut(animationSpec = tween(200)) },
-            ) { entry ->
-                SupportInfoScreen(entry.arguments?.getString("key") ?: "about")
-            }
-
-            composable(
-                Routes.SETTINGS,
-                enterTransition = { fadeIn(animationSpec = tween(250)) },
-                exitTransition = { fadeOut(animationSpec = tween(200)) },
-            ) {
-                SettingsPageScreen()
-            }
-
-            composable(
-                Routes.SUPPORT,
-                enterTransition = { fadeIn(animationSpec = tween(250)) },
-                exitTransition = { fadeOut(animationSpec = tween(200)) },
-            ) {
-                SupportPageScreen()
-            }
-
-            composable(
-                Routes.TRUST,
-                enterTransition = { fadeIn(animationSpec = tween(250)) },
-                exitTransition = { fadeOut(animationSpec = tween(200)) },
-            ) {
-                TrustPageScreen(onOpenInfo = { key -> navController.navigate(Routes.supportInfo(key)) })
-            }
-
-            composable(
-                Routes.ABOUT,
-                enterTransition = { fadeIn(animationSpec = tween(250)) },
-                exitTransition = { fadeOut(animationSpec = tween(200)) },
-            ) {
-                AboutPageScreen(onOpenInfo = { key -> navController.navigate(Routes.supportInfo(key)) })
-            }
             }
         }
-        }
-    }
     }
 
-    val resumeActiveGame: () -> Unit = {
-        val activeGameId = activeGameKey()?.let { key -> GameId.entries.firstOrNull { it.key == key } }
-        if (activeGameId != null) navController.navigate(resumeActiveRoute(activeGameId))
+    fun resumeActiveGame() {
+        val activeGameId = navigator.activeGameKey()?.let { key -> GameId.entries.firstOrNull { it.key == key } }
+        if (activeGameId != null) navigator.resumeActiveGame(activeGameId)
     }
 
     val dailyRouteToStart = pendingDailyRoute
@@ -1152,7 +271,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
             },
             onStartNew = {
                 pendingDailyRoute = null
-                navController.navigate(dailyRouteToStart)
+                navigator.navigate(dailyRouteToStart)
             },
             onDismiss = { pendingDailyRoute = null },
         )
@@ -1167,20 +286,100 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
             },
             onStartNew = {
                 pendingMixToStart = null
-                startMix(mixToStart)
+                navigator.startMix(mixToStart)
             },
             onDismiss = { pendingMixToStart = null },
         )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+private fun openFromDrawer(navigator: AppNavigator, drawerState: DrawerState, route: Any) {
+    navigator.scope.launch { drawerState.close() }
+    navigator.navigate(route)
+}
+
 @Composable
-private fun rememberNextDaily(dailyKey: String?, finishedGameId: GameId, finishedDifficulty: Difficulty): Pair<GameId, Difficulty>? {
-    if (dailyKey == null) return null
-    val dailyViewModel: DailyViewModel = hiltViewModel()
-    val dailyState by dailyViewModel.state.collectAsStateWithLifecycle()
-    if (dailyState.loading || dailyState.today.toString() != dailyKey) return null
-    return remember(dailyState.games, finishedGameId, finishedDifficulty) {
-        nextUnplayedDaily(dailyState.games, finishedGameId, finishedDifficulty)
+private fun AppNavTopBar(
+    entry: NavBackStackEntry?,
+    isTabsRoute: Boolean,
+    isOn: (KClass<*>) -> Boolean,
+    navigator: AppNavigator,
+    favoriteGameIds: Set<String>,
+    mixes: List<Mix>,
+    mixEditorTriggers: MixEditorTriggers,
+) {
+    val back = { navigator.back() }
+    when {
+        isTabsRoute -> Unit
+        isOn(PickerRoute::class) -> {
+            val gameId = entry?.toRoute<PickerRoute>()?.gameId
+            if (gameId != null) {
+                GamePageTopBar(
+                    gameId,
+                    isFavorite = gameId.key in favoriteGameIds,
+                    onFavoriteChange = { favorite -> navigator.scope.launch { navigator.repositories.settingsRepository.setFavorite(gameId, favorite) } },
+                    onBack = back,
+                )
+            } else {
+                AppTopBar(onBack = back)
+            }
+        }
+        isOn(RulesRoute::class) -> AppTopBar(title = stringResource(R.string.common_rules), onBack = back)
+        isOn(JourneyRoute::class) || isOn(JourneyMapRoute::class) -> AppTopBar(title = stringResource(R.string.journey_title), onBack = back)
+        isOn(AnalyzerRoute::class) -> AppTopBar(title = stringResource(R.string.analyzer_title), onBack = back)
+        FULL_SCREEN_ROUTES.any(isOn) -> Unit
+        isOn(SupportInfoRoute::class) -> {
+            val titleRes = entry?.toRoute<SupportInfoRoute>()?.key?.let { supportInfoTitleRes(it) }
+            AppTopBar(title = titleRes?.let { stringResource(it) }, onBack = back)
+        }
+        isOn(MixEditorRoute::class) -> {
+            val mixId = entry?.toRoute<MixEditorRoute>()?.mixId
+            AppTopBar(
+                title = mixes.firstOrNull { it.id == mixId }?.name ?: stringResource(R.string.mix_editor_title_edit),
+                onBack = back,
+                actions = {
+                    val renameInteractionSource = remember { MutableInteractionSource() }
+                    IconButton(
+                        onClick = { mixEditorTriggers.rename++ },
+                        interactionSource = renameInteractionSource,
+                        modifier = Modifier.pressScale(renameInteractionSource),
+                    ) {
+                        Icon(Icons.Filled.Create, contentDescription = stringResource(R.string.mix_rename_content_description))
+                    }
+                    val deleteInteractionSource = remember { MutableInteractionSource() }
+                    IconButton(
+                        onClick = { mixEditorTriggers.delete++ },
+                        interactionSource = deleteInteractionSource,
+                        modifier = Modifier.pressScale(deleteInteractionSource),
+                    ) {
+                        Icon(
+                            Icons.Filled.Delete,
+                            contentDescription = stringResource(R.string.mix_delete_button),
+                            tint = MaterialTheme.colorScheme.error,
+                        )
+                    }
+                },
+            )
+        }
+        isOn(AddToMixRoute::class) -> AppTopBar(title = stringResource(R.string.mix_add_to_mix), onBack = back)
+        isOn(AddToNewMixRoute::class) -> AppTopBar(title = stringResource(R.string.add_to_mix_new_mix), onBack = back)
+        isOn(SettingsRoute::class) -> AppTopBar(title = stringResource(R.string.account_preferences_section), onBack = back)
+        isOn(SupportRoute::class) -> AppTopBar(title = stringResource(R.string.support_support_section), onBack = back)
+        isOn(TrustRoute::class) -> AppTopBar(title = stringResource(R.string.support_trust_section), onBack = back)
+        isOn(AboutRoute::class) -> AppTopBar(title = stringResource(R.string.support_about_section), onBack = back)
+        else -> AppTopBar(onBack = back)
     }
 }
+
+private val FULL_SCREEN_ROUTES: List<KClass<*>> = listOf(
+    PlayRoute::class,
+    CompletionRoute::class,
+    LossRoute::class,
+    JourneyResultRoute::class,
+    ChallengerRoute::class,
+    ChallengerResultRoute::class,
+    EndlessRoute::class,
+    BlockFillEndlessResultRoute::class,
+    MinesweeperEndlessResultRoute::class,
+)

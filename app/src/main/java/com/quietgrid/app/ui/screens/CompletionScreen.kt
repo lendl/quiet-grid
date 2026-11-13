@@ -76,7 +76,6 @@ fun CompletionScreen(
     score: Int,
     accuracyPct: Int,
     elapsedSeconds: Int,
-    bestTile: Int,
     isFirstSolve: Boolean,
     isNewHighScore: Boolean,
     isMixActive: Boolean,
@@ -121,6 +120,7 @@ fun CompletionScreen(
     val themeIcon = (highlight as? CompletionHighlight.ThemeIcon)?.icon
     val nbackBreakdown = highlight as? CompletionHighlight.NBackBreakdown
     val caseSolvedText = (highlight as? CompletionHighlight.CaseSolved)?.text?.takeIf { it.isNotEmpty() }
+    val bestTile = (highlight as? CompletionHighlight.BestTile)?.tile
 
     val repositories: RepositoriesViewModel = hiltViewModel()
     val halloween = rememberHalloweenCharacter()?.takeIf { picture == null }
@@ -446,13 +446,13 @@ private fun WinHeroFigure(
 }
 
 @Composable
-private fun WinMetaItems(gameId: GameId, elapsedSeconds: Int, accuracyPct: Int, bestTile: Int) {
+private fun WinMetaItems(gameId: GameId, elapsedSeconds: Int, accuracyPct: Int, bestTile: Int?) {
     MetaItem(stringResource(R.string.completion_elapsed_time), formatElapsed(elapsedSeconds))
     if (GameRegistry.of(gameId).capabilities.accuracyTracked) {
         ResultMetaDivider()
         MetaItem(stringResource(R.string.completion_accuracy), "$accuracyPct%")
     }
-    if (GameRegistry.of(gameId).capabilities.bestTileTracked) {
+    if (bestTile != null) {
         ResultMetaDivider()
         MetaItem(stringResource(R.string.completion_best_tile), bestTile.toString())
     }

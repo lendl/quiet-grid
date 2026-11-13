@@ -7,7 +7,7 @@ import com.quietgrid.app.core.mix.Mix
 import com.quietgrid.app.core.mix.resolvedCandidates
 import com.quietgrid.app.data.ActiveSessionSummary
 import com.quietgrid.app.data.PlayRecord
-import com.quietgrid.app.nav.Routes
+import com.quietgrid.app.nav.resumeRoute
 
 data class QuickPlayContinue(val gameId: GameId, val difficulty: Difficulty?)
 
@@ -28,7 +28,7 @@ private val playCountThenRecency = compareByDescending<List<PlayRecord>> { it.si
     .thenByDescending { records -> records.maxOf { it.timestampMillis } }
 
 fun quickPlayContinue(activeSession: ActiveSessionSummary?): QuickPlayContinue? {
-    val session = activeSession?.takeIf { Routes.resume(it) != null } ?: return null
+    val session = activeSession?.takeIf { resumeRoute(it) != null } ?: return null
     val gameId = GameId.entries.firstOrNull { it.key == session.gameId } ?: return null
     return QuickPlayContinue(gameId, Difficulty.entries.firstOrNull { it.key == session.difficulty })
 }

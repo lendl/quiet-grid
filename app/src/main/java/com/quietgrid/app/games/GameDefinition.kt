@@ -20,7 +20,6 @@ data class GameCapabilities(
     val phonePortraitOnly: Boolean = false,
     val flawlessEligible: Boolean = false,
     val accuracyTracked: Boolean = false,
-    val bestTileTracked: Boolean = false,
     val scoreOnLossTracked: Boolean = false,
     val themed: Boolean = false,
     val alwaysKeepScreenOn: Boolean = false,
@@ -55,6 +54,8 @@ interface GameDefinition {
     val abandonedCopy: LossCopy
         get() = SHARED_ABANDONED_COPY
     val ruleFailureCopy: LossCopy?
+        get() = null
+    val analyzerScreen: (@Composable (snapshot: String?) -> Unit)?
         get() = null
 
     fun lossCopy(reason: LossReason): LossCopy =

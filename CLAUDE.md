@@ -48,7 +48,7 @@ When writing player-facing copy, string resources, loss screens, or how-to-play 
 ## Architecture
 
 - `app/src/main/java/com/quietgrid/app/` is the single module (`applicationId` / `namespace` = `com.quietgrid.app`).
-- Navigation is centralized in `nav/AppNavHost.kt`, using Navigation Compose. Routes are defined in `nav/Routes.kt`.
+- Navigation uses Navigation Compose with type-safe `@Serializable` routes in `nav/Destinations.kt` (enums used as route args need `@Keep` for R8). `nav/AppNavHost.kt` holds the shell (drawer, top/bottom bars, tabs) and wires the area graphs: `ShellGraphs.kt` (game page, journey, mixes, account), `PlayGraph.kt` (play, completion, loss, analyzer) and `ModeGraphs.kt` (Challenger, Endless). Shared navigation actions live in `nav/AppNavigator.kt`. Game-specific result details travel as a `CompletionHighlight`, never as extra route args.
 - Games are plugin-like modules under `games/<id>/` (e.g. `games/takuzu/`), each with its own `*ViewModel.kt` (session state, persistence), `*Grid.kt` (the board composable), `*PlayScreen.kt` (screen composition + chrome), and `*Strings.kt`/`*Logic.kt`/`*Models.kt`/`*PuzzleBank.kt` as needed.
 - The shell registry at `core/GameCatalog.kt` is the source of truth for installed games (id, title, tagline, beta flag).
 - Each game also has a `games/<id>/<Name>Definition.kt` object implementing `GameDefinition` (`games/GameDefinition.kt`): capabilities, quick start, icon, difficulty labels, play screen, loss copy overrides, and an optional `ChallengerSpec`. They are listed in `games/GameRegistry.kt`; shared screens call `GameRegistry.of(gameId)` instead of switching on `GameId` or keeping `Set<GameId>` lists. `GameRegistryTest` fails if a `GameId` has no definition.

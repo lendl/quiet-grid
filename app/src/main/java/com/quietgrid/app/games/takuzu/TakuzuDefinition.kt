@@ -27,6 +27,7 @@ object TakuzuDefinition : GameDefinition {
         config = TAKUZU_CHALLENGER_CONFIG,
         playScreen = { onFinished -> TakuzuChallengerPlayScreen(onFinished = onFinished) },
     )
+    override val analyzerScreen: @Composable (String?) -> Unit = { snapshot -> TakuzuAnalyzerScreen(snapshot = snapshot) }
     override val quickStart = TakuzuQuickStart
     override val iconHue = Color(0xFF2A85A6)
     override val iconGlyph: List<GlyphShape> = listOf(

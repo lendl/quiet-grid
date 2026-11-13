@@ -7,6 +7,7 @@ sealed interface CompletionHighlight {
     data class NBackBreakdown(val hits: Int, val misses: Int, val falsePositives: Int, val avgReactionTimeMs: Int) : CompletionHighlight
     data class CaseSolved(val text: String) : CompletionHighlight
     data class RevealWordList(val words: List<String>) : CompletionHighlight
+    data class BestTile(val tile: Int) : CompletionHighlight
 }
 
 object CompletionExtras {

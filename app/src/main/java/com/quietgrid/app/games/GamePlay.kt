@@ -26,5 +26,4 @@ data class GameFinish(
     val isNewHighScore: Boolean,
     val lossReason: LossReason?,
     val journeySignals: JourneySignals = JourneySignals(0, 0),
-    val bestTile: Int = 0,
 )

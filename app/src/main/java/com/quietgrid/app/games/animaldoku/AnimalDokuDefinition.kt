@@ -30,6 +30,7 @@ object AnimalDokuDefinition : GameDefinition {
         playScreen = { onFinished -> AnimalDokuChallengerPlayScreen(onFinished = onFinished) },
     )
     override val abandonedCopy = LossCopy(R.string.animaldoku_loss_rule_failure_eyebrow, R.string.animaldoku_loss_rule_failure_title, R.string.animaldoku_loss_rule_failure_body)
+    override val analyzerScreen: @Composable (String?) -> Unit = { snapshot -> AnimalDokuAnalyzerScreen(snapshot = snapshot) }
     override val quickStart = AnimalDokuQuickStart
     override val iconHue = Color(0xFFC25E3C)
     override val iconGlyph: List<GlyphShape> = listOf(
