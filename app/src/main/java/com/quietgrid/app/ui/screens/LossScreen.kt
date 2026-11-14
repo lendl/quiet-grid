@@ -34,11 +34,13 @@ import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.formatElapsed
+import com.quietgrid.app.core.tips.QuietTip
 import com.quietgrid.app.games.GameRegistry
 import com.quietgrid.app.games.gameDifficultyLabelRes
 import com.quietgrid.app.session.LossReason
 import com.quietgrid.app.ui.components.OutlinedGlowButton
 import com.quietgrid.app.ui.components.rememberHapticController
+import com.quietgrid.app.ui.components.rememberReduceMotion
 
 @Composable
 fun LossScreen(
@@ -59,6 +61,9 @@ fun LossScreen(
     hasNextDaily: Boolean = false,
     onPlayNextDaily: () -> Unit = {},
     onBackToJourney: (() -> Unit)? = null,
+    tip: QuietTip? = null,
+    tipActions: QuietTipActions = QuietTipActions(),
+    onPrimaryTapped: (early: Boolean) -> Unit = {},
 ) {
     val haptics = rememberHapticController()
     LaunchedEffect(Unit) { if (reason != LossReason.ABANDONED) haptics.incorrectFeedback() }
@@ -77,6 +82,7 @@ fun LossScreen(
     val analyzerSnapshot = rememberSaveable { mutableStateOf(AnalyzerHandoff.consume()) }.value
 
     val entrance = rememberResultEntrance()
+    val reduceMotion = rememberReduceMotion()
 
     val links = lossResultLinks(
         dailyDate = dailyDate,
@@ -92,7 +98,12 @@ fun LossScreen(
         if (dailyDate != null) {
             DailyResultPrimaryButton(hasNextDaily, onPlayNextDaily, onShareDaily)
         } else {
-            OutlinedGlowButton(onClick = onRetry) {
+            OutlinedGlowButton(
+                onClick = {
+                    if (!reduceMotion) onPrimaryTapped(!entrance.finished())
+                    onRetry()
+                },
+            ) {
                 Text(
                     stringResource(mixAwarePrimaryLabel(isMixActive, R.string.loss_try_again)),
                     fontWeight = FontWeight.Bold,
@@ -133,6 +144,14 @@ fun LossScreen(
                 ) {
                     Box(Modifier.size(10.dp).background(errorColor, CircleShape))
                     Text(stringResource(eyebrowRes), style = MaterialTheme.typography.labelMedium, color = errorColor)
+                }
+                if (tip != null) {
+                    QuietTipButton(
+                        tip = tip,
+                        actions = tipActions,
+                        modifier = Modifier.offset(x = 12.dp),
+                        ringWhen = { entrance.badgesAlpha() >= 1f },
+                    )
                 }
                 ResultOverflowMenu(
                     gameId = gameId,

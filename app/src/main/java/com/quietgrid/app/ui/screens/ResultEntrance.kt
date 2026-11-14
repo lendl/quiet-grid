@@ -57,6 +57,8 @@ class ResultEntrance internal constructor(private val time: () -> Float, private
 
     fun landed(): Boolean = time() >= LANDED_MS
 
+    fun finished(): Boolean = time() >= ENTRANCE_END_MS
+
     fun elapsedMs(): Float = time()
 
     fun medalAlpha(): Float = EmphasizedEasing.transform(fraction(MEDAL_START_MS, GROW_MS))

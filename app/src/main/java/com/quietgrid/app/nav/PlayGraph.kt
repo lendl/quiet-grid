@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,10 +26,12 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.daily.nextUnplayedDaily
 import com.quietgrid.app.core.daily.shareDailyResult
+import com.quietgrid.app.core.tips.QuietTip
 import com.quietgrid.app.games.GameFinish
 import com.quietgrid.app.games.GameRegistry
 import com.quietgrid.app.games.PlayRequest
@@ -43,6 +46,8 @@ import com.quietgrid.app.ui.screens.AnalyzerHandoff
 import com.quietgrid.app.ui.screens.CompletionScreen
 import com.quietgrid.app.ui.screens.DailyViewModel
 import com.quietgrid.app.ui.screens.LossScreen
+import com.quietgrid.app.ui.screens.QuietTipActions
+import com.quietgrid.app.ui.screens.QuietTipViewModel
 import kotlinx.coroutines.launch
 
 private const val FOLD_TAIL_MS = 300
@@ -155,6 +160,7 @@ private fun CompletionDestination(navigator: AppNavigator, route: CompletionRout
     val gameId = route.gameId
     val nextDaily = rememberNextDaily(route.daily, gameId, route.difficulty)
     val context = LocalContext.current
+    val resultTip = rememberResultTip(navigator, gameId, solved = true, eligible = route.daily == null && navigator.activeMix == null)
     ProvideGamePlayPreferences(navigator.playPreferencesFor(gameId)) {
         CompletionScreen(
             gameId = gameId,
@@ -176,6 +182,9 @@ private fun CompletionDestination(navigator: AppNavigator, route: CompletionRout
             onBackToDaily = { navigator.openTab(AppTab.DAILY) },
             hasNextDaily = nextDaily != null,
             onPlayNextDaily = { navigator.playNextDaily(nextDaily, route.daily) },
+            tip = resultTip.tip,
+            tipActions = resultTip.actions,
+            onPrimaryTapped = resultTip.onPrimaryTapped,
         )
     }
 }
@@ -187,6 +196,12 @@ private fun LossDestination(navigator: AppNavigator, route: LossRoute) {
     val journeyViewModel: JourneyViewModel = hiltViewModel()
     val nextDaily = rememberNextDaily(route.daily, gameId, route.difficulty)
     val context = LocalContext.current
+    val resultTip = rememberResultTip(
+        navigator,
+        gameId,
+        solved = false,
+        eligible = route.daily == null && journeyStop == null && navigator.activeMix == null,
+    )
     ProvideGamePlayPreferences(navigator.playPreferencesFor(gameId)) {
         LossScreen(
             gameId = gameId,
@@ -215,9 +230,48 @@ private fun LossDestination(navigator: AppNavigator, route: LossRoute) {
             hasNextDaily = nextDaily != null,
             onPlayNextDaily = { navigator.playNextDaily(nextDaily, route.daily) },
             onBackToJourney = journeyStop?.let { stop -> { navigator.returnToJourney(gameId, stop) } },
+            tip = resultTip.tip,
+            tipActions = resultTip.actions,
+            onPrimaryTapped = resultTip.onPrimaryTapped,
         )
     }
 }
+
+private class ResultTip(val tip: QuietTip?, val actions: QuietTipActions, val onPrimaryTapped: (Boolean) -> Unit)
+
+@Composable
+private fun rememberResultTip(navigator: AppNavigator, gameId: GameId, solved: Boolean, eligible: Boolean): ResultTip {
+    val viewModel: QuietTipViewModel = hiltViewModel()
+    LaunchedEffect(viewModel) { viewModel.load(gameId, solved, eligible) }
+    val tip by viewModel.tip.collectAsStateWithLifecycle()
+    val resources = LocalContext.current.resources
+    val current = tip
+    val actions = remember(current, viewModel) {
+        if (current == null) QuietTipActions() else quietTipActions(current, viewModel, navigator) { resources.getString(R.string.mix_default_name, it) }
+    }
+    return ResultTip(current, actions, viewModel::recordResultExit)
+}
+
+private fun quietTipActions(
+    tip: QuietTip,
+    viewModel: QuietTipViewModel,
+    navigator: AppNavigator,
+    mixName: (Int) -> String,
+): QuietTipActions = QuietTipActions(
+    onOpened = { viewModel.opened(tip) },
+    onAction = {
+        when (tip) {
+            is QuietTip.MakeMix -> viewModel.makeMix(tip, mixName) { mixId -> navigator.navigate(MixEditorRoute(mixId)) }
+            QuietTip.TryDaily -> viewModel.tryDaily(tip) { navigator.openTab(AppTab.DAILY) }
+            is QuietTip.LockRotation, is QuietTip.KeepAwake, QuietTip.ReduceMotion -> viewModel.applySetting(tip)
+        }
+    },
+    onUndo = { viewModel.undoSetting(tip) },
+    onDoneClosed = { viewModel.hide() },
+    onQuietThis = { viewModel.quietThis(tip) },
+    onQuietAll = { viewModel.quietAll() },
+    onSnooze = { viewModel.snooze(tip) },
+)
 
 private fun shareDaily(navigator: AppNavigator, context: Context, gameId: GameId, difficulty: Difficulty, dailyKey: String?) {
     if (dailyKey == null) return

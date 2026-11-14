@@ -28,6 +28,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -65,6 +66,8 @@ import com.quietgrid.app.ui.components.GamePageTopBar
 import com.quietgrid.app.ui.components.ReplacePuzzleSheet
 import com.quietgrid.app.ui.components.pressScale
 import com.quietgrid.app.ui.play.LocalOpenGameRules
+import com.quietgrid.app.ui.play.LocalQuietTipSignals
+import com.quietgrid.app.ui.play.QuietTipSignalsViewModel
 import com.quietgrid.app.ui.screens.AccountDrawerContent
 import com.quietgrid.app.ui.screens.DailyScreen
 import com.quietgrid.app.ui.screens.GamesScreen
@@ -97,6 +100,10 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
     val settings = settingsState.value
     val context = LocalContext.current
     val appContext = context.applicationContext
+    val quietTipSignals: QuietTipSignalsViewModel = hiltViewModel()
+    LaunchedEffect(selectedTab) {
+        if (selectedTab == AppTab.DAILY) quietTipSignals.dailyTabOpened()
+    }
 
     val navigator = remember(navController) {
         AppNavigator(
@@ -186,7 +193,10 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                 }
             },
         ) { padding ->
-            CompositionLocalProvider(LocalOpenGameRules provides { gameId -> navigator.navigate(RulesRoute(gameId)) }) {
+            CompositionLocalProvider(
+                LocalOpenGameRules provides { gameId -> navigator.navigate(RulesRoute(gameId)) },
+                LocalQuietTipSignals provides quietTipSignals,
+            ) {
                 SharedTransitionLayout {
                     NavHost(
                         navController = navController,

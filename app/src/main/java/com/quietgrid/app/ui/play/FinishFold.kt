@@ -104,6 +104,7 @@ internal fun FinishFold(
     finishing: FinishKind?,
     rows: Int,
     cols: Int,
+    modifier: Modifier = Modifier,
     content: @Composable BoxScope.() -> Unit,
 ) {
     var center by remember { mutableStateOf<Offset?>(null) }
@@ -111,7 +112,7 @@ internal fun FinishFold(
         if (finishing != null) FoldHandoff.set(center)
     }
     Box(
-        Modifier.fillMaxSize().onGloballyPositioned { coordinates ->
+        modifier.fillMaxSize().onGloballyPositioned { coordinates ->
             center = coordinates.positionInRoot() + Offset(coordinates.size.width / 2f, coordinates.size.height / 2f)
         },
     ) {

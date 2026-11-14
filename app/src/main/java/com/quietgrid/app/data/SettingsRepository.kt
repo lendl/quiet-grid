@@ -38,6 +38,8 @@ data class AppSettings(
     val dailyReminderTime: LocalTime = LocalTime.of(9, 0),
     val dailyReminderPermissionAsked: Boolean = false,
     val seasonalTouchesEnabled: Boolean = true,
+    val beQuiet: Boolean = false,
+    val suggestionsEnabled: Boolean = true,
 )
 
 @Singleton
@@ -63,6 +65,8 @@ class SettingsRepository @Inject constructor(private val dataStore: DataStore<Pr
         val DAILY_REMINDER_MINUTE_OF_DAY = intPreferencesKey("daily_reminder_minute_of_day")
         val DAILY_REMINDER_PERMISSION_ASKED = booleanPreferencesKey("daily_reminder_permission_asked")
         val SEASONAL_TOUCHES_ENABLED = booleanPreferencesKey("seasonal_touches_enabled")
+        val BE_QUIET = booleanPreferencesKey("be_quiet")
+        val SUGGESTIONS_ENABLED = booleanPreferencesKey("suggestions_enabled")
     }
 
     val settings: Flow<AppSettings> = dataStore.data.map { prefs ->
@@ -89,6 +93,8 @@ class SettingsRepository @Inject constructor(private val dataStore: DataStore<Pr
             dailyReminderTime = (prefs[Keys.DAILY_REMINDER_MINUTE_OF_DAY] ?: 540).let { LocalTime.of(it / 60, it % 60) },
             dailyReminderPermissionAsked = prefs[Keys.DAILY_REMINDER_PERMISSION_ASKED] ?: false,
             seasonalTouchesEnabled = prefs[Keys.SEASONAL_TOUCHES_ENABLED] ?: true,
+            beQuiet = prefs[Keys.BE_QUIET] ?: false,
+            suggestionsEnabled = prefs[Keys.SUGGESTIONS_ENABLED] ?: true,
         )
     }.distinctUntilChanged()
 
@@ -168,5 +174,13 @@ class SettingsRepository @Inject constructor(private val dataStore: DataStore<Pr
 
     suspend fun setSeasonalTouchesEnabled(enabled: Boolean) {
         dataStore.edit { it[Keys.SEASONAL_TOUCHES_ENABLED] = enabled }
+    }
+
+    suspend fun setBeQuiet(enabled: Boolean) {
+        dataStore.edit { it[Keys.BE_QUIET] = enabled }
+    }
+
+    suspend fun setSuggestionsEnabled(enabled: Boolean) {
+        dataStore.edit { it[Keys.SUGGESTIONS_ENABLED] = enabled }
     }
 }

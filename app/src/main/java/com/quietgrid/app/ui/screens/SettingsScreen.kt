@@ -336,6 +336,23 @@ fun PreferencesSection() {
 
         HorizontalDivider(Modifier.padding(vertical = 4.dp))
 
+        SettingsSectionHeading(stringResource(R.string.settings_be_quiet_section))
+        SettingsToggleRow(
+            label = stringResource(R.string.settings_be_quiet_label),
+            detail = stringResource(R.string.settings_be_quiet_detail),
+            checked = settings.beQuiet,
+            onCheckedChange = { scope.launch { repositories.settingsRepository.setBeQuiet(it) } },
+        )
+        SettingsToggleRow(
+            label = stringResource(R.string.settings_suggestions_label),
+            detail = stringResource(R.string.settings_suggestions_detail),
+            checked = settings.suggestionsEnabled,
+            enabled = !settings.beQuiet,
+            onCheckedChange = { scope.launch { repositories.settingsRepository.setSuggestionsEnabled(it) } },
+        )
+
+        HorizontalDivider(Modifier.padding(vertical = 4.dp))
+
         DailyReminderSettings(settings)
 
         HorizontalDivider(Modifier.padding(vertical = 4.dp))
@@ -405,21 +422,44 @@ private val MORE_PLAY_DEFAULT_TOGGLES = listOf(
 )
 
 @Composable
-private fun SettingsToggleRow(label: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit, detail: String? = null) {
+private fun SettingsSectionHeading(text: String) {
+    Text(
+        text,
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier.padding(top = 12.dp, bottom = 4.dp),
+    )
+}
+
+@Composable
+private fun SettingsToggleRow(
+    label: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    detail: String? = null,
+    enabled: Boolean = true,
+) {
+    val alpha = if (enabled) 1f else DISABLED_ALPHA
     Row(
         Modifier.fillMaxWidth().padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(Modifier.weight(1f)) {
-            Text(label, style = MaterialTheme.typography.bodyLarge)
+            Text(label, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha))
             if (detail != null) {
-                Text(detail, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    detail,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = alpha),
+                )
             }
         }
-        Switch(checked = checked, onCheckedChange = onCheckedChange)
+        Switch(checked = checked, onCheckedChange = onCheckedChange, enabled = enabled)
     }
 }
+
+private const val DISABLED_ALPHA = 0.38f
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

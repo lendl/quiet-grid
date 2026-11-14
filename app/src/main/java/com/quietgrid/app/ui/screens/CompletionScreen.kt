@@ -53,6 +53,7 @@ import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.difficultyColor
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.core.formatElapsed
+import com.quietgrid.app.core.tips.QuietTip
 import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.games.GameRegistry
 import com.quietgrid.app.games.gameDifficultyLabelRes
@@ -60,6 +61,7 @@ import com.quietgrid.app.ui.theme.LocalIsDarkTheme
 import com.quietgrid.app.ui.components.BadgePill
 import com.quietgrid.app.ui.components.OutlinedGlowButton
 import com.quietgrid.app.ui.components.rememberHapticController
+import com.quietgrid.app.ui.components.rememberReduceMotion
 import com.quietgrid.app.ui.seasonal.HalloweenCharacter
 import com.quietgrid.app.ui.seasonal.HalloweenFigure
 import com.quietgrid.app.ui.seasonal.rememberHalloweenCharacter
@@ -88,6 +90,9 @@ fun CompletionScreen(
     onBackToDaily: () -> Unit = {},
     hasNextDaily: Boolean = false,
     onPlayNextDaily: () -> Unit = {},
+    tip: QuietTip? = null,
+    tipActions: QuietTipActions = QuietTipActions(),
+    onPrimaryTapped: (early: Boolean) -> Unit = {},
 ) {
     val haptics = rememberHapticController()
     LaunchedEffect(Unit) { haptics.correctFeedback() }
@@ -146,6 +151,7 @@ fun CompletionScreen(
     val puzzlesToday = remember(allHistoryRecords, today) { recordsToday(allHistoryRecords, today) }
 
     val entrance = rememberResultEntrance()
+    val reduceMotion = rememberReduceMotion()
 
     val links = if (dailyDate != null) {
         dailyResultLinks(hasNextDaily, onShareDaily, onBackToDaily, onTryAnotherGame)
@@ -159,7 +165,12 @@ fun CompletionScreen(
         if (dailyDate != null) {
             DailyResultPrimaryButton(hasNextDaily, onPlayNextDaily, onShareDaily)
         } else {
-            OutlinedGlowButton(onClick = onPlayAgain) {
+            OutlinedGlowButton(
+                onClick = {
+                    if (!reduceMotion) onPrimaryTapped(!entrance.finished())
+                    onPlayAgain()
+                },
+            ) {
                 Text(
                     stringResource(mixAwarePrimaryLabel(isMixActive, R.string.completion_play_again)),
                     fontWeight = FontWeight.Bold,
@@ -267,6 +278,14 @@ fun CompletionScreen(
                                 text = stringResource(R.string.completion_daily_total_badge, puzzlesToday),
                             )
                         }
+                    }
+                    if (tip != null) {
+                        QuietTipButton(
+                            tip = tip,
+                            actions = tipActions,
+                            modifier = Modifier.badgesFadeIn(entrance),
+                            ringWhen = { entrance.badgesAlpha() >= 1f },
+                        )
                     }
                     ResultOverflowMenu(
                         gameId = gameId,

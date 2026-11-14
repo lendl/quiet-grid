@@ -95,6 +95,12 @@ fun GamePlayScaffold(
     val (rows, cols) = remember(foldRows, foldCols, boardAspectRatio) { foldGrid(foldRows, foldCols, boardAspectRatio) }
     val preferences = LocalGamePlayPreferences.current
     ApplyPlayOrientation(preferences.rotation, phonePortraitOnly)
+    val touches = trackQuietTipSignals(
+        gameId = gameId,
+        rotation = preferences.rotation,
+        keepsScreenOn = preferences.keepScreenOn || GameRegistry.of(gameId).capabilities.alwaysKeepScreenOn,
+        phonePortraitOnly = phonePortraitOnly,
+    )
     val openGameRules = LocalOpenGameRules.current
 
     val shownHint = hint?.takeIf { preferences.showHints }
@@ -123,7 +129,7 @@ fun GamePlayScaffold(
     val stripItems = playContextItems(gameId, difficulty) + info
     val contentDirection = LocalLayoutDirection.current
 
-    BoxWithConstraints(modifier.fillMaxSize()) {
+    BoxWithConstraints(modifier.fillMaxSize().observeScreenTouches(touches)) {
         val sizeClass = playSizeClass(maxWidth, maxHeight)
         val metrics = playMetrics(sizeClass)
         val ratio = boardAspectRatio.takeUnless { boardFillsSlot }
@@ -131,7 +137,7 @@ fun GamePlayScaffold(
         val layoutDirection = if (mirrored) contentDirection.flipped() else contentDirection
         val boardSlot: @Composable BoxScope.() -> Unit = {
             InContentDirection {
-                FinishFold(fold, finishing, rows, cols) { board(sizeClass) }
+                FinishFold(fold, finishing, rows, cols, Modifier.observeBoardTouches(touches)) { board(sizeClass) }
             }
         }
         val dockSlot: (@Composable ColumnScope.() -> Unit)? = if (dock != null) {
