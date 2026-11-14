@@ -81,8 +81,8 @@ class JourneyResultContentTest {
     }
 
     @Test
-    fun `last stop hides next`() {
-        val allCleared = file.chapters.single().stops.associate { it.puzzleId to JourneyStopProgress(stars = 1, cleared = true) }
+    fun `chapter with every star hides next`() {
+        val allCleared = file.chapters.single().stops.associate { it.puzzleId to JourneyStopProgress(stars = 3, cleared = true) }
         show(model("s5", allCleared, 200, JourneySignals(0, 0)), reduceMotion = true)
         composeRule.onAllNodes(SemanticsMatcher.expectValue(SemanticsProperties.Text, listOf(androidx.compose.ui.text.AnnotatedString("Next stop"))))
             .assertCountEquals(0)

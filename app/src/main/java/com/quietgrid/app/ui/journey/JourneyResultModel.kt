@@ -39,7 +39,16 @@ fun journeyResultModel(rows: List<JourneyStopRow>, stopId: String, elapsedSecond
             JourneyGoal(JourneyGoalKind.CLEAN, run.clean),
             JourneyGoal(JourneyGoalKind.TIME, run.underTarget),
         ),
-        next = rows.drop(index + 1).firstOrNull { it.state == JourneyStopState.CURRENT || it.state == JourneyStopState.OPEN },
+        next = nextStopInChapter(rows, row),
         replay = row.takeIf { bestStars < JOURNEY_MAX_STARS_PER_STOP },
     )
+}
+
+private fun nextStopInChapter(rows: List<JourneyStopRow>, row: JourneyStopRow): JourneyStopRow? {
+    val chapterRows = rows.filter { it.chapterIndex == row.chapterIndex }
+    val at = chapterRows.indexOf(row)
+    val others = chapterRows.drop(at + 1) + chapterRows.take(at)
+    return others.firstOrNull { it.state == JourneyStopState.CURRENT || it.state == JourneyStopState.OPEN }
+        ?: others.firstOrNull { it.state == JourneyStopState.SKIPPED }
+        ?: others.firstOrNull { it.state == JourneyStopState.DONE && it.progress.stars < JOURNEY_MAX_STARS_PER_STOP }
 }

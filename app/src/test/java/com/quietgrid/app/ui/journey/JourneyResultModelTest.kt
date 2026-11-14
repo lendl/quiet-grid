@@ -62,14 +62,54 @@ class JourneyResultModelTest {
         val progress = mapOf("c1-s1" to cleared(3), "c1-s2" to JourneyStopProgress(skipped = true), "c1-s3" to cleared(1))
         val rows = journeyRows(file, progress)
         assertEquals("c1-s4", journeyResultModel(rows, "c1-s1", 60, clean)?.next?.stop?.puzzleId)
+    }
 
-        val endOfChapter = journeyRows(file, (1..6).associate { "c1-s$it" to cleared(1) })
-        assertEquals("c2-s1", journeyResultModel(endOfChapter, "c1-s6", 60, clean)?.next?.stop?.puzzleId)
+    @Test
+    fun `unfinished stop earlier in the chapter comes before another chapter`() {
+        val progress = (2..6).associate { "c1-s$it" to cleared(3) }
+        val rows = journeyRows(file, progress)
+        assertEquals("c1-s1", journeyResultModel(rows, "c1-s6", 60, clean)?.next?.stop?.puzzleId)
+    }
+
+    @Test
+    fun `unfinished stops come before stops missing stars`() {
+        val progress = mapOf("c1-s1" to cleared(1), "c1-s2" to cleared(3))
+        val rows = journeyRows(file, progress)
+        assertEquals("c1-s3", journeyResultModel(rows, "c1-s2", 60, clean)?.next?.stop?.puzzleId)
+    }
+
+    @Test
+    fun `skipped stop comes before stops missing stars`() {
+        val progress = (1..6).associate { "c1-s$it" to cleared(1) } + ("c1-s3" to JourneyStopProgress(skipped = true))
+        val rows = journeyRows(file, progress)
+        assertEquals("c1-s3", journeyResultModel(rows, "c1-s5", 60, clean)?.next?.stop?.puzzleId)
+    }
+
+    @Test
+    fun `finished chapter goes to the next stop missing stars in the same chapter`() {
+        val progress = (1..6).associate { "c1-s$it" to cleared(3) } + ("c1-s2" to cleared(2)) + ("c1-s5" to cleared(1))
+        val rows = journeyRows(file, progress)
+        assertEquals("c1-s2", journeyResultModel(rows, "c1-s6", 60, clean)?.next?.stop?.puzzleId)
+        assertEquals("c1-s5", journeyResultModel(rows, "c1-s3", 60, clean)?.next?.stop?.puzzleId)
+    }
+
+    @Test
+    fun `chapter with every star has no next stop even when another chapter is open`() {
+        val rows = journeyRows(file, (1..6).associate { "c1-s$it" to cleared(3) })
+        assertNull(journeyResultModel(rows, "c1-s6", 60, clean)?.next)
+    }
+
+    @Test
+    fun `stop missing stars on its own is offered as replay, not next`() {
+        val progress = (1..6).associate { "c1-s$it" to cleared(3) } + ("c1-s4" to cleared(2))
+        val model = journeyResultModel(journeyRows(file, progress), "c1-s4", 60, JourneySignals(hintsUsed = 1, mistakes = 0))!!
+        assertNull(model.next)
+        assertEquals("c1-s4", model.replay?.stop?.puzzleId)
     }
 
     @Test
     fun `last stop has no next stop`() {
-        val rows = journeyRows(file, file.chapters.flatMap { it.stops }.associate { it.puzzleId to cleared(1) })
+        val rows = journeyRows(file, file.chapters.flatMap { it.stops }.associate { it.puzzleId to cleared(3) })
         assertNull(journeyResultModel(rows, "c2-s5", 60, clean)?.next)
     }
 
