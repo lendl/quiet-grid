@@ -2,6 +2,7 @@ package com.quietgrid.app.session
 
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.badges.BadgeFacts
 import com.quietgrid.app.core.journey.JourneySignals
 import java.time.LocalDate
 
@@ -44,4 +45,7 @@ interface PuzzleAdapter<TSession, TResult> {
     suspend fun journeySession(difficulty: Difficulty, puzzleId: String, transform: Int): TSession? = null
 
     fun journeySignals(session: TSession): JourneySignals = JourneySignals(0, 0)
+
+    fun badgeFacts(session: TSession): BadgeFacts =
+        journeySignals(session).let { BadgeFacts(hintsUsed = it.hintsUsed, mistakes = it.mistakes) }
 }

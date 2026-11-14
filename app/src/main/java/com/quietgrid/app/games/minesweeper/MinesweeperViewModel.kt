@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.badges.BadgeFacts
+import com.quietgrid.app.data.BadgeStore
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
@@ -49,7 +51,7 @@ private class MinesweeperPuzzleAdapter : PuzzleAdapter<MinesweeperSession, Mines
         val persisted = runCatching { json.decodeFromString<MinesweeperPersistedSession>(payload) }.getOrNull()
             ?: return null
         if (persisted.board.status != MinesweeperStatus.PLAYING) return null
-        return MinesweeperSession(puzzle = persisted.puzzle, board = persisted.board)
+        return MinesweeperSession(puzzle = persisted.puzzle, board = persisted.board, hintsUsed = persisted.hintsUsed)
     }
 
     override fun difficultyOf(session: MinesweeperSession): Difficulty = Difficulty.fromKey(session.puzzle.difficulty)
@@ -58,7 +60,10 @@ private class MinesweeperPuzzleAdapter : PuzzleAdapter<MinesweeperSession, Mines
         minesweeperHasMeaningfulProgress(session)
 
     override fun encode(session: MinesweeperSession): String =
-        json.encodeToString(MinesweeperPersistedSession(puzzle = session.puzzle, board = session.board))
+        json.encodeToString(MinesweeperPersistedSession(puzzle = session.puzzle, board = session.board, hintsUsed = session.hintsUsed))
+
+    override fun badgeFacts(session: MinesweeperSession): BadgeFacts =
+        BadgeFacts(hintsUsed = session.hintsUsed, allMinesFlagged = minesweeperAllMinesFlagged(session.board))
 
     override fun scoreOnWin(session: MinesweeperSession, difficulty: Difficulty, elapsedSeconds: Int): Int =
         minesweeperScore(difficulty, elapsedSeconds)
@@ -80,6 +85,7 @@ class MinesweeperPlayViewModel @AssistedInject constructor(
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
+    badgeStore: BadgeStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
 ) : ViewModel() {
@@ -95,6 +101,7 @@ class MinesweeperPlayViewModel @AssistedInject constructor(
         statsStore = statsRepository,
         historyStore = historyRepository,
         adapter = MinesweeperPuzzleAdapter(),
+        badgeStore = badgeStore,
     )
 
     val session get() = controller.session
@@ -159,7 +166,10 @@ class MinesweeperPlayViewModel @AssistedInject constructor(
         hintJob = viewModelScope.launch {
             val hint = withContext(hintDispatcher) { getMinesweeperNextMoveHint(current.board) }
             isComputingHint = false
-            if (!controller.isFinalized && session == current) nextMoveHint = hint
+            if (!controller.isFinalized && session == current) {
+                nextMoveHint = hint
+                if (hint != null) controller.updateSession(minesweeperRecordHint(current))
+            }
         }
     }
 

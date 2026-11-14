@@ -4,7 +4,9 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.journey.JourneySignals
 import com.quietgrid.app.core.journey.JourneyStopProgress
+import com.quietgrid.app.core.badges.FinishFacts
 import com.quietgrid.app.data.ActiveSessionEnvelope
+import com.quietgrid.app.data.BadgeStore
 import com.quietgrid.app.data.EndlessStats
 import com.quietgrid.app.data.GameStats
 import com.quietgrid.app.data.JourneyProgressStore
@@ -14,6 +16,7 @@ import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import java.time.LocalDate
 
 class FakeSessionStore : SessionStore {
     private val state = MutableStateFlow<ActiveSessionEnvelope?>(null)
@@ -99,6 +102,8 @@ class FakeJourneyStore : JourneyProgressStore {
 
     override fun progressFor(gameId: GameId): Flow<Map<String, JourneyStopProgress>> = progress
 
+    override suspend fun storedProgress(gameId: GameId): Map<String, JourneyStopProgress> = progress.value
+
     override suspend fun recordWin(gameId: GameId, stopId: String, signals: JourneySignals, elapsedSeconds: Int, score: Int): Int {
         wins += stopId
         return 1
@@ -134,4 +139,16 @@ class FakeHistoryStore : PlayHistoryStore {
     override suspend fun clear() {
         records.clear()
     }
+}
+
+class FakeBadgeStore : BadgeStore {
+    val finishes = mutableListOf<FinishFacts>()
+    override val earned: Flow<Map<String, LocalDate>> = MutableStateFlow(emptyMap())
+    override val announcement: Flow<String?> = MutableStateFlow(null)
+
+    override suspend fun recordFinish(finish: FinishFacts) {
+        finishes += finish
+    }
+
+    override suspend fun clearAnnouncement() = Unit
 }

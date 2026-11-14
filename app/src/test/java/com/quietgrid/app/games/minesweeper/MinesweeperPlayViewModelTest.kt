@@ -3,6 +3,7 @@ package com.quietgrid.app.games.minesweeper
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.session.LossReason
+import com.quietgrid.app.testutil.FakeBadgeStore
 import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeSessionStore
 import com.quietgrid.app.testutil.FakeStatsStore
@@ -26,7 +27,7 @@ class MinesweeperPlayViewModelTest {
 
     @Test
     fun `starting fresh creates an ungenerated playable session with zero elapsed seconds`() {
-        val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
+        val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakeBadgeStore(), Difficulty.EASY, resume = false)
 
         assertNotNull(viewModel.session)
         assertEquals(MinesweeperStatus.PLAYING, viewModel.session?.board?.status)
@@ -36,7 +37,7 @@ class MinesweeperPlayViewModelTest {
 
     @Test
     fun `flagging before the board is generated still flags the cell`() {
-        val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
+        val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakeBadgeStore(), Difficulty.EASY, resume = false)
 
         viewModel.onToggleFlag(0, 0)
 
@@ -45,7 +46,7 @@ class MinesweeperPlayViewModelTest {
 
     @Test
     fun `revealing the first cell is always safe and generates the board`() {
-        val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
+        val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakeBadgeStore(), Difficulty.EASY, resume = false)
         viewModel.generationDispatcher = mainDispatcherRule.dispatcher
 
         viewModel.onReveal(0, 0)
@@ -59,7 +60,7 @@ class MinesweeperPlayViewModelTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `the first reveal deals the board in the background and ignores taps until it lands`() {
-        val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EXPERT, resume = false)
+        val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakeBadgeStore(), Difficulty.EXPERT, resume = false)
         viewModel.generationDispatcher = StandardTestDispatcher(mainDispatcherRule.dispatcher.scheduler)
 
         viewModel.onReveal(9, 5)
@@ -77,7 +78,7 @@ class MinesweeperPlayViewModelTest {
 
     @Test
     fun `revealing an out-of-bounds cell leaves the session unchanged`() {
-        val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
+        val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakeBadgeStore(), Difficulty.EASY, resume = false)
         viewModel.generationDispatcher = mainDispatcherRule.dispatcher
         val before = viewModel.session
 
@@ -89,7 +90,7 @@ class MinesweeperPlayViewModelTest {
     @Test
     fun `endPuzzle finalizes the session as an abandoned loss`() {
         val sessionStore = FakeSessionStore()
-        val viewModel = MinesweeperPlayViewModel(sessionStore, FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
+        val viewModel = MinesweeperPlayViewModel(sessionStore, FakeStatsStore(), FakeHistoryStore(), FakeBadgeStore(), Difficulty.EASY, resume = false)
         val results = mutableListOf<MinesweeperResult>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 
@@ -105,7 +106,7 @@ class MinesweeperPlayViewModelTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `toggling the hint computes asynchronously and ignores re-entrant taps while pending`() {
-        val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
+        val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakeBadgeStore(), Difficulty.EASY, resume = false)
         viewModel.hintDispatcher = StandardTestDispatcher(mainDispatcherRule.dispatcher.scheduler)
 
         viewModel.toggleNextMoveHint()
@@ -123,7 +124,7 @@ class MinesweeperPlayViewModelTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `revealing a cell while the hint is computing cancels it instead of applying a stale result`() {
-        val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), Difficulty.EASY, resume = false)
+        val viewModel = MinesweeperPlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakeBadgeStore(), Difficulty.EASY, resume = false)
         viewModel.hintDispatcher = StandardTestDispatcher(mainDispatcherRule.dispatcher.scheduler)
 
         viewModel.toggleNextMoveHint()

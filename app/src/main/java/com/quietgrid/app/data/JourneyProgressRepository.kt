@@ -28,6 +28,7 @@ import javax.inject.Singleton
 
 interface JourneyProgressStore {
     fun progressFor(gameId: GameId): Flow<Map<String, JourneyStopProgress>>
+    suspend fun storedProgress(gameId: GameId): Map<String, JourneyStopProgress>
     suspend fun recordWin(gameId: GameId, stopId: String, signals: JourneySignals, elapsedSeconds: Int, score: Int): Int
     suspend fun recordLoss(gameId: GameId, stopId: String)
     suspend fun recordAbandon(gameId: GameId, stopId: String)
@@ -60,6 +61,9 @@ class JourneyProgressRepository(
         lineUpMissingReplays(gameId)
         emitAll(dao.progressFor(journeyScope(gameId)).map { rows -> rows.associate { it.puzzleId to it.toProgress() } })
     }
+
+    override suspend fun storedProgress(gameId: GameId): Map<String, JourneyStopProgress> =
+        dao.progressFor(journeyScope(gameId)).first().associate { it.puzzleId to it.toProgress() }
 
     override suspend fun recordWin(gameId: GameId, stopId: String, signals: JourneySignals, elapsedSeconds: Int, score: Int): Int {
         val old = current(gameId, stopId)

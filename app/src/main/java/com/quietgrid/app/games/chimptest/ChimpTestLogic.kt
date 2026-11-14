@@ -108,6 +108,9 @@ fun runChimpTestAction(session: ChimpTestSession, row: Int, col: Int, elapsedSec
     )
 }
 
+fun chimpTestReached(session: ChimpTestSession): Int =
+    if (session.status == ChimpTestStatus.WON) session.currentCount else session.currentCount - 1
+
 fun chimpTestScore(session: ChimpTestSession): Int {
     if (session.status != ChimpTestStatus.WON) return 0
     val totalRoundTime = session.roundTimes.sum()

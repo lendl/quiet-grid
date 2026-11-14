@@ -34,10 +34,12 @@ data class MinesweeperPuzzle(
 data class MinesweeperSession(
     val puzzle: MinesweeperPuzzle,
     val board: MinesweeperBoard,
+    val hintsUsed: Int = 0,
 )
 
 @Serializable
 data class MinesweeperPersistedSession(
     val puzzle: MinesweeperPuzzle,
     val board: MinesweeperBoard,
+    val hintsUsed: Int = 0,
 )

@@ -19,4 +19,7 @@ abstract class RepositoryBindingsModule {
 
     @Binds
     abstract fun bindJourneyProgressStore(impl: JourneyProgressRepository): JourneyProgressStore
+
+    @Binds
+    abstract fun bindBadgeStore(impl: BadgeRepository): BadgeStore
 }

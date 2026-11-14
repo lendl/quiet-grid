@@ -6,6 +6,7 @@ import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.ActiveSessionEnvelope
 import com.quietgrid.app.session.AppForeground
 import com.quietgrid.app.session.LossReason
+import com.quietgrid.app.testutil.FakeBadgeStore
 import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeSessionStore
 import com.quietgrid.app.testutil.FakeStatsStore
@@ -30,7 +31,7 @@ class SequenceMemoryPlayViewModelTest {
         foreground: () -> Boolean = { true },
         difficulty: Difficulty = Difficulty.EASY,
         resume: Boolean = false,
-    ) = SequenceMemoryPlayViewModel(sessionStore, FakeStatsStore(), FakeHistoryStore(), AppForeground { foreground() }, difficulty, resume)
+    ) = SequenceMemoryPlayViewModel(sessionStore, FakeStatsStore(), FakeHistoryStore(), AppForeground { foreground() }, FakeBadgeStore(), difficulty, resume)
 
     private fun advance(ms: Long) {
         mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(ms)

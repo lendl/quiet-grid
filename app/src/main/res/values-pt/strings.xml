@@ -276,14 +276,8 @@
     <string name="completion_other_difficulty">Outra dificuldade</string>
     <string name="completion_play_again">Jogar novamente</string>
     <string name="mix_next_puzzle">Próximo quebra-cabeça</string>
-    <string name="completion_streak_badge">Sequência de %1$d quebra-cabeças</string>
     <string name="completion_flawless_badge">Impecável</string>
-    <string name="completion_milestone_game_badge">%1$d resolvidos</string>
-    <string name="completion_milestone_difficulty_badge">%1$d resolvidos em %2$s</string>
-    <string name="completion_milestone_total_badge">%1$d quebra-cabeças no total</string>
     <string name="completion_bounced_back_badge">Virada por cima</string>
-    <string name="completion_variety_badge">%1$d jogos hoje</string>
-    <string name="completion_daily_total_badge">%1$d quebra-cabeças hoje</string>
 
     <!-- loss -->
     <string name="loss_difficulty">Dificuldade</string>

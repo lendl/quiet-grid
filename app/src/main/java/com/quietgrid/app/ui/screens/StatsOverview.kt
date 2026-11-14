@@ -100,7 +100,11 @@ fun buildStatsOverview(
 }
 
 @Composable
-fun StatsOverviewContent(overview: StatsOverviewModel, modifier: Modifier = Modifier) {
+fun StatsOverviewContent(
+    overview: StatsOverviewModel,
+    modifier: Modifier = Modifier,
+    belowSummary: @Composable () -> Unit = {},
+) {
     Column(modifier) {
         StatGroup(
             listOf(
@@ -121,6 +125,8 @@ fun StatsOverviewContent(overview: StatsOverviewModel, modifier: Modifier = Modi
                 ),
             ),
         )
+
+        belowSummary()
 
         HorizontalDivider(Modifier.padding(top = 20.dp))
 

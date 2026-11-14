@@ -14,6 +14,7 @@ import com.quietgrid.app.data.PlayRecord
 import com.quietgrid.app.data.SESSION_MODE_ENDLESS
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
+import com.quietgrid.app.testutil.FakeBadgeStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
@@ -131,6 +132,8 @@ private class FakeJourneyStore(private val history: FakeHistoryStore) : JourneyP
     val historySizeAtLoss = mutableListOf<Int>()
 
     override fun progressFor(gameId: GameId): Flow<Map<String, JourneyStopProgress>> = MutableStateFlow(emptyMap())
+
+    override suspend fun storedProgress(gameId: GameId): Map<String, JourneyStopProgress> = emptyMap()
 
     override suspend fun recordWin(gameId: GameId, stopId: String, signals: JourneySignals, elapsedSeconds: Int, score: Int): Int {
         wins += Win(stopId, signals, elapsedSeconds, score)
@@ -921,5 +924,89 @@ class PuzzleSessionControllerTest {
         assertEquals(listOf(signals, signals), emitted.map { it.journeySignals })
         wonJob.cancel()
         lostJob.cancel()
+    }
+
+    @Test
+    fun `a win hands the badge store one solved finish`() = runTest {
+        val badges = FakeBadgeStore()
+        val controller = PuzzleSessionController(
+            backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(signals = JourneySignals(2, 1)),
+            isAppForeground = { true },
+            badgeStore = badges,
+        )
+
+        controller.start(Difficulty.HARD, resume = false)
+        runCurrent()
+        controller.finishAsWin()
+        runCurrent()
+
+        val finish = badges.finishes.single()
+        assertTrue(finish.solved)
+        assertEquals(GameId.TAKUZU, finish.gameId)
+        assertEquals(2, finish.facts.hintsUsed)
+        assertEquals(1, finish.facts.mistakes)
+    }
+
+    @Test
+    fun `a loss counts for badges but ending the puzzle does not`() = runTest {
+        val badges = FakeBadgeStore()
+        val lost = PuzzleSessionController(
+            backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
+            isAppForeground = { true },
+            badgeStore = badges,
+        )
+        lost.start(Difficulty.HARD, resume = false)
+        runCurrent()
+        lost.finishAsLoss(LossReason.OUT_OF_LIVES)
+        runCurrent()
+
+        val ended = PuzzleSessionController(
+            backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
+            isAppForeground = { true },
+            badgeStore = badges,
+        )
+        ended.start(Difficulty.HARD, resume = false)
+        runCurrent()
+        ended.endPuzzle()
+        runCurrent()
+
+        assertFalse(badges.finishes.single().solved)
+    }
+
+    @Test
+    fun `beta games never reach the badge store`() = runTest {
+        val badges = FakeBadgeStore()
+        val controller = PuzzleSessionController(
+            backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(gameId = GameId.HASHI),
+            isAppForeground = { true },
+            badgeStore = badges,
+        )
+
+        controller.start(Difficulty.HARD, resume = false)
+        runCurrent()
+        controller.finishAsWin()
+        runCurrent()
+
+        assertTrue(badges.finishes.isEmpty())
+    }
+
+    @Test
+    fun `the start date is saved once and read back on resume`() = runTest {
+        val sessionStore = FakeSessionStore()
+        sessionStore.preload(ActiveSessionEnvelope(GameId.TAKUZU.key, 12.0, "p", startedDate = "2026-09-20"))
+        val badges = FakeBadgeStore()
+        val controller = PuzzleSessionController(
+            backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(restoreValue = TestSession(7)),
+            isAppForeground = { true },
+            badgeStore = badges,
+        )
+
+        controller.start(Difficulty.EASY, resume = true)
+        advanceTimeBy(15_001)
+        assertEquals("2026-09-20", sessionStore.activeSession.first()?.startedDate)
+        controller.finishAsWin()
+        runCurrent()
+
+        assertEquals(LocalDate.of(2026, 9, 20), badges.finishes.single().startedDate)
     }
 }

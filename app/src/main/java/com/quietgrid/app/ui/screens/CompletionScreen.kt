@@ -65,7 +65,6 @@ import com.quietgrid.app.ui.components.rememberReduceMotion
 import com.quietgrid.app.ui.seasonal.HalloweenCharacter
 import com.quietgrid.app.ui.seasonal.HalloweenFigure
 import com.quietgrid.app.ui.seasonal.rememberHalloweenCharacter
-import java.time.LocalDate
 import kotlin.math.roundToInt
 
 private const val CHECK_SIZE_FRACTION = 0.46f
@@ -93,6 +92,8 @@ fun CompletionScreen(
     tip: QuietTip? = null,
     tipActions: QuietTipActions = QuietTipActions(),
     onPrimaryTapped: (early: Boolean) -> Unit = {},
+    newBadgeId: String? = null,
+    onOpenMilestones: () -> Unit = {},
 ) {
     val haptics = rememberHapticController()
     LaunchedEffect(Unit) { haptics.correctFeedback() }
@@ -130,25 +131,13 @@ fun CompletionScreen(
     val repositories: RepositoriesViewModel = hiltViewModel()
     val halloween = rememberHalloweenCharacter()?.takeIf { picture == null }
     val bodyText = stringResource(halloween?.lineRes?.takeIf { !isNewHighScore && !isFirstSolve } ?: bodyRes)
-    val stats by remember(repositories, gameId) { repositories.statsRepository.statsFor(gameId) }.collectAsStateWithLifecycle(initialValue = null)
-    val streak = stats?.forDifficulty(difficulty)?.currentStreak ?: 0
 
     val gameRecords by remember(repositories, gameId) { repositories.playHistoryRepository.recordsFor(gameId) }
         .collectAsStateWithLifecycle(initialValue = emptyList())
-    val allHistoryRecords by remember(repositories) { repositories.playHistoryRepository.allRecords() }
-        .collectAsStateWithLifecycle(initialValue = emptyList())
     val currentWinTimestamp = remember(gameRecords) { gameRecords.maxOfOrNull { it.timestampMillis } ?: 0L }
-    val gameMilestone = remember(gameRecords) { milestoneReached(gameRecords.count { it.solved }) }
-    val difficultyMilestone = remember(gameRecords, difficulty) {
-        milestoneReached(gameRecords.count { it.solved && it.difficulty == difficulty.key })
-    }
-    val totalMilestone = remember(allHistoryRecords) { milestoneReached(allHistoryRecords.count { it.solved }) }
     val didBounceBack = remember(gameRecords, difficulty, currentWinTimestamp) {
         bouncedBackFromSkid(gameRecords, difficulty, currentWinTimestamp)
     }
-    val today = remember { LocalDate.now() }
-    val gamesToday = remember(allHistoryRecords, today) { distinctGamesToday(allHistoryRecords, today) }
-    val puzzlesToday = remember(allHistoryRecords, today) { recordsToday(allHistoryRecords, today) }
 
     val entrance = rememberResultEntrance()
     val reduceMotion = rememberReduceMotion()
@@ -214,14 +203,6 @@ fun CompletionScreen(
                             Box(Modifier.size(10.dp).background(accentColor, CircleShape))
                             Text(stringResource(eyebrowRes), style = MaterialTheme.typography.labelMedium, color = accentColor)
                         }
-                        if (streak >= 2) {
-                            BadgePill(
-                                borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
-                                textColor = MaterialTheme.colorScheme.primary,
-                                emoji = "🔥",
-                                text = stringResource(R.string.completion_streak_badge, streak),
-                            )
-                        }
                         if (isFlawless) {
                             BadgePill(
                                 borderColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f),
@@ -230,52 +211,12 @@ fun CompletionScreen(
                                 text = stringResource(R.string.completion_flawless_badge),
                             )
                         }
-                        if (gameMilestone != null) {
-                            BadgePill(
-                                borderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.35f),
-                                textColor = MaterialTheme.colorScheme.secondary,
-                                emoji = "🏅",
-                                text = stringResource(R.string.completion_milestone_game_badge, gameMilestone),
-                            )
-                        }
-                        if (difficultyMilestone != null) {
-                            BadgePill(
-                                borderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.35f),
-                                textColor = MaterialTheme.colorScheme.secondary,
-                                emoji = "🎯",
-                                text = stringResource(R.string.completion_milestone_difficulty_badge, difficultyMilestone, stringResource(difficultyLabelRes)),
-                            )
-                        }
-                        if (totalMilestone != null) {
-                            BadgePill(
-                                borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
-                                textColor = MaterialTheme.colorScheme.primary,
-                                emoji = "🌟",
-                                text = stringResource(R.string.completion_milestone_total_badge, totalMilestone),
-                            )
-                        }
                         if (didBounceBack) {
                             BadgePill(
                                 borderColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f),
                                 textColor = MaterialTheme.colorScheme.tertiary,
                                 emoji = "💪",
                                 text = stringResource(R.string.completion_bounced_back_badge),
-                            )
-                        }
-                        if (gamesToday >= 3) {
-                            BadgePill(
-                                borderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.35f),
-                                textColor = MaterialTheme.colorScheme.secondary,
-                                emoji = "🎲",
-                                text = stringResource(R.string.completion_variety_badge, gamesToday),
-                            )
-                        }
-                        if (puzzlesToday >= 5) {
-                            BadgePill(
-                                borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
-                                textColor = MaterialTheme.colorScheme.primary,
-                                emoji = "☀️",
-                                text = stringResource(R.string.completion_daily_total_badge, puzzlesToday),
                             )
                         }
                     }
@@ -340,6 +281,9 @@ fun CompletionScreen(
                 Column(Modifier.riseIn(entrance, 4), horizontalAlignment = Alignment.CenterHorizontally) {
                     WinHighlights(caseSolvedText, nbackBreakdown)
                 }
+                if (newBadgeId != null) {
+                    NewBadgeLine(newBadgeId, onOpenMilestones, Modifier.padding(top = 10.dp).badgesFadeIn(entrance))
+                }
 
                 CompactResultActions(links, Modifier.padding(top = 20.dp).riseIn(entrance, 5), primaryAction)
             } else {
@@ -389,6 +333,9 @@ fun CompletionScreen(
                     }
                     Column(Modifier.riseIn(entrance, 6), horizontalAlignment = Alignment.CenterHorizontally) {
                         WinHighlights(caseSolvedText, nbackBreakdown)
+                    }
+                    if (newBadgeId != null) {
+                        NewBadgeLine(newBadgeId, onOpenMilestones, Modifier.padding(top = 14.dp).badgesFadeIn(entrance))
                     }
                 }
 

@@ -64,6 +64,8 @@ fun LossScreen(
     tip: QuietTip? = null,
     tipActions: QuietTipActions = QuietTipActions(),
     onPrimaryTapped: (early: Boolean) -> Unit = {},
+    newBadgeId: String? = null,
+    onOpenMilestones: () -> Unit = {},
 ) {
     val haptics = rememberHapticController()
     LaunchedEffect(Unit) { if (reason != LossReason.ABANDONED) haptics.incorrectFeedback() }
@@ -194,6 +196,9 @@ fun LossScreen(
                         ) {
                             LossMetaItems(gameId, difficultyLabelRes, elapsedSeconds, score, bestTile)
                         }
+                        if (newBadgeId != null) {
+                            NewBadgeLine(newBadgeId, onOpenMilestones, Modifier.padding(top = 10.dp).badgesFadeIn(entrance))
+                        }
 
                         CompactResultActions(links, Modifier.padding(top = 22.dp).riseIn(entrance, 4), primaryAction)
                         if (walkThrough != null) {
@@ -227,6 +232,9 @@ fun LossScreen(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             LossMetaItems(gameId, difficultyLabelRes, elapsedSeconds, score, bestTile)
+                        }
+                        if (newBadgeId != null) {
+                            NewBadgeLine(newBadgeId, onOpenMilestones, Modifier.padding(top = 14.dp).badgesFadeIn(entrance))
                         }
 
                         Box(Modifier.padding(top = 24.dp).riseIn(entrance, 4)) { primaryAction() }

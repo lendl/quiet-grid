@@ -7,6 +7,7 @@ import com.quietgrid.app.core.journey.JourneyRequest
 import com.quietgrid.app.core.journey.JourneySignals
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.SettingsRepository
+import com.quietgrid.app.testutil.FakeBadgeStore
 import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeJourneyStore
 import com.quietgrid.app.testutil.FakeSessionStore
@@ -74,6 +75,7 @@ class ArrowEscapeJourneyTest {
     fun `journey start loads the stop puzzle by id`() {
         val viewModel = ArrowEscapePlayViewModel(
             context, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), settingsRepository, FakeJourneyStore(),
+            FakeBadgeStore(),
             Difficulty.HARD, resume = false, journey = JourneyRequest("ae-stop", "ae-stop", 0),
         )
         assertEquals("ae-stop", viewModel.session?.puzzle?.id)

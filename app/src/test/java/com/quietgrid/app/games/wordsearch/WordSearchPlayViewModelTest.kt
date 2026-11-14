@@ -7,6 +7,7 @@ import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.SettingsRepository
 import com.quietgrid.app.data.ThemePreferencesRepository
 import com.quietgrid.app.session.LossReason
+import com.quietgrid.app.testutil.FakeBadgeStore
 import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeSessionStore
 import com.quietgrid.app.testutil.FakeStatsStore
@@ -73,7 +74,7 @@ class WordSearchPlayViewModelTest {
         val themePreferencesRepository = mockk<ThemePreferencesRepository>()
         every { themePreferencesRepository.excludedThemes(any(), any()) } returns flowOf(excludedThemes)
         return WordSearchPlayViewModel(
-            mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), settingsRepository, themePreferencesRepository, Difficulty.EASY, resume = false, dailyDate = null,
+            mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), settingsRepository, themePreferencesRepository, FakeBadgeStore(), Difficulty.EASY, resume = false, dailyDate = null,
         )
     }
 

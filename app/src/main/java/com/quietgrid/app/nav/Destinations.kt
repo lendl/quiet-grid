@@ -137,6 +137,9 @@ data class SupportInfoRoute(val key: String)
 data object SettingsRoute
 
 @Serializable
+data object MilestonesRoute
+
+@Serializable
 data object SupportRoute
 
 @Serializable

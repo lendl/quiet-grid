@@ -9,6 +9,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.badges.BadgeFacts
+import com.quietgrid.app.data.BadgeStore
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
@@ -65,6 +67,8 @@ private class SequenceMemoryPuzzleAdapter : PuzzleAdapter<SequenceMemorySession,
 
     override fun encode(session: SequenceMemorySession): String = json.encodeToString(sequenceMemorySessionForReplay(session))
 
+    override fun badgeFacts(session: SequenceMemorySession): BadgeFacts = BadgeFacts(reached = session.completedRounds)
+
     override fun scoreOnWin(session: SequenceMemorySession, difficulty: Difficulty, elapsedSeconds: Int): Int =
         sequenceMemoryScore(session.completedRounds)
 
@@ -88,6 +92,7 @@ class SequenceMemoryPlayViewModel @AssistedInject constructor(
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     private val appForeground: AppForeground,
+    badgeStore: BadgeStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
 ) : ViewModel() {
@@ -104,6 +109,7 @@ class SequenceMemoryPlayViewModel @AssistedInject constructor(
         historyStore = historyRepository,
         adapter = SequenceMemoryPuzzleAdapter(),
         isAppForeground = appForeground::isForeground,
+        badgeStore = badgeStore,
     )
 
     val session get() = controller.session

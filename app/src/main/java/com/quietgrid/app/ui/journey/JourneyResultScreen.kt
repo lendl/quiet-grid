@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
+import com.quietgrid.app.ui.screens.NewBadgeLine
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.formatElapsed
@@ -69,6 +70,8 @@ fun JourneyResultScreen(
     signals: JourneySignals,
     onPlay: (Difficulty, JourneyRequest) -> Unit,
     onMap: () -> Unit,
+    newBadgeId: String? = null,
+    onOpenMilestones: () -> Unit = {},
 ) {
     val viewModel: JourneyViewModel = hiltViewModel()
     val state by remember(viewModel, gameId) { viewModel.state(gameId) }.collectAsStateWithLifecycle(initialValue = null)
@@ -86,6 +89,8 @@ fun JourneyResultScreen(
         onNext = { model.next?.let(::play) },
         onReplay = { model.replay?.let(::play) },
         onMap = onMap,
+        newBadgeId = newBadgeId,
+        onOpenMilestones = onOpenMilestones,
     )
 }
 
@@ -97,6 +102,8 @@ fun JourneyResultContent(
     onNext: () -> Unit,
     onReplay: () -> Unit,
     onMap: () -> Unit,
+    newBadgeId: String? = null,
+    onOpenMilestones: () -> Unit = {},
 ) {
     val totalMs = gentlePopTotalMs(model.runStars)
     var revealStarted by rememberSaveable { mutableStateOf(false) }
@@ -158,6 +165,9 @@ fun JourneyResultContent(
                     val shown = ((elapsedMs - brighten[index]) / GOAL_BRIGHTEN_MS).coerceIn(0f, 1f)
                     JourneyGoalRow(model, goal, Modifier.alpha(GOAL_DIM_ALPHA + (1f - GOAL_DIM_ALPHA) * shown))
                 }
+            }
+            if (newBadgeId != null) {
+                NewBadgeLine(newBadgeId, onOpenMilestones)
             }
             Spacer(Modifier.heightIn(min = 8.dp))
             Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {

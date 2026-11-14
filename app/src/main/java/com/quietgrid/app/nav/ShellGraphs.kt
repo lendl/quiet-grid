@@ -18,6 +18,7 @@ import com.quietgrid.app.ui.play.ProvideGamePlayPreferences
 import com.quietgrid.app.ui.screens.AboutPageScreen
 import com.quietgrid.app.ui.screens.AddToMixScreen
 import com.quietgrid.app.ui.screens.HowToPlayScreen
+import com.quietgrid.app.ui.screens.MilestonesScreen
 import com.quietgrid.app.ui.screens.MixEditorScreen
 import com.quietgrid.app.ui.screens.NewMixScreen
 import com.quietgrid.app.ui.screens.PuzzlePickerScreen
@@ -99,6 +100,8 @@ fun NavGraphBuilder.journeyGraph(navigator: AppNavigator) {
                 signals = JourneySignals(hintsUsed = route.hintsUsed, mistakes = route.mistakes),
                 onPlay = { difficulty, request -> navigator.playJourneyStop(route.gameId, difficulty, request) },
                 onMap = { navigator.returnToJourney(route.gameId, route.stopId) },
+                newBadgeId = rememberNewBadge(),
+                onOpenMilestones = { navigator.navigate(MilestonesRoute) },
             )
         }
     }
@@ -144,6 +147,7 @@ fun NavGraphBuilder.accountGraph(navigator: AppNavigator) {
         SupportInfoScreen(entry.toRoute<SupportInfoRoute>().key)
     }
     composable<SettingsRoute> { SettingsPageScreen() }
+    composable<MilestonesRoute> { MilestonesScreen() }
     composable<SupportRoute> { SupportPageScreen() }
     composable<TrustRoute> { TrustPageScreen(onOpenInfo = { key -> navigator.navigate(SupportInfoRoute(key)) }) }
     composable<AboutRoute> { AboutPageScreen(onOpenInfo = { key -> navigator.navigate(SupportInfoRoute(key)) }) }

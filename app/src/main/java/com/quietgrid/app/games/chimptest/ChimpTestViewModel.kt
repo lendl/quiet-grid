@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.badges.BadgeFacts
+import com.quietgrid.app.data.BadgeStore
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
@@ -62,6 +64,8 @@ private class ChimpTestPuzzleAdapter : PuzzleAdapter<ChimpTestSession, ChimpTest
     override fun encode(session: ChimpTestSession): String =
         json.encodeToString(session.copy(revealAll = false, wrongTapCell = null))
 
+    override fun badgeFacts(session: ChimpTestSession): BadgeFacts = BadgeFacts(reached = chimpTestReached(session))
+
     override fun scoreOnWin(session: ChimpTestSession, difficulty: Difficulty, elapsedSeconds: Int): Int =
         chimpTestScore(session)
 
@@ -81,6 +85,7 @@ class ChimpTestPlayViewModel @AssistedInject constructor(
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
+    badgeStore: BadgeStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
 ) : ViewModel() {
@@ -96,6 +101,7 @@ class ChimpTestPlayViewModel @AssistedInject constructor(
         statsStore = statsRepository,
         historyStore = historyRepository,
         adapter = ChimpTestPuzzleAdapter(),
+        badgeStore = badgeStore,
     )
 
     val session get() = controller.session

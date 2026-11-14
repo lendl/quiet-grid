@@ -263,14 +263,8 @@
     <string name="completion_other_difficulty">Autre difficulté</string>
     <string name="completion_play_again">Rejouer</string>
     <string name="mix_next_puzzle">Puzzle Suivant</string>
-    <string name="completion_streak_badge">Série de %1$d puzzles</string>
     <string name="completion_flawless_badge">Sans faute</string>
-    <string name="completion_milestone_game_badge">%1$d résolus</string>
-    <string name="completion_milestone_difficulty_badge">%1$d résolus en %2$s</string>
-    <string name="completion_milestone_total_badge">%1$d puzzles au total</string>
     <string name="completion_bounced_back_badge">Retour gagnant</string>
-    <string name="completion_variety_badge">%1$d jeux aujourd\'hui</string>
-    <string name="completion_daily_total_badge">%1$d puzzles aujourd\'hui</string>
     <string name="completion_best_tile">Meilleure tuile</string>
 
     <string name="loss_difficulty">Difficulté</string>

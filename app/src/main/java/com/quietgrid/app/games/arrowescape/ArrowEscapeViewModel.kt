@@ -8,8 +8,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.badges.BadgeFacts
+import com.quietgrid.app.core.badges.SEASON_HALLOWEEN
 import com.quietgrid.app.core.journey.JourneyRequest
 import com.quietgrid.app.core.journey.JourneySignals
+import com.quietgrid.app.data.BadgeStore
 import com.quietgrid.app.data.JourneyProgressStore
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
@@ -71,8 +74,8 @@ internal class ArrowEscapePuzzleAdapter(
     override val gameId: GameId = GameId.ARROWESCAPE
 
     override suspend fun freshSession(difficulty: Difficulty): ArrowEscapeSession? {
-        val puzzle = halloweenPuzzle(difficulty)
-            ?: ArrowEscapePuzzleBank.randomPuzzle(appContext, difficulty, historyStore.recentlyPlayedPuzzleIds(gameId, difficulty))
+        halloweenPuzzle(difficulty)?.let { return createArrowEscapeSession(it).copy(seasonal = SEASON_HALLOWEEN) }
+        val puzzle = ArrowEscapePuzzleBank.randomPuzzle(appContext, difficulty, historyStore.recentlyPlayedPuzzleIds(gameId, difficulty))
             ?: return null
         return createArrowEscapeSession(puzzle)
     }
@@ -92,6 +95,9 @@ internal class ArrowEscapePuzzleAdapter(
     override fun journeySignals(session: ArrowEscapeSession): JourneySignals =
         JourneySignals(session.hintsUsed, ARROW_ESCAPE_STARTING_LIVES - session.lives)
 
+    override fun badgeFacts(session: ArrowEscapeSession): BadgeFacts =
+        BadgeFacts(hintsUsed = session.hintsUsed, mistakes = ARROW_ESCAPE_STARTING_LIVES - session.lives, seasonal = session.seasonal)
+
     override suspend fun restoreSession(payload: String, elapsedSeconds: Double): ArrowEscapeSession? {
         val persisted = runCatching { json.decodeFromString<ArrowEscapePersistedSession>(payload) }.getOrNull() ?: return null
         if (persisted.status != ArrowEscapeStatus.PLAYING.name) return null
@@ -109,6 +115,7 @@ internal class ArrowEscapePuzzleAdapter(
             hintsUsed = persisted.hintsUsed,
             wrongIndices = persisted.wrongIndices.toSet(),
             transform = transform,
+            seasonal = persisted.seasonal,
         )
     }
 
@@ -139,6 +146,7 @@ internal class ArrowEscapePuzzleAdapter(
             status = session.status.name,
             hintsUsed = session.hintsUsed,
             wrongIndices = session.wrongIndices.toList(),
+            seasonal = session.seasonal,
         ),
     )
 
@@ -172,6 +180,7 @@ class ArrowEscapePlayViewModel @AssistedInject constructor(
     historyRepository: PlayHistoryStore,
     settingsRepository: SettingsRepository,
     journeyStore: JourneyProgressStore,
+    badgeStore: BadgeStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
     @Assisted journey: JourneyRequest?,
@@ -189,6 +198,7 @@ class ArrowEscapePlayViewModel @AssistedInject constructor(
         historyStore = historyRepository,
         adapter = ArrowEscapePuzzleAdapter(appContext, historyRepository, settingsRepository),
         journeyStore = journeyStore,
+        badgeStore = badgeStore,
     )
 
     val session get() = controller.session

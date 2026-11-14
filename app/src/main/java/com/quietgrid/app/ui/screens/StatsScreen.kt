@@ -36,7 +36,7 @@ import com.quietgrid.app.ui.components.AccountIconButton
 private enum class StatsView { OVERVIEW, LOGS }
 
 @Composable
-fun StatsScreen(onOpenAccount: () -> Unit) {
+fun StatsScreen(onOpenAccount: () -> Unit, onOpenMilestones: () -> Unit = {}) {
     val repositories: RepositoriesViewModel = hiltViewModel()
     val gameIds = remember { GameCatalog.games.map { it.id } }
     val statsByGame by remember(repositories) { repositories.statsRepository.statsForGames(gameIds) }
@@ -104,7 +104,7 @@ fun StatsScreen(onOpenAccount: () -> Unit) {
         }
 
         when (view) {
-            StatsView.OVERVIEW -> OverviewContent(statsByGame, selectedGame)
+            StatsView.OVERVIEW -> OverviewContent(statsByGame, selectedGame, onOpenMilestones)
             StatsView.LOGS -> LogsContent(records, selectedGame)
         }
     }
@@ -114,11 +114,16 @@ fun StatsScreen(onOpenAccount: () -> Unit) {
 private fun OverviewContent(
     statsByGame: Map<GameId, GameStats>,
     selectedGame: GameId?,
+    onOpenMilestones: () -> Unit,
 ) {
     val overview = remember(statsByGame, selectedGame) { buildStatsOverview(selectedGame, statsByGame) }
 
     Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
-        StatsOverviewContent(overview, modifier = Modifier.padding(top = 16.dp))
+        StatsOverviewContent(
+            overview,
+            modifier = Modifier.padding(top = 16.dp),
+            belowSummary = { MilestonesStatsRow(onOpen = onOpenMilestones, modifier = Modifier.padding(top = 16.dp)) },
+        )
 
         Text(
             stringResource(R.string.stats_privacy_text),

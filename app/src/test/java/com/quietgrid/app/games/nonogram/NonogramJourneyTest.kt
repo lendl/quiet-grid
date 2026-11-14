@@ -5,6 +5,7 @@ import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.journey.JourneyRequest
 import com.quietgrid.app.core.journey.JourneySignals
+import com.quietgrid.app.testutil.FakeBadgeStore
 import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeJourneyStore
 import com.quietgrid.app.testutil.FakeSessionStore
@@ -53,6 +54,7 @@ class NonogramJourneyTest {
 
     private fun newViewModel(journey: JourneyRequest? = null): NonogramPlayViewModel = NonogramPlayViewModel(
         context, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakeJourneyStore(),
+        FakeBadgeStore(),
         Difficulty.HARD, resume = false, journey = journey,
     ).also { it.hintDispatcher = mainDispatcherRule.dispatcher }
 

@@ -10,6 +10,9 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.daily.selectDaily
 import java.time.LocalDate
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.badges.BadgeFacts
+import com.quietgrid.app.core.badges.SEASON_HALLOWEEN
+import com.quietgrid.app.data.BadgeStore
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.SettingsRepository
@@ -68,7 +71,8 @@ private class WordSearchPuzzleAdapter(
 
     override suspend fun freshSession(difficulty: Difficulty): WordSearchSession? {
         val locale = currentWordSearchLocale(settingsRepository.settings.first().puzzleLanguage)
-        val entry = halloweenPuzzle(locale, difficulty) ?: run {
+        val halloween = halloweenPuzzle(locale, difficulty)
+        val entry = halloween ?: run {
             val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
             val excludedThemes = themePreferencesRepository.excludedThemes(gameId, locale).first()
             WordSearchPuzzleBank.randomPuzzle(appContext, locale, difficulty, recentIds, excludedThemes)
@@ -81,6 +85,7 @@ private class WordSearchPuzzleAdapter(
             hiddenWordProgress = emptyList(),
             hiddenWordSolved = false,
             accuracyDrops = 0,
+            seasonal = SEASON_HALLOWEEN.takeIf { halloween != null },
         )
     }
 
@@ -114,6 +119,8 @@ private class WordSearchPuzzleAdapter(
             hiddenWordProgress = persisted.hiddenWordProgress,
             hiddenWordSolved = persisted.hiddenWordSolved,
             accuracyDrops = persisted.accuracyDrops,
+            hintsUsed = persisted.hintsUsed,
+            seasonal = persisted.seasonal,
         )
     }
 
@@ -129,10 +136,15 @@ private class WordSearchPuzzleAdapter(
             hiddenWordProgress = session.hiddenWordProgress,
             hiddenWordSolved = session.hiddenWordSolved,
             accuracyDrops = session.accuracyDrops,
+            hintsUsed = session.hintsUsed,
+            seasonal = session.seasonal,
         ),
     )
 
     override fun puzzleIdOf(session: WordSearchSession): String? = session.puzzle.id
+
+    override fun badgeFacts(session: WordSearchSession): BadgeFacts =
+        BadgeFacts(hintsUsed = session.hintsUsed, hiddenWordSolved = session.hiddenWordSolved, seasonal = session.seasonal)
 
     override fun scoreOnWin(session: WordSearchSession, difficulty: Difficulty, elapsedSeconds: Int): Int =
         wordSearchScore(elapsedSeconds, session)
@@ -160,6 +172,7 @@ class WordSearchPlayViewModel @AssistedInject constructor(
     historyRepository: PlayHistoryStore,
     settingsRepository: SettingsRepository,
     themePreferencesRepository: ThemePreferencesRepository,
+    badgeStore: BadgeStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
     @Assisted dailyDate: LocalDate?,
@@ -176,6 +189,7 @@ class WordSearchPlayViewModel @AssistedInject constructor(
         statsStore = statsRepository,
         historyStore = historyRepository,
         adapter = WordSearchPuzzleAdapter(appContext, settingsRepository, themePreferencesRepository, historyRepository),
+        badgeStore = badgeStore,
     )
 
     val session get() = controller.session
@@ -308,7 +322,10 @@ class WordSearchPlayViewModel @AssistedInject constructor(
         hintJob = viewModelScope.launch {
             val hint = withContext(hintDispatcher) { wsNextMoveHint(current) }
             isComputingHint = false
-            if (!controller.isFinalized && session == current) nextMoveHint = hint
+            if (!controller.isFinalized && session == current) {
+                nextMoveHint = hint
+                if (hint != null) controller.updateSession(wsRecordHint(current))
+            }
         }
     }
 

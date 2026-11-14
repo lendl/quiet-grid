@@ -96,6 +96,8 @@ fun wsCommitSelection(session: WordSearchSession): WordSearchSession? {
     return wsMatchSelection(session) ?: session.copy(tempSelection = null)
 }
 
+fun wsRecordHint(session: WordSearchSession): WordSearchSession = session.copy(hintsUsed = session.hintsUsed + 1)
+
 fun wsToggleHiddenWordMode(session: WordSearchSession): WordSearchSession? {
     if (session.hiddenWordSolved) return null
     return session.copy(hiddenWordMode = !session.hiddenWordMode, tempSelection = null)

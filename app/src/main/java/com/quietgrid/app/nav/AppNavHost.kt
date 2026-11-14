@@ -249,7 +249,10 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                             },
                                             onOpenAccount = openAccount,
                                         )
-                                        AppTab.STATS -> StatsScreen(onOpenAccount = openAccount)
+                                        AppTab.STATS -> StatsScreen(
+                                            onOpenAccount = openAccount,
+                                            onOpenMilestones = { navigator.navigate(MilestonesRoute) },
+                                        )
                                     }
                                 }
                             }
@@ -375,6 +378,7 @@ private fun AppNavTopBar(
         isOn(AddToMixRoute::class) -> AppTopBar(title = stringResource(R.string.mix_add_to_mix), onBack = back)
         isOn(AddToNewMixRoute::class) -> AppTopBar(title = stringResource(R.string.add_to_mix_new_mix), onBack = back)
         isOn(SettingsRoute::class) -> AppTopBar(title = stringResource(R.string.account_preferences_section), onBack = back)
+        isOn(MilestonesRoute::class) -> AppTopBar(title = stringResource(R.string.milestones_title), onBack = back)
         isOn(SupportRoute::class) -> AppTopBar(title = stringResource(R.string.support_support_section), onBack = back)
         isOn(TrustRoute::class) -> AppTopBar(title = stringResource(R.string.support_trust_section), onBack = back)
         isOn(AboutRoute::class) -> AppTopBar(title = stringResource(R.string.support_about_section), onBack = back)

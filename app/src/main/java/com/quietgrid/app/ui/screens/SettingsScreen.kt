@@ -350,6 +350,13 @@ fun PreferencesSection() {
             enabled = !settings.beQuiet,
             onCheckedChange = { scope.launch { repositories.settingsRepository.setSuggestionsEnabled(it) } },
         )
+        SettingsToggleRow(
+            label = stringResource(R.string.settings_milestones_label),
+            detail = stringResource(R.string.settings_milestones_detail),
+            checked = settings.showMilestones,
+            enabled = !settings.beQuiet,
+            onCheckedChange = { scope.launch { repositories.settingsRepository.setMilestonesEnabled(it) } },
+        )
 
         HorizontalDivider(Modifier.padding(vertical = 4.dp))
 

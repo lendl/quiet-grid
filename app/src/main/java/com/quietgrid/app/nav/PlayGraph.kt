@@ -43,6 +43,7 @@ import com.quietgrid.app.ui.play.LocalPlayContext
 import com.quietgrid.app.ui.play.PlayContext
 import com.quietgrid.app.ui.play.ProvideGamePlayPreferences
 import com.quietgrid.app.ui.screens.AnalyzerHandoff
+import com.quietgrid.app.ui.screens.BadgeAnnouncementViewModel
 import com.quietgrid.app.ui.screens.CompletionScreen
 import com.quietgrid.app.ui.screens.DailyViewModel
 import com.quietgrid.app.ui.screens.LossScreen
@@ -161,6 +162,7 @@ private fun CompletionDestination(navigator: AppNavigator, route: CompletionRout
     val nextDaily = rememberNextDaily(route.daily, gameId, route.difficulty)
     val context = LocalContext.current
     val resultTip = rememberResultTip(navigator, gameId, solved = true, eligible = route.daily == null && navigator.activeMix == null)
+    val newBadgeId = rememberNewBadge()
     ProvideGamePlayPreferences(navigator.playPreferencesFor(gameId)) {
         CompletionScreen(
             gameId = gameId,
@@ -185,6 +187,8 @@ private fun CompletionDestination(navigator: AppNavigator, route: CompletionRout
             tip = resultTip.tip,
             tipActions = resultTip.actions,
             onPrimaryTapped = resultTip.onPrimaryTapped,
+            newBadgeId = newBadgeId,
+            onOpenMilestones = { navigator.navigate(MilestonesRoute) },
         )
     }
 }
@@ -202,6 +206,7 @@ private fun LossDestination(navigator: AppNavigator, route: LossRoute) {
         solved = false,
         eligible = route.daily == null && journeyStop == null && navigator.activeMix == null,
     )
+    val newBadgeId = rememberNewBadge()
     ProvideGamePlayPreferences(navigator.playPreferencesFor(gameId)) {
         LossScreen(
             gameId = gameId,
@@ -233,8 +238,17 @@ private fun LossDestination(navigator: AppNavigator, route: LossRoute) {
             tip = resultTip.tip,
             tipActions = resultTip.actions,
             onPrimaryTapped = resultTip.onPrimaryTapped,
+            newBadgeId = newBadgeId,
+            onOpenMilestones = { navigator.navigate(MilestonesRoute) },
         )
     }
+}
+
+@Composable
+internal fun rememberNewBadge(): String? {
+    val viewModel: BadgeAnnouncementViewModel = hiltViewModel()
+    val badgeId by viewModel.badgeId.collectAsStateWithLifecycle()
+    return badgeId
 }
 
 private class ResultTip(val tip: QuietTip?, val actions: QuietTipActions, val onPrimaryTapped: (Boolean) -> Unit)

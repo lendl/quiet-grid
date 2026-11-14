@@ -7,9 +7,11 @@ import androidx.compose.runtime.setValue
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.badges.FinishFacts
 import com.quietgrid.app.core.journey.JourneyRequest
 import com.quietgrid.app.core.journey.JourneySignals
 import com.quietgrid.app.data.ActiveSessionEnvelope
+import com.quietgrid.app.data.BadgeStore
 import com.quietgrid.app.data.JourneyProgressStore
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.PlayRecord
@@ -50,6 +52,7 @@ class PuzzleSessionController<TSession, TResult>(
     private val isAppForeground: () -> Boolean = ProcessAppForeground()::isForeground,
     private val animationsEnabled: () -> Boolean = ::systemAnimatorsEnabled,
     private val journeyStore: JourneyProgressStore? = null,
+    private val badgeStore: BadgeStore? = null,
 ) {
     var session by mutableStateOf<TSession?>(null)
         private set
@@ -65,6 +68,8 @@ class PuzzleSessionController<TSession, TResult>(
 
     private var difficulty: Difficulty = Difficulty.EASY
     private var finalized = false
+    private var startedDate: LocalDate? = null
+    private val isBeta: Boolean get() = GameCatalog.get(adapter.gameId).beta
 
     private val _result = MutableSharedFlow<TResult>(extraBufferCapacity = 1)
     val result: SharedFlow<TResult> = _result
@@ -119,7 +124,7 @@ class PuzzleSessionController<TSession, TResult>(
             val previous = statsStore.statsFor(adapter.gameId).first().forDifficulty(difficulty)
             statsStore.recordResult(adapter.gameId, difficulty, solved = true, score = score)
             val journeyStars = journey?.let { journeyStore?.recordWin(adapter.gameId, it.stopId, adapter.journeySignals(current), elapsedSeconds.toInt(), score) }
-            if (!GameCatalog.get(adapter.gameId).beta) {
+            if (!isBeta) {
                 historyStore.appendRecord(
                     PlayRecord(
                         gameId = adapter.gameId.key,
@@ -136,6 +141,7 @@ class PuzzleSessionController<TSession, TResult>(
                         journeyStars = journeyStars,
                     ),
                 )
+                badgeStore?.recordFinish(finishFacts(current, solved = true))
             }
             sessionStore.clear()
             delay(foldHandoffMs())
@@ -186,7 +192,7 @@ class PuzzleSessionController<TSession, TResult>(
     private suspend fun recordLoss(reason: LossReason): Int {
         val score = session?.let { adapter.scoreOnLoss(it, difficulty, elapsedSeconds.toInt()) } ?: 0
         statsStore.recordResult(adapter.gameId, difficulty, solved = false, score = score)
-        if (!GameCatalog.get(adapter.gameId).beta) {
+        if (!isBeta) {
             historyStore.appendRecord(
                 PlayRecord(
                     gameId = adapter.gameId.key,
@@ -206,8 +212,24 @@ class PuzzleSessionController<TSession, TResult>(
         journey?.let {
             if (reason == LossReason.ABANDONED) journeyStore?.recordAbandon(adapter.gameId, it.stopId) else journeyStore?.recordLoss(adapter.gameId, it.stopId)
         }
+        val current = session
+        if (reason != LossReason.ABANDONED && !isBeta && current != null) {
+            badgeStore?.recordFinish(finishFacts(current, solved = false))
+        }
         return score
     }
+
+    private fun finishFacts(current: TSession, solved: Boolean): FinishFacts = FinishFacts(
+        gameId = adapter.gameId,
+        difficulty = difficulty,
+        solved = solved,
+        elapsedSeconds = elapsedSeconds.toInt(),
+        date = LocalDate.now(),
+        startedDate = startedDate,
+        journeyStopId = journey?.stopId,
+        mixId = null,
+        facts = adapter.badgeFacts(current),
+    )
 
     private fun foldHandoffMs(): Long = if (animationsEnabled() && !FinishMotion.reduced) FOLD_HANDOFF_MS else 0L
 
@@ -220,6 +242,7 @@ class PuzzleSessionController<TSession, TResult>(
                 difficulty = adapter.difficultyOf(restored)
                 dailyDate = envelope.dailyDate?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
                 journey = envelope.journey
+                startedDate = envelope.startedDate?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
                 return restored
             }
         }
@@ -229,6 +252,7 @@ class PuzzleSessionController<TSession, TResult>(
     private suspend fun createFresh(requestedDifficulty: Difficulty, requestedDailyDate: LocalDate?, requestedJourney: JourneyRequest?): TSession? {
         dailyDate = requestedDailyDate
         journey = requestedJourney
+        startedDate = null
         return when {
             requestedJourney != null -> adapter.journeySession(requestedDifficulty, requestedJourney.puzzleId, requestedJourney.transform)
             requestedDailyDate != null -> adapter.dailySession(requestedDifficulty, requestedDailyDate)
@@ -304,6 +328,7 @@ class PuzzleSessionController<TSession, TResult>(
             journeyStopId = journey?.stopId,
             journeyPuzzleId = journey?.puzzleId,
             journeyTransform = journey?.transform ?: 0,
+            startedDate = (startedDate ?: LocalDate.now().also { startedDate = it }).toString(),
         )
     }
 

@@ -11,6 +11,7 @@ import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.daily.selectDaily
 import com.quietgrid.app.core.journey.JourneyRequest
 import com.quietgrid.app.core.journey.JourneySignals
+import com.quietgrid.app.data.BadgeStore
 import com.quietgrid.app.data.JourneyProgressStore
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
@@ -143,6 +144,7 @@ class AnimalDokuPlayViewModel @AssistedInject constructor(
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     journeyStore: JourneyProgressStore,
+    badgeStore: BadgeStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
     @Assisted dailyDate: LocalDate?,
@@ -161,6 +163,7 @@ class AnimalDokuPlayViewModel @AssistedInject constructor(
         historyStore = historyRepository,
         adapter = AnimalDokuPuzzleAdapter(appContext, historyRepository),
         journeyStore = journeyStore,
+        badgeStore = badgeStore,
     )
 
     val session get() = controller.session

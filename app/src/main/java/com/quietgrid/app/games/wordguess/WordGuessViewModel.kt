@@ -11,6 +11,8 @@ import com.quietgrid.app.core.daily.selectDaily
 import com.quietgrid.app.core.daily.wordGuessShareGrid
 import java.time.LocalDate
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.badges.BadgeFacts
+import com.quietgrid.app.data.BadgeStore
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.SettingsRepository
@@ -115,6 +117,8 @@ private class WordGuessPuzzleAdapter(
 
     override fun puzzleIdOf(session: WordGuessSession): String? = session.puzzleId
 
+    override fun badgeFacts(session: WordGuessSession): BadgeFacts = BadgeFacts(guesses = session.guesses.size)
+
     override fun scoreOnWin(session: WordGuessSession, difficulty: Difficulty, elapsedSeconds: Int): Int =
         computeWordGuessScore(session.difficulty, session.guesses.size, elapsedSeconds)
 
@@ -137,6 +141,7 @@ class WordGuessPlayViewModel @AssistedInject constructor(
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     settingsRepository: SettingsRepository,
+    badgeStore: BadgeStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
     @Assisted dailyDate: LocalDate?,
@@ -153,6 +158,7 @@ class WordGuessPlayViewModel @AssistedInject constructor(
         statsStore = statsRepository,
         historyStore = historyRepository,
         adapter = WordGuessPuzzleAdapter(appContext, settingsRepository, historyRepository),
+        badgeStore = badgeStore,
     )
 
     val session get() = controller.session

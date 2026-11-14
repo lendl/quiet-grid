@@ -6,6 +6,7 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.SettingsRepository
 import com.quietgrid.app.data.ThemePreferencesRepository
+import com.quietgrid.app.testutil.FakeBadgeStore
 import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeSessionStore
 import com.quietgrid.app.testutil.FakeStatsStore
@@ -68,7 +69,7 @@ class ThemeClearPlayViewModelTest {
         val themePreferencesRepository = mockk<ThemePreferencesRepository>()
         every { themePreferencesRepository.excludedThemes(any(), any()) } returns flowOf(excludedThemes)
         return ThemeClearPlayViewModel(
-            mockk<Context>(relaxed = true), FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), settingsRepository, themePreferencesRepository, Difficulty.EASY, resume = false,
+            mockk<Context>(relaxed = true), FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), settingsRepository, themePreferencesRepository, FakeBadgeStore(), Difficulty.EASY, resume = false,
         ).also {
             it.solverDispatcher = Dispatchers.Unconfined
             it.random = Random(1)

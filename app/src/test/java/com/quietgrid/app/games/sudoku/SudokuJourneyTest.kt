@@ -6,6 +6,7 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.journey.JourneyRequest
 import com.quietgrid.app.core.journey.JourneySignals
 import com.quietgrid.app.games.minisudoku.MiniSudokuPuzzleBank
+import com.quietgrid.app.testutil.FakeBadgeStore
 import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeJourneyStore
 import com.quietgrid.app.testutil.FakeSessionStore
@@ -75,6 +76,7 @@ class SudokuJourneyTest {
 
     private fun newViewModel(journey: JourneyRequest? = null, variant: SudokuVariant = SudokuVariant.CLASSIC): SudokuPlayViewModel = SudokuPlayViewModel(
         context, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakeJourneyStore(),
+        FakeBadgeStore(),
         Difficulty.MEDIUM, resume = false, dailyDate = null, variant = variant, journey = journey,
     ).also { it.hintDispatcher = mainDispatcherRule.dispatcher }
 

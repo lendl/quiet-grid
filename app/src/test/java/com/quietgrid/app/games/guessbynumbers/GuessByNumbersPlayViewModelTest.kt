@@ -8,6 +8,7 @@ import com.quietgrid.app.data.SettingsRepository
 import com.quietgrid.app.games.wordguess.WordGuessPuzzleBank
 import com.quietgrid.app.games.wordguess.currentWordGuessLocale
 import com.quietgrid.app.session.LossReason
+import com.quietgrid.app.testutil.FakeBadgeStore
 import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.app.testutil.FakeSessionStore
 import com.quietgrid.app.testutil.FakeStatsStore
@@ -58,7 +59,7 @@ class GuessByNumbersPlayViewModelTest {
         val settingsRepository = mockk<SettingsRepository>(relaxed = true)
         every { settingsRepository.settings } returns MutableStateFlow(AppSettings())
         return GuessByNumbersPlayViewModel(
-            mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), settingsRepository, Difficulty.EASY, resume = false,
+            mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), settingsRepository, FakeBadgeStore(), Difficulty.EASY, resume = false,
         )
     }
 

@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.badges.BadgeFacts
+import com.quietgrid.app.data.BadgeStore
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.SettingsRepository
@@ -97,6 +99,8 @@ private class GuessByNumbersPuzzleAdapter(
 
     override fun puzzleIdOf(session: GuessByNumbersSession): String? = session.puzzleId
 
+    override fun badgeFacts(session: GuessByNumbersSession): BadgeFacts = BadgeFacts(guesses = session.guesses.size)
+
     override fun scoreOnWin(session: GuessByNumbersSession, difficulty: Difficulty, elapsedSeconds: Int): Int =
         computeGuessByNumbersScore(session.difficulty, session.guesses.size, elapsedSeconds)
 
@@ -119,6 +123,7 @@ class GuessByNumbersPlayViewModel @AssistedInject constructor(
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     settingsRepository: SettingsRepository,
+    badgeStore: BadgeStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
 ) : ViewModel() {
@@ -134,6 +139,7 @@ class GuessByNumbersPlayViewModel @AssistedInject constructor(
         statsStore = statsRepository,
         historyStore = historyRepository,
         adapter = GuessByNumbersPuzzleAdapter(appContext, settingsRepository, historyRepository),
+        badgeStore = badgeStore,
     )
 
     val session get() = controller.session

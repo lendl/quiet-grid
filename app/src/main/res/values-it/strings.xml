@@ -282,14 +282,8 @@
     <string name="add_to_mix_create">Crea</string>
     <string name="report_puzzle_problem">Segnala un problema</string>
     <string name="result_more_options">Altre opzioni</string>
-    <string name="completion_streak_badge">Serie di %1$d puzzle</string>
     <string name="completion_flawless_badge">Impeccabile</string>
-    <string name="completion_milestone_game_badge">%1$d risolti</string>
-    <string name="completion_milestone_difficulty_badge">%1$d risolti (%2$s)</string>
-    <string name="completion_milestone_total_badge">%1$d puzzle in totale</string>
     <string name="completion_bounced_back_badge">Riscossa</string>
-    <string name="completion_variety_badge">%1$d giochi oggi</string>
-    <string name="completion_daily_total_badge">%1$d puzzle oggi</string>
 
     <!-- loss -->
     <string name="loss_difficulty">Difficoltà</string>

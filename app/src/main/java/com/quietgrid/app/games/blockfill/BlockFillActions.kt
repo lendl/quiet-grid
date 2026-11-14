@@ -63,5 +63,7 @@ fun applyBlockFillPlacement(
         status = status,
         multiplier = nextMultiplier,
         moves = session.moves + 1,
+        maxLinesAtOnce = maxOf(session.maxLinesAtOnce, linesCleared),
+        boardEmptied = session.boardEmptied || (outcome.boardEmptied && linesCleared > 0),
     )
 }

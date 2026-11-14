@@ -240,14 +240,8 @@
     <string name="completion_other_difficulty">Andere moeilijkheid</string>
     <string name="completion_play_again">Opnieuw spelen</string>
     <string name="mix_next_puzzle">Volgende Puzzel</string>
-    <string name="completion_streak_badge">%1$d puzzels op rij</string>
     <string name="completion_flawless_badge">Foutloos</string>
-    <string name="completion_milestone_game_badge">%1$d opgelost</string>
-    <string name="completion_milestone_difficulty_badge">%1$d keer %2$s opgelost</string>
-    <string name="completion_milestone_total_badge">%1$d puzzels in totaal</string>
     <string name="completion_bounced_back_badge">Comeback</string>
-    <string name="completion_variety_badge">%1$d spellen vandaag</string>
-    <string name="completion_daily_total_badge">%1$d puzzels vandaag</string>
 
     <string name="loss_difficulty">Moeilijkheid</string>
     <string name="loss_elapsed_time">Verstreken tijd</string>

@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.badges.BadgeFacts
+import com.quietgrid.app.data.BadgeStore
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.SettingsRepository
@@ -94,6 +96,8 @@ private class ThemeClearPuzzleAdapter(
 
     override fun puzzleIdOf(session: ThemeClearSession): String? = session.puzzle.id
 
+    override fun badgeFacts(session: ThemeClearSession): BadgeFacts = BadgeFacts(hintsUsed = session.hintsUsed)
+
     override fun scoreOnWin(session: ThemeClearSession, difficulty: Difficulty, elapsedSeconds: Int): Int =
         themeClearScore(session.hintsUsed, elapsedSeconds, session.discoveredWords)
 
@@ -117,6 +121,7 @@ class ThemeClearPlayViewModel @AssistedInject constructor(
     historyRepository: PlayHistoryStore,
     settingsRepository: SettingsRepository,
     themePreferencesRepository: ThemePreferencesRepository,
+    badgeStore: BadgeStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
 ) : ViewModel() {
@@ -132,6 +137,7 @@ class ThemeClearPlayViewModel @AssistedInject constructor(
         statsStore = statsRepository,
         historyStore = historyRepository,
         adapter = ThemeClearPuzzleAdapter(appContext, settingsRepository, themePreferencesRepository, historyRepository),
+        badgeStore = badgeStore,
     )
 
     val session get() = controller.session

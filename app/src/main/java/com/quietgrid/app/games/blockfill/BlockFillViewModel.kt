@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.badges.BadgeFacts
+import com.quietgrid.app.data.BadgeStore
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
@@ -49,6 +51,8 @@ private class BlockFillPuzzleAdapter : PuzzleAdapter<BlockFillSession, BlockFill
             status = persisted.status,
             multiplier = persisted.multiplier,
             moves = persisted.moves,
+            maxLinesAtOnce = persisted.maxLinesAtOnce,
+            boardEmptied = persisted.boardEmptied,
         )
     }
 
@@ -66,8 +70,12 @@ private class BlockFillPuzzleAdapter : PuzzleAdapter<BlockFillSession, BlockFill
             status = session.status,
             multiplier = session.multiplier,
             moves = session.moves,
+            maxLinesAtOnce = session.maxLinesAtOnce,
+            boardEmptied = session.boardEmptied,
         ),
     )
+
+    override fun badgeFacts(session: BlockFillSession): BadgeFacts = BadgeFacts(maxLinesAtOnce = session.maxLinesAtOnce, boardEmptied = session.boardEmptied)
 
     override fun scoreOnWin(session: BlockFillSession, difficulty: Difficulty, elapsedSeconds: Int): Int =
         blockFillPuzzleScore(session.moves, session.puzzle.scoreTarget)
@@ -88,6 +96,7 @@ class BlockFillPlayViewModel @AssistedInject constructor(
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
+    badgeStore: BadgeStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
 ) : ViewModel() {
@@ -103,6 +112,7 @@ class BlockFillPlayViewModel @AssistedInject constructor(
         statsStore = statsRepository,
         historyStore = historyRepository,
         adapter = BlockFillPuzzleAdapter(),
+        badgeStore = badgeStore,
     )
 
     val session get() = controller.session

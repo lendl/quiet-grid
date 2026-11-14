@@ -16,6 +16,8 @@ data class WordSearchSession(
     val hiddenWordProgress: List<WSCellRef>,
     val hiddenWordSolved: Boolean,
     val accuracyDrops: Int,
+    val hintsUsed: Int = 0,
+    val seasonal: String? = null,
 )
 
 @Serializable
@@ -26,4 +28,6 @@ data class WordSearchPersistedSession(
     val hiddenWordProgress: List<WSCellRef>,
     val hiddenWordSolved: Boolean,
     val accuracyDrops: Int = 0,
+    val hintsUsed: Int = 0,
+    val seasonal: String? = null,
 )

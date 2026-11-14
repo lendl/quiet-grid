@@ -29,3 +29,10 @@ fun minesweeperBoardAspectRatio(puzzle: MinesweeperPuzzle): Float = puzzle.cols.
 
 fun minesweeperHasMeaningfulProgress(session: MinesweeperSession): Boolean =
     session.board.generated || session.board.cells.any { row -> row.any { it.state != MinesweeperCellState.HIDDEN } }
+
+fun minesweeperRecordHint(session: MinesweeperSession): MinesweeperSession = session.copy(hintsUsed = session.hintsUsed + 1)
+
+fun minesweeperAllMinesFlagged(board: MinesweeperBoard): Boolean {
+    val mines = board.cells.flatten().filter { it.isMine }
+    return board.status == MinesweeperStatus.WON && mines.isNotEmpty() && mines.all { it.state == MinesweeperCellState.FLAGGED }
+}

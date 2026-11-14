@@ -268,14 +268,8 @@
     <string name="completion_other_difficulty">Inny poziom trudności</string>
     <string name="completion_play_again">Zagraj ponownie</string>
     <string name="mix_next_puzzle">Następna Łamigłówka</string>
-    <string name="completion_streak_badge">Seria łamigłówek: %1$d</string>
     <string name="completion_flawless_badge">Bez błędu</string>
-    <string name="completion_milestone_game_badge">Rozwiązane: %1$d</string>
-    <string name="completion_milestone_difficulty_badge">Rozwiązane (%2$s): %1$d</string>
-    <string name="completion_milestone_total_badge">Wszystkie łamigłówki: %1$d</string>
     <string name="completion_bounced_back_badge">Powrót do formy</string>
-    <string name="completion_variety_badge">Gry dzisiaj: %1$d</string>
-    <string name="completion_daily_total_badge">Łamigłówki dzisiaj: %1$d</string>
 
     <!-- loss -->
     <string name="loss_difficulty">Poziom trudności</string>

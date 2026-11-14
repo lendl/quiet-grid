@@ -46,6 +46,8 @@ data class BlockFillSession(
     val status: BlockFillStatus,
     val multiplier: Int = 1,
     val moves: Int = 0,
+    val maxLinesAtOnce: Int = 0,
+    val boardEmptied: Boolean = false,
 )
 
 @Serializable
@@ -72,4 +74,6 @@ data class BlockFillPersistedSession(
     val status: BlockFillStatus,
     val multiplier: Int = 1,
     val moves: Int = 0,
+    val maxLinesAtOnce: Int = 0,
+    val boardEmptied: Boolean = false,
 )

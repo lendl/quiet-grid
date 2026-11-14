@@ -29,6 +29,7 @@ data class ActiveSessionEnvelope(
     val journeyStopId: String? = null,
     val journeyPuzzleId: String? = null,
     val journeyTransform: Int = 0,
+    val startedDate: String? = null,
 )
 
 const val SESSION_MODE_ENDLESS = "endless"

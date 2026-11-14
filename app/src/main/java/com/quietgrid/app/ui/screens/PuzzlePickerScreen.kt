@@ -537,7 +537,7 @@ private fun GameStatsTab(gameId: GameId, endlessCopy: EndlessModeCopy?) {
     val overview = remember(currentStats) { buildStatsOverview(gameId, mapOf(gameId to currentStats)) }
 
     Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(16.dp)) {
-        StatsOverviewContent(overview)
+        StatsOverviewContent(overview, belowSummary = { GameBadgesRow(gameId, Modifier.padding(top = 16.dp)) })
 
         val challengerStatsTitleRes = GameRegistry.of(gameId).challenger?.let { R.string.challenger_stats_title }
         val challengerStatsBestRunRes = GameRegistry.of(gameId).challenger?.let { R.string.challenger_stats_best_run }

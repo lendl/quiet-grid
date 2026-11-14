@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.badges.BadgeFacts
+import com.quietgrid.app.data.BadgeStore
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
@@ -56,6 +58,8 @@ private class Game2048PuzzleAdapter : PuzzleAdapter<Game2048Session, Game2048Res
     override fun encode(session: Game2048Session): String =
         json.encodeToString(Game2048PersistedSession(puzzle = session.puzzle, board = session.board))
 
+    override fun badgeFacts(session: Game2048Session): BadgeFacts = BadgeFacts(maxTile = session.board.tiles.flatten().filterNotNull().maxOrNull() ?: 0)
+
     override fun scoreOnWin(session: Game2048Session, difficulty: Difficulty, elapsedSeconds: Int): Int =
         session.board.score
 
@@ -80,6 +84,7 @@ class Game2048PlayViewModel @AssistedInject constructor(
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
+    badgeStore: BadgeStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
 ) : ViewModel() {
@@ -95,6 +100,7 @@ class Game2048PlayViewModel @AssistedInject constructor(
         statsStore = statsRepository,
         historyStore = historyRepository,
         adapter = Game2048PuzzleAdapter(),
+        badgeStore = badgeStore,
     )
 
     val session get() = controller.session

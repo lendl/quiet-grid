@@ -40,7 +40,10 @@ data class AppSettings(
     val seasonalTouchesEnabled: Boolean = true,
     val beQuiet: Boolean = false,
     val suggestionsEnabled: Boolean = true,
-)
+    val milestonesEnabled: Boolean = true,
+) {
+    val showMilestones: Boolean get() = milestonesEnabled && !beQuiet
+}
 
 @Singleton
 class SettingsRepository @Inject constructor(private val dataStore: DataStore<Preferences>) {
@@ -67,6 +70,7 @@ class SettingsRepository @Inject constructor(private val dataStore: DataStore<Pr
         val SEASONAL_TOUCHES_ENABLED = booleanPreferencesKey("seasonal_touches_enabled")
         val BE_QUIET = booleanPreferencesKey("be_quiet")
         val SUGGESTIONS_ENABLED = booleanPreferencesKey("suggestions_enabled")
+        val MILESTONES_ENABLED = booleanPreferencesKey("milestones_enabled")
     }
 
     val settings: Flow<AppSettings> = dataStore.data.map { prefs ->
@@ -95,6 +99,7 @@ class SettingsRepository @Inject constructor(private val dataStore: DataStore<Pr
             seasonalTouchesEnabled = prefs[Keys.SEASONAL_TOUCHES_ENABLED] ?: true,
             beQuiet = prefs[Keys.BE_QUIET] ?: false,
             suggestionsEnabled = prefs[Keys.SUGGESTIONS_ENABLED] ?: true,
+            milestonesEnabled = prefs[Keys.MILESTONES_ENABLED] ?: true,
         )
     }.distinctUntilChanged()
 
@@ -182,5 +187,9 @@ class SettingsRepository @Inject constructor(private val dataStore: DataStore<Pr
 
     suspend fun setSuggestionsEnabled(enabled: Boolean) {
         dataStore.edit { it[Keys.SUGGESTIONS_ENABLED] = enabled }
+    }
+
+    suspend fun setMilestonesEnabled(enabled: Boolean) {
+        dataStore.edit { it[Keys.MILESTONES_ENABLED] = enabled }
     }
 }

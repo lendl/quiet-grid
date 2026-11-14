@@ -16,6 +16,7 @@ data class ArrowEscapeSession(
     val hintsUsed: Int,
     val wrongIndices: Set<Int>,
     val transform: Int = 0,
+    val seasonal: String? = null,
 )
 
 @Serializable
@@ -30,6 +31,7 @@ data class ArrowEscapePersistedSession(
     val status: String,
     val hintsUsed: Int = 0,
     val wrongIndices: List<Int> = emptyList(),
+    val seasonal: String? = null,
 )
 
 fun createArrowEscapeSession(puzzle: ArrowEscapePuzzleEntry, transform: Int = 0): ArrowEscapeSession = ArrowEscapeSession(
