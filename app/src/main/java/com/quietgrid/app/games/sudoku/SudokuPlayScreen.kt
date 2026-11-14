@@ -72,6 +72,7 @@ fun SudokuPlayScreen(
         onBack = onBack,
         onEndPuzzle = { viewModel.endPuzzle() },
         onRestartPuzzle = if (journey != null) viewModel::restartPuzzle else null,
+        restarting = viewModel.restarting,
         difficulty = session?.let { Difficulty.fromKey(it.puzzle.difficulty) },
         hint = PlayHintAction(
             active = hintActive,

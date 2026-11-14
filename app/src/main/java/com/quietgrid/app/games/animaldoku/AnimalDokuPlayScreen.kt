@@ -72,6 +72,7 @@ fun AnimalDokuPlayScreen(
         foldRows = session?.puzzle?.size,
         foldCols = session?.puzzle?.size,
         onRestartPuzzle = if (journey != null) viewModel::restartPuzzle else null,
+        restarting = viewModel.restarting,
         difficulty = session?.let { Difficulty.fromKey(it.puzzle.difficulty) },
         hint = PlayHintAction(
             active = hint != null,

@@ -42,6 +42,7 @@ import com.quietgrid.app.core.GameId
 import com.quietgrid.app.games.GameRegistry
 import com.quietgrid.app.session.FinishKind
 import com.quietgrid.app.ui.components.EndPuzzleDialog
+import com.quietgrid.app.ui.components.PuzzleLoadingIndicator
 import com.quietgrid.app.ui.components.QuickStartContent
 
 const val PLAY_BOARD_TAG = "play_board"
@@ -79,14 +80,15 @@ fun GamePlayScaffold(
     foldRows: Int? = null,
     foldCols: Int? = null,
     onRestartPuzzle: (() -> Unit)? = null,
+    restarting: Boolean = false,
     board: @Composable BoxScope.(PlaySizeClass) -> Unit,
 ) {
     var showEndDialog by remember { mutableStateOf(false) }
     var rulesOpen by remember { mutableStateOf(false) }
     BackHandler(enabled = rulesOpen) { rulesOpen = false }
-    BackHandler(enabled = finishing != null) {}
-    LaunchedEffect(finishing) {
-        if (finishing != null) {
+    BackHandler(enabled = finishing != null || restarting) {}
+    LaunchedEffect(finishing, restarting) {
+        if (finishing != null || restarting) {
             rulesOpen = false
             showEndDialog = false
         }
@@ -107,7 +109,7 @@ fun GamePlayScaffold(
     val shownTimer = timer?.takeUnless { it is PlayTimer.Elapsed && !preferences.showTimer }
     val hintActive = shownHint?.active == true
     var hintCardHidden by remember(hintActive) { mutableStateOf(false) }
-    val hintCardVisible = hintActive && !hintCardHidden && hintMessage != null
+    val hintCardVisible = hintActive && !hintCardHidden && hintMessage != null && !restarting
     val chromeHint = shownHint?.copy(
         onClick = {
             rulesOpen = false
@@ -137,7 +139,11 @@ fun GamePlayScaffold(
         val layoutDirection = if (mirrored) contentDirection.flipped() else contentDirection
         val boardSlot: @Composable BoxScope.() -> Unit = {
             InContentDirection {
-                FinishFold(fold, finishing, rows, cols, Modifier.observeBoardTouches(touches)) { board(sizeClass) }
+                if (restarting) {
+                    PuzzleLoadingIndicator(revealDelayMillis = 0L)
+                } else {
+                    FinishFold(fold, finishing, rows, cols, Modifier.observeBoardTouches(touches)) { board(sizeClass) }
+                }
             }
         }
         val dockSlot: (@Composable ColumnScope.() -> Unit)? = if (dock != null) {
@@ -181,7 +187,7 @@ fun GamePlayScaffold(
                 else -> UprightLayout(metrics, actions, stripItems, ratio, dockAreaHeight, fold, boardSlot, dockSlot, hintCard)
             }
         }
-        if (finishing != null) {
+        if (finishing != null || restarting) {
             Box(Modifier.fillMaxSize().pointerInput(Unit) { consumeAllPointerEvents() })
         }
         if (rulesOpen) {

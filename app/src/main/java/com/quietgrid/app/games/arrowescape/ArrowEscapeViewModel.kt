@@ -203,6 +203,7 @@ class ArrowEscapePlayViewModel @AssistedInject constructor(
 
     val session get() = controller.session
     val elapsedSeconds get() = controller.elapsedSeconds
+    val restarting get() = controller.restarting
     val result = controller.result
     val finishing = controller.finishing
     val restarts = controller.restarts

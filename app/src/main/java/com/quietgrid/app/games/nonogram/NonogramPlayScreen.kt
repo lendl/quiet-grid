@@ -48,6 +48,7 @@ fun NonogramPlayScreen(
         onBack = onBack,
         onEndPuzzle = { viewModel.endPuzzle() },
         onRestartPuzzle = if (journey != null) viewModel::restartPuzzle else null,
+        restarting = viewModel.restarting,
         finishing = finishing,
         foldRows = session?.puzzle?.rows,
         foldCols = session?.puzzle?.cols,

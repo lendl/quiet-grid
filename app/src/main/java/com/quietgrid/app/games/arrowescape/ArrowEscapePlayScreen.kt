@@ -103,6 +103,7 @@ fun ArrowEscapePlayScreen(
         foldRows = viewport?.rows,
         foldCols = viewport?.cols,
         onRestartPuzzle = if (journey != null) viewModel::restartPuzzle else null,
+        restarting = viewModel.restarting,
         difficulty = session?.let { Difficulty.fromKey(it.puzzle.difficulty) },
         boardAspectRatio = viewport?.aspectRatio ?: 1f,
         hint = PlayHintAction(

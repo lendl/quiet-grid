@@ -62,6 +62,8 @@ class PuzzleSessionController<TSession, TResult>(
         private set
     var journey by mutableStateOf<JourneyRequest?>(null)
         private set
+    var restarting by mutableStateOf(false)
+        private set
 
     val isFinalized: Boolean
         get() = finalized
@@ -107,6 +109,7 @@ class PuzzleSessionController<TSession, TResult>(
     fun restartPuzzle() {
         if (finalized || session == null) return
         finalized = true
+        restarting = true
         scope.launch {
             recordLoss(LossReason.ABANDONED)
             sessionStore.clear()

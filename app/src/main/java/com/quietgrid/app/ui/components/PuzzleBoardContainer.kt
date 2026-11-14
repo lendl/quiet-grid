@@ -43,13 +43,13 @@ private val BOARD_FRAME_ELEVATION = 4.dp
 private const val LOADING_REVEAL_DELAY_MS = 250L
 
 @Composable
-private fun PuzzleLoadingIndicator() {
+fun PuzzleLoadingIndicator(modifier: Modifier = Modifier, revealDelayMillis: Long = LOADING_REVEAL_DELAY_MS) {
     var revealed by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
-        delay(LOADING_REVEAL_DELAY_MS)
+        delay(revealDelayMillis)
         revealed = true
     }
-    AnimatedVisibility(visible = revealed, enter = fadeIn(tween(200))) {
+    AnimatedVisibility(visible = revealed, enter = fadeIn(tween(200)), modifier = modifier) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp),
