@@ -11,6 +11,7 @@ import com.quietgrid.engine.wordswap.findWordSwapHint
 import com.quietgrid.engine.wordswap.isValidWordSwapBoard
 import com.quietgrid.engine.wordswap.isWordSwapSolved
 import com.quietgrid.engine.wordswap.read
+import com.quietgrid.engine.wordswap.wordGroup
 import com.quietgrid.engine.wordswap.wordSwapSolvedSlots
 
 private const val WORDSWAP_BASE_SCORE = 1000
@@ -66,7 +67,7 @@ fun wordSwapBank(session: WordSwapSession): List<WordSwapBankWord> {
     val puzzle = session.puzzle
     val solved = wordSwapSolvedSlots(puzzle, session.board)
     return puzzle.slots.mapIndexed { index, slot ->
-        WordSwapBankWord(slot.read(puzzle.solution, puzzle.cols), slot.direction, index in solved)
+        WordSwapBankWord(slot.read(puzzle.solution, puzzle.cols), slot.direction.wordGroup, index in solved)
     }.sortedWith(compareBy({ it.direction.ordinal }, { it.word }))
 }
 

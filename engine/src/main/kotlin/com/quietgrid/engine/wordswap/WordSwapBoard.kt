@@ -29,13 +29,20 @@ fun wordSwapLineSlots(layout: String, rows: Int, cols: Int): List<WordSwapSlot> 
     return slots
 }
 
-fun wordSwapDiagonalSlot(layout: String, size: Int, direction: WordSwapDirection): WordSwapSlot? {
-    val slot = when (direction) {
-        WordSwapDirection.DIAGONAL -> WordSwapSlot(0, 0, size, direction)
-        WordSwapDirection.ANTI_DIAGONAL -> WordSwapSlot(0, size - 1, size, direction)
-        else -> return null
+fun wordSwapDiagonalSlots(layout: String, rows: Int, cols: Int, length: Int): List<WordSwapSlot> {
+    val slots = mutableListOf<WordSwapSlot>()
+    for (direction in listOf(WordSwapDirection.DIAGONAL, WordSwapDirection.ANTI_DIAGONAL)) {
+        for (r in 0 until rows) {
+            for (c in 0 until cols) {
+                val endRow = r + (length - 1) * direction.rowStep
+                val endCol = c + (length - 1) * direction.colStep
+                if (endRow !in 0 until rows || endCol !in 0 until cols) continue
+                val slot = WordSwapSlot(r, c, length, direction)
+                if (slot.cells(cols).none { layout[it] == WORDSWAP_HOLE }) slots += slot
+            }
+        }
     }
-    return slot.takeIf { s -> s.cells(size).none { layout[it] == WORDSWAP_HOLE } }
+    return slots
 }
 
 fun wordSwapTileCells(board: String): List<Int> = board.indices.filter { board[it] != WORDSWAP_HOLE }
@@ -99,7 +106,7 @@ fun countWordSwapArrangements(
         for (w in words.indices) {
             if (used[w]) continue
             val word = words[w]
-            if (slots[w].direction != slots[slotIndex].direction) continue
+            if (slots[w].direction.wordGroup != slots[slotIndex].direction.wordGroup) continue
             if (word.length != cells.size || !tried.add(word)) continue
             if (cells.indices.any { i -> letters[cells[i]]?.let { it != word[i] } == true }) continue
             val added = cells.indices.filter { letters[cells[it]] == null }

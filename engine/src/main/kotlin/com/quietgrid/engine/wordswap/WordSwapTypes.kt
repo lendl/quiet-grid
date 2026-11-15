@@ -13,6 +13,12 @@ enum class WordSwapDirection(val rowStep: Int, val colStep: Int) {
     ANTI_DIAGONAL(1, -1),
 }
 
+val WordSwapDirection.isDiagonal: Boolean
+    get() = this == WordSwapDirection.DIAGONAL || this == WordSwapDirection.ANTI_DIAGONAL
+
+val WordSwapDirection.wordGroup: WordSwapDirection
+    get() = if (isDiagonal) WordSwapDirection.DIAGONAL else this
+
 @Serializable
 data class WordSwapSlot(
     val row: Int,

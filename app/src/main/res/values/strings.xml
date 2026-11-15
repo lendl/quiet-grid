@@ -2196,7 +2196,7 @@
     <string name="wordswap_difficulty_desc_expert">6 by 6 grids that take 21 swaps or more</string>
     <string name="wordswap_quickstart_goal">Swap the letter tiles until every word in the list sits in its place on the grid.</string>
     <string name="wordswap_quickstart_bullet_1">Tap a tile, then tap another tile to swap them.</string>
-    <string name="wordswap_quickstart_bullet_2">Every line of three or more tiles across or down is a word from the list. Some grids also have a diagonal word.</string>
+    <string name="wordswap_quickstart_bullet_2">Every line of three or more tiles across or down is a word from the list. Some grids also have marked diagonal words.</string>
     <string name="wordswap_quickstart_bullet_3">A finished word lights up. Try to solve the puzzle in the fewest swaps.</string>
     <string name="wordswap_quickstart_hook">Start where words cross: one letter has to fit both.</string>
     <string name="wordswap_how_to_play_goal">Put every word from the list in its place on the grid. The puzzle is solved when all of them read correctly.</string>
@@ -2213,8 +2213,7 @@
     <string name="wordswap_fewest">Fewest %1$d</string>
     <string name="wordswap_across">Across</string>
     <string name="wordswap_down">Down</string>
-    <string name="wordswap_diagonal">Diagonal ↘</string>
-    <string name="wordswap_anti_diagonal">Diagonal ↙</string>
+    <string name="wordswap_diagonal">Diagonal</string>
     <string name="wordswap_words_title">Words</string>
     <string name="wordswap_all_words">All words</string>
     <string name="wordswap_undo">Undo</string>

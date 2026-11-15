@@ -80,8 +80,7 @@ internal fun wordSwapDockHeight(sizeClass: PlaySizeClass): Dp {
 internal fun wordSwapDirectionLabelRes(direction: WordSwapDirection): Int = when (direction) {
     WordSwapDirection.ACROSS -> R.string.wordswap_across
     WordSwapDirection.DOWN -> R.string.wordswap_down
-    WordSwapDirection.DIAGONAL -> R.string.wordswap_diagonal
-    WordSwapDirection.ANTI_DIAGONAL -> R.string.wordswap_anti_diagonal
+    WordSwapDirection.DIAGONAL, WordSwapDirection.ANTI_DIAGONAL -> R.string.wordswap_diagonal
 }
 
 @Composable

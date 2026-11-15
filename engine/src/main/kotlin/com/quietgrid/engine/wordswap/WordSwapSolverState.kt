@@ -31,7 +31,7 @@ class WordSwapSolverState private constructor(
     fun sameShape(slot: Int, word: Int): Boolean {
         val a = puzzle.slots[slot]
         val b = puzzle.slots[word]
-        return a.direction == b.direction && a.length == b.length
+        return a.direction.wordGroup == b.direction.wordGroup && a.length == b.length
     }
 
     fun fits(slot: Int, word: Int): Boolean {
@@ -83,7 +83,8 @@ class WordSwapSolverState private constructor(
             }
             val domains = puzzle.slots.indices.map { slot ->
                 puzzle.slots.indices.filterTo(LinkedHashSet()) { word ->
-                    puzzle.slots[word].direction == puzzle.slots[slot].direction && puzzle.slots[word].length == puzzle.slots[slot].length
+                    puzzle.slots[word].direction.wordGroup == puzzle.slots[slot].direction.wordGroup &&
+                        puzzle.slots[word].length == puzzle.slots[slot].length
                 }
             }
             return WordSwapSolverState(

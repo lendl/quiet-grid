@@ -33,9 +33,9 @@ import androidx.compose.ui.zIndex
 import androidx.compose.ui.unit.min
 import com.quietgrid.app.ui.components.LocalReduceMotion
 import com.quietgrid.engine.wordswap.WORDSWAP_HOLE
-import com.quietgrid.engine.wordswap.WordSwapDirection
 import com.quietgrid.engine.wordswap.WordSwapMove
 import com.quietgrid.engine.wordswap.WordSwapPuzzleEntry
+import com.quietgrid.engine.wordswap.isDiagonal
 
 private const val TILE_GAP = 0.06f
 private const val TILE_CORNER = 0.18f
@@ -64,7 +64,7 @@ fun WordSwapGrid(
             swapProgress.snapTo(1f)
         }
     }
-    val diagonals = puzzle.slots.filter { it.direction == WordSwapDirection.DIAGONAL || it.direction == WordSwapDirection.ANTI_DIAGONAL }
+    val diagonals = puzzle.slots.filter { it.direction.isDiagonal }
 
     BoxWithConstraints(Modifier.padding(12.dp), contentAlignment = Alignment.Center) {
         val cellSize = min(maxWidth / puzzle.cols, maxHeight / puzzle.rows)

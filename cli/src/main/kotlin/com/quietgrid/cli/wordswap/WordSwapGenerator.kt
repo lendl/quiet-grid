@@ -2,6 +2,7 @@ package com.quietgrid.cli.wordswap
 
 import com.quietgrid.engine.core.Difficulty
 import com.quietgrid.engine.wordswap.WORDSWAP_HOLE
+import com.quietgrid.engine.wordswap.WORDSWAP_MIN_WORD_LENGTH
 import com.quietgrid.engine.wordswap.WordSwapDirection
 import com.quietgrid.engine.wordswap.WordSwapPuzzleEntry
 import com.quietgrid.engine.wordswap.WordSwapSlot
@@ -10,7 +11,7 @@ import com.quietgrid.engine.wordswap.countWordSwapArrangements
 import com.quietgrid.engine.wordswap.gradeWordSwapPuzzle
 import com.quietgrid.engine.wordswap.read
 import com.quietgrid.engine.wordswap.wordSwapCoversAllTiles
-import com.quietgrid.engine.wordswap.wordSwapDiagonalSlot
+import com.quietgrid.engine.wordswap.wordSwapDiagonalSlots
 import com.quietgrid.engine.wordswap.wordSwapLineSlots
 import com.quietgrid.engine.wordswap.wordSwapMinSwaps
 import com.quietgrid.engine.wordswap.wordSwapTileCells
@@ -36,12 +37,12 @@ val WORDSWAP_TIERS: Map<Difficulty, WordSwapTier> = mapOf(
         inPlaceFraction = 0.1,
     ),
     Difficulty.HARD to WordSwapTier(
-        listOf(WordSwapShape(5, 1..3, 1, weight = 2), WordSwapShape(6, 5..8, 0)),
+        listOf(WordSwapShape(5, 1..3, 2, weight = 2), WordSwapShape(6, 5..8, 0)),
         vocabulary = 8000,
         inPlaceFraction = 0.0,
     ),
     Difficulty.EXPERT to WordSwapTier(
-        listOf(WordSwapShape(6, 3..6, 1), WordSwapShape(6, 3..6, 0)),
+        listOf(WordSwapShape(6, 3..6, 2), WordSwapShape(6, 3..6, 0)),
         vocabulary = 10000,
         inPlaceFraction = 0.0,
     ),
@@ -49,6 +50,8 @@ val WORDSWAP_TIERS: Map<Difficulty, WordSwapTier> = mapOf(
 
 private const val FILL_NODE_LIMIT = 40_000
 private const val CANDIDATE_TRIES = 40
+
+private data class WordSwapLayout(val tiles: String, val diagonals: List<WordSwapSlot>)
 
 private val lexicons = HashMap<Int, WordSwapLexicon>()
 
@@ -59,9 +62,9 @@ private fun lexicon(vocabulary: Int): WordSwapLexicon = synchronized(lexicons) {
 fun generateWordSwapPuzzle(difficulty: Difficulty, random: Random = Random.Default): WordSwapPuzzleEntry? {
     val tier = WORDSWAP_TIERS.getValue(difficulty)
     val shape = pickShape(tier.shapes, random)
-    val layout = randomLayout(shape, random) ?: return null
+    val (layout, diagonals) = randomLayout(shape, random) ?: return null
     val size = shape.size
-    val slots = wordSwapLineSlots(layout, size, size) + diagonalSlots(layout, shape)
+    val slots = wordSwapLineSlots(layout, size, size) + diagonals
     if (!wordSwapCoversAllTiles(layout, size, slots)) return null
     val solution = fill(layout, size, slots, lexicon(tier.vocabulary), random) ?: return null
     val words = slots.map { it.read(solution, size) }
@@ -89,16 +92,26 @@ private fun pickShape(shapes: List<WordSwapShape>, random: Random): WordSwapShap
     return shapes.last()
 }
 
-private fun diagonalSlots(layout: String, shape: WordSwapShape): List<WordSwapSlot> = when (shape.diagonals) {
-    0 -> emptyList()
-    1 -> listOfNotNull(wordSwapDiagonalSlot(layout, shape.size, WordSwapDirection.DIAGONAL))
-    else -> listOfNotNull(
-        wordSwapDiagonalSlot(layout, shape.size, WordSwapDirection.DIAGONAL),
-        wordSwapDiagonalSlot(layout, shape.size, WordSwapDirection.ANTI_DIAGONAL),
-    )
+private fun pickDiagonals(layout: String, shape: WordSwapShape, random: Random): List<WordSwapSlot>? {
+    if (shape.diagonals == 0) return emptyList()
+    for (length in (maxOf(WORDSWAP_MIN_WORD_LENGTH, shape.size - 2) until shape.size).shuffled(random)) {
+        val picked = mutableListOf<WordSwapSlot>()
+        for (slot in wordSwapDiagonalSlots(layout, shape.size, shape.size, length).shuffled(random)) {
+            if (picked.any { it.sharesLineWith(slot) }) continue
+            picked += slot
+            if (picked.size == shape.diagonals) return picked
+        }
+    }
+    return null
 }
 
-private fun randomLayout(shape: WordSwapShape, random: Random): String? {
+private fun WordSwapSlot.sharesLineWith(other: WordSwapSlot): Boolean = when {
+    direction != other.direction -> false
+    direction == WordSwapDirection.DIAGONAL -> col - row == other.col - other.row
+    else -> col + row == other.col + other.row
+}
+
+private fun randomLayout(shape: WordSwapShape, random: Random): WordSwapLayout? {
     val size = shape.size
     val cells = size * size
     val center = if (cells % 2 == 1) cells / 2 else null
@@ -118,8 +131,8 @@ private fun randomLayout(shape: WordSwapShape, random: Random): String? {
         if (!isConnected(layout, size)) return@repeat
         val slots = wordSwapLineSlots(layout, size, size)
         if (!wordSwapCoversAllTiles(layout, size, slots)) return@repeat
-        if (diagonalSlots(layout, shape).size != shape.diagonals) return@repeat
-        return layout
+        val diagonals = pickDiagonals(layout, shape, random) ?: return@repeat
+        return WordSwapLayout(layout, diagonals)
     }
     return null
 }

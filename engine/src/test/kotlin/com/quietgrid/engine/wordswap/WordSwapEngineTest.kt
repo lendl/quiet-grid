@@ -80,10 +80,33 @@ class WordSwapEngineTest {
     @Test
     fun diagonalSlotsNeedAnOpenDiagonal() {
         val open = "aaa" + "a.a" + "aaa"
-        assertNull(wordSwapDiagonalSlot(open, 3, WordSwapDirection.DIAGONAL))
+        assertTrue(wordSwapDiagonalSlots(open, 3, 3, 3).isEmpty())
         val full = "aaa" + "aaa" + "aaa"
-        val anti = wordSwapDiagonalSlot(full, 3, WordSwapDirection.ANTI_DIAGONAL)!!
-        assertEquals(listOf(2, 4, 6), anti.cells(3))
+        val slots = wordSwapDiagonalSlots(full, 3, 3, 3)
+        assertEquals(listOf(listOf(0, 4, 8), listOf(2, 4, 6)), slots.map { it.cells(3) })
+    }
+
+    @Test
+    fun diagonalSlotsFindEveryShorterRunInBothDirections() {
+        val layout = "aaaa" + "aaaa" + "aaa." + "aaaa"
+        val slots = wordSwapDiagonalSlots(layout, 4, 4, 3)
+        assertEquals(
+            setOf(
+                listOf(0, 5, 10), listOf(4, 9, 14), listOf(5, 10, 15),
+                listOf(2, 5, 8), listOf(3, 6, 9), listOf(6, 9, 12), listOf(7, 10, 13),
+            ),
+            slots.map { it.cells(4) }.toSet(),
+        )
+        assertEquals(7, slots.size)
+    }
+
+    @Test
+    fun arrangementCountLetsDiagonalWordsSwapBetweenDiagonals() {
+        val solution = "a.d" + ".b." + "e.c"
+        val slots = listOf(WordSwapSlot(0, 0, 3, WordSwapDirection.DIAGONAL), WordSwapSlot(0, 2, 3, WordSwapDirection.ANTI_DIAGONAL))
+        val words = slots.map { it.read(solution, 3) }
+        assertEquals(listOf("abc", "dbe"), words)
+        assertEquals(2, countWordSwapArrangements(solution, 3, slots, words))
     }
 
     @Test
