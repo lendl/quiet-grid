@@ -9,8 +9,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.ui.components.pressScale
+import com.quietgrid.app.ui.theme.celebrationGold
 
 @Composable
 fun JourneyCard(gameId: GameId, onOpen: (Int?) -> Unit) {
@@ -59,11 +64,20 @@ fun JourneyCard(gameId: GameId, onOpen: (Int?) -> Unit) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 2.dp),
             )
-            Text(
-                stringResource(R.string.journey_card_stars, summary.stars, summary.maxStars),
-                style = MaterialTheme.typography.labelMedium,
-                modifier = Modifier.padding(top = 6.dp),
-            )
+            Row(Modifier.padding(top = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+                if (state?.mastered == true) {
+                    Icon(
+                        Icons.Filled.Star,
+                        contentDescription = stringResource(R.string.journey_mastered_badge),
+                        tint = celebrationGold().gold,
+                        modifier = Modifier.padding(end = 4.dp).size(16.dp),
+                    )
+                }
+                Text(
+                    stringResource(R.string.journey_card_stars, summary.stars, summary.maxStars),
+                    style = MaterialTheme.typography.labelMedium,
+                )
+            }
         }
         Button(onClick = { onOpen(chapterIndex) }) { Text(stringResource(R.string.journey_continue)) }
     }

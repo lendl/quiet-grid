@@ -6,6 +6,7 @@ import kotlin.math.abs
 import kotlin.random.Random
 
 const val JOURNEY_PLAYABLE_WINDOW = 4
+const val JOURNEY_MAX_STARS_PER_STOP = 3
 
 data class JourneyStopProgress(
     val stars: Int = 0,

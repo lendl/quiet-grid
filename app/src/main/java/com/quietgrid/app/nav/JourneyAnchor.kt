@@ -33,3 +33,11 @@ fun journeyReturnPlan(gameId: GameId, chapter: Int?, backStack: List<JourneyBack
         else -> JourneyReturnPlan(anchor, inclusive = false, push = listOfNotNull(JourneyRoute(gameId), mapRoute))
     }
 }
+
+fun journeyListPlan(gameId: GameId, backStack: List<JourneyBackEntry>): JourneyReturnPlan {
+    if (backStack.lastOrNull { it.route == JourneyRoute::class }?.gameKey == gameId.key) {
+        return JourneyReturnPlan(JourneyRoute::class, inclusive = false, push = emptyList())
+    }
+    val anchor = journeyAnchorRoute(gameId.key, backStack)
+    return JourneyReturnPlan(anchor, inclusive = anchor == JourneyMapRoute::class, push = listOf(JourneyRoute(gameId)))
+}

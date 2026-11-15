@@ -2,6 +2,7 @@ package com.quietgrid.app.session
 
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.journey.JourneyMilestone
 import com.quietgrid.app.core.journey.JourneyRequest
 import com.quietgrid.app.core.journey.JourneySignals
 import com.quietgrid.app.core.journey.JourneyStopProgress
@@ -150,6 +151,12 @@ private class FakeJourneyStore(private val history: FakeHistoryStore) : JourneyP
     }
 
     override suspend fun skip(gameId: GameId, stopId: String) = Unit
+
+    override suspend fun pendingMilestones(gameId: GameId): List<JourneyMilestone> = emptyList()
+
+    override suspend fun markShown(gameId: GameId, milestone: JourneyMilestone) = Unit
+
+    override fun isMastered(gameId: GameId): Flow<Boolean> = MutableStateFlow(false)
 }
 
 private class FakePuzzleAdapter(

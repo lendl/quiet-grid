@@ -53,7 +53,7 @@ import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.formatElapsed
 import com.quietgrid.app.data.PlayRecord
 import com.quietgrid.app.data.isLegacyMigratedTimestamp
-import com.quietgrid.app.ui.journey.JOURNEY_MAX_STARS_PER_STOP
+import com.quietgrid.app.core.journey.JOURNEY_MAX_STARS_PER_STOP
 import java.text.SimpleDateFormat
 import java.util.Locale
 

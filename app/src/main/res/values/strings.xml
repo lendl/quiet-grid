@@ -2137,6 +2137,32 @@
     <string name="journey_stop_skipped_now">Skipped for now</string>
     <string name="journey_goal_chip_clear">Clear</string>
     <string name="journey_goal_chip_clean">Clean</string>
+    <string name="journey_chapter_complete_title">Chapter %1$d complete</string>
+    <string name="journey_chapter_complete_label">%1$s · Journey · Chapter %2$d</string>
+    <string name="journey_chapter_all_cleared">All %1$d stops cleared</string>
+    <string name="journey_start_chapter">Start chapter %1$d</string>
+    <string name="journey_replay_for_stars">Replay for stars</string>
+    <string name="journey_stat_stars">stars</string>
+    <string name="journey_stat_best_times">best times</string>
+    <string name="journey_stat_clean_boards">clean boards</string>
+    <string name="journey_stat_chapters">chapters</string>
+    <string name="journey_stat_stops">stops</string>
+    <plurals name="journey_stops_can_earn_more">
+        <item quantity="one">%1$d stop can still earn more stars</item>
+        <item quantity="other">%1$d stops can still earn more stars</item>
+    </plurals>
+    <string name="journey_chapter_road_description">Chapter %1$d, %2$d of %3$d stops cleared</string>
+    <string name="journey_mastered_title">Every star collected</string>
+    <string name="journey_mastered_label">%1$s · Journey</string>
+    <string name="journey_mastered_sub">%1$s Journey · %2$d of %2$d stars</string>
+    <string name="journey_mastered_note">A gold star now marks your %1$s Journey</string>
+    <plurals name="journey_constellation_description">
+        <item quantity="one">%1$d chapter, every star collected</item>
+        <item quantity="other">%1$d chapters, every star collected</item>
+    </plurals>
+    <string name="journey_done">Done</string>
+    <string name="journey_view_map">View the map</string>
+    <string name="journey_mastered_badge">Every star collected</string>
     <string name="blockescape_title">Block Escape</string>
     <string name="blockescape_tagline">Slide the blocks aside and set the coral block free</string>
     <string name="blockescape_difficulty_desc_easy">Solvable in 4 to 8 moves</string>

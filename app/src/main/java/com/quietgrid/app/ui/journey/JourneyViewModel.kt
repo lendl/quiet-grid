@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.journey.JourneyMilestone
 import com.quietgrid.app.core.journey.JourneyRequest
 import com.quietgrid.app.core.journey.loadJourneyFile
 import com.quietgrid.app.data.JourneyProgressStore
@@ -32,16 +33,16 @@ import com.quietgrid.engine.journey.gridTransformById
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 private const val NONOGRAM_PREVIEW_GUIDE = 5
 
-data class JourneyState(val rows: List<JourneyStopRow>, val summary: JourneySummary)
+data class JourneyState(val rows: List<JourneyStopRow>, val summary: JourneySummary, val mastered: Boolean = false)
 
 @HiltViewModel
 class JourneyViewModel @Inject constructor(
@@ -55,7 +56,17 @@ class JourneyViewModel @Inject constructor(
             emit(null)
             return@flow
         }
-        emitAll(store.progressFor(gameId).map { progress -> JourneyState(journeyRows(file, progress), journeySummary(file, progress)) })
+        emitAll(
+            combine(store.progressFor(gameId), store.isMastered(gameId)) { progress, mastered ->
+                JourneyState(journeyRows(file, progress), journeySummary(file, progress), mastered)
+            },
+        )
+    }
+
+    suspend fun pendingMilestones(gameId: GameId): List<JourneyMilestone> = store.pendingMilestones(gameId)
+
+    fun markShown(gameId: GameId, milestone: JourneyMilestone) {
+        viewModelScope.launch { store.markShown(gameId, milestone) }
     }
 
     suspend fun playTarget(gameId: GameId, stopId: String): Pair<Difficulty, JourneyRequest>? =

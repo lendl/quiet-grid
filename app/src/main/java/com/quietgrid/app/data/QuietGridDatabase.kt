@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [PlayRecordEntity::class, JourneyProgressEntity::class], version = 5, exportSchema = false)
+@Database(entities = [PlayRecordEntity::class, JourneyProgressEntity::class, JourneyMilestoneEntity::class], version = 6, exportSchema = false)
 abstract class QuietGridDatabase : RoomDatabase() {
     abstract fun playHistoryDao(): PlayHistoryDao
     abstract fun journeyProgressDao(): JourneyProgressDao
@@ -35,5 +35,15 @@ val MIGRATION_4_5: Migration = object : Migration(4, 5) {
     override fun migrate(db: SupportSQLiteDatabase) {
         db.execSQL("ALTER TABLE `play_records` ADD COLUMN `journeyStars` INTEGER")
         db.execSQL("ALTER TABLE `journey_progress` ADD COLUMN `bestScore` INTEGER")
+    }
+}
+
+val MIGRATION_5_6: Migration = object : Migration(5, 6) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `journey_milestone` (`scope` TEXT NOT NULL, `kind` TEXT NOT NULL, " +
+                "`chapterIndex` INTEGER NOT NULL, `achievedMillis` INTEGER NOT NULL, `shownMillis` INTEGER, " +
+                "PRIMARY KEY(`scope`, `kind`, `chapterIndex`))",
+        )
     }
 }

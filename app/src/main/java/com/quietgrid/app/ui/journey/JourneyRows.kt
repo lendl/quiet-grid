@@ -1,5 +1,6 @@
 package com.quietgrid.app.ui.journey
 
+import com.quietgrid.app.core.journey.JOURNEY_MAX_STARS_PER_STOP
 import com.quietgrid.app.core.journey.JourneyRequest
 import com.quietgrid.app.core.journey.JourneyStopProgress
 import com.quietgrid.app.core.journey.currentStop
@@ -19,8 +20,6 @@ data class JourneyStopRow(
 )
 
 data class JourneySummary(val chapterIndex: Int?, val stopNumber: Int?, val stars: Int, val maxStars: Int)
-
-const val JOURNEY_MAX_STARS_PER_STOP = 3
 
 fun journeyRows(file: JourneyFile, progress: Map<String, JourneyStopProgress>): List<JourneyStopRow> =
     file.chapters.flatMap { chapter ->

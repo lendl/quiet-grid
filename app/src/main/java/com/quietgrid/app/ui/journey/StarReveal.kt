@@ -21,6 +21,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
+import com.quietgrid.app.core.journey.JOURNEY_MAX_STARS_PER_STOP
 
 val StarRevealScale = SemanticsPropertyKey<Float>("StarRevealScale")
 var SemanticsPropertyReceiver.starRevealScale by StarRevealScale

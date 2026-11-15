@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.journey.JourneyMilestone
 import com.quietgrid.app.core.journey.JourneySignals
 import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.engine.journey.JourneyChapter
@@ -185,6 +186,44 @@ class JourneyProgressRepositoryTest {
         assertEquals(80, progress.getValue("s3").bestSeconds)
         assertFalse("old3" in progress)
         assertNull(database.journeyProgressDao().get(game.key, "old3"))
+    }
+
+    @Test
+    fun `clearing the last stop of a chapter queues one chapter milestone`() = runBlocking {
+        val hinted = JourneySignals(hintsUsed = 1, mistakes = 0)
+        repository.recordWin(game, "s1", hinted, elapsedSeconds = 60, score = 0)
+        repository.recordWin(game, "s2", hinted, elapsedSeconds = 60, score = 0)
+        assertEquals(emptyList<JourneyMilestone>(), repository.pendingMilestones(game))
+
+        repository.recordWin(game, "s3", hinted, elapsedSeconds = 60, score = 0)
+        assertEquals(listOf(JourneyMilestone.ChapterComplete(1)), repository.pendingMilestones(game))
+
+        repository.recordWin(game, "s3", hinted, elapsedSeconds = 60, score = 0)
+        assertEquals(listOf(JourneyMilestone.ChapterComplete(1)), repository.pendingMilestones(game))
+        assertFalse(repository.isMastered(game).first())
+    }
+
+    @Test
+    fun `a shown milestone leaves pending and is never queued again`() = runBlocking {
+        val hinted = JourneySignals(hintsUsed = 1, mistakes = 0)
+        listOf("s1", "s2", "s3").forEach { repository.recordWin(game, it, hinted, elapsedSeconds = 60, score = 0) }
+        repository.markShown(game, JourneyMilestone.ChapterComplete(1))
+        assertEquals(emptyList<JourneyMilestone>(), repository.pendingMilestones(game))
+
+        repository.recordWin(game, "s3", hinted, elapsedSeconds = 60, score = 0)
+        assertEquals(emptyList<JourneyMilestone>(), repository.pendingMilestones(game))
+    }
+
+    @Test
+    fun `the last missing star queues mastered after the chapter`() = runBlocking {
+        val clean = JourneySignals(hintsUsed = 0, mistakes = 0)
+        listOf("s1", "s2", "s3").forEach { repository.recordWin(game, it, clean, elapsedSeconds = 60, score = 0) }
+
+        assertEquals(listOf(JourneyMilestone.ChapterComplete(1), JourneyMilestone.Mastered), repository.pendingMilestones(game))
+        assertTrue(repository.isMastered(game).first())
+        repository.markShown(game, JourneyMilestone.Mastered)
+        assertEquals(listOf(JourneyMilestone.ChapterComplete(1)), repository.pendingMilestones(game))
+        assertTrue(repository.isMastered(game).first())
     }
 
     @Test

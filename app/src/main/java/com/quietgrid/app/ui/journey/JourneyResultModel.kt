@@ -1,5 +1,6 @@
 package com.quietgrid.app.ui.journey
 
+import com.quietgrid.app.core.journey.JOURNEY_MAX_STARS_PER_STOP
 import com.quietgrid.app.core.journey.JourneySignals
 import com.quietgrid.app.core.journey.journeyRun
 

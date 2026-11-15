@@ -73,6 +73,24 @@ class JourneyAnchorTest {
     }
 
     @Test
+    fun `journey list pops back to the same game's list`() {
+        val stack = listOf(tabs, picker("arrowescape"), journey("arrowescape"), map("arrowescape", 2))
+        assertEquals(JourneyReturnPlan(JourneyRoute::class, inclusive = false, push = emptyList()), journeyListPlan(GameId.ARROWESCAPE, stack))
+    }
+
+    @Test
+    fun `journey list is pushed when it is not on the stack`() {
+        assertEquals(
+            JourneyReturnPlan(TabsRoute::class, inclusive = false, push = listOf(JourneyRoute(GameId.ARROWESCAPE))),
+            journeyListPlan(GameId.ARROWESCAPE, listOf(tabs)),
+        )
+        assertEquals(
+            JourneyReturnPlan(PickerRoute::class, inclusive = false, push = listOf(JourneyRoute(GameId.ARROWESCAPE))),
+            journeyListPlan(GameId.ARROWESCAPE, listOf(tabs, picker("animaldoku"), journey("animaldoku"))),
+        )
+    }
+
+    @Test
     fun `unknown chapter returns to the chapter list`() {
         val stack = listOf(tabs, picker("arrowescape"), play("arrowescape"))
         assertEquals(

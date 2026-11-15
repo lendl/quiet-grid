@@ -31,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -55,6 +56,7 @@ import com.quietgrid.app.ui.screens.NewBadgeLine
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.formatElapsed
+import com.quietgrid.app.core.journey.JourneyMilestone
 import com.quietgrid.app.core.journey.JourneyRequest
 import com.quietgrid.app.core.journey.JourneySignals
 import com.quietgrid.app.ui.components.rememberReduceMotion
@@ -72,10 +74,15 @@ fun JourneyResultScreen(
     onMap: () -> Unit,
     newBadgeId: String? = null,
     onOpenMilestones: () -> Unit = {},
+    onCelebrate: (JourneyMilestone) -> Unit = {},
 ) {
     val viewModel: JourneyViewModel = hiltViewModel()
     val state by remember(viewModel, gameId) { viewModel.state(gameId) }.collectAsStateWithLifecycle(initialValue = null)
+    val pending by produceState<List<JourneyMilestone>?>(initialValue = null, viewModel, gameId) {
+        value = viewModel.pendingMilestones(gameId)
+    }
     val rows = state?.rows ?: return
+    val milestone = (pending ?: return).firstOrNull()
     val model = remember(rows, stopId, elapsedSeconds, signals) { journeyResultModel(rows, stopId, elapsedSeconds, signals) }
     if (model == null) {
         LaunchedEffect(Unit) { onMap() }
@@ -91,6 +98,7 @@ fun JourneyResultScreen(
         onMap = onMap,
         newBadgeId = newBadgeId,
         onOpenMilestones = onOpenMilestones,
+        onContinue = milestone?.let { { onCelebrate(it) } },
     )
 }
 
@@ -104,6 +112,7 @@ fun JourneyResultContent(
     onMap: () -> Unit,
     newBadgeId: String? = null,
     onOpenMilestones: () -> Unit = {},
+    onContinue: (() -> Unit)? = null,
 ) {
     val totalMs = gentlePopTotalMs(model.runStars)
     var revealStarted by rememberSaveable { mutableStateOf(false) }
@@ -171,9 +180,11 @@ fun JourneyResultContent(
             }
             Spacer(Modifier.heightIn(min = 8.dp))
             Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                if (model.next != null) {
-                    Button(onClick = onNext, modifier = Modifier.fillMaxWidth().heightIn(min = 54.dp)) {
-                        Text(stringResource(R.string.journey_next_stop), fontWeight = FontWeight.Bold)
+                val primaryLabel = if (onContinue != null) R.string.journey_continue else R.string.journey_next_stop
+                val onPrimary = onContinue ?: onNext
+                if (onContinue != null || model.next != null) {
+                    Button(onClick = onPrimary, modifier = Modifier.fillMaxWidth().heightIn(min = 54.dp)) {
+                        Text(stringResource(primaryLabel), fontWeight = FontWeight.Bold)
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowForward,
                             contentDescription = null,
@@ -181,7 +192,7 @@ fun JourneyResultContent(
                         )
                     }
                 }
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                if (onContinue == null) Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     if (model.replay != null) {
                         OutlinedButton(onClick = onReplay, modifier = Modifier.weight(1f).heightIn(min = 50.dp)) {
                             Text(stringResource(R.string.journey_replay_stars))

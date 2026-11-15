@@ -3,10 +3,12 @@ package com.quietgrid.app.data
 import android.content.Context
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.journey.JourneyMilestone
 import com.quietgrid.app.core.journey.JourneySignals
 import com.quietgrid.app.core.journey.JourneyStopProgress
 import com.quietgrid.app.core.journey.applyJourneyLoss
 import com.quietgrid.app.core.journey.applyJourneyWin
+import com.quietgrid.app.core.journey.journeyMilestones
 import com.quietgrid.app.core.journey.journeyRatedPool
 import com.quietgrid.app.core.journey.journeyRun
 import com.quietgrid.app.core.journey.journeyScope
@@ -33,6 +35,9 @@ interface JourneyProgressStore {
     suspend fun recordLoss(gameId: GameId, stopId: String)
     suspend fun recordAbandon(gameId: GameId, stopId: String)
     suspend fun skip(gameId: GameId, stopId: String)
+    suspend fun pendingMilestones(gameId: GameId): List<JourneyMilestone>
+    suspend fun markShown(gameId: GameId, milestone: JourneyMilestone)
+    fun isMastered(gameId: GameId): Flow<Boolean>
 }
 
 @Singleton
@@ -67,12 +72,33 @@ class JourneyProgressRepository(
 
     override suspend fun recordWin(gameId: GameId, stopId: String, signals: JourneySignals, elapsedSeconds: Int, score: Int): Int {
         val old = current(gameId, stopId)
-        val located = journeyFile(gameId)?.locate(stopId)
+        val file = journeyFile(gameId)
+        val located = file?.locate(stopId)
         val run = journeyRun(signals, elapsedSeconds, located?.second?.targetSeconds ?: 0)
         val replay = located?.let { (chapter, stop) -> nextSibling(gameId, chapter, stop, old, playedIds(gameId)) }?.takeIf { it != stopId }
+        val before = storedProgress(gameId)
         save(gameId, stopId, applyJourneyWin(old, run, elapsedSeconds, score, replay))
+        if (file != null) {
+            val now = clock()
+            journeyMilestones(file, stopId, before, storedProgress(gameId)).forEach { milestone ->
+                dao.insertMilestone(milestone.toEntity(journeyScope(gameId), now))
+            }
+        }
         return run.stars
     }
+
+    override suspend fun pendingMilestones(gameId: GameId): List<JourneyMilestone> =
+        dao.pendingMilestones(journeyScope(gameId))
+            .mapNotNull { it.toMilestone() }
+            .sortedWith(compareBy<JourneyMilestone> { it is JourneyMilestone.Mastered }.thenBy { (it as? JourneyMilestone.ChapterComplete)?.chapterIndex ?: 0 })
+
+    override suspend fun markShown(gameId: GameId, milestone: JourneyMilestone) {
+        val now = clock()
+        val row = milestone.toEntity(journeyScope(gameId), now)
+        dao.markMilestoneShown(row.scope, row.kind, row.chapterIndex, now)
+    }
+
+    override fun isMastered(gameId: GameId): Flow<Boolean> = dao.hasMilestone(journeyScope(gameId), JOURNEY_MILESTONE_MASTERED)
 
     override suspend fun recordLoss(gameId: GameId, stopId: String) {
         val old = current(gameId, stopId)
@@ -133,6 +159,17 @@ class JourneyProgressRepository(
             dao.delete(scope, oldId)
         }
     }
+}
+
+private fun JourneyMilestone.toEntity(scope: String, now: Long): JourneyMilestoneEntity = when (this) {
+    is JourneyMilestone.ChapterComplete -> JourneyMilestoneEntity(scope, JOURNEY_MILESTONE_CHAPTER, chapterIndex, achievedMillis = now, shownMillis = null)
+    JourneyMilestone.Mastered -> JourneyMilestoneEntity(scope, JOURNEY_MILESTONE_MASTERED, 0, achievedMillis = now, shownMillis = null)
+}
+
+private fun JourneyMilestoneEntity.toMilestone(): JourneyMilestone? = when (kind) {
+    JOURNEY_MILESTONE_CHAPTER -> JourneyMilestone.ChapterComplete(chapterIndex)
+    JOURNEY_MILESTONE_MASTERED -> JourneyMilestone.Mastered
+    else -> null
 }
 
 private fun JourneyProgressEntity.toProgress(): JourneyStopProgress = JourneyStopProgress(

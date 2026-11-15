@@ -11,8 +11,10 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.quietgrid.app.core.journey.JourneySignals
+import com.quietgrid.app.ui.journey.ChapterCelebrationScreen
 import com.quietgrid.app.ui.journey.JourneyResultScreen
 import com.quietgrid.app.ui.journey.JourneyScreen
+import com.quietgrid.app.ui.journey.MasteredCelebrationScreen
 import com.quietgrid.app.ui.journey.map.JourneyMapScreen
 import com.quietgrid.app.ui.play.ProvideGamePlayPreferences
 import com.quietgrid.app.ui.screens.AboutPageScreen
@@ -74,6 +76,7 @@ fun NavGraphBuilder.journeyGraph(navigator: AppNavigator) {
         JourneyScreen(
             gameId = gameId,
             onOpenChapter = { chapter -> navigator.navigate(JourneyMapRoute(gameId, chapter)) },
+            onOpenMastered = { navigator.navigate(JourneyMasteredRoute(gameId, replay = true)) },
         )
     }
 
@@ -102,6 +105,32 @@ fun NavGraphBuilder.journeyGraph(navigator: AppNavigator) {
                 onMap = { navigator.returnToJourney(route.gameId, route.stopId) },
                 newBadgeId = rememberNewBadge(),
                 onOpenMilestones = { navigator.navigate(MilestonesRoute) },
+                onCelebrate = { milestone -> navigator.openJourneyCelebration(route.gameId, milestone) },
+            )
+        }
+    }
+
+    composable<JourneyChapterRoute> { entry ->
+        val route = entry.toRoute<JourneyChapterRoute>()
+        ProvideGamePlayPreferences(navigator.playPreferencesFor(route.gameId)) {
+            ChapterCelebrationScreen(
+                gameId = route.gameId,
+                chapter = route.chapter,
+                onClose = { navigator.returnToJourneyChapter(route.gameId, route.chapter) },
+                onPlay = { difficulty, request -> navigator.playJourneyStop(route.gameId, difficulty, request) },
+                onContinue = { milestone -> navigator.openJourneyCelebration(route.gameId, milestone) },
+            )
+        }
+    }
+
+    composable<JourneyMasteredRoute> { entry ->
+        val route = entry.toRoute<JourneyMasteredRoute>()
+        ProvideGamePlayPreferences(navigator.playPreferencesFor(route.gameId)) {
+            MasteredCelebrationScreen(
+                gameId = route.gameId,
+                replay = route.replay,
+                onDone = { navigator.returnToJourneyList(route.gameId) },
+                onViewMap = { chapter -> navigator.returnToJourneyChapter(route.gameId, chapter) },
             )
         }
     }

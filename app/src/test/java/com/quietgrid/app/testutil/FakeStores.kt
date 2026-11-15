@@ -2,6 +2,7 @@ package com.quietgrid.app.testutil
 
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.journey.JourneyMilestone
 import com.quietgrid.app.core.journey.JourneySignals
 import com.quietgrid.app.core.journey.JourneyStopProgress
 import com.quietgrid.app.core.badges.FinishFacts
@@ -118,6 +119,17 @@ class FakeJourneyStore : JourneyProgressStore {
     override suspend fun skip(gameId: GameId, stopId: String) {
         skips += stopId
     }
+
+    val pending = mutableListOf<JourneyMilestone>()
+    val mastered = MutableStateFlow(false)
+
+    override suspend fun pendingMilestones(gameId: GameId): List<JourneyMilestone> = pending.toList()
+
+    override suspend fun markShown(gameId: GameId, milestone: JourneyMilestone) {
+        pending.remove(milestone)
+    }
+
+    override fun isMastered(gameId: GameId): Flow<Boolean> = mastered
 }
 
 class FakeHistoryStore : PlayHistoryStore {

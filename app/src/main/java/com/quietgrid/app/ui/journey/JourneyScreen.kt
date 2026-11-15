@@ -47,19 +47,33 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.journey.JOURNEY_MAX_STARS_PER_STOP
 import com.quietgrid.app.games.gameDifficultyLabelRes
+import com.quietgrid.app.ui.theme.celebrationGold
 
 @Composable
-fun JourneyScreen(gameId: GameId, onOpenChapter: (Int) -> Unit) {
+fun JourneyScreen(gameId: GameId, onOpenChapter: (Int) -> Unit, onOpenMastered: () -> Unit = {}) {
     val viewModel: JourneyViewModel = hiltViewModel()
     val state by remember(viewModel, gameId) { viewModel.state(gameId) }.collectAsStateWithLifecycle(initialValue = null)
     val current = state ?: return
     val chapters = remember(current.rows) { journeyChapterSummaries(current.rows) }
-    JourneyChapterList(gameId, chapters, onOpenChapter)
+    JourneyChapterList(
+        gameId = gameId,
+        chapters = chapters,
+        onOpenChapter = onOpenChapter,
+        masteredSummary = current.summary.takeIf { current.mastered },
+        onOpenMastered = onOpenMastered,
+    )
 }
 
 @Composable
-fun JourneyChapterList(gameId: GameId, chapters: List<JourneyChapterSummary>, onOpenChapter: (Int) -> Unit) {
+fun JourneyChapterList(
+    gameId: GameId,
+    chapters: List<JourneyChapterSummary>,
+    onOpenChapter: (Int) -> Unit,
+    masteredSummary: JourneySummary? = null,
+    onOpenMastered: () -> Unit = {},
+) {
     val listState = rememberLazyListState()
     var positioned by rememberSaveable(gameId) { mutableStateOf(false) }
     LaunchedEffect(chapters) {
@@ -75,6 +89,9 @@ fun JourneyChapterList(gameId: GameId, chapters: List<JourneyChapterSummary>, on
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
+            if (masteredSummary != null) {
+                item(key = "mastered") { JourneyMasteredRow(masteredSummary, onOpenMastered) }
+            }
             item(key = "note") {
                 Text(
                     stringResource(R.string.journey_open_note),
@@ -90,6 +107,38 @@ fun JourneyChapterList(gameId: GameId, chapters: List<JourneyChapterSummary>, on
             items(chapters, key = { "chapter-${it.index}" }) { chapter ->
                 JourneyChapterCard(gameId, chapter, onClick = { onOpenChapter(chapter.index) })
             }
+        }
+    }
+}
+
+@Composable
+private fun JourneyMasteredRow(summary: JourneySummary, onClick: () -> Unit) {
+    val badge = stringResource(R.string.journey_mastered_badge)
+    val stars = stringResource(R.string.journey_card_stars, summary.stars, summary.maxStars)
+    Surface(
+        onClick = onClick,
+        shape = RoundedCornerShape(14.dp),
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 48.dp)
+            .semantics { contentDescription = "$badge, $stars" },
+    ) {
+        Row(
+            Modifier
+                .clearAndSetSemantics {}
+                .padding(horizontal = 14.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(Icons.Filled.Star, contentDescription = null, tint = celebrationGold().gold, modifier = Modifier.size(16.dp))
+            Text(
+                stars,
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 8.dp),
+            )
+            Text(badge, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }

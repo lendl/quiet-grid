@@ -57,6 +57,12 @@ data class JourneyMapRoute(val gameId: GameId, val chapter: Int)
 data class JourneyResultRoute(val gameId: GameId, val stopId: String, val elapsedSeconds: Int, val hintsUsed: Int, val mistakes: Int)
 
 @Serializable
+data class JourneyChapterRoute(val gameId: GameId, val chapter: Int)
+
+@Serializable
+data class JourneyMasteredRoute(val gameId: GameId, val replay: Boolean = false)
+
+@Serializable
 data class ChallengerRoute(val gameId: GameId)
 
 @Serializable

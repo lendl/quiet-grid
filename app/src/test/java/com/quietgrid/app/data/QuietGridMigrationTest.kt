@@ -44,8 +44,15 @@ class QuietGridMigrationTest {
         db.execSQL("INSERT INTO journey_progress (scope, puzzleId, stars, cleared, clean, underTarget, bestSeconds, skipped, attempts, nextPuzzleId, lastPlayedMillis) VALUES ('animaldoku', 'ad-1', 2, 1, 1, 0, 95, 0, 1, NULL, 3000)")
     }
 
+    private fun createVersion5Database() = createLegacyDatabase(5) { db ->
+        MIGRATION_2_3.migrate(db)
+        MIGRATION_3_4.migrate(db)
+        MIGRATION_4_5.migrate(db)
+        db.execSQL("INSERT INTO journey_progress (scope, puzzleId, stars, cleared, clean, underTarget, bestSeconds, bestScore, skipped, attempts, nextPuzzleId, lastPlayedMillis) VALUES ('animaldoku', 'ad-1', 3, 1, 1, 1, 80, 700, 0, 2, 'ad-9', 3000)")
+    }
+
     private fun openDatabase() = Room.databaseBuilder(context, QuietGridDatabase::class.java, DB_NAME)
-        .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+        .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
         .allowMainThreadQueries()
         .build()
 
@@ -161,6 +168,27 @@ class QuietGridMigrationTest {
             ),
         )
         assertEquals(3, database.playHistoryDao().allRecords().first().first { it.puzzleId == "ad-2" }.journeyStars)
+        database.close()
+    }
+
+    @Test
+    fun `migration 5 to 6 keeps journey progress and adds an empty milestone table`() = runBlocking {
+        createVersion5Database()
+
+        val database = openDatabase()
+        val dao = database.journeyProgressDao()
+
+        val progress = dao.get("animaldoku", "ad-1")!!
+        assertEquals(3, progress.stars)
+        assertEquals(700, progress.bestScore)
+        assertEquals("ad-9", progress.nextPuzzleId)
+        assertEquals("s-1", database.playHistoryDao().allRecords().first().single().puzzleId)
+        assertEquals(emptyList<JourneyMilestoneEntity>(), dao.pendingMilestones("animaldoku"))
+
+        val milestone = JourneyMilestoneEntity("animaldoku", JOURNEY_MILESTONE_CHAPTER, 1, achievedMillis = 5000, shownMillis = null)
+        dao.insertMilestone(milestone)
+        dao.insertMilestone(milestone.copy(achievedMillis = 6000))
+        assertEquals(listOf(milestone), dao.pendingMilestones("animaldoku"))
         database.close()
     }
 }

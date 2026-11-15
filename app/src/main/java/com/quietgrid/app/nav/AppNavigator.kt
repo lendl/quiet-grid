@@ -7,6 +7,7 @@ import androidx.navigation.toRoute
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.journey.JourneyMilestone
 import com.quietgrid.app.core.journey.JourneyRequest
 import com.quietgrid.app.core.journey.loadJourneyFile
 import com.quietgrid.app.core.journey.locate
@@ -72,10 +73,26 @@ class AppNavigator(
     fun returnToJourney(gameId: GameId, stopId: String) {
         scope.launch {
             val chapter = loadJourneyFile(appContext, gameId)?.locate(stopId)?.first?.index
-            val plan = journeyReturnPlan(gameId, chapter, journeyBackStack())
-            navController.popBackStack(plan.popTo, inclusive = plan.inclusive)
-            plan.push.forEach { navController.navigate(it) }
+            follow(journeyReturnPlan(gameId, chapter, journeyBackStack()))
         }
+    }
+
+    fun returnToJourneyChapter(gameId: GameId, chapter: Int) = follow(journeyReturnPlan(gameId, chapter, journeyBackStack()))
+
+    fun returnToJourneyList(gameId: GameId) = follow(journeyListPlan(gameId, journeyBackStack()))
+
+    fun openJourneyCelebration(gameId: GameId, milestone: JourneyMilestone) {
+        val route: Any = when (milestone) {
+            is JourneyMilestone.ChapterComplete -> JourneyChapterRoute(gameId, milestone.chapterIndex)
+            JourneyMilestone.Mastered -> JourneyMasteredRoute(gameId)
+        }
+        val anchor = journeyAnchor(gameId)
+        navController.navigate(route) { popUpTo(anchor) { inclusive = false } }
+    }
+
+    private fun follow(plan: JourneyReturnPlan) {
+        navController.popBackStack(plan.popTo, inclusive = plan.inclusive)
+        plan.push.forEach { navController.navigate(it) }
     }
 
     fun playJourneyStop(gameId: GameId, difficulty: Difficulty, request: JourneyRequest) {
