@@ -5,6 +5,7 @@ import com.quietgrid.engine.blockescape.BlockEscapePuzzleEntry
 import com.quietgrid.engine.blockescape.gradeBlockEscape
 import com.quietgrid.engine.blockescape.blockEscapeLayoutKey
 import com.quietgrid.engine.blockescape.blockEscapeMinMoves
+import com.quietgrid.engine.blockescape.blockEscapeRepeatMoves
 import com.quietgrid.engine.blockescape.isValidBlockEscapeLayout
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
@@ -35,7 +36,7 @@ class BlockEscapeBankVerificationTest {
         bank.forEach { entry ->
             assertTrue(entry.id, isValidBlockEscapeLayout(entry.blocks))
             assertEquals(entry.id, entry.minMoves, blockEscapeMinMoves(entry.blocks))
-            assertEquals(entry.id, entry.difficulty, gradeBlockEscape(entry.minMoves)?.key)
+            assertEquals(entry.id, entry.difficulty, gradeBlockEscape(entry.minMoves) { blockEscapeRepeatMoves(entry.blocks) }?.key)
             assertEquals(entry.id, blockEscapePuzzleId(entry.blocks), entry.id)
         }
     }

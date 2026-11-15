@@ -19,10 +19,12 @@ private val BLOCKESCAPE_CLIMB_STEPS_BY_DIFFICULTY: Map<Difficulty, Int> = mapOf(
 
 private val BLOCKESCAPE_TARGET_CAP_BY_DIFFICULTY: Map<Difficulty, Int> = mapOf(
     Difficulty.EASY to 8,
-    Difficulty.MEDIUM to 16,
+    Difficulty.MEDIUM to 13,
     Difficulty.HARD to 26,
     Difficulty.EXPERT to 42,
 )
+
+private const val BLOCKESCAPE_GRADE_TRIES = 200
 
 private fun addRandomBlock(blocks: MutableList<BlockEscapeBlock>, random: Random): Boolean {
     val owners = blockEscapeOccupancy(blocks)
@@ -79,13 +81,11 @@ fun generateBlockEscapePuzzle(
                 distances = candidateDistances
             }
         }
-        val states = distances.statesAt(target..range.last)
-        if (states.isEmpty()) return@repeat
-        val chosen = states[random.nextInt(states.size)]
-        val blocks = distances.blocksOf(chosen)
-        if (blocks.size !in counts) return@repeat
-        val minMoves = distances.distances.getValue(chosen)
-        return blocks to minMoves
+        if (layout.size !in counts) return@repeat
+        val chosen = distances.statesAt(target..range.last).shuffled(random).take(BLOCKESCAPE_GRADE_TRIES).firstOrNull { key ->
+            gradeBlockEscape(distances.distances.getValue(key)) { distances.repeatMoves(key) } == difficulty
+        } ?: return@repeat
+        return distances.blocksOf(chosen) to distances.distances.getValue(chosen)
     }
     return null
 }

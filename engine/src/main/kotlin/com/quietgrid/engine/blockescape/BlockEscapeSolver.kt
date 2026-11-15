@@ -98,6 +98,36 @@ class BlockEscapeDistances internal constructor(
         val positions = space.decode(key)
         return template.mapIndexed { index, block -> block.movedTo(positions[index]) }
     }
+
+    internal fun keyOf(blocks: List<BlockEscapeBlock>): Long = space.encode(positionsOf(blocks))
+
+    fun repeatMoves(key: Long): Int? {
+        if (key !in distances) return null
+        val movedShift = space.count * 3
+        val memo = HashMap<Long, Int>()
+        fun fewestRepeats(state: Long, moved: Int): Int {
+            val remaining = distances.getValue(state)
+            if (remaining == 0) return 0
+            val memoKey = state or (moved.toLong() shl movedShift)
+            memo[memoKey]?.let { return it }
+            var best = Int.MAX_VALUE
+            space.forEachNeighbor(state) { index, _, next ->
+                if (distances[next] == remaining - 1) {
+                    val bit = 1 shl index
+                    val repeat = if (moved and bit != 0) 1 else 0
+                    best = minOf(best, repeat + fewestRepeats(next, moved or bit))
+                }
+            }
+            memo[memoKey] = best
+            return best
+        }
+        return fewestRepeats(key, 0)
+    }
+}
+
+fun blockEscapeRepeatMoves(blocks: List<BlockEscapeBlock>): Int? {
+    val distances = blockEscapeDistances(blocks) ?: return null
+    return distances.repeatMoves(distances.keyOf(blocks))
 }
 
 fun blockEscapeDistances(blocks: List<BlockEscapeBlock>, maxStates: Int = BLOCKESCAPE_MAX_STATES): BlockEscapeDistances? {

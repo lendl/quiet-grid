@@ -2165,8 +2165,8 @@
     <string name="journey_mastered_badge">Every star collected</string>
     <string name="blockescape_title">Block Escape</string>
     <string name="blockescape_tagline">Slide the blocks aside and set the coral block free</string>
-    <string name="blockescape_difficulty_desc_easy">Solvable in 4 to 8 moves</string>
-    <string name="blockescape_difficulty_desc_medium">Needs 10 to 16 moves, a little planning ahead</string>
+    <string name="blockescape_difficulty_desc_easy">Solvable in 4 to 8 moves, sliding each block only once</string>
+    <string name="blockescape_difficulty_desc_medium">Needs 8 to 13 moves, with a little back and forth</string>
     <string name="blockescape_difficulty_desc_hard">Needs 18 to 26 moves and some backing up</string>
     <string name="blockescape_difficulty_desc_expert">30 moves or more, with long chains of blocks to clear</string>
     <string name="blockescape_quickstart_goal">Slide the other blocks out of the way and move the coral block out through the exit.</string>

@@ -19,6 +19,17 @@ class BlockEscapeSolverTest {
         BlockEscapeBlock(4, 0, 2, true),
     )
 
+    private val backAndForthBoard = listOf(
+        BlockEscapeBlock(2, 0, 2, true),
+        BlockEscapeBlock(1, 2, 2, true),
+        BlockEscapeBlock(4, 4, 2, true),
+        BlockEscapeBlock(3, 1, 2, true),
+        BlockEscapeBlock(2, 5, 2, false),
+        BlockEscapeBlock(5, 4, 2, true),
+        BlockEscapeBlock(0, 5, 2, false),
+        BlockEscapeBlock(3, 3, 3, false),
+    )
+
     @Test
     fun `the shortest solution counts each slide as one move`() {
         val solution = solveBlockEscape(fiveMoveBoard)
@@ -60,12 +71,34 @@ class BlockEscapeSolverTest {
     }
 
     @Test
-    fun `grading follows the move ranges`() {
-        assertEquals(Difficulty.EASY, gradeBlockEscape(5))
-        assertEquals(Difficulty.MEDIUM, gradeBlockEscape(12))
-        assertEquals(Difficulty.HARD, gradeBlockEscape(20))
-        assertEquals(Difficulty.EXPERT, gradeBlockEscape(40))
-        assertNull(gradeBlockEscape(9))
+    fun `grading follows the move and repeat ranges`() {
+        assertEquals(Difficulty.EASY, gradeBlockEscape(5) { 0 })
+        assertEquals(Difficulty.EASY, gradeBlockEscape(8) { 0 })
+        assertEquals(Difficulty.MEDIUM, gradeBlockEscape(8) { 1 })
+        assertEquals(Difficulty.MEDIUM, gradeBlockEscape(12) { 4 })
+        assertEquals(Difficulty.HARD, gradeBlockEscape(20) { null })
+        assertEquals(Difficulty.EXPERT, gradeBlockEscape(40) { null })
+        assertNull(gradeBlockEscape(6) { 1 })
+        assertNull(gradeBlockEscape(12) { 5 })
+        assertNull(gradeBlockEscape(15) { 0 })
+    }
+
+    @Test
+    fun `hard and expert grading never counts repeat moves`() {
+        assertEquals(Difficulty.HARD, gradeBlockEscape(20) { error("not needed") })
+        assertEquals(Difficulty.EXPERT, gradeBlockEscape(40) { error("not needed") })
+    }
+
+    @Test
+    fun `a board where each block slides once has no repeat moves`() {
+        assertEquals(0, blockEscapeRepeatMoves(fiveMoveBoard))
+    }
+
+    @Test
+    fun `a board that needs a block to slide twice counts the repeat`() {
+        assertEquals(6, blockEscapeMinMoves(backAndForthBoard))
+        assertEquals(1, blockEscapeRepeatMoves(backAndForthBoard))
+        assertNull(gradeBlockEscape(backAndForthBoard))
     }
 
     @Test
@@ -75,7 +108,7 @@ class BlockEscapeSolverTest {
             val (blocks, minMoves) = generateBlockEscapePuzzle(difficulty, random)!!
             assertTrue(isValidBlockEscapeLayout(blocks))
             assertEquals(minMoves, blockEscapeMinMoves(blocks))
-            assertEquals(difficulty, gradeBlockEscape(minMoves))
+            assertEquals(difficulty, gradeBlockEscape(blocks))
         }
     }
 }
