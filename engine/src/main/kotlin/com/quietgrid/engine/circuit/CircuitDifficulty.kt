@@ -23,15 +23,18 @@ fun analyzeCircuitSolveResult(result: CircuitSolveResult): CircuitSolveProfile {
     )
 }
 
+fun circuitTeeCount(masks: IntArray): Int = masks.count { circuitArmCount(it) == 3 }
+
 data class CircuitTier(
     val rows: Int,
     val cols: Int,
     val wrap: Boolean,
     val longWhatIfs: IntRange,
+    val maxTees: Int = Int.MAX_VALUE,
 )
 
 val CIRCUIT_TIERS: Map<Difficulty, CircuitTier> = mapOf(
-    Difficulty.EASY to CircuitTier(5, 5, wrap = false, longWhatIfs = 0..0),
+    Difficulty.EASY to CircuitTier(5, 5, wrap = false, longWhatIfs = 0..0, maxTees = 2),
     Difficulty.MEDIUM to CircuitTier(7, 7, wrap = false, longWhatIfs = 1..2),
     Difficulty.HARD to CircuitTier(7, 7, wrap = true, longWhatIfs = 3..9),
     Difficulty.EXPERT to CircuitTier(8, 8, wrap = true, longWhatIfs = 12..40),
@@ -45,9 +48,12 @@ fun circuitTierDistance(tier: CircuitTier, profile: CircuitSolveProfile): Int {
 }
 
 fun classifyCircuitDifficulty(board: CircuitBoard, result: CircuitSolveResult): Difficulty? {
-    if (!result.solved) return null
+    val masks = result.masks
+    if (!result.solved || masks == null) return null
     val profile = analyzeCircuitSolveResult(result)
+    val tees = circuitTeeCount(masks)
     return CIRCUIT_TIERS.entries.firstOrNull { (_, tier) ->
-        tier.rows == board.rows && tier.cols == board.cols && tier.wrap == board.wrap && circuitTierDistance(tier, profile) == 0
+        tier.rows == board.rows && tier.cols == board.cols && tier.wrap == board.wrap &&
+            tees <= tier.maxTees && circuitTierDistance(tier, profile) == 0
     }?.key
 }

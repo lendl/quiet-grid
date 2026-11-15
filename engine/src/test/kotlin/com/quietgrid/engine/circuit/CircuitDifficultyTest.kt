@@ -11,18 +11,19 @@ class CircuitDifficultyTest {
 
     private fun board(size: Int, wrap: Boolean) = CircuitBoard(size, size, (size / 2) * size + size / 2, wrap)
 
-    private fun result(size: Int, longWhatIfs: Int, shortWhatIfs: Int = 0, loops: Int = 0): CircuitSolveResult {
+    private fun result(size: Int, longWhatIfs: Int, shortWhatIfs: Int = 0, loops: Int = 0, tees: Int = 0): CircuitSolveResult {
         val steps = buildList {
             repeat(longWhatIfs) { add(CircuitSolveStep(CircuitTechnique.CONTRADICTION, it, 2, chainLength = 5)) }
             repeat(shortWhatIfs) { add(CircuitSolveStep(CircuitTechnique.CONTRADICTION, it, 2, chainLength = 1)) }
             repeat(loops) { add(CircuitSolveStep(CircuitTechnique.NO_LOOP, it, 0)) }
             add(CircuitSolveStep(CircuitTechnique.EDGE_MATCH, 0, 0))
         }
-        return CircuitSolveResult(true, steps, IntArray(size * size))
+        val tee = CIRCUIT_UP or CIRCUIT_RIGHT or CIRCUIT_DOWN
+        return CircuitSolveResult(true, steps, IntArray(size * size) { if (it < tees) tee else CIRCUIT_UP })
     }
 
-    private fun classify(size: Int, wrap: Boolean, longWhatIfs: Int, shortWhatIfs: Int = 0, loops: Int = 0): Difficulty? =
-        classifyCircuitDifficulty(board(size, wrap), result(size, longWhatIfs, shortWhatIfs, loops))
+    private fun classify(size: Int, wrap: Boolean, longWhatIfs: Int, shortWhatIfs: Int = 0, loops: Int = 0, tees: Int = 0): Difficulty? =
+        classifyCircuitDifficulty(board(size, wrap), result(size, longWhatIfs, shortWhatIfs, loops, tees))
 
     @Test
     fun `hard is seven by seven wrapped`() {
@@ -39,6 +40,25 @@ class CircuitDifficultyTest {
     fun `easy accepts no long what-if and rejects one`() {
         assertEquals(Difficulty.EASY, classify(5, false, 0))
         assertNull(classify(5, false, 1))
+    }
+
+    @Test
+    fun `easy accepts two T tiles and rejects three`() {
+        assertEquals(Difficulty.EASY, classify(5, false, 0, tees = 2))
+        assertNull(classify(5, false, 0, tees = 3))
+    }
+
+    @Test
+    fun `only easy caps the T tiles`() {
+        assertEquals(Difficulty.MEDIUM, classify(7, false, 1, tees = 20))
+        assertEquals(Difficulty.HARD, classify(7, true, 3, tees = 20))
+        assertEquals(Difficulty.EXPERT, classify(8, true, 12, tees = 20))
+    }
+
+    @Test
+    fun `the T-tile count looks only at three-armed tiles`() {
+        val tee = CIRCUIT_UP or CIRCUIT_RIGHT or CIRCUIT_DOWN
+        assertEquals(2, circuitTeeCount(intArrayOf(tee, CIRCUIT_UP, CIRCUIT_UP or CIRCUIT_DOWN, CIRCUIT_UP or CIRCUIT_RIGHT, rotateCircuitMask(tee))))
     }
 
     @Test

@@ -3,6 +3,7 @@ package com.quietgrid.cli.circuit
 import com.quietgrid.engine.circuit.CIRCUIT_TIERS
 import com.quietgrid.engine.circuit.CircuitBoard
 import com.quietgrid.engine.circuit.circuitArmCount
+import com.quietgrid.engine.circuit.circuitTeeCount
 import com.quietgrid.engine.circuit.classifyCircuitDifficulty
 import com.quietgrid.engine.circuit.countCircuitSolutions
 import com.quietgrid.engine.circuit.isCircuitSolved
@@ -28,6 +29,25 @@ class CircuitGeneratorTest {
                 assertTrue(isCircuitSolved(board, mutated))
             }
         }
+    }
+
+    @Test
+    fun `capped trees and their mutations never exceed the T-tile cap`() {
+        val random = Random(9)
+        val board = CircuitBoard(5, 5, circuitSourceCell(5, 5))
+        var trees = 0
+        var mutations = 0
+        repeat(80) {
+            val tree = randomCircuitTree(board, random, maxTees = 2) ?: return@repeat
+            trees++
+            assertTrue(isCircuitSolved(board, tree))
+            assertTrue(circuitTeeCount(tree) <= 2)
+            val mutated = mutateCircuitTree(board, tree, random, maxTees = 2) ?: return@repeat
+            mutations++
+            assertTrue(isCircuitSolved(board, mutated))
+            assertTrue(circuitTeeCount(mutated) <= 2)
+        }
+        assertTrue(trees > 0 && mutations > 0)
     }
 
     @Test

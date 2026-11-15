@@ -13,6 +13,7 @@ import com.quietgrid.engine.circuit.analyzeCircuitSolveResult
 import com.quietgrid.engine.circuit.circuitTierDistance
 import com.quietgrid.engine.circuit.classifyCircuitDifficulty
 import com.quietgrid.engine.circuit.circuitArmCount
+import com.quietgrid.engine.circuit.circuitTeeCount
 import com.quietgrid.engine.circuit.circuitOrientations
 import com.quietgrid.engine.circuit.oppositeCircuitDirection
 import com.quietgrid.engine.circuit.solveCircuitFrom
@@ -24,12 +25,13 @@ const val CIRCUIT_MAX_ARMS = 3
 
 fun circuitSourceCell(rows: Int, cols: Int): Int = (rows / 2) * cols + cols / 2
 
-fun randomCircuitTree(board: CircuitBoard, random: Random): IntArray? {
+fun randomCircuitTree(board: CircuitBoard, random: Random, maxTees: Int = Int.MAX_VALUE): IntArray? {
     val masks = IntArray(board.size)
     val inTree = BooleanArray(board.size)
     val start = random.nextInt(board.size)
     inTree[start] = true
     var added = 1
+    var tees = 0
     val frontier = ArrayList<Pair<Int, Int>>()
     fun addFrontier(cell: Int) {
         for (direction in CIRCUIT_DIRECTIONS) {
@@ -39,10 +41,14 @@ fun randomCircuitTree(board: CircuitBoard, random: Random): IntArray? {
     }
     addFrontier(start)
     while (added < board.size) {
-        frontier.removeAll { (cell, direction) -> inTree[board.neighbor(cell, direction)] || circuitArmCount(masks[cell]) >= CIRCUIT_MAX_ARMS }
+        frontier.removeAll { (cell, direction) ->
+            val arms = circuitArmCount(masks[cell])
+            inTree[board.neighbor(cell, direction)] || arms >= CIRCUIT_MAX_ARMS || (arms == 2 && tees >= maxTees)
+        }
         if (frontier.isEmpty()) return null
         val (cell, direction) = frontier[random.nextInt(frontier.size)]
         val other = board.neighbor(cell, direction)
+        if (circuitArmCount(masks[cell]) == 2) tees++
         masks[cell] = masks[cell] or direction
         masks[other] = masks[other] or oppositeCircuitDirection(direction)
         inTree[other] = true
@@ -52,7 +58,7 @@ fun randomCircuitTree(board: CircuitBoard, random: Random): IntArray? {
     return masks
 }
 
-fun mutateCircuitTree(board: CircuitBoard, masks: IntArray, random: Random): IntArray? {
+fun mutateCircuitTree(board: CircuitBoard, masks: IntArray, random: Random, maxTees: Int = Int.MAX_VALUE): IntArray? {
     val links = ArrayList<Pair<Int, Int>>()
     for (cell in 0 until board.size) {
         for (direction in intArrayOf(CIRCUIT_RIGHT, CIRCUIT_DOWN)) if (masks[cell] and direction != 0) links += cell to direction
@@ -76,6 +82,8 @@ fun mutateCircuitTree(board: CircuitBoard, masks: IntArray, random: Random): Int
             }
         }
     }
+    val tees = circuitTeeCount(next)
+    fun newTees(target: Int): Int = if (circuitArmCount(next[target]) == 2) 1 else 0
     val candidates = ArrayList<Pair<Int, Int>>()
     for (a in 0 until board.size) {
         if (!side[a] || circuitArmCount(next[a]) >= CIRCUIT_MAX_ARMS) continue
@@ -83,6 +91,7 @@ fun mutateCircuitTree(board: CircuitBoard, masks: IntArray, random: Random): Int
             val b = board.neighbor(a, d)
             if (b < 0 || side[b] || circuitArmCount(next[b]) >= CIRCUIT_MAX_ARMS) continue
             if (a == cell && b == other) continue
+            if (tees + newTees(a) + newTees(b) > maxTees) continue
             candidates += a to d
         }
     }
@@ -106,7 +115,7 @@ fun scrambleCircuit(solution: IntArray, random: Random): IntArray = IntArray(sol
 }
 
 fun climbCircuitTree(board: CircuitBoard, tier: CircuitTier, random: Random, maxSteps: Int = 600): Pair<IntArray, CircuitSolveResult>? {
-    var masks = randomCircuitTree(board, random) ?: return null
+    var masks = randomCircuitTree(board, random, tier.maxTees) ?: return null
     fun score(candidate: IntArray): Pair<Int, CircuitSolveResult> {
         val (undecided, result) = circuitUndecidedAfterLogic(board, candidate)
         val distance = if (undecided == 0 && result.solved) circuitTierDistance(tier, analyzeCircuitSolveResult(result)) else 0
@@ -116,7 +125,7 @@ fun climbCircuitTree(board: CircuitBoard, tier: CircuitTier, random: Random, max
     var steps = 0
     while (current > 0 && steps < maxSteps) {
         steps++
-        val candidate = mutateCircuitTree(board, masks, random) ?: continue
+        val candidate = mutateCircuitTree(board, masks, random, tier.maxTees) ?: continue
         val (candidateScore, candidateResult) = score(candidate)
         if (candidateScore <= current) {
             masks = candidate
