@@ -126,7 +126,7 @@ class PuzzleSessionController<TSession, TResult>(
         scope.launch {
             val previous = statsStore.statsFor(adapter.gameId).first().forDifficulty(difficulty)
             statsStore.recordResult(adapter.gameId, difficulty, solved = true, score = score)
-            val journeyStars = journey?.let { journeyStore?.recordWin(adapter.gameId, it.stopId, adapter.journeySignals(current), elapsedSeconds.toInt(), score) }
+            val journeyStars = journey?.let { journeyStore?.recordWin(adapter.gameId, it.stopId, it.puzzleId, adapter.journeySignals(current), elapsedSeconds.toInt(), score) }
             if (!isBeta) {
                 historyStore.appendRecord(
                     PlayRecord(
@@ -213,7 +213,7 @@ class PuzzleSessionController<TSession, TResult>(
             )
         }
         journey?.let {
-            if (reason == LossReason.ABANDONED) journeyStore?.recordAbandon(adapter.gameId, it.stopId) else journeyStore?.recordLoss(adapter.gameId, it.stopId)
+            if (reason == LossReason.ABANDONED) journeyStore?.recordAbandon(adapter.gameId, it.stopId, it.puzzleId) else journeyStore?.recordLoss(adapter.gameId, it.stopId, it.puzzleId)
         }
         val current = session
         if (reason != LossReason.ABANDONED && !isBeta && current != null) {

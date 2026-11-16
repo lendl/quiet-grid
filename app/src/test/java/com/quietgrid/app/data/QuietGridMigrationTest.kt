@@ -51,8 +51,17 @@ class QuietGridMigrationTest {
         db.execSQL("INSERT INTO journey_progress (scope, puzzleId, stars, cleared, clean, underTarget, bestSeconds, bestScore, skipped, attempts, nextPuzzleId, lastPlayedMillis) VALUES ('animaldoku', 'ad-1', 3, 1, 1, 1, 80, 700, 0, 2, 'ad-9', 3000)")
     }
 
+    private fun createVersion6Database() = createLegacyDatabase(6) { db ->
+        MIGRATION_2_3.migrate(db)
+        MIGRATION_3_4.migrate(db)
+        MIGRATION_4_5.migrate(db)
+        MIGRATION_5_6.migrate(db)
+        db.execSQL("INSERT INTO journey_progress (scope, puzzleId, stars, cleared, clean, underTarget, bestSeconds, bestScore, skipped, attempts, nextPuzzleId, lastPlayedMillis) VALUES ('animaldoku', 'ad-1', 2, 1, 1, 0, 95, 640, 0, 1, 'ad-9', 3000)")
+        db.execSQL("INSERT INTO journey_milestone (scope, kind, chapterIndex, achievedMillis, shownMillis) VALUES ('animaldoku', 'chapter', 1, 4000, NULL)")
+    }
+
     private fun openDatabase() = Room.databaseBuilder(context, QuietGridDatabase::class.java, DB_NAME)
-        .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+        .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
         .allowMainThreadQueries()
         .build()
 
@@ -189,6 +198,25 @@ class QuietGridMigrationTest {
         dao.insertMilestone(milestone)
         dao.insertMilestone(milestone.copy(achievedMillis = 6000))
         assertEquals(listOf(milestone), dao.pendingMilestones("animaldoku"))
+        database.close()
+    }
+
+    @Test
+    fun `migration 6 to 7 keeps journey progress and milestones and starts with nothing retired`() = runBlocking {
+        createVersion6Database()
+
+        val database = openDatabase()
+        val dao = database.journeyProgressDao()
+
+        val progress = dao.get("animaldoku", "ad-1")!!
+        assertEquals(2, progress.stars)
+        assertEquals(640, progress.bestScore)
+        assertEquals("ad-9", progress.nextPuzzleId)
+        assertEquals("", progress.retiredPuzzleIds)
+        assertEquals(listOf(1), dao.pendingMilestones("animaldoku").map { it.chapterIndex })
+
+        dao.upsert(progress.copy(retiredPuzzleIds = "ad-1\nad-9"))
+        assertEquals("ad-1\nad-9", dao.get("animaldoku", "ad-1")!!.retiredPuzzleIds)
         database.close()
     }
 }

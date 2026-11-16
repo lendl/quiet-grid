@@ -105,16 +105,16 @@ class FakeJourneyStore : JourneyProgressStore {
 
     override suspend fun storedProgress(gameId: GameId): Map<String, JourneyStopProgress> = progress.value
 
-    override suspend fun recordWin(gameId: GameId, stopId: String, signals: JourneySignals, elapsedSeconds: Int, score: Int): Int {
+    override suspend fun recordWin(gameId: GameId, stopId: String, puzzleId: String, signals: JourneySignals, elapsedSeconds: Int, score: Int): Int {
         wins += stopId
         return 1
     }
 
-    override suspend fun recordLoss(gameId: GameId, stopId: String) {
+    override suspend fun recordLoss(gameId: GameId, stopId: String, puzzleId: String) {
         losses += stopId
     }
 
-    override suspend fun recordAbandon(gameId: GameId, stopId: String) = Unit
+    override suspend fun recordAbandon(gameId: GameId, stopId: String, puzzleId: String) = Unit
 
     override suspend fun skip(gameId: GameId, stopId: String) {
         skips += stopId

@@ -121,31 +121,127 @@ class JourneyRulesTest {
         assertEquals(old.copy(attempts = 4, nextPuzzleId = "sib"), lost)
     }
 
+    private val levels = (0 until 60).map { JourneyStop("L$it", "easy", it * 10 + 5, 90) }
+    private val ratedBank = (0 until 600).map { "p$it" to it }
+
     @Test
-    fun `sibling is nearest rated, skips stops and played puzzles, and is deterministic for a seed`() {
-        val stop = chapter.stops[2]
-        val pool = listOf(
-            "s4" to stop.rating,
-            "played" to stop.rating + 1,
-            "near-a" to stop.rating + 3,
-            "near-b" to stop.rating - 3,
-            "far" to stop.rating + 40,
-            "out-of-band" to 900,
-        ) + chapter.stops.map { it.puzzleId to it.rating }
-        val picks = (0 until 20).map { pickJourneySibling(stop, chapter, pool, setOf("played"), seed = it) }.toSet()
-        assertEquals(setOf("near-a", "near-b"), picks)
-        assertEquals(
-            pickJourneySibling(stop, chapter, pool, setOf("played"), seed = 7),
-            pickJourneySibling(stop, chapter, pool, setOf("played"), seed = 7),
-        )
+    fun `levels split the bank into back-to-back score ranges that never overlap`() {
+        val ranges = journeyLevelRanges(levels, ratedBank)
+
+        assertEquals(60, ranges.size)
+        assertEquals(listOf(0 to 9, 10 to 19, 20 to 29), ranges.take(3).map { it.minRating to it.maxRating })
+        ranges.zipWithNext().forEach { (a, b) -> assertTrue(a.maxRating < b.minRating) }
+        assertEquals(ratedBank.size + levels.size, ranges.sumOf { it.puzzles.size })
+        ranges.forEach { range -> assertTrue(range.puzzles.any { it.first == range.stopId }) }
+    }
+
+    private fun spareIds(range: JourneyLevelRange) = range.puzzles.map { it.first }.filter { it != range.stopId }
+
+    @Test
+    fun `levels bunched below the bank still get four other puzzles each, nearest first`() {
+        val bunched = listOf(10, 11, 12).map { JourneyStop("L$it", "easy", it, 90) }
+        val bank = (20 until 40).map { "p$it" to it }
+
+        val ranges = journeyLevelRanges(bunched, bank)
+
+        assertEquals((20 until 24).map { "p$it" }, spareIds(ranges[0]))
+        assertEquals((24 until 28).map { "p$it" }, spareIds(ranges[1]))
+        assertEquals((28 until 40).map { "p$it" }, spareIds(ranges[2]))
     }
 
     @Test
-    fun `sibling falls back to played puzzles, then to the stop itself`() {
-        val stop = chapter.stops[0]
-        val pool = listOf("a" to stop.rating + 5, "b" to stop.rating + 9)
-        assertEquals("a", pickJourneySibling(stop, chapter, pool, setOf("a", "b"), seed = 1))
-        assertEquals(stop.puzzleId, pickJourneySibling(stop, chapter, chapter.stops.map { it.puzzleId to it.rating }, emptySet(), seed = 1))
+    fun `levels bunched above the bank still get four other puzzles each, nearest first`() {
+        val bunched = listOf(30, 31, 32).map { JourneyStop("L$it", "easy", it, 90) }
+        val bank = (0 until 20).map { "p$it" to it }
+
+        val ranges = journeyLevelRanges(bunched, bank)
+
+        assertEquals(listOf(12, 4, 4), ranges.map { spareIds(it).size })
+        assertEquals((16 until 20).map { "p$it" }, spareIds(ranges[2]))
+    }
+
+    @Test
+    fun `a tier with too few puzzles shares them out as evenly as it can`() {
+        val bunched = listOf(10, 11, 12).map { JourneyStop("L$it", "easy", it, 90) }
+        val bank = (20 until 27).map { "p$it" to it }
+
+        assertEquals(listOf(2, 2, 3), journeyLevelRanges(bunched, bank).map { spareIds(it).size })
+    }
+
+    @Test
+    fun `replay comes from the level's own range and skips retired and reserved puzzles`() {
+        val ranges = journeyLevelRanges(levels, ratedBank)
+        val own = ranges[1].puzzles.map { it.first }.filter { it != "L1" }
+
+        val first = pickJourneyReplay("L1", ranges, mapOf("L1" to listOf("L1")), emptySet())
+        assertTrue(first in own)
+        val second = pickJourneyReplay("L1", ranges, mapOf("L1" to listOf("L1", first!!)), emptySet())
+        assertTrue(second in own && second != first)
+        val reserved = pickJourneyReplay("L1", ranges, mapOf("L1" to listOf("L1")), setOf(first))
+        assertTrue(reserved in own && reserved != first)
+        val retiredElsewhere = pickJourneyReplay("L1", ranges, mapOf("L1" to listOf("L1"), "L2" to listOf(first)), emptySet())
+        assertTrue(retiredElsewhere in own && retiredElsewhere != first)
+    }
+
+    @Test
+    fun `an emptied range opens up again, least recently played first and never the previous one`() {
+        val ranges = journeyLevelRanges(levels, ratedBank)
+        val own = ranges[1].puzzles.map { it.first }
+        val played = listOf("L1") + own.filter { it != "L1" }
+
+        val pick = pickJourneyReplay("L1", ranges, mapOf("L1" to played), emptySet())
+
+        assertEquals("L1", pick)
+        assertEquals(own.first { it != "L1" }, pickJourneyReplay("L1", ranges, mapOf("L1" to played + "L1"), emptySet()))
+    }
+
+    @Test
+    fun `a short range borrows every unused neighbour puzzle before repeating its own`() {
+        val stops = listOf(10, 20, 30).map { JourneyStop("L$it", "easy", it, 90) }
+        val ranges = journeyLevelRanges(stops, listOf("x" to 11, "y" to 21, "z" to 31))
+        val played = (1..4).fold(listOf("L10")) { acc, _ -> acc + pickJourneyReplay("L10", ranges, mapOf("L10" to acc), emptySet())!! }
+
+        assertEquals(listOf("L10", "x", "y", "z", "L10"), played)
+    }
+
+    @Test
+    fun `a range with only the level's own puzzle borrows the nearest unused one from a neighbour`() {
+        val ranges = journeyLevelRanges(listOf(JourneyStop("a", "easy", 10, 90), JourneyStop("b", "easy", 20, 90)), listOf("x" to 30))
+
+        assertEquals("x", pickJourneyReplay("a", ranges, mapOf("a" to listOf("a")), emptySet()))
+    }
+
+    @Test
+    fun `once nothing unused is left the least recently played comes back, never the previous one`() {
+        val ranges = journeyLevelRanges(listOf(JourneyStop("a", "easy", 10, 90)), listOf("b" to 11, "c" to 12))
+
+        assertEquals("a", pickJourneyReplay("a", ranges, mapOf("a" to listOf("a", "b", "c")), emptySet()))
+        assertEquals("b", pickJourneyReplay("a", ranges, mapOf("a" to listOf("a", "b", "c", "a")), emptySet()))
+        assertEquals("c", pickJourneyReplay("a", ranges, mapOf("a" to listOf("a", "b", "c", "a")), setOf("b")))
+    }
+
+    @Test
+    fun `replay never repeats the previous puzzle over many plays`() {
+        val ranges = journeyLevelRanges(listOf(JourneyStop("a", "easy", 10, 90)), listOf("b" to 11))
+        val played = (1..6).fold(listOf("a")) { acc, _ -> acc + pickJourneyReplay("a", ranges, mapOf("a" to acc), emptySet())!! }
+
+        assertEquals(listOf("a", "b", "a", "b", "a", "b", "a"), played)
+    }
+
+    @Test
+    fun `a level with no other puzzle anywhere has no replay`() {
+        val ranges = journeyLevelRanges(listOf(JourneyStop("a", "easy", 10, 90)), emptyList())
+
+        assertNull(pickJourneyReplay("a", ranges, mapOf("a" to listOf("a")), emptySet()))
+    }
+
+    @Test
+    fun `when the whole tier is used up it reuses another level's puzzle rather than the previous one`() {
+        val stops = listOf(JourneyStop("a", "easy", 10, 90), JourneyStop("b", "easy", 20, 90))
+
+        val pick = pickJourneyReplay("a", journeyLevelRanges(stops, emptyList()), mapOf("a" to listOf("a"), "b" to listOf("b")), emptySet())
+
+        assertEquals("b", pick)
     }
 
     @Test
@@ -156,13 +252,5 @@ class JourneyRulesTest {
     @Test
     fun `no transforms replays the original`() {
         assertEquals(0, replayTransform(3, emptyList()))
-    }
-
-    @Test
-    fun `sibling seed depends on scope, stop and attempt`() {
-        val seed = journeySiblingSeed("animaldoku", "s1", 1)
-        assertEquals(seed, journeySiblingSeed("animaldoku", "s1", 1))
-        assertTrue(seed != journeySiblingSeed("animaldoku", "s1", 2))
-        assertTrue(seed != journeySiblingSeed("arrowescape", "s1", 1))
     }
 }

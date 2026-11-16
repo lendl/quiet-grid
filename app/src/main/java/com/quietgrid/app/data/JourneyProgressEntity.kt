@@ -16,4 +16,5 @@ data class JourneyProgressEntity(
     val attempts: Int,
     val nextPuzzleId: String?,
     val lastPlayedMillis: Long,
+    val retiredPuzzleIds: String = "",
 )

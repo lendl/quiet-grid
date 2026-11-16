@@ -72,8 +72,8 @@ class JourneyProgressRepositoryTest {
 
     @Test
     fun `win then loss on the replay keep stars and move on to another sibling`() = runBlocking {
-        val runStars = repository.recordWin(game, "s1", JourneySignals(hintsUsed = 0, mistakes = 0), elapsedSeconds = 60, score = 750)
-        repository.recordLoss(game, "s1")
+        val runStars = repository.recordWin(game, "s1", "s1", JourneySignals(hintsUsed = 0, mistakes = 0), elapsedSeconds = 60, score = 750)
+        repository.recordLoss(game, "s1", "sib-near")
 
         val progress = repository.progressFor(game).first().getValue("s1")
         assertEquals(3, runStars)
@@ -88,9 +88,9 @@ class JourneyProgressRepositoryTest {
     @Test
     fun `each win lines up a different sibling for the replay`() = runBlocking {
         val signals = JourneySignals(hintsUsed = 0, mistakes = 0)
-        repository.recordWin(game, "s1", signals, elapsedSeconds = 60, score = 0)
+        repository.recordWin(game, "s1", "s1", signals, elapsedSeconds = 60, score = 0)
         val firstReplay = repository.progressFor(game).first().getValue("s1").nextPuzzleId
-        repository.recordWin(game, "s1", signals, elapsedSeconds = 60, score = 0)
+        repository.recordWin(game, "s1", firstReplay!!, signals, elapsedSeconds = 60, score = 0)
         val secondReplay = repository.progressFor(game).first().getValue("s1").nextPuzzleId
 
         assertEquals("sib-near", firstReplay)
@@ -108,8 +108,8 @@ class JourneyProgressRepositoryTest {
 
     @Test
     fun `ending a replay of a cleared stop lines up a different sibling`() = runBlocking {
-        repository.recordWin(game, "s1", JourneySignals(hintsUsed = 0, mistakes = 0), elapsedSeconds = 60, score = 0)
-        repository.recordAbandon(game, "s1")
+        repository.recordWin(game, "s1", "s1", JourneySignals(hintsUsed = 0, mistakes = 0), elapsedSeconds = 60, score = 0)
+        repository.recordAbandon(game, "s1", "sib-near")
 
         val progress = repository.progressFor(game).first().getValue("s1")
         assertEquals("sib-far", progress.nextPuzzleId)
@@ -118,9 +118,9 @@ class JourneyProgressRepositoryTest {
 
     @Test
     fun `ending an uncleared stop lines up a sibling without settling the stop`() = runBlocking {
-        repository.recordAbandon(game, "s1")
+        repository.recordAbandon(game, "s1", "s1")
         val first = repository.progressFor(game).first().getValue("s1")
-        repository.recordAbandon(game, "s1")
+        repository.recordAbandon(game, "s1", "sib-near")
         val second = repository.progressFor(game).first().getValue("s1")
 
         assertEquals("sib-near", first.nextPuzzleId)
@@ -139,26 +139,64 @@ class JourneyProgressRepositoryTest {
             ratedPool = { _, _ -> emptyList() },
             clock = { 5000L },
         )
-        bare.recordWin(game, "s1", JourneySignals(hintsUsed = 0, mistakes = 0), elapsedSeconds = 60, score = 0)
+        bare.recordWin(game, "s1", "s1", JourneySignals(hintsUsed = 0, mistakes = 0), elapsedSeconds = 60, score = 0)
 
         assertNull(bare.progressFor(game).first().getValue("s1").nextPuzzleId)
     }
 
     @Test
-    fun `loss avoids played siblings and uses the stop's own tier`() = runBlocking {
-        history.appendRecord(PlayRecord(game.key, "easy", "sib-near", solved = false, score = 0, elapsedSeconds = 10, timestampMillis = 1))
-        repository.recordLoss(game, "s1")
-        repository.recordLoss(game, "s3")
+    fun `two levels never line up the same puzzle and each tier stays separate`() = runBlocking {
+        repository.recordLoss(game, "s1", "s1")
+        repository.recordLoss(game, "s1", "sib-near")
+        repository.recordLoss(game, "s2", "s2")
+        repository.recordLoss(game, "s3", "s3")
 
         val progress = repository.progressFor(game).first()
         assertEquals("sib-far", progress.getValue("s1").nextPuzzleId)
+        assertEquals("sib-near", progress.getValue("s2").nextPuzzleId)
         assertEquals("m-sib", progress.getValue("s3").nextPuzzleId)
     }
 
     @Test
+    fun `finished puzzles are retired in the order they were played`() = runBlocking {
+        val signals = JourneySignals(hintsUsed = 1, mistakes = 0)
+        repository.recordLoss(game, "s1", "s1")
+        repository.recordWin(game, "s1", "sib-near", signals, elapsedSeconds = 60, score = 0)
+        repository.recordAbandon(game, "s1", "sib-far")
+
+        val progress = repository.progressFor(game).first().getValue("s1")
+        assertEquals(listOf("s1", "sib-near", "sib-far"), progress.retired)
+        assertEquals("s1", progress.nextPuzzleId)
+    }
+
+    @Test
+    fun `progress from before retirement picks up its played puzzles from history`() = runBlocking {
+        database.journeyProgressDao().upsert(
+            JourneyProgressEntity(game.key, "s1", 2, true, true, false, 80, null, false, 2, "sib-near", 1000),
+        )
+        history.appendRecord(PlayRecord(game.key, "easy", "s1", solved = true, score = 0, elapsedSeconds = 10, timestampMillis = 1, journeyStop = "s1"))
+        history.appendRecord(PlayRecord(game.key, "easy", "sib-near", solved = true, score = 0, elapsedSeconds = 10, timestampMillis = 2, journeyStop = "s1"))
+
+        val progress = repository.progressFor(game).first().getValue("s1")
+        assertEquals(listOf("s1", "sib-near"), progress.retired)
+        assertEquals("sib-far", progress.nextPuzzleId)
+    }
+
+    @Test
+    fun `two levels lined up on the same puzzle get split apart when progress loads`() = runBlocking {
+        val dao = database.journeyProgressDao()
+        dao.upsert(JourneyProgressEntity(game.key, "s1", 1, true, false, false, 80, null, false, 1, "sib-far", 1000, retiredPuzzleIds = "s1"))
+        dao.upsert(JourneyProgressEntity(game.key, "s2", 1, true, false, false, 80, null, false, 1, "sib-far", 1000, retiredPuzzleIds = "s2"))
+
+        val progress = repository.progressFor(game).first()
+        assertEquals("sib-near", progress.getValue("s1").nextPuzzleId)
+        assertEquals("sib-far", progress.getValue("s2").nextPuzzleId)
+    }
+
+    @Test
     fun `win uses the stop's target time`() = runBlocking {
-        repository.recordWin(game, "s3", JourneySignals(hintsUsed = 0, mistakes = 0), elapsedSeconds = 100, score = 0)
-        repository.recordWin(game, "s2", JourneySignals(hintsUsed = 0, mistakes = 0), elapsedSeconds = 100, score = 0)
+        repository.recordWin(game, "s3", "s3", JourneySignals(hintsUsed = 0, mistakes = 0), elapsedSeconds = 100, score = 0)
+        repository.recordWin(game, "s2", "s2", JourneySignals(hintsUsed = 0, mistakes = 0), elapsedSeconds = 100, score = 0)
 
         val progress = repository.progressFor(game).first()
         assertTrue(progress.getValue("s3").underTarget)
@@ -191,14 +229,14 @@ class JourneyProgressRepositoryTest {
     @Test
     fun `clearing the last stop of a chapter queues one chapter milestone`() = runBlocking {
         val hinted = JourneySignals(hintsUsed = 1, mistakes = 0)
-        repository.recordWin(game, "s1", hinted, elapsedSeconds = 60, score = 0)
-        repository.recordWin(game, "s2", hinted, elapsedSeconds = 60, score = 0)
+        repository.recordWin(game, "s1", "s1", hinted, elapsedSeconds = 60, score = 0)
+        repository.recordWin(game, "s2", "s2", hinted, elapsedSeconds = 60, score = 0)
         assertEquals(emptyList<JourneyMilestone>(), repository.pendingMilestones(game))
 
-        repository.recordWin(game, "s3", hinted, elapsedSeconds = 60, score = 0)
+        repository.recordWin(game, "s3", "s3", hinted, elapsedSeconds = 60, score = 0)
         assertEquals(listOf(JourneyMilestone.ChapterComplete(1)), repository.pendingMilestones(game))
 
-        repository.recordWin(game, "s3", hinted, elapsedSeconds = 60, score = 0)
+        repository.recordWin(game, "s3", "s3", hinted, elapsedSeconds = 60, score = 0)
         assertEquals(listOf(JourneyMilestone.ChapterComplete(1)), repository.pendingMilestones(game))
         assertFalse(repository.isMastered(game).first())
     }
@@ -206,18 +244,18 @@ class JourneyProgressRepositoryTest {
     @Test
     fun `a shown milestone leaves pending and is never queued again`() = runBlocking {
         val hinted = JourneySignals(hintsUsed = 1, mistakes = 0)
-        listOf("s1", "s2", "s3").forEach { repository.recordWin(game, it, hinted, elapsedSeconds = 60, score = 0) }
+        listOf("s1", "s2", "s3").forEach { repository.recordWin(game, it, it, hinted, elapsedSeconds = 60, score = 0) }
         repository.markShown(game, JourneyMilestone.ChapterComplete(1))
         assertEquals(emptyList<JourneyMilestone>(), repository.pendingMilestones(game))
 
-        repository.recordWin(game, "s3", hinted, elapsedSeconds = 60, score = 0)
+        repository.recordWin(game, "s3", "s3", hinted, elapsedSeconds = 60, score = 0)
         assertEquals(emptyList<JourneyMilestone>(), repository.pendingMilestones(game))
     }
 
     @Test
     fun `the last missing star queues mastered after the chapter`() = runBlocking {
         val clean = JourneySignals(hintsUsed = 0, mistakes = 0)
-        listOf("s1", "s2", "s3").forEach { repository.recordWin(game, it, clean, elapsedSeconds = 60, score = 0) }
+        listOf("s1", "s2", "s3").forEach { repository.recordWin(game, it, it, clean, elapsedSeconds = 60, score = 0) }
 
         assertEquals(listOf(JourneyMilestone.ChapterComplete(1), JourneyMilestone.Mastered), repository.pendingMilestones(game))
         assertTrue(repository.isMastered(game).first())

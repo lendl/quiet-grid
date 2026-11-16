@@ -136,17 +136,17 @@ private class FakeJourneyStore(private val history: FakeHistoryStore) : JourneyP
 
     override suspend fun storedProgress(gameId: GameId): Map<String, JourneyStopProgress> = emptyMap()
 
-    override suspend fun recordWin(gameId: GameId, stopId: String, signals: JourneySignals, elapsedSeconds: Int, score: Int): Int {
+    override suspend fun recordWin(gameId: GameId, stopId: String, puzzleId: String, signals: JourneySignals, elapsedSeconds: Int, score: Int): Int {
         wins += Win(stopId, signals, elapsedSeconds, score)
         return 2
     }
 
-    override suspend fun recordLoss(gameId: GameId, stopId: String) {
+    override suspend fun recordLoss(gameId: GameId, stopId: String, puzzleId: String) {
         losses += stopId
         historySizeAtLoss += history.appended.size
     }
 
-    override suspend fun recordAbandon(gameId: GameId, stopId: String) {
+    override suspend fun recordAbandon(gameId: GameId, stopId: String, puzzleId: String) {
         abandons += stopId
     }
 
