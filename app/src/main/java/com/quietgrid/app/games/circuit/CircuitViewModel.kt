@@ -7,6 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.journey.JourneyRequest
+import com.quietgrid.app.core.journey.JourneySignals
+import com.quietgrid.app.data.BadgeStore
+import com.quietgrid.app.data.JourneyProgressStore
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
@@ -40,9 +44,10 @@ data class CircuitResult(
     val lossReason: LossReason?,
     val isFirstSolve: Boolean = false,
     val isNewHighScore: Boolean = false,
+    val journeySignals: JourneySignals = JourneySignals(0, 0),
 )
 
-private class CircuitPuzzleAdapter(
+internal class CircuitPuzzleAdapter(
     private val appContext: android.content.Context,
     private val historyStore: PlayHistoryStore,
 ) : PuzzleAdapter<CircuitSession, CircuitResult> {
@@ -53,6 +58,11 @@ private class CircuitPuzzleAdapter(
         val puzzle = CircuitPuzzleBank.randomPuzzle(appContext, difficulty, recentIds) ?: return null
         return createCircuitSession(puzzle)
     }
+
+    override suspend fun journeySession(difficulty: Difficulty, puzzleId: String, transform: Int): CircuitSession? =
+        CircuitPuzzleBank.puzzleById(appContext, difficulty, puzzleId)?.let(::createCircuitSession)
+
+    override fun journeySignals(session: CircuitSession): JourneySignals = JourneySignals(session.hintsUsed, 0)
 
     override suspend fun restoreSession(payload: String, elapsedSeconds: Double): CircuitSession? = runCatching {
         val persisted = json.decodeFromString<CircuitPersistedSession>(payload)
@@ -98,6 +108,7 @@ private class CircuitPuzzleAdapter(
         lossReason = outcome.lossReason,
         isFirstSolve = outcome.isFirstSolve,
         isNewHighScore = outcome.isNewHighScore,
+        journeySignals = outcome.journeySignals,
     )
 }
 
@@ -107,13 +118,16 @@ class CircuitPlayViewModel @AssistedInject constructor(
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
+    journeyStore: JourneyProgressStore,
+    badgeStore: BadgeStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
+    @Assisted journey: JourneyRequest?,
 ) : ViewModel() {
 
     @AssistedFactory
     interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean): CircuitPlayViewModel
+        fun create(requestedDifficulty: Difficulty, resume: Boolean, journey: JourneyRequest?): CircuitPlayViewModel
     }
 
     private val controller = PuzzleSessionController(
@@ -122,12 +136,16 @@ class CircuitPlayViewModel @AssistedInject constructor(
         statsStore = statsRepository,
         historyStore = historyRepository,
         adapter = CircuitPuzzleAdapter(appContext, historyRepository),
+        journeyStore = journeyStore,
+        badgeStore = badgeStore,
     )
 
     val session get() = controller.session
     val elapsedSeconds get() = controller.elapsedSeconds
+    val restarting get() = controller.restarting
     val result = controller.result
     val finishing = controller.finishing
+    val restarts = controller.restarts
 
     var lastTapEvent by mutableStateOf<CircuitTapEvent?>(null)
         private set
@@ -141,7 +159,7 @@ class CircuitPlayViewModel @AssistedInject constructor(
     private var tapEventSeq = 0
 
     init {
-        controller.start(requestedDifficulty, resume)
+        controller.start(requestedDifficulty, resume, journey = journey)
     }
 
     private fun clearHint() {
@@ -197,4 +215,8 @@ class CircuitPlayViewModel @AssistedInject constructor(
     }
 
     fun endPuzzle() = controller.endPuzzle()
+
+    fun restartPuzzle() {
+        controller.restartPuzzle()
+    }
 }

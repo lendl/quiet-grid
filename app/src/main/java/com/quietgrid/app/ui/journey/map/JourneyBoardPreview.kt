@@ -4,6 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Path
@@ -15,9 +16,18 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import com.quietgrid.app.games.animaldoku.rememberAnimalDokuRegionColors
+import com.quietgrid.app.games.blockescape.rememberBlockEscapeColors
+import com.quietgrid.app.games.links.rememberLinksPairColors
 import com.quietgrid.app.ui.theme.LocalIsPencilTheme
 import com.quietgrid.engine.arrowescape.ARROW_ESCAPE_MASK_ACTIVE
 import com.quietgrid.engine.arrowescape.ArrowEscapePieceData
+import com.quietgrid.engine.blockescape.BlockEscapeBlock
+import com.quietgrid.engine.circuit.CIRCUIT_DOWN
+import com.quietgrid.engine.circuit.CIRCUIT_LEFT
+import com.quietgrid.engine.circuit.CIRCUIT_RIGHT
+import com.quietgrid.engine.circuit.CIRCUIT_UP
+import com.quietgrid.engine.links.LinksPuzzleEntry
+import com.quietgrid.engine.wordswap.WORDSWAP_HOLE
 
 sealed interface JourneyBoardPreviewData {
     data class Arrows(val rows: Int, val cols: Int, val pieces: List<ArrowEscapePieceData>, val mask: List<String>? = null) : JourneyBoardPreviewData
@@ -29,6 +39,14 @@ sealed interface JourneyBoardPreviewData {
     data class Cages(val size: Int, val boxSize: Int, val cageOf: List<Int>) : JourneyBoardPreviewData
 
     data class EmptyGrid(val rows: Int, val cols: Int, val guideEvery: Int) : JourneyBoardPreviewData
+
+    data class Blocks(val size: Int, val blocks: List<BlockEscapeBlock>, val exitRow: Int) : JourneyBoardPreviewData
+
+    data class Wires(val rows: Int, val cols: Int, val masks: List<Int>, val source: Int) : JourneyBoardPreviewData
+
+    data class Pairs(val puzzle: LinksPuzzleEntry) : JourneyBoardPreviewData
+
+    data class Letters(val rows: Int, val cols: Int, val letters: String) : JourneyBoardPreviewData
 }
 
 @Composable
@@ -39,6 +57,10 @@ fun JourneyBoardPreview(data: JourneyBoardPreviewData, modifier: Modifier = Modi
         is JourneyBoardPreviewData.Digits -> DigitsPreview(data, modifier)
         is JourneyBoardPreviewData.Cages -> CagesPreview(data, modifier)
         is JourneyBoardPreviewData.EmptyGrid -> EmptyGridPreview(data, modifier)
+        is JourneyBoardPreviewData.Blocks -> BlocksPreview(data, modifier)
+        is JourneyBoardPreviewData.Wires -> WiresPreview(data, modifier)
+        is JourneyBoardPreviewData.Pairs -> PairsPreview(data, modifier)
+        is JourneyBoardPreviewData.Letters -> LettersPreview(data, modifier)
     }
 }
 
@@ -212,6 +234,110 @@ private fun EmptyGridPreview(data: JourneyBoardPreviewData.EmptyGrid, modifier: 
             val edge = row == 0 || row == data.rows
             val guide = row % data.guideEvery == 0
             drawLine(if (edge) ink else grid, Offset(left, top + row * cell), Offset(left + cell * data.cols, top + row * cell), if (edge || guide) cell * 0.06f else cell * 0.03f)
+        }
+    }
+}
+
+@Composable
+private fun BlocksPreview(data: JourneyBoardPreviewData.Blocks, modifier: Modifier) {
+    val colors = rememberBlockEscapeColors()
+    val surface = MaterialTheme.colorScheme.surface
+    val grid = MaterialTheme.colorScheme.outlineVariant
+    Canvas(modifier) {
+        if (data.size <= 0) return@Canvas
+        val cell = minOf(size.width, size.height) / data.size
+        val left = (size.width - cell * data.size) / 2
+        val top = (size.height - cell * data.size) / 2
+        drawRect(surface, Offset(left, top), Size(cell * data.size, cell * data.size))
+        drawRect(grid, Offset(left, top), Size(cell * data.size, cell * data.size), style = Stroke(cell * 0.05f))
+        val gap = cell * 0.08f
+        data.blocks.forEachIndexed { index, block ->
+            val width = if (block.horizontal) block.length * cell else cell
+            val height = if (block.horizontal) cell else block.length * cell
+            drawRoundRect(
+                color = if (index == 0) colors.key else colors.block,
+                topLeft = Offset(left + block.col * cell + gap, top + block.row * cell + gap),
+                size = Size(width - gap * 2, height - gap * 2),
+                cornerRadius = CornerRadius(cell * 0.18f),
+            )
+        }
+        val exitY = top + data.exitRow * cell
+        drawLine(colors.key, Offset(left + cell * data.size, exitY + gap), Offset(left + cell * data.size, exitY + cell - gap), cell * 0.12f)
+    }
+}
+
+@Composable
+private fun WiresPreview(data: JourneyBoardPreviewData.Wires, modifier: Modifier) {
+    val surface = MaterialTheme.colorScheme.surface
+    val grid = MaterialTheme.colorScheme.outlineVariant
+    val ink = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+    val power = MaterialTheme.colorScheme.primary
+    Canvas(modifier) {
+        if (data.rows <= 0 || data.cols <= 0 || data.masks.size != data.rows * data.cols) return@Canvas
+        val cell = minOf(size.width / data.cols, size.height / data.rows)
+        val left = (size.width - cell * data.cols) / 2
+        val top = (size.height - cell * data.rows) / 2
+        drawRect(surface, Offset(left, top), Size(cell * data.cols, cell * data.rows))
+        for (col in 0..data.cols) drawLine(grid, Offset(left + col * cell, top), Offset(left + col * cell, top + cell * data.rows), cell * 0.03f)
+        for (row in 0..data.rows) drawLine(grid, Offset(left, top + row * cell), Offset(left + cell * data.cols, top + row * cell), cell * 0.03f)
+        val wire = cell * 0.16f
+        data.masks.forEachIndexed { index, mask ->
+            val centre = Offset(left + (index % data.cols + 0.5f) * cell, top + (index / data.cols + 0.5f) * cell)
+            val half = cell / 2
+            if (mask and CIRCUIT_UP != 0) drawLine(ink, centre, Offset(centre.x, centre.y - half), wire, StrokeCap.Round)
+            if (mask and CIRCUIT_DOWN != 0) drawLine(ink, centre, Offset(centre.x, centre.y + half), wire, StrokeCap.Round)
+            if (mask and CIRCUIT_LEFT != 0) drawLine(ink, centre, Offset(centre.x - half, centre.y), wire, StrokeCap.Round)
+            if (mask and CIRCUIT_RIGHT != 0) drawLine(ink, centre, Offset(centre.x + half, centre.y), wire, StrokeCap.Round)
+            if (index == data.source) drawCircle(power, radius = cell * 0.26f, center = centre)
+        }
+    }
+}
+
+@Composable
+private fun PairsPreview(data: JourneyBoardPreviewData.Pairs, modifier: Modifier) {
+    val pairColors = rememberLinksPairColors(data.puzzle)
+    val surface = MaterialTheme.colorScheme.surface
+    val grid = MaterialTheme.colorScheme.outlineVariant
+    val size = data.puzzle.size
+    Canvas(modifier) {
+        if (size <= 0) return@Canvas
+        val cell = minOf(this.size.width, this.size.height) / size
+        val left = (this.size.width - cell * size) / 2
+        val top = (this.size.height - cell * size) / 2
+        drawRect(surface, Offset(left, top), Size(cell * size, cell * size))
+        for (i in 0..size) {
+            drawLine(grid, Offset(left + i * cell, top), Offset(left + i * cell, top + cell * size), cell * 0.04f)
+            drawLine(grid, Offset(left, top + i * cell), Offset(left + cell * size, top + i * cell), cell * 0.04f)
+        }
+        data.puzzle.endpoints.forEachIndexed { pair, ends ->
+            val colour = pairColors.getOrNull(pair) ?: return@forEachIndexed
+            ends.forEach { endCell ->
+                val centre = Offset(left + (endCell % size + 0.5f) * cell, top + (endCell / size + 0.5f) * cell)
+                drawCircle(colour, radius = cell * 0.36f, center = centre)
+            }
+        }
+    }
+}
+
+@Composable
+private fun LettersPreview(data: JourneyBoardPreviewData.Letters, modifier: Modifier) {
+    val textMeasurer = rememberTextMeasurer()
+    val tile = MaterialTheme.colorScheme.surfaceVariant
+    val ink = MaterialTheme.colorScheme.onSurfaceVariant
+    Canvas(modifier) {
+        if (data.rows <= 0 || data.cols <= 0 || data.letters.length != data.rows * data.cols) return@Canvas
+        val cell = minOf(size.width / data.cols, size.height / data.rows)
+        val left = (size.width - cell * data.cols) / 2
+        val top = (size.height - cell * data.rows) / 2
+        val gap = cell * 0.06f
+        val style = TextStyle(color = ink, fontSize = (cell * 0.55f).toSp(), fontWeight = FontWeight.SemiBold)
+        data.letters.forEachIndexed { index, letter ->
+            if (letter == WORDSWAP_HOLE) return@forEachIndexed
+            val x = left + (index % data.cols) * cell
+            val y = top + (index / data.cols) * cell
+            drawRoundRect(tile, Offset(x + gap, y + gap), Size(cell - gap * 2, cell - gap * 2), CornerRadius(cell * 0.14f))
+            val layout = textMeasurer.measure(letter.uppercaseChar().toString(), style)
+            drawText(layout, topLeft = Offset(x + (cell - layout.size.width) / 2, y + (cell - layout.size.height) / 2))
         }
     }
 }

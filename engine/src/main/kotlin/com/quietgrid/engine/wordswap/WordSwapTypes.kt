@@ -37,6 +37,7 @@ data class WordSwapPuzzleEntry(
     val start: String,
     val slots: List<WordSwapSlot>,
     val minSwaps: Int,
+    val rating: Int? = null,
 )
 
 data class WordSwapMove(val first: Int, val second: Int)

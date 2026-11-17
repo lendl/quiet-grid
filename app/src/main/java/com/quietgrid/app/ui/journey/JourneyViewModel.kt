@@ -12,15 +12,21 @@ import com.quietgrid.app.data.JourneyProgressStore
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.games.animaldoku.AnimalDokuPuzzleBank
 import com.quietgrid.app.games.arrowescape.ArrowEscapePuzzleBank
+import com.quietgrid.app.games.blockescape.BlockEscapePuzzleBank
+import com.quietgrid.app.games.circuit.CircuitPuzzleBank
 import com.quietgrid.app.games.killersudoku.KillerSudokuPuzzleBank
+import com.quietgrid.app.games.links.LinksPuzzleBank
 import com.quietgrid.app.games.minisudoku.MiniSudokuPuzzleBank
 import com.quietgrid.app.games.nonogram.NonogramPuzzleBank
 import com.quietgrid.app.games.starbattle.StarBattlePuzzleBank
 import com.quietgrid.app.games.sudoku.SudokuPuzzleBank
 import com.quietgrid.app.games.takuzu.TakuzuPuzzleBank
+import com.quietgrid.app.games.wordswap.WordSwapPuzzleBank
 import com.quietgrid.app.ui.journey.map.JourneyBoardPreviewData
 import com.quietgrid.engine.animaldoku.transformed
 import com.quietgrid.engine.arrowescape.transformed
+import com.quietgrid.engine.blockescape.BLOCKESCAPE_EXIT_ROW
+import com.quietgrid.engine.blockescape.BLOCKESCAPE_SIZE
 import com.quietgrid.engine.starbattle.transformed
 import com.quietgrid.engine.killersudoku.transformed
 import com.quietgrid.engine.nonogram.transformed
@@ -109,6 +115,14 @@ class JourneyViewModel @Inject constructor(
         GameId.TAKUZU -> TakuzuPuzzleBank.puzzleById(context, Difficulty.fromKey(difficulty), puzzleId)
             ?.transformed(gridTransformById(transform))
             ?.let { JourneyBoardPreviewData.Digits(it.size, it.size, it.size, decodePuzzleBoard(it.solution, it.mask, it.size)) }
+        GameId.BLOCKESCAPE -> BlockEscapePuzzleBank.puzzleById(context, Difficulty.fromKey(difficulty), puzzleId)
+            ?.let { JourneyBoardPreviewData.Blocks(BLOCKESCAPE_SIZE, it.blocks, BLOCKESCAPE_EXIT_ROW) }
+        GameId.CIRCUIT -> CircuitPuzzleBank.puzzleById(context, Difficulty.fromKey(difficulty), puzzleId)
+            ?.let { JourneyBoardPreviewData.Wires(it.rows, it.cols, it.start, it.source) }
+        GameId.LINKS -> LinksPuzzleBank.puzzleById(context, Difficulty.fromKey(difficulty), puzzleId)
+            ?.let { JourneyBoardPreviewData.Pairs(it) }
+        GameId.WORDSWAP -> WordSwapPuzzleBank.puzzleById(context, Difficulty.fromKey(difficulty), puzzleId)
+            ?.let { JourneyBoardPreviewData.Letters(it.rows, it.cols, it.start) }
         else -> null
     }
 

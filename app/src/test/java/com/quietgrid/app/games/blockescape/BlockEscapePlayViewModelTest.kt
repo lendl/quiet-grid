@@ -3,7 +3,9 @@ package com.quietgrid.app.games.blockescape
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
+import com.quietgrid.app.testutil.FakeBadgeStore
 import com.quietgrid.app.testutil.FakeHistoryStore
+import com.quietgrid.app.testutil.FakeJourneyStore
 import com.quietgrid.app.testutil.FakeSessionStore
 import com.quietgrid.app.testutil.FakeStatsStore
 import com.quietgrid.engine.blockescape.BlockEscapeBlock
@@ -60,8 +62,11 @@ class BlockEscapePlayViewModelTest {
             FakeSessionStore(),
             FakeStatsStore(),
             FakeHistoryStore(),
+            FakeJourneyStore(),
+            FakeBadgeStore(),
             Difficulty.EASY,
             resume = false,
+            journey = null,
         )
         viewModel.hintDispatcher = StandardTestDispatcher(mainDispatcherRule.dispatcher.scheduler)
         return viewModel

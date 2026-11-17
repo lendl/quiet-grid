@@ -21,6 +21,7 @@ data class BlockEscapePuzzleEntry(
     val difficulty: String,
     val blocks: List<BlockEscapeBlock>,
     val minMoves: Int,
+    val rating: Int? = null,
 )
 
 @Serializable

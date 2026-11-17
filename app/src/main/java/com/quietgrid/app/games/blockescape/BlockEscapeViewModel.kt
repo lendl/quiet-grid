@@ -7,6 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.journey.JourneyRequest
+import com.quietgrid.app.core.journey.JourneySignals
+import com.quietgrid.app.data.BadgeStore
+import com.quietgrid.app.data.JourneyProgressStore
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
@@ -42,9 +46,10 @@ data class BlockEscapeResult(
     val lossReason: LossReason?,
     val isFirstSolve: Boolean = false,
     val isNewHighScore: Boolean = false,
+    val journeySignals: JourneySignals = JourneySignals(0, 0),
 )
 
-private class BlockEscapePuzzleAdapter(
+internal class BlockEscapePuzzleAdapter(
     private val appContext: android.content.Context,
     private val historyStore: PlayHistoryStore,
 ) : PuzzleAdapter<BlockEscapeSession, BlockEscapeResult> {
@@ -55,6 +60,11 @@ private class BlockEscapePuzzleAdapter(
         val puzzle = BlockEscapePuzzleBank.randomPuzzle(appContext, difficulty, recentIds) ?: return null
         return createBlockEscapeSession(puzzle)
     }
+
+    override suspend fun journeySession(difficulty: Difficulty, puzzleId: String, transform: Int): BlockEscapeSession? =
+        BlockEscapePuzzleBank.puzzleById(appContext, difficulty, puzzleId)?.let(::createBlockEscapeSession)
+
+    override fun journeySignals(session: BlockEscapeSession): JourneySignals = JourneySignals(session.hintsUsed, 0)
 
     override suspend fun restoreSession(payload: String, elapsedSeconds: Double): BlockEscapeSession? = runCatching {
         val persisted = json.decodeFromString<BlockEscapePersistedSession>(payload)
@@ -96,6 +106,7 @@ private class BlockEscapePuzzleAdapter(
         lossReason = outcome.lossReason,
         isFirstSolve = outcome.isFirstSolve,
         isNewHighScore = outcome.isNewHighScore,
+        journeySignals = outcome.journeySignals,
     )
 }
 
@@ -105,13 +116,16 @@ class BlockEscapePlayViewModel @AssistedInject constructor(
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
+    journeyStore: JourneyProgressStore,
+    badgeStore: BadgeStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
+    @Assisted journey: JourneyRequest?,
 ) : ViewModel() {
 
     @AssistedFactory
     interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean): BlockEscapePlayViewModel
+        fun create(requestedDifficulty: Difficulty, resume: Boolean, journey: JourneyRequest?): BlockEscapePlayViewModel
     }
 
     private val controller = PuzzleSessionController(
@@ -120,12 +134,16 @@ class BlockEscapePlayViewModel @AssistedInject constructor(
         statsStore = statsRepository,
         historyStore = historyRepository,
         adapter = BlockEscapePuzzleAdapter(appContext, historyRepository),
+        journeyStore = journeyStore,
+        badgeStore = badgeStore,
     )
 
     val session get() = controller.session
     val elapsedSeconds get() = controller.elapsedSeconds
+    val restarting get() = controller.restarting
     val result = controller.result
     val finishing = controller.finishing
+    val restarts = controller.restarts
 
     var isComputingHint by mutableStateOf(false)
         private set
@@ -145,7 +163,7 @@ class BlockEscapePlayViewModel @AssistedInject constructor(
     private var lastChargedBlocks: List<BlockEscapeBlock>? = null
 
     init {
-        controller.start(requestedDifficulty, resume)
+        controller.start(requestedDifficulty, resume, journey = journey)
     }
 
     fun onMove(move: BlockEscapeMove) {
@@ -205,4 +223,9 @@ class BlockEscapePlayViewModel @AssistedInject constructor(
     }
 
     fun endPuzzle() = controller.endPuzzle()
+
+    fun restartPuzzle() {
+        clearHint()
+        controller.restartPuzzle()
+    }
 }

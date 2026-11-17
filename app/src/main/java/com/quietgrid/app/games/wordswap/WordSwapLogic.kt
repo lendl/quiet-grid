@@ -14,15 +14,15 @@ import com.quietgrid.engine.wordswap.read
 import com.quietgrid.engine.wordswap.wordGroup
 import com.quietgrid.engine.wordswap.wordSwapSolvedSlots
 
-private const val WORDSWAP_BASE_SCORE = 1000
-private const val WORDSWAP_HINT_PENALTY = 100
-private const val WORDSWAP_EXTRA_SWAP_PENALTY = 10
+private const val WORDSWAP_BASE_SCORE = 10_000
+private const val WORDSWAP_HINT_PENALTY = 1_000
+private const val WORDSWAP_EXTRA_SWAP_PENALTY = 100
 
-private fun wordSwapSecondsPerPoint(difficulty: Difficulty): Int = when (difficulty) {
-    Difficulty.EASY -> 1
-    Difficulty.MEDIUM -> 2
-    Difficulty.HARD -> 3
-    Difficulty.EXPERT -> 4
+private fun wordSwapPointsPerSecond(difficulty: Difficulty): Int = when (difficulty) {
+    Difficulty.EASY -> 10
+    Difficulty.MEDIUM -> 5
+    Difficulty.HARD -> 4
+    Difficulty.EXPERT -> 3
 }
 
 data class WordSwapBankWord(val word: String, val direction: WordSwapDirection, val done: Boolean)
@@ -79,13 +79,13 @@ fun wordSwapAccuracy(session: WordSwapSession): Int {
 
 fun wordSwapScore(session: WordSwapSession, elapsedSeconds: Int): Int {
     val extraSwaps = maxOf(0, session.swaps - session.puzzle.minSwaps)
-    val secondsPerPoint = wordSwapSecondsPerPoint(Difficulty.fromKey(session.puzzle.difficulty))
+    val pointsPerSecond = wordSwapPointsPerSecond(Difficulty.fromKey(session.puzzle.difficulty))
     return maxOf(
         0,
         WORDSWAP_BASE_SCORE -
             session.hintsUsed * WORDSWAP_HINT_PENALTY -
             extraSwaps * WORDSWAP_EXTRA_SWAP_PENALTY -
-            elapsedSeconds / secondsPerPoint,
+            elapsedSeconds * pointsPerSecond,
     )
 }
 

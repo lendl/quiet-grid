@@ -5,9 +5,9 @@ import com.quietgrid.engine.circuit.circuitTurnsBetween
 import com.quietgrid.engine.circuit.findCircuitHint
 import com.quietgrid.engine.circuit.isCircuitSolved
 
-private const val CIRCUIT_BASE_SCORE = 1000
-private const val CIRCUIT_HINT_PENALTY = 100
-private const val CIRCUIT_TIME_PENALTY_PER_SECOND = 1
+private const val CIRCUIT_BASE_SCORE = 10_000
+private const val CIRCUIT_HINT_PENALTY = 1_000
+private const val CIRCUIT_TIME_PENALTY_PER_SECOND = 10
 
 internal fun circuitScore(hintsUsed: Int, elapsedSeconds: Int): Int =
     maxOf(0, CIRCUIT_BASE_SCORE - hintsUsed * CIRCUIT_HINT_PENALTY - elapsedSeconds * CIRCUIT_TIME_PENALTY_PER_SECOND)

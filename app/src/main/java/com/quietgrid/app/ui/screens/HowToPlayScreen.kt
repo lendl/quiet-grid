@@ -677,6 +677,11 @@ private fun CircuitHowToPlay() {
     RuleRow(2, R.string.circuit_rule_2_title, R.string.circuit_rule_2_body)
     RuleRow(3, R.string.circuit_rule_3_title, R.string.circuit_rule_3_body)
     RuleRow(4, R.string.circuit_rule_4_title, R.string.circuit_rule_4_body)
+
+    HorizontalDivider(Modifier.padding(vertical = 20.dp))
+    Accordion(stringResource(R.string.how_to_play_scoring_title)) {
+        BodyText(stringResource(R.string.circuit_how_to_play_scoring))
+    }
 }
 
 @Composable

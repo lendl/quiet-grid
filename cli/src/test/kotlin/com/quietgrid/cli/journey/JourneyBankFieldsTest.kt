@@ -34,6 +34,10 @@ class JourneyBankFieldsTest {
         assertKnownFields("killersudoku_puzzles.json", KillerSudokuPuzzleEntry.serializer())
         assertKnownFields("takuzu_puzzles.json", com.quietgrid.engine.takuzu.TakuzuPuzzleEntry.serializer())
         assertKnownFields("nonogram_puzzles.json", com.quietgrid.engine.nonogram.NonogramPuzzleEntry.serializer())
+        assertKnownFields("blockescape_puzzles.json", com.quietgrid.engine.blockescape.BlockEscapePuzzleEntry.serializer())
+        assertKnownFields("circuit_puzzles.json", com.quietgrid.engine.circuit.CircuitPuzzleEntry.serializer())
+        assertKnownFields("links_puzzles.json", com.quietgrid.engine.links.LinksPuzzleEntry.serializer())
+        assertKnownFields("wordswap_puzzles.json", com.quietgrid.engine.wordswap.WordSwapPuzzleEntry.serializer())
         listOf("easy", "medium", "hard", "expert", "halloween").forEach { suffix ->
             val file = if (suffix == "halloween") "arrowescape_halloween_puzzles.json" else "arrowescape_puzzles_$suffix.json"
             assertKnownFields(file, ArrowEscapePuzzleEntry.serializer())

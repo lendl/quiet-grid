@@ -8,15 +8,15 @@ import com.quietgrid.engine.blockescape.blockEscapeLanesMatch
 import com.quietgrid.engine.blockescape.isBlockEscapeSolved
 import com.quietgrid.engine.blockescape.isValidBlockEscapeLayout
 
-private const val BLOCKESCAPE_BASE_SCORE = 1000
-private const val BLOCKESCAPE_HINT_PENALTY = 100
-private const val BLOCKESCAPE_EXTRA_MOVE_PENALTY = 10
+private const val BLOCKESCAPE_BASE_SCORE = 10_000
+private const val BLOCKESCAPE_HINT_PENALTY = 1_000
+private const val BLOCKESCAPE_EXTRA_MOVE_PENALTY = 100
 
-private fun blockEscapeSecondsPerPoint(difficulty: Difficulty): Int = when (difficulty) {
-    Difficulty.EASY -> 1
-    Difficulty.MEDIUM -> 2
-    Difficulty.HARD -> 3
-    Difficulty.EXPERT -> 4
+private fun blockEscapePointsPerSecond(difficulty: Difficulty): Int = when (difficulty) {
+    Difficulty.EASY -> 10
+    Difficulty.MEDIUM -> 5
+    Difficulty.HARD -> 4
+    Difficulty.EXPERT -> 3
 }
 
 fun applyBlockEscapeSlide(session: BlockEscapeSession, move: BlockEscapeMove): BlockEscapeSession? {
@@ -43,13 +43,13 @@ fun blockEscapeAccuracy(session: BlockEscapeSession): Int {
 
 fun blockEscapeScore(session: BlockEscapeSession, elapsedSeconds: Int): Int {
     val extraMoves = maxOf(0, session.moves - session.puzzle.minMoves)
-    val secondsPerPoint = blockEscapeSecondsPerPoint(Difficulty.fromKey(session.puzzle.difficulty))
+    val pointsPerSecond = blockEscapePointsPerSecond(Difficulty.fromKey(session.puzzle.difficulty))
     return maxOf(
         0,
         BLOCKESCAPE_BASE_SCORE -
             session.hintsUsed * BLOCKESCAPE_HINT_PENALTY -
             extraMoves * BLOCKESCAPE_EXTRA_MOVE_PENALTY -
-            elapsedSeconds / secondsPerPoint,
+            elapsedSeconds * pointsPerSecond,
     )
 }
 

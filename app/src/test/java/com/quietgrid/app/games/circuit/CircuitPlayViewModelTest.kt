@@ -5,7 +5,9 @@ import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.ActiveSessionEnvelope
+import com.quietgrid.app.testutil.FakeBadgeStore
 import com.quietgrid.app.testutil.FakeHistoryStore
+import com.quietgrid.app.testutil.FakeJourneyStore
 import com.quietgrid.app.testutil.FakeSessionStore
 import com.quietgrid.app.testutil.FakeStatsStore
 import com.quietgrid.engine.circuit.CIRCUIT_DOWN
@@ -75,8 +77,11 @@ class CircuitPlayViewModelTest {
             sessionStore,
             FakeStatsStore(),
             FakeHistoryStore(),
+            FakeJourneyStore(),
+            FakeBadgeStore(),
             Difficulty.EASY,
             resume = resume,
+            journey = null,
         )
         viewModel.hintDispatcher = StandardTestDispatcher(mainDispatcherRule.dispatcher.scheduler)
         return viewModel

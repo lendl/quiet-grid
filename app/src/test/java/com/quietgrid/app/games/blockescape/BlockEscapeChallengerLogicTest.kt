@@ -30,7 +30,7 @@ class BlockEscapeChallengerLogicTest {
         val solved = ticked.copy(puzzleSession = ticked.puzzleSession.copy(moves = 2))
         val next = advanceBlockEscapeChallengerAfterSolve(solved, Difficulty.EASY, 1, puzzle("b"))
         assertEquals(1, next.puzzlesSolved)
-        assertEquals(1000 - 10, next.score)
+        assertEquals(10_000 - 100, next.score)
         assertEquals(BLOCKESCAPE_CHALLENGER_STARTING_SECONDS - 10 + BLOCKESCAPE_CHALLENGER_BONUS_SECONDS, next.secondsRemaining, 0.0)
         assertEquals(0.0, next.secondsOnCurrentPuzzle, 0.0)
         assertEquals(10.0, next.fastestSolveSeconds!!, 0.0)

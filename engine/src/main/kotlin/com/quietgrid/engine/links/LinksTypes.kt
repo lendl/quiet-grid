@@ -10,6 +10,7 @@ data class LinksPuzzleEntry(
     val difficulty: String,
     val endpoints: List<List<Int>>,
     val solution: List<List<Int>>,
+    val rating: Int? = null,
 ) {
     val pairCount: Int get() = endpoints.size
     val cellCount: Int get() = size * size

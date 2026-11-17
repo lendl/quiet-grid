@@ -57,6 +57,10 @@ enum class BadgeGlyph {
     TWO_LINES,
     THREE_LINES,
     CLEAN_BOARD,
+    EXIT,
+    BOLT,
+    LINK,
+    SWAP,
 }
 
 sealed interface BadgeIcon {
@@ -139,6 +143,10 @@ private val SKILL_BADGES: Map<GameId, Pair<String, BadgeGlyph>> = mapOf(
     GameId.STARBATTLE to ("night_owl" to BadgeGlyph.NIGHT),
     GameId.TAKUZU to ("even_keel" to BadgeGlyph.BALANCE),
     GameId.NONOGRAM to ("full_picture" to BadgeGlyph.PICTURE),
+    GameId.BLOCKESCAPE to ("clear_way" to BadgeGlyph.EXIT),
+    GameId.CIRCUIT to ("live_wire" to BadgeGlyph.BOLT),
+    GameId.LINKS to ("unbroken" to BadgeGlyph.LINK),
+    GameId.WORDSWAP to ("word_perfect" to BadgeGlyph.SWAP),
 )
 
 private fun isBeta(gameId: GameId): Boolean = GameCatalog.get(gameId).beta

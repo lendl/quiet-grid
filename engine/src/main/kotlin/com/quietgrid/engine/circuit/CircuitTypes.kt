@@ -20,6 +20,7 @@ data class CircuitPuzzleEntry(
     val wrap: Boolean = false,
     val solution: List<Int>,
     val start: List<Int>,
+    val rating: Int? = null,
 )
 
 fun rotateCircuitMask(mask: Int, quarterTurns: Int = 1): Int {

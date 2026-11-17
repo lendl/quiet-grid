@@ -40,7 +40,7 @@ class BlockEscapeLogicTest {
         assertEquals(BlockEscapeStatus.WON, won.status)
         assertEquals(5, won.moves)
         assertEquals(100, blockEscapeAccuracy(won))
-        assertEquals(1000, blockEscapeScore(won, 0))
+        assertEquals(10_000, blockEscapeScore(won, 0))
     }
 
     @Test
@@ -52,7 +52,7 @@ class BlockEscapeLogicTest {
     @Test
     fun `extra moves, hints and time lower the score`() {
         val session = createBlockEscapeSession(puzzle).copy(moves = 9, hintsUsed = 1)
-        assertEquals(1000 - 100 - 40 - 30, blockEscapeScore(session, 30))
+        assertEquals(10_000 - 1_000 - 400 - 300, blockEscapeScore(session, 30))
         assertEquals(55, blockEscapeAccuracy(session))
     }
 

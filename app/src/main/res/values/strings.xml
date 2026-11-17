@@ -1828,13 +1828,14 @@
     <string name="circuit_rule_3_body">Wires can never run in a closed ring.</string>
     <string name="circuit_rule_4_title">Wrapping edges</string>
     <string name="circuit_rule_4_body">On Hard and Expert the grid has a dashed frame: a wire leaving one edge comes back in on the opposite edge.</string>
+    <string name="circuit_how_to_play_scoring">Starts at 10,000. Loses 10 points every second. Each hint costs 1,000 points.</string>
     <string name="circuit_tiles_lit">%1$d / %2$d lit</string>
     <string name="circuit_turns">Turns %1$d</string>
     <string name="circuit_hint_show">Show a hint</string>
     <string name="circuit_hint_hide">Hide the hint</string>
     <string name="circuit_hint_title_turn">This tile is in place now</string>
     <string name="circuit_hint_title_mistake">This locked tile was the wrong way round</string>
-    <string name="circuit_hint_body_edge_match">Working from your locked tiles, only one way fits here.</string>
+    <string name="circuit_hint_body_edge_match">Working from the edges and your locked tiles, only one way fits here.</string>
     <string name="circuit_hint_body_no_loop">Every other way that still fits would close a loop.</string>
     <string name="circuit_hint_body_dead_end">Every other way that still fits would cut a group off from the power.</string>
     <string name="circuit_hint_body_what_if">Each other way that still fits leads to a dead end a few steps on.</string>
@@ -1896,7 +1897,7 @@
     <string name="links_how_to_play_goal">Connect every pair of matching dots with a pipe. The puzzle is solved when every pair is joined and every cell of the grid is filled.</string>
     <string name="links_how_to_play_controls">Drag from a dot to draw a pipe. Drag back over your pipe to shorten it, or press anywhere on a pipe and drag to redraw it from there. Dragging through another pipe cuts it; back off during the same drag and the cut pipe comes back. A tap without dragging changes nothing. On big grids, pinch to zoom and move the view with two fingers.</string>
     <string name="links_how_to_play_wrong_move">There are no lives. A move counts each time you start drawing a different color than last time, and accuracy is pairs divided by moves. A hint fixes a pipe that has gone the wrong way, or draws the pair you can work out next, and costs two moves.</string>
-    <string name="links_how_to_play_scoring">Starts at 1,000. Loses 1 point every second on Easy, every 2 seconds on Medium, every 3 on Hard and every 4 on Expert. Each hint costs 100 points and each move beyond one per pair costs 20.</string>
+    <string name="links_how_to_play_scoring">Starts at 10,000. Loses 10 points every second on Easy, 5 on Medium, 4 on Hard and 3 on Expert. Each hint costs 1,000 points and each move beyond one per pair costs 200.</string>
     <string name="links_rule_1_title">Connect the pairs</string>
     <string name="links_rule_1_body">Join each dot to the other dot of the same color with one pipe.</string>
     <string name="links_rule_2_title">No crossings</string>
@@ -1973,6 +1974,14 @@
     <string name="badge_takuzu_even_keel_desc">Solve an Expert Takuzu without hints.</string>
     <string name="badge_nonogram_full_picture_name">Full picture</string>
     <string name="badge_nonogram_full_picture_desc">Solve an Expert Nonogram without hints.</string>
+    <string name="badge_blockescape_clear_way_name">Clear way</string>
+    <string name="badge_blockescape_clear_way_desc">Solve an Expert Block Escape without hints.</string>
+    <string name="badge_circuit_live_wire_name">Live wire</string>
+    <string name="badge_circuit_live_wire_desc">Solve an Expert Circuit without hints.</string>
+    <string name="badge_links_unbroken_name">Unbroken</string>
+    <string name="badge_links_unbroken_desc">Solve an Expert Links puzzle without hints.</string>
+    <string name="badge_wordswap_word_perfect_name">Word perfect</string>
+    <string name="badge_wordswap_word_perfect_desc">Solve an Expert Word Swap without hints.</string>
     <string name="badge_minesweeper_clean_sweep_name">Clean sweep</string>
     <string name="badge_minesweeper_clean_sweep_desc">Clear a Hard field.</string>
     <string name="badge_minesweeper_every_flag_name">Every flag</string>
@@ -2167,7 +2176,7 @@
     <string name="blockescape_how_to_play_goal">Get the coral block out through the exit on the right side of the grid. The puzzle is solved as soon as it reaches the exit.</string>
     <string name="blockescape_how_to_play_controls">Drag a block along its own length to slide it. It stops at the edge of the grid or at the next block, and settles into the nearest cell when you let go. Undo takes back your last slide.</string>
     <string name="blockescape_how_to_play_wrong_move">There are no lives. Every slide counts as one move, and the info strip shows the fewest moves this puzzle can be solved in. A hint shows which block to slide and where.</string>
-    <string name="blockescape_how_to_play_scoring">Starts at 1,000. Loses 1 point every second on Easy, every 2 seconds on Medium, every 3 on Hard and every 4 on Expert. Each hint costs 100 points and each move beyond the fewest possible costs 10.</string>
+    <string name="blockescape_how_to_play_scoring">Starts at 10,000. Loses 10 points every second on Easy, 5 on Medium, 4 on Hard and 3 on Expert. Each hint costs 1,000 points and each move beyond the fewest possible costs 100.</string>
     <string name="blockescape_rule_1_title">Slide along its length</string>
     <string name="blockescape_rule_1_body">A flat block only moves left and right. A tall block only moves up and down.</string>
     <string name="blockescape_rule_2_title">No passing</string>
@@ -2192,7 +2201,7 @@
     <string name="wordswap_how_to_play_goal">Put every word from the list in its place on the grid. The puzzle is solved when all of them read correctly.</string>
     <string name="wordswap_how_to_play_controls">Tap a tile to pick it up, then tap any other tile to swap the two. Tap the same tile again to put it down. Undo takes back your last swap and Restart puts every tile back where it started.</string>
     <string name="wordswap_how_to_play_wrong_move">There are no lives. Every swap counts, and the info strip shows the fewest swaps this puzzle can be solved in. A hint shows which word goes in one line, and why.</string>
-    <string name="wordswap_how_to_play_scoring">Starts at 1,000. Loses 1 point every second on Easy, every 2 seconds on Medium, every 3 on Hard and every 4 on Expert. Each hint costs 100 points and each swap beyond the fewest possible costs 10.</string>
+    <string name="wordswap_how_to_play_scoring">Starts at 10,000. Loses 10 points every second on Easy, 5 on Medium, 4 on Hard and 3 on Expert. Each hint costs 1,000 points and each swap beyond the fewest possible costs 100.</string>
     <string name="wordswap_rule_1_title">Swap any two tiles</string>
     <string name="wordswap_rule_1_body">The two tiles don\'t have to touch. Gaps in the grid stay empty.</string>
     <string name="wordswap_rule_2_title">Every line is a word</string>

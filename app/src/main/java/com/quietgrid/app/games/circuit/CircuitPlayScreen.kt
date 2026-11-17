@@ -9,6 +9,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.journey.JourneyRequest
 import com.quietgrid.app.ui.components.CollectPuzzleResult
 import com.quietgrid.app.ui.components.PuzzleBoardContainer
 import com.quietgrid.app.ui.components.rememberHapticController
@@ -26,11 +27,14 @@ fun CircuitPlayScreen(
     resume: Boolean,
     onBack: () -> Unit,
     onFinished: (CircuitResult) -> Unit,
+    journey: JourneyRequest? = null,
+    onRestarted: () -> Unit = {},
 ) {
     val viewModel = hiltViewModel<CircuitPlayViewModel, CircuitPlayViewModel.Factory>(
-        creationCallback = { factory -> factory.create(difficulty, resume) },
+        creationCallback = { factory -> factory.create(difficulty, resume, journey) },
     )
     CollectPuzzleResult(viewModel.result, onFinished)
+    CollectPuzzleResult(viewModel.restarts) { onRestarted() }
     val finishing by viewModel.finishing.collectAsStateWithLifecycle()
 
     val session = viewModel.session
@@ -46,6 +50,8 @@ fun CircuitPlayScreen(
         timer = PlayTimer.Elapsed(viewModel.elapsedSeconds.toInt()),
         onBack = onBack,
         onEndPuzzle = { viewModel.endPuzzle() },
+        onRestartPuzzle = if (journey != null) viewModel::restartPuzzle else null,
+        restarting = viewModel.restarting,
         finishing = finishing,
         foldRows = session?.puzzle?.rows,
         foldCols = session?.puzzle?.cols,

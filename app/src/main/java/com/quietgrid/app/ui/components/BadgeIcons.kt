@@ -1,10 +1,12 @@
 package com.quietgrid.app.ui.components
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.automirrored.outlined.MenuBook
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Balance
 import androidx.compose.material.icons.outlined.Bedtime
+import androidx.compose.material.icons.outlined.Bolt
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.CleaningServices
 import androidx.compose.material.icons.outlined.CropFree
@@ -20,6 +22,7 @@ import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Landscape
 import androidx.compose.material.icons.outlined.Layers
 import androidx.compose.material.icons.outlined.Lightbulb
+import androidx.compose.material.icons.outlined.Link
 import androidx.compose.material.icons.outlined.LockOpen
 import androidx.compose.material.icons.outlined.LooksTwo
 import androidx.compose.material.icons.outlined.Looks3
@@ -32,6 +35,7 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Shuffle
 import androidx.compose.material.icons.outlined.SportsScore
 import androidx.compose.material.icons.outlined.StarOutline
+import androidx.compose.material.icons.outlined.SwapHoriz
 import androidx.compose.material.icons.outlined.Terrain
 import androidx.compose.material.icons.outlined.TipsAndUpdates
 import androidx.compose.material.icons.outlined.VerticalAlignBottom
@@ -107,6 +111,10 @@ fun badgeGlyphIcon(glyph: BadgeGlyph): ImageVector = when (glyph) {
     BadgeGlyph.TWO_LINES -> Icons.Outlined.DragHandle
     BadgeGlyph.THREE_LINES -> Icons.Outlined.Menu
     BadgeGlyph.CLEAN_BOARD -> Icons.Outlined.CropSquare
+    BadgeGlyph.EXIT -> Icons.AutoMirrored.Outlined.Logout
+    BadgeGlyph.BOLT -> Icons.Outlined.Bolt
+    BadgeGlyph.LINK -> Icons.Outlined.Link
+    BadgeGlyph.SWAP -> Icons.Outlined.SwapHoriz
 }
 
 fun journeyStageIcon(stage: JourneyStage): ImageVector = when (stage) {

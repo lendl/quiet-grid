@@ -42,6 +42,8 @@ object WordSwapDefinition : GameDefinition {
         WordSwapPlayScreen(
             difficulty = request.difficulty,
             resume = request.resume,
+            journey = request.journey,
+            onRestarted = request.onRestarted,
             onBack = request.onBack,
             onFinished = { result ->
                 request.onFinished(
@@ -54,6 +56,7 @@ object WordSwapDefinition : GameDefinition {
                         isFirstSolve = result.isFirstSolve,
                         isNewHighScore = result.isNewHighScore,
                         lossReason = result.lossReason,
+                        journeySignals = result.journeySignals,
                     ),
                 )
             },

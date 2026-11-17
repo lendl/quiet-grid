@@ -81,14 +81,14 @@ class LinksLogicTest {
     @Test
     fun `score drops with hints, extra moves and time`() {
         val base = createLinksSession(puzzle).copy(moves = 2)
-        assertEquals(990, linksScore(base, elapsedSeconds = 10))
-        assertEquals(850, linksScore(base.copy(moves = 4, hintsUsed = 1), elapsedSeconds = 10))
+        assertEquals(9_900, linksScore(base, elapsedSeconds = 10))
+        assertEquals(8_500, linksScore(base.copy(moves = 4, hintsUsed = 1), elapsedSeconds = 10))
     }
 
     @Test
     fun `time costs less on harder tiers`() {
         val expert = createLinksSession(puzzle.copy(difficulty = "expert")).copy(moves = 2)
-        assertEquals(900, linksScore(expert, elapsedSeconds = 400))
+        assertEquals(8_800, linksScore(expert, elapsedSeconds = 400))
     }
 
     @Test

@@ -42,6 +42,8 @@
 - **Minesweeper** — Clear grid without opening mine.
 - **Animal Doku** — Place one animal per row, column, and colored region.
 - **Star Battle** — Place your stars, keep them apart.
+- **Links** — Join every pair of dots and fill the grid.
+- **Circuit** — Turn the tiles until every wire is live.
 
 ### Word
 
@@ -49,6 +51,7 @@
 - **Word Guess** — Guess the hidden word in six tries.
 - **Guess by Numbers** — Crack the hidden word using only two numbers.
 - **Theme Clear** — Clear the grid with words from one theme.
+- **Word Swap** — Swap letter tiles until every line spells a word.
 
 ### Memory
 
@@ -60,8 +63,9 @@
 - **2048** — Merge tiles to reach 2048.
 - **Block Fill** — Drag pieces onto the board and clear full lines. Includes an Endless mode.
 - **Arrow Escape** — Clear the board, one arrow at a time.
+- **Block Escape** — Slide the blocks aside and set the coral block free.
 
-In beta, enable in Settings: N-Back, Who Did It?, Hashi, Links, Block Escape, Word Swap, Circuit.
+In beta, enable in Settings: N-Back, Who Did It?, Hashi.
 
 ### Also
 

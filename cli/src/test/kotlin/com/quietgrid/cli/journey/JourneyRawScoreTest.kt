@@ -65,6 +65,40 @@ class JourneyRawScoreTest {
         }
     }
 
+    private fun <T> bank(file: String, serializer: kotlinx.serialization.KSerializer<T>): List<T> =
+        json.decodeFromString(ListSerializer(serializer), File("app/src/main/assets/$file").readText())
+
+    private val blockEscape = bank("blockescape_puzzles.json", com.quietgrid.engine.blockescape.BlockEscapePuzzleEntry.serializer())
+    private val wordSwap = bank("wordswap_puzzles.json", com.quietgrid.engine.wordswap.WordSwapPuzzleEntry.serializer())
+
+    @Test
+    fun `block escape circuit links and word swap raw scores sit inside their tier slot`() {
+        samplePerTier(blockEscape, { it.difficulty }, 3).forEach {
+            assertEquals(it.id, tierOf(it.difficulty), com.quietgrid.engine.blockescape.blockEscapeRawScore(it) / JOURNEY_TIER_SPAN)
+        }
+        samplePerTier(bank("circuit_puzzles.json", com.quietgrid.engine.circuit.CircuitPuzzleEntry.serializer()), { it.difficulty }, 3).forEach {
+            assertEquals(it.id, tierOf(it.difficulty), com.quietgrid.engine.circuit.circuitRawScore(it) / JOURNEY_TIER_SPAN)
+        }
+        samplePerTier(bank("links_puzzles.json", com.quietgrid.engine.links.LinksPuzzleEntry.serializer()), { it.difficulty }, 3).forEach {
+            assertEquals(it.id, tierOf(it.difficulty), com.quietgrid.engine.links.linksRawScore(it) / JOURNEY_TIER_SPAN)
+        }
+        samplePerTier(wordSwap, { it.difficulty }, 3).forEach {
+            assertEquals(it.id, tierOf(it.difficulty), com.quietgrid.engine.wordswap.wordSwapRawScore(it) / JOURNEY_TIER_SPAN)
+        }
+    }
+
+    @Test
+    fun `block escape and word swap rank more moves higher inside a tier`() {
+        val medium = blockEscape.filter { it.difficulty == "medium" }
+        val shortest = medium.filter { it.minMoves == medium.minOf { m -> m.minMoves } }.maxOf { com.quietgrid.engine.blockescape.blockEscapeRawScore(it) }
+        val longest = medium.filter { it.minMoves == medium.maxOf { m -> m.minMoves } }.minOf { com.quietgrid.engine.blockescape.blockEscapeRawScore(it) }
+        assertTrue(shortest < longest)
+        val hard = wordSwap.filter { it.difficulty == "hard" }
+        val fewest = hard.filter { it.minSwaps == hard.minOf { h -> h.minSwaps } }.maxOf { com.quietgrid.engine.wordswap.wordSwapRawScore(it) }
+        val most = hard.filter { it.minSwaps == hard.maxOf { h -> h.minSwaps } }.minOf { com.quietgrid.engine.wordswap.wordSwapRawScore(it) }
+        assertTrue(fewest < most)
+    }
+
     @Test
     fun `unsolved animaldoku rates in its tier without throwing`() {
         val entry = AnimalDokuPuzzleEntry(

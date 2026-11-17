@@ -101,9 +101,9 @@ class CircuitLogicTest {
     }
 
     @Test
-    fun `scores lose a point a second and a hundred per hint`() {
-        assertEquals(1000, circuitScore(0, 0))
-        assertEquals(780, circuitScore(2, 20))
+    fun `scores lose ten points a second and a thousand per hint`() {
+        assertEquals(10_000, circuitScore(0, 0))
+        assertEquals(7_800, circuitScore(2, 20))
         assertEquals(0, circuitScore(20, 0))
     }
 }

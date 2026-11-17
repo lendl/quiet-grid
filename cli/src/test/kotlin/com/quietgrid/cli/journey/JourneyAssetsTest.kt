@@ -31,6 +31,10 @@ class JourneyAssetsTest {
         "killersudoku" -> rows(journeyBank(game) as JourneyBank<com.quietgrid.engine.killersudoku.KillerSudokuPuzzleEntry>) { it.difficulty }
         "takuzu" -> rows(journeyBank(game) as JourneyBank<com.quietgrid.engine.takuzu.TakuzuPuzzleEntry>) { it.difficulty }
         "nonogram" -> rows(journeyBank(game) as JourneyBank<com.quietgrid.engine.nonogram.NonogramPuzzleEntry>) { it.difficulty }
+        "blockescape" -> rows(journeyBank(game) as JourneyBank<com.quietgrid.engine.blockescape.BlockEscapePuzzleEntry>) { it.difficulty }
+        "circuit" -> rows(journeyBank(game) as JourneyBank<com.quietgrid.engine.circuit.CircuitPuzzleEntry>) { it.difficulty }
+        "links" -> rows(journeyBank(game) as JourneyBank<com.quietgrid.engine.links.LinksPuzzleEntry>) { it.difficulty }
+        "wordswap" -> rows(journeyBank(game) as JourneyBank<com.quietgrid.engine.wordswap.WordSwapPuzzleEntry>) { it.difficulty }
         else -> error(game)
     }
 

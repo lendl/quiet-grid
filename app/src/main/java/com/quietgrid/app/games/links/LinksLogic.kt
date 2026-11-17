@@ -11,15 +11,15 @@ import com.quietgrid.engine.links.isValidLinksSolution
 import com.quietgrid.engine.links.linksAccuracyPercent
 import com.quietgrid.engine.links.linksAreAdjacent
 
-private const val LINKS_BASE_SCORE = 1000
-private const val LINKS_HINT_PENALTY = 100
-private const val LINKS_EXTRA_MOVE_PENALTY = 20
+private const val LINKS_BASE_SCORE = 10_000
+private const val LINKS_HINT_PENALTY = 1_000
+private const val LINKS_EXTRA_MOVE_PENALTY = 200
 
-private fun linksSecondsPerPoint(difficulty: Difficulty): Int = when (difficulty) {
-    Difficulty.EASY -> 1
-    Difficulty.MEDIUM -> 2
-    Difficulty.HARD -> 3
-    Difficulty.EXPERT -> 4
+private fun linksPointsPerSecond(difficulty: Difficulty): Int = when (difficulty) {
+    Difficulty.EASY -> 10
+    Difficulty.MEDIUM -> 5
+    Difficulty.HARD -> 4
+    Difficulty.EXPERT -> 3
 }
 
 fun commitLinksStroke(session: LinksSession, stroke: LinksStroke): LinksSession {
@@ -56,13 +56,13 @@ fun linksAccuracy(session: LinksSession): Int =
 
 fun linksScore(session: LinksSession, elapsedSeconds: Int): Int {
     val extraMoves = maxOf(0, session.moves - session.puzzle.pairCount)
-    val secondsPerPoint = linksSecondsPerPoint(Difficulty.fromKey(session.puzzle.difficulty))
+    val pointsPerSecond = linksPointsPerSecond(Difficulty.fromKey(session.puzzle.difficulty))
     return maxOf(
         0,
         LINKS_BASE_SCORE -
             session.hintsUsed * LINKS_HINT_PENALTY -
             extraMoves * LINKS_EXTRA_MOVE_PENALTY -
-            elapsedSeconds / secondsPerPoint,
+            elapsedSeconds * pointsPerSecond,
     )
 }
 

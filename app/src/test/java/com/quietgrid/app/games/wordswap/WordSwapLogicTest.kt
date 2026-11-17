@@ -118,10 +118,10 @@ class WordSwapLogicTest {
     @Test
     fun scoreDropsWithHintsExtraSwapsAndTime() {
         val base = createWordSwapSession(puzzle).copy(swaps = puzzle.minSwaps)
-        assertEquals(1000, wordSwapScore(base, 0))
-        assertEquals(900, wordSwapScore(base.copy(hintsUsed = 1), 0))
-        assertEquals(980, wordSwapScore(base.copy(swaps = puzzle.minSwaps + 2), 0))
-        assertEquals(940, wordSwapScore(base, 60))
+        assertEquals(10_000, wordSwapScore(base, 0))
+        assertEquals(9_000, wordSwapScore(base.copy(hintsUsed = 1), 0))
+        assertEquals(9_800, wordSwapScore(base.copy(swaps = puzzle.minSwaps + 2), 0))
+        assertEquals(9_400, wordSwapScore(base, 60))
     }
 
     @Test

@@ -8,6 +8,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.journey.JourneyRequest
+import com.quietgrid.app.core.journey.JourneySignals
+import com.quietgrid.app.data.BadgeStore
+import com.quietgrid.app.data.JourneyProgressStore
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
@@ -43,9 +47,10 @@ data class WordSwapResult(
     val lossReason: LossReason?,
     val isFirstSolve: Boolean = false,
     val isNewHighScore: Boolean = false,
+    val journeySignals: JourneySignals = JourneySignals(0, 0),
 )
 
-private class WordSwapPuzzleAdapter(
+internal class WordSwapPuzzleAdapter(
     private val appContext: android.content.Context,
     private val historyStore: PlayHistoryStore,
 ) : PuzzleAdapter<WordSwapSession, WordSwapResult> {
@@ -56,6 +61,11 @@ private class WordSwapPuzzleAdapter(
         val puzzle = WordSwapPuzzleBank.randomPuzzle(appContext, difficulty, recentIds) ?: return null
         return createWordSwapSession(puzzle)
     }
+
+    override suspend fun journeySession(difficulty: Difficulty, puzzleId: String, transform: Int): WordSwapSession? =
+        WordSwapPuzzleBank.puzzleById(appContext, difficulty, puzzleId)?.let(::createWordSwapSession)
+
+    override fun journeySignals(session: WordSwapSession): JourneySignals = JourneySignals(session.hintsUsed, 0)
 
     override suspend fun restoreSession(payload: String, elapsedSeconds: Double): WordSwapSession? = runCatching {
         val persisted = json.decodeFromString<WordSwapPersistedSession>(payload)
@@ -97,6 +107,7 @@ private class WordSwapPuzzleAdapter(
         lossReason = outcome.lossReason,
         isFirstSolve = outcome.isFirstSolve,
         isNewHighScore = outcome.isNewHighScore,
+        journeySignals = outcome.journeySignals,
     )
 }
 
@@ -106,13 +117,16 @@ class WordSwapPlayViewModel @AssistedInject constructor(
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
+    journeyStore: JourneyProgressStore,
+    badgeStore: BadgeStore,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
+    @Assisted journey: JourneyRequest?,
 ) : ViewModel() {
 
     @AssistedFactory
     interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean): WordSwapPlayViewModel
+        fun create(requestedDifficulty: Difficulty, resume: Boolean, journey: JourneyRequest?): WordSwapPlayViewModel
     }
 
     private val controller = PuzzleSessionController(
@@ -121,12 +135,16 @@ class WordSwapPlayViewModel @AssistedInject constructor(
         statsStore = statsRepository,
         historyStore = historyRepository,
         adapter = WordSwapPuzzleAdapter(appContext, historyRepository),
+        journeyStore = journeyStore,
+        badgeStore = badgeStore,
     )
 
     val session get() = controller.session
     val elapsedSeconds get() = controller.elapsedSeconds
+    val restarting get() = controller.restarting
     val result = controller.result
     val finishing = controller.finishing
+    val restarts = controller.restarts
 
     var selectedCell by mutableStateOf<Int?>(null)
         private set
@@ -153,7 +171,7 @@ class WordSwapPlayViewModel @AssistedInject constructor(
     private val undoHistory = mutableListOf<WordSwapSession>()
 
     init {
-        controller.start(requestedDifficulty, resume)
+        controller.start(requestedDifficulty, resume, journey = journey)
     }
 
     fun onTileTap(cell: Int) {
@@ -237,5 +255,10 @@ class WordSwapPlayViewModel @AssistedInject constructor(
     fun endPuzzle() {
         clearHint()
         controller.endPuzzle()
+    }
+
+    fun restartPuzzle() {
+        clearHint()
+        controller.restartPuzzle()
     }
 }

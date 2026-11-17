@@ -50,6 +50,10 @@ fun JourneyStopCard(
             is JourneyBoardPreviewData.Digits -> stringResource(R.string.journey_stop_meta_grid, preview.size)
             is JourneyBoardPreviewData.Cages -> stringResource(R.string.journey_stop_meta_grid, preview.size)
             is JourneyBoardPreviewData.EmptyGrid -> stringResource(R.string.journey_stop_meta_rect, preview.cols, preview.rows)
+            is JourneyBoardPreviewData.Blocks -> stringResource(R.string.journey_stop_meta_grid, preview.size)
+            is JourneyBoardPreviewData.Wires -> stringResource(R.string.journey_stop_meta_rect, preview.cols, preview.rows)
+            is JourneyBoardPreviewData.Pairs -> stringResource(R.string.journey_stop_meta_grid, preview.puzzle.size)
+            is JourneyBoardPreviewData.Letters -> stringResource(R.string.journey_stop_meta_rect, preview.cols, preview.rows)
             null -> null
         },
         stringResource(R.string.journey_stop_target, formatElapsed(row.stop.targetSeconds)),

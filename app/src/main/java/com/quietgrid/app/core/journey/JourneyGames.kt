@@ -5,12 +5,16 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.games.animaldoku.AnimalDokuPuzzleBank
 import com.quietgrid.app.games.arrowescape.ArrowEscapePuzzleBank
+import com.quietgrid.app.games.blockescape.BlockEscapePuzzleBank
+import com.quietgrid.app.games.circuit.CircuitPuzzleBank
 import com.quietgrid.app.games.killersudoku.KillerSudokuPuzzleBank
+import com.quietgrid.app.games.links.LinksPuzzleBank
 import com.quietgrid.app.games.minisudoku.MiniSudokuPuzzleBank
 import com.quietgrid.app.games.nonogram.NonogramPuzzleBank
 import com.quietgrid.app.games.starbattle.StarBattlePuzzleBank
 import com.quietgrid.app.games.sudoku.SudokuPuzzleBank
 import com.quietgrid.app.games.takuzu.TakuzuPuzzleBank
+import com.quietgrid.app.games.wordswap.WordSwapPuzzleBank
 import com.quietgrid.engine.journey.JourneyChapter
 import com.quietgrid.engine.journey.JourneyFile
 import com.quietgrid.engine.journey.JourneyStop
@@ -20,7 +24,10 @@ import kotlinx.serialization.json.Json
 import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 
-val JOURNEY_GAMES: Set<GameId> = setOf(GameId.ANIMALDOKU, GameId.ARROWESCAPE, GameId.STARBATTLE, GameId.SUDOKU, GameId.MINISUDOKU, GameId.KILLERSUDOKU, GameId.TAKUZU, GameId.NONOGRAM)
+val JOURNEY_GAMES: Set<GameId> = setOf(
+    GameId.ANIMALDOKU, GameId.ARROWESCAPE, GameId.STARBATTLE, GameId.SUDOKU, GameId.MINISUDOKU, GameId.KILLERSUDOKU, GameId.TAKUZU, GameId.NONOGRAM,
+    GameId.BLOCKESCAPE, GameId.CIRCUIT, GameId.LINKS, GameId.WORDSWAP,
+)
 
 fun journeyScope(gameId: GameId): String = gameId.key
 
@@ -52,6 +59,10 @@ suspend fun journeyRatedPool(context: Context, gameId: GameId, difficulty: Diffi
     GameId.KILLERSUDOKU -> KillerSudokuPuzzleBank.ratedPool(context, difficulty)
     GameId.TAKUZU -> TakuzuPuzzleBank.ratedPool(context, difficulty)
     GameId.NONOGRAM -> NonogramPuzzleBank.ratedPool(context, difficulty)
+    GameId.BLOCKESCAPE -> BlockEscapePuzzleBank.ratedPool(context, difficulty)
+    GameId.CIRCUIT -> CircuitPuzzleBank.ratedPool(context, difficulty)
+    GameId.LINKS -> LinksPuzzleBank.ratedPool(context, difficulty)
+    GameId.WORDSWAP -> WordSwapPuzzleBank.ratedPool(context, difficulty)
     else -> emptyList()
 }
 

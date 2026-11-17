@@ -56,9 +56,9 @@ private fun journeyFile(gameId: GameId, vararg chapters: List<String>) = Journey
 class BadgesTest {
 
     @Test
-    fun `the catalog holds 67 badges with unique ids and no beta games`() {
-        assertEquals(67, BadgeCatalog.all.size)
-        assertEquals(67, BadgeCatalog.all.map { it.id }.toSet().size)
+    fun `the catalog holds 83 badges with unique ids and no beta games`() {
+        assertEquals(83, BadgeCatalog.all.size)
+        assertEquals(83, BadgeCatalog.all.map { it.id }.toSet().size)
         assertEquals(8, BadgeCatalog.general.size)
         assertTrue(BadgeCatalog.all.mapNotNull { it.gameId }.none { GameCatalog.get(it).beta })
         assertEquals(4, BadgeCatalog.forGame(GameId.SUDOKU).size)

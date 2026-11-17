@@ -11,7 +11,21 @@ import com.quietgrid.engine.arrowescape.arrowEscapeReplayCandidates
 import com.quietgrid.engine.arrowescape.solveArrowEscape
 import com.quietgrid.engine.arrowescape.toPiece
 import com.quietgrid.engine.arrowescape.transformed
+import com.quietgrid.engine.blockescape.BlockEscapePuzzleEntry
+import com.quietgrid.engine.blockescape.blockEscapeMinMoves
+import com.quietgrid.engine.blockescape.blockEscapeRawScore
+import com.quietgrid.engine.circuit.CircuitPuzzleEntry
+import com.quietgrid.engine.circuit.circuitRawScore
+import com.quietgrid.engine.circuit.circuitShapes
+import com.quietgrid.engine.circuit.solveCircuit
+import com.quietgrid.engine.circuit.toBoard
 import com.quietgrid.engine.core.Difficulty
+import com.quietgrid.engine.links.LinksPuzzleEntry
+import com.quietgrid.engine.links.linksRawScore
+import com.quietgrid.engine.links.solveLinks
+import com.quietgrid.engine.wordswap.WordSwapPuzzleEntry
+import com.quietgrid.engine.wordswap.solveWordSwap
+import com.quietgrid.engine.wordswap.wordSwapRawScore
 import com.quietgrid.engine.killersudoku.KillerCageLayout
 import com.quietgrid.engine.killersudoku.KillerSudokuPuzzleEntry
 import com.quietgrid.engine.killersudoku.killerSudokuRawScore
@@ -42,7 +56,10 @@ import com.quietgrid.engine.takuzu.takuzuReplayCandidates
 import com.quietgrid.engine.takuzu.transformed
 import kotlinx.serialization.KSerializer
 
-val JOURNEY_GAMES = listOf("animaldoku", "arrowescape", "starbattle", "sudoku", "minisudoku", "killersudoku", "takuzu", "nonogram")
+val JOURNEY_GAMES = listOf(
+    "animaldoku", "arrowescape", "starbattle", "sudoku", "minisudoku", "killersudoku", "takuzu", "nonogram",
+    "blockescape", "circuit", "links", "wordswap",
+)
 
 class JourneyBank<T>(
     val game: String,
@@ -161,6 +178,62 @@ fun journeyBank(game: String): JourneyBank<*> = when (game) {
         replayCandidates = ::nonogramReplayCandidates,
         transformed = { entry, t -> entry.transformed(t) },
         solves = { analyzeNonogramEntry(it) != null },
+        keepSiblings = false,
+    )
+    "blockescape" -> JourneyBank(
+        game = game,
+        files = listOf("blockescape_puzzles.json"),
+        serializer = BlockEscapePuzzleEntry.serializer(),
+        id = { it.id },
+        difficulty = { it.difficulty },
+        rating = { it.rating },
+        withRating = { entry, rating -> entry.copy(rating = rating) },
+        rawScore = ::blockEscapeRawScore,
+        replayCandidates = { emptyList() },
+        transformed = { entry, _ -> entry },
+        solves = { blockEscapeMinMoves(it.blocks) != null },
+        keepSiblings = false,
+    )
+    "circuit" -> JourneyBank(
+        game = game,
+        files = listOf("circuit_puzzles.json"),
+        serializer = CircuitPuzzleEntry.serializer(),
+        id = { it.id },
+        difficulty = { it.difficulty },
+        rating = { it.rating },
+        withRating = { entry, rating -> entry.copy(rating = rating) },
+        rawScore = ::circuitRawScore,
+        replayCandidates = { emptyList() },
+        transformed = { entry, _ -> entry },
+        solves = { solveCircuit(it.toBoard(), circuitShapes(it)).solved },
+        keepSiblings = false,
+    )
+    "links" -> JourneyBank(
+        game = game,
+        files = listOf("links_puzzles.json"),
+        serializer = LinksPuzzleEntry.serializer(),
+        id = { it.id },
+        difficulty = { it.difficulty },
+        rating = { it.rating },
+        withRating = { entry, rating -> entry.copy(rating = rating) },
+        rawScore = ::linksRawScore,
+        replayCandidates = { emptyList() },
+        transformed = { entry, _ -> entry },
+        solves = { solveLinks(it.size, it.endpoints).solved },
+        keepSiblings = false,
+    )
+    "wordswap" -> JourneyBank(
+        game = game,
+        files = listOf("wordswap_puzzles.json"),
+        serializer = WordSwapPuzzleEntry.serializer(),
+        id = { it.id },
+        difficulty = { it.difficulty },
+        rating = { it.rating },
+        withRating = { entry, rating -> entry.copy(rating = rating) },
+        rawScore = ::wordSwapRawScore,
+        replayCandidates = { emptyList() },
+        transformed = { entry, _ -> entry },
+        solves = { solveWordSwap(it).solved },
         keepSiblings = false,
     )
     else -> error("No journey for game '$game'. Expected one of: ${JOURNEY_GAMES.joinToString()}")

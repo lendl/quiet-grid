@@ -69,10 +69,10 @@ object GameCatalog {
         GameMeta(GameId.WHODIDIT, R.string.whodidit_title, R.string.whodidit_tagline, setOf(GameCategory.LOGIC), beta = true),
         GameMeta(GameId.SEQUENCEMEMORY, R.string.sequencememory_title, R.string.sequencememory_tagline, setOf(GameCategory.MEMORY)),
         GameMeta(GameId.HASHI, R.string.hashi_title, R.string.hashi_tagline, setOf(GameCategory.LOGIC, GameCategory.SPATIAL), beta = true),
-        GameMeta(GameId.LINKS, R.string.links_title, R.string.links_tagline, setOf(GameCategory.LOGIC, GameCategory.SPATIAL), beta = true),
-        GameMeta(GameId.BLOCKESCAPE, R.string.blockescape_title, R.string.blockescape_tagline, setOf(GameCategory.LOGIC, GameCategory.SPATIAL), beta = true),
-        GameMeta(GameId.WORDSWAP, R.string.wordswap_title, R.string.wordswap_tagline, setOf(GameCategory.WORD), beta = true),
-        GameMeta(GameId.CIRCUIT, R.string.circuit_title, R.string.circuit_tagline, setOf(GameCategory.LOGIC, GameCategory.SPATIAL), beta = true),
+        GameMeta(GameId.LINKS, R.string.links_title, R.string.links_tagline, setOf(GameCategory.LOGIC, GameCategory.SPATIAL), isNew = true),
+        GameMeta(GameId.BLOCKESCAPE, R.string.blockescape_title, R.string.blockescape_tagline, setOf(GameCategory.LOGIC, GameCategory.SPATIAL), isNew = true),
+        GameMeta(GameId.WORDSWAP, R.string.wordswap_title, R.string.wordswap_tagline, setOf(GameCategory.WORD), isNew = true),
+        GameMeta(GameId.CIRCUIT, R.string.circuit_title, R.string.circuit_tagline, setOf(GameCategory.LOGIC, GameCategory.SPATIAL), isNew = true),
         GameMeta(GameId.KILLERSUDOKU, R.string.killersudoku_title, R.string.killersudoku_tagline, setOf(GameCategory.LOGIC)),
     )
 

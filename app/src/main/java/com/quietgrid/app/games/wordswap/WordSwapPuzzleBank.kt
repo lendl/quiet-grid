@@ -23,6 +23,12 @@ object WordSwapPuzzleBank {
         }
     }
 
+    suspend fun puzzleById(context: Context, difficulty: Difficulty, id: String): WordSwapPuzzleEntry? =
+        load(context)[difficulty.key].orEmpty().firstOrNull { it.id == id }
+
+    suspend fun ratedPool(context: Context, difficulty: Difficulty): List<Pair<String, Int>> =
+        load(context)[difficulty.key].orEmpty().mapNotNull { entry -> entry.rating?.let { entry.id to it } }
+
     suspend fun randomPuzzle(context: Context, difficulty: Difficulty, recentlyPlayedIds: Set<String> = emptySet()): WordSwapPuzzleEntry? {
         val pool = load(context)[difficulty.key] ?: return null
         if (pool.isEmpty()) return null
