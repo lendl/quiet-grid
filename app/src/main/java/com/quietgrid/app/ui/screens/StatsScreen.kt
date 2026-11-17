@@ -122,7 +122,7 @@ private fun OverviewContent(
         StatsOverviewContent(
             overview,
             modifier = Modifier.padding(top = 16.dp),
-            belowSummary = { MilestonesStatsRow(onOpen = onOpenMilestones, modifier = Modifier.padding(top = 16.dp)) },
+            belowSummary = { MilestonesStatsRow(onOpen = onOpenMilestones) },
         )
 
         Text(

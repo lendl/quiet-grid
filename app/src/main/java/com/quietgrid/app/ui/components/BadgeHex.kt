@@ -54,7 +54,7 @@ private const val DOT_RADIUS = 47f
 private const val DOT_SIZE = 3.6f
 private const val STAR_RADIUS = 6.5f
 private const val GLYPH_FRACTION = 0.4f
-private const val NOT_YET_ALPHA = 0.75f
+private const val NOT_YET_ALPHA = 0.35f
 private const val EARNED_FILL_ALPHA = 0.18f
 private const val GLOW_ALPHA = 0.35f
 private val HEX_POINTS = listOf(50f to 10f, 88f to 32f, 88f to 76f, 50f to 98f, 12f to 76f, 12f to 32f)
@@ -118,7 +118,7 @@ private fun hexColors(def: BadgeDef, earned: Boolean): HexColors {
             accent,
             scheme.outlineVariant,
         )
-        else -> HexColors(scheme.surfaceContainerLowest, scheme.onSurfaceVariant.copy(alpha = NOT_YET_ALPHA), null, accent, scheme.outlineVariant)
+        else -> HexColors(scheme.surfaceContainerLowest, scheme.onSurfaceVariant.copy(alpha = NOT_YET_ALPHA), null, scheme.onSurfaceVariant, scheme.outlineVariant)
     }
 }
 

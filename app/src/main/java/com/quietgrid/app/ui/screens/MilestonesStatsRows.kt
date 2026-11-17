@@ -1,19 +1,16 @@
 package com.quietgrid.app.ui.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.outlined.MilitaryTech
-import androidx.compose.material3.Icon
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,9 +22,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -36,9 +34,10 @@ import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.badges.BadgeCatalog
 import com.quietgrid.app.ui.components.BadgeDetailSheet
 import com.quietgrid.app.ui.components.badgeStatusText
-import com.quietgrid.app.ui.components.badgeText
 
 private val GAME_BADGE_SIZE = 58.dp
+private val SHELF_BADGE_SIZE = 50.dp
+private const val SHELF_COUNT = 4
 
 @Composable
 internal fun MilestonesStatsRow(
@@ -47,30 +46,75 @@ internal fun MilestonesStatsRow(
     viewModel: BadgeSummaryViewModel = hiltViewModel(),
 ) {
     val summary by viewModel.summary.collectAsStateWithLifecycle()
+    var openId by rememberSaveable { mutableStateOf<String?>(null) }
     if (!summary.show) return
-    val count = summary.earned.size
-    val newest = summary.earned.keys.lastOrNull()?.let { BadgeCatalog.byId(it) }
-    val detail = if (newest != null) {
-        pluralStringResource(R.plurals.milestones_stats_row_detail, count, count, stringResource(badgeText(newest).nameRes))
-    } else {
-        stringResource(R.string.milestones_stats_row_empty)
-    }
-    Row(
-        modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.surface)
-            .clickable(role = Role.Button, onClick = onOpen)
-            .heightIn(min = 64.dp)
-            .padding(horizontal = 14.dp, vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(Icons.Outlined.MilitaryTech, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))
-        Column(Modifier.weight(1f).padding(horizontal = 12.dp)) {
-            Text(stringResource(R.string.milestones_stats_row), style = MaterialTheme.typography.titleMedium)
-            Text(detail, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    val earnedCount = BadgeCatalog.all.count { it.id in summary.earned }
+    val newest = summary.earned.keys.toList().takeLast(SHELF_COUNT).reversed().mapNotNull { BadgeCatalog.byId(it) }
+    val title = stringResource(R.string.stats_badges_title)
+    Column(modifier.fillMaxWidth()) {
+        HorizontalDivider(Modifier.padding(top = 20.dp))
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp, bottom = 10.dp),
+        ) {
+            Row(
+                Modifier
+                    .weight(1f)
+                    .alignByBaseline()
+                    .semantics(mergeDescendants = true) { heading() },
+            ) {
+                Text(title, style = MaterialTheme.typography.titleSmall, modifier = Modifier.alignByBaseline())
+                Text(
+                    stringResource(R.string.stats_badges_count, earnedCount, BadgeCatalog.all.size),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .alignByBaseline(),
+                )
+            }
+            Box(
+                Modifier
+                    .alignByBaseline()
+                    .heightIn(min = 48.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable(role = Role.Button, onClickLabel = title, onClick = onOpen)
+                    .padding(horizontal = 8.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    stringResource(R.string.stats_badges_see_all),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
         }
-        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+        if (newest.isEmpty()) {
+            Text(
+                stringResource(R.string.milestones_stats_row_empty),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        } else {
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                newest.forEach { def ->
+                    val earnedOn = summary.earned[def.id]
+                    BadgeTile(
+                        def = def,
+                        earned = earnedOn != null,
+                        badgeSize = SHELF_BADGE_SIZE,
+                        status = badgeStatusText(earnedOn, null),
+                        onClick = { openId = def.id },
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+                repeat(SHELF_COUNT - newest.size) { Spacer(Modifier.weight(1f)) }
+            }
+        }
+    }
+    openId?.let { id -> BadgeCatalog.byId(id) }?.let { def ->
+        BadgeDetailSheet(def = def, earnedOn = summary.earned[def.id], count = null, onDismiss = { openId = null })
     }
 }
 

@@ -1,25 +1,27 @@
 package com.quietgrid.app.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,10 +32,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -41,6 +48,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.badges.BadgeCatalog
+import com.quietgrid.app.core.badges.BadgeCount
 import com.quietgrid.app.core.badges.BadgeDef
 import com.quietgrid.app.core.badges.BadgeSection
 import com.quietgrid.app.core.badges.badgeCount
@@ -62,6 +70,7 @@ private const val GRID_COLUMNS = 3
 private const val RECENT_COUNT = 3
 private val CELL_BADGE_SIZE = 64.dp
 private val RECENT_BADGE_SIZE = 36.dp
+private val GAME_HEX_SIZE = 34.dp
 
 @Composable
 fun MilestonesScreen(modifier: Modifier = Modifier, viewModel: MilestonesViewModel = hiltViewModel()) {
@@ -75,7 +84,8 @@ fun MilestonesScreen(modifier: Modifier = Modifier, viewModel: MilestonesViewMod
                 .widthIn(max = 640.dp)
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp),
+                .padding(16.dp)
+                .padding(bottom = 8.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             Text(
@@ -84,17 +94,12 @@ fun MilestonesScreen(modifier: Modifier = Modifier, viewModel: MilestonesViewMod
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             MilestonesSummaryCard(state, onOpen = { openId = it })
-            MILESTONE_SECTIONS.forEach { (section, titleRes) ->
-                MilestonesSection(stringResource(titleRes), BadgeCatalog.section(section), state, onOpen = { openId = it })
-            }
-            GameBadgesCard(state)
-            Text(
-                stringResource(R.string.milestones_footer),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-            )
+            MILESTONE_SECTIONS
+                .filter { (section, _) -> section != BadgeSection.SEASONAL || BadgeCatalog.section(section).any { it.id in state.earned } }
+                .forEach { (section, titleRes) ->
+                    MilestonesSection(stringResource(titleRes), BadgeCatalog.section(section), state, onOpen = { openId = it })
+                }
+            GameBadgesSection(state, onOpen = { openId = it })
         }
     }
 
@@ -111,35 +116,53 @@ fun MilestonesScreen(modifier: Modifier = Modifier, viewModel: MilestonesViewMod
 
 @Composable
 private fun MilestonesSummaryCard(state: MilestonesState, onOpen: (String) -> Unit) {
-    val general = BadgeCatalog.general
-    val earnedGeneral = general.count { it.id in state.earned }
+    val all = BadgeCatalog.all
+    val earnedAll = all.count { it.id in state.earned }
     val recent = state.earned.keys.toList().takeLast(RECENT_COUNT).reversed().mapNotNull { BadgeCatalog.byId(it) }
+    val shape = RoundedCornerShape(18.dp)
+    val total = stringResource(R.string.milestones_earned_total, all.size)
+    val scheme = MaterialTheme.colorScheme
+    val totalStyle = MaterialTheme.typography.titleMedium.toSpanStyle().copy(color = scheme.onSurfaceVariant)
     Row(
         Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(18.dp))
-            .background(MaterialTheme.colorScheme.surfaceContainer)
+            .clip(shape)
+            .background(scheme.surfaceContainer)
+            .border(1.dp, scheme.outlineVariant, shape)
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(Modifier.weight(1f)) {
             Text(
-                stringResource(R.string.milestones_earned_count, earnedGeneral, general.size),
+                buildAnnotatedString {
+                    withStyle(MaterialTheme.typography.displaySmall.toSpanStyle().copy(color = scheme.primary, fontWeight = FontWeight.Black)) {
+                        append(earnedAll.toString())
+                    }
+                    withStyle(totalStyle) { append(" $total") }
+                },
                 style = MaterialTheme.typography.displaySmall,
-                fontWeight = FontWeight.Black,
             )
             Text(
                 stringResource(R.string.milestones_earned_label),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = scheme.onSurfaceVariant,
+            )
+            BadgeProgressBar(
+                BadgeCount(done = earnedAll, total = all.size),
+                scheme.primary,
+                Modifier
+                    .padding(top = 10.dp)
+                    .fillMaxWidth()
+                    .height(4.dp),
             )
         }
         if (recent.isNotEmpty()) {
+            Spacer(Modifier.width(16.dp))
             Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text(
                     stringResource(R.string.milestones_recent),
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = scheme.onSurfaceVariant,
                 )
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     recent.forEach { def ->
@@ -160,9 +183,34 @@ private fun MilestonesSummaryCard(state: MilestonesState, onOpen: (String) -> Un
 }
 
 @Composable
+private fun BadgeSectionHeader(title: String, done: Int, total: Int, modifier: Modifier = Modifier) {
+    Row(
+        modifier
+            .fillMaxWidth()
+            .semantics(mergeDescendants = true) { heading() },
+    ) {
+        Text(
+            title,
+            style = MaterialTheme.typography.titleSmall,
+            modifier = Modifier
+                .weight(1f)
+                .alignByBaseline(),
+        )
+        Text(
+            stringResource(R.string.stats_badges_count, done, total),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier
+                .padding(start = 8.dp)
+                .alignByBaseline(),
+        )
+    }
+}
+
+@Composable
 private fun MilestonesSection(title: String, defs: List<BadgeDef>, state: MilestonesState, onOpen: (String) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(title, style = MaterialTheme.typography.titleSmall)
+        BadgeSectionHeader(title, defs.count { it.id in state.earned }, defs.size)
         defs.chunked(GRID_COLUMNS).forEach { row ->
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 row.forEach { def ->
@@ -185,6 +233,7 @@ private fun MilestoneCell(def: BadgeDef, state: MilestonesState, onOpen: (String
         badgeSize = CELL_BADGE_SIZE,
         isNew = def.id == state.newBadgeId,
         status = status,
+        showStatus = earnedOn != null || count != null,
         onClick = { onOpen(def.id) },
         modifier = modifier,
         dots = state.journeyDots(def),
@@ -204,6 +253,7 @@ internal fun BadgeTile(
     status: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    showStatus: Boolean = earned,
     isNew: Boolean = false,
     dots: List<Boolean>? = null,
     footer: (@Composable () -> Unit)? = null,
@@ -232,54 +282,92 @@ internal fun BadgeTile(
                 )
             }
         }
-        Text(
-            stringResource(badgeText(def).nameRes),
-            style = MaterialTheme.typography.labelMedium,
-            textAlign = TextAlign.Center,
-            maxLines = 2,
-            color = if (earned) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                stringResource(badgeText(def).nameRes),
+                style = MaterialTheme.typography.labelMedium,
+                textAlign = TextAlign.Center,
+                maxLines = 2,
+                color = if (earned) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            if (showStatus) {
+                Text(
+                    status,
+                    style = MaterialTheme.typography.labelSmall,
+                    textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.clearAndSetSemantics {},
+                )
+            }
+        }
         footer?.invoke()
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun GameBadgesCard(state: MilestonesState) {
+private fun GameBadgesSection(state: MilestonesState, onOpen: (String) -> Unit) {
     val gameBadges = BadgeCatalog.gameBadges
-    val earnedCount = gameBadges.count { it.id in state.earned }
     val games = GameCatalog.games.filterNot { it.beta }.filter { BadgeCatalog.forGame(it.id).isNotEmpty() }
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(18.dp))
-            .background(MaterialTheme.colorScheme.surfaceContainer)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(6.dp),
-    ) {
-        Text(stringResource(R.string.milestones_game_badges, earnedCount, gameBadges.size), style = MaterialTheme.typography.titleSmall)
-        Text(
-            stringResource(R.string.milestones_game_badges_detail),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+    Column {
+        BadgeSectionHeader(
+            stringResource(R.string.milestones_group_games),
+            gameBadges.count { it.id in state.earned },
+            gameBadges.size,
+            Modifier.padding(bottom = 4.dp),
         )
-        FlowRow(
-            Modifier.padding(top = 6.dp),
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
-        ) {
-            games.forEach { meta ->
-                val defs = BadgeCatalog.forGame(meta.id)
-                Text(
-                    stringResource(R.string.milestones_game_progress, stringResource(meta.titleRes), defs.count { it.id in state.earned }, defs.size),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
-                )
-            }
+        games.forEachIndexed { index, meta ->
+            if (index > 0) HorizontalDivider()
+            GameBadgesLine(stringResource(meta.titleRes), BadgeCatalog.forGame(meta.id), state, onOpen)
         }
     }
+}
+
+@Composable
+private fun GameBadgesLine(title: String, defs: List<BadgeDef>, state: MilestonesState, onOpen: (String) -> Unit) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .heightIn(min = 56.dp)
+            .padding(vertical = 9.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(
+            Modifier
+                .weight(1f)
+                .padding(end = 8.dp)
+                .semantics(mergeDescendants = true) {},
+        ) {
+            Text(title, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium, maxLines = 2)
+            Text(
+                stringResource(R.string.stats_badges_count, defs.count { it.id in state.earned }, defs.size),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            defs.forEach { def -> GameBadgeHex(def, state, onOpen) }
+        }
+    }
+}
+
+@Composable
+private fun GameBadgeHex(def: BadgeDef, state: MilestonesState, onOpen: (String) -> Unit) {
+    val earnedOn = state.earned[def.id]
+    val name = stringResource(badgeText(def).nameRes)
+    val status = badgeStatusText(earnedOn, badgeCount(def.id, state.progress, state.journeys))
+    BadgeHex(
+        def = def,
+        earned = earnedOn != null,
+        size = GAME_HEX_SIZE,
+        dots = state.journeyDots(def),
+        modifier = Modifier
+            .minimumInteractiveComponentSize()
+            .clip(RoundedCornerShape(8.dp))
+            .clickable(role = Role.Button, onClickLabel = name) { onOpen(def.id) }
+            .semantics {
+                contentDescription = name
+                stateDescription = status
+            },
+    )
 }
