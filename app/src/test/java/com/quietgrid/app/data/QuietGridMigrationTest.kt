@@ -195,9 +195,9 @@ class QuietGridMigrationTest {
         assertEquals(emptyList<JourneyMilestoneEntity>(), dao.pendingMilestones("animaldoku"))
 
         val milestone = JourneyMilestoneEntity("animaldoku", JOURNEY_MILESTONE_CHAPTER, 1, achievedMillis = 5000, shownMillis = null)
-        dao.insertMilestone(milestone)
-        dao.insertMilestone(milestone.copy(achievedMillis = 6000))
-        assertEquals(listOf(milestone), dao.pendingMilestones("animaldoku"))
+        dao.upsertMilestone(milestone)
+        dao.upsertMilestone(milestone.copy(achievedMillis = 6000))
+        assertEquals(listOf(milestone.copy(achievedMillis = 6000)), dao.pendingMilestones("animaldoku"))
         database.close()
     }
 

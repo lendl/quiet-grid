@@ -20,7 +20,7 @@ fun MasteredCelebrationScreen(
 ) {
     val viewModel: JourneyViewModel = hiltViewModel()
     val state by remember(viewModel, gameId) { viewModel.state(gameId) }.collectAsStateWithLifecycle(initialValue = null)
-    val playSeconds by produceState<Int?>(initialValue = null, viewModel, gameId) { value = viewModel.journeyPlaySeconds(gameId) }
+    val playSeconds by produceState<Map<String, Int>?>(initialValue = null, viewModel, gameId) { value = viewModel.playSecondsByStop(gameId) }
     val rows = state?.rows ?: return
     val seconds = playSeconds ?: return
     if (rows.isEmpty()) {
@@ -31,7 +31,7 @@ fun MasteredCelebrationScreen(
         gameId = gameId,
         milestone = JourneyMilestone.Mastered,
         rows = rows,
-        playSeconds = seconds,
+        secondsByStop = seconds,
         reduceMotion = rememberReduceMotion(),
         actions = JourneyCelebrationActions(onClose = onClose, onPlay = {}, onMap = onViewMap, onDone = onDone),
     )

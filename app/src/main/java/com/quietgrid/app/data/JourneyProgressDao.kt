@@ -1,8 +1,6 @@
 package com.quietgrid.app.data
 
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
@@ -21,8 +19,8 @@ interface JourneyProgressDao {
     @Query("DELETE FROM journey_progress WHERE scope = :scope AND puzzleId = :puzzleId")
     suspend fun delete(scope: String, puzzleId: String)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertMilestone(entity: JourneyMilestoneEntity)
+    @Upsert
+    suspend fun upsertMilestone(entity: JourneyMilestoneEntity)
 
     @Query("SELECT * FROM journey_milestone WHERE scope = :scope AND shownMillis IS NULL ORDER BY achievedMillis ASC, chapterIndex ASC")
     suspend fun pendingMilestones(scope: String): List<JourneyMilestoneEntity>

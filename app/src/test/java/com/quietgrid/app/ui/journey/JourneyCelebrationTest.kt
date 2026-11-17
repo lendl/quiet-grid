@@ -42,7 +42,7 @@ class JourneyCelebrationTest {
 
     private fun won(stars: Int, clean: Boolean = false) = JourneyStopProgress(stars = stars, cleared = true, clean = clean, bestSeconds = 60)
 
-    private fun show(milestone: JourneyMilestone, progress: Map<String, JourneyStopProgress>, playSeconds: Int = 180) {
+    private fun show(milestone: JourneyMilestone, progress: Map<String, JourneyStopProgress>, secondsByStop: Map<String, Int> = emptyMap()) {
         val actions = JourneyCelebrationActions(
             onClose = { closed++ },
             onPlay = { played += it.stop.puzzleId },
@@ -52,7 +52,7 @@ class JourneyCelebrationTest {
         composeRule.mainClock.autoAdvance = false
         composeRule.setContent {
             MaterialTheme {
-                JourneyCelebration(GameId.ANIMALDOKU, milestone, journeyRows(file, progress), playSeconds, reduceMotion = true, actions = actions)
+                JourneyCelebration(GameId.ANIMALDOKU, milestone, journeyRows(file, progress), secondsByStop, reduceMotion = true, actions = actions)
             }
         }
         composeRule.mainClock.advanceTimeByFrame()
@@ -60,12 +60,17 @@ class JourneyCelebrationTest {
 
     @Test
     fun `chapter complete shows the chapter map, stats and the next chapter`() {
-        show(JourneyMilestone.ChapterComplete(1), mapOf("a1" to won(3, clean = true), "a2" to won(2), "a3" to won(2)))
+        show(
+            JourneyMilestone.ChapterComplete(1),
+            mapOf("a1" to won(3, clean = true), "a2" to won(2), "a3" to won(2)),
+            secondsByStop = mapOf("a1" to 100, "a2" to 150, "b1" to 999),
+        )
 
         composeRule.onNodeWithContentDescription("Chapter 1, 3 of 3 stops cleared").assertExists()
         composeRule.onNodeWithText("Chapter 1 complete").performScrollTo()
         composeRule.onNodeWithText("All 3 stops cleared").performScrollTo()
         composeRule.onNodeWithContentDescription("7/9 stars").performScrollTo()
+        composeRule.onNodeWithContentDescription("4:10 total time").performScrollTo()
         composeRule.onNodeWithContentDescription("1 clean boards").performScrollTo()
         composeRule.onNodeWithText("Start chapter 2").performScrollTo().performClick()
         composeRule.onNodeWithText("Replay for stars").performScrollTo().performClick()
@@ -76,9 +81,23 @@ class JourneyCelebrationTest {
     }
 
     @Test
+    fun `chapter with every star goes gold and moves on to the next chapter`() {
+        show(JourneyMilestone.ChapterMastered(1), listOf("a1", "a2", "a3").associateWith { won(3) })
+
+        composeRule.onNodeWithContentDescription("Chapter 1, 3 of 3 stops cleared").assertExists()
+        composeRule.onNodeWithText("Every star in chapter 1").performScrollTo()
+        composeRule.onNodeWithText("All 3 stops at three stars").performScrollTo()
+        composeRule.onNodeWithContentDescription("9 stars").performScrollTo()
+        composeRule.onNodeWithText("Replay for stars").assertDoesNotExist()
+        composeRule.onNodeWithText("Start chapter 2").performScrollTo().performClick()
+
+        assertEquals(listOf("b1"), played)
+    }
+
+    @Test
     fun `journey complete counts stars still to go and offers a replay`() {
         val progress = mapOf("a1" to won(3), "a2" to won(3), "a3" to won(2), "b1" to won(2), "b2" to won(2))
-        show(JourneyMilestone.JourneyComplete, progress, playSeconds = 180)
+        show(JourneyMilestone.JourneyComplete, progress, secondsByStop = mapOf("a1" to 120, "b2" to 60, "gone" to 999))
 
         composeRule.onNodeWithContentDescription("Journey map, 5 of 5 stops cleared").assertExists()
         composeRule.onNodeWithText("Journey complete").performScrollTo()

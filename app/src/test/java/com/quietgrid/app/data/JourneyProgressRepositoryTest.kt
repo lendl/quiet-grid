@@ -255,17 +255,25 @@ class JourneyProgressRepositoryTest {
     }
 
     @Test
-    fun `every star on the first pass queues all three milestones`() = runBlocking {
+    fun `every star on the first pass queues every milestone`() = runBlocking {
         val clean = JourneySignals(hintsUsed = 0, mistakes = 0)
         listOf("s1", "s2", "s3").forEach { repository.recordWin(game, it, it, clean, elapsedSeconds = 60, score = 0) }
 
         assertEquals(
-            listOf(JourneyMilestone.ChapterComplete(1), JourneyMilestone.JourneyComplete, JourneyMilestone.Mastered),
+            listOf(
+                JourneyMilestone.ChapterComplete(1),
+                JourneyMilestone.ChapterMastered(1),
+                JourneyMilestone.JourneyComplete,
+                JourneyMilestone.Mastered,
+            ),
             repository.pendingMilestones(game),
         )
         assertTrue(repository.isMastered(game).first())
         repository.markShown(game, JourneyMilestone.Mastered)
-        assertEquals(listOf(JourneyMilestone.ChapterComplete(1), JourneyMilestone.JourneyComplete), repository.pendingMilestones(game))
+        assertEquals(
+            listOf(JourneyMilestone.ChapterComplete(1), JourneyMilestone.ChapterMastered(1), JourneyMilestone.JourneyComplete),
+            repository.pendingMilestones(game),
+        )
         assertTrue(repository.isMastered(game).first())
     }
 
@@ -281,8 +289,36 @@ class JourneyProgressRepositoryTest {
         assertEquals(emptyList<JourneyMilestone>(), repository.pendingMilestones(game))
 
         repository.recordWin(game, "s3", "s3", clean, elapsedSeconds = 60, score = 0)
-        assertEquals(listOf(JourneyMilestone.Mastered), repository.pendingMilestones(game))
+        assertEquals(listOf(JourneyMilestone.ChapterMastered(1), JourneyMilestone.Mastered), repository.pendingMilestones(game))
         assertTrue(repository.isMastered(game).first())
+    }
+
+    @Test
+    fun `mastering again after the journey gains a stop queues the milestones again`() = runBlocking {
+        val clean = JourneySignals(hintsUsed = 0, mistakes = 0)
+        listOf("s1", "s2", "s3").forEach { repository.recordWin(game, it, it, clean, elapsedSeconds = 60, score = 0) }
+        repository.pendingMilestones(game).forEach { repository.markShown(game, it) }
+
+        val chapter = file.chapters.single()
+        val grown = file.copy(chapters = listOf(chapter.copy(stops = chapter.stops + JourneyStop("s4", "easy", 250, 90))))
+        val updated = JourneyProgressRepository(
+            dao = database.journeyProgressDao(),
+            historyStore = history,
+            journeyFile = { if (it == game) grown else null },
+            ratedPool = { gameId, difficulty -> if (gameId == game) pools[difficulty].orEmpty() else emptyList() },
+            clock = { 6000L },
+        )
+        updated.recordWin(game, "s4", "s4", clean, elapsedSeconds = 60, score = 0)
+
+        assertEquals(
+            listOf(
+                JourneyMilestone.ChapterComplete(1),
+                JourneyMilestone.ChapterMastered(1),
+                JourneyMilestone.JourneyComplete,
+                JourneyMilestone.Mastered,
+            ),
+            updated.pendingMilestones(game),
+        )
     }
 
     @Test

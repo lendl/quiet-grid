@@ -8,6 +8,7 @@ import com.quietgrid.app.core.journey.JourneySignals
 import com.quietgrid.app.core.journey.JourneyStopProgress
 import com.quietgrid.app.core.journey.applyJourneyLoss
 import com.quietgrid.app.core.journey.applyJourneyWin
+import com.quietgrid.app.core.journey.chapterIndex
 import com.quietgrid.app.core.journey.journeyLevelRanges
 import com.quietgrid.app.core.journey.journeyMilestones
 import com.quietgrid.app.core.journey.journeyRatedPool
@@ -87,7 +88,7 @@ class JourneyProgressRepository(
         if (file != null) {
             val now = clock()
             journeyMilestones(file, stopId, before, storedProgress(gameId)).forEach { milestone ->
-                dao.insertMilestone(milestone.toEntity(journeyScope(gameId), now))
+                dao.upsertMilestone(milestone.toEntity(journeyScope(gameId), now))
             }
         }
         return run.stars
@@ -96,7 +97,7 @@ class JourneyProgressRepository(
     override suspend fun pendingMilestones(gameId: GameId): List<JourneyMilestone> =
         dao.pendingMilestones(journeyScope(gameId))
             .mapNotNull { it.toMilestone() }
-            .sortedWith(compareBy<JourneyMilestone> { it.rank }.thenBy { (it as? JourneyMilestone.ChapterComplete)?.chapterIndex ?: 0 })
+            .sortedWith(compareBy({ it.rank }, { it.chapterIndex }))
 
     override suspend fun markShown(gameId: GameId, milestone: JourneyMilestone) {
         val now = clock()
@@ -204,12 +205,14 @@ class JourneyProgressRepository(
 
 private fun JourneyMilestone.toEntity(scope: String, now: Long): JourneyMilestoneEntity = when (this) {
     is JourneyMilestone.ChapterComplete -> JourneyMilestoneEntity(scope, JOURNEY_MILESTONE_CHAPTER, chapterIndex, achievedMillis = now, shownMillis = null)
+    is JourneyMilestone.ChapterMastered -> JourneyMilestoneEntity(scope, JOURNEY_MILESTONE_CHAPTER_MASTERED, chapterIndex, achievedMillis = now, shownMillis = null)
     JourneyMilestone.JourneyComplete -> JourneyMilestoneEntity(scope, JOURNEY_MILESTONE_JOURNEY, 0, achievedMillis = now, shownMillis = null)
     JourneyMilestone.Mastered -> JourneyMilestoneEntity(scope, JOURNEY_MILESTONE_MASTERED, 0, achievedMillis = now, shownMillis = null)
 }
 
 private fun JourneyMilestoneEntity.toMilestone(): JourneyMilestone? = when (kind) {
     JOURNEY_MILESTONE_CHAPTER -> JourneyMilestone.ChapterComplete(chapterIndex)
+    JOURNEY_MILESTONE_CHAPTER_MASTERED -> JourneyMilestone.ChapterMastered(chapterIndex)
     JOURNEY_MILESTONE_JOURNEY -> JourneyMilestone.JourneyComplete
     JOURNEY_MILESTONE_MASTERED -> JourneyMilestone.Mastered
     else -> null

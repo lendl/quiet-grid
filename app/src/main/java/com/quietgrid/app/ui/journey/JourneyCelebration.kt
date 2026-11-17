@@ -92,7 +92,6 @@ private val RAY_SHORT = 11.dp
 private val LABEL_GAP = 11.dp
 private val LABEL_STAR_RADIUS = 5.dp
 private val LABEL_STAR_GAP = 4.dp
-private const val SCRIM_ALPHA = 0.95f
 private const val GLOW_ALPHA = 0.22f
 private const val HALO_ALPHA = 0.14f
 private const val HALO_SCALE = 1.55f
@@ -120,19 +119,23 @@ fun JourneyCelebration(
     gameId: GameId,
     milestone: JourneyMilestone,
     rows: List<JourneyStopRow>,
-    playSeconds: Int,
+    secondsByStop: Map<String, Int>,
     reduceMotion: Boolean,
     actions: JourneyCelebrationActions,
     modifier: Modifier = Modifier,
 ) {
     when (milestone) {
         is JourneyMilestone.ChapterComplete -> {
-            val model = remember(rows, milestone) { chapterCelebrationModel(rows, milestone.chapterIndex) } ?: return
-            ChapterCelebration(gameId, model, reduceMotion, actions, modifier)
+            val model = remember(rows, milestone, secondsByStop) { chapterCelebrationModel(rows, milestone.chapterIndex, secondsByStop) } ?: return
+            ChapterCelebration(gameId, model, mastered = false, reduceMotion, actions, modifier)
+        }
+        is JourneyMilestone.ChapterMastered -> {
+            val model = remember(rows, milestone, secondsByStop) { chapterCelebrationModel(rows, milestone.chapterIndex, secondsByStop) } ?: return
+            ChapterCelebration(gameId, model, mastered = true, reduceMotion, actions, modifier)
         }
         JourneyMilestone.JourneyComplete, JourneyMilestone.Mastered -> {
-            val model = remember(rows) { journeyCelebrationModel(rows) } ?: return
-            WholeJourneyCelebration(gameId, model, playSeconds, milestone == JourneyMilestone.Mastered, reduceMotion, actions, modifier)
+            val model = remember(rows, secondsByStop) { journeyCelebrationModel(rows, secondsByStop) } ?: return
+            WholeJourneyCelebration(gameId, model, milestone == JourneyMilestone.Mastered, reduceMotion, actions, modifier)
         }
     }
 }
@@ -141,6 +144,7 @@ fun JourneyCelebration(
 private fun ChapterCelebration(
     gameId: GameId,
     model: ChapterCelebrationModel,
+    mastered: Boolean,
     reduceMotion: Boolean,
     actions: JourneyCelebrationActions,
     modifier: Modifier = Modifier,
@@ -148,16 +152,26 @@ private fun ChapterCelebration(
     val timeline = remember(model.stopCount) { CelebrationTimeline(chapterLightMs(model.stopCount)) }
     val elapsed = rememberCelebrationClock(timeline.totalMs, reduceMotion)
     val colors = MaterialTheme.colorScheme
+    val gold = celebrationGold()
+    val accent = if (mastered) gold.gold else colors.primary
+    val onAccent = if (mastered) gold.onGold else colors.onPrimary
     val gameTitle = stringResource(GameCatalog.get(gameId).titleRes)
     val nodes = remember(model.stopCount) { (1..model.stopCount).map { CelebrationNode(it.toString()) } }
     val description = stringResource(R.string.journey_chapter_road_description, model.chapterIndex, model.stopCount, model.stopCount)
-    val timeLabel = stringResource(R.string.journey_stat_best_times)
     CelebrationLayout(
         elapsed = elapsed,
         timeline = timeline,
         label = stringResource(R.string.journey_chapter_complete_label, gameTitle, model.chapterIndex),
-        title = stringResource(R.string.journey_chapter_complete_title, model.chapterIndex),
-        subtitle = stringResource(R.string.journey_chapter_all_cleared, model.stopCount),
+        title = if (mastered) {
+            stringResource(R.string.journey_chapter_mastered_title, model.chapterIndex)
+        } else {
+            stringResource(R.string.journey_chapter_complete_title, model.chapterIndex)
+        },
+        subtitle = if (mastered) {
+            stringResource(R.string.journey_mastered_all_stops, model.stopCount)
+        } else {
+            stringResource(R.string.journey_chapter_all_cleared, model.stopCount)
+        },
         onClose = actions.onClose,
         map = { mapModifier ->
             CelebrationMap(
@@ -165,9 +179,9 @@ private fun ChapterCelebration(
                 seedChapter = model.chapterIndex,
                 nodes = nodes,
                 dotsBefore = emptyList(),
-                accent = colors.primary,
-                onAccent = colors.onPrimary,
-                rays = false,
+                accent = accent,
+                onAccent = onAccent,
+                rays = mastered,
                 timeline = timeline,
                 elapsed = elapsed,
                 description = description,
@@ -178,14 +192,13 @@ private fun ChapterCelebration(
             CountingStats(
                 elapsed = elapsed,
                 timeline = timeline,
-                stars = CountedStars(model.stars, model.maxStars, colors.primary),
-                seconds = model.bestSeconds,
-                secondsLabel = timeLabel,
+                stars = CountedStars(model.stars, model.maxStars.takeUnless { mastered }, accent),
+                seconds = model.playSeconds,
                 cleanBoards = model.cleanBoards,
                 modifier = statsModifier,
             )
         },
-        buttons = { buttonsModifier -> ChapterButtons(model, actions, buttonsModifier) },
+        buttons = { buttonsModifier -> ChapterButtons(model, accent, onAccent, actions, buttonsModifier) },
         modifier = modifier,
     )
 }
@@ -194,7 +207,6 @@ private fun ChapterCelebration(
 private fun WholeJourneyCelebration(
     gameId: GameId,
     model: JourneyCelebrationModel,
-    playSeconds: Int,
     mastered: Boolean,
     reduceMotion: Boolean,
     actions: JourneyCelebrationActions,
@@ -225,7 +237,6 @@ private fun WholeJourneyCelebration(
         else -> cleared
     }
     val description = stringResource(R.string.journey_road_description, model.stopCount, model.stopCount)
-    val timeLabel = stringResource(R.string.journey_stat_total_time)
     CelebrationLayout(
         elapsed = elapsed,
         timeline = timeline,
@@ -253,8 +264,7 @@ private fun WholeJourneyCelebration(
                 elapsed = elapsed,
                 timeline = timeline,
                 stars = CountedStars(model.stars, model.maxStars.takeUnless { mastered }, accent),
-                seconds = playSeconds,
-                secondsLabel = timeLabel,
+                seconds = model.playSeconds,
                 cleanBoards = model.cleanBoards,
                 modifier = statsModifier,
             )
@@ -282,7 +292,7 @@ private fun CelebrationLayout(
         modifier
             .fillMaxSize()
             .graphicsLayer { alpha = timeline.fade(elapsed()) }
-            .background(colors.background.copy(alpha = SCRIM_ALPHA))
+            .background(colors.background)
             .pointerInput(Unit) { detectTapGestures() },
         contentAlignment = Alignment.TopCenter,
     ) {
@@ -341,7 +351,6 @@ private fun CountingStats(
     timeline: CelebrationTimeline,
     stars: CountedStars,
     seconds: Int,
-    secondsLabel: String,
     cleanBoards: Int,
     modifier: Modifier = Modifier,
 ) {
@@ -352,7 +361,11 @@ private fun CountingStats(
     CelebrationStatsCard(
         stats = listOf(
             CelebrationStat(starsValue, stringResource(R.string.journey_stat_stars), starsSpoken, stars.tint),
-            CelebrationStat(formatTotalTime(timeline.count(now, seconds)), secondsLabel, formatTotalTime(seconds)),
+            CelebrationStat(
+                formatTotalTime(timeline.count(now, seconds)),
+                stringResource(R.string.journey_stat_total_time),
+                formatTotalTime(seconds),
+            ),
             CelebrationStat(
                 timeline.count(now, cleanBoards).toString(),
                 stringResource(R.string.journey_stat_clean_boards),
@@ -364,12 +377,19 @@ private fun CountingStats(
 }
 
 @Composable
-private fun ChapterButtons(model: ChapterCelebrationModel, actions: JourneyCelebrationActions, modifier: Modifier = Modifier) {
+private fun ChapterButtons(
+    model: ChapterCelebrationModel,
+    accent: Color,
+    onAccent: Color,
+    actions: JourneyCelebrationActions,
+    modifier: Modifier = Modifier,
+) {
     val next = model.nextChapterStop
     val replay = model.replayStop
+    val mainColors = ButtonDefaults.buttonColors(containerColor = accent, contentColor = onAccent)
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         if (next != null) {
-            Button(onClick = { actions.onPlay(next) }, modifier = Modifier.fillMaxWidth().heightIn(min = 54.dp)) {
+            Button(onClick = { actions.onPlay(next) }, colors = mainColors, modifier = Modifier.fillMaxWidth().heightIn(min = 54.dp)) {
                 Text(stringResource(R.string.journey_start_chapter, next.chapterIndex), fontWeight = FontWeight.Bold)
             }
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -383,7 +403,7 @@ private fun ChapterButtons(model: ChapterCelebrationModel, actions: JourneyCeleb
                 }
             }
         } else {
-            Button(onClick = { actions.onMap(model.chapterIndex) }, modifier = Modifier.fillMaxWidth().heightIn(min = 54.dp)) {
+            Button(onClick = { actions.onMap(model.chapterIndex) }, colors = mainColors, modifier = Modifier.fillMaxWidth().heightIn(min = 54.dp)) {
                 Text(stringResource(R.string.journey_map), fontWeight = FontWeight.Bold)
             }
             if (replay != null) {

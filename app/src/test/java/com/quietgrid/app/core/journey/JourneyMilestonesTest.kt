@@ -37,17 +37,43 @@ class JourneyMilestonesTest {
     }
 
     @Test
-    fun `the last missing star masters the journey`() {
+    fun `the last missing star masters the chapter and the journey`() {
         val before = mapOf("a1" to cleared(3), "a2" to cleared(3), "b1" to cleared(3), "b2" to cleared(2))
         val after = before + ("b2" to cleared(3))
-        assertEquals(listOf(JourneyMilestone.Mastered), journeyMilestones(file, "b2", before, after))
+        assertEquals(
+            listOf(JourneyMilestone.ChapterMastered(2), JourneyMilestone.Mastered),
+            journeyMilestones(file, "b2", before, after),
+        )
     }
 
     @Test
-    fun `a third star with other stops still short does not master`() {
+    fun `a third star with another chapter still short masters only its own chapter`() {
         val before = mapOf("a1" to cleared(3), "a2" to cleared(2), "b1" to cleared(3), "b2" to cleared(2))
         val after = before + ("b2" to cleared(3))
-        assertEquals(emptyList<JourneyMilestone>(), journeyMilestones(file, "b2", before, after))
+        assertEquals(listOf(JourneyMilestone.ChapterMastered(2)), journeyMilestones(file, "b2", before, after))
+    }
+
+    @Test
+    fun `a third star with its own chapter still short masters nothing`() {
+        val before = mapOf("a1" to cleared(2), "a2" to cleared(2))
+        val after = before + ("a2" to cleared(3))
+        assertEquals(emptyList<JourneyMilestone>(), journeyMilestones(file, "a2", before, after))
+    }
+
+    @Test
+    fun `finishing a chapter with every star completes and masters it`() {
+        val before = mapOf("a1" to cleared(3))
+        val after = before + ("a2" to cleared(3))
+        assertEquals(
+            listOf(JourneyMilestone.ChapterComplete(1), JourneyMilestone.ChapterMastered(1)),
+            journeyMilestones(file, "a2", before, after),
+        )
+    }
+
+    @Test
+    fun `replaying a stop of a mastered chapter fires nothing`() {
+        val before = mapOf("a1" to cleared(3), "a2" to cleared(3))
+        assertEquals(emptyList<JourneyMilestone>(), journeyMilestones(file, "a2", before, before))
     }
 
     @Test
@@ -62,7 +88,7 @@ class JourneyMilestonesTest {
 
     @Test
     fun `replaying a stop of a finished journey does not finish it again`() {
-        val before = mapOf("a1" to cleared(2), "a2" to cleared(3), "b1" to cleared(1), "b2" to cleared(2))
+        val before = mapOf("a1" to cleared(2), "a2" to cleared(2), "b1" to cleared(1), "b2" to cleared(2))
         val after = before + ("a1" to cleared(3))
         assertEquals(emptyList<JourneyMilestone>(), journeyMilestones(file, "a1", before, after))
     }
@@ -71,15 +97,23 @@ class JourneyMilestonesTest {
     fun `the last missing star after the journey was finished masters it`() {
         val before = mapOf("a1" to cleared(2), "a2" to cleared(3), "b1" to cleared(3), "b2" to cleared(3))
         val after = before + ("a1" to cleared(3))
-        assertEquals(listOf(JourneyMilestone.Mastered), journeyMilestones(file, "a1", before, after))
+        assertEquals(
+            listOf(JourneyMilestone.ChapterMastered(1), JourneyMilestone.Mastered),
+            journeyMilestones(file, "a1", before, after),
+        )
     }
 
     @Test
-    fun `finishing everything with every star on one win fires all three`() {
+    fun `finishing everything with every star on one win fires all four`() {
         val before = mapOf("a1" to cleared(3), "a2" to cleared(3), "b1" to cleared(3))
         val after = before + ("b2" to cleared(3))
         assertEquals(
-            listOf(JourneyMilestone.ChapterComplete(2), JourneyMilestone.JourneyComplete, JourneyMilestone.Mastered),
+            listOf(
+                JourneyMilestone.ChapterComplete(2),
+                JourneyMilestone.ChapterMastered(2),
+                JourneyMilestone.JourneyComplete,
+                JourneyMilestone.Mastered,
+            ),
             journeyMilestones(file, "b2", before, after),
         )
     }
@@ -87,8 +121,10 @@ class JourneyMilestonesTest {
     @Test
     fun `the biggest milestone is the one celebrated`() {
         val chapter = JourneyMilestone.ChapterComplete(2)
-        assertEquals(JourneyMilestone.Mastered, headlineMilestone(listOf(chapter, JourneyMilestone.JourneyComplete, JourneyMilestone.Mastered)))
-        assertEquals(JourneyMilestone.JourneyComplete, headlineMilestone(listOf(chapter, JourneyMilestone.JourneyComplete)))
+        val chapterGold = JourneyMilestone.ChapterMastered(2)
+        assertEquals(JourneyMilestone.Mastered, headlineMilestone(listOf(chapter, chapterGold, JourneyMilestone.JourneyComplete, JourneyMilestone.Mastered)))
+        assertEquals(JourneyMilestone.JourneyComplete, headlineMilestone(listOf(chapter, chapterGold, JourneyMilestone.JourneyComplete)))
+        assertEquals(chapterGold, headlineMilestone(listOf(chapter, chapterGold)))
         assertEquals(chapter, headlineMilestone(listOf(chapter)))
         assertNull(headlineMilestone(emptyList()))
     }

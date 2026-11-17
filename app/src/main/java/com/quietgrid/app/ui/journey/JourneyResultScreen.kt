@@ -84,8 +84,8 @@ fun JourneyResultScreen(
     val pending by produceState<List<JourneyMilestone>?>(initialValue = null, viewModel, gameId) {
         value = viewModel.pendingMilestones(gameId)
     }
-    val playSeconds by produceState<Int?>(initialValue = null, viewModel, gameId) {
-        value = viewModel.journeyPlaySeconds(gameId)
+    val playSeconds by produceState<Map<String, Int>?>(initialValue = null, viewModel, gameId) {
+        value = viewModel.playSecondsByStop(gameId)
     }
     val rows = state?.rows ?: return
     val milestones = pending ?: return
@@ -124,7 +124,7 @@ fun JourneyResultScreen(
                 gameId = gameId,
                 milestone = celebration,
                 rows = rows,
-                playSeconds = seconds,
+                secondsByStop = seconds,
                 reduceMotion = reduceMotion,
                 actions = JourneyCelebrationActions(
                     onClose = { dismissed = true },

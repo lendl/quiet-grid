@@ -74,7 +74,7 @@ class JourneyViewModel @Inject constructor(
         viewModelScope.launch { milestones.forEach { store.markShown(gameId, it) } }
     }
 
-    suspend fun journeyPlaySeconds(gameId: GameId): Int = totalJourneySeconds(history.recordsFor(gameId).first())
+    suspend fun playSecondsByStop(gameId: GameId): Map<String, Int> = journeySecondsByStop(history.recordsFor(gameId).first())
 
     suspend fun playTarget(gameId: GameId, stopId: String): Pair<Difficulty, JourneyRequest>? =
         state(gameId).first()?.rows?.firstOrNull { it.stop.puzzleId == stopId }
