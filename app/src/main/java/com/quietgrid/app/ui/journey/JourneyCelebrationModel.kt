@@ -1,27 +1,29 @@
 package com.quietgrid.app.ui.journey
 
 import com.quietgrid.app.core.journey.JOURNEY_MAX_STARS_PER_STOP
+import com.quietgrid.app.data.PlayRecord
 
 data class ChapterCelebrationModel(
     val chapterIndex: Int,
     val stopCount: Int,
-    val clearedCount: Int,
     val stars: Int,
     val maxStars: Int,
     val bestSeconds: Int,
     val cleanBoards: Int,
-    val canEarnMore: Int,
     val nextChapterStop: JourneyStopRow?,
     val replayStop: JourneyStopRow?,
 )
 
-data class MasteredCelebrationModel(
-    val chapterIndexes: List<Int>,
+data class JourneyCelebrationModel(
+    val chapters: List<JourneyChapterSummary>,
     val stopCount: Int,
     val stars: Int,
-    val bestSeconds: Int,
+    val maxStars: Int,
+    val cleanBoards: Int,
+    val replayStop: JourneyStopRow?,
 ) {
-    val lastChapterIndex: Int get() = chapterIndexes.last()
+    val lastChapterIndex: Int get() = chapters.last().index
+    val starsToGo: Int get() = maxStars - stars
 }
 
 fun chapterCelebrationModel(rows: List<JourneyStopRow>, chapterIndex: Int): ChapterCelebrationModel? {
@@ -29,27 +31,29 @@ fun chapterCelebrationModel(rows: List<JourneyStopRow>, chapterIndex: Int): Chap
     if (chapterRows.isEmpty()) return null
     val chapterOrder = rows.map { it.chapterIndex }.distinct()
     val nextChapter = chapterOrder.getOrNull(chapterOrder.indexOf(chapterIndex) + 1)
-    val shortOfStars = chapterRows.filter { it.progress.stars < JOURNEY_MAX_STARS_PER_STOP }
     return ChapterCelebrationModel(
         chapterIndex = chapterIndex,
         stopCount = chapterRows.size,
-        clearedCount = chapterRows.count { it.progress.cleared },
         stars = chapterRows.sumOf { it.progress.stars },
         maxStars = chapterRows.size * JOURNEY_MAX_STARS_PER_STOP,
         bestSeconds = chapterRows.sumOf { it.progress.bestSeconds ?: 0 },
         cleanBoards = chapterRows.count { it.progress.clean },
-        canEarnMore = shortOfStars.size,
         nextChapterStop = nextChapter?.let { next -> rows.firstOrNull { it.chapterIndex == next && it.state == JourneyStopState.CURRENT } },
-        replayStop = shortOfStars.firstOrNull(),
+        replayStop = chapterRows.firstOrNull { it.progress.stars < JOURNEY_MAX_STARS_PER_STOP },
     )
 }
 
-fun masteredCelebrationModel(rows: List<JourneyStopRow>): MasteredCelebrationModel? {
+fun journeyCelebrationModel(rows: List<JourneyStopRow>): JourneyCelebrationModel? {
     if (rows.isEmpty()) return null
-    return MasteredCelebrationModel(
-        chapterIndexes = rows.map { it.chapterIndex }.distinct(),
+    return JourneyCelebrationModel(
+        chapters = journeyChapterSummaries(rows),
         stopCount = rows.size,
         stars = rows.sumOf { it.progress.stars },
-        bestSeconds = rows.sumOf { it.progress.bestSeconds ?: 0 },
+        maxStars = rows.size * JOURNEY_MAX_STARS_PER_STOP,
+        cleanBoards = rows.count { it.progress.clean },
+        replayStop = rows.firstOrNull { it.progress.stars < JOURNEY_MAX_STARS_PER_STOP },
     )
 }
+
+fun totalJourneySeconds(records: List<PlayRecord>): Int =
+    records.filter { it.journeyStop != null }.sumOf { it.elapsedSeconds }

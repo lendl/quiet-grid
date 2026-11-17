@@ -227,17 +227,18 @@ class JourneyProgressRepositoryTest {
     }
 
     @Test
-    fun `clearing the last stop of a chapter queues one chapter milestone`() = runBlocking {
+    fun `clearing the last stop queues the chapter and journey milestones once`() = runBlocking {
         val hinted = JourneySignals(hintsUsed = 1, mistakes = 0)
         repository.recordWin(game, "s1", "s1", hinted, elapsedSeconds = 60, score = 0)
         repository.recordWin(game, "s2", "s2", hinted, elapsedSeconds = 60, score = 0)
         assertEquals(emptyList<JourneyMilestone>(), repository.pendingMilestones(game))
 
         repository.recordWin(game, "s3", "s3", hinted, elapsedSeconds = 60, score = 0)
-        assertEquals(listOf(JourneyMilestone.ChapterComplete(1)), repository.pendingMilestones(game))
+        val finished = listOf(JourneyMilestone.ChapterComplete(1), JourneyMilestone.JourneyComplete)
+        assertEquals(finished, repository.pendingMilestones(game))
 
         repository.recordWin(game, "s3", "s3", hinted, elapsedSeconds = 60, score = 0)
-        assertEquals(listOf(JourneyMilestone.ChapterComplete(1)), repository.pendingMilestones(game))
+        assertEquals(finished, repository.pendingMilestones(game))
         assertFalse(repository.isMastered(game).first())
     }
 
@@ -246,6 +247,7 @@ class JourneyProgressRepositoryTest {
         val hinted = JourneySignals(hintsUsed = 1, mistakes = 0)
         listOf("s1", "s2", "s3").forEach { repository.recordWin(game, it, it, hinted, elapsedSeconds = 60, score = 0) }
         repository.markShown(game, JourneyMilestone.ChapterComplete(1))
+        repository.markShown(game, JourneyMilestone.JourneyComplete)
         assertEquals(emptyList<JourneyMilestone>(), repository.pendingMilestones(game))
 
         repository.recordWin(game, "s3", "s3", hinted, elapsedSeconds = 60, score = 0)
@@ -253,14 +255,33 @@ class JourneyProgressRepositoryTest {
     }
 
     @Test
-    fun `the last missing star queues mastered after the chapter`() = runBlocking {
+    fun `every star on the first pass queues all three milestones`() = runBlocking {
         val clean = JourneySignals(hintsUsed = 0, mistakes = 0)
         listOf("s1", "s2", "s3").forEach { repository.recordWin(game, it, it, clean, elapsedSeconds = 60, score = 0) }
 
-        assertEquals(listOf(JourneyMilestone.ChapterComplete(1), JourneyMilestone.Mastered), repository.pendingMilestones(game))
+        assertEquals(
+            listOf(JourneyMilestone.ChapterComplete(1), JourneyMilestone.JourneyComplete, JourneyMilestone.Mastered),
+            repository.pendingMilestones(game),
+        )
         assertTrue(repository.isMastered(game).first())
         repository.markShown(game, JourneyMilestone.Mastered)
-        assertEquals(listOf(JourneyMilestone.ChapterComplete(1)), repository.pendingMilestones(game))
+        assertEquals(listOf(JourneyMilestone.ChapterComplete(1), JourneyMilestone.JourneyComplete), repository.pendingMilestones(game))
+        assertTrue(repository.isMastered(game).first())
+    }
+
+    @Test
+    fun `the last missing star after finishing the journey queues mastered`() = runBlocking {
+        val hinted = JourneySignals(hintsUsed = 1, mistakes = 0)
+        val clean = JourneySignals(hintsUsed = 0, mistakes = 0)
+        listOf("s1", "s2", "s3").forEach { repository.recordWin(game, it, it, hinted, elapsedSeconds = 60, score = 0) }
+        repository.pendingMilestones(game).forEach { repository.markShown(game, it) }
+        assertFalse(repository.isMastered(game).first())
+
+        listOf("s1", "s2").forEach { repository.recordWin(game, it, it, clean, elapsedSeconds = 60, score = 0) }
+        assertEquals(emptyList<JourneyMilestone>(), repository.pendingMilestones(game))
+
+        repository.recordWin(game, "s3", "s3", clean, elapsedSeconds = 60, score = 0)
+        assertEquals(listOf(JourneyMilestone.Mastered), repository.pendingMilestones(game))
         assertTrue(repository.isMastered(game).first())
     }
 

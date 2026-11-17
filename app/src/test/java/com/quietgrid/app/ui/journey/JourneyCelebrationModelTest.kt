@@ -1,6 +1,7 @@
 package com.quietgrid.app.ui.journey
 
 import com.quietgrid.app.core.journey.JourneyStopProgress
+import com.quietgrid.app.data.PlayRecord
 import com.quietgrid.engine.journey.JourneyChapter
 import com.quietgrid.engine.journey.JourneyFile
 import com.quietgrid.engine.journey.JourneyStop
@@ -23,12 +24,10 @@ class JourneyCelebrationModelTest {
         val model = chapterCelebrationModel(journeyRows(file, progress), 1)!!
 
         assertEquals(3, model.stopCount)
-        assertEquals(3, model.clearedCount)
         assertEquals(6, model.stars)
         assertEquals(9, model.maxStars)
         assertEquals(200, model.bestSeconds)
         assertEquals(2, model.cleanBoards)
-        assertEquals(2, model.canEarnMore)
         assertEquals("a2", model.replayStop?.stop?.puzzleId)
         assertEquals("b1", model.nextChapterStop?.stop?.puzzleId)
     }
@@ -44,7 +43,6 @@ class JourneyCelebrationModelTest {
         val model = chapterCelebrationModel(journeyRows(file, progress), 1)!!
 
         assertEquals("b2", model.nextChapterStop?.stop?.puzzleId)
-        assertEquals(0, model.canEarnMore)
         assertNull(model.replayStop)
     }
 
@@ -63,14 +61,42 @@ class JourneyCelebrationModelTest {
     }
 
     @Test
-    fun `mastered summary covers the whole journey`() {
-        val progress = listOf("a1", "a2", "a3", "b1", "b2").associateWith { won(3, 3600) }
-        val model = masteredCelebrationModel(journeyRows(file, progress))!!
+    fun `journey summary covers every chapter and finds stars still to earn`() {
+        val progress = mapOf(
+            "a1" to won(3, 60, clean = true),
+            "a2" to won(3, 60, clean = true),
+            "a3" to won(3, 60),
+            "b1" to won(2, 60),
+            "b2" to won(3, 60, clean = true),
+        )
+        val model = journeyCelebrationModel(journeyRows(file, progress))!!
 
-        assertEquals(listOf(1, 2), model.chapterIndexes)
+        assertEquals(listOf(1, 2), model.chapters.map { it.index })
+        assertEquals(listOf(9, 5), model.chapters.map { it.stars })
         assertEquals(5, model.stopCount)
-        assertEquals(15, model.stars)
-        assertEquals(5 * 3600, model.bestSeconds)
+        assertEquals(14, model.stars)
+        assertEquals(15, model.maxStars)
+        assertEquals(1, model.starsToGo)
+        assertEquals(3, model.cleanBoards)
+        assertEquals("b1", model.replayStop?.stop?.puzzleId)
         assertEquals(2, model.lastChapterIndex)
+    }
+
+    @Test
+    fun `a journey with every star has nothing to replay`() {
+        val progress = listOf("a1", "a2", "a3", "b1", "b2").associateWith { won(3, 60) }
+        val model = journeyCelebrationModel(journeyRows(file, progress))!!
+
+        assertEquals(0, model.starsToGo)
+        assertNull(model.replayStop)
+    }
+
+    @Test
+    fun `journey play time adds up every journey run and skips other play`() {
+        fun record(seconds: Int, stop: String?) =
+            PlayRecord(gameId = "animaldoku", difficulty = "easy", solved = true, score = 0, elapsedSeconds = seconds, timestampMillis = 0L, journeyStop = stop)
+        val records = listOf(record(60, "a1"), record(90, "a1"), record(500, null), record(30, "b2"))
+
+        assertEquals(180, totalJourneySeconds(records))
     }
 }

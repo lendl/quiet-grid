@@ -16,14 +16,19 @@ data class RoadPoint(val x: Float, val y: Float)
 
 data class JourneyRoadLayout(val width: Float, val height: Float, val stops: List<RoadPoint>, val full: List<RoadPoint>)
 
-fun journeyRoadLayout(stopCount: Int, width: Float): JourneyRoadLayout {
-    val height = (stopCount - 1).coerceAtLeast(0) * JOURNEY_STOP_SPACING + 2 * JOURNEY_ROAD_MARGIN
+fun journeyRoadLayout(
+    stopCount: Int,
+    width: Float,
+    spacing: Float = JOURNEY_STOP_SPACING,
+    margin: Float = JOURNEY_ROAD_MARGIN,
+): JourneyRoadLayout {
+    val height = (stopCount - 1).coerceAtLeast(0) * spacing + 2 * margin
     val centre = width / 2
     val amplitude = minOf(width * JOURNEY_ROAD_AMPLITUDE_FRACTION, JOURNEY_ROAD_MAX_AMPLITUDE, centre - JOURNEY_STOP_HALF_SLOT)
         .coerceAtLeast(0f)
     fun point(i: Int) = RoadPoint(
         x = centre + amplitude * sin(i * 0.95f + 0.4f),
-        y = height - JOURNEY_ROAD_MARGIN - i * JOURNEY_STOP_SPACING,
+        y = height - margin - i * spacing,
     )
     val stops = (0 until stopCount).map(::point)
     return JourneyRoadLayout(width, height, stops, listOf(point(-1)) + stops)

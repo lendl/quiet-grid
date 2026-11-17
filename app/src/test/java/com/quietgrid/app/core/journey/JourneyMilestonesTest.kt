@@ -4,6 +4,7 @@ import com.quietgrid.engine.journey.JourneyChapter
 import com.quietgrid.engine.journey.JourneyFile
 import com.quietgrid.engine.journey.JourneyStop
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
 
 class JourneyMilestonesTest {
@@ -50,13 +51,46 @@ class JourneyMilestonesTest {
     }
 
     @Test
-    fun `chapter and mastered on the same win come chapter first`() {
+    fun `clearing the last open stop finishes the journey with stars still missing`() {
+        val before = mapOf("a1" to cleared(2), "a2" to cleared(3), "b1" to cleared(1))
+        val after = before + ("b2" to cleared(2))
+        assertEquals(
+            listOf(JourneyMilestone.ChapterComplete(2), JourneyMilestone.JourneyComplete),
+            journeyMilestones(file, "b2", before, after),
+        )
+    }
+
+    @Test
+    fun `replaying a stop of a finished journey does not finish it again`() {
+        val before = mapOf("a1" to cleared(2), "a2" to cleared(3), "b1" to cleared(1), "b2" to cleared(2))
+        val after = before + ("a1" to cleared(3))
+        assertEquals(emptyList<JourneyMilestone>(), journeyMilestones(file, "a1", before, after))
+    }
+
+    @Test
+    fun `the last missing star after the journey was finished masters it`() {
+        val before = mapOf("a1" to cleared(2), "a2" to cleared(3), "b1" to cleared(3), "b2" to cleared(3))
+        val after = before + ("a1" to cleared(3))
+        assertEquals(listOf(JourneyMilestone.Mastered), journeyMilestones(file, "a1", before, after))
+    }
+
+    @Test
+    fun `finishing everything with every star on one win fires all three`() {
         val before = mapOf("a1" to cleared(3), "a2" to cleared(3), "b1" to cleared(3))
         val after = before + ("b2" to cleared(3))
         assertEquals(
-            listOf(JourneyMilestone.ChapterComplete(2), JourneyMilestone.Mastered),
+            listOf(JourneyMilestone.ChapterComplete(2), JourneyMilestone.JourneyComplete, JourneyMilestone.Mastered),
             journeyMilestones(file, "b2", before, after),
         )
+    }
+
+    @Test
+    fun `the biggest milestone is the one celebrated`() {
+        val chapter = JourneyMilestone.ChapterComplete(2)
+        assertEquals(JourneyMilestone.Mastered, headlineMilestone(listOf(chapter, JourneyMilestone.JourneyComplete, JourneyMilestone.Mastered)))
+        assertEquals(JourneyMilestone.JourneyComplete, headlineMilestone(listOf(chapter, JourneyMilestone.JourneyComplete)))
+        assertEquals(chapter, headlineMilestone(listOf(chapter)))
+        assertNull(headlineMilestone(emptyList()))
     }
 
     @Test

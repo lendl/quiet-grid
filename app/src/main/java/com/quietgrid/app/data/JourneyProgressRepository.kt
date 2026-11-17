@@ -16,6 +16,7 @@ import com.quietgrid.app.core.journey.journeyScope
 import com.quietgrid.app.core.journey.loadJourneyFile
 import com.quietgrid.app.core.journey.locate
 import com.quietgrid.app.core.journey.pickJourneyReplay
+import com.quietgrid.app.core.journey.rank
 import com.quietgrid.engine.journey.JourneyFile
 import com.quietgrid.engine.journey.JourneyStop
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -95,7 +96,7 @@ class JourneyProgressRepository(
     override suspend fun pendingMilestones(gameId: GameId): List<JourneyMilestone> =
         dao.pendingMilestones(journeyScope(gameId))
             .mapNotNull { it.toMilestone() }
-            .sortedWith(compareBy<JourneyMilestone> { it is JourneyMilestone.Mastered }.thenBy { (it as? JourneyMilestone.ChapterComplete)?.chapterIndex ?: 0 })
+            .sortedWith(compareBy<JourneyMilestone> { it.rank }.thenBy { (it as? JourneyMilestone.ChapterComplete)?.chapterIndex ?: 0 })
 
     override suspend fun markShown(gameId: GameId, milestone: JourneyMilestone) {
         val now = clock()
@@ -203,11 +204,13 @@ class JourneyProgressRepository(
 
 private fun JourneyMilestone.toEntity(scope: String, now: Long): JourneyMilestoneEntity = when (this) {
     is JourneyMilestone.ChapterComplete -> JourneyMilestoneEntity(scope, JOURNEY_MILESTONE_CHAPTER, chapterIndex, achievedMillis = now, shownMillis = null)
+    JourneyMilestone.JourneyComplete -> JourneyMilestoneEntity(scope, JOURNEY_MILESTONE_JOURNEY, 0, achievedMillis = now, shownMillis = null)
     JourneyMilestone.Mastered -> JourneyMilestoneEntity(scope, JOURNEY_MILESTONE_MASTERED, 0, achievedMillis = now, shownMillis = null)
 }
 
 private fun JourneyMilestoneEntity.toMilestone(): JourneyMilestone? = when (kind) {
     JOURNEY_MILESTONE_CHAPTER -> JourneyMilestone.ChapterComplete(chapterIndex)
+    JOURNEY_MILESTONE_JOURNEY -> JourneyMilestone.JourneyComplete
     JOURNEY_MILESTONE_MASTERED -> JourneyMilestone.Mastered
     else -> null
 }

@@ -9,6 +9,7 @@ import com.quietgrid.app.core.journey.JourneyMilestone
 import com.quietgrid.app.core.journey.JourneyRequest
 import com.quietgrid.app.core.journey.loadJourneyFile
 import com.quietgrid.app.data.JourneyProgressStore
+import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.games.animaldoku.AnimalDokuPuzzleBank
 import com.quietgrid.app.games.arrowescape.ArrowEscapePuzzleBank
 import com.quietgrid.app.games.killersudoku.KillerSudokuPuzzleBank
@@ -48,7 +49,10 @@ data class JourneyState(val rows: List<JourneyStopRow>, val summary: JourneySumm
 class JourneyViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val store: JourneyProgressStore,
+    private val history: PlayHistoryStore,
 ) : ViewModel() {
+
+    private val pendingByGame = mutableMapOf<GameId, List<JourneyMilestone>>()
 
     fun state(gameId: GameId): Flow<JourneyState?> = flow {
         val file = loadJourneyFile(context, gameId)
@@ -63,11 +67,14 @@ class JourneyViewModel @Inject constructor(
         )
     }
 
-    suspend fun pendingMilestones(gameId: GameId): List<JourneyMilestone> = store.pendingMilestones(gameId)
+    suspend fun pendingMilestones(gameId: GameId): List<JourneyMilestone> =
+        pendingByGame[gameId] ?: store.pendingMilestones(gameId).also { pendingByGame[gameId] = it }
 
-    fun markShown(gameId: GameId, milestone: JourneyMilestone) {
-        viewModelScope.launch { store.markShown(gameId, milestone) }
+    fun markShown(gameId: GameId, milestones: List<JourneyMilestone>) {
+        viewModelScope.launch { milestones.forEach { store.markShown(gameId, it) } }
     }
+
+    suspend fun journeyPlaySeconds(gameId: GameId): Int = totalJourneySeconds(history.recordsFor(gameId).first())
 
     suspend fun playTarget(gameId: GameId, stopId: String): Pair<Difficulty, JourneyRequest>? =
         state(gameId).first()?.rows?.firstOrNull { it.stop.puzzleId == stopId }

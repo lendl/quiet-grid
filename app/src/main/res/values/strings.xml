@@ -2145,21 +2145,17 @@
     <string name="journey_stat_stars">stars</string>
     <string name="journey_stat_best_times">best times</string>
     <string name="journey_stat_clean_boards">clean boards</string>
-    <string name="journey_stat_chapters">chapters</string>
-    <string name="journey_stat_stops">stops</string>
-    <plurals name="journey_stops_can_earn_more">
-        <item quantity="one">%1$d stop can still earn more stars</item>
-        <item quantity="other">%1$d stops can still earn more stars</item>
-    </plurals>
+    <string name="journey_stat_total_time">total time</string>
     <string name="journey_chapter_road_description">Chapter %1$d, %2$d of %3$d stops cleared</string>
+    <string name="journey_road_description">Journey map, %1$d of %2$d stops cleared</string>
+    <string name="journey_complete_title">Journey complete</string>
+    <plurals name="journey_stars_to_gold">
+        <item quantity="one">%1$d star to go for gold</item>
+        <item quantity="other">%1$d stars to go for gold</item>
+    </plurals>
     <string name="journey_mastered_title">Every star collected</string>
     <string name="journey_mastered_label">%1$s · Journey</string>
-    <string name="journey_mastered_sub">%1$s Journey · %2$d of %2$d stars</string>
-    <string name="journey_mastered_note">A gold star now marks your %1$s Journey</string>
-    <plurals name="journey_constellation_description">
-        <item quantity="one">%1$d chapter, every star collected</item>
-        <item quantity="other">%1$d chapters, every star collected</item>
-    </plurals>
+    <string name="journey_mastered_all_stops">All %1$d stops at three stars</string>
     <string name="journey_done">Done</string>
     <string name="journey_view_map">View the map</string>
     <string name="journey_mastered_badge">Every star collected</string>

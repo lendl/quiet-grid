@@ -391,7 +391,6 @@ private val FULL_SCREEN_ROUTES: List<KClass<*>> = listOf(
     CompletionRoute::class,
     LossRoute::class,
     JourneyResultRoute::class,
-    JourneyChapterRoute::class,
     JourneyMasteredRoute::class,
     ChallengerRoute::class,
     ChallengerResultRoute::class,
