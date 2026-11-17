@@ -16,7 +16,6 @@ data class WordSwapColors(
     val onDone: Color,
     val hint: Color,
     val onHint: Color,
-    val diagonal: Color,
 )
 
 private val PENCIL_WORDSWAP_COLORS = WordSwapColors(
@@ -28,7 +27,6 @@ private val PENCIL_WORDSWAP_COLORS = WordSwapColors(
     onDone = Color(0xFF1F1F1F),
     hint = Color(0xFF5E5E5E),
     onHint = Color(0xFFFFFFFF),
-    diagonal = Color(0xFFC8C8C8),
 )
 
 private const val STRONG_SEPARATION = 0.25f
@@ -66,7 +64,6 @@ fun wordSwapColorsFor(scheme: ColorScheme, pencil: Boolean): WordSwapColors {
         onDone = scheme.onTertiaryContainer,
         hint = hint.first,
         onHint = hint.second,
-        diagonal = scheme.outlineVariant,
     )
 }
 

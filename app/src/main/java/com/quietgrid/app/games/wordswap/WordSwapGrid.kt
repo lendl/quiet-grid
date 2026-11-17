@@ -22,9 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
@@ -35,7 +32,6 @@ import com.quietgrid.app.ui.components.LocalReduceMotion
 import com.quietgrid.engine.wordswap.WORDSWAP_HOLE
 import com.quietgrid.engine.wordswap.WordSwapMove
 import com.quietgrid.engine.wordswap.WordSwapPuzzleEntry
-import com.quietgrid.engine.wordswap.isDiagonal
 
 private const val TILE_GAP = 0.06f
 private const val TILE_CORNER = 0.18f
@@ -64,28 +60,13 @@ fun WordSwapGrid(
             swapProgress.snapTo(1f)
         }
     }
-    val diagonals = puzzle.slots.filter { it.direction.isDiagonal }
 
     BoxWithConstraints(Modifier.padding(12.dp), contentAlignment = Alignment.Center) {
         val cellSize = min(maxWidth / puzzle.cols, maxHeight / puzzle.rows)
         val density = LocalDensity.current
         val cellPx = with(density) { cellSize.toPx() }
         val letterSize = with(density) { (cellSize * LETTER_SIZE).toSp() }
-        Box(
-            Modifier
-                .size(cellSize * puzzle.cols, cellSize * puzzle.rows)
-                .drawBehind {
-                    diagonals.forEach { slot ->
-                        val last = slot.length - 1
-                        val start = Offset((slot.col + 0.5f) * cellPx, (slot.row + 0.5f) * cellPx)
-                        val end = Offset(
-                            (slot.col + last * slot.direction.colStep + 0.5f) * cellPx,
-                            (slot.row + last * slot.direction.rowStep + 0.5f) * cellPx,
-                        )
-                        drawLine(colors.diagonal, start, end, strokeWidth = cellPx * 0.08f, cap = StrokeCap.Round)
-                    }
-                },
-        ) {
+        Box(Modifier.size(cellSize * puzzle.cols, cellSize * puzzle.rows)) {
             board.indices.filter { board[it] != WORDSWAP_HOLE }.forEach { cell ->
                 key(cell) {
                     val letter = board[cell]

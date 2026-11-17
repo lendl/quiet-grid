@@ -2186,7 +2186,7 @@
     <string name="wordswap_difficulty_desc_expert">6 by 6 grids that take 21 swaps or more</string>
     <string name="wordswap_quickstart_goal">Swap the letter tiles until every word in the list sits in its place on the grid.</string>
     <string name="wordswap_quickstart_bullet_1">Tap a tile, then tap another tile to swap them.</string>
-    <string name="wordswap_quickstart_bullet_2">Every line of three or more tiles across or down is a word from the list. Some grids also have marked diagonal words.</string>
+    <string name="wordswap_quickstart_bullet_2">Every line of three or more tiles across or down is a word from the list. Some grids also hide words on a diagonal.</string>
     <string name="wordswap_quickstart_bullet_3">A finished word lights up. Try to solve the puzzle in the fewest swaps.</string>
     <string name="wordswap_quickstart_hook">Start where words cross: one letter has to fit both.</string>
     <string name="wordswap_how_to_play_goal">Put every word from the list in its place on the grid. The puzzle is solved when all of them read correctly.</string>
@@ -2196,7 +2196,7 @@
     <string name="wordswap_rule_1_title">Swap any two tiles</string>
     <string name="wordswap_rule_1_body">The two tiles don\'t have to touch. Gaps in the grid stay empty.</string>
     <string name="wordswap_rule_2_title">Every line is a word</string>
-    <string name="wordswap_rule_2_body">Each line of three or more tiles across or down, and each marked diagonal, spells a word from the list. Shorter lines don\'t count.</string>
+    <string name="wordswap_rule_2_body">Each line of three or more tiles across or down spells a word from the list. Shorter lines don\'t count. Words listed under Diagonal sit on a diagonal somewhere in the grid, and finding where is part of the puzzle.</string>
     <string name="wordswap_rule_3_title">Finished words light up</string>
     <string name="wordswap_rule_3_body">A word that is fully in place changes color and is crossed off the list.</string>
     <string name="wordswap_swaps">Swaps %1$d</string>
