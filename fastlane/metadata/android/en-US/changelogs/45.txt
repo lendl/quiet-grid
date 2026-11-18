@@ -1,0 +1,8 @@
+Version 1.15.0
+
+- New games: Links, Block Escape, Word Swap and Circuit. Word Swap plays in your puzzle language.
+- Journey: now in 12 games, with celebrations for chapters, the whole journey and every star.
+- Badges for the puzzles you have done, on the Stats tab.
+- Quiet tips after a puzzle. Turn them off under Be quiet in Settings.
+- Word Guess accepts more French and Dutch words.
+- Bug fixes and stability improvements

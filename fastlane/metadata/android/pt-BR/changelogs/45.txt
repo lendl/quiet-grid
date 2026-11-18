@@ -1,0 +1,8 @@
+Versão 1.15.0
+
+- Novos jogos: Ligações, Escape dos Blocos, Troca de Palavras (no seu idioma) e Circuito.
+- Jornada: agora em 12 jogos, com comemorações por capítulos, a jornada completa e cada estrela.
+- Insígnias pelos quebra-cabeças que você fez, na aba Estatísticas.
+- Conselhos tranquilos após um quebra-cabeça. Desative em Ajustes, em Silêncio.
+- Adivinhe a Palavra aceita mais palavras em francês e holandês.
+- Correções de bugs e melhorias de estabilidade

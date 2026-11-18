@@ -1,0 +1,8 @@
+Version 1.15.0
+
+- Neue Spiele: Verbinden, Blockflucht, Worttausch und Stromkreis. Worttausch spielt in deiner Rätselsprache.
+- Reise: jetzt in 12 Spielen, mit Feiern für Kapitel, die ganze Reise und jeden Stern.
+- Abzeichen für deine gelösten Rätsel, im Tab Statistiken.
+- Ruhige Tipps nach einem Rätsel. Abschalten unter Ruhe in den Einstellungen.
+- Wort erraten akzeptiert mehr französische und niederländische Wörter.
+- Fehlerbehebungen und Stabilitätsverbesserungen

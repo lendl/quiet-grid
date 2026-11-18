@@ -1,0 +1,8 @@
+Versión 1.15.0
+
+- Juegos nuevos: Enlaces, Escape de Bloques, Intercambio de Palabras (en tu idioma) y Circuito.
+- Viaje: ahora en 12 juegos, con celebraciones por capítulos, el viaje completo y cada estrella.
+- Insignias por los puzzles que has hecho, en la pestaña Estadísticas.
+- Consejos tranquilos tras un puzzle. Desactívalos en Ajustes, en Silencio.
+- Adivina la Palabra acepta más palabras en francés y neerlandés.
+- Corrección de errores y mejoras de estabilidad

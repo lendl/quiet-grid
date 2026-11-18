@@ -1,0 +1,8 @@
+Wersja 1.15.0
+
+- Nowe gry: Połączenia, Ucieczka klocków, Zamiana słów i Obwód. Zamiana słów działa w Twoim języku łamigłówek.
+- Podróż: teraz w 12 grach, ze świętowaniem rozdziałów, całej podróży i każdej gwiazdki.
+- Odznaki za rozwiązane łamigłówki, w karcie Statystyki.
+- Spokojne wskazówki po łamigłówce. Wyłączysz je w Ustawieniach, w sekcji Cisza.
+- Zgadnij słowo przyjmuje więcej słów francuskich i niderlandzkich.
+- Poprawki błędów i większa stabilność

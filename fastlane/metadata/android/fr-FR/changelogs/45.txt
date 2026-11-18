@@ -1,0 +1,8 @@
+Version 1.15.0
+
+- Nouveaux jeux : Liaisons, Évasion des Blocs, Échange de Mots (dans ta langue) et Circuit.
+- Voyage : désormais dans 12 jeux, avec des célébrations pour les chapitres, le voyage complet et chaque étoile.
+- Des badges pour les puzzles que tu as faits, dans l'onglet Statistiques.
+- Des astuces discrètes après un puzzle. Désactive-les dans Paramètres, sous Discrétion.
+- Devine le Mot accepte plus de mots français et néerlandais.
+- Corrections et améliorations de stabilité

@@ -1,0 +1,8 @@
+Versione 1.15.0
+
+- Nuovi giochi: Collegamenti, Fuga dei blocchi, Scambio di parole e Circuito. Scambio di parole usa la tua lingua dei puzzle.
+- Viaggio: ora in 12 giochi, con celebrazioni per i capitoli, il viaggio completo e ogni stella.
+- Badge per i puzzle che hai fatto, nella scheda Statistiche.
+- Consigli tranquilli dopo un puzzle. Disattivali nelle Impostazioni, sotto Silenzio.
+- Indovina la parola accetta più parole francesi e olandesi.
+- Correzioni e miglioramenti di stabilità

@@ -1,0 +1,8 @@
+Versie 1.15.0
+
+- Nieuwe spellen: Verbinden, Blokkenvlucht, Woordwissel en Stroomkring. Woordwissel speelt in je puzzeltaal.
+- Reis: nu in 12 spellen, met vieringen voor hoofdstukken, de hele reis en elke ster.
+- Badges voor de puzzels die je hebt gedaan, op het tabblad Statistieken.
+- Rustige tips na een puzzel. Zet ze uit onder Stil in Instellingen.
+- Woord Raden accepteert meer Franse en Nederlandse woorden.
+- Bugfixes en stabiliteitsverbeteringen
