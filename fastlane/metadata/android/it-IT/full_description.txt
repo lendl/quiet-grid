@@ -4,7 +4,7 @@
 Scegli quali giochi ti danno un nuovo puzzle ogni giorno, in ogni difficoltà. Condividi il risultato quando hai finito e ricevi un promemoria facoltativo se non hai ancora giocato.</p>
 
 <p><b>VIAGGIO</b><br>
-Attraversa capitoli di puzzle sempre più difficili e guadagna fino a tre stelle a ogni tappa. In 8 giochi, da Sudoku a Fuga delle frecce.</p>
+Attraversa capitoli di puzzle sempre più difficili e guadagna fino a tre stelle a ogni tappa. In 12 giochi.</p>
 
 <p><b>PUZZLE LEALI</b></p>
 <ul>
@@ -17,22 +17,25 @@ Attraversa capitoli di puzzle sempre più difficili e guadagna fino a tre stelle
 
 <p><b>PUZZLE DI LOGICA</b></p>
 <ul>
-<li><b>Sudoku</b> — Inserisci le cifre da 1 a 9 in modo che ogni riga, colonna e riquadro 3×3 contenga ogni cifra una sola volta.</li>
+<li><b>Sudoku</b> — Ogni cifra da 1 a 9, una volta per riga, colonna e riquadro 3×3.</li>
 <li><b>Killer Sudoku</b> — Nessuna cifra iniziale: le somme di ogni gabbia tratteggiata ti dicono cosa va dove.</li>
 <li><b>Mini Sudoku</b> — Sudoku veloci 4×4 e 6×6 per una breve pausa.</li>
-<li><b>Takuzu (Binairo)</b> — Riempi la griglia con 0 e 1. Stesso numero di ciascuno, mai tre di fila, nessuna riga identica.</li>
+<li><b>Takuzu (Binairo)</b> — Riempi la griglia con 0 e 1, mai tre di fila né righe identiche.</li>
 <li><b>Nonogram (Hanjie)</b> — Svela un'immagine nascosta con gli indizi numerici di ogni riga e colonna.</li>
-<li><b>Campo minato</b> — Scopri tutte le caselle sicure senza colpire una mina. Le griglie classiche non richiedono mai di tirare a indovinare, e c'è una modalità infinita.</li>
+<li><b>Campo minato</b> — Scopri le caselle sicure senza colpire una mina. Mai tirare a indovinare, e c'è una modalità infinita.</li>
 <li><b>Battaglia di stelle</b> — Metti le stelle in ogni riga, colonna e regione, senza che due si tocchino.</li>
 <li><b>Animal Doku</b> — Un animale per riga, colonna e regione colorata, mai a contatto, nemmeno in diagonale.</li>
+<li><b>Collegamenti</b> — Collega ogni coppia di punti e riempi la griglia.</li>
+<li><b>Circuito</b> — Ruota le tessere finché ogni filo è sotto tensione.</li>
 </ul>
 
 <p><b>GIOCHI DI PAROLE</b></p>
 <ul>
 <li><b>Cerca parole</b> — Trova le parole nascoste in griglie a tema.</li>
 <li><b>Indovina la parola</b> — Indovina la parola nascosta in sei tentativi.</li>
-<li><b>Indovina con i numeri</b> — Indovina la parola in dieci tentativi; due numeri mostrano quanto è vicino ogni tentativo.</li>
+<li><b>Indovina con i numeri</b> — Indovina la parola in dieci tentativi, aiutato da due numeri.</li>
 <li><b>Svuota il tema</b> — Componi parole di un solo tema finché ogni lettera è stata usata.</li>
+<li><b>Scambio di parole</b> — Scambia le tessere finché ogni riga forma una parola.</li>
 </ul>
 
 <p><b>MEMORIA, NUMERI E BLOCCHI</b></p>
@@ -42,10 +45,11 @@ Attraversa capitoli di puzzle sempre più difficili e guadagna fino a tre stelle
 <li><b>2048</b> — Fai scorrere e unisci le tessere fino a raggiungere 2048.</li>
 <li><b>Block Fill</b> — Trascina i pezzi sulla griglia e libera righe e colonne complete. Con modalità infinita.</li>
 <li><b>Fuga delle frecce</b> — Tocca una freccia per farla uscire dalla griglia. Esce solo se niente le sbarra la strada.</li>
+<li><b>Fuga dei blocchi</b> — Sposta i blocchi e libera il blocco corallo.</li>
 </ul>
 
 <p><b>A MODO TUO</b><br>
-Sette temi di colore, tra cui Matita, un tema in scala di grigi effetto carta, adatto ai giocatori daltonici. Segna con una stella i tuoi giochi preferiti, imposta suggerimenti, timer e layout per ogni gioco e riprendi un puzzle da un widget nella schermata Home. Gioca in 8 lingue e scegli a parte la lingua dei giochi di parole.</p>
+Sette temi di colore, tra cui Matita, in grigi effetto carta, adatto ai daltonici. Giochi preferiti, impostazioni per gioco e un widget per la schermata Home. Gioca in 8 lingue, con una lingua a parte per i giochi di parole.</p>
 
 <p><b>CALMO, PRIVATO E OPEN SOURCE</b><br>
-Pensato per momenti tranquilli: la pressione del tempo c'è solo se avvii tu la modalità Challenger. Niente pubblicità, niente tracciamento, niente account e nessun permesso internet. L'unico permesso richiesto è quello per le notifiche, per i promemoria giornalieri facoltativi. Open source con licenza GPLv3.</p>
+Pensato per momenti tranquilli: la pressione del tempo c'è solo se avvii tu la modalità Challenger. Niente pubblicità, niente tracciamento, niente account e nessun permesso internet. Unico permesso: le notifiche, per i promemoria facoltativi. Open source con licenza GPLv3.</p>

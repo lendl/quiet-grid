@@ -4,7 +4,7 @@
 Wähle, welche Spiele dir jeden Tag ein neues Rätsel geben, in jeder Schwierigkeitsstufe. Teile dein Ergebnis, wenn du fertig bist, und erhalte auf Wunsch eine Erinnerung, falls du noch nicht gespielt hast.</p>
 
 <p><b>REISE</b><br>
-Arbeite dich durch Kapitel mit Rätseln, die langsam schwerer werden, und hol dir bis zu drei Sterne pro Station. In 8 Spielen, von Sudoku bis Pfeilflucht.</p>
+Arbeite dich durch Kapitel mit Rätseln, die langsam schwerer werden, und hol dir bis zu drei Sterne pro Station. In 12 Spielen.</p>
 
 <p><b>FAIRE RÄTSEL</b></p>
 <ul>
@@ -17,22 +17,25 @@ Arbeite dich durch Kapitel mit Rätseln, die langsam schwerer werden, und hol di
 
 <p><b>LOGIKRÄTSEL</b></p>
 <ul>
-<li><b>Sudoku</b> — Setze die Ziffern 1–9 so, dass jede Zeile, jede Spalte und jeder 3×3-Block jede Ziffer genau einmal enthält.</li>
+<li><b>Sudoku</b> — Jede Ziffer 1–9 einmal pro Zeile, Spalte und 3×3-Block.</li>
 <li><b>Killer Sudoku</b> — Keine vorgegebenen Ziffern: Die Summen in den gestrichelten Käfigen zeigen, was wohin gehört.</li>
 <li><b>Mini Sudoku</b> — Schnelle 4×4- und 6×6-Sudokus für eine kurze Pause.</li>
-<li><b>Takuzu (Binairo)</b> — Fülle das Raster mit Nullen und Einsen. Gleich viele von beiden, nie drei in Folge, keine identischen Zeilen.</li>
+<li><b>Takuzu (Binairo)</b> — Fülle das Raster mit Nullen und Einsen, nie drei in Folge, keine gleichen Zeilen.</li>
 <li><b>Nonogramm (Hanjie)</b> — Decke mit den Zahlenhinweisen an jeder Zeile und Spalte ein verborgenes Bild auf.</li>
-<li><b>Minesweeper</b> — Decke alle sicheren Felder auf, ohne eine Mine zu treffen. Klassische Felder lassen sich immer ohne Raten lösen, dazu gibt es einen Endlos-Modus.</li>
+<li><b>Minesweeper</b> — Decke alle sicheren Felder auf, ohne eine Mine zu treffen. Nie raten, plus Endlos-Modus.</li>
 <li><b>Star Battle</b> — Setze Sterne in jede Zeile, Spalte und Region, ohne dass sich zwei berühren.</li>
 <li><b>Animal Doku</b> — Ein Tier pro Zeile, Spalte und farbiger Region, die sich nie berühren, auch nicht diagonal.</li>
+<li><b>Verbinden</b> — Verbinde jedes Punktepaar und fülle das Gitter.</li>
+<li><b>Stromkreis</b> — Drehe die Kacheln, bis jeder Draht Strom führt.</li>
 </ul>
 
 <p><b>WORTSPIELE</b></p>
 <ul>
 <li><b>Wortsuche</b> — Finde versteckte Wörter in thematischen Rastern.</li>
 <li><b>Wort erraten</b> — Errate das verborgene Wort in sechs Versuchen.</li>
-<li><b>Zahlenraten</b> — Errate das Wort in zehn Versuchen; zwei Zahlen zeigen, wie nah du dran bist.</li>
+<li><b>Zahlenraten</b> — Errate das Wort in zehn Versuchen, mit zwei Zahlen als Hilfe.</li>
 <li><b>Thema Leeren</b> — Bilde Wörter aus einem Thema, bis jeder Buchstabe verwendet ist.</li>
+<li><b>Worttausch</b> — Tausche Buchstabenkacheln, bis jede Zeile ein Wort ergibt.</li>
 </ul>
 
 <p><b>GEDÄCHTNIS, ZAHLEN UND BLÖCKE</b></p>
@@ -41,11 +44,12 @@ Arbeite dich durch Kapitel mit Rätseln, die langsam schwerer werden, und hol di
 <li><b>Sequenzgedächtnis</b> — Sieh zu, wie die Felder aufleuchten, und tippe die wachsende Folge nach.</li>
 <li><b>2048</b> — Schiebe und verbinde Kacheln, bis du 2048 erreichst.</li>
 <li><b>Block Fill</b> — Ziehe Teile aufs Feld und räume volle Reihen und Spalten. Mit Endlos-Modus.</li>
-<li><b>Pfeilflucht</b> — Tippe einen Pfeil an, um ihn vom Feld zu ziehen. Er kommt nur frei, wenn nichts im Weg ist.</li>
+<li><b>Pfeilflucht</b> — Tippe einen Pfeil an. Er fliegt nur raus, wenn nichts im Weg ist.</li>
+<li><b>Blockflucht</b> — Schiebe die Blöcke beiseite und befreie den korallenroten Block.</li>
 </ul>
 
 <p><b>GANZ NACH DEINEM GESCHMACK</b><br>
-Sieben Farbthemen, darunter Bleistift: ein papierartiges Graustufenthema, das sich gut für farbenblinde Spieler eignet. Markiere Lieblingsspiele mit einem Stern, stelle Hinweise, Timer und Layout pro Spiel ein und spiele über ein Widget auf dem Startbildschirm weiter. Spiele in 8 Sprachen und wähle die Sprache für Worträtsel separat.</p>
+Sieben Farbthemen, darunter Bleistift in papierartigen Graustufen, gut für Farbenblinde. Lieblingsspiele, Einstellungen pro Spiel und ein Widget für den Startbildschirm. Spiele in 8 Sprachen, mit eigener Sprache für Worträtsel.</p>
 
 <p><b>RUHIG, PRIVAT UND OPEN SOURCE</b><br>
-Gemacht für ruhige Rätselzeit: Zeitdruck gibt es nur, wenn du selbst den Challenger-Modus startest. Keine Werbung, kein Tracking, kein Konto und keine Internetberechtigung. Die einzige Berechtigung, die die App anfragt, betrifft Benachrichtigungen für optionale tägliche Erinnerungen. Open Source unter GPLv3.</p>
+Gemacht für ruhige Rätselzeit: Zeitdruck gibt es nur, wenn du selbst den Challenger-Modus startest. Keine Werbung, kein Tracking, kein Konto und keine Internetberechtigung. Einzige Berechtigung: Benachrichtigungen für optionale Erinnerungen. Open Source unter GPLv3.</p>

@@ -4,7 +4,7 @@
 Choisissez les jeux qui vous proposent un nouveau puzzle chaque jour, dans chaque difficulté. Partagez votre résultat une fois terminé et recevez un rappel facultatif si vous n'avez pas encore joué.</p>
 
 <p><b>VOYAGE</b><br>
-Parcourez des chapitres de puzzles de plus en plus difficiles et gagnez jusqu'à trois étoiles à chaque étape. Dans 8 jeux, du Sudoku à Évasion des Flèches.</p>
+Parcourez des chapitres de puzzles de plus en plus difficiles et gagnez jusqu'à trois étoiles à chaque étape. Dans 12 jeux.</p>
 
 <p><b>DES PUZZLES ÉQUITABLES</b></p>
 <ul>
@@ -17,22 +17,25 @@ Parcourez des chapitres de puzzles de plus en plus difficiles et gagnez jusqu'à
 
 <p><b>PUZZLES LOGIQUES</b></p>
 <ul>
-<li><b>Sudoku</b> — Placez les chiffres de 1 à 9 pour que chaque ligne, colonne et bloc 3×3 contienne chaque chiffre une seule fois.</li>
+<li><b>Sudoku</b> — Chaque chiffre de 1 à 9, une fois par ligne, colonne et bloc 3×3.</li>
 <li><b>Killer Sudoku</b> — Aucun chiffre de départ : les sommes de chaque cage en pointillés indiquent où va chaque chiffre.</li>
 <li><b>Mini Sudoku</b> — Des Sudoku rapides en 4×4 et 6×6 pour une courte pause.</li>
-<li><b>Takuzu (Binairo)</b> — Remplissez la grille de 0 et de 1. Autant de chaque, jamais trois à la suite, aucune ligne identique.</li>
+<li><b>Takuzu (Binairo)</b> — Remplissez la grille de 0 et de 1, sans trois à la suite ni lignes identiques.</li>
 <li><b>Nonogramme (Hanjie)</b> — Révélez une image cachée grâce aux indices chiffrés de chaque ligne et colonne.</li>
-<li><b>Démineur</b> — Découvrez toutes les cases sûres sans toucher de mine. Les grilles classiques se résolvent sans deviner, et il y a un mode infini.</li>
+<li><b>Démineur</b> — Découvrez les cases sûres sans toucher de mine. Jamais besoin de deviner, et un mode infini.</li>
 <li><b>Star Battle</b> — Placez des étoiles dans chaque ligne, colonne et région, sans que deux se touchent.</li>
 <li><b>Animal Doku</b> — Un animal par ligne, colonne et région colorée, jamais en contact, même en diagonale.</li>
+<li><b>Liaisons</b> — Reliez chaque paire de points et remplissez la grille.</li>
+<li><b>Circuit</b> — Tournez les tuiles jusqu'à ce que chaque fil soit sous tension.</li>
 </ul>
 
 <p><b>JEUX DE MOTS</b></p>
 <ul>
 <li><b>Mots mêlés</b> — Trouvez les mots cachés dans des grilles à thème.</li>
 <li><b>Devine le Mot</b> — Devinez le mot caché en six essais.</li>
-<li><b>Devine par les Nombres</b> — Devinez le mot en dix essais ; deux nombres indiquent à quel point vous êtes proche.</li>
+<li><b>Devine par les Nombres</b> — Devinez le mot en dix essais, guidé par deux nombres.</li>
 <li><b>Efface le Thème</b> — Formez des mots d'un même thème jusqu'à utiliser toutes les lettres.</li>
+<li><b>Échange de Mots</b> — Échangez les lettres jusqu'à ce que chaque ligne forme un mot.</li>
 </ul>
 
 <p><b>MÉMOIRE, NOMBRES ET BLOCS</b></p>
@@ -40,12 +43,13 @@ Parcourez des chapitres de puzzles de plus en plus difficiles et gagnez jusqu'à
 <li><b>Chimp Test</b> — Touchez les nombres dans l'ordre avant qu'ils ne disparaissent.</li>
 <li><b>Mémoire de Séquences</b> — Regardez les cases s'allumer, puis reproduisez la séquence qui s'allonge.</li>
 <li><b>2048</b> — Faites glisser et fusionnez les tuiles pour atteindre 2048.</li>
-<li><b>Block Fill</b> — Faites glisser des pièces sur la grille et videz des lignes et colonnes complètes. Avec un mode infini.</li>
-<li><b>Évasion des Flèches</b> — Touchez une flèche pour la faire sortir du plateau. Elle ne sort que si rien ne lui barre la route.</li>
+<li><b>Block Fill</b> — Placez des pièces et videz lignes et colonnes. Avec un mode infini.</li>
+<li><b>Évasion des Flèches</b> — Touchez une flèche pour la faire sortir, si rien ne lui barre la route.</li>
+<li><b>Évasion des Blocs</b> — Écartez les blocs et libérez le bloc corail.</li>
 </ul>
 
 <p><b>À VOTRE GOÛT</b><br>
-Sept thèmes de couleurs, dont Crayon, un thème en niveaux de gris façon papier, adapté aux joueurs daltoniens. Mettez vos jeux préférés en favoris, réglez indices, minuterie et disposition par jeu, et reprenez un puzzle depuis un widget sur l'écran d'accueil. Jouez en 8 langues et choisissez séparément celle des jeux de mots.</p>
+Sept thèmes de couleurs, dont Crayon, en niveaux de gris façon papier, adapté aux daltoniens. Jeux favoris, réglages par jeu et widget d'écran d'accueil. Jouez en 8 langues, avec une langue à part pour les jeux de mots.</p>
 
 <p><b>CALME, PRIVÉ ET OPEN SOURCE</b><br>
-Conçu pour des moments calmes : la pression du temps n'existe que si vous lancez vous-même le mode Challenger. Pas de publicité, pas de pistage, pas de compte et pas d'autorisation internet. La seule autorisation demandée concerne les notifications, pour les rappels quotidiens facultatifs. Open source sous licence GPLv3.</p>
+Conçu pour des moments calmes : la pression du temps n'existe que si vous lancez vous-même le mode Challenger. Pas de publicité, pas de pistage, pas de compte et pas d'autorisation internet. Seule autorisation demandée : les notifications, pour les rappels facultatifs. Open source sous licence GPLv3.</p>

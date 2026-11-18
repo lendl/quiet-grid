@@ -4,7 +4,7 @@
 Kies zelf welke spellen je elke dag een nieuwe puzzel geven, in elke moeilijkheidsgraad. Deel je resultaat als je klaar bent, en krijg een optionele herinnering als je nog niet hebt gespeeld.</p>
 
 <p><b>REIS</b><br>
-Reis door hoofdstukken met puzzels die langzaam moeilijker worden, en verdien tot drie sterren per halte. In 8 spellen, van Sudoku tot Pijlenvlucht.</p>
+Reis door hoofdstukken met puzzels die langzaam moeilijker worden, en verdien tot drie sterren per halte. In 12 spellen.</p>
 
 <p><b>EERLIJKE PUZZELS</b></p>
 <ul>
@@ -22,9 +22,11 @@ Reis door hoofdstukken met puzzels die langzaam moeilijker worden, en verdien to
 <li><b>Mini Sudoku</b> — Snelle 4×4- en 6×6-sudoku's voor een korte pauze.</li>
 <li><b>Takuzu (Binairo)</b> — Vul het raster met nullen en enen. Evenveel van elk, nooit drie op een rij, geen gelijke rijen.</li>
 <li><b>Nonogram (Hanjie)</b> — Onthul een verborgen afbeelding met de cijferhints bij elke rij en kolom.</li>
-<li><b>Mijnenveger</b> — Open elk veilig vakje zonder een mijn te raken. Klassieke borden los je altijd op zonder te gokken, en er is een eindeloze modus.</li>
+<li><b>Mijnenveger</b> — Open elk veilig vakje zonder een mijn te raken. Nooit gokken, en een eindeloze modus.</li>
 <li><b>Star Battle</b> — Plaats sterren in elke rij, kolom en regio, zonder dat twee sterren elkaar raken.</li>
 <li><b>Animal Doku</b> — Eén dier per rij, kolom en gekleurde regio, nooit naast elkaar, ook niet diagonaal.</li>
+<li><b>Verbinden</b> — Verbind elk paar stippen en vul het raster.</li>
+<li><b>Stroomkring</b> — Draai de tegels tot elke draad onder stroom staat.</li>
 </ul>
 
 <p><b>WOORDSPELLEN</b></p>
@@ -33,6 +35,7 @@ Reis door hoofdstukken met puzzels die langzaam moeilijker worden, en verdien to
 <li><b>Woord Raden</b> — Raad het verborgen woord in zes pogingen.</li>
 <li><b>Cijfers Raden</b> — Raad het woord in tien pogingen; twee getallen laten zien hoe dichtbij je bent.</li>
 <li><b>Thema Wissen</b> — Vorm woorden uit één thema tot elke letter is gebruikt.</li>
+<li><b>Woordwissel</b> — Wissel lettertegels tot elke regel een woord vormt.</li>
 </ul>
 
 <p><b>GEHEUGEN, GETALLEN EN BLOKKEN</b></p>
@@ -42,10 +45,11 @@ Reis door hoofdstukken met puzzels die langzaam moeilijker worden, en verdien to
 <li><b>2048</b> — Schuif en voeg tegels samen tot je 2048 bereikt.</li>
 <li><b>Block Fill</b> — Sleep stukken op het bord en maak volle rijen en kolommen leeg. Met eindeloze modus.</li>
 <li><b>Pijlenvlucht</b> — Tik een pijl aan om hem van het bord te halen. Hij komt alleen vrij als niets in de weg zit.</li>
+<li><b>Blokkenvlucht</b> — Schuif de blokken opzij en bevrijd het koraalrode blok.</li>
 </ul>
 
 <p><b>HELEMAAL VAN JOU</b><br>
-Zeven kleurthema's, waaronder Potlood: een grijstintenthema als op papier, prettig voor kleurenblinde spelers. Geef je favoriete spellen een ster, stel hints, timer en indeling per spel in en speel verder via een widget op je startscherm. Speel in 8 talen en kies de taal voor woordpuzzels apart.</p>
+Zeven kleurthema's, waaronder Potlood in grijstinten als op papier, prettig bij kleurenblindheid. Favoriete spellen, instellingen per spel en een widget op je startscherm. Speel in 8 talen, met een eigen taal voor woordpuzzels.</p>
 
 <p><b>RUSTIG, PRIVÉ EN OPEN SOURCE</b><br>
 Gemaakt voor rustige puzzeltijd: tijdsdruk is er alleen als je zelf de Challenger-modus start. Geen advertenties, geen tracking, geen account en geen internettoestemming. De enige toestemming die de app vraagt is voor meldingen, voor optionele dagelijkse herinneringen. Open source onder GPLv3.</p>

@@ -4,7 +4,7 @@
 Elige qué juegos te dan un puzzle nuevo cada día, en cada dificultad. Comparte tu resultado al terminar y recibe un recordatorio opcional si aún no has jugado.</p>
 
 <p><b>VIAJE</b><br>
-Avanza por capítulos de puzzles cada vez más difíciles y gana hasta tres estrellas en cada parada. En 8 juegos, de Sudoku a Escape de Flechas.</p>
+Avanza por capítulos de puzzles cada vez más difíciles y gana hasta tres estrellas en cada parada. En 12 juegos.</p>
 
 <p><b>PUZZLES JUSTOS</b></p>
 <ul>
@@ -17,14 +17,16 @@ Avanza por capítulos de puzzles cada vez más difíciles y gana hasta tres estr
 
 <p><b>PUZZLES DE LÓGICA</b></p>
 <ul>
-<li><b>Sudoku</b> — Coloca los dígitos del 1 al 9 para que cada fila, columna y caja de 3×3 contenga cada dígito una sola vez.</li>
+<li><b>Sudoku</b> — Cada dígito del 1 al 9, una vez por fila, columna y caja de 3×3.</li>
 <li><b>Killer Sudoku</b> — Sin dígitos iniciales: las sumas de cada jaula punteada te dicen qué va en cada sitio.</li>
 <li><b>Mini Sudoku</b> — Sudokus rápidos de 4×4 y 6×6 para una pausa corta.</li>
-<li><b>Takuzu (Binairo)</b> — Llena la cuadrícula con 0 y 1. El mismo número de cada uno, nunca tres seguidos, ninguna fila idéntica.</li>
+<li><b>Takuzu (Binairo)</b> — Llena la cuadrícula con 0 y 1, sin tres seguidos ni filas idénticas.</li>
 <li><b>Nonograma (Hanjie)</b> — Descubre una imagen oculta con las pistas numéricas de cada fila y columna.</li>
-<li><b>Buscaminas</b> — Descubre todas las casillas seguras sin tocar ninguna mina. Los tableros clásicos nunca obligan a adivinar, y hay un modo sin fin.</li>
+<li><b>Buscaminas</b> — Descubre las casillas seguras sin tocar ninguna mina. Nunca hay que adivinar, y hay un modo sin fin.</li>
 <li><b>Batalla de Estrellas</b> — Coloca estrellas en cada fila, columna y región, sin que dos se toquen.</li>
 <li><b>Animal Doku</b> — Un animal por fila, columna y región de color, sin tocarse nunca, ni siquiera en diagonal.</li>
+<li><b>Enlaces</b> — Une cada par de puntos y llena la cuadrícula.</li>
+<li><b>Circuito</b> — Gira las fichas hasta que todos los cables tengan corriente.</li>
 </ul>
 
 <p><b>JUEGOS DE PALABRAS</b></p>
@@ -33,6 +35,7 @@ Avanza por capítulos de puzzles cada vez más difíciles y gana hasta tres estr
 <li><b>Adivina la Palabra</b> — Adivina la palabra oculta en seis intentos.</li>
 <li><b>Adivina por Números</b> — Adivina la palabra en diez intentos; dos números muestran lo cerca que estás.</li>
 <li><b>Despeja el Tema</b> — Forma palabras de un mismo tema hasta usar todas las letras.</li>
+<li><b>Intercambio de Palabras</b> — Intercambia fichas de letras hasta que cada línea forme una palabra.</li>
 </ul>
 
 <p><b>MEMORIA, NÚMEROS Y BLOQUES</b></p>
@@ -42,10 +45,11 @@ Avanza por capítulos de puzzles cada vez más difíciles y gana hasta tres estr
 <li><b>2048</b> — Desliza y combina fichas hasta llegar a 2048.</li>
 <li><b>Block Fill</b> — Arrastra piezas al tablero y despeja filas y columnas completas. Incluye un modo sin fin.</li>
 <li><b>Escape de Flechas</b> — Toca una flecha para sacarla del tablero. Solo sale si nada le bloquea el paso.</li>
+<li><b>Escape de Bloques</b> — Aparta los bloques y libera el bloque coral.</li>
 </ul>
 
 <p><b>A TU MANERA</b><br>
-Siete temas de color, entre ellos Lápiz, un tema en escala de grises con aspecto de papel, ideal para jugadores daltónicos. Marca tus juegos favoritos con una estrella, ajusta pistas, temporizador y diseño en cada juego, y retoma un puzzle desde un widget en la pantalla de inicio. Juega en 8 idiomas y elige por separado el idioma de los juegos de palabras.</p>
+Siete temas de color, entre ellos Lápiz, en grises con aspecto de papel, ideal para daltónicos. Juegos favoritos, ajustes por juego y un widget para la pantalla de inicio. Juega en 8 idiomas, con un idioma aparte para los juegos de palabras.</p>
 
 <p><b>TRANQUILO, PRIVADO Y DE CÓDIGO ABIERTO</b><br>
-Hecho para ratos tranquilos: solo hay presión de tiempo si inicias tú el modo Challenger. Sin anuncios, sin rastreo, sin cuenta y sin permiso de internet. El único permiso que pide es el de notificaciones, para los recordatorios diarios opcionales. Código abierto bajo GPLv3.</p>
+Hecho para ratos tranquilos: solo hay presión de tiempo si inicias tú el modo Challenger. Sin anuncios, sin rastreo, sin cuenta y sin permiso de internet. Único permiso: notificaciones, para recordatorios opcionales. Código abierto bajo GPLv3.</p>

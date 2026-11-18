@@ -4,7 +4,7 @@
 Escolha quais jogos oferecem um quebra-cabeça novo todo dia, em cada dificuldade. Compartilhe seu resultado ao terminar e receba um lembrete opcional se ainda não tiver jogado.</p>
 
 <p><b>JORNADA</b><br>
-Avance por capítulos de quebra-cabeças cada vez mais difíceis e ganhe até três estrelas em cada parada. Em 8 jogos, do Sudoku ao Escape das Setas.</p>
+Avance por capítulos de quebra-cabeças cada vez mais difíceis e ganhe até três estrelas em cada parada. Em 12 jogos.</p>
 
 <p><b>QUEBRA-CABEÇAS JUSTOS</b></p>
 <ul>
@@ -17,22 +17,25 @@ Avance por capítulos de quebra-cabeças cada vez mais difíceis e ganhe até tr
 
 <p><b>QUEBRA-CABEÇAS DE LÓGICA</b></p>
 <ul>
-<li><b>Sudoku</b> — Coloque os dígitos de 1 a 9 para que cada linha, coluna e bloco 3×3 tenha cada dígito uma única vez.</li>
+<li><b>Sudoku</b> — Cada dígito de 1 a 9, uma vez por linha, coluna e bloco 3×3.</li>
 <li><b>Killer Sudoku</b> — Sem dígitos iniciais: as somas de cada gaiola tracejada mostram o que vai onde.</li>
 <li><b>Mini Sudoku</b> — Sudokus rápidos de 4×4 e 6×6 para uma pausa curta.</li>
-<li><b>Takuzu (Binairo)</b> — Preencha a grade com 0 e 1. A mesma quantidade de cada, nunca três seguidos, nenhuma linha idêntica.</li>
+<li><b>Takuzu (Binairo)</b> — Preencha a grade com 0 e 1, sem três seguidos nem linhas idênticas.</li>
 <li><b>Nonograma (Hanjie)</b> — Revele uma imagem escondida usando as pistas numéricas de cada linha e coluna.</li>
-<li><b>Campo Minado</b> — Descubra todas as casas seguras sem acertar uma mina. Os tabuleiros clássicos nunca exigem palpites, e há um modo infinito.</li>
+<li><b>Campo Minado</b> — Descubra as casas seguras sem acertar uma mina. Nunca exige palpites, e há um modo infinito.</li>
 <li><b>Batalha de Estrelas</b> — Coloque estrelas em cada linha, coluna e região, sem que duas se toquem.</li>
 <li><b>Animal Doku</b> — Um animal por linha, coluna e região colorida, sem nunca se tocarem, nem na diagonal.</li>
+<li><b>Ligações</b> — Ligue cada par de pontos e preencha a grade.</li>
+<li><b>Circuito</b> — Gire as fichas até que todos os fios tenham energia.</li>
 </ul>
 
 <p><b>JOGOS DE PALAVRAS</b></p>
 <ul>
 <li><b>Caça-Palavras</b> — Encontre palavras escondidas em grades temáticas.</li>
 <li><b>Adivinhe a Palavra</b> — Adivinhe a palavra escondida em seis tentativas.</li>
-<li><b>Adivinhe por Números</b> — Adivinhe a palavra em dez tentativas; dois números mostram o quanto você está perto.</li>
+<li><b>Adivinhe por Números</b> — Adivinhe a palavra em dez tentativas, guiado por dois números.</li>
 <li><b>Limpe o Tema</b> — Forme palavras de um mesmo tema até usar todas as letras.</li>
+<li><b>Troca de Palavras</b> — Troque as fichas de letras até cada linha formar uma palavra.</li>
 </ul>
 
 <p><b>MEMÓRIA, NÚMEROS E BLOCOS</b></p>
@@ -42,10 +45,11 @@ Avance por capítulos de quebra-cabeças cada vez mais difíceis e ganhe até tr
 <li><b>2048</b> — Deslize e junte peças até chegar a 2048.</li>
 <li><b>Block Fill</b> — Arraste peças para o tabuleiro e limpe linhas e colunas inteiras. Inclui modo infinito.</li>
 <li><b>Escape das Setas</b> — Toque em uma seta para tirá-la do tabuleiro. Ela só sai se nada bloquear o caminho.</li>
+<li><b>Escape dos Blocos</b> — Afaste os blocos e liberte o bloco coral.</li>
 </ul>
 
 <p><b>DO SEU JEITO</b><br>
-Sete temas de cores, incluindo Lápis, um tema em tons de cinza com aparência de papel, ótimo para jogadores daltônicos. Marque seus jogos favoritos com uma estrela, ajuste dicas, cronômetro e layout em cada jogo e continue um quebra-cabeça por um widget na tela inicial. Jogue em 8 idiomas e escolha separadamente o idioma dos jogos de palavras.</p>
+Sete temas de cores, incluindo Lápis, em tons de cinza como papel, ótimo para daltônicos. Jogos favoritos, ajustes por jogo e um widget na tela inicial. Jogue em 8 idiomas, com um idioma à parte para os jogos de palavras.</p>
 
 <p><b>CALMO, PRIVADO E DE CÓDIGO ABERTO</b><br>
-Feito para momentos tranquilos: só há pressão de tempo quando você inicia o modo Desafiante por conta própria. Sem anúncios, sem rastreamento, sem conta e sem permissão de internet. A única permissão que o app pede é a de notificações, para lembretes diários opcionais. Código aberto sob a licença GPLv3.</p>
+Feito para momentos tranquilos: só há pressão de tempo quando você inicia o modo Desafiante por conta própria. Sem anúncios, sem rastreamento, sem conta e sem permissão de internet. Única permissão: notificações, para lembretes opcionais. Código aberto sob a licença GPLv3.</p>

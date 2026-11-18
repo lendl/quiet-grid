@@ -4,7 +4,7 @@
 Choose which games give you a new puzzle every day, in every difficulty. Share your result when you're done, and get an optional reminder if you haven't played yet.</p>
 
 <p><b>JOURNEY</b><br>
-Work your way through chapters of puzzles that slowly get harder, and earn up to three stars at every stop. In 8 games, from Sudoku to Arrow Escape.</p>
+Work your way through chapters of puzzles that slowly get harder, and earn up to three stars at every stop. In 12 games.</p>
 
 <p><b>PUZZLES THAT PLAY FAIR</b></p>
 <ul>
@@ -25,6 +25,8 @@ Work your way through chapters of puzzles that slowly get harder, and earn up to
 <li><b>Minesweeper</b> — Uncover every safe cell without hitting a mine. Classic boards never need a guess, and there's an Endless mode.</li>
 <li><b>Star Battle</b> — Place stars in every row, column and region, with no two touching.</li>
 <li><b>Animal Doku</b> — One animal per row, column and colored region, never touching, not even diagonally.</li>
+<li><b>Links</b> — Join every pair of dots and fill the grid.</li>
+<li><b>Circuit</b> — Turn the tiles until every wire is live.</li>
 </ul>
 
 <p><b>WORD GAMES</b></p>
@@ -33,6 +35,7 @@ Work your way through chapters of puzzles that slowly get harder, and earn up to
 <li><b>Word Guess</b> — Guess the hidden word in six tries.</li>
 <li><b>Guess by Numbers</b> — Guess the word in ten tries; two numbers show how close you are.</li>
 <li><b>Theme Clear</b> — Spell words from one theme until every letter is used.</li>
+<li><b>Word Swap</b> — Swap letter tiles until every line spells a word.</li>
 </ul>
 
 <p><b>MEMORY, NUMBERS AND BLOCKS</b></p>
@@ -42,6 +45,7 @@ Work your way through chapters of puzzles that slowly get harder, and earn up to
 <li><b>2048</b> — Slide and merge tiles to reach 2048.</li>
 <li><b>Block Fill</b> — Drag pieces onto the board and clear full rows and columns. Includes an Endless mode.</li>
 <li><b>Arrow Escape</b> — Tap an arrow to send it off the board. It only gets out if nothing blocks its path.</li>
+<li><b>Block Escape</b> — Slide the blocks aside and set the coral block free.</li>
 </ul>
 
 <p><b>MAKE IT YOURS</b><br>
