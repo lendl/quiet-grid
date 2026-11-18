@@ -131,6 +131,14 @@ fun main(args: Array<String>) {
         return
     }
 
+    if (args.getOrNull(0) == "prune") {
+        require(requireFlag(args, "--game") == "wordswap") { "prune only supports --game wordswap" }
+        val locale = requireFlag(args, "--locale")
+        require(locale in com.quietgrid.cli.wordswap.WORDSWAP_LOCALES) { "Unknown locale '$locale'" }
+        com.quietgrid.cli.wordswap.runWordSwapPrune(locale, optionalFlag(args, "--out", "app/src/main/assets"))
+        return
+    }
+
     if (args.getOrNull(0) == "regrade") {
         val game = requireFlag(args, "--game")
         val path = optionalFlag(args, "--path", "app/src/main/assets/${game}_puzzles.json")
@@ -433,7 +441,7 @@ fun main(args: Array<String>) {
             println("Generated ${entries.size}/${command.count} hashi puzzles at $difficulty into ${command.outDir}/hashi_puzzles.json")
         }
         "wordswap" -> {
-            val outFile = "${command.outDir}/wordswap_puzzles.json"
+            val outFile = "${command.outDir}/${com.quietgrid.cli.wordswap.wordSwapBankFile(command.locale)}"
             val existing = readPuzzleEntries(outFile, com.quietgrid.engine.wordswap.WordSwapPuzzleEntry.serializer())
             val seenSolutions = existing.mapTo(HashSet()) { it.solution }
             val requested = command.fillTo?.let { target -> maxOf(0, target - existing.count { it.difficulty == difficulty.key }) } ?: command.count
@@ -444,7 +452,7 @@ fun main(args: Array<String>) {
                 Thread {
                     val random = Random(System.nanoTime() + worker)
                     while (entries.size < requested && attempts.incrementAndGet() < maxAttempts) {
-                        val candidate = com.quietgrid.cli.wordswap.generateWordSwapPuzzle(difficulty, random) ?: continue
+                        val candidate = com.quietgrid.cli.wordswap.generateWordSwapPuzzle(difficulty, command.locale, random) ?: continue
                         synchronized(seenSolutions) {
                             if (entries.size < requested && seenSolutions.add(candidate.solution)) entries += candidate
                         }

@@ -13,7 +13,9 @@ import com.quietgrid.app.core.journey.journeyLevelRanges
 import com.quietgrid.app.core.journey.journeyMilestones
 import com.quietgrid.app.core.journey.journeyRatedPool
 import com.quietgrid.app.core.journey.journeyRun
-import com.quietgrid.app.core.journey.journeyScope
+import com.quietgrid.app.core.journey.JourneyTrack
+import com.quietgrid.app.core.journey.journeyTrack
+import com.quietgrid.app.core.journey.journeyTrackOfStop
 import com.quietgrid.app.core.journey.loadJourneyFile
 import com.quietgrid.app.core.journey.locate
 import com.quietgrid.app.core.journey.pickJourneyReplay
@@ -23,9 +25,12 @@ import com.quietgrid.engine.journey.JourneyStop
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -49,10 +54,12 @@ interface JourneyProgressStore {
 class JourneyProgressRepository(
     private val dao: JourneyProgressDao,
     private val historyStore: PlayHistoryStore,
-    private val journeyFile: suspend (GameId) -> JourneyFile?,
-    private val ratedPool: suspend (GameId, Difficulty) -> List<Pair<String, Int>>,
+    private val journeyFile: suspend (JourneyTrack) -> JourneyFile?,
+    private val ratedPool: suspend (JourneyTrack, Difficulty) -> List<Pair<String, Int>>,
     private val clock: () -> Long = System::currentTimeMillis,
     private val workDispatcher: CoroutineDispatcher = Dispatchers.Default,
+    private val trackOf: (GameId) -> Flow<JourneyTrack> = { flowOf(journeyTrack(it, "en")) },
+    private val stopTrackOf: (GameId, String) -> JourneyTrack? = ::journeyTrackOfStop,
 ) : JourneyProgressStore {
 
     @Inject
@@ -60,70 +67,86 @@ class JourneyProgressRepository(
         @ApplicationContext context: Context,
         dao: JourneyProgressDao,
         historyStore: PlayHistoryStore,
+        settingsRepository: SettingsRepository,
     ) : this(
         dao = dao,
         historyStore = historyStore,
         journeyFile = { loadJourneyFile(context, it) },
-        ratedPool = { gameId, difficulty -> journeyRatedPool(context, gameId, difficulty) },
+        ratedPool = { track, difficulty -> journeyRatedPool(context, track, difficulty) },
+        trackOf = { settingsRepository.journeyTrack(it) },
     )
 
-    override fun progressFor(gameId: GameId): Flow<Map<String, JourneyStopProgress>> = flow {
-        applyReplacements(gameId)
-        adoptJourneyHistory(gameId)
-        lineUpReplays(gameId)
-        emitAll(dao.progressFor(journeyScope(gameId)).map { rows -> rows.associate { it.puzzleId to it.toProgress() } })
+    private suspend fun track(gameId: GameId): JourneyTrack = trackOf(gameId).first()
+
+    private suspend fun track(gameId: GameId, stopId: String): JourneyTrack = stopTrackOf(gameId, stopId) ?: track(gameId)
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun progressFor(gameId: GameId): Flow<Map<String, JourneyStopProgress>> = trackOf(gameId).flatMapLatest { track ->
+        flow {
+            applyReplacements(track)
+            adoptJourneyHistory(track)
+            lineUpReplays(track)
+            emitAll(dao.progressFor(track.scope).map { rows -> rows.associate { it.puzzleId to it.toProgress() } })
+        }
     }.flowOn(workDispatcher)
 
-    override suspend fun storedProgress(gameId: GameId): Map<String, JourneyStopProgress> =
-        dao.progressFor(journeyScope(gameId)).first().associate { it.puzzleId to it.toProgress() }
+    override suspend fun storedProgress(gameId: GameId): Map<String, JourneyStopProgress> = storedProgress(track(gameId))
+
+    private suspend fun storedProgress(track: JourneyTrack): Map<String, JourneyStopProgress> =
+        dao.progressFor(track.scope).first().associate { it.puzzleId to it.toProgress() }
 
     override suspend fun recordWin(gameId: GameId, stopId: String, puzzleId: String, signals: JourneySignals, elapsedSeconds: Int, score: Int): Int {
-        val old = current(gameId, stopId).retiring(puzzleId)
-        val file = journeyFile(gameId)
+        val track = track(gameId, stopId)
+        val old = current(track, stopId).retiring(puzzleId)
+        val file = journeyFile(track)
         val located = file?.locate(stopId)
         val run = journeyRun(signals, elapsedSeconds, located?.second?.targetSeconds ?: 0)
-        val replay = located?.let { (_, stop) -> nextReplay(gameId, stop, old) }
-        val before = storedProgress(gameId)
-        save(gameId, stopId, applyJourneyWin(old, run, elapsedSeconds, score, replay))
+        val replay = located?.let { (_, stop) -> nextReplay(track, stop, old) }
+        val before = storedProgress(track)
+        save(track, stopId, applyJourneyWin(old, run, elapsedSeconds, score, replay))
         if (file != null) {
             val now = clock()
-            journeyMilestones(file, stopId, before, storedProgress(gameId)).forEach { milestone ->
-                dao.upsertMilestone(milestone.toEntity(journeyScope(gameId), now))
+            journeyMilestones(file, stopId, before, storedProgress(track)).forEach { milestone ->
+                dao.upsertMilestone(milestone.toEntity(track.scope, now))
             }
         }
         return run.stars
     }
 
     override suspend fun pendingMilestones(gameId: GameId): List<JourneyMilestone> =
-        dao.pendingMilestones(journeyScope(gameId))
+        dao.pendingMilestones(track(gameId).scope)
             .mapNotNull { it.toMilestone() }
             .sortedWith(compareBy({ it.rank }, { it.chapterIndex }))
 
     override suspend fun markShown(gameId: GameId, milestone: JourneyMilestone) {
         val now = clock()
-        val row = milestone.toEntity(journeyScope(gameId), now)
+        val row = milestone.toEntity(track(gameId).scope, now)
         dao.markMilestoneShown(row.scope, row.kind, row.chapterIndex, now)
     }
 
-    override fun isMastered(gameId: GameId): Flow<Boolean> = dao.hasMilestone(journeyScope(gameId), JOURNEY_MILESTONE_MASTERED)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun isMastered(gameId: GameId): Flow<Boolean> =
+        trackOf(gameId).flatMapLatest { dao.hasMilestone(it.scope, JOURNEY_MILESTONE_MASTERED) }
 
     override suspend fun recordLoss(gameId: GameId, stopId: String, puzzleId: String) {
-        val old = current(gameId, stopId).retiring(puzzleId)
-        val stop = journeyFile(gameId)?.locate(stopId)?.second ?: return save(gameId, stopId, applyJourneyLoss(old, stopId))
-        save(gameId, stopId, applyJourneyLoss(old, nextReplay(gameId, stop, old) ?: stopId))
+        val track = track(gameId, stopId)
+        val old = current(track, stopId).retiring(puzzleId)
+        val stop = journeyFile(track)?.locate(stopId)?.second ?: return save(track, stopId, applyJourneyLoss(old, stopId))
+        save(track, stopId, applyJourneyLoss(old, nextReplay(track, stop, old) ?: stopId))
     }
 
     override suspend fun recordAbandon(gameId: GameId, stopId: String, puzzleId: String) {
-        val old = current(gameId, stopId).retiring(puzzleId)
-        val stop = journeyFile(gameId)?.locate(stopId)?.second ?: return save(gameId, stopId, old)
-        save(gameId, stopId, old.copy(nextPuzzleId = nextReplay(gameId, stop, old)))
+        val track = track(gameId, stopId)
+        val old = current(track, stopId).retiring(puzzleId)
+        val stop = journeyFile(track)?.locate(stopId)?.second ?: return save(track, stopId, old)
+        save(track, stopId, old.copy(nextPuzzleId = nextReplay(track, stop, old)))
     }
 
-    private suspend fun adoptJourneyHistory(gameId: GameId) {
-        val rows = dao.progressFor(journeyScope(gameId)).first()
+    private suspend fun adoptJourneyHistory(track: JourneyTrack) {
+        val rows = dao.progressFor(track.scope).first()
         val unknown = rows.filter { it.retiredPuzzleIds.isEmpty() && (it.cleared || it.attempts > 0 || it.nextPuzzleId != null) }
         if (unknown.isEmpty()) return
-        val played = historyStore.recordsFor(gameId).first()
+        val played = historyStore.recordsFor(track.gameId).first()
             .filter { it.journeyStop != null && it.puzzleId != null }
             .sortedBy { it.timestampMillis }
             .groupBy({ it.journeyStop!! }, { it.puzzleId!! })
@@ -133,9 +156,9 @@ class JourneyProgressRepository(
         }
     }
 
-    private suspend fun lineUpReplays(gameId: GameId) {
-        val file = journeyFile(gameId) ?: return
-        val rows = dao.progressFor(journeyScope(gameId)).first().associateByTo(LinkedHashMap()) { it.puzzleId }
+    private suspend fun lineUpReplays(track: JourneyTrack) {
+        val file = journeyFile(track) ?: return
+        val rows = dao.progressFor(track.scope).first().associateByTo(LinkedHashMap()) { it.puzzleId }
         val progress = rows.mapValuesTo(LinkedHashMap()) { it.value.toProgress() }
         rows.values.toList().forEach { row ->
             val own = progress.getValue(row.puzzleId)
@@ -145,29 +168,29 @@ class JourneyProgressRepository(
                 progress.none { (id, other) -> id != row.puzzleId && (next == other.nextPuzzleId || next in other.retired) }
             if (healthy) return@forEach
             val (_, stop) = file.locate(row.puzzleId) ?: return@forEach
-            val replay = nextReplay(file, gameId, stop, own, progress.filterKeys { it != row.puzzleId })
+            val replay = nextReplay(file, track, stop, own, progress.filterKeys { it != row.puzzleId })
             if (replay == next) return@forEach
             dao.upsert(row.copy(nextPuzzleId = replay))
             progress[row.puzzleId] = own.copy(nextPuzzleId = replay)
         }
     }
 
-    private suspend fun nextReplay(gameId: GameId, stop: JourneyStop, progress: JourneyStopProgress): String? {
-        val file = journeyFile(gameId) ?: return null
-        val others = dao.progressFor(journeyScope(gameId)).first()
+    private suspend fun nextReplay(track: JourneyTrack, stop: JourneyStop, progress: JourneyStopProgress): String? {
+        val file = journeyFile(track) ?: return null
+        val others = dao.progressFor(track.scope).first()
             .filter { it.puzzleId != stop.puzzleId }
             .associate { it.puzzleId to it.toProgress() }
-        return nextReplay(file, gameId, stop, progress, others)
+        return nextReplay(file, track, stop, progress, others)
     }
 
     private suspend fun nextReplay(
         file: JourneyFile,
-        gameId: GameId,
+        track: JourneyTrack,
         stop: JourneyStop,
         progress: JourneyStopProgress,
         others: Map<String, JourneyStopProgress>,
     ): String? {
-        val pool = ratedPool(gameId, Difficulty.fromKey(stop.difficulty))
+        val pool = ratedPool(track, Difficulty.fromKey(stop.difficulty))
         return withContext(workDispatcher) {
             val sameTier = file.chapters.flatMap { it.stops }.filter { it.difficulty == stop.difficulty }
             pickJourneyReplay(
@@ -180,19 +203,20 @@ class JourneyProgressRepository(
     }
 
     override suspend fun skip(gameId: GameId, stopId: String) {
-        save(gameId, stopId, current(gameId, stopId).copy(skipped = true))
+        val track = track(gameId, stopId)
+        save(track, stopId, current(track, stopId).copy(skipped = true))
     }
 
-    private suspend fun current(gameId: GameId, stopId: String): JourneyStopProgress =
-        dao.get(journeyScope(gameId), stopId)?.toProgress() ?: JourneyStopProgress()
+    private suspend fun current(track: JourneyTrack, stopId: String): JourneyStopProgress =
+        dao.get(track.scope, stopId)?.toProgress() ?: JourneyStopProgress()
 
-    private suspend fun save(gameId: GameId, stopId: String, progress: JourneyStopProgress) {
-        dao.upsert(progress.toEntity(journeyScope(gameId), stopId, clock()))
+    private suspend fun save(track: JourneyTrack, stopId: String, progress: JourneyStopProgress) {
+        dao.upsert(progress.toEntity(track.scope, stopId, clock()))
     }
 
-    private suspend fun applyReplacements(gameId: GameId) {
-        val scope = journeyScope(gameId)
-        val file = journeyFile(gameId) ?: return
+    private suspend fun applyReplacements(track: JourneyTrack) {
+        val scope = track.scope
+        val file = journeyFile(track) ?: return
         file.chapters.flatMap { it.stops }.forEach { stop ->
             val oldId = stop.replaces ?: return@forEach
             val old = dao.get(scope, oldId) ?: return@forEach

@@ -14,6 +14,7 @@ import com.quietgrid.app.data.BadgeStore
 import com.quietgrid.app.data.JourneyProgressStore
 import com.quietgrid.app.data.PlayHistoryStore
 import com.quietgrid.app.data.SessionStore
+import com.quietgrid.app.data.SettingsRepository
 import com.quietgrid.app.data.StatsStore
 import com.quietgrid.app.data.recentlyPlayedPuzzleIds
 import com.quietgrid.app.session.LossReason
@@ -30,6 +31,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
@@ -53,12 +55,14 @@ data class WordSwapResult(
 internal class WordSwapPuzzleAdapter(
     private val appContext: android.content.Context,
     private val historyStore: PlayHistoryStore,
+    private val puzzleLanguage: suspend () -> String,
 ) : PuzzleAdapter<WordSwapSession, WordSwapResult> {
     override val gameId: GameId = GameId.WORDSWAP
 
     override suspend fun freshSession(difficulty: Difficulty): WordSwapSession? {
         val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
-        val puzzle = WordSwapPuzzleBank.randomPuzzle(appContext, difficulty, recentIds) ?: return null
+        val locale = currentWordSwapLocale(puzzleLanguage())
+        val puzzle = WordSwapPuzzleBank.randomPuzzle(appContext, locale, difficulty, recentIds) ?: return null
         return createWordSwapSession(puzzle)
     }
 
@@ -119,6 +123,7 @@ class WordSwapPlayViewModel @AssistedInject constructor(
     historyRepository: PlayHistoryStore,
     journeyStore: JourneyProgressStore,
     badgeStore: BadgeStore,
+    settingsRepository: SettingsRepository,
     @Assisted requestedDifficulty: Difficulty,
     @Assisted resume: Boolean,
     @Assisted journey: JourneyRequest?,
@@ -134,7 +139,7 @@ class WordSwapPlayViewModel @AssistedInject constructor(
         sessionStore = sessionRepository,
         statsStore = statsRepository,
         historyStore = historyRepository,
-        adapter = WordSwapPuzzleAdapter(appContext, historyRepository),
+        adapter = WordSwapPuzzleAdapter(appContext, historyRepository) { settingsRepository.settings.first().puzzleLanguage },
         journeyStore = journeyStore,
         badgeStore = badgeStore,
     )

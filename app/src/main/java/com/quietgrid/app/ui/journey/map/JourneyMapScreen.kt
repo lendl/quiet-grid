@@ -47,7 +47,6 @@ import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.journey.JourneyRequest
-import com.quietgrid.app.core.journey.journeyScope
 import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.ui.components.ReplacePuzzleSheet
 import com.quietgrid.app.ui.components.rememberReduceMotion
@@ -109,7 +108,7 @@ fun JourneyMapScreen(
     }
     val doneCount = remember(rows) { doneStopCount(rows) }
     val sceneKind = journeySceneFor(LocalResolvedTheme.current)
-    val seed = remember(gameId, chapter) { journeySceneSeed(journeyScope(gameId), chapter) }
+    val seed = remember(gameId, chapter) { journeySceneSeed(gameId.key, chapter) }
     JourneyMapContent(
         gameId = gameId,
         chapter = chapter,

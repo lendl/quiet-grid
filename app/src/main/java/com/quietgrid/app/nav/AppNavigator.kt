@@ -17,6 +17,7 @@ import com.quietgrid.app.core.mix.resolvedCandidates
 import com.quietgrid.app.data.ActiveSessionSummary
 import com.quietgrid.app.data.GamePlayPreferences
 import com.quietgrid.app.data.RepositoriesViewModel
+import com.quietgrid.app.data.journeyTrack
 import com.quietgrid.app.ui.components.AppTab
 import java.time.LocalDate
 import kotlin.reflect.KClass
@@ -71,7 +72,8 @@ class AppNavigator(
 
     fun returnToJourney(gameId: GameId, stopId: String) {
         scope.launch {
-            val chapter = loadJourneyFile(appContext, gameId)?.locate(stopId)?.first?.index
+            val track = repositories.settingsRepository.journeyTrack(gameId).first()
+            val chapter = loadJourneyFile(appContext, track)?.locate(stopId)?.first?.index
             follow(journeyReturnPlan(gameId, chapter, journeyBackStack()))
         }
     }

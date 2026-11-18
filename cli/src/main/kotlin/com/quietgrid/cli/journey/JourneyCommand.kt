@@ -15,7 +15,7 @@ data class JourneyArgs(val game: String, val outDir: String, val scalesPath: Str
 private val journeyJson = Json { ignoreUnknownKeys = true }
 
 fun parseJourneyArgs(args: Array<String>): JourneyArgs {
-    require(args.firstOrNull() == "journey") { "Usage: journey --game <id|all> [--out <dir>] [--scales <path>]" }
+    require(args.firstOrNull() == "journey") { "Usage: journey --game <id|wordswap_<locale>|all> [--out <dir>] [--scales <path>]" }
     fun flag(name: String): String? = args.indexOf(name).takeIf { it != -1 && it + 1 < args.size }?.let { args[it + 1] }
     return JourneyArgs(
         game = requireNotNull(flag("--game")) { "Missing required flag --game" },
@@ -33,7 +33,7 @@ fun replayTransformCheck(game: String, outDir: String, scale: JourneyRatingScale
 
 fun runJourney(game: String, outDir: String, scalesPath: String) {
     if (game == "all") {
-        JOURNEY_GAMES.forEach { runJourney(it, outDir, scalesPath) }
+        JOURNEY_TRACKS.forEach { runJourney(it, outDir, scalesPath) }
         return
     }
     runJourneyFor(journeyBank(game), outDir, scalesPath)
@@ -41,7 +41,7 @@ fun runJourney(game: String, outDir: String, scalesPath: String) {
 
 private fun <T> runJourneyFor(bank: JourneyBank<T>, outDir: String, scalesPath: String) {
     val scales = readJourneyScales(scalesPath)
-    val stored = scales[bank.game] ?: error("$scalesPath has no entry for ${bank.game}")
+    val stored = scales[bank.scale] ?: error("$scalesPath has no entry for ${bank.scale}")
     val files = bank.files.associateWith { readPuzzleEntries("$outDir/$it", bank.serializer) }
     val entries = files.values.flatten()
     check(entries.isNotEmpty()) { "No ${bank.game} puzzles found in $outDir" }
@@ -50,7 +50,7 @@ private fun <T> runJourneyFor(bank: JourneyBank<T>, outDir: String, scalesPath: 
     val raws = needsRaw.parallelStream().map { bank.id(it) to bank.rawScore(it) }.toList().toMap()
     val gameScale = if (stored.points.isEmpty()) {
         stored.copy(points = buildRatingScale(entries.map { raws.getValue(bank.id(it)) }))
-            .also { writeJourneyScales(scalesPath, scales + (bank.game to it)) }
+            .also { writeJourneyScales(scalesPath, scales + (bank.scale to it)) }
     } else {
         stored
     }

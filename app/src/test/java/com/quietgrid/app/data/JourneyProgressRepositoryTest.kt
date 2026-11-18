@@ -7,10 +7,12 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.journey.JourneyMilestone
 import com.quietgrid.app.core.journey.JourneySignals
+import com.quietgrid.app.core.journey.JourneyTrack
 import com.quietgrid.app.testutil.FakeHistoryStore
 import com.quietgrid.engine.journey.JourneyChapter
 import com.quietgrid.engine.journey.JourneyFile
 import com.quietgrid.engine.journey.JourneyStop
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -59,8 +61,8 @@ class JourneyProgressRepositoryTest {
         repository = JourneyProgressRepository(
             dao = database.journeyProgressDao(),
             historyStore = history,
-            journeyFile = { if (it == game) file else null },
-            ratedPool = { gameId, difficulty -> if (gameId == game) pools[difficulty].orEmpty() else emptyList() },
+            journeyFile = { if (it.gameId == game) file else null },
+            ratedPool = { track, difficulty -> if (track.gameId == game) pools[difficulty].orEmpty() else emptyList() },
             clock = { 5000L },
         )
     }
@@ -83,6 +85,51 @@ class JourneyProgressRepositoryTest {
         assertEquals(750, progress.bestScore)
         assertEquals(2, progress.attempts)
         assertEquals("sib-far", progress.nextPuzzleId)
+    }
+
+    @Test
+    fun `progress follows the puzzle language`() = runBlocking {
+        val wordSwap = GameId.WORDSWAP
+        val english = JourneyFile(wordSwap.key, listOf(JourneyChapter(1, 100, 400, listOf(JourneyStop("ws-easy-1", "easy", 150, 90)))))
+        val dutch = JourneyFile("wordswap_nl", listOf(JourneyChapter(1, 100, 400, listOf(JourneyStop("ws-nl-easy-1", "easy", 150, 90)))))
+        val tracks = MutableStateFlow(JourneyTrack(wordSwap, "en"))
+        val languages = JourneyProgressRepository(
+            dao = database.journeyProgressDao(),
+            historyStore = history,
+            journeyFile = { track -> if (track.scope == "wordswap_nl") dutch else english },
+            ratedPool = { _, _ -> emptyList() },
+            clock = { 5000L },
+            trackOf = { tracks },
+        )
+        languages.recordWin(wordSwap, "ws-easy-1", "ws-easy-1", JourneySignals(hintsUsed = 0, mistakes = 0), elapsedSeconds = 60, score = 0)
+
+        assertTrue("ws-easy-1" in languages.progressFor(wordSwap).first())
+        tracks.value = JourneyTrack(wordSwap, "nl")
+        assertFalse("ws-easy-1" in languages.progressFor(wordSwap).first())
+        assertTrue(languages.storedProgress(wordSwap).isEmpty())
+        tracks.value = JourneyTrack(wordSwap, "en")
+        assertTrue("ws-easy-1" in languages.storedProgress(wordSwap))
+    }
+
+    @Test
+    fun `a win on a stop from another language stays in that language`() = runBlocking {
+        val wordSwap = GameId.WORDSWAP
+        val english = JourneyFile(wordSwap.key, listOf(JourneyChapter(1, 100, 400, listOf(JourneyStop("ws-easy-1", "easy", 150, 90)))))
+        val dutch = JourneyFile("wordswap_nl", listOf(JourneyChapter(1, 100, 400, listOf(JourneyStop("ws-nl-easy-1", "easy", 150, 90)))))
+        val tracks = MutableStateFlow(JourneyTrack(wordSwap, "en"))
+        val languages = JourneyProgressRepository(
+            dao = database.journeyProgressDao(),
+            historyStore = history,
+            journeyFile = { track -> if (track.scope == "wordswap_nl") dutch else english },
+            ratedPool = { _, _ -> emptyList() },
+            clock = { 5000L },
+            trackOf = { tracks },
+        )
+        languages.recordWin(wordSwap, "ws-nl-easy-1", "ws-nl-easy-1", JourneySignals(hintsUsed = 0, mistakes = 0), elapsedSeconds = 60, score = 0)
+
+        assertTrue(languages.storedProgress(wordSwap).isEmpty())
+        tracks.value = JourneyTrack(wordSwap, "nl")
+        assertTrue(languages.storedProgress(wordSwap).getValue("ws-nl-easy-1").cleared)
     }
 
     @Test
@@ -135,7 +182,7 @@ class JourneyProgressRepositoryTest {
         val bare = JourneyProgressRepository(
             dao = database.journeyProgressDao(),
             historyStore = history,
-            journeyFile = { if (it == game) file else null },
+            journeyFile = { if (it.gameId == game) file else null },
             ratedPool = { _, _ -> emptyList() },
             clock = { 5000L },
         )
@@ -304,8 +351,8 @@ class JourneyProgressRepositoryTest {
         val updated = JourneyProgressRepository(
             dao = database.journeyProgressDao(),
             historyStore = history,
-            journeyFile = { if (it == game) grown else null },
-            ratedPool = { gameId, difficulty -> if (gameId == game) pools[difficulty].orEmpty() else emptyList() },
+            journeyFile = { if (it.gameId == game) grown else null },
+            ratedPool = { track, difficulty -> if (track.gameId == game) pools[difficulty].orEmpty() else emptyList() },
             clock = { 6000L },
         )
         updated.recordWin(game, "s4", "s4", clean, elapsedSeconds = 60, score = 0)

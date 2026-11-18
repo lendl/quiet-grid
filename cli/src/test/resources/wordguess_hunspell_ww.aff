@@ -1,0 +1,12 @@
+SET UTF-8
+FLAG long
+AF 2
+AF S.
+AF F.
+
+SFX S. Y 1
+SFX S. 0 s .
+
+SFX F. Y 2
+SFX F. 0 s .
+SFX F. e 0 te

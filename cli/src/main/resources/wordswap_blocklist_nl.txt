@@ -1,0 +1,21 @@
+# Extra words kept out of Word Swap boards on top of wordguess_blocklist_nl.txt:
+# profanity, slurs, sexual and drug terms, violence, and common first names.
+# Not yet reviewed by a native speaker.
+kut kutje lul lullen pik neuk neuken neukt geneukt hoer hoeren slet sletten tiet tieten pijpen klote kloten eikel eikels
+shit kak kakken pis pissen poep poepen scheet stront kanker tyfus tering godver verdomme verdomd
+seks sexy porno naakt orgasme sperma penis vagina anus kont konten reet
+homo homos flikker flikkers mietje neger negers nikker nikkers mof moffen jood joden joods nazi nazis hitler mongool debiel idioot
+dood doden moord moorden lijk bom bommen geweer geweren pistool wapen wapens
+drugs drug coke heroine wiet joint dronken bier wijn wodka jenever
+god jezus
+jan piet kees henk klaas
+# English, names, places and abbreviations seen in generated boards (2026-11-17 review).
+abel adam age air all anita ara arden are area art attila back bette blue bob boy bren btw bye call case center cicero city dar del der dino dog don drive dvd easy ebola ede effect empire end enter erica erin erna eros eva face fat fine finish five flash force freak free gil gloria gps gsm hans happy helen high home hot house islam jen jojo judas kali kim kris league light lil live lord lori loser loss low lsd luis madam marge medusa meg metal miss mom more mum music nero new nick nobel nor not office old out pee prozac pure race rachel rambo range red reine report return right rio run sara save second secret shake sherpa short shots sms songs stars state story tea terra tesla the time train tree trust unit urgent uzi viagra view vin walk walt waste weeks world wow yes zero
+# Round 2 of the 2026-11-17 review.
+babe caesar care close cover darren first garden gare green heat heavy holden hope inga jon kano look lost make move nature people ros runs shift soft soul stuff tahoe wave went white yankee
+# Round 3 of the 2026-11-17 review.
+cold future grey grover joel koran
+# Round 4 of the 2026-11-17 review.
+claim tod
+# Round 5 of the 2026-11-17 review.
+class cross malta mina

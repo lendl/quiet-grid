@@ -32,6 +32,7 @@ tasks.named<Test>("test") {
     // Pin test working directory to the root project so that relative asset paths
     // in tests (e.g., "app/src/main/assets") resolve correctly.
     workingDir = rootProject.projectDir
+    maxHeapSize = "4g"
 }
 
 dependencies {

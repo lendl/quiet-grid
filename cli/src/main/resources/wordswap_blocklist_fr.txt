@@ -1,0 +1,21 @@
+# Extra words kept out of Word Swap boards on top of wordguess_blocklist_fr.txt:
+# profanity, slurs, sexual and drug terms, violence, and common first names.
+# Not yet reviewed by a native speaker.
+merde merdes putain pute putes salope salopes connard connards conne connes con cons bite bites couille couilles
+chier chie chiant foutre fout nique niquer baise baiser baisee bordel cul culs nichon nichons sein seins vagin
+sexe sexy porno nue nues orgasme sperme pisse pisser pet pets caca vomi gerber
+tapette tapettes gouine negre bougnoule youpin bicot raton salaud salauds batard idiot idiots abruti abrutis
+tuer tue meurtre meurtres mort morts cadavre bombe bombes fusil fusils arme armes flingue suicide
+drogue drogues cocaine heroine shit joint ivre alcool
+juif juifs juive nazi nazis hitler dieu
+jean pierre marie paul louis jacques michel
+# English, names, places and abbreviations seen in generated boards (2026-11-17 review).
+about adonis age alfa allie alvin ana baby ben bill bit boom border boy bull bye cab camera cash clean cool crash cross cuba dal dan data deal der die doc dom donna drag far for gay gemma girls gloria green gupta gus han hindi hit hlm horst hot house inca islam jan kat ladies lady land latino laure let lia light lights lima lise lolita look lord lori loser love mac mach man maria max maya media mess miles mir miro miss mmm more news olympe open orin oscar out pal pff pfft pool rab raina rani relax river rivera rob romano rosa rosie same shot shots sin sir soul spam speech speed staff state step strike talmud tara tell terra terri tesla tex thrace toto trip tris trust
+# Round 2 of the 2026-11-17 review.
+able aida alla bob break canada capote clive cos girl goal lev live luis moira nope off pilot rabat ramona saxon sioux slow states stick viagra yankee yard
+# Round 3 of the 2026-11-17 review.
+christ coach post smart
+# Base forms added after the final review; every Hunspell form of a listed word is blocked too.
+enculer foutre
+# Round 5 of the 2026-11-17 review.
+baxter china dry gan glass gracie hello joseph judas mali master neck nurse phone rom soft trick won

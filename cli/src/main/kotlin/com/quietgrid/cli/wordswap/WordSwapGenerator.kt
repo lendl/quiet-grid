@@ -53,26 +53,31 @@ private const val CANDIDATE_TRIES = 40
 
 private data class WordSwapLayout(val tiles: String, val diagonals: List<WordSwapSlot>)
 
-private val lexicons = HashMap<Int, WordSwapLexicon>()
+private val lexicons = HashMap<Pair<String, Int>, WordSwapLexicon>()
 
-private fun lexicon(vocabulary: Int): WordSwapLexicon = synchronized(lexicons) {
-    lexicons.getOrPut(vocabulary) { WordSwapLexicon(loadWordSwapRankedWords().take(vocabulary)) }
+private fun lexicon(locale: String, vocabulary: Int): WordSwapLexicon = synchronized(lexicons) {
+    lexicons.getOrPut(locale to vocabulary) { WordSwapLexicon(loadWordSwapRankedWords(locale).take(vocabulary)) }
 }
 
-fun generateWordSwapPuzzle(difficulty: Difficulty, random: Random = Random.Default): WordSwapPuzzleEntry? {
+fun wordSwapBankFile(locale: String): String = if (locale == "en") "wordswap_puzzles.json" else "wordswap_puzzles_$locale.json"
+
+fun wordSwapIdPrefix(locale: String, difficulty: Difficulty): String =
+    if (locale == "en") "ws-${difficulty.key}" else "ws-$locale-${difficulty.key}"
+
+fun generateWordSwapPuzzle(difficulty: Difficulty, locale: String = "en", random: Random = Random.Default): WordSwapPuzzleEntry? {
     val tier = WORDSWAP_TIERS.getValue(difficulty)
     val shape = pickShape(tier.shapes, random)
     val (layout, diagonals) = randomLayout(shape, random) ?: return null
     val size = shape.size
     val slots = wordSwapLineSlots(layout, size, size) + diagonals
     if (!wordSwapCoversAllTiles(layout, size, slots)) return null
-    val solution = fill(layout, size, slots, lexicon(tier.vocabulary), random) ?: return null
+    val solution = fill(layout, size, slots, lexicon(locale, tier.vocabulary), random) ?: return null
     val words = slots.map { it.read(solution, size) }
     if (words.toSet().size != words.size) return null
     if (countWordSwapArrangements(solution, size, slots, words) != 1) return null
     val start = scramble(solution, size, slots, tier.inPlaceFraction, random) ?: return null
     return WordSwapPuzzleEntry(
-        id = "ws-${difficulty.key}-${Integer.toHexString(solution.hashCode())}",
+        id = "${wordSwapIdPrefix(locale, difficulty)}-${Integer.toHexString(solution.hashCode())}",
         difficulty = difficulty.key,
         rows = size,
         cols = size,

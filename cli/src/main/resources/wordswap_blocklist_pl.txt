@@ -1,0 +1,23 @@
+# Extra words kept out of Word Swap boards (Polish has no wordguess_blocklist_pl.txt):
+# profanity, slurs, sexual and drug terms, violence, and common first names.
+# Not yet reviewed by a native speaker.
+kurwa kurwy kurwo chuj chuja chuje huj pizda pizdy jebany jebana jebane pierdoli dupa dupy dupek cipa cipy kutas kutasy fiut fiuty
+cycki cycek sraka szmata szmaty dziwka dziwki suka suki pedal pedaly ciota cioty lesba
+murzyn murzyni cygan cyganie debil debile idiota kretyn zjeb zjeby
+penis wagina seks seksi porno nago naga nagi orgazm sperma
+zabity zabita trup trupy morderca mord bomba bomby pistolet narkotyk kokaina heroina pijany pijana
+jan anna piotr marek adam
+# English, names, places and abbreviations seen in generated boards (2026-11-17 review).
+abdul adi age air akbar alaska albert aldo alf alfie all allen ami ana and any apollo apple arab ari ariel art asa bad bauer beach ben bert big bill bob bobby book boss boy cali call cary castro cat chan che cole come comes cross dali damn dan dance daniel dark der des die dirty dna doc dog don door dream elka empire end eye fair felix fight firm food for friday fun gay gemma gil girls got gracie grand hair hall han happy has have head heh hello henry her hera hindi his hmm hmmm hot hour house how ice ira iron islam jack jen jon juana kai karla kent king know kurt lady lana lane lanie law lenny life lila lin line lisa liz liza long lord lunch luz mac madame mai maine malibu man manolo map mara marc marin mark market mason master max mel melony men merle mhm mia miss mld mln mmm mon morgan music must nero nice nick nico nor normie not ocean odo off okay ole omar online oscar out paco pam party pen penny people per peta play point poole ray real red rex ride road roll run said sal salem san sand sec sex shake sharon shea shot show siana sim sin single sir sms son song sound space stop strong stu style sure talk tell tip toledo top trent trick two tzn ufa union unit van walk want wash will willi win wini wong wow yale yard york zach zulu
+# Round 2 of the 2026-11-17 review.
+angus axel ball bessie bomb booker boom break bryce bud carmen chen coach cody cool crew cut deal delia della derek donny dow dragon far fast frank gate ghost girl gloria grady grant green hal high human image island kali key kiss kong kris last light loki look low lutz mad manny mari mister mom monet moon much night nikki notes order pass pay peri queen rabin sat shu six slow sorry speed story terra think tower trip trust wang watch wei white yuri
+# Round 3 of the 2026-11-17 review.
+baku bit case drive hard hun jung luce lucky made mary news push room ros sweet talbot tarzan tex went zeus
+# Round 4 of the 2026-11-17 review.
+dalton down fat moreno
+# Base forms added after the final review; every Hunspell form of a listed word is blocked too.
+dupsko jebać srać pierdolić gówno pedał yorku bobbym jacka kings speedy jungle
+# Round 5 of the 2026-11-17 review.
+center chief city drink gary gonna indy jamie lego lola mail paso pitt press race rebeka sing soul texas
+# Round 6 of the 2026-11-17 review.
+bali bang bite crown hear killer skye sofie

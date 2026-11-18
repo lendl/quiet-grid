@@ -71,4 +71,14 @@ class JourneyCommandTest {
     fun `arrowescape bank never reads the halloween file`() {
         assertTrue(journeyBank("arrowescape").files.none { "halloween" in it })
     }
+
+    @Test
+    fun `wordswap language tracks read their own bank and share the wordswap scale`() {
+        val bank = journeyBank("wordswap_nl")
+        assertEquals("wordswap_nl", bank.game)
+        assertEquals("wordswap", bank.scale)
+        assertEquals(listOf("wordswap_puzzles_nl.json"), bank.files)
+        assertEquals("wordswap", journeyBank("wordswap").scale)
+        assertTrue("wordswap_pt" in JOURNEY_TRACKS && "wordswap_en" !in JOURNEY_TRACKS)
+    }
 }

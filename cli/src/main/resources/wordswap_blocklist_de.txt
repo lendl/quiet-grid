@@ -1,0 +1,27 @@
+# Extra words kept out of Word Swap boards on top of wordguess_blocklist_de.txt:
+# profanity, slurs, sexual and drug terms, violence, and common first names.
+# Not yet reviewed by a native speaker.
+arsch arsche fick ficke ficken fickt fickte gefickt fotze fotzen hure huren nutte nutten schlampe wichser wichsen wichse wixer
+pisse pissen pisser kacke kacken scheiss schiss mist furz furzen pups kotze kotzen titte titten busen muschi schwanz penis vagina anus
+sex sexy porno porn nackt nackte nackter nacktes orgasmus sperma geil geile geiler geiles erotik lust
+neger negers nigger kanake kanaken schwuchtel schwul schwule schwuler lesbe lesben zigeuner spast spasti mongo idiot idioten depp trottel
+jude juden nazi nazis hitler
+koks kokain heroin meth droge drogen kiffen kiffer crack
+mord morde morden tot tote toten tod leiche leichen waffe waffen pistole bombe bomben schuss folter foltern killer
+schnaps wodka saufen besoffen suff
+gott allah
+hans peter klaus fritz uwe jens heinz karl otto
+# English, names, places and abbreviations seen in generated boards (2026-11-17 review).
+action adele alaska alien andre angola arms ass aug aviv bali bambi bette blast boston boy break center check china christ clean coach cool cover cut dar doll don down dtv elba elbe empire enter essex ethan freak ganges girl girls haiti hawaii hindi holm holst horst hui image iowa islam israel japan kai kali katz kent kid kids lee lerner level lord loser lunch madrid main marge memory miss model moore nassau news nils odessa ohio order oregon oslo out paris peking peru potts power priest put red report riga riggs rio roll rom run sahara saigon saint san santa satan seoul set shirt sir sirius skin slip soul sports stick sure taiwan tara task thor time toto tower trust uganda venus verona wes
+# Round 2 of the 2026-11-17 review.
+after ankara borneo call darren drink europa flash haag iran korea milan monaco monte smoke soft sparta summer gerber
+# Round 3 of the 2026-11-17 review.
+best bridge ebola file lost police
+# Round 4 of the 2026-11-17 review.
+swing
+# Base forms added after the final review; every Hunspell form of a listed word is blocked too.
+tunte tunten schwuchtel
+# Round 5 of the 2026-11-17 review.
+albert ball buddha glaser lake look nevada pool rico royal
+# Round 6 of the 2026-11-17 review.
+cruz

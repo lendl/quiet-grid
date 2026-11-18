@@ -10,6 +10,9 @@ private val unescapedSlash = Regex("(?<!\\\\)/")
 
 val WORDGUESS_COMMON_NOUN_FLAGS: Map<String, String> = mapOf("de" to "m")
 
+private fun flagAliases(affText: String): List<String> =
+    Regex("(?m)^AF\\s+(\\S+)").findAll(affText).map { it.groupValues[1] }.drop(1).toList()
+
 private fun compoundPositionFlags(affText: String): Set<String> {
     val flagWidth = if (Regex("(?m)^FLAG\\s+long").containsMatchIn(affText)) 2 else 1
     return Regex("(?m)^COMPOUND(BEGIN|MIDDLE|END)\\s+(\\S+)")
@@ -19,8 +22,7 @@ private fun compoundPositionFlags(affText: String): Set<String> {
         .toSet()
 }
 
-fun loadWordGuessHunspellWords(locale: String, commonNounFlag: String? = WORDGUESS_COMMON_NOUN_FLAGS[locale]): List<String> {
-    cache[locale]?.let { return it }
+private fun forEachHunspellParadigm(locale: String, action: (flags: List<String>, forms: List<String>) -> Unit) {
     val classLoader = object {}.javaClass.classLoader
 
     val affBytes = classLoader.getResourceAsStream("wordguess_hunspell_$locale.aff")
@@ -35,8 +37,8 @@ fun loadWordGuessHunspellWords(locale: String, commonNounFlag: String? = WORDGUE
     val affText = affBytes.toString(Charsets.UTF_8)
     val flagWidth = if (Regex("(?m)^FLAG\\s+long").containsMatchIn(affText)) 2 else 1
     val compoundFlags = compoundPositionFlags(affText)
+    val flagAliases = flagAliases(affText)
 
-    val words = mutableListOf<String>()
     dicBytes.inputStream().bufferedReader(Charsets.UTF_8).useLines { lines ->
         lines.drop(1).forEach { rawLine ->
             val line = rawLine.substringBefore('\t')
@@ -44,27 +46,44 @@ fun loadWordGuessHunspellWords(locale: String, commonNounFlag: String? = WORDGUE
 
             val slash = unescapedSlash.find(line)
             val stem = if (slash == null) line else line.substring(0, slash.range.first)
-            val flags = if (slash == null) "" else line.substring(slash.range.last + 1)
+            val rawFlags = if (slash == null) "" else line.substring(slash.range.last + 1).trim()
+            val flags = if (flagAliases.isEmpty()) rawFlags else rawFlags.toIntOrNull()?.let { flagAliases[it - 1] } ?: rawFlags
             val strippedFlags = if (compoundFlags.isEmpty() || flags.isEmpty()) {
                 flags
             } else {
                 flags.chunked(flagWidth).filterNot { it in compoundFlags }.joinToString("")
             }
 
-            val isCommonNoun = commonNounFlag != null && commonNounFlag in flags.chunked(flagWidth)
+            val forms = generator.getAllWordForms(stem, strippedFlags, checkCanceled)
+                .map { it.word.replace("\u0133", "ij").replace("\u0132", "IJ") }
+            action(flags.chunked(flagWidth), forms)
+        }
+    }
+}
 
-            for (affixedWord in generator.getAllWordForms(stem, strippedFlags, checkCanceled)) {
-                val word = affixedWord.word
-                if (word.none { it.isUpperCase() }) {
-                    words.add(word)
-                } else if (isCommonNoun && word.first().isUpperCase() && word.drop(1).none { it.isUpperCase() }) {
-                    words.add(word.lowercase())
-                }
+fun loadWordGuessHunspellWords(locale: String, commonNounFlag: String? = WORDGUESS_COMMON_NOUN_FLAGS[locale]): List<String> {
+    cache[locale]?.let { return it }
+    val words = mutableListOf<String>()
+    forEachHunspellParadigm(locale) { flags, forms ->
+        val isCommonNoun = commonNounFlag != null && commonNounFlag in flags
+        forms.forEach { word ->
+            if (word.none { it.isUpperCase() }) {
+                words.add(word)
+            } else if (isCommonNoun && word.first().isUpperCase() && word.drop(1).none { it.isUpperCase() }) {
+                words.add(word.lowercase())
             }
         }
     }
-
     val result = words.distinct()
     cache[locale] = result
+    return result
+}
+
+fun hunspellParadigmsContaining(locale: String, words: Set<String>): Set<String> {
+    val result = HashSet<String>()
+    forEachHunspellParadigm(locale) { _, forms ->
+        val lowered = forms.map { it.lowercase() }
+        if (lowered.any { it in words }) result += lowered
+    }
     return result
 }

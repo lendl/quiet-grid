@@ -37,6 +37,10 @@ object WordSwapDefinition : GameDefinition {
         GlyphPath("M8.5 9.5 Q12 12 15.5 14.5", GlyphPaint.LINE_ACCENT, strokeWidth = 1.6f),
     )
 
+    override fun journeyLocale(puzzleLanguage: String): String = currentWordSwapLocale(puzzleLanguage)
+
+    override fun journeyLocaleOfStop(stopId: String): String = wordSwapLocaleOfId(stopId)
+
     @Composable
     override fun PlayScreen(request: PlayRequest) {
         WordSwapPlayScreen(

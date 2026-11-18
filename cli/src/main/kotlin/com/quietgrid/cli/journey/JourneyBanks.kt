@@ -23,6 +23,8 @@ import com.quietgrid.engine.core.Difficulty
 import com.quietgrid.engine.links.LinksPuzzleEntry
 import com.quietgrid.engine.links.linksRawScore
 import com.quietgrid.engine.links.solveLinks
+import com.quietgrid.cli.wordswap.WORDSWAP_LOCALES
+import com.quietgrid.cli.wordswap.wordSwapBankFile
 import com.quietgrid.engine.wordswap.WordSwapPuzzleEntry
 import com.quietgrid.engine.wordswap.solveWordSwap
 import com.quietgrid.engine.wordswap.wordSwapRawScore
@@ -61,6 +63,8 @@ val JOURNEY_GAMES = listOf(
     "blockescape", "circuit", "links", "wordswap",
 )
 
+val JOURNEY_TRACKS: List<String> = JOURNEY_GAMES + WORDSWAP_LOCALES.filter { it != "en" }.map { "wordswap_$it" }
+
 class JourneyBank<T>(
     val game: String,
     val files: List<String>,
@@ -74,6 +78,7 @@ class JourneyBank<T>(
     val transformed: (T, GridTransform) -> T,
     val solves: (T) -> Boolean,
     val keepSiblings: Boolean,
+    val scale: String = game,
 )
 
 fun <T> JourneyBank<T>.replayRating(entry: T, transform: GridTransform, scale: JourneyRatingScale): Int? {
@@ -81,7 +86,28 @@ fun <T> JourneyBank<T>.replayRating(entry: T, transform: GridTransform, scale: J
     return if (solves(moved)) scale.rate(rawScore(moved)) else null
 }
 
-fun journeyBank(game: String): JourneyBank<*> = when (game) {
+fun journeyBank(game: String): JourneyBank<*> = when {
+    game.startsWith("wordswap_") -> wordSwapJourneyBank(game, game.removePrefix("wordswap_"))
+    else -> journeyGameBank(game)
+}
+
+private fun wordSwapJourneyBank(game: String, locale: String): JourneyBank<WordSwapPuzzleEntry> = JourneyBank(
+    game = game,
+    files = listOf(wordSwapBankFile(locale)),
+    serializer = WordSwapPuzzleEntry.serializer(),
+    id = { it.id },
+    difficulty = { it.difficulty },
+    rating = { it.rating },
+    withRating = { entry, rating -> entry.copy(rating = rating) },
+    rawScore = ::wordSwapRawScore,
+    replayCandidates = { emptyList() },
+    transformed = { entry, _ -> entry },
+    solves = { solveWordSwap(it).solved },
+    keepSiblings = false,
+    scale = "wordswap",
+)
+
+private fun journeyGameBank(game: String): JourneyBank<*> = when (game) {
     "animaldoku" -> JourneyBank(
         game = game,
         files = listOf("animaldoku_puzzles.json"),
@@ -222,19 +248,6 @@ fun journeyBank(game: String): JourneyBank<*> = when (game) {
         solves = { solveLinks(it.size, it.endpoints).solved },
         keepSiblings = false,
     )
-    "wordswap" -> JourneyBank(
-        game = game,
-        files = listOf("wordswap_puzzles.json"),
-        serializer = WordSwapPuzzleEntry.serializer(),
-        id = { it.id },
-        difficulty = { it.difficulty },
-        rating = { it.rating },
-        withRating = { entry, rating -> entry.copy(rating = rating) },
-        rawScore = ::wordSwapRawScore,
-        replayCandidates = { emptyList() },
-        transformed = { entry, _ -> entry },
-        solves = { solveWordSwap(it).solved },
-        keepSiblings = false,
-    )
+    "wordswap" -> wordSwapJourneyBank(game, "en")
     else -> error("No journey for game '$game'. Expected one of: ${JOURNEY_GAMES.joinToString()}")
 }

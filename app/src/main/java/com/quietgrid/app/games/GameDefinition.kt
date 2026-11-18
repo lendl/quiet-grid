@@ -64,6 +64,10 @@ interface GameDefinition {
     @StringRes
     fun difficultyLabelRes(difficulty: Difficulty): Int = standardDifficultyLabelRes(difficulty)
 
+    fun journeyLocale(puzzleLanguage: String): String = ""
+
+    fun journeyLocaleOfStop(stopId: String): String? = null
+
     @Composable
     fun PlayScreen(request: PlayRequest)
 }

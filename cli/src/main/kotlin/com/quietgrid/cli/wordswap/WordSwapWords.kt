@@ -1,29 +1,33 @@
 package com.quietgrid.cli.wordswap
 
+import com.quietgrid.cli.wordguess.hunspellParadigmsContaining
 import com.quietgrid.cli.wordguess.loadWordGuessBlocklist
 import com.quietgrid.cli.wordguess.loadWordGuessFrequencyWords
 import com.quietgrid.cli.wordguess.loadWordGuessHunspellWords
 
+val WORDSWAP_LOCALES: List<String> = listOf("en", "de", "es", "fr", "it", "nl", "pl", "pt")
+
 private val plainWord = Regex("[a-z]{3,7}")
 
-private var cachedRanked: List<String>? = null
+private val vowel = Regex("[aeiouy]")
 
-fun loadWordSwapRankedWords(): List<String> {
-    cachedRanked?.let { return it }
-    val dictionary = loadWordGuessHunspellWords("en").filterTo(HashSet()) { plainWord.matches(it) }
-    val blocklist = loadWordGuessBlocklist("en")
-    val extraBlocked = loadWordSwapExtraBlocklist()
-    val ranked = loadWordGuessFrequencyWords("en")
-        .asSequence()
-        .filter { plainWord.matches(it) && it in dictionary && it !in blocklist && it !in extraBlocked }
-        .distinct()
-        .toList()
-    cachedRanked = ranked
-    return ranked
+private val cachedRanked = HashMap<String, List<String>>()
+
+fun loadWordSwapRankedWords(locale: String): List<String> = synchronized(cachedRanked) {
+    cachedRanked.getOrPut(locale) {
+        val dictionary = loadWordGuessHunspellWords(locale).filterTo(HashSet()) { plainWord.matches(it) }
+        val listed = loadWordGuessBlocklist(locale) + loadWordSwapBlocklist(locale)
+        val blocked = listed + hunspellParadigmsContaining(locale, listed)
+        loadWordGuessFrequencyWords(locale)
+            .asSequence()
+            .filter { plainWord.matches(it) && vowel.containsMatchIn(it) && it in dictionary && it !in blocked }
+            .distinct()
+            .toList()
+    }
 }
 
-private fun loadWordSwapExtraBlocklist(): Set<String> =
-    object {}.javaClass.getResourceAsStream("/wordswap_blocklist_en.txt")
+fun loadWordSwapBlocklist(locale: String): Set<String> =
+    object {}.javaClass.getResourceAsStream("/wordswap_blocklist_$locale.txt")
         ?.bufferedReader()
         ?.useLines { lines -> lines.filter { !it.startsWith("#") }.flatMap { it.trim().lowercase().split(Regex("\\s+")) }.filter { it.isNotEmpty() }.toSet() }
         .orEmpty()

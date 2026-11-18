@@ -1,0 +1,24 @@
+# Extra words kept out of Word Swap boards on top of wordguess_blocklist_es.txt:
+# profanity, slurs, sexual and drug terms, violence, and common first names.
+# Not yet reviewed by a native speaker.
+puta putas puto putos puton joder jodido jodida jodidos mierda cabron cabrona polla pollas verga vergas pija pene vagina
+culo culos teta tetas chocho mamada follar folla follan follo pajero paja zorra zorras guarra perra perras
+marica maricas maricon sexo sexy porno desnudo desnuda orgasmo semen esperma condon
+violar violada violado asesino asesina asesinar matar mata mato muerto muerta muerte cadaver bomba bombas pistola arma armas balazo disparo suicida tortura
+droga drogas cocaina heroina porro porros coca borracho borracha
+mear meado cagar cagada caca pedo pedos vomito idiota retrasado subnormal
+moro moros gitano gitanos sudaca judio judios nazi nazis
+dios
+juan jose maria pedro pablo carlos luis manuel
+# English, names, places and abbreviations seen in generated boards (2026-11-17 review).
+adonis ali alonso andes arabia are ares axe ben berta bit car celia chas che cid cole cross dad dallas dante dela dom done dora elle eros far flash gay gil grant hadar helena her ice india isa jane junior kan lay leila len light lord man maya mean milena mir miss more nobel odie open oreo pal paulo pee pepe peri pete place rafa rain rene ringo rob rock ros sancho shows silva stand stock susana tea tell teresa tesla test tone too top tour true venus yes york zapata
+# Round 2 of the 2026-11-17 review.
+bel benito bree bren crack dina dino grand hall home inca islam luisa margo mateo rice roma sena trina
+# Round 3 of the 2026-11-17 review.
+fine giles hope
+# Round 4 of the 2026-11-17 review.
+mullen
+# Round 5 of the 2026-11-17 review.
+aries aron boom case cases delia green guido inga lady liza rosen time tito
+# Round 6 of the 2026-11-17 review.
+relax rivera

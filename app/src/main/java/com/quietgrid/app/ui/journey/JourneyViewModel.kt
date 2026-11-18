@@ -10,6 +10,8 @@ import com.quietgrid.app.core.journey.JourneyRequest
 import com.quietgrid.app.core.journey.loadJourneyFile
 import com.quietgrid.app.data.JourneyProgressStore
 import com.quietgrid.app.data.PlayHistoryStore
+import com.quietgrid.app.data.SettingsRepository
+import com.quietgrid.app.data.journeyTrack
 import com.quietgrid.app.games.animaldoku.AnimalDokuPuzzleBank
 import com.quietgrid.app.games.arrowescape.ArrowEscapePuzzleBank
 import com.quietgrid.app.games.blockescape.BlockEscapePuzzleBank
@@ -39,10 +41,12 @@ import com.quietgrid.engine.takuzu.transformed
 import com.quietgrid.engine.journey.gridTransformById
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -56,21 +60,25 @@ class JourneyViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val store: JourneyProgressStore,
     private val history: PlayHistoryStore,
+    private val settings: SettingsRepository,
 ) : ViewModel() {
 
     private val pendingByGame = mutableMapOf<GameId, List<JourneyMilestone>>()
 
-    fun state(gameId: GameId): Flow<JourneyState?> = flow {
-        val file = loadJourneyFile(context, gameId)
-        if (file == null) {
-            emit(null)
-            return@flow
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun state(gameId: GameId): Flow<JourneyState?> = settings.journeyTrack(gameId).flatMapLatest { track ->
+        flow {
+            val file = loadJourneyFile(context, track)
+            if (file == null) {
+                emit(null)
+                return@flow
+            }
+            emitAll(
+                combine(store.progressFor(gameId), store.isMastered(gameId)) { progress, mastered ->
+                    JourneyState(journeyRows(file, progress), journeySummary(file, progress), mastered)
+                },
+            )
         }
-        emitAll(
-            combine(store.progressFor(gameId), store.isMastered(gameId)) { progress, mastered ->
-                JourneyState(journeyRows(file, progress), journeySummary(file, progress), mastered)
-            },
-        )
     }
 
     suspend fun pendingMilestones(gameId: GameId): List<JourneyMilestone> =

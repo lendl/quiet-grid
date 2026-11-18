@@ -34,13 +34,15 @@ private val PUZZLE = WordSwapPuzzleEntry(
 
 class WordSwapJourneyTest {
 
-    private val adapter = WordSwapPuzzleAdapter(mockk<Context>(relaxed = true), FakeHistoryStore())
+    private val adapter = WordSwapPuzzleAdapter(mockk<Context>(relaxed = true), FakeHistoryStore()) { "nl" }
 
     @Before
     fun setUp() {
         mockkObject(WordSwapPuzzleBank)
         coEvery { WordSwapPuzzleBank.puzzleById(any(), any(), any()) } returns null
         coEvery { WordSwapPuzzleBank.puzzleById(any(), Difficulty.MEDIUM, "stop") } returns PUZZLE
+        coEvery { WordSwapPuzzleBank.randomPuzzle(any(), any(), any(), any()) } returns null
+        coEvery { WordSwapPuzzleBank.randomPuzzle(any(), "nl", Difficulty.MEDIUM, any()) } returns PUZZLE
     }
 
     @After
@@ -52,6 +54,11 @@ class WordSwapJourneyTest {
     fun `journey start loads the stop puzzle by id`() {
         assertEquals(PUZZLE, runBlocking { adapter.journeySession(Difficulty.MEDIUM, "stop", 0) }?.puzzle)
         assertNull(runBlocking { adapter.journeySession(Difficulty.MEDIUM, "missing", 0) })
+    }
+
+    @Test
+    fun `fresh puzzle comes from the puzzle language bank`() {
+        assertEquals(PUZZLE, runBlocking { adapter.freshSession(Difficulty.MEDIUM) }?.puzzle)
     }
 
     @Test

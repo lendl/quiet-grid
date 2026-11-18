@@ -1,0 +1,20 @@
+# Extra words kept out of Word Swap boards (Italian has no wordguess_blocklist_it.txt):
+# profanity, slurs, sexual and drug terms, violence, and common first names.
+# Not yet reviewed by a native speaker.
+cazzo cazzi cazzata cazzate merda merde stronzo stronza stronzi puttana puttane troia troie zoccola figa fica
+culo culi tette tetta pompino scopare scopata minchia coglione coglioni palle sega seghe pene vagina ano
+sesso sexy porno nudo nuda nudi nude orgasmo sperma
+frocio froci negro negri terrone zingaro zingari ebreo ebrei nazi nazista nazisti duce
+bastardo bastarda idiota imbecille cretino pirla
+uccidere uccide ucciso morto morta morti morte cadavere bomba bombe pistola fucile arma armi suicidio tortura
+droga droghe cocaina eroina ubriaco ubriaca vomito pisciare piscia cacca
+dio madonna
+marco luca paolo maria giulia giuseppe
+# English, names, places and abbreviations seen in generated boards (2026-11-17 review).
+ada ade alone apollo ari ariana arnie art ate audi ava baby bang barbie bea bear beat becca bob boy brenna card cast celia chance ciel city cole corner cross crown dance dar day dee diane dir dix dover down drink drive driver drop ebola elisa elise ella elle elsa end ernie eros finn flag flash free full game gay geiger goal hall han hard help ice india islam led liv lord love luigi mail man mao mass max maya mcc men miss mister model moira mozart nico nobel okay olivia once open oscar out pardon pepe play prue rape reich rio robbie roll rom rush secret senior simon simone sin sir sonia spring stars sudan swing tahiti target tea tessa thai tibet tip toto trace trust vin water week
+# Round 2 of the 2026-11-17 review.
+argo blue cesare fast garden jack killer leda linda look martin nepal park round sex some space stick stuart task uri ursula word zane
+# Round 3 of the 2026-11-17 review.
+real
+# Round 5 of the 2026-11-17 review.
+camila empire market maura office

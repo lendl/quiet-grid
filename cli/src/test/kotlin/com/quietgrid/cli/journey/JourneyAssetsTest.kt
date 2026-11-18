@@ -34,8 +34,11 @@ class JourneyAssetsTest {
         "blockescape" -> rows(journeyBank(game) as JourneyBank<com.quietgrid.engine.blockescape.BlockEscapePuzzleEntry>) { it.difficulty }
         "circuit" -> rows(journeyBank(game) as JourneyBank<com.quietgrid.engine.circuit.CircuitPuzzleEntry>) { it.difficulty }
         "links" -> rows(journeyBank(game) as JourneyBank<com.quietgrid.engine.links.LinksPuzzleEntry>) { it.difficulty }
-        "wordswap" -> rows(journeyBank(game) as JourneyBank<com.quietgrid.engine.wordswap.WordSwapPuzzleEntry>) { it.difficulty }
-        else -> error(game)
+        else -> if (game.startsWith("wordswap")) {
+            rows(journeyBank(game) as JourneyBank<com.quietgrid.engine.wordswap.WordSwapPuzzleEntry>) { it.difficulty }
+        } else {
+            error(game)
+        }
     }
 
     private fun journey(game: String): JourneyFile =
@@ -45,14 +48,14 @@ class JourneyAssetsTest {
 
     @Test
     fun `every journey bank entry has a rating in range`() {
-        JOURNEY_GAMES.forEach { game ->
+        JOURNEY_TRACKS.forEach { game ->
             bankRows(game).forEach { assertTrue("$game ${it.id} rated ${it.rating}", it.rating in 100..1000) }
         }
     }
 
     @Test
     fun `median rating rises with the difficulty label`() {
-        JOURNEY_GAMES.forEach { game ->
+        JOURNEY_TRACKS.forEach { game ->
             val byTier = bankRows(game).groupBy { it.difficulty }
             val medians = Difficulty.entries.mapNotNull { tier -> byTier[tier.key]?.let { rows -> median(rows.map { it.rating!! }) } }
             medians.zipWithNext().forEach { (lower, higher) -> assertTrue("$game medians $medians", lower < higher) }
@@ -61,7 +64,7 @@ class JourneyAssetsTest {
 
     @Test
     fun `every journey file validates against its bank`() {
-        JOURNEY_GAMES.forEach { game ->
+        JOURNEY_TRACKS.forEach { game ->
             val file = journey(game)
             assertEquals(game, file.game)
             validateJourney(file, bankRows(game).map { it.id }.toSet())
@@ -75,7 +78,7 @@ class JourneyAssetsTest {
 
     @Test
     fun `every stop's difficulty matches its bank entry`() {
-        JOURNEY_GAMES.forEach { game ->
+        JOURNEY_TRACKS.forEach { game ->
             val tiers = bankRows(game).associate { it.id to it.difficulty }
             journey(game).chapters.flatMap { it.stops }.forEach { stop ->
                 assertEquals("$game ${stop.puzzleId}", tiers.getValue(stop.puzzleId), stop.difficulty)
@@ -96,8 +99,8 @@ class JourneyAssetsTest {
     @Test
     fun `every listed replay transform keeps the stop solvable and within five percent`() {
         val scales = readJourneyScales(DEFAULT_JOURNEY_SCALES)
-        JOURNEY_GAMES.forEach { game ->
-            val scale = scales.getValue(game).scale
+        JOURNEY_TRACKS.forEach { game ->
+            val scale = scales.getValue(journeyBank(game).scale).scale
             val check = replayTransformCheck(game, assets, scale)
             journey(game).chapters.flatMap { it.stops }.parallelStream().forEach { stop ->
                 val ownRating = check(stop.puzzleId, GridTransform.IDENTITY)!!

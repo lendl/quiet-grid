@@ -58,7 +58,6 @@ import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.formatTotalTime
 import com.quietgrid.app.core.journey.JourneyMilestone
-import com.quietgrid.app.core.journey.journeyScope
 import com.quietgrid.app.ui.journey.map.JourneySceneCanvas
 import com.quietgrid.app.ui.journey.map.journeySceneFor
 import com.quietgrid.app.ui.journey.map.journeySceneSeed
@@ -472,7 +471,7 @@ private fun CelebrationMap(
 ) {
     val colors = MaterialTheme.colorScheme
     val sceneKind = journeySceneFor(LocalResolvedTheme.current)
-    val seed = remember(gameId, seedChapter) { journeySceneSeed(journeyScope(gameId), seedChapter) }
+    val seed = remember(gameId, seedChapter) { journeySceneSeed(gameId.key, seedChapter) }
     val textMeasurer = rememberTextMeasurer()
     val labelStyle = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
     BoxWithConstraints(modifier.clearAndSetSemantics { contentDescription = description }) {

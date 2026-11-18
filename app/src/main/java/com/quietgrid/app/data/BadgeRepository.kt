@@ -81,11 +81,12 @@ class BadgeRepository(
         historyStore: PlayHistoryStore,
         journeyStore: JourneyProgressStore,
         mixRepository: MixRepository,
+        settingsRepository: SettingsRepository,
     ) : this(
         dataStore = dataStore,
         historyStore = historyStore,
         journeyStore = journeyStore,
-        journeyFile = { loadJourneyFile(context, it) },
+        journeyFile = { loadJourneyFile(context, settingsRepository.journeyTrack(it).first()) },
         activeMix = {
             val activeId = mixRepository.activeMixId.first()
             activeId?.let { id -> mixRepository.mixes.first().firstOrNull { it.id == id } }

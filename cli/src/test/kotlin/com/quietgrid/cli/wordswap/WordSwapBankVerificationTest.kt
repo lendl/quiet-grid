@@ -1,6 +1,7 @@
 package com.quietgrid.cli.wordswap
 
 import com.quietgrid.cli.readPuzzleEntries
+import com.quietgrid.cli.wordguess.hunspellParadigmsContaining
 import com.quietgrid.cli.wordguess.loadWordGuessBlocklist
 import com.quietgrid.engine.wordswap.WordSwapHint
 import com.quietgrid.engine.wordswap.WordSwapPuzzleEntry
@@ -18,21 +19,26 @@ import org.junit.Test
 
 class WordSwapBankVerificationTest {
 
-    private val bank: List<WordSwapPuzzleEntry> =
-        readPuzzleEntries("app/src/main/assets/wordswap_puzzles.json", WordSwapPuzzleEntry.serializer())
+    private val banks: Map<String, List<WordSwapPuzzleEntry>> = WORDSWAP_LOCALES.associateWith { locale ->
+        readPuzzleEntries("app/src/main/assets/${wordSwapBankFile(locale)}", WordSwapPuzzleEntry.serializer())
+    }
+
+    private val plainWord = Regex("[a-z]{3,7}")
 
     @Test
     fun everyTierHasPuzzles() {
-        val counts = bank.groupingBy { it.difficulty }.eachCount()
-        listOf("easy", "medium", "hard", "expert").forEach { tier ->
-            assertTrue("$tier has ${counts[tier]} puzzles", (counts[tier] ?: 0) >= 120)
+        banks.forEach { (locale, bank) ->
+            val counts = bank.groupingBy { it.difficulty }.eachCount()
+            listOf("easy", "medium", "hard", "expert").forEach { tier ->
+                assertTrue("$locale $tier has ${counts[tier]} puzzles", (counts[tier] ?: 0) >= 120)
+            }
+            assertEquals(locale, bank.size, bank.map { it.id }.toSet().size)
         }
-        assertEquals(bank.size, bank.map { it.id }.toSet().size)
     }
 
     @Test
     fun hintFromStartIsAPlacementMatchingTheSolution() {
-        bank.forEach { puzzle ->
+        banks.values.flatten().forEach { puzzle ->
             val hint = findWordSwapHint(puzzle, puzzle.start) as WordSwapHint.Placement
             assertEquals(puzzle.id, puzzle.words()[hint.slotIndex], hint.word)
         }
@@ -40,12 +46,12 @@ class WordSwapBankVerificationTest {
 
     @Test
     fun everyPuzzleSolvesAtItsStoredTier() {
-        bank.forEach { puzzle -> assertEquals(puzzle.id, puzzle.difficulty, gradeWordSwapPuzzle(puzzle)?.key) }
+        banks.values.flatten().forEach { puzzle -> assertEquals(puzzle.id, puzzle.difficulty, gradeWordSwapPuzzle(puzzle)?.key) }
     }
 
     @Test
     fun everyPuzzleIsWellFormedAndHasOneAnswer() {
-        bank.forEach { puzzle ->
+        banks.values.flatten().forEach { puzzle ->
             assertTrue(puzzle.id, isValidWordSwapBoard(puzzle, puzzle.start))
             assertTrue(puzzle.id, wordSwapCoversAllTiles(puzzle.solution, puzzle.cols, puzzle.slots))
             val words = puzzle.words()
@@ -56,7 +62,7 @@ class WordSwapBankVerificationTest {
 
     @Test
     fun storedFewestSwapsIsExactAndNoWordStartsInPlace() {
-        bank.forEach { puzzle ->
+        banks.values.flatten().forEach { puzzle ->
             assertEquals(puzzle.id, wordSwapMinSwaps(puzzle.start, puzzle.solution), puzzle.minSwaps)
             assertTrue(puzzle.id, puzzle.slots.none { it.read(puzzle.start, puzzle.cols) == it.read(puzzle.solution, puzzle.cols) })
         }
@@ -64,14 +70,36 @@ class WordSwapBankVerificationTest {
 
     @Test
     fun noBlockedWords() {
-        val blocked = loadWordGuessBlocklist("en") + loadWordSwapBlocklistForTest()
-        bank.forEach { puzzle ->
-            puzzle.words().forEach { word -> assertTrue("${puzzle.id}: $word", word !in blocked) }
+        banks.forEach { (locale, bank) ->
+            val blocked = loadWordGuessBlocklist(locale) + loadWordSwapBlocklist(locale)
+            bank.forEach { puzzle ->
+                puzzle.words().forEach { word -> assertTrue("${puzzle.id}: $word", word !in blocked) }
+            }
         }
     }
 
-    private fun loadWordSwapBlocklistForTest(): Set<String> =
-        javaClass.getResourceAsStream("/wordswap_blocklist_en.txt")!!.bufferedReader().useLines { lines ->
-            lines.filter { !it.startsWith("#") }.flatMap { it.trim().split(Regex("\\s+")) }.filter { it.isNotEmpty() }.toSet()
+    @Test
+    fun noWordIsAFormOfABlockedWord() {
+        banks.forEach { (locale, bank) ->
+            val blockedForms = hunspellParadigmsContaining(locale, loadWordGuessBlocklist(locale) + loadWordSwapBlocklist(locale))
+            bank.forEach { puzzle ->
+                puzzle.words().forEach { word -> assertTrue("${puzzle.id}: $word", word !in blockedForms) }
+            }
         }
+    }
+
+    @Test
+    fun idsAndLettersMatchTheirLocale() {
+        banks.forEach { (locale, bank) ->
+            val prefix = if (locale == "en") {
+                Regex("ws-(easy|medium|hard|expert)-[0-9a-f]+")
+            } else {
+                Regex("ws-$locale-(easy|medium|hard|expert)-[0-9a-f]+")
+            }
+            bank.forEach { puzzle ->
+                assertTrue(puzzle.id, prefix.matches(puzzle.id))
+                assertTrue(puzzle.id, puzzle.words().all { plainWord.matches(it) })
+            }
+        }
+    }
 }

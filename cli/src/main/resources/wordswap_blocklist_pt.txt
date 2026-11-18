@@ -1,0 +1,22 @@
+# Extra words kept out of Word Swap boards on top of wordguess_blocklist_pt.txt:
+# profanity, slurs, sexual and drug terms, violence, and common first names.
+# Not yet reviewed by a native speaker.
+porra caralho buceta boceta piroca pica foder fode fodeu fodido fodida merda bosta puta putas puto putos
+viado viados bicha bichas vadia vadias safada cacete rola xoxota peitos bunda bundas
+cagar mijar mijo peido peidos vomito
+sexo sexy porno nua nuas orgasmo esperma penis vagina
+judeu judeus nazi nazista idiota retardado mongol
+matar mata matou morto morta morte cadaver bomba bombas arma armas pistola tiro tiros suicidio tortura
+droga drogas cocaina heroina maconha pinga
+deus
+joao jose maria pedro ana paulo carlos
+# English, names, places and abbreviations seen in generated boards (2026-11-17 review).
+abe ada adam ade adele alana angus anita are ariana asia ava axe bang bel bit boom boris box break bridge brie camila carma cesare chat clive cosmo cris dali dane dante del der design diana didi dino drive elmo elvira ema erica eros eva eve fan far gay goa gus hall han here ice irene irma isa israel jan jane jones judas lana lane lao leila liam lie light lise liza los luca mai maia medusa mia miami milo mimi miss mobile moira mom nara nina nobel nola odo ola olga omaha online ono otis out pal paul pie plus pool prime racine rana rani rena rex risa rita rom rose round rubi rush sara sena set shop short site soul spam sta stress sugar susana tate tera tobin too top trace trina uri valera van vernon video von xena zoe zone
+# Round 2 of the 2026-11-17 review.
+agnes alonso angola baal dance doctor does enrico fine flash game gear havana irina mara maura milena mister palace pepe pete reba rice rina rosita sabina sacha sexual split step tear temple tito toledo
+# Round 3 of the 2026-11-17 review.
+dina teresa
+# Round 5 of the 2026-11-17 review.
+able acosta ago angel cairo claus delia die gates iago inga jonas lorena lula martel matias melina miles nico series sus times trevor
+# Round 6 of the 2026-11-17 review.
+esme gloria marisa
