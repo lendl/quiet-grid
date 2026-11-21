@@ -231,6 +231,8 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                         AppTab.GAMES -> GamesScreen(
                                             onOpenGame = { gameId -> navigator.navigate(PickerRoute(gameId)) },
                                             onOpenAccount = openAccount,
+                                            onContinueChapter = { gameId, chapter -> navigator.openJourneyChapter(gameId, chapter) },
+                                            journeyPuzzleInProgress = navigator.journeyPuzzleInProgress(),
                                         )
                                         AppTab.MIXES -> MixesScreen(
                                             mixes = mixes,

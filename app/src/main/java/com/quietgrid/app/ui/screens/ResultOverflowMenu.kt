@@ -7,8 +7,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.PlaylistAdd
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Flag
+import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -38,6 +40,7 @@ fun ResultOverflowMenu(
     difficulty: Difficulty,
     onAddToMix: () -> Unit,
     modifier: Modifier = Modifier,
+    onOpenGamePage: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
     val language = LocalConfiguration.current.locales[0].toLanguageTag()
@@ -71,6 +74,17 @@ fun ResultOverflowMenu(
             )
         }
         DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+            if (onOpenGamePage != null) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.result_game_page)) },
+                    leadingIcon = { Icon(Icons.Outlined.GridView, contentDescription = null) },
+                    onClick = {
+                        menuOpen = false
+                        onOpenGamePage()
+                    },
+                )
+                HorizontalDivider()
+            }
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.mix_add_to_mix)) },
                 leadingIcon = { Icon(Icons.AutoMirrored.Filled.PlaylistAdd, contentDescription = null) },

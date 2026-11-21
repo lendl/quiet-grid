@@ -44,10 +44,13 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -80,6 +83,19 @@ class JourneyViewModel @Inject constructor(
             )
         }
     }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun activeJourney(enabledGameIds: Set<GameId>): Flow<ActiveJourney?> = history.journeyGameKeysByRecency()
+        .map { keys -> journeyCandidates(keys, enabledGameIds) }
+        .distinctUntilChanged()
+        .flatMapLatest { candidates ->
+            if (candidates.isEmpty()) {
+                flowOf(null)
+            } else {
+                combine(candidates.map { gameId -> state(gameId).map { gameId to it?.summary } }) { firstActiveJourney(it.asList()) }
+            }
+        }
+        .distinctUntilChanged()
 
     suspend fun pendingMilestones(gameId: GameId): List<JourneyMilestone> =
         pendingByGame[gameId] ?: store.pendingMilestones(gameId).also { pendingByGame[gameId] = it }

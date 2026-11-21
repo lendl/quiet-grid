@@ -192,6 +192,9 @@ internal class FakePlayHistoryDao : PlayHistoryDao {
     override fun recordsForPuzzle(gameId: String, puzzleId: String, difficulty: String): Flow<List<PlayRecordEntity>> =
         flowOf(records.filter { it.gameId == gameId && it.puzzleId == puzzleId && it.difficulty == difficulty })
 
+    override fun journeyGameKeysByRecency(): Flow<List<String>> =
+        flowOf(gameKeysByJourneyRecency(records.map { it.toRecord() }))
+
     override suspend fun insert(record: PlayRecordEntity) {
         records.add(record)
     }

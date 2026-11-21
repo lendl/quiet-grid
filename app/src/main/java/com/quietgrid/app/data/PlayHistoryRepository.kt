@@ -45,9 +45,16 @@ interface PlayHistoryStore {
     fun allRecords(): Flow<List<PlayRecord>>
     fun recordsFor(gameId: GameId): Flow<List<PlayRecord>>
     fun recordsForPuzzle(gameId: GameId, puzzleId: String, difficulty: Difficulty): Flow<List<PlayRecord>>
+    fun journeyGameKeysByRecency(): Flow<List<String>> = allRecords().map(::gameKeysByJourneyRecency)
     suspend fun appendRecord(record: PlayRecord)
     suspend fun clear()
 }
+
+fun gameKeysByJourneyRecency(records: List<PlayRecord>): List<String> = records
+    .filter { it.journeyStop != null }
+    .sortedByDescending { it.timestampMillis }
+    .map { it.gameId }
+    .distinct()
 
 private val json = Json { ignoreUnknownKeys = true }
 private val PLAY_HISTORY_KEY = stringPreferencesKey("play_history")
@@ -73,6 +80,11 @@ class PlayHistoryRepository @Inject constructor(
     override fun recordsForPuzzle(gameId: GameId, puzzleId: String, difficulty: Difficulty): Flow<List<PlayRecord>> = flow {
         migrateIfNeeded()
         emitAll(dao.recordsForPuzzle(gameId.key, puzzleId, difficulty.key).map { entities -> entities.map { it.toRecord() } })
+    }
+
+    override fun journeyGameKeysByRecency(): Flow<List<String>> = flow {
+        migrateIfNeeded()
+        emitAll(dao.journeyGameKeysByRecency())
     }
 
     override suspend fun appendRecord(record: PlayRecord) {

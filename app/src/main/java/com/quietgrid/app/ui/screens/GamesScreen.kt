@@ -52,11 +52,15 @@ import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.ui.components.AccountIconButton
 import com.quietgrid.app.ui.components.GameIcon
+import com.quietgrid.app.ui.journey.ContinueChapterCard
+import com.quietgrid.app.ui.journey.rememberActiveJourney
 
 @Composable
 fun GamesScreen(
     onOpenGame: (GameId) -> Unit,
     onOpenAccount: () -> Unit,
+    onContinueChapter: (GameId, Int) -> Unit = { _, _ -> },
+    journeyPuzzleInProgress: Boolean = false,
 ) {
     val repositories: RepositoriesViewModel = hiltViewModel()
     val loadedSettings by repositories.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = null)
@@ -76,6 +80,9 @@ fun GamesScreen(
     val betaGames = if (loadedSettings == null) emptyList() else sortedBy(GameCatalog.games.filter { it.beta })
     val betaGamesEnabled = settings.betaGamesEnabled
     val isFavorite = { meta: GameMeta -> meta.id.key in settings.favoriteGameIds }
+    val enabledGameIds = remember(betaGamesEnabled) { GameCatalog.enabledGameIds(betaGamesEnabled) }
+    val activeJourney = rememberActiveJourney(enabledGameIds)
+        .takeIf { loadedSettings != null && selectedCategory == null && !journeyPuzzleInProgress }
     val isNew = { meta: GameMeta -> meta.isNew && meta.id.key !in settings.newBadgeSeenGameIds }
 
     Column(Modifier.fillMaxWidth().padding(16.dp)) {
@@ -110,6 +117,11 @@ fun GamesScreen(
                 horizontalArrangement = Arrangement.spacedBy(layout.spacing),
                 verticalArrangement = Arrangement.spacedBy(layout.spacing + 4.dp),
             ) {
+                if (activeJourney != null) {
+                    item(span = { GridItemSpan(maxLineSpan) }, key = "continue_chapter") {
+                        ContinueChapterCard(activeJourney, onContinue = onContinueChapter)
+                    }
+                }
                 items(readyGames, key = { it.id.key }) { meta ->
                     GameTile(meta, layout, enabled = true, isFavorite = isFavorite(meta), isNew = isNew(meta), onClick = { onOpenGame(meta.id) })
                 }

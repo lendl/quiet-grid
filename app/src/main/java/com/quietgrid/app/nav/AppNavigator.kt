@@ -40,6 +40,8 @@ class AppNavigator(
 
     fun activeGameKey(): String? = activeSession.value?.gameId
 
+    fun journeyPuzzleInProgress(): Boolean = activeSession.value?.journey != null
+
     fun playPreferencesFor(gameId: GameId): GamePlayPreferences = resolvePreferences(gameId)
 
     fun back() {
@@ -72,10 +74,28 @@ class AppNavigator(
 
     fun returnToJourney(gameId: GameId, stopId: String) {
         scope.launch {
-            val track = repositories.settingsRepository.journeyTrack(gameId).first()
-            val chapter = loadJourneyFile(appContext, track)?.locate(stopId)?.first?.index
-            follow(journeyReturnPlan(gameId, chapter, journeyBackStack()))
+            follow(journeyReturnPlan(gameId, chapterOf(gameId, stopId), journeyBackStack()))
         }
+    }
+
+    private suspend fun chapterOf(gameId: GameId, stopId: String): Int? {
+        val track = repositories.settingsRepository.journeyTrack(gameId).first()
+        return loadJourneyFile(appContext, track)?.locate(stopId)?.first?.index
+    }
+
+    fun openGamePage(gameId: GameId) {
+        val onStack = entryFor(PickerRoute::class)?.toRoute<PickerRoute>()?.gameId == gameId
+        if (onStack) navController.popBackStack<PickerRoute>(inclusive = false) else navigateFromTabs(PickerRoute(gameId))
+    }
+
+    fun openJourney(gameId: GameId, chapter: Int?) {
+        navController.navigate(JourneyRoute(gameId))
+        if (chapter != null) navController.navigate(JourneyMapRoute(gameId, chapter))
+    }
+
+    fun openJourneyChapter(gameId: GameId, chapter: Int?) {
+        navigateFromTabs(PickerRoute(gameId))
+        openJourney(gameId, chapter)
     }
 
     fun returnToJourneyChapter(gameId: GameId, chapter: Int) = follow(journeyReturnPlan(gameId, chapter, journeyBackStack()))
@@ -101,7 +121,18 @@ class AppNavigator(
         return resumeRoute(summary) ?: PlayRoute.of(gameId, Difficulty.EASY, resume = true)
     }
 
-    fun resumeActiveGame(gameId: GameId) = navController.navigate(resumeActiveRoute(gameId))
+    fun resumeActiveGame(gameId: GameId) {
+        val route = resumeActiveRoute(gameId)
+        val journey = (route as? PlayRoute)?.journey
+        if (journey == null || journeyAnchor(gameId) != TabsRoute::class) {
+            navController.navigate(route)
+            return
+        }
+        scope.launch {
+            openJourneyChapter(gameId, chapterOf(gameId, journey.stopId))
+            navController.navigate(route)
+        }
+    }
 
     fun playNextDaily(next: Pair<GameId, Difficulty>?, dailyKey: String?) {
         val date = dailyKey?.let { runCatching { LocalDate.parse(it) }.getOrNull() } ?: return

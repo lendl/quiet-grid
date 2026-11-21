@@ -60,10 +60,7 @@ fun NavGraphBuilder.gamePageGraph(navigator: AppNavigator, sharedScope: SharedTr
                     navigator.clearMix()
                     navigator.navigate(EndlessRoute(gameId, resume = false))
                 },
-                onOpenJourney = { chapter ->
-                    navigator.navigate(JourneyRoute(gameId))
-                    if (chapter != null) navigator.navigate(JourneyMapRoute(gameId, chapter))
-                },
+                onOpenJourney = { chapter -> navigator.openJourney(gameId, chapter) },
             )
         }
     }
@@ -103,6 +100,8 @@ fun NavGraphBuilder.journeyGraph(navigator: AppNavigator) {
                 onPlay = { difficulty, request -> navigator.playJourneyStop(route.gameId, difficulty, request) },
                 onMap = { navigator.returnToJourney(route.gameId, route.stopId) },
                 onJourneyList = { navigator.returnToJourneyList(route.gameId) },
+                onAddToMix = { difficulty -> navigator.navigate(AddToMixRoute(route.gameId, difficulty)) },
+                onOpenGamePage = { navigator.openGamePage(route.gameId) },
                 newBadgeId = rememberNewBadge(),
                 onOpenMilestones = { navigator.navigate(MilestonesRoute) },
             )

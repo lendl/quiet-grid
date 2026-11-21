@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -49,11 +50,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
 import com.quietgrid.app.ui.screens.NewBadgeLine
+import com.quietgrid.app.ui.screens.ResultOverflowMenu
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.formatElapsed
@@ -76,6 +79,8 @@ fun JourneyResultScreen(
     onPlay: (Difficulty, JourneyRequest) -> Unit,
     onMap: () -> Unit,
     onJourneyList: () -> Unit = {},
+    onAddToMix: (Difficulty) -> Unit = {},
+    onOpenGamePage: () -> Unit = {},
     newBadgeId: String? = null,
     onOpenMilestones: () -> Unit = {},
 ) {
@@ -107,6 +112,7 @@ fun JourneyResultScreen(
         }
     }
     fun play(row: JourneyStopRow) = onPlay(Difficulty.fromKey(row.stop.difficulty), journeyRequestFor(row))
+    val difficulty = remember(rows, stopId) { rows.firstOrNull { it.stop.puzzleId == stopId }?.let { Difficulty.fromKey(it.stop.difficulty) } }
     Box(Modifier.fillMaxSize()) {
         JourneyResultContent(
             gameId = gameId,
@@ -115,6 +121,9 @@ fun JourneyResultScreen(
             onNext = { model.next?.let(::play) },
             onReplay = { model.replay?.let(::play) },
             onMap = onMap,
+            menuDifficulty = difficulty,
+            onAddToMix = onAddToMix,
+            onOpenGamePage = onOpenGamePage,
             newBadgeId = newBadgeId,
             onOpenMilestones = onOpenMilestones,
         )
@@ -145,6 +154,9 @@ fun JourneyResultContent(
     onNext: () -> Unit,
     onReplay: () -> Unit,
     onMap: () -> Unit,
+    menuDifficulty: Difficulty? = null,
+    onAddToMix: (Difficulty) -> Unit = {},
+    onOpenGamePage: (() -> Unit)? = null,
     newBadgeId: String? = null,
     onOpenMilestones: () -> Unit = {},
 ) {
@@ -169,11 +181,24 @@ fun JourneyResultContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
-            Text(
-                stringResource(R.string.journey_card_position, model.chapterIndex, model.stopNumber),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Text(
+                    stringResource(R.string.journey_card_position, model.chapterIndex, model.stopNumber),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = if (menuDifficulty != null) 48.dp else 0.dp),
+                )
+                if (menuDifficulty != null) {
+                    ResultOverflowMenu(
+                        gameId = gameId,
+                        difficulty = menuDifficulty,
+                        onAddToMix = { onAddToMix(menuDifficulty) },
+                        onOpenGamePage = onOpenGamePage,
+                        modifier = Modifier.align(Alignment.CenterEnd).offset(x = 12.dp),
+                    )
+                }
+            }
             Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
                     stringResource(R.string.journey_board_cleared),

@@ -235,6 +235,7 @@ private fun LossDestination(navigator: AppNavigator, route: LossRoute) {
             hasNextDaily = nextDaily != null,
             onPlayNextDaily = { navigator.playNextDaily(nextDaily, route.daily) },
             onBackToJourney = journeyStop?.let { stop -> { navigator.returnToJourney(gameId, stop) } },
+            onOpenGamePage = journeyStop?.let { { navigator.openGamePage(gameId) } },
             tip = resultTip.tip,
             tipActions = resultTip.actions,
             onPrimaryTapped = resultTip.onPrimaryTapped,

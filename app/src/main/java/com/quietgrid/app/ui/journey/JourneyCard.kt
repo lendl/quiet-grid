@@ -4,8 +4,10 @@ import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -44,18 +46,7 @@ fun JourneyCard(gameId: GameId, onOpen: (Int?) -> Unit) {
     } else {
         stringResource(R.string.journey_complete)
     }
-    val interactionSource = remember { MutableInteractionSource() }
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .pressScale(interactionSource)
-            .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.surface)
-            .clickable(interactionSource = interactionSource, indication = LocalIndication.current, onClick = { onOpen(null) })
-            .heightIn(min = 88.dp)
-            .padding(horizontal = 14.dp, vertical = 14.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
+    JourneyCardSurface(onClick = { onOpen(null) }) {
         Column(Modifier.weight(1f)) {
             Text(stringResource(R.string.journey_title), style = MaterialTheme.typography.titleMedium)
             Text(
@@ -81,4 +72,22 @@ fun JourneyCard(gameId: GameId, onOpen: (Int?) -> Unit) {
         }
         Button(onClick = { onOpen(chapterIndex) }) { Text(stringResource(R.string.journey_continue)) }
     }
+}
+
+@Composable
+fun JourneyCardSurface(onClick: () -> Unit, modifier: Modifier = Modifier, content: @Composable RowScope.() -> Unit) {
+    val interactionSource = remember { MutableInteractionSource() }
+    Row(
+        modifier
+            .fillMaxWidth()
+            .pressScale(interactionSource)
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface)
+            .clickable(interactionSource = interactionSource, indication = LocalIndication.current, onClick = onClick)
+            .heightIn(min = 88.dp)
+            .padding(horizontal = 14.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        content = content,
+    )
 }

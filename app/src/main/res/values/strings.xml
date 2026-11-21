@@ -301,6 +301,7 @@
     <string name="walk_through_solve">Walk through the solve</string>
     <string name="report_puzzle_problem">Report a problem</string>
     <string name="result_more_options">More options</string>
+    <string name="result_game_page">Game page</string>
 
     <!-- stats -->
     <string name="common_all">All</string>

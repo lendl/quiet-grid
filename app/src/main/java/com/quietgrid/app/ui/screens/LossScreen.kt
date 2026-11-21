@@ -61,6 +61,7 @@ fun LossScreen(
     hasNextDaily: Boolean = false,
     onPlayNextDaily: () -> Unit = {},
     onBackToJourney: (() -> Unit)? = null,
+    onOpenGamePage: (() -> Unit)? = null,
     tip: QuietTip? = null,
     tipActions: QuietTipActions = QuietTipActions(),
     onPrimaryTapped: (early: Boolean) -> Unit = {},
@@ -160,6 +161,7 @@ fun LossScreen(
                     difficulty = difficulty,
                     onAddToMix = onAddToMix,
                     modifier = Modifier.offset(x = 12.dp),
+                    onOpenGamePage = onOpenGamePage,
                 )
             }
 

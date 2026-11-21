@@ -19,6 +19,9 @@ interface PlayHistoryDao {
     )
     fun recordsForPuzzle(gameId: String, puzzleId: String, difficulty: String): Flow<List<PlayRecordEntity>>
 
+    @Query("SELECT gameId FROM play_records WHERE journeyStop IS NOT NULL GROUP BY gameId ORDER BY MAX(timestampMillis) DESC")
+    fun journeyGameKeysByRecency(): Flow<List<String>>
+
     @Insert
     suspend fun insert(record: PlayRecordEntity)
 
