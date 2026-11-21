@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -84,6 +86,12 @@ fun GamesScreen(
     val activeJourney = rememberActiveJourney(enabledGameIds)
         .takeIf { loadedSettings != null && selectedCategory == null && !journeyPuzzleInProgress }
     val isNew = { meta: GameMeta -> meta.isNew && meta.id.key !in settings.newBadgeSeenGameIds }
+    val gridState = rememberLazyGridState()
+    val showsContinueCard = activeJourney != null
+    LaunchedEffect(showsContinueCard) {
+        val atTop = gridState.firstVisibleItemIndex <= 1 && gridState.firstVisibleItemScrollOffset == 0
+        if (showsContinueCard && atTop) gridState.scrollToItem(0)
+    }
 
     Column(Modifier.fillMaxWidth().padding(16.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -113,6 +121,7 @@ fun GamesScreen(
             val layout = gamesGridLayout(maxWidth)
             LazyVerticalGrid(
                 columns = GridCells.Fixed(layout.columns),
+                state = gridState,
                 contentPadding = PaddingValues(top = 14.dp, bottom = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(layout.spacing),
                 verticalArrangement = Arrangement.spacedBy(layout.spacing + 4.dp),

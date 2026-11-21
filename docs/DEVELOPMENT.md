@@ -54,4 +54,4 @@ See [`docs/testing.md`](testing.md) for the full test suite (unit, screenshot, c
 
 ## Store art
 
-Store screenshots, feature graphic, and the README banner are generated from the real app rather than hand-made. See [`tools/store-art/README.md`](../tools/store-art/README.md).
+Tablet store screenshots are generated from the real app rather than hand-made. See [`tools/store-art/README.md`](../tools/store-art/README.md). The phone screenshots, feature graphic and README banner came from an earlier version of the same pipeline that is no longer in the repo.

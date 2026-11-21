@@ -90,12 +90,12 @@
     if this recurs after a future Kotlin bump — don't assume the pinned version here stays compatible
     forever).
 
-- **Store screenshots** — `StoreArtCaptureTest`
-  (`app/src/test/java/com/quietgrid/app/storeart/StoreArtCaptureTest.kt`) is a Roborazzi capture
-  class, parameterized per locale, that seeds fixture data and Robolectric-renders the real app
-  into `tools/store-art/captures/<lang>/*.png` for framing into store listing images. It's
-  English-only for now and skipped in normal `./gradlew test` runs; run it explicitly with
-  `./gradlew :app:recordRoborazziDebug --tests "com.quietgrid.app.storeart.StoreArtCaptureTest"`.
+- **Store screenshots** — `TabletStoreArtCaptureTest`
+  (`app/src/test/java/com/quietgrid/app/storeart/TabletStoreArtCaptureTest.kt`) is a Roborazzi capture
+  class that seeds demo data and Robolectric-renders the real app at 7" and 10" tablet sizes into
+  `tools/store-art/captures/<device>/*.png` for framing into store listing images. It's skipped in
+  normal `./gradlew test` runs; run it explicitly with
+  `./gradlew :app:recordRoborazziDebug --tests "com.quietgrid.app.storeart.TabletStoreArtCaptureTest"`.
   See [`tools/store-art/README.md`](../tools/store-art/README.md) for the full capture-to-store-art
   pipeline.
 
