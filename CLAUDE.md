@@ -13,18 +13,19 @@ Quiet Grid is a native Android app (Kotlin, Jetpack Compose). The repo root is t
 
 ## Shared puzzle engine
 
-- `engine/` — pure Kotlin/JVM module (no Android deps) holding canonical puzzle rules, solving techniques, and difficulty scoring for sudoku, takuzu, nonogram, and wordsearch. `app/` depends on it for live hints/validation; `cli/` depends on it for offline generation. See `docs/superpowers/specs/2026-07-24-shared-puzzle-engine-design.md`.
+- `engine/` — Kotlin Multiplatform module (JVM + iOS targets, no Android deps; shared code in `src/commonMain`, the few platform pieces in `src/jvmMain`/`src/iosMain`) holding canonical puzzle rules, solving techniques, and difficulty scoring for sudoku, takuzu, nonogram, and wordsearch. `app/` depends on it for live hints/validation; `cli/` depends on it for offline generation. See `docs/superpowers/specs/2026-07-24-shared-puzzle-engine-design.md`.
 - `cli/` — offline puzzle generator (`./gradlew :cli:run --args="generate --game <sudoku|takuzu|nonogram|wordsearch> --difficulty <easy|medium|hard|expert> --count <n> --out app/src/main/assets"`). Arrow Escape also takes `--shape <id|all>` to build silhouette boards from `cli/src/main/resources/arrowescape_silhouettes.json` (shape authoring rules: `docs/arrowescape-silhouette-guidelines.md`). Writes/merges generated puzzles directly into the committed `*_puzzles.json` asset files `*PuzzleBank.kt` already loads — never ships in the APK, never runs on-device.
+- `shared/` — Compose Multiplatform module (Android target always, iOS targets only with `-Pquietgrid.ios=true`) that app code moves into during the iOS port; `iosApp/` holds the XcodeGen spec (`project.yml`, the `.xcodeproj` is generated on CI) and the SwiftUI host. `compileDebugKotlin` does not cover `:shared`: run `./gradlew :shared:testAndroidHostTest`. See `docs/ios-port.md`.
 - Seasonal (Halloween, Oct 31 only, gated by `core/Seasonal.kt` + the "Seasonal touches" setting) puzzles live in their own banks: `arrowescape_halloween_puzzles.json` (silhouettes with `"season": "halloween"`) and `wordsearch_halloween_puzzles_<tier>.json` (`--season halloween`, words in `cli/src/main/resources/seasonal_themes_halloween.json`). Never merge them into the main banks.
-- Fast unit tests for rules/techniques/generators: `./gradlew :engine:test :cli:test` (plain JVM, no emulator needed).
+- Fast unit tests for rules/techniques/generators: `./gradlew :engine:test :cli:test` (plain JVM, no emulator needed). To filter engine tests use `./gradlew :engine:jvmTest --tests "..."`: `:engine:test` is only an alias and rejects `--tests`. Engine tests live in `engine/src/commonTest` and use `kotlin.test`, so they also run on the iOS simulator (`./gradlew -Pquietgrid.ios=true :engine:iosSimulatorArm64Test`, macOS only; CI runs it). iOS targets are only declared when `-Pquietgrid.ios=true` is passed, so default builds and F-Droid never download Kotlin/Native (quote it in PowerShell: `'-Pquietgrid.ios=true'`); see `docs/ios-port.md`. Engine code must stay platform-neutral: no `java.*` APIs in `commonMain`, put any platform call behind `expect`/`actual`.
 - New games' move-finding, solving-technique, and validity logic belongs in `:engine` first
-  (`engine/src/main/kotlin/com/quietgrid/engine/<game>/`), with the `:app` layer delegating to it
+  (`engine/src/commonMain/kotlin/com/quietgrid/engine/<game>/`), with the `:app` layer delegating to it
   rather than re-deriving board-scanning or validity logic locally in `games/<id>/`. Takuzu's
   `:app` hint code drifted into exactly this (see `TakuzuNextMove.kt`'s history) before being
   brought back in line — treat that as the canonical example of what not to repeat. This
   convention is enforced at review time, not by a test: cross-module semantic duplication isn't
   something static analysis can detect. (What *is* mechanically enforced: `:engine` has zero
-  Android dependencies, checked by `EngineArchitectureTest` in `:engine`'s test source set.)
+  Android dependencies, checked by `EngineArchitectureTest` in `:engine`'s `jvmTest` source set; JVM-only APIs in shared engine code fail the iOS compile.)
 
 ## After making changes
 

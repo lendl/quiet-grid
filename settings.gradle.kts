@@ -20,4 +20,5 @@ rootProject.name = "QuietGrid"
 include(":app")
 include(":engine")
 include(":cli")
+include(":shared")
 include(":baselineprofile")

@@ -1,29 +1,66 @@
+import java.time.Duration
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithSimulatorTests
+
 plugins {
-    id("org.jetbrains.kotlin.jvm")
+    id("org.jetbrains.kotlin.multiplatform")
     id("org.jetbrains.kotlin.plugin.serialization")
     id("jacoco")
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-}
+val iosTargetsEnabled = providers.gradleProperty("quietgrid.ios").orNull == "true"
 
 kotlin {
     explicitApiWarning()
+
+    jvm {
+        compilerOptions.jvmTarget.set(JvmTarget.JVM_17)
+    }
+    if (iosTargetsEnabled) {
+        iosArm64()
+        iosSimulatorArm64()
+    }
+
+    sourceSets {
+        commonMain.dependencies {
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.12.0")
+        }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
+        jvmTest.dependencies {
+            implementation("junit:junit:4.13.2")
+            implementation("com.lemonappdev:konsist:0.18.1")
+        }
+    }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+if (iosTargetsEnabled) {
+    providers.gradleProperty("iosSimulatorDevice").orNull?.let { device ->
+        kotlin.targets.withType<KotlinNativeTargetWithSimulatorTests>().configureEach {
+            testRuns.named("test") { deviceId = device }
+        }
+    }
 }
 
-dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.12.0")
-
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("com.lemonappdev:konsist:0.18.1")
+tasks.withType<AbstractTestTask>().configureEach {
+    timeout.set(Duration.ofMinutes(20))
 }
 
-tasks.named("jacocoTestReport") {
-    dependsOn(tasks.named("test"))
+tasks.register("test") {
+    group = "verification"
+    description = "Runs the engine's unit tests on the JVM."
+    dependsOn("jvmTest")
+}
+
+tasks.register<JacocoReport>("jacocoTestReport") {
+    dependsOn("jvmTest")
+    executionData(layout.buildDirectory.file("jacoco/jvmTest.exec"))
+    classDirectories.from(layout.buildDirectory.dir("classes/kotlin/jvm/main"))
+    sourceDirectories.from("src/commonMain/kotlin", "src/jvmMain/kotlin")
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+        html.outputLocation.set(layout.buildDirectory.dir("reports/jacoco/test/html"))
+    }
 }

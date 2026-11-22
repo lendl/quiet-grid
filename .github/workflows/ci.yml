@@ -32,7 +32,133 @@ jobs:
         run: ./gradlew compileDebugKotlin
 
       - name: Unit tests
-        run: ./gradlew testDebugUnitTest :engine:test :cli:test
+        run: ./gradlew testDebugUnitTest :engine:test :cli:test :shared:testAndroidHostTest
 
       - name: Check app permissions
         run: ./gradlew :app:checkReleasePermissions
+
+  ios-engine:
+    name: Puzzle engine on iOS
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v6
+        with:
+          java-version: '17'
+          distribution: temurin
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Cache Kotlin/Native toolchain
+        uses: actions/cache@v4
+        with:
+          path: ~/.konan
+          key: konan-${{ runner.os }}-${{ hashFiles('build.gradle.kts') }}
+
+      - name: Compile the engine for iPhone
+        run: ./gradlew -Pquietgrid.ios=true :engine:compileKotlinIosArm64
+
+      - name: Run the engine tests on the iPhone simulator
+        run: |
+          DEVICE=$(xcrun simctl list devices available --json | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')
+          echo "Using simulator $DEVICE"
+          ./gradlew -Pquietgrid.ios=true :engine:iosSimulatorArm64Test -PiosSimulatorDevice="$DEVICE"
+
+  ios-app:
+    name: iOS app on the simulator
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v6
+        with:
+          java-version: '17'
+          distribution: temurin
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Cache Kotlin/Native toolchain
+        uses: actions/cache@v4
+        with:
+          path: ~/.konan
+          key: konan-${{ runner.os }}-${{ hashFiles('build.gradle.kts') }}
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate the Xcode project
+        run: xcodegen generate --spec iosApp/project.yml
+
+      - name: List the Xcode schemes
+        run: xcodebuild -list -project iosApp/QuietGrid.xcodeproj
+
+      - name: Build the app for the simulator
+        run: >
+          xcodebuild -project iosApp/QuietGrid.xcodeproj -scheme QuietGrid -configuration Debug
+          -sdk iphonesimulator -destination 'generic/platform=iOS Simulator'
+          -derivedDataPath build/ios CODE_SIGNING_ALLOWED=NO build
+
+      - name: Package the simulator app
+        run: tar -czf build/QuietGrid-simulator.tar.gz -C build/ios/Build/Products/Debug-iphonesimulator QuietGrid.app
+
+      - name: Upload the simulator app
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-simulator-app
+          path: build/QuietGrid-simulator.tar.gz
+
+      - name: Launch on simulators and take screenshots
+        env:
+          IOS18: skip
+        run: bash .github/scripts/ios-simulator-screenshots.sh build/ios/Build/Products/Debug-iphonesimulator/QuietGrid.app build/ios-screenshots
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-skeleton-screenshots
+          path: build/ios-screenshots
+          if-no-files-found: warn
+
+      - name: Run the shared tests on the iPhone simulator
+        run: |
+          DEVICE=$(xcrun simctl list devices available --json | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')
+          echo "Using simulator $DEVICE"
+          ./gradlew -Pquietgrid.ios=true :shared:iosSimulatorArm64Test -PiosSimulatorDevice="$DEVICE"
+
+  ios-app-ios18:
+    name: iOS app on the iOS 18 simulator
+    needs: ios-app
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Download the simulator app
+        uses: actions/download-artifact@v4
+        with:
+          name: ios-simulator-app
+          path: build
+
+      - name: Unpack the simulator app
+        run: tar -xzf build/QuietGrid-simulator.tar.gz -C build
+
+      - name: Launch on simulators and take screenshots
+        env:
+          IOS18: required
+        run: bash .github/scripts/ios-simulator-screenshots.sh build/QuietGrid.app build/ios-screenshots-ios18
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-skeleton-screenshots-ios18
+          path: build/ios-screenshots-ios18
+          if-no-files-found: warn

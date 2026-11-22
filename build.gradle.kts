@@ -1,7 +1,10 @@
 plugins {
     id("com.android.application") version "9.5.1" apply false
     id("com.android.test") version "9.5.1" apply false
+    id("com.android.kotlin.multiplatform.library") version "9.5.1" apply false
+    id("org.jetbrains.compose") version "1.12.2" apply false
     id("org.jetbrains.kotlin.jvm") version "2.4.21" apply false
+    id("org.jetbrains.kotlin.multiplatform") version "2.4.21" apply false
     id("org.jetbrains.kotlin.plugin.serialization") version "2.4.21" apply false
     id("org.jetbrains.kotlin.plugin.compose") version "2.4.21" apply false
     id("com.android.compose.screenshot") version "0.0.1-alpha16" apply false
@@ -20,7 +23,7 @@ subprojects {
         ignoreFailures.set(true)
         parallel.set(true)
         config.setFrom(rootProject.file("config/detekt/detekt.yml"))
-        source.setFrom(files("src/main/java", "src/main/kotlin"))
+        source.setFrom(files("src/main/java", "src/main/kotlin", "src/commonMain/kotlin", "src/jvmMain/kotlin", "src/androidMain/kotlin", "src/iosMain/kotlin"))
     }
     dependencies.add("detektPlugins", "io.nlopez.compose.rules:detekt:0.6.8")
 }

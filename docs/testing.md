@@ -5,14 +5,17 @@
 - All unit tests (app + engine + cli): `./gradlew test`
 - App module only: `./gradlew :app:testDebugUnitTest`
 - Engine/CLI only (plain JVM, no emulator): `./gradlew :engine:test :cli:test`
+- Shared module (Android host): `./gradlew :shared:testAndroidHostTest`
 - Single class: `./gradlew :app:testDebugUnitTest --tests "com.quietgrid.app.games.sudoku.*"`
+- Single engine class: `./gradlew :engine:jvmTest --tests "com.quietgrid.engine.sudoku.*"`. `:engine:test`
+  is only an alias for `:engine:jvmTest` and rejects `--tests`.
 - Compile check only (fast): `./gradlew compileDebugKotlin`
 
 ## Current coverage
 
 - `:engine` — canonical puzzle rules, solving techniques, and difficulty scoring for sudoku, takuzu,
   nonogram, and wordsearch. The deepest and most systematic coverage in the repo
-  (`engine/src/test/kotlin/com/quietgrid/engine/`).
+  (`engine/src/commonTest/kotlin/com/quietgrid/engine/`, shared by the JVM and iOS simulator runs).
 - `:cli` — offline puzzle generators, arg parsing, JSON writers (`cli/src/test/kotlin/com/quietgrid/cli/`).
 - `:app` data layer — `SessionRepository`/`StatsRepository`/`SettingsRepository`
   (`app/src/test/java/com/quietgrid/app/data/`). These take an injected `DataStore<Preferences>`
@@ -52,11 +55,14 @@
 
 - **Coverage (Jacoco)** — all three modules have the `jacoco` plugin applied.
   - `:engine` / `:cli`: `./gradlew :engine:jacocoTestReport :cli:jacocoTestReport` →
-    `<module>/build/reports/jacoco/test/html/index.html`. Both modules' `jacocoTestReport` task has
-    an explicit `dependsOn(tasks.named("test"))` — the community `jacoco` plugin does **not**
-    auto-wire that dependency for plain `org.jetbrains.kotlin.jvm` modules the way it does for
-    `java`/`java-library` projects, so running `jacocoTestReport` alone with no execution data present
-    silently no-ops (shows as `SKIPPED`) rather than failing loudly. Don't remove that `dependsOn`.
+    `<module>/build/reports/jacoco/test/html/index.html`. `:cli`'s `jacocoTestReport` has an explicit
+    `dependsOn(tasks.named("test"))` — the community `jacoco` plugin does **not** auto-wire that
+    dependency for plain `org.jetbrains.kotlin.jvm` modules the way it does for `java`/`java-library`
+    projects, so running `jacocoTestReport` alone with no execution data present silently no-ops
+    (shows as `SKIPPED`) rather than failing loudly. `:engine` is a Kotlin Multiplatform module, so
+    its `jacocoTestReport` is registered by hand in `engine/build.gradle.kts`: it depends on
+    `jvmTest`, reads `build/jacoco/jvmTest.exec` and the classes in `build/classes/kotlin/jvm/main`.
+    Don't remove either module's `dependsOn`.
   - `:app`: uses AGP's own coverage integration instead (`enableUnitTestCoverage = true` on the
     `debug` build type in `app/build.gradle.kts`), which *does* correctly wire its own test
     dependency. Run `./gradlew :app:createDebugUnitTestCoverageReport` →
