@@ -1,0 +1,40 @@
+title: "[Puzzle] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Tell us how a puzzle felt: too hard or too easy for its level, a hint that didn't help, or one you loved.
+
+        If a puzzle is actually broken (more than one solution, a correct move rejected), use **Report a problem** in the ⋮ menu on the result screen instead. It fills in the exact puzzle for you.
+  - type: input
+    id: game
+    attributes:
+      label: Game
+      placeholder: "Arrow Escape"
+    validations:
+      required: true
+  - type: dropdown
+    id: difficulty
+    attributes:
+      label: Difficulty
+      options:
+        - Easy
+        - Medium
+        - Hard
+        - Expert
+        - Daily puzzle
+        - Journey
+        - Challenger / Endless
+    validations:
+      required: true
+  - type: textarea
+    id: feedback
+    attributes:
+      label: Your feedback
+    validations:
+      required: true
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot
+      description: A screenshot of the board makes it much easier to find the exact puzzle.

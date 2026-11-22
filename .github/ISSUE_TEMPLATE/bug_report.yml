@@ -1,0 +1,112 @@
+name: Bug report
+description: Something in Quiet Grid doesn't work the way it should.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this. Please check the [open issues](https://github.com/lendl/quiet-grid/issues) first in case it's already known.
+  - type: dropdown
+    id: game
+    attributes:
+      label: Game
+      description: Which game or screen is affected?
+      options:
+        - Not game-specific (menus, settings, stats, daily puzzle...)
+        - Sudoku
+        - Killer Sudoku
+        - Mini Sudoku
+        - Takuzu
+        - Nonogram
+        - Minesweeper
+        - Animal Doku
+        - Star Battle
+        - Links
+        - Circuit
+        - Word Search
+        - Word Guess
+        - Guess by Numbers
+        - Theme Clear
+        - Word Swap
+        - Chimp Test
+        - Sequence Memory
+        - "2048"
+        - Block Fill
+        - Arrow Escape
+        - Block Escape
+        - A beta game (say which below)
+    validations:
+      required: true
+  - type: dropdown
+    id: difficulty
+    attributes:
+      label: Difficulty
+      options:
+        - Not relevant
+        - Easy
+        - Medium
+        - Hard
+        - Expert
+        - Daily puzzle
+        - Journey
+        - Challenger / Endless
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you see, and what did you expect to see instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open ...
+        2. Tap ...
+        3. See ...
+  - type: input
+    id: app-version
+    attributes:
+      label: App version
+      description: Shown at the bottom of the Support screen in the app menu.
+      placeholder: "1.15.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: source
+    attributes:
+      label: Installed from
+      options:
+        - F-Droid
+        - Google Play
+        - GitHub Releases
+        - APKPure
+        - Built from source
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device and Android version
+      placeholder: "Pixel 8, Android 15"
+    validations:
+      required: true
+  - type: dropdown
+    id: language
+    attributes:
+      label: App language
+      options:
+        - English
+        - Dutch
+        - German
+        - French
+        - Spanish
+        - Portuguese
+        - Polish
+        - Italian
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or screen recording
+      description: Drag images or videos here. For a puzzle bug, a screenshot of the board helps a lot.

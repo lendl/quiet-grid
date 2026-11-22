@@ -1,0 +1,15 @@
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ask anything about Quiet Grid: how a game's rules work, where a setting lives, or why a puzzle seems stuck. If something is clearly broken, a [bug report](https://github.com/lendl/quiet-grid/issues/new?template=bug_report.yml) is better.
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+    validations:
+      required: true
+  - type: input
+    id: game
+    attributes:
+      label: Game (if any)

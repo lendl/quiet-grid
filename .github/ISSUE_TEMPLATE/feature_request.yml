@@ -1,0 +1,34 @@
+name: Feature request
+description: Suggest an improvement to an existing game or to the app.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ideas for **new games** are best posted in [Discussions > Ideas](https://github.com/lendl/quiet-grid/discussions/categories/ideas) so others can weigh in first.
+
+        Quiet Grid stays offline, ad-free and account-free, so requests that need internet access, tracking or sign-in won't be added.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What would you like to change?
+      description: Describe the problem or the moment in the app where you missed something.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your idea
+      description: How would you like it to work?
+    validations:
+      required: true
+  - type: input
+    id: game
+    attributes:
+      label: Game (if any)
+      placeholder: "Sudoku"
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else
+      description: Screenshots, mockups, or examples from other apps.

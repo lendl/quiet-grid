@@ -90,6 +90,10 @@ In beta, enable in Settings: N-Back, Who Did It?, Hashi.
 
 Built natively with Kotlin and Jetpack Compose. See [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md) for build setup and puzzle generation.
 
+## Contributing
+
+Bug reports, puzzle feedback, translations and ideas are all welcome. Questions and new game ideas go in [Discussions](https://github.com/lendl/quiet-grid/discussions); see [CONTRIBUTING.md](CONTRIBUTING.md) before sending code.
+
 ## License
 
 [GNU General Public License v3.0](LICENSE)

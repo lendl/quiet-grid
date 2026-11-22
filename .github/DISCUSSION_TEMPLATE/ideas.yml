@@ -1,0 +1,32 @@
+title: "[Idea] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Share an idea for a new game, a new mode, or a bigger change. Others can upvote and comment, which helps decide what gets built.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of idea is it?
+      options:
+        - A new game
+        - A change to an existing game
+        - Something for the whole app
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea
+      description: For a new game, explain the rules in a few sentences and, if you can, what makes a puzzle easy or hard.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why would it be fun or useful?
+  - type: textarea
+    id: examples
+    attributes:
+      label: Examples or sketches
+      description: Links, drawings or screenshots of similar puzzles.
