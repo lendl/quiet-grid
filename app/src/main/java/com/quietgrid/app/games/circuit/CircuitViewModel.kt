@@ -21,10 +21,6 @@ import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
 import com.quietgrid.engine.circuit.CircuitHint
 import com.quietgrid.engine.circuit.toBoard
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -112,23 +108,17 @@ internal class CircuitPuzzleAdapter(
     )
 }
 
-@HiltViewModel(assistedFactory = CircuitPlayViewModel.Factory::class)
-class CircuitPlayViewModel @AssistedInject constructor(
-    @dagger.hilt.android.qualifiers.ApplicationContext appContext: android.content.Context,
+class CircuitPlayViewModel(
+    appContext: android.content.Context,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     journeyStore: JourneyProgressStore,
     badgeStore: BadgeStore,
-    @Assisted requestedDifficulty: Difficulty,
-    @Assisted resume: Boolean,
-    @Assisted journey: JourneyRequest?,
+    requestedDifficulty: Difficulty,
+    resume: Boolean,
+    journey: JourneyRequest?,
 ) : ViewModel() {
-
-    @AssistedFactory
-    interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean, journey: JourneyRequest?): CircuitPlayViewModel
-    }
 
     private val controller = PuzzleSessionController(
         scope = viewModelScope,

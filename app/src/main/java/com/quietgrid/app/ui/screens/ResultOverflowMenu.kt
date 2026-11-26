@@ -24,15 +24,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.quietgrid.app.LocalAppGraph
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.appVersionName
 import com.quietgrid.app.core.buildPuzzleReportUrl
 import com.quietgrid.app.data.PlayRecord
-import com.quietgrid.app.data.RepositoriesViewModel
 
 @Composable
 fun ResultOverflowMenu(
@@ -44,8 +43,8 @@ fun ResultOverflowMenu(
 ) {
     val context = LocalContext.current
     val language = LocalConfiguration.current.locales[0].toLanguageTag()
-    val repositories: RepositoriesViewModel = hiltViewModel()
-    val records by remember(repositories, gameId) { repositories.playHistoryRepository.recordsFor(gameId) }
+    val graph = LocalAppGraph.current
+    val records by remember(graph, gameId) { graph.playHistoryRepository.recordsFor(gameId) }
         .collectAsStateWithLifecycle(initialValue = emptyList())
     var menuOpen by remember { mutableStateOf(false) }
 

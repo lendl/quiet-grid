@@ -21,11 +21,6 @@ import com.quietgrid.app.session.LossReason
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
@@ -116,22 +111,16 @@ private class GuessByNumbersPuzzleAdapter(
     )
 }
 
-@HiltViewModel(assistedFactory = GuessByNumbersPlayViewModel.Factory::class)
-class GuessByNumbersPlayViewModel @AssistedInject constructor(
-    @ApplicationContext appContext: Context,
+class GuessByNumbersPlayViewModel(
+    appContext: Context,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     settingsRepository: SettingsRepository,
     badgeStore: BadgeStore,
-    @Assisted requestedDifficulty: Difficulty,
-    @Assisted resume: Boolean,
+    requestedDifficulty: Difficulty,
+    resume: Boolean,
 ) : ViewModel() {
-
-    @AssistedFactory
-    interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean): GuessByNumbersPlayViewModel
-    }
 
     private val controller = PuzzleSessionController(
         scope = viewModelScope,

@@ -24,10 +24,6 @@ import com.quietgrid.app.session.PuzzleSessionController
 import com.quietgrid.engine.wordswap.WORDSWAP_HOLE
 import com.quietgrid.engine.wordswap.WordSwapHint
 import com.quietgrid.engine.wordswap.WordSwapMove
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -115,24 +111,18 @@ internal class WordSwapPuzzleAdapter(
     )
 }
 
-@HiltViewModel(assistedFactory = WordSwapPlayViewModel.Factory::class)
-class WordSwapPlayViewModel @AssistedInject constructor(
-    @dagger.hilt.android.qualifiers.ApplicationContext appContext: android.content.Context,
+class WordSwapPlayViewModel(
+    appContext: android.content.Context,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     journeyStore: JourneyProgressStore,
     badgeStore: BadgeStore,
     settingsRepository: SettingsRepository,
-    @Assisted requestedDifficulty: Difficulty,
-    @Assisted resume: Boolean,
-    @Assisted journey: JourneyRequest?,
+    requestedDifficulty: Difficulty,
+    resume: Boolean,
+    journey: JourneyRequest?,
 ) : ViewModel() {
-
-    @AssistedFactory
-    interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean, journey: JourneyRequest?): WordSwapPlayViewModel
-    }
 
     private val controller = PuzzleSessionController(
         scope = viewModelScope,

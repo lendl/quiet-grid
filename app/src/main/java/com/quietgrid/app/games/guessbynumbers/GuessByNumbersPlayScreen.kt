@@ -17,9 +17,9 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
+import com.quietgrid.app.appViewModel
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.games.wordguess.WordGuessDock
@@ -42,9 +42,18 @@ fun GuessByNumbersPlayScreen(
     onBack: () -> Unit,
     onFinished: (GuessByNumbersResult) -> Unit,
 ) {
-    val viewModel = hiltViewModel<GuessByNumbersPlayViewModel, GuessByNumbersPlayViewModel.Factory>(
-        creationCallback = { factory -> factory.create(difficulty, resume) },
-    )
+    val viewModel = appViewModel { graph ->
+        GuessByNumbersPlayViewModel(
+            graph.appContext,
+            graph.sessionRepository,
+            graph.statsRepository,
+            graph.playHistoryRepository,
+            graph.settingsRepository,
+            graph.badgeRepository,
+            difficulty,
+            resume,
+        )
+    }
     CollectPuzzleResult(viewModel.result, onFinished)
     val finishing by viewModel.finishing.collectAsStateWithLifecycle()
 

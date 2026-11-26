@@ -16,10 +16,6 @@ import com.quietgrid.app.session.LossReason
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
@@ -80,20 +76,14 @@ private class ChimpTestPuzzleAdapter : PuzzleAdapter<ChimpTestSession, ChimpTest
     )
 }
 
-@HiltViewModel(assistedFactory = ChimpTestPlayViewModel.Factory::class)
-class ChimpTestPlayViewModel @AssistedInject constructor(
+class ChimpTestPlayViewModel(
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     badgeStore: BadgeStore,
-    @Assisted requestedDifficulty: Difficulty,
-    @Assisted resume: Boolean,
+    requestedDifficulty: Difficulty,
+    resume: Boolean,
 ) : ViewModel() {
-
-    @AssistedFactory
-    interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean): ChimpTestPlayViewModel
-    }
 
     private val controller = PuzzleSessionController(
         scope = viewModelScope,

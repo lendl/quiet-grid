@@ -7,7 +7,6 @@ import androidx.work.WorkManager
 import com.quietgrid.app.core.daily.nextReminderDelay
 import com.quietgrid.app.data.DailyRepository
 import com.quietgrid.app.data.SettingsRepository
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -18,14 +17,11 @@ import kotlinx.coroutines.launch
 import java.time.LocalTime
 import java.time.ZonedDateTime
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
-import javax.inject.Singleton
 
 private const val WORK_NAME = "daily_reminder"
 
-@Singleton
-class DailyReminderScheduler @Inject constructor(
-    @ApplicationContext private val context: Context,
+class DailyReminderScheduler(
+    private val context: Context,
     private val settingsRepository: SettingsRepository,
     private val dailyRepository: DailyRepository,
 ) {

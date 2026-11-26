@@ -16,10 +16,6 @@ import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
 import com.quietgrid.engine.hashi.toBoard
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -105,20 +101,14 @@ private class HashiPuzzleAdapter(
     )
 }
 
-@HiltViewModel(assistedFactory = HashiPlayViewModel.Factory::class)
-class HashiPlayViewModel @AssistedInject constructor(
-    @dagger.hilt.android.qualifiers.ApplicationContext appContext: android.content.Context,
+class HashiPlayViewModel(
+    appContext: android.content.Context,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
-    @Assisted requestedDifficulty: Difficulty,
-    @Assisted resume: Boolean,
+    requestedDifficulty: Difficulty,
+    resume: Boolean,
 ) : ViewModel() {
-
-    @AssistedFactory
-    interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean): HashiPlayViewModel
-    }
 
     private val controller = PuzzleSessionController(
         scope = viewModelScope,

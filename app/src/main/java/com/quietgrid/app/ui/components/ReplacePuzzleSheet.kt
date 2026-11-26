@@ -21,13 +21,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.quietgrid.app.LocalAppGraph
 import com.quietgrid.app.R
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.formatElapsed
-import com.quietgrid.app.data.RepositoriesViewModel
 import androidx.compose.runtime.getValue
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,8 +35,8 @@ fun ReplacePuzzleSheet(
     onStartNew: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val repositories: RepositoriesViewModel = hiltViewModel()
-    val activeSession by repositories.sessionRepository.activeSession.collectAsStateWithLifecycle(initialValue = null)
+    val graph = LocalAppGraph.current
+    val activeSession by graph.sessionRepository.activeSession.collectAsStateWithLifecycle(initialValue = null)
     val activeGameId = activeSession?.gameId?.let { key -> GameId.entries.firstOrNull { it.key == key } }
     ModalBottomSheet(
         onDismissRequest = onDismiss,

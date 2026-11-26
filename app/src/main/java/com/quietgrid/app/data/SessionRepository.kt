@@ -14,8 +14,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Serializable
 data class ActiveSessionEnvelope(
@@ -57,8 +55,7 @@ interface SessionStore {
 private val json = Json { ignoreUnknownKeys = true }
 private val ACTIVE_SESSION_KEY = stringPreferencesKey("active_session")
 
-@Singleton
-class SessionRepository @Inject constructor(private val dataStore: DataStore<Preferences>) : SessionStore {
+class SessionRepository(private val dataStore: DataStore<Preferences>) : SessionStore {
     override val activeSession: Flow<ActiveSessionEnvelope?> = dataStore.data
         .map { prefs -> prefs[ACTIVE_SESSION_KEY] }
         .distinctUntilChanged()

@@ -4,9 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
+import com.quietgrid.app.appViewModel
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.ui.components.CollectPuzzleResult
@@ -26,9 +26,16 @@ fun HashiPlayScreen(
     onBack: () -> Unit,
     onFinished: (HashiResult) -> Unit,
 ) {
-    val viewModel = hiltViewModel<HashiPlayViewModel, HashiPlayViewModel.Factory>(
-        creationCallback = { factory -> factory.create(difficulty, resume) },
-    )
+    val viewModel = appViewModel { graph ->
+        HashiPlayViewModel(
+            graph.appContext,
+            graph.sessionRepository,
+            graph.statsRepository,
+            graph.playHistoryRepository,
+            difficulty,
+            resume,
+        )
+    }
     CollectPuzzleResult(viewModel.result, onFinished)
     val finishing by viewModel.finishing.collectAsStateWithLifecycle()
 

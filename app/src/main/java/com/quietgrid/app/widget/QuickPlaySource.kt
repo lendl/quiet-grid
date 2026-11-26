@@ -8,13 +8,10 @@ import com.quietgrid.app.data.ThemeMode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import javax.inject.Inject
-import javax.inject.Singleton
 
 data class QuickPlayRender(val quickPlay: QuickPlayState, val mix: MixWidgetState, val themeMode: ThemeMode)
 
-@Singleton
-class QuickPlaySource @Inject constructor(
+class QuickPlaySource(
     sessionRepository: SessionRepository,
     mixRepository: MixRepository,
     historyStore: PlayHistoryStore,

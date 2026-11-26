@@ -1,14 +1,12 @@
 package com.quietgrid.app.games.takuzu
 
 import androidx.compose.runtime.Composable
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.quietgrid.app.appViewModel
 import com.quietgrid.app.ui.analyzer.AnalyzerScreenFrame
 
 @Composable
 fun TakuzuAnalyzerScreen(snapshot: String?) {
-    val viewModel = hiltViewModel<TakuzuAnalyzerViewModel, TakuzuAnalyzerViewModel.Factory>(
-        creationCallback = { factory -> factory.create(snapshot) },
-    )
+    val viewModel = appViewModel { TakuzuAnalyzerViewModel(snapshot) }
 
     AnalyzerScreenFrame(
         viewModel = viewModel,

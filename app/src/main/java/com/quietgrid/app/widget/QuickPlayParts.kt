@@ -36,6 +36,7 @@ import androidx.glance.semantics.semantics
 import androidx.glance.unit.ColorProvider
 import com.quietgrid.app.LaunchRequest
 import com.quietgrid.app.R
+import com.quietgrid.app.appGraph
 import com.quietgrid.app.core.AppLocale
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameCatalog
@@ -48,10 +49,6 @@ import com.quietgrid.app.ui.components.chunkyEdgeColor
 import com.quietgrid.app.ui.theme.ResolvedTheme
 import com.quietgrid.app.ui.theme.colorSchemeFor
 import com.quietgrid.app.ui.theme.fixedResolvedTheme
-import dagger.hilt.EntryPoint
-import dagger.hilt.InstallIn
-import dagger.hilt.android.EntryPointAccessors
-import dagger.hilt.components.SingletonComponent
 import androidx.glance.color.ColorProvider as DayNightColorProvider
 
 private const val MAX_ICON_PX = 384
@@ -70,14 +67,8 @@ private val STRIP_END_PADDING = 12.dp
 private val MIN_STRIP_TITLE = 28.dp
 private const val PLAY_GLYPH_TO_CIRCLE = 0.55f
 
-@EntryPoint
-@InstallIn(SingletonComponent::class)
-interface QuickPlayWidgetEntryPoint {
-    fun quickPlaySource(): QuickPlaySource
-}
-
 internal fun quickPlaySource(context: Context): QuickPlaySource =
-    EntryPointAccessors.fromApplication(context, QuickPlayWidgetEntryPoint::class.java).quickPlaySource()
+    context.appGraph.quickPlaySource
 
 fun quickPlayColors(themeMode: ThemeMode): ColorProviders {
     val fixed = themeMode.fixedResolvedTheme()

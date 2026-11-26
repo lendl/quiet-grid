@@ -4,11 +4,6 @@
 -if @kotlinx.serialization.Serializable class com.quietgrid.**
 -keep,includedescriptorclasses class <1>$$serializer { *; }
 
-# Hilt's @HiltViewModel/@LazyClassKey lookup matches ViewModel classes by Class.getName()
-# against a string baked into Dagger-generated code at compile time. R8 is meant to keep
-# that string in sync when it renames the class (via @IdentifierNameString), but under full
-# R8 + class merging that rewrite doesn't reliably happen, causing the lookup to miss and
-# Hilt to fall back to plain no-arg reflection construction, which crashes with
-# NoSuchMethodException since these ViewModels take constructor args. Keeping names sidesteps
-# the mismatch instead of depending on that rewrite.
+# lifecycle's viewModel { } keys each ViewModel by its class name. R8 must never give two
+# ViewModels one name by renaming or merging them, or a screen gets another screen's ViewModel.
 -keepnames class * extends androidx.lifecycle.ViewModel

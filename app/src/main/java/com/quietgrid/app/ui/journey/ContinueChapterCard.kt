@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
 import com.quietgrid.app.core.GameCatalog
@@ -20,7 +19,7 @@ import com.quietgrid.app.ui.components.GameIcon
 
 @Composable
 fun rememberActiveJourney(enabledGameIds: Set<GameId>): ActiveJourney? {
-    val viewModel: JourneyViewModel = hiltViewModel()
+    val viewModel = journeyViewModel()
     val active by remember(viewModel, enabledGameIds) { viewModel.activeJourney(enabledGameIds) }
         .collectAsStateWithLifecycle(initialValue = null)
     return active

@@ -7,9 +7,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
+import com.quietgrid.app.appViewModel
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.journey.JourneyRequest
 import com.quietgrid.app.core.GameId
@@ -30,9 +30,19 @@ fun NonogramPlayScreen(
     journey: JourneyRequest? = null,
     onRestarted: () -> Unit = {},
 ) {
-    val viewModel = hiltViewModel<NonogramPlayViewModel, NonogramPlayViewModel.Factory>(
-        creationCallback = { factory -> factory.create(difficulty, resume, journey) },
-    )
+    val viewModel = appViewModel { graph ->
+        NonogramPlayViewModel(
+            graph.appContext,
+            graph.sessionRepository,
+            graph.statsRepository,
+            graph.playHistoryRepository,
+            graph.journeyProgressRepository,
+            graph.badgeRepository,
+            difficulty,
+            resume,
+            journey,
+        )
+    }
     CollectPuzzleResult(viewModel.result, onFinished)
     CollectPuzzleResult(viewModel.restarts) { onRestarted() }
     val finishing by viewModel.finishing.collectAsStateWithLifecycle()

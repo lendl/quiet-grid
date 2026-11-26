@@ -16,10 +16,6 @@ import com.quietgrid.app.session.LossReason
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -79,20 +75,14 @@ private class Game2048PuzzleAdapter : PuzzleAdapter<Game2048Session, Game2048Res
         )
 }
 
-@HiltViewModel(assistedFactory = Game2048PlayViewModel.Factory::class)
-class Game2048PlayViewModel @AssistedInject constructor(
+class Game2048PlayViewModel(
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     badgeStore: BadgeStore,
-    @Assisted requestedDifficulty: Difficulty,
-    @Assisted resume: Boolean,
+    requestedDifficulty: Difficulty,
+    resume: Boolean,
 ) : ViewModel() {
-
-    @AssistedFactory
-    interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean): Game2048PlayViewModel
-    }
 
     private val controller = PuzzleSessionController(
         scope = viewModelScope,

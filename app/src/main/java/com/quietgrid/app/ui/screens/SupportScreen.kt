@@ -50,7 +50,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.quietgrid.app.LocalAppGraph
 import com.quietgrid.app.R
 import com.quietgrid.app.core.HELP_WANTED_ITEMS
 import com.quietgrid.app.core.HelpWantedItem
@@ -61,7 +61,6 @@ import com.quietgrid.app.core.SUPPORT_EMAIL
 import com.quietgrid.app.core.appVersionName
 import com.quietgrid.app.core.buildBugReportUrl
 import com.quietgrid.app.core.buildFeatureRequestUrl
-import com.quietgrid.app.data.RepositoriesViewModel
 import kotlinx.coroutines.launch
 
 private val SUPPORT_ICON_COLOR = Color(0xFF60A5FA)
@@ -91,7 +90,7 @@ fun SupportPageScreen() {
 @Composable
 fun TrustPageScreen(onOpenInfo: (String) -> Unit) {
     val context = LocalContext.current
-    val repositories: RepositoriesViewModel = hiltViewModel()
+    val graph = LocalAppGraph.current
     val scope = rememberCoroutineScope()
     var showClearDialog by remember { mutableStateOf(false) }
     fun openUrl(url: String): Boolean =
@@ -117,9 +116,9 @@ fun TrustPageScreen(onOpenInfo: (String) -> Unit) {
             confirmButton = {
                 Button(onClick = {
                     scope.launch {
-                        repositories.statsRepository.clearAll()
-                        repositories.sessionRepository.clear()
-                        repositories.playHistoryRepository.clear()
+                        graph.statsRepository.clearAll()
+                        graph.sessionRepository.clear()
+                        graph.playHistoryRepository.clear()
                     }
                     showClearDialog = false
                 }) { Text(stringResource(R.string.trust_clear_data)) }

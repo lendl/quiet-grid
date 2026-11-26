@@ -26,11 +26,6 @@ import com.quietgrid.engine.sudoku.SudokuGrid
 import com.quietgrid.engine.sudoku.SudokuLayout
 import com.quietgrid.engine.journey.gridTransformById
 import com.quietgrid.engine.sudoku.transformed
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -135,25 +130,19 @@ internal class SudokuPuzzleAdapter(
     )
 }
 
-@HiltViewModel(assistedFactory = SudokuPlayViewModel.Factory::class)
-class SudokuPlayViewModel @AssistedInject constructor(
-    @ApplicationContext appContext: Context,
+class SudokuPlayViewModel(
+    appContext: Context,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     journeyStore: JourneyProgressStore,
     badgeStore: BadgeStore,
-    @Assisted requestedDifficulty: Difficulty,
-    @Assisted resume: Boolean,
-    @Assisted dailyDate: LocalDate?,
-    @Assisted variant: SudokuVariant,
-    @Assisted journey: JourneyRequest?,
+    requestedDifficulty: Difficulty,
+    resume: Boolean,
+    dailyDate: LocalDate?,
+    variant: SudokuVariant,
+    journey: JourneyRequest?,
 ) : ViewModel() {
-
-    @AssistedFactory
-    interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean, dailyDate: LocalDate?, variant: SudokuVariant, journey: JourneyRequest?): SudokuPlayViewModel
-    }
 
     private val controller = PuzzleSessionController(
         scope = viewModelScope,

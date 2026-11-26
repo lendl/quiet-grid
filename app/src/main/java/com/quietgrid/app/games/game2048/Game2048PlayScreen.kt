@@ -9,9 +9,9 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
+import com.quietgrid.app.appViewModel
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.ui.components.CollectPuzzleResult
@@ -32,9 +32,16 @@ fun Game2048PlayScreen(
     onBack: () -> Unit,
     onFinished: (Game2048Result) -> Unit,
 ) {
-    val viewModel = hiltViewModel<Game2048PlayViewModel, Game2048PlayViewModel.Factory>(
-        creationCallback = { factory -> factory.create(difficulty, resume) },
-    )
+    val viewModel = appViewModel { graph ->
+        Game2048PlayViewModel(
+            graph.sessionRepository,
+            graph.statsRepository,
+            graph.playHistoryRepository,
+            graph.badgeRepository,
+            difficulty,
+            resume,
+        )
+    }
     CollectPuzzleResult(viewModel.result, onFinished)
     val finishing by viewModel.finishing.collectAsStateWithLifecycle()
 

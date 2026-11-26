@@ -17,10 +17,6 @@ import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
 import com.quietgrid.engine.whodidit.WhoDidItPuzzleEntry
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -104,21 +100,15 @@ private class WhoDidItPuzzleAdapter(
     )
 }
 
-@HiltViewModel(assistedFactory = WhoDidItPlayViewModel.Factory::class)
-class WhoDidItPlayViewModel @AssistedInject constructor(
-    @dagger.hilt.android.qualifiers.ApplicationContext appContext: android.content.Context,
+class WhoDidItPlayViewModel(
+    appContext: android.content.Context,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
-    @Assisted requestedDifficulty: Difficulty,
-    @Assisted resume: Boolean,
-    @Assisted dailyDate: LocalDate?,
+    requestedDifficulty: Difficulty,
+    resume: Boolean,
+    dailyDate: LocalDate?,
 ) : ViewModel() {
-
-    @AssistedFactory
-    interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean, dailyDate: LocalDate?): WhoDidItPlayViewModel
-    }
 
     private val controller = PuzzleSessionController(
         scope = viewModelScope,

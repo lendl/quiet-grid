@@ -12,16 +12,13 @@ import com.quietgrid.app.session.AppForeground
 import com.quietgrid.app.session.ChallengerRunController
 import com.quietgrid.app.session.challengerTierAfterSolve
 import com.quietgrid.app.session.tick
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 private const val CHALLENGER_SOLVE_ADVANCE_DELAY_MS = 500L
 private const val CHALLENGER_WRONG_TAP_REVEAL_MS = 700L
 
-@HiltViewModel
-class ChimpTestChallengerViewModel @Inject constructor(
+class ChimpTestChallengerViewModel(
     statsStore: StatsStore,
     historyStore: PlayHistoryStore,
     appForeground: AppForeground,

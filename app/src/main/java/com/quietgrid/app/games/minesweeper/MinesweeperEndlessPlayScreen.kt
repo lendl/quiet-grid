@@ -11,8 +11,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.R
+import com.quietgrid.app.appViewModel
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.ui.components.CollectPuzzleResult
 import com.quietgrid.app.ui.components.LogoGridLoader
@@ -34,9 +34,9 @@ fun MinesweeperEndlessPlayScreen(
     onBack: () -> Unit,
     onFinished: (MinesweeperEndlessResult) -> Unit,
 ) {
-    val viewModel = hiltViewModel<MinesweeperEndlessViewModel, MinesweeperEndlessViewModel.Factory>(
-        creationCallback = { factory -> factory.create(resume) },
-    )
+    val viewModel = appViewModel { graph ->
+        MinesweeperEndlessViewModel(graph.sessionRepository, graph.statsRepository, graph.appForeground, resume)
+    }
     CollectPuzzleResult(viewModel.result, onFinished)
     val haptics = rememberHapticController()
 

@@ -3,8 +3,8 @@ package com.quietgrid.app.games.nonogram
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.R
+import com.quietgrid.app.appViewModel
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.standardDifficultyLabelRes
 import com.quietgrid.app.session.ChallengerResult
@@ -18,7 +18,14 @@ import com.quietgrid.app.ui.play.PlayTimer
 fun NonogramChallengerPlayScreen(
     onFinished: (ChallengerResult) -> Unit,
 ) {
-    val viewModel = hiltViewModel<NonogramChallengerViewModel>()
+    val viewModel = appViewModel { graph ->
+        NonogramChallengerViewModel(
+            graph.appContext,
+            graph.statsRepository,
+            graph.playHistoryRepository,
+            graph.appForeground,
+        )
+    }
 
     CollectPuzzleResult(viewModel.result, onFinished)
 

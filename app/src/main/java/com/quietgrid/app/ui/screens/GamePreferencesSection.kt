@@ -28,13 +28,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.quietgrid.app.LocalAppGraph
 import com.quietgrid.app.R
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.GameToggle
-import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.data.ScreenRotation
 import com.quietgrid.app.data.toggleDefault
 import com.quietgrid.app.games.GameRegistry
@@ -90,13 +89,13 @@ private data class PreferenceOption(val label: String, val selected: Boolean, va
 
 @Composable
 fun GamePreferencesSection(gameId: GameId, modifier: Modifier = Modifier) {
-    val repositories: RepositoriesViewModel = hiltViewModel()
+    val graph = LocalAppGraph.current
     val scope = rememberCoroutineScope()
-    val settings by repositories.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = AppSettings())
-    val overridesFlow = remember(gameId) { repositories.gamePreferencesRepository.overrides(gameId) }
+    val settings by graph.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = AppSettings())
+    val overridesFlow = remember(gameId) { graph.gamePreferencesRepository.overrides(gameId) }
     val overrides by overridesFlow.collectAsStateWithLifecycle(initialValue = null)
     val current = overrides ?: return
-    val gamePreferences = repositories.gamePreferencesRepository
+    val gamePreferences = graph.gamePreferencesRepository
     val onLabel = stringResource(R.string.game_settings_play_on)
     val offLabel = stringResource(R.string.game_settings_play_off)
     val portraitOnlyOnPhone = GameRegistry.of(gameId).capabilities.phonePortraitOnly &&

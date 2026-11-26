@@ -10,7 +10,6 @@ import com.quietgrid.app.core.badges.BadgeProgress
 import com.quietgrid.app.core.badges.JourneySnapshot
 import com.quietgrid.app.data.BadgeRepository
 import com.quietgrid.app.data.SettingsRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,7 +23,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
-import javax.inject.Inject
 
 private const val SUBSCRIBE_TIMEOUT_MS = 5_000L
 private const val ANNOUNCEMENT_LOADED_KEY = "badge_announcement_loaded"
@@ -46,8 +44,7 @@ fun MilestonesState.journeyDots(def: BadgeDef): List<Boolean>? = when (def.id) {
 
 private fun Map<String, LocalDate>.knownBadges(): Map<String, LocalDate> = filterKeys { BadgeCatalog.byId(it) != null }
 
-@HiltViewModel
-class MilestonesViewModel @Inject constructor(private val badgeRepository: BadgeRepository) : ViewModel() {
+class MilestonesViewModel(private val badgeRepository: BadgeRepository) : ViewModel() {
     private val current = MutableStateFlow(MilestonesState())
     val state: StateFlow<MilestonesState> = current.asStateFlow()
 
@@ -71,8 +68,7 @@ class MilestonesViewModel @Inject constructor(private val badgeRepository: Badge
 
 data class BadgeSummary(val show: Boolean = false, val earned: Map<String, LocalDate> = emptyMap())
 
-@HiltViewModel
-class BadgeSummaryViewModel @Inject constructor(
+class BadgeSummaryViewModel(
     badgeRepository: BadgeRepository,
     settingsRepository: SettingsRepository,
 ) : ViewModel() {
@@ -83,8 +79,7 @@ class BadgeSummaryViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(SUBSCRIBE_TIMEOUT_MS), BadgeSummary())
 }
 
-@HiltViewModel
-class BadgeAnnouncementViewModel @Inject constructor(
+class BadgeAnnouncementViewModel(
     private val savedStateHandle: SavedStateHandle,
     private val badgeRepository: BadgeRepository,
     private val settingsRepository: SettingsRepository,

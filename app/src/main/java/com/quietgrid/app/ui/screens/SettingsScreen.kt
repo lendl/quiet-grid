@@ -45,14 +45,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.quietgrid.app.LocalAppGraph
 import com.quietgrid.app.R
 import com.quietgrid.app.core.AppLocale
 import com.quietgrid.app.core.localeFlagEmoji
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.GameToggle
-import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.data.ScreenRotation
 import com.quietgrid.app.data.ThemeMode
 import com.quietgrid.app.data.toggleDefault
@@ -146,10 +145,10 @@ fun SettingsPageScreen() {
 
 @Composable
 fun PreferencesSection() {
-    val repositories: RepositoriesViewModel = hiltViewModel()
+    val graph = LocalAppGraph.current
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val settings by repositories.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = AppSettings())
+    val settings by graph.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = AppSettings())
     var themeMenuOpen by remember { mutableStateOf(false) }
     var languageMenuOpen by remember { mutableStateOf(false) }
     var puzzleLanguageMenuOpen by remember { mutableStateOf(false) }
@@ -179,7 +178,7 @@ fun PreferencesSection() {
                         text = { Text(stringResource(option.labelRes)) },
                         onClick = {
                             themeMenuOpen = false
-                            scope.launch { repositories.settingsRepository.setThemeMode(option.mode) }
+                            scope.launch { graph.settingsRepository.setThemeMode(option.mode) }
                         },
                     )
                 }
@@ -247,7 +246,7 @@ fun PreferencesSection() {
                         text = { Text(stringResource(option.labelRes)) },
                         onClick = {
                             puzzleLanguageMenuOpen = false
-                            scope.launch { repositories.settingsRepository.setPuzzleLanguage(option.tag) }
+                            scope.launch { graph.settingsRepository.setPuzzleLanguage(option.tag) }
                         },
                     )
                 }
@@ -260,7 +259,7 @@ fun PreferencesSection() {
             label = stringResource(R.string.settings_show_timer_in_play_label),
             detail = stringResource(R.string.settings_show_timer_in_play_detail),
             checked = settings.showTimerInPlay,
-            onCheckedChange = { scope.launch { repositories.settingsRepository.setShowTimerInPlay(it) } },
+            onCheckedChange = { scope.launch { graph.settingsRepository.setShowTimerInPlay(it) } },
         )
 
         HorizontalDivider(Modifier.padding(vertical = 4.dp))
@@ -269,7 +268,7 @@ fun PreferencesSection() {
             label = stringResource(R.string.settings_show_hints_label),
             detail = stringResource(R.string.settings_show_hints_detail),
             checked = settings.showHintsInPlay,
-            onCheckedChange = { scope.launch { repositories.settingsRepository.setShowHintsInPlay(it) } },
+            onCheckedChange = { scope.launch { graph.settingsRepository.setShowHintsInPlay(it) } },
         )
 
         HorizontalDivider(Modifier.padding(vertical = 4.dp))
@@ -293,7 +292,7 @@ fun PreferencesSection() {
                         text = { Text(stringResource(rotation.labelRes)) },
                         onClick = {
                             rotationMenuOpen = false
-                            scope.launch { repositories.settingsRepository.setScreenRotation(rotation) }
+                            scope.launch { graph.settingsRepository.setScreenRotation(rotation) }
                         },
                     )
                 }
@@ -306,7 +305,7 @@ fun PreferencesSection() {
             label = stringResource(R.string.settings_keep_screen_on_label),
             detail = stringResource(R.string.settings_keep_screen_on_detail),
             checked = settings.keepScreenOnInPlay,
-            onCheckedChange = { scope.launch { repositories.settingsRepository.setKeepScreenOnInPlay(it) } },
+            onCheckedChange = { scope.launch { graph.settingsRepository.setKeepScreenOnInPlay(it) } },
         )
 
         HorizontalDivider(Modifier.padding(vertical = 4.dp))
@@ -315,7 +314,7 @@ fun PreferencesSection() {
             label = stringResource(R.string.settings_haptics_label),
             detail = stringResource(R.string.settings_haptics_detail),
             checked = settings.hapticsEnabled,
-            onCheckedChange = { scope.launch { repositories.settingsRepository.setHapticsEnabled(it) } },
+            onCheckedChange = { scope.launch { graph.settingsRepository.setHapticsEnabled(it) } },
         )
 
         MORE_PLAY_DEFAULT_TOGGLES.forEach { toggle ->
@@ -324,7 +323,7 @@ fun PreferencesSection() {
                 label = stringResource(toggle.labelRes),
                 detail = stringResource(toggle.detailRes),
                 checked = settings.toggleDefault(toggle),
-                onCheckedChange = { scope.launch { repositories.settingsRepository.setPlayDefault(toggle, it) } },
+                onCheckedChange = { scope.launch { graph.settingsRepository.setPlayDefault(toggle, it) } },
             )
         }
         Text(
@@ -341,21 +340,21 @@ fun PreferencesSection() {
             label = stringResource(R.string.settings_be_quiet_label),
             detail = stringResource(R.string.settings_be_quiet_detail),
             checked = settings.beQuiet,
-            onCheckedChange = { scope.launch { repositories.settingsRepository.setBeQuiet(it) } },
+            onCheckedChange = { scope.launch { graph.settingsRepository.setBeQuiet(it) } },
         )
         SettingsToggleRow(
             label = stringResource(R.string.settings_suggestions_label),
             detail = stringResource(R.string.settings_suggestions_detail),
             checked = settings.suggestionsEnabled,
             enabled = !settings.beQuiet,
-            onCheckedChange = { scope.launch { repositories.settingsRepository.setSuggestionsEnabled(it) } },
+            onCheckedChange = { scope.launch { graph.settingsRepository.setSuggestionsEnabled(it) } },
         )
         SettingsToggleRow(
             label = stringResource(R.string.settings_milestones_label),
             detail = stringResource(R.string.settings_milestones_detail),
             checked = settings.showMilestones,
             enabled = !settings.beQuiet,
-            onCheckedChange = { scope.launch { repositories.settingsRepository.setMilestonesEnabled(it) } },
+            onCheckedChange = { scope.launch { graph.settingsRepository.setMilestonesEnabled(it) } },
         )
 
         HorizontalDivider(Modifier.padding(vertical = 4.dp))
@@ -368,7 +367,7 @@ fun PreferencesSection() {
             label = stringResource(R.string.settings_seasonal_label),
             detail = stringResource(R.string.settings_seasonal_detail),
             checked = settings.seasonalTouchesEnabled,
-            onCheckedChange = { scope.launch { repositories.settingsRepository.setSeasonalTouchesEnabled(it) } },
+            onCheckedChange = { scope.launch { graph.settingsRepository.setSeasonalTouchesEnabled(it) } },
         )
 
         HorizontalDivider(Modifier.padding(vertical = 4.dp))
@@ -377,7 +376,7 @@ fun PreferencesSection() {
             label = stringResource(R.string.settings_beta_games_label),
             detail = stringResource(R.string.settings_beta_games_detail),
             checked = settings.betaGamesEnabled,
-            onCheckedChange = { scope.launch { repositories.settingsRepository.setBetaGamesEnabled(it) } },
+            onCheckedChange = { scope.launch { graph.settingsRepository.setBetaGamesEnabled(it) } },
         )
     }
 }
@@ -471,7 +470,7 @@ private const val DISABLED_ALPHA = 0.38f
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DailyReminderSettings(settings: AppSettings) {
-    val repositories: RepositoriesViewModel = hiltViewModel()
+    val graph = LocalAppGraph.current
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -488,7 +487,7 @@ private fun DailyReminderSettings(settings: AppSettings) {
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         permissionGranted = DailyReminderNotifier.hasPermission(context)
-        if (granted) scope.launch { repositories.settingsRepository.setDailyReminderEnabled(true) }
+        if (granted) scope.launch { graph.settingsRepository.setDailyReminderEnabled(true) }
     }
 
     fun openSystemNotificationSettings() {
@@ -506,18 +505,18 @@ private fun DailyReminderSettings(settings: AppSettings) {
         checked = active,
         onCheckedChange = { turnOn ->
             if (!turnOn) {
-                scope.launch { repositories.settingsRepository.setDailyReminderEnabled(false) }
+                scope.launch { graph.settingsRepository.setDailyReminderEnabled(false) }
             } else if (permissionGranted) {
-                scope.launch { repositories.settingsRepository.setDailyReminderEnabled(true) }
+                scope.launch { graph.settingsRepository.setDailyReminderEnabled(true) }
             } else {
-                scope.launch { repositories.settingsRepository.setDailyReminderEnabled(true) }
+                scope.launch { graph.settingsRepository.setDailyReminderEnabled(true) }
                 val activity = context.findActivity()
                 val permanentlyDenied = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
                     settings.dailyReminderPermissionAsked &&
                     activity != null &&
                     !ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.POST_NOTIFICATIONS)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !permanentlyDenied) {
-                    scope.launch { repositories.settingsRepository.markDailyReminderPermissionAsked() }
+                    scope.launch { graph.settingsRepository.markDailyReminderPermissionAsked() }
                     launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 } else {
                     openSystemNotificationSettings()
@@ -559,7 +558,7 @@ private fun DailyReminderSettings(settings: AppSettings) {
             confirmButton = {
                 TextButton(onClick = {
                     showTimePicker = false
-                    scope.launch { repositories.settingsRepository.setDailyReminderTime(LocalTime.of(pickerState.hour, pickerState.minute)) }
+                    scope.launch { graph.settingsRepository.setDailyReminderTime(LocalTime.of(pickerState.hour, pickerState.minute)) }
                 }) { Text(stringResource(R.string.settings_daily_reminder_ok)) }
             },
             dismissButton = {

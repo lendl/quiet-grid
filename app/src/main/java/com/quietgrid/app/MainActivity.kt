@@ -17,6 +17,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -27,23 +28,16 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.core.view.WindowCompat
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.core.AppLocale
-import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.data.ThemeMode
 import com.quietgrid.app.nav.AppNavHost
 import com.quietgrid.app.ui.components.LocalHapticsEnabled
 import com.quietgrid.app.ui.theme.QuietGridTheme
 import com.quietgrid.app.ui.theme.ResolvedTheme
 import com.quietgrid.app.ui.theme.fixedResolvedTheme
-import com.quietgrid.app.widget.QuickPlayWidgetUpdater
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
-@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @Inject lateinit var quickPlayWidgetUpdater: QuickPlayWidgetUpdater
     private val launchRequest = mutableStateOf<LaunchRequest?>(null)
     private var firstFrameReady = false
 
@@ -71,7 +65,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null) launchRequest.value = intent.toLaunchRequest()
-        quickPlayWidgetUpdater.refresh()
+        appGraph.quickPlayWidgetUpdater.refresh()
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
@@ -79,46 +73,53 @@ class MainActivity : ComponentActivity() {
         holdFirstDrawUntilReady()
 
         setContent {
-            val repositories: RepositoriesViewModel = hiltViewModel()
-            val loadedSettings by repositories.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = null)
-            val settings = loadedSettings ?: return@setContent
-            val systemDark = isSystemInDarkTheme()
-            val resolvedTheme = settings.themeMode.fixedResolvedTheme()
-                ?: if (systemDark) ResolvedTheme.DARK else ResolvedTheme.LIGHT
-
-            LaunchedEffect(settings.themeMode) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    splashScreen.setSplashScreenTheme(launchThemeFor(settings.themeMode))
-                }
+            CompositionLocalProvider(LocalAppGraph provides appGraph) {
+                AppContent()
             }
+        }
+    }
 
-            LaunchedEffect(resolvedTheme) {
-                val useDarkIcons = resolvedTheme != ResolvedTheme.DARK &&
-                    resolvedTheme != ResolvedTheme.COFFEE &&
-                    resolvedTheme != ResolvedTheme.DRACULA
-                WindowCompat.getInsetsController(window, window.decorView).apply {
-                    isAppearanceLightStatusBars = useDarkIcons
-                    isAppearanceLightNavigationBars = useDarkIcons
-                }
+    @Composable
+    private fun AppContent() {
+        val loadedSettings by appGraph.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = null)
+        val settings = loadedSettings ?: return
+        val systemDark = isSystemInDarkTheme()
+        val resolvedTheme = settings.themeMode.fixedResolvedTheme()
+            ?: if (systemDark) ResolvedTheme.DARK else ResolvedTheme.LIGHT
+
+        LaunchedEffect(settings.themeMode) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                splashScreen.setSplashScreenTheme(launchThemeFor(settings.themeMode))
             }
+        }
 
-            QuietGridTheme(resolvedTheme = resolvedTheme) {
-                val windowBackground = MaterialTheme.colorScheme.background.toArgb()
-                SideEffect {
-                    window.setBackgroundDrawable(ColorDrawable(windowBackground))
-                    firstFrameReady = true
-                }
-                CompositionLocalProvider(LocalHapticsEnabled provides settings.hapticsEnabled) {
-                    Box(Modifier.fillMaxSize().semantics { testTagsAsResourceId = true }) {
-                        AppNavHost(
-                            launchRequest = launchRequest.value,
-                            onLaunchRequestHandled = { launchRequest.value = null },
-                        )
-                    }
+        LaunchedEffect(resolvedTheme) {
+            val useDarkIcons = resolvedTheme != ResolvedTheme.DARK &&
+                resolvedTheme != ResolvedTheme.COFFEE &&
+                resolvedTheme != ResolvedTheme.DRACULA
+            WindowCompat.getInsetsController(window, window.decorView).apply {
+                isAppearanceLightStatusBars = useDarkIcons
+                isAppearanceLightNavigationBars = useDarkIcons
+            }
+        }
+
+        QuietGridTheme(resolvedTheme = resolvedTheme) {
+            val windowBackground = MaterialTheme.colorScheme.background.toArgb()
+            SideEffect {
+                window.setBackgroundDrawable(ColorDrawable(windowBackground))
+                firstFrameReady = true
+            }
+            CompositionLocalProvider(LocalHapticsEnabled provides settings.hapticsEnabled) {
+                Box(Modifier.fillMaxSize().semantics { testTagsAsResourceId = true }) {
+                    AppNavHost(
+                        launchRequest = launchRequest.value,
+                        onLaunchRequestHandled = { launchRequest.value = null },
+                    )
                 }
             }
         }
     }
+
     private fun holdFirstDrawUntilReady() {
         val content = findViewById<View>(android.R.id.content)
         content.viewTreeObserver.addOnPreDrawListener(

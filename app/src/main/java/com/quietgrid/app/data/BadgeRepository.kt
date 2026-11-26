@@ -23,7 +23,6 @@ import com.quietgrid.app.core.badges.updatedProgress
 import com.quietgrid.app.core.journey.loadJourneyFile
 import com.quietgrid.app.core.mix.Mix
 import com.quietgrid.engine.journey.JourneyFile
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
@@ -36,8 +35,6 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.time.LocalDate
-import javax.inject.Inject
-import javax.inject.Singleton
 
 interface BadgeStore {
     val earned: Flow<Map<String, LocalDate>>
@@ -64,7 +61,6 @@ private object BadgeKeys {
     val SEEN_NEWEST = stringPreferencesKey("badges_seen_newest")
 }
 
-@Singleton
 class BadgeRepository(
     private val dataStore: DataStore<Preferences>,
     private val historyStore: PlayHistoryStore,
@@ -74,9 +70,8 @@ class BadgeRepository(
     private val today: () -> LocalDate = LocalDate::now,
 ) : BadgeStore {
 
-    @Inject
     constructor(
-        @ApplicationContext context: Context,
+        context: Context,
         dataStore: DataStore<Preferences>,
         historyStore: PlayHistoryStore,
         journeyStore: JourneyProgressStore,

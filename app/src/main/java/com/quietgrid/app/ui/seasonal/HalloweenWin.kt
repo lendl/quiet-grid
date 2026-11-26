@@ -22,10 +22,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.quietgrid.app.LocalAppGraph
 import com.quietgrid.app.core.isHalloween
-import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.ui.theme.LocalIsDarkTheme
 import com.quietgrid.app.ui.theme.LocalIsPencilTheme
 import kotlinx.coroutines.flow.map
@@ -62,8 +61,8 @@ private fun pulse(t: Float, start: Float, end: Float): Float {
 fun rememberHalloweenActive(): Boolean {
     val today = remember { LocalDate.now() }
     if (!isHalloween(today)) return false
-    val repositories: RepositoriesViewModel = hiltViewModel()
-    val enabled by remember(repositories) { repositories.settingsRepository.settings.map { it.seasonalTouchesEnabled } }
+    val graph = LocalAppGraph.current
+    val enabled by remember(graph) { graph.settingsRepository.settings.map { it.seasonalTouchesEnabled } }
         .collectAsStateWithLifecycle(initialValue = true)
     return enabled
 }

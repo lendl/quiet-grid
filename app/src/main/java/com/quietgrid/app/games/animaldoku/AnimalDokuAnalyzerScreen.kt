@@ -1,15 +1,13 @@
 package com.quietgrid.app.games.animaldoku
 
 import androidx.compose.runtime.Composable
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.quietgrid.app.appViewModel
 import com.quietgrid.app.ui.analyzer.AnalyzerScreenFrame
 import com.quietgrid.app.ui.seasonal.rememberHalloweenActive
 
 @Composable
 fun AnimalDokuAnalyzerScreen(snapshot: String?) {
-    val viewModel = hiltViewModel<AnimalDokuAnalyzerViewModel, AnimalDokuAnalyzerViewModel.Factory>(
-        creationCallback = { factory -> factory.create(snapshot) },
-    )
+    val viewModel = appViewModel { AnimalDokuAnalyzerViewModel(snapshot) }
     val emojiPalette = animalDokuEmojiPalette(rememberHalloweenActive())
 
     AnalyzerScreenFrame(

@@ -7,8 +7,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.quietgrid.app.appViewModel
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.ui.components.CollectPuzzleResult
@@ -24,9 +24,16 @@ fun ChimpTestPlayScreen(
     onBack: () -> Unit,
     onFinished: (ChimpTestResult) -> Unit,
 ) {
-    val viewModel = hiltViewModel<ChimpTestPlayViewModel, ChimpTestPlayViewModel.Factory>(
-        creationCallback = { factory -> factory.create(difficulty, resume) },
-    )
+    val viewModel = appViewModel { graph ->
+        ChimpTestPlayViewModel(
+            graph.sessionRepository,
+            graph.statsRepository,
+            graph.playHistoryRepository,
+            graph.badgeRepository,
+            difficulty,
+            resume,
+        )
+    }
     CollectPuzzleResult(viewModel.result, onFinished)
     val finishing by viewModel.finishing.collectAsStateWithLifecycle()
 

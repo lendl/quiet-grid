@@ -24,10 +24,6 @@ import com.quietgrid.app.session.PuzzleSessionController
 import com.quietgrid.engine.animaldoku.AnimalDokuHint
 import com.quietgrid.engine.animaldoku.transformed
 import com.quietgrid.engine.journey.gridTransformById
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -137,24 +133,18 @@ internal class AnimalDokuPuzzleAdapter(
     )
 }
 
-@HiltViewModel(assistedFactory = AnimalDokuPlayViewModel.Factory::class)
-class AnimalDokuPlayViewModel @AssistedInject constructor(
-    @dagger.hilt.android.qualifiers.ApplicationContext appContext: android.content.Context,
+class AnimalDokuPlayViewModel(
+    appContext: android.content.Context,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     journeyStore: JourneyProgressStore,
     badgeStore: BadgeStore,
-    @Assisted requestedDifficulty: Difficulty,
-    @Assisted resume: Boolean,
-    @Assisted dailyDate: LocalDate?,
-    @Assisted journey: JourneyRequest?,
+    requestedDifficulty: Difficulty,
+    resume: Boolean,
+    dailyDate: LocalDate?,
+    journey: JourneyRequest?,
 ) : ViewModel() {
-
-    @AssistedFactory
-    interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean, dailyDate: LocalDate?, journey: JourneyRequest?): AnimalDokuPlayViewModel
-    }
 
     private val controller = PuzzleSessionController(
         scope = viewModelScope,

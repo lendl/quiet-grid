@@ -1,8 +1,10 @@
 package com.quietgrid.app.ui.journey
 
 import android.content.Context
+import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.quietgrid.app.appViewModel
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.journey.JourneyMilestone
@@ -39,8 +41,6 @@ import com.quietgrid.engine.sudoku.transformed
 import com.quietgrid.engine.takuzu.decodePuzzleBoard
 import com.quietgrid.engine.takuzu.transformed
 import com.quietgrid.engine.journey.gridTransformById
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -52,15 +52,13 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 private const val NONOGRAM_PREVIEW_GUIDE = 5
 
 data class JourneyState(val rows: List<JourneyStopRow>, val summary: JourneySummary, val mastered: Boolean = false)
 
-@HiltViewModel
-class JourneyViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
+class JourneyViewModel(
+    private val context: Context,
     private val store: JourneyProgressStore,
     private val history: PlayHistoryStore,
     private val settings: SettingsRepository,
@@ -158,4 +156,9 @@ class JourneyViewModel @Inject constructor(
     fun skip(gameId: GameId, stopId: String) {
         viewModelScope.launch { store.skip(gameId, stopId) }
     }
+}
+
+@Composable
+fun journeyViewModel(): JourneyViewModel = appViewModel { graph ->
+    JourneyViewModel(graph.appContext, graph.journeyProgressRepository, graph.playHistoryRepository, graph.settingsRepository)
 }

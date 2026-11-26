@@ -8,8 +8,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.R
+import com.quietgrid.app.appViewModel
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.standardDifficultyLabelRes
 import com.quietgrid.app.session.ChallengerResult
@@ -27,7 +27,15 @@ import kotlinx.coroutines.delay
 fun WordGuessChallengerPlayScreen(
     onFinished: (ChallengerResult) -> Unit,
 ) {
-    val viewModel = hiltViewModel<WordGuessChallengerViewModel>()
+    val viewModel = appViewModel { graph ->
+        WordGuessChallengerViewModel(
+            graph.appContext,
+            graph.settingsRepository,
+            graph.statsRepository,
+            graph.playHistoryRepository,
+            graph.appForeground,
+        )
+    }
 
     CollectPuzzleResult(viewModel.result, onFinished)
 

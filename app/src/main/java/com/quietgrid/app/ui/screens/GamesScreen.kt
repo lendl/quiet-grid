@@ -43,15 +43,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.quietgrid.app.LocalAppGraph
 import com.quietgrid.app.R
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameCategory
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.GameMeta
 import com.quietgrid.app.data.AppSettings
-import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.ui.components.AccountIconButton
 import com.quietgrid.app.ui.components.GameIcon
 import com.quietgrid.app.ui.journey.ContinueChapterCard
@@ -64,8 +63,8 @@ fun GamesScreen(
     onContinueChapter: (GameId, Int) -> Unit = { _, _ -> },
     journeyPuzzleInProgress: Boolean = false,
 ) {
-    val repositories: RepositoriesViewModel = hiltViewModel()
-    val loadedSettings by repositories.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = null)
+    val graph = LocalAppGraph.current
+    val loadedSettings by graph.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = null)
     val settings = loadedSettings ?: AppSettings()
 
     var selectedCategory by remember { mutableStateOf<GameCategory?>(null) }

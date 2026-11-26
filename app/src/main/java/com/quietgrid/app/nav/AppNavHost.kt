@@ -39,7 +39,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination.Companion.hasRoute
@@ -49,14 +48,15 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.quietgrid.app.LaunchRequest
+import com.quietgrid.app.LocalAppGraph
 import com.quietgrid.app.R
+import com.quietgrid.app.appViewModel
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.mix.Mix
 import com.quietgrid.app.core.mix.nextMixName
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.GamePreferenceOverrides
-import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.data.resolveGamePlayPreferences
 import com.quietgrid.app.ui.components.AppTab
 import com.quietgrid.app.ui.components.AppTopBar
@@ -89,18 +89,18 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
     val backStackEntry by navController.currentBackStackEntryAsState()
     var selectedTab by remember { mutableStateOf(AppTab.GAMES) }
     val scope = rememberCoroutineScope()
-    val repositories: RepositoriesViewModel = hiltViewModel()
-    val settingsState = repositories.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = AppSettings())
-    val overridesState = repositories.gamePreferencesRepository.allOverrides.collectAsStateWithLifecycle(initialValue = emptyMap())
-    val activeSessionState = repositories.sessionRepository.activeSessionSummary.collectAsStateWithLifecycle(initialValue = null)
-    val mixesState = repositories.mixRepository.mixes.collectAsStateWithLifecycle(initialValue = emptyList())
-    val activeMixIdState = repositories.mixRepository.activeMixId.collectAsStateWithLifecycle(initialValue = null)
+    val graph = LocalAppGraph.current
+    val settingsState = graph.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = AppSettings())
+    val overridesState = graph.gamePreferencesRepository.allOverrides.collectAsStateWithLifecycle(initialValue = emptyMap())
+    val activeSessionState = graph.sessionRepository.activeSessionSummary.collectAsStateWithLifecycle(initialValue = null)
+    val mixesState = graph.mixRepository.mixes.collectAsStateWithLifecycle(initialValue = emptyList())
+    val activeMixIdState = graph.mixRepository.activeMixId.collectAsStateWithLifecycle(initialValue = null)
     val activeMixState = remember { derivedStateOf { mixesState.value.firstOrNull { it.id == activeMixIdState.value } } }
     val mixes = mixesState.value
     val settings = settingsState.value
     val context = LocalContext.current
     val appContext = context.applicationContext
-    val quietTipSignals: QuietTipSignalsViewModel = hiltViewModel()
+    val quietTipSignals = appViewModel { QuietTipSignalsViewModel(graph.quietTipsRepository) }
     LaunchedEffect(selectedTab) {
         if (selectedTab == AppTab.DAILY) quietTipSignals.dailyTabOpened()
     }
@@ -109,7 +109,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
         AppNavigator(
             navController = navController,
             scope = scope,
-            repositories = repositories,
+            graph = graph,
             appContext = appContext,
             activeSession = activeSessionState,
             activeMixState = activeMixState,
@@ -128,8 +128,8 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
     val isTabsRoute = destination == null || isOn(TabsRoute::class)
 
     LaunchRequestEffect(launchRequest, onLaunchRequestHandled) { request ->
-        val session = repositories.sessionRepository.activeSessionSummary.first()
-        val currentMixes = repositories.mixRepository.mixes.first()
+        val session = graph.sessionRepository.activeSessionSummary.first()
+        val currentMixes = graph.mixRepository.mixes.first()
         val onPlayScreen = navController.currentDestination?.let { current ->
             current.hasRoute<PlayRoute>() || current.hasRoute<ChallengerRoute>() || current.hasRoute<EndlessRoute>()
         } == true
@@ -139,7 +139,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
             LaunchAction.OpenTabs -> navigator.popToTabs()
             LaunchAction.Stay -> Unit
             is LaunchAction.Navigate -> {
-                if (action.endsMix) repositories.mixRepository.clearActiveMix()
+                if (action.endsMix) graph.mixRepository.clearActiveMix()
                 navigator.navigateFromTabs(action.route)
             }
             is LaunchAction.StartMix -> currentMixes.firstOrNull { it.id == action.mixId }?.let { navigator.startMix(it) }
@@ -245,7 +245,7 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
                                                         name = nextMixName(mixes.map { it.name }) { context.resources.getString(R.string.mix_default_name, it) },
                                                         entries = emptyList(),
                                                     )
-                                                    repositories.mixRepository.saveMix(newMix)
+                                                    graph.mixRepository.saveMix(newMix)
                                                     navigator.navigate(MixEditorRoute(newMix.id))
                                                 }
                                             },
@@ -333,7 +333,7 @@ private fun AppNavTopBar(
                 GamePageTopBar(
                     gameId,
                     isFavorite = gameId.key in favoriteGameIds,
-                    onFavoriteChange = { favorite -> navigator.scope.launch { navigator.repositories.settingsRepository.setFavorite(gameId, favorite) } },
+                    onFavoriteChange = { favorite -> navigator.scope.launch { navigator.graph.settingsRepository.setFavorite(gameId, favorite) } },
                     onBack = back,
                 )
             } else {

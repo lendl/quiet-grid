@@ -17,9 +17,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
+import com.quietgrid.app.appViewModel
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.journey.JourneyRequest
@@ -40,9 +40,19 @@ fun StarBattlePlayScreen(
     journey: JourneyRequest? = null,
     onRestarted: () -> Unit = {},
 ) {
-    val viewModel = hiltViewModel<StarBattlePlayViewModel, StarBattlePlayViewModel.Factory>(
-        creationCallback = { factory -> factory.create(difficulty, resume, journey) },
-    )
+    val viewModel = appViewModel { graph ->
+        StarBattlePlayViewModel(
+            graph.appContext,
+            graph.sessionRepository,
+            graph.statsRepository,
+            graph.playHistoryRepository,
+            graph.journeyProgressRepository,
+            graph.badgeRepository,
+            difficulty,
+            resume,
+            journey,
+        )
+    }
     CollectPuzzleResult(viewModel.result, onFinished)
     CollectPuzzleResult(viewModel.restarts) { onRestarted() }
     val finishing by viewModel.finishing.collectAsStateWithLifecycle()

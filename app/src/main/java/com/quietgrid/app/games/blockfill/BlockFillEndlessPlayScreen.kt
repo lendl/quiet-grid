@@ -9,8 +9,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.R
+import com.quietgrid.app.appViewModel
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.ui.components.CollectPuzzleResult
 import com.quietgrid.app.ui.components.CrownIcon
@@ -26,9 +26,9 @@ fun BlockFillEndlessPlayScreen(
     onBack: () -> Unit,
     onFinished: (BlockFillEndlessResult) -> Unit,
 ) {
-    val viewModel = hiltViewModel<BlockFillEndlessViewModel, BlockFillEndlessViewModel.Factory>(
-        creationCallback = { factory -> factory.create(resume) },
-    )
+    val viewModel = appViewModel { graph ->
+        BlockFillEndlessViewModel(graph.sessionRepository, graph.statsRepository, resume)
+    }
     CollectPuzzleResult(viewModel.result, onFinished)
 
     val session = viewModel.session

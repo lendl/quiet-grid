@@ -16,19 +16,15 @@ import com.quietgrid.app.session.ChallengerRunController
 import com.quietgrid.app.session.challengerTierAfterSolve
 import com.quietgrid.app.session.creditSolve
 import com.quietgrid.app.session.tick
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 private const val CHALLENGER_SOLVE_ADVANCE_DELAY_MS = 700L
 private const val CHALLENGER_LOSS_REVEAL_DELAY_MS = 1400L
 
-@HiltViewModel
-class WordGuessChallengerViewModel @Inject constructor(
-    @ApplicationContext private val appContext: Context,
+class WordGuessChallengerViewModel(
+    private val appContext: Context,
     private val settingsRepository: SettingsRepository,
     statsStore: StatsStore,
     historyStore: PlayHistoryStore,

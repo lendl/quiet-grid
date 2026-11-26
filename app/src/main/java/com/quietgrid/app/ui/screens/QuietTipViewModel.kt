@@ -20,7 +20,6 @@ import com.quietgrid.app.data.QuietTipsRepository
 import com.quietgrid.app.data.SettingsRepository
 import com.quietgrid.app.data.resolveGamePlayPreferences
 import com.quietgrid.app.games.GameRegistry
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,13 +29,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.util.UUID
-import javax.inject.Inject
 
 private const val LOADED_KEY = "quiet_tip_loaded"
 private const val MIX_TIP_ENTRY_WEIGHT = 5
 
-@HiltViewModel
-class QuietTipViewModel @Inject constructor(
+class QuietTipViewModel(
     private val savedStateHandle: SavedStateHandle,
     private val quietTipsRepository: QuietTipsRepository,
     private val settingsRepository: SettingsRepository,

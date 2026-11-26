@@ -41,21 +41,20 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.quietgrid.app.LocalAppGraph
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.journey.JourneyRequest
-import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.ui.components.ReplacePuzzleSheet
 import com.quietgrid.app.ui.components.rememberReduceMotion
 import com.quietgrid.app.ui.journey.JourneyStopRow
 import com.quietgrid.app.ui.journey.JourneyStopState
-import com.quietgrid.app.ui.journey.JourneyViewModel
 import com.quietgrid.app.ui.journey.journeyChapterSubtitle
 import com.quietgrid.app.ui.journey.journeyChapterSummaries
 import com.quietgrid.app.ui.journey.journeyRequestFor
+import com.quietgrid.app.ui.journey.journeyViewModel
 import com.quietgrid.app.ui.theme.LocalResolvedTheme
 import kotlin.math.roundToInt
 
@@ -72,10 +71,10 @@ fun JourneyMapScreen(
     onPlayStop: (Difficulty, JourneyRequest) -> Unit,
     onResumeActiveGame: (GameId) -> Unit,
 ) {
-    val viewModel: JourneyViewModel = hiltViewModel()
-    val repositories: RepositoriesViewModel = hiltViewModel()
+    val graph = LocalAppGraph.current
+    val viewModel = journeyViewModel()
     val state by remember(viewModel, gameId) { viewModel.state(gameId) }.collectAsStateWithLifecycle(initialValue = null)
-    val activeSession by repositories.sessionRepository.activeSession.collectAsStateWithLifecycle(initialValue = null)
+    val activeSession by graph.sessionRepository.activeSession.collectAsStateWithLifecycle(initialValue = null)
     val reduceMotion = rememberReduceMotion()
     var pendingRow by remember(gameId) { mutableStateOf<JourneyStopRow?>(null) }
     var selectedId by remember(gameId, chapter) { mutableStateOf<String?>(null) }

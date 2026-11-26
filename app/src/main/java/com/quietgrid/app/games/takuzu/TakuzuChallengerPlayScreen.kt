@@ -9,8 +9,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.R
+import com.quietgrid.app.appViewModel
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.standardDifficultyLabelRes
 import com.quietgrid.app.session.ChallengerResult
@@ -26,7 +26,14 @@ import com.quietgrid.app.ui.play.PlayTimer
 fun TakuzuChallengerPlayScreen(
     onFinished: (ChallengerResult) -> Unit,
 ) {
-    val viewModel = hiltViewModel<TakuzuChallengerViewModel>()
+    val viewModel = appViewModel { graph ->
+        TakuzuChallengerViewModel(
+            graph.appContext,
+            graph.statsRepository,
+            graph.playHistoryRepository,
+            graph.appForeground,
+        )
+    }
 
     CollectPuzzleResult(viewModel.result, onFinished)
 

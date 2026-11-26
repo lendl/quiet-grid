@@ -23,11 +23,6 @@ import com.quietgrid.app.session.PuzzleSessionController
 import com.quietgrid.engine.journey.gridTransformById
 import com.quietgrid.engine.nonogram.NonogramPuzzleEntry
 import com.quietgrid.engine.nonogram.transformed
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -113,23 +108,17 @@ internal class NonogramPuzzleAdapter(
     )
 }
 
-@HiltViewModel(assistedFactory = NonogramPlayViewModel.Factory::class)
-class NonogramPlayViewModel @AssistedInject constructor(
-    @ApplicationContext appContext: Context,
+class NonogramPlayViewModel(
+    appContext: Context,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     journeyStore: JourneyProgressStore,
     badgeStore: BadgeStore,
-    @Assisted requestedDifficulty: Difficulty,
-    @Assisted resume: Boolean,
-    @Assisted journey: JourneyRequest?,
+    requestedDifficulty: Difficulty,
+    resume: Boolean,
+    journey: JourneyRequest?,
 ) : ViewModel() {
-
-    @AssistedFactory
-    interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean, journey: JourneyRequest?): NonogramPlayViewModel
-    }
 
     private val controller = PuzzleSessionController(
         scope = viewModelScope,

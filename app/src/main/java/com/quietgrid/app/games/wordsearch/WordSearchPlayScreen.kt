@@ -17,9 +17,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
+import com.quietgrid.app.appViewModel
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.themes.themeLabelRes
@@ -42,9 +42,20 @@ fun WordSearchPlayScreen(
     onBack: () -> Unit,
     onFinished: (WordSearchResult) -> Unit,
 ) {
-    val viewModel = hiltViewModel<WordSearchPlayViewModel, WordSearchPlayViewModel.Factory>(
-        creationCallback = { factory -> factory.create(difficulty, resume, dailyDate) },
-    )
+    val viewModel = appViewModel { graph ->
+        WordSearchPlayViewModel(
+            graph.appContext,
+            graph.sessionRepository,
+            graph.statsRepository,
+            graph.playHistoryRepository,
+            graph.settingsRepository,
+            graph.themePreferencesRepository,
+            graph.badgeRepository,
+            difficulty,
+            resume,
+            dailyDate,
+        )
+    }
     CollectPuzzleResult(viewModel.result, onFinished)
     val finishing by viewModel.finishing.collectAsStateWithLifecycle()
 

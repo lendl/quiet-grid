@@ -27,9 +27,9 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
+import com.quietgrid.app.appViewModel
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.badges.BadgeCatalog
 import com.quietgrid.app.ui.components.BadgeDetailSheet
@@ -43,7 +43,7 @@ private const val SHELF_COUNT = 4
 internal fun MilestonesStatsRow(
     onOpen: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: BadgeSummaryViewModel = hiltViewModel(),
+    viewModel: BadgeSummaryViewModel = appViewModel { graph -> BadgeSummaryViewModel(graph.badgeRepository, graph.settingsRepository) },
 ) {
     val summary by viewModel.summary.collectAsStateWithLifecycle()
     var openId by rememberSaveable { mutableStateOf<String?>(null) }
@@ -122,7 +122,7 @@ internal fun MilestonesStatsRow(
 internal fun GameBadgesRow(
     gameId: GameId,
     modifier: Modifier = Modifier,
-    viewModel: BadgeSummaryViewModel = hiltViewModel(),
+    viewModel: BadgeSummaryViewModel = appViewModel { graph -> BadgeSummaryViewModel(graph.badgeRepository, graph.settingsRepository) },
 ) {
     val summary by viewModel.summary.collectAsStateWithLifecycle()
     val defs = remember(gameId) { BadgeCatalog.forGame(gameId) }

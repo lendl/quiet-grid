@@ -25,11 +25,6 @@ import com.quietgrid.app.session.PuzzleSessionController
 import com.quietgrid.engine.journey.gridTransformById
 import com.quietgrid.engine.takuzu.TakuzuGrid
 import com.quietgrid.engine.takuzu.transformed
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -134,24 +129,18 @@ internal class TakuzuPuzzleAdapter(
     )
 }
 
-@HiltViewModel(assistedFactory = TakuzuPlayViewModel.Factory::class)
-class TakuzuPlayViewModel @AssistedInject constructor(
-    @ApplicationContext appContext: Context,
+class TakuzuPlayViewModel(
+    appContext: Context,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     journeyStore: JourneyProgressStore,
     badgeStore: BadgeStore,
-    @Assisted requestedDifficulty: Difficulty,
-    @Assisted resume: Boolean,
-    @Assisted dailyDate: LocalDate?,
-    @Assisted journey: JourneyRequest?,
+    requestedDifficulty: Difficulty,
+    resume: Boolean,
+    dailyDate: LocalDate?,
+    journey: JourneyRequest?,
 ) : ViewModel() {
-
-    @AssistedFactory
-    interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean, dailyDate: LocalDate?, journey: JourneyRequest?): TakuzuPlayViewModel
-    }
 
     private val controller = PuzzleSessionController(
         scope = viewModelScope,

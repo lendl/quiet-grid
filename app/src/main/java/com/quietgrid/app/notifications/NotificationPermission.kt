@@ -8,16 +8,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.quietgrid.app.LocalAppGraph
 import com.quietgrid.app.data.AppSettings
-import com.quietgrid.app.data.RepositoriesViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun rememberFirstSubscribePermissionRequest(): () -> Unit {
-    val repositories: RepositoriesViewModel = hiltViewModel()
-    val settings by repositories.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = AppSettings(dailyReminderPermissionAsked = true))
+    val graph = LocalAppGraph.current
+    val settings by graph.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = AppSettings(dailyReminderPermissionAsked = true))
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
@@ -26,7 +25,7 @@ fun rememberFirstSubscribePermissionRequest(): () -> Unit {
             !settings.dailyReminderPermissionAsked &&
             !DailyReminderNotifier.hasPermission(context)
         ) {
-            scope.launch { repositories.settingsRepository.markDailyReminderPermissionAsked() }
+            scope.launch { graph.settingsRepository.markDailyReminderPermissionAsked() }
             launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }

@@ -11,8 +11,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
-import javax.inject.Singleton
 
 enum class ScreenRotation { AUTO, PORTRAIT, LANDSCAPE }
 
@@ -76,8 +74,7 @@ fun resolveGamePlayPreferences(settings: AppSettings, overrides: GamePreferenceO
     )
 }
 
-@Singleton
-class GamePreferencesRepository @Inject constructor(private val dataStore: DataStore<Preferences>) {
+class GamePreferencesRepository(private val dataStore: DataStore<Preferences>) {
 
     private fun toggleKey(gameId: GameId, toggle: GameToggle) =
         booleanPreferencesKey("game_pref_${gameId.key}_${toggle.keySuffix}")

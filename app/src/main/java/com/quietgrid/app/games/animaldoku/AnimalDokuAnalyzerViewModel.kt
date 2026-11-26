@@ -5,24 +5,14 @@ import com.quietgrid.app.ui.analyzer.AnalyzerViewModel
 import com.quietgrid.app.ui.analyzer.buildAnalyzerState
 import com.quietgrid.engine.animaldoku.AnimalDokuHint
 import com.quietgrid.engine.animaldoku.AnimalDokuPuzzleEntry
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 private val json = Json { ignoreUnknownKeys = true }
 
-@HiltViewModel(assistedFactory = AnimalDokuAnalyzerViewModel.Factory::class)
-class AnimalDokuAnalyzerViewModel @AssistedInject constructor(
-    @Assisted private val snapshot: String?,
+class AnimalDokuAnalyzerViewModel(
+    private val snapshot: String?,
 ) : AnalyzerViewModel<AnimalDokuPuzzleEntry, List<List<AnimalDokuCellState>>, AnimalDokuHint>() {
-
-    @AssistedFactory
-    interface Factory {
-        fun create(snapshot: String?): AnimalDokuAnalyzerViewModel
-    }
 
     override fun detailFrameCount(hint: AnimalDokuHint): Int = animalDokuChainFrameCount(hint)
 

@@ -41,9 +41,9 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
+import com.quietgrid.app.appViewModel
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
@@ -70,7 +70,15 @@ fun DailyScreen(
     onStartDaily: (GameId, Difficulty, LocalDate) -> Unit,
     onResumeDaily: (GameId) -> Unit,
 ) {
-    val viewModel: DailyViewModel = hiltViewModel()
+    val viewModel = appViewModel { graph ->
+        DailyViewModel(
+            graph.appContext,
+            graph.dailyRepository,
+            graph.playHistoryRepository,
+            graph.sessionRepository,
+            graph.settingsRepository,
+        )
+    }
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()

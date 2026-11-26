@@ -15,8 +15,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import javax.inject.Inject
-import javax.inject.Singleton
 
 internal fun statsKeyFor(gameId: GameId) = stringPreferencesKey("stats_${gameId.key}")
 internal fun statsChallengerKeyFor(gameId: GameId) = stringPreferencesKey("stats_challenger_${gameId.key}")
@@ -55,8 +53,7 @@ interface StatsStore {
 
 private val json = Json { ignoreUnknownKeys = true }
 
-@Singleton
-class StatsRepository @Inject constructor(
+class StatsRepository(
     private val dataStore: DataStore<Preferences>,
     private val historyStore: PlayHistoryStore,
 ) : StatsStore {

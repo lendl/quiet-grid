@@ -1,7 +1,6 @@
 package com.quietgrid.app.notifications
 
 import android.content.Context
-import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.quietgrid.app.core.daily.DailyPools
@@ -12,16 +11,13 @@ import com.quietgrid.app.data.DailyRepository
 import com.quietgrid.app.data.PlayHistoryRepository
 import com.quietgrid.app.data.SessionRepository
 import com.quietgrid.app.data.SettingsRepository
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate
 
-@HiltWorker
-class DailyReminderWorker @AssistedInject constructor(
-    @Assisted appContext: Context,
-    @Assisted params: WorkerParameters,
+class DailyReminderWorker(
+    appContext: Context,
+    params: WorkerParameters,
     private val settingsRepository: SettingsRepository,
     private val dailyRepository: DailyRepository,
     private val historyRepository: PlayHistoryRepository,

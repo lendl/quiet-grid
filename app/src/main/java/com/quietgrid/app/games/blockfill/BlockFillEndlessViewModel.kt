@@ -10,10 +10,6 @@ import com.quietgrid.app.data.ActiveSessionEnvelope
 import com.quietgrid.app.data.SESSION_MODE_ENDLESS
 import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -36,17 +32,11 @@ data class BlockFillEndlessResult(
     val reason: String,
 )
 
-@HiltViewModel(assistedFactory = BlockFillEndlessViewModel.Factory::class)
-class BlockFillEndlessViewModel @AssistedInject constructor(
+class BlockFillEndlessViewModel(
     private val sessionStore: SessionStore,
     private val statsStore: StatsStore,
-    @Assisted resume: Boolean,
+    resume: Boolean,
 ) : ViewModel() {
-
-    @AssistedFactory
-    interface Factory {
-        fun create(resume: Boolean): BlockFillEndlessViewModel
-    }
 
     var session by mutableStateOf<BlockFillEndlessSession?>(null)
         private set

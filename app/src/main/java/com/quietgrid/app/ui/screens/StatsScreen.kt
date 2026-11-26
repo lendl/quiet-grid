@@ -25,23 +25,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.quietgrid.app.LocalAppGraph
 import com.quietgrid.app.R
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.data.GameStats
-import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.ui.components.AccountIconButton
 
 private enum class StatsView { OVERVIEW, LOGS }
 
 @Composable
 fun StatsScreen(onOpenAccount: () -> Unit, onOpenMilestones: () -> Unit = {}) {
-    val repositories: RepositoriesViewModel = hiltViewModel()
+    val graph = LocalAppGraph.current
     val gameIds = remember { GameCatalog.games.map { it.id } }
-    val statsByGame by remember(repositories) { repositories.statsRepository.statsForGames(gameIds) }
+    val statsByGame by remember(graph) { graph.statsRepository.statsForGames(gameIds) }
         .collectAsStateWithLifecycle(initialValue = emptyMap())
-    val records by remember(repositories) { repositories.playHistoryRepository.allRecords() }
+    val records by remember(graph) { graph.playHistoryRepository.allRecords() }
         .collectAsStateWithLifecycle(initialValue = emptyList())
     var view by rememberSaveable { mutableStateOf(StatsView.OVERVIEW) }
     var selectedGame by remember { mutableStateOf<GameId?>(null) }

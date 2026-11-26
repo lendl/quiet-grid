@@ -42,7 +42,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
@@ -53,7 +52,7 @@ import com.quietgrid.app.ui.theme.celebrationGold
 
 @Composable
 fun JourneyScreen(gameId: GameId, onOpenChapter: (Int) -> Unit, onOpenMastered: () -> Unit = {}) {
-    val viewModel: JourneyViewModel = hiltViewModel()
+    val viewModel = journeyViewModel()
     val state by remember(viewModel, gameId) { viewModel.state(gameId) }.collectAsStateWithLifecycle(initialValue = null)
     val current = state ?: return
     val chapters = remember(current.rows) { journeyChapterSummaries(current.rows) }

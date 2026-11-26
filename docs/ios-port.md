@@ -45,7 +45,10 @@ refactor. Each step leaves the Android app building and passing its tests.
 - [x] 3. **Strings and assets.** `strings.xml` (8 locales) and the puzzle banks moved once to
   `:shared`'s Compose resources; the Android APK's resources and assets are unchanged. The iOS
   skeleton screen loads the first Sudoku from the bank and shows real strings, in English and French.
-- [ ] 4. **Dependency injection.** Hilt replaced with plain constructor wiring.
+- [x] 4. **Dependency injection.** Hilt replaced with plain constructor wiring. One `AppGraph` in
+  `QuietGridApplication` builds every shared instance once; screens create ViewModels with
+  `appViewModel { graph -> ... }` over lifecycle's `viewModel { }`, which Compose Multiplatform also
+  has. `QuietGridWorkerFactory` builds the daily reminder worker.
 - [ ] 5. **Storage.** DataStore Preferences and Room move to their KMP builds. Existing Android
   saves, settings, stats and history survive the change.
 - [ ] 6. **Platform services.** `expect`/`actual` for haptics, keep screen awake, in-app language,

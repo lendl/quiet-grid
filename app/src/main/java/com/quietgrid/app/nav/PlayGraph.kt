@@ -20,13 +20,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.keepScreenOn
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.createSavedStateHandle
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.quietgrid.app.R
+import com.quietgrid.app.appViewModel
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.daily.nextUnplayedDaily
@@ -38,7 +39,7 @@ import com.quietgrid.app.games.PlayRequest
 import com.quietgrid.app.session.FinishMotion
 import com.quietgrid.app.session.LossReason
 import com.quietgrid.app.ui.components.AppTab
-import com.quietgrid.app.ui.journey.JourneyViewModel
+import com.quietgrid.app.ui.journey.journeyViewModel
 import com.quietgrid.app.ui.play.LocalPlayContext
 import com.quietgrid.app.ui.play.PlayContext
 import com.quietgrid.app.ui.play.ProvideGamePlayPreferences
@@ -105,7 +106,7 @@ fun NavGraphBuilder.playGraph(navigator: AppNavigator, sharedScope: SharedTransi
 private fun PlayDestination(navigator: AppNavigator, route: PlayRoute) {
     val gameId = route.gameId
     val journeyRequest = route.journey
-    val journeyViewModel: JourneyViewModel = hiltViewModel()
+    val journeyViewModel = journeyViewModel()
 
     fun restartJourney() {
         val request = journeyRequest ?: return
@@ -197,7 +198,7 @@ private fun CompletionDestination(navigator: AppNavigator, route: CompletionRout
 private fun LossDestination(navigator: AppNavigator, route: LossRoute) {
     val gameId = route.gameId
     val journeyStop = route.journeyStop
-    val journeyViewModel: JourneyViewModel = hiltViewModel()
+    val journeyViewModel = journeyViewModel()
     val nextDaily = rememberNextDaily(route.daily, gameId, route.difficulty)
     val context = LocalContext.current
     val resultTip = rememberResultTip(
@@ -247,7 +248,9 @@ private fun LossDestination(navigator: AppNavigator, route: LossRoute) {
 
 @Composable
 internal fun rememberNewBadge(): String? {
-    val viewModel: BadgeAnnouncementViewModel = hiltViewModel()
+    val viewModel = appViewModel { graph ->
+        BadgeAnnouncementViewModel(createSavedStateHandle(), graph.badgeRepository, graph.settingsRepository)
+    }
     val badgeId by viewModel.badgeId.collectAsStateWithLifecycle()
     return badgeId
 }
@@ -256,7 +259,16 @@ private class ResultTip(val tip: QuietTip?, val actions: QuietTipActions, val on
 
 @Composable
 private fun rememberResultTip(navigator: AppNavigator, gameId: GameId, solved: Boolean, eligible: Boolean): ResultTip {
-    val viewModel: QuietTipViewModel = hiltViewModel()
+    val viewModel = appViewModel { graph ->
+        QuietTipViewModel(
+            createSavedStateHandle(),
+            graph.quietTipsRepository,
+            graph.settingsRepository,
+            graph.gamePreferencesRepository,
+            graph.playHistoryRepository,
+            graph.mixRepository,
+        )
+    }
     LaunchedEffect(viewModel) { viewModel.load(gameId, solved, eligible) }
     val tip by viewModel.tip.collectAsStateWithLifecycle()
     val resources = LocalContext.current.resources
@@ -291,14 +303,22 @@ private fun quietTipActions(
 private fun shareDaily(navigator: AppNavigator, context: Context, gameId: GameId, difficulty: Difficulty, dailyKey: String?) {
     if (dailyKey == null) return
     navigator.scope.launch {
-        shareDailyResult(context, navigator.repositories.playHistoryRepository, gameId, difficulty, dailyKey)
+        shareDailyResult(context, navigator.graph.playHistoryRepository, gameId, difficulty, dailyKey)
     }
 }
 
 @Composable
 private fun rememberNextDaily(dailyKey: String?, finishedGameId: GameId, finishedDifficulty: Difficulty): Pair<GameId, Difficulty>? {
     if (dailyKey == null) return null
-    val dailyViewModel: DailyViewModel = hiltViewModel()
+    val dailyViewModel = appViewModel { graph ->
+        DailyViewModel(
+            graph.appContext,
+            graph.dailyRepository,
+            graph.playHistoryRepository,
+            graph.sessionRepository,
+            graph.settingsRepository,
+        )
+    }
     val dailyState by dailyViewModel.state.collectAsStateWithLifecycle()
     if (dailyState.loading || dailyState.today.toString() != dailyKey) return null
     return remember(dailyState.games, finishedGameId, finishedDifficulty) {

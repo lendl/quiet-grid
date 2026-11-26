@@ -5,7 +5,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.journey.JourneyMilestone
@@ -18,7 +17,7 @@ fun MasteredCelebrationScreen(
     onDone: () -> Unit,
     onViewMap: (Int) -> Unit,
 ) {
-    val viewModel: JourneyViewModel = hiltViewModel()
+    val viewModel = journeyViewModel()
     val state by remember(viewModel, gameId) { viewModel.state(gameId) }.collectAsStateWithLifecycle(initialValue = null)
     val playSeconds by produceState<Map<String, Int>?>(initialValue = null, viewModel, gameId) { value = viewModel.playSecondsByStop(gameId) }
     val rows = state?.rows ?: return

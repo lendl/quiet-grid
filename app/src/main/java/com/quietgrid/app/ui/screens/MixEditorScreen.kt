@@ -47,10 +47,11 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
+import com.quietgrid.app.LocalAppGraph
 import com.quietgrid.app.R
+import com.quietgrid.app.appViewModel
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
@@ -66,8 +67,10 @@ import com.quietgrid.app.core.mix.stepEntryWeight
 import com.quietgrid.app.core.mix.groupEntriesByKnownGame
 import com.quietgrid.app.core.mix.missingModeOptionsFor
 import com.quietgrid.app.data.AppSettings
-import com.quietgrid.app.data.RepositoriesViewModel
+import com.quietgrid.app.data.MixRepository
+import com.quietgrid.app.data.SettingsRepository
 import com.quietgrid.app.games.gameDifficultyLabelRes
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 internal const val MIX_NAME_FIELD_TEST_TAG = "mix_name_field"
@@ -75,12 +78,14 @@ private const val MAX_MIX_ENTRY_WEIGHT = 10
 
 @Composable
 fun MixEditorScreen(mixId: String, onDone: () -> Unit, renameTrigger: Int = 0, deleteTrigger: Int = 0) {
-    hiltViewModel<EmptyMixCleanupViewModel, EmptyMixCleanupViewModel.Factory>(creationCallback = { factory -> factory.create(mixId) })
-    val repositories: RepositoriesViewModel = hiltViewModel()
+    val graph = LocalAppGraph.current
+    val cleanup = appViewModel { EmptyMixCleanupViewModel(mixId, graph.mixRepository) }
     MixEditorContent(
         mixId = mixId,
         onDone = onDone,
-        repositories = repositories,
+        settingsRepository = graph.settingsRepository,
+        mixRepository = graph.mixRepository,
+        saveScope = cleanup.viewModelScope,
         renameTrigger = renameTrigger,
         deleteTrigger = deleteTrigger,
     )
@@ -90,12 +95,14 @@ fun MixEditorScreen(mixId: String, onDone: () -> Unit, renameTrigger: Int = 0, d
 internal fun MixEditorContent(
     mixId: String,
     onDone: () -> Unit,
-    repositories: RepositoriesViewModel,
+    settingsRepository: SettingsRepository,
+    mixRepository: MixRepository,
+    saveScope: CoroutineScope,
     renameTrigger: Int = 0,
     deleteTrigger: Int = 0,
 ) {
-    val settings by repositories.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = AppSettings())
-    val mixes by repositories.mixRepository.mixes.collectAsStateWithLifecycle(initialValue = emptyList())
+    val settings by settingsRepository.settings.collectAsStateWithLifecycle(initialValue = AppSettings())
+    val mixes by mixRepository.mixes.collectAsStateWithLifecycle(initialValue = emptyList())
     val existing = remember(mixId, mixes) { mixes.firstOrNull { it.id == mixId } }
     val coroutineScope = rememberCoroutineScope()
 
@@ -119,8 +126,8 @@ internal fun MixEditorContent(
     }
 
     fun persist(newName: String = name, newEntries: List<MixEntry> = entries) {
-        repositories.viewModelScope.launch {
-            repositories.mixRepository.saveMix(Mix(id = mixId, name = newName, entries = newEntries))
+        saveScope.launch {
+            mixRepository.saveMix(Mix(id = mixId, name = newName, entries = newEntries))
         }
     }
 
@@ -209,7 +216,7 @@ internal fun MixEditorContent(
                 TextButton(onClick = {
                     showDeleteConfirm = false
                     coroutineScope.launch {
-                        repositories.mixRepository.deleteMix(mixId)
+                        mixRepository.deleteMix(mixId)
                         onDone()
                     }
                 }) { Text(stringResource(R.string.mix_delete_confirm_button), color = MaterialTheme.colorScheme.error) }

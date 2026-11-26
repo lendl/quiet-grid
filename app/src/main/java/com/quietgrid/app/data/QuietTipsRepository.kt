@@ -14,11 +14,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class QuietTipsRepository @Inject constructor(private val dataStore: DataStore<Preferences>) {
+class QuietTipsRepository(private val dataStore: DataStore<Preferences>) {
     private object Keys {
         val LAST_SHOWN_DAY = stringPreferencesKey("tip_last_shown_day")
         val RESULTS_SINCE_LAST = intPreferencesKey("tip_results_since_last")

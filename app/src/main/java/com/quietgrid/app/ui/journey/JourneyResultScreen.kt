@@ -52,7 +52,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
 import com.quietgrid.app.ui.screens.NewBadgeLine
@@ -84,7 +83,7 @@ fun JourneyResultScreen(
     newBadgeId: String? = null,
     onOpenMilestones: () -> Unit = {},
 ) {
-    val viewModel: JourneyViewModel = hiltViewModel()
+    val viewModel = journeyViewModel()
     val state by remember(viewModel, gameId) { viewModel.state(gameId) }.collectAsStateWithLifecycle(initialValue = null)
     val pending by produceState<List<JourneyMilestone>?>(initialValue = null, viewModel, gameId) {
         value = viewModel.pendingMilestones(gameId)

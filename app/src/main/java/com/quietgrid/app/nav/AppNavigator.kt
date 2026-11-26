@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.compose.runtime.State
 import androidx.navigation.NavHostController
 import androidx.navigation.toRoute
+import com.quietgrid.app.AppGraph
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
@@ -16,7 +17,6 @@ import com.quietgrid.app.core.mix.drawWeighted
 import com.quietgrid.app.core.mix.resolvedCandidates
 import com.quietgrid.app.data.ActiveSessionSummary
 import com.quietgrid.app.data.GamePlayPreferences
-import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.data.journeyTrack
 import com.quietgrid.app.ui.components.AppTab
 import java.time.LocalDate
@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 class AppNavigator(
     val navController: NavHostController,
     val scope: CoroutineScope,
-    val repositories: RepositoriesViewModel,
+    val graph: AppGraph,
     private val appContext: Context,
     private val activeSession: State<ActiveSessionSummary?>,
     private val activeMixState: State<Mix?>,
@@ -57,7 +57,7 @@ class AppNavigator(
     }
 
     fun clearMix() {
-        scope.launch { repositories.mixRepository.clearActiveMix() }
+        scope.launch { graph.mixRepository.clearActiveMix() }
     }
 
     fun openTab(tab: AppTab) {
@@ -79,7 +79,7 @@ class AppNavigator(
     }
 
     private suspend fun chapterOf(gameId: GameId, stopId: String): Int? {
-        val track = repositories.settingsRepository.journeyTrack(gameId).first()
+        val track = graph.settingsRepository.journeyTrack(gameId).first()
         return loadJourneyFile(appContext, track)?.locate(stopId)?.first?.index
     }
 
@@ -141,7 +141,7 @@ class AppNavigator(
     }
 
     fun startMix(mix: Mix) {
-        scope.launch { repositories.mixRepository.setActiveMix(mix.id) }
+        scope.launch { graph.mixRepository.setActiveMix(mix.id) }
         drawFromMix(mix)
     }
 
@@ -152,10 +152,10 @@ class AppNavigator(
 
     private fun drawFromMix(mix: Mix) {
         scope.launch {
-            val enabledGameIds = GameCatalog.enabledGameIds(repositories.settingsRepository.settings.first().betaGamesEnabled)
+            val enabledGameIds = GameCatalog.enabledGameIds(graph.settingsRepository.settings.first().betaGamesEnabled)
             val candidate = drawWeighted(mix.resolvedCandidates().filter { it.gameId in enabledGameIds })
             if (candidate == null) {
-                repositories.mixRepository.clearActiveMix()
+                graph.mixRepository.clearActiveMix()
                 openTab(AppTab.GAMES)
                 return@launch
             }

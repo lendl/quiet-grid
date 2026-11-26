@@ -32,10 +32,6 @@ import com.quietgrid.engine.arrowescape.toPiece
 import com.quietgrid.engine.arrowescape.transformed
 import com.quietgrid.engine.journey.GridTransform
 import com.quietgrid.engine.journey.gridTransformById
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -172,24 +168,18 @@ internal class ArrowEscapePuzzleAdapter(
     )
 }
 
-@HiltViewModel(assistedFactory = ArrowEscapePlayViewModel.Factory::class)
-class ArrowEscapePlayViewModel @AssistedInject constructor(
-    @dagger.hilt.android.qualifiers.ApplicationContext appContext: android.content.Context,
+class ArrowEscapePlayViewModel(
+    appContext: android.content.Context,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     settingsRepository: SettingsRepository,
     journeyStore: JourneyProgressStore,
     badgeStore: BadgeStore,
-    @Assisted requestedDifficulty: Difficulty,
-    @Assisted resume: Boolean,
-    @Assisted journey: JourneyRequest?,
+    requestedDifficulty: Difficulty,
+    resume: Boolean,
+    journey: JourneyRequest?,
 ) : ViewModel() {
-
-    @AssistedFactory
-    interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean, journey: JourneyRequest?): ArrowEscapePlayViewModel
-    }
 
     private val controller = PuzzleSessionController(
         scope = viewModelScope,

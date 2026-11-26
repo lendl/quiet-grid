@@ -8,14 +8,11 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
-import javax.inject.Singleton
 
 private val DAILY_SUBSCRIPTIONS_KEY = stringSetPreferencesKey("daily_subscriptions")
 private const val TIER_SEPARATOR = ":"
 
-@Singleton
-class DailyRepository @Inject constructor(private val dataStore: DataStore<Preferences>) {
+class DailyRepository(private val dataStore: DataStore<Preferences>) {
     val subscriptions: Flow<Map<GameId, Set<Difficulty>>> = dataStore.data.map { prefs ->
         parseSubscriptions(prefs[DAILY_SUBSCRIPTIONS_KEY].orEmpty())
     }

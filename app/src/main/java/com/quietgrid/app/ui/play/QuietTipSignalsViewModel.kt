@@ -5,12 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.QuietTipsRepository
 import com.quietgrid.app.data.ScreenRotation
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class QuietTipSignalsViewModel @Inject constructor(
+class QuietTipSignalsViewModel(
     private val quietTipsRepository: QuietTipsRepository,
 ) : ViewModel(), QuietTipSignals {
     private var dailyTabMarked = false

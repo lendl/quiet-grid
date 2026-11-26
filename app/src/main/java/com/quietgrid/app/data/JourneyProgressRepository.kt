@@ -22,7 +22,6 @@ import com.quietgrid.app.core.journey.pickJourneyReplay
 import com.quietgrid.app.core.journey.rank
 import com.quietgrid.engine.journey.JourneyFile
 import com.quietgrid.engine.journey.JourneyStop
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -35,8 +34,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Singleton
 
 interface JourneyProgressStore {
     fun progressFor(gameId: GameId): Flow<Map<String, JourneyStopProgress>>
@@ -50,7 +47,6 @@ interface JourneyProgressStore {
     fun isMastered(gameId: GameId): Flow<Boolean>
 }
 
-@Singleton
 class JourneyProgressRepository(
     private val dao: JourneyProgressDao,
     private val historyStore: PlayHistoryStore,
@@ -62,9 +58,8 @@ class JourneyProgressRepository(
     private val stopTrackOf: (GameId, String) -> JourneyTrack? = ::journeyTrackOfStop,
 ) : JourneyProgressStore {
 
-    @Inject
     constructor(
-        @ApplicationContext context: Context,
+        context: Context,
         dao: JourneyProgressDao,
         historyStore: PlayHistoryStore,
         settingsRepository: SettingsRepository,

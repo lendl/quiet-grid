@@ -46,8 +46,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.quietgrid.app.LocalAppGraph
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameCatalog
@@ -58,7 +58,6 @@ import com.quietgrid.app.core.mix.MixEntry
 import com.quietgrid.app.core.mix.MixEntryMode
 import com.quietgrid.app.core.mix.mixIdsContainingPuzzle
 import com.quietgrid.app.core.mix.nextMixName
-import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.games.gameDifficultyLabelRes
 import com.quietgrid.app.ui.components.OutlinedGlowButton
 import kotlinx.coroutines.launch
@@ -66,9 +65,9 @@ import java.util.UUID
 
 @Composable
 fun AddToMixScreen(gameId: GameId, difficulty: Difficulty, onDone: () -> Unit, onNewMix: () -> Unit) {
-    val repositories: RepositoriesViewModel = hiltViewModel()
+    val graph = LocalAppGraph.current
     val scope = rememberCoroutineScope()
-    val mixes by repositories.mixRepository.mixes.collectAsStateWithLifecycle(initialValue = null)
+    val mixes by graph.mixRepository.mixes.collectAsStateWithLifecycle(initialValue = null)
     var selectedIds by rememberSaveable { mutableStateOf<List<String>?>(null) }
     var saving by remember { mutableStateOf(false) }
     val loadedMixes = mixes ?: return
@@ -78,7 +77,7 @@ fun AddToMixScreen(gameId: GameId, difficulty: Difficulty, onDone: () -> Unit, o
         if (saving) return
         saving = true
         scope.launch {
-            repositories.mixRepository.setPuzzleMembership(gameId, difficulty, selected)
+            graph.mixRepository.setPuzzleMembership(gameId, difficulty, selected)
             next()
         }
     }
@@ -127,9 +126,9 @@ fun AddToMixScreen(gameId: GameId, difficulty: Difficulty, onDone: () -> Unit, o
 
 @Composable
 fun NewMixScreen(gameId: GameId, difficulty: Difficulty, onCreated: () -> Unit) {
-    val repositories: RepositoriesViewModel = hiltViewModel()
+    val graph = LocalAppGraph.current
     val scope = rememberCoroutineScope()
-    val mixes by repositories.mixRepository.mixes.collectAsStateWithLifecycle(initialValue = null)
+    val mixes by graph.mixRepository.mixes.collectAsStateWithLifecycle(initialValue = null)
     var name by rememberSaveable { mutableStateOf("") }
     var creating by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
@@ -148,7 +147,7 @@ fun NewMixScreen(gameId: GameId, difficulty: Difficulty, onCreated: () -> Unit) 
             entries = listOf(MixEntry(gameId = gameId.key, mode = MixEntryMode.PUZZLE, difficulty = difficulty.key, weight = 1)),
         )
         scope.launch {
-            repositories.mixRepository.saveMix(mix)
+            graph.mixRepository.saveMix(mix)
             onCreated()
         }
     }

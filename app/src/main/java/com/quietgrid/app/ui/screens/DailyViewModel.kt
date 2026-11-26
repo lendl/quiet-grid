@@ -16,8 +16,6 @@ import com.quietgrid.app.data.DailyRepository
 import com.quietgrid.app.data.PlayHistoryRepository
 import com.quietgrid.app.data.SessionRepository
 import com.quietgrid.app.data.SettingsRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -33,7 +31,6 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import javax.inject.Inject
 
 private const val TODAY_POLL_MS = 60_000L
 
@@ -49,9 +46,8 @@ data class DailyUiState(
 )
 
 @OptIn(ExperimentalCoroutinesApi::class)
-@HiltViewModel
-class DailyViewModel @Inject constructor(
-    @ApplicationContext private val appContext: Context,
+class DailyViewModel(
+    private val appContext: Context,
     private val dailyRepository: DailyRepository,
     private val historyRepository: PlayHistoryRepository,
     sessionRepository: SessionRepository,

@@ -41,8 +41,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.quietgrid.app.LocalAppGraph
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
@@ -50,7 +50,6 @@ import com.quietgrid.app.core.themes.ThemeCount
 import com.quietgrid.app.core.themes.sparseTiers
 import com.quietgrid.app.core.themes.themeIcon
 import com.quietgrid.app.core.themes.themeLabelRes
-import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.games.GameRegistry
 import com.quietgrid.app.games.themeclear.ThemeClearPuzzleBank
 import com.quietgrid.app.games.themeclear.currentThemeClearLocale
@@ -102,16 +101,16 @@ fun GameSettingsTab(gameId: GameId) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ThemeSelectionSection(gameId: GameId, header: @Composable () -> Unit) {
-    val repositories: RepositoriesViewModel = hiltViewModel()
+    val graph = LocalAppGraph.current
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val settings by repositories.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = null)
+    val settings by graph.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = null)
     val puzzleLanguage = settings?.puzzleLanguage ?: return
     val locale = themeLocaleFor(gameId, puzzleLanguage)
     val counts by produceState<List<ThemeCount>?>(null, gameId, locale) {
         value = themeCountsFor(gameId, context, locale)
     }
-    val excludedFlow = remember(gameId, locale) { repositories.themePreferencesRepository.excludedThemes(gameId, locale) }
+    val excludedFlow = remember(gameId, locale) { graph.themePreferencesRepository.excludedThemes(gameId, locale) }
     val excluded by excludedFlow.collectAsStateWithLifecycle(initialValue = null)
     var openThemeId by rememberSaveable(gameId) { mutableStateOf<String?>(null) }
     val currentCounts = counts ?: return
@@ -152,7 +151,7 @@ private fun ThemeSelectionSection(gameId: GameId, header: @Composable () -> Unit
                 )
                 TextButton(
                     onClick = {
-                        scope.launch { repositories.themePreferencesRepository.setExcludedThemes(gameId, locale, emptySet()) }
+                        scope.launch { graph.themePreferencesRepository.setExcludedThemes(gameId, locale, emptySet()) }
                     },
                     enabled = effectiveExcluded.isNotEmpty(),
                 ) {
@@ -221,7 +220,7 @@ private fun ThemeSelectionSection(gameId: GameId, header: @Composable () -> Unit
                     checked = checked,
                     onCheckedChange = {
                         scope.launch {
-                            repositories.themePreferencesRepository.toggleExcludedTheme(gameId, locale, count.themeId, allIds)
+                            graph.themePreferencesRepository.toggleExcludedTheme(gameId, locale, count.themeId, allIds)
                         }
                     },
                     enabled = canToggle,

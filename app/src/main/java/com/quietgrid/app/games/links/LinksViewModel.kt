@@ -23,10 +23,6 @@ import com.quietgrid.engine.links.LinksStroke
 import com.quietgrid.engine.links.extendLinksStroke
 import com.quietgrid.engine.links.linksStrokePaths
 import com.quietgrid.engine.links.startLinksStroke
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -112,23 +108,17 @@ internal class LinksPuzzleAdapter(
     )
 }
 
-@HiltViewModel(assistedFactory = LinksPlayViewModel.Factory::class)
-class LinksPlayViewModel @AssistedInject constructor(
-    @dagger.hilt.android.qualifiers.ApplicationContext appContext: android.content.Context,
+class LinksPlayViewModel(
+    appContext: android.content.Context,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     journeyStore: JourneyProgressStore,
     badgeStore: BadgeStore,
-    @Assisted requestedDifficulty: Difficulty,
-    @Assisted resume: Boolean,
-    @Assisted journey: JourneyRequest?,
+    requestedDifficulty: Difficulty,
+    resume: Boolean,
+    journey: JourneyRequest?,
 ) : ViewModel() {
-
-    @AssistedFactory
-    interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean, journey: JourneyRequest?): LinksPlayViewModel
-    }
 
     private val controller = PuzzleSessionController(
         scope = viewModelScope,

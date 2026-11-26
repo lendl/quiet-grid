@@ -57,17 +57,16 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.quietgrid.app.LocalAppGraph
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.core.difficultyColor
 import com.quietgrid.app.core.formatElapsed
 import com.quietgrid.app.core.journey.JOURNEY_GAMES
 import com.quietgrid.app.data.ActiveSessionEnvelope
 import com.quietgrid.app.data.DifficultyStats
-import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.data.SESSION_MODE_ENDLESS
 import com.quietgrid.app.games.GameRegistry
 import com.quietgrid.app.games.animaldoku.animalDokuDifficultyDescriptionRes
@@ -114,9 +113,9 @@ fun PuzzlePickerScreen(
     onStartEndless: () -> Unit = {},
     onOpenJourney: (Int?) -> Unit = {},
 ) {
-    val repositories: RepositoriesViewModel = hiltViewModel()
-    val settings by repositories.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = null)
-    val activeSession by repositories.sessionRepository.activeSession.collectAsStateWithLifecycle(initialValue = null)
+    val graph = LocalAppGraph.current
+    val settings by graph.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = null)
+    val activeSession by graph.sessionRepository.activeSession.collectAsStateWithLifecycle(initialValue = null)
     val activeGameKey = activeSession?.gameId
     val coroutineScope = rememberCoroutineScope()
     var showQuickStart by remember(gameId) { mutableStateOf(false) }
@@ -139,7 +138,7 @@ fun PuzzlePickerScreen(
 
     LaunchedEffect(gameId, settings) {
         val newBadgeSeen = settings?.newBadgeSeenGameIds ?: return@LaunchedEffect
-        if (GameCatalog.get(gameId).isNew && gameId.key !in newBadgeSeen) repositories.settingsRepository.markNewBadgeSeen(gameId)
+        if (GameCatalog.get(gameId).isNew && gameId.key !in newBadgeSeen) graph.settingsRepository.markNewBadgeSeen(gameId)
     }
 
     if (showQuickStart) {
@@ -147,11 +146,11 @@ fun PuzzlePickerScreen(
             content = GameRegistry.of(gameId).quickStart,
             onDismiss = {
                 showQuickStart = false
-                coroutineScope.launch { repositories.settingsRepository.markQuickStartSeen(gameId) }
+                coroutineScope.launch { graph.settingsRepository.markQuickStartSeen(gameId) }
             },
             onQuickPlay = {
                 showQuickStart = false
-                coroutineScope.launch { repositories.settingsRepository.markQuickStartSeen(gameId) }
+                coroutineScope.launch { graph.settingsRepository.markQuickStartSeen(gameId) }
                 requestStartDifficulty(Difficulty.EASY)
             },
         )
@@ -324,8 +323,8 @@ private fun GamePlayPickerTab(
     endlessCopy: EndlessModeCopy?,
     onOpenJourney: (Int?) -> Unit,
 ) {
-    val repositories: RepositoriesViewModel = hiltViewModel()
-    val stats by remember(repositories, gameId) { repositories.statsRepository.statsFor(gameId) }.collectAsStateWithLifecycle(initialValue = null)
+    val graph = LocalAppGraph.current
+    val stats by remember(graph, gameId) { graph.statsRepository.statsFor(gameId) }.collectAsStateWithLifecycle(initialValue = null)
 
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
         Column(
@@ -366,7 +365,7 @@ private fun GamePlayPickerTab(
             val challengerLabelRes = GameRegistry.of(gameId).challenger?.let { R.string.challenger_label }
             val challengerDescriptionRes = GameRegistry.of(gameId).challenger?.descriptionRes
             if (challengerLabelRes != null && challengerDescriptionRes != null) {
-                val challengerStats by remember(repositories, gameId) { repositories.statsRepository.challengerStatsFor(gameId) }
+                val challengerStats by remember(graph, gameId) { graph.statsRepository.challengerStatsFor(gameId) }
                     .collectAsStateWithLifecycle(initialValue = null)
                 val bestScore = challengerStats?.bestScore ?: 0
                 PickerModeTile(
@@ -377,7 +376,7 @@ private fun GamePlayPickerTab(
                 )
             }
             if (endlessCopy != null) {
-                val endlessStats by remember(repositories, gameId) { repositories.statsRepository.endlessStatsFor(gameId) }
+                val endlessStats by remember(graph, gameId) { graph.statsRepository.endlessStatsFor(gameId) }
                     .collectAsStateWithLifecycle(initialValue = null)
                 val bestScore = endlessStats?.bestScore ?: 0
                 PickerModeTile(
@@ -531,8 +530,8 @@ private fun PickerModeTile(label: String, description: String, detail: String?, 
 
 @Composable
 private fun GameStatsTab(gameId: GameId, endlessCopy: EndlessModeCopy?) {
-    val repositories: RepositoriesViewModel = hiltViewModel()
-    val stats by remember(repositories, gameId) { repositories.statsRepository.statsFor(gameId) }.collectAsStateWithLifecycle(initialValue = null)
+    val graph = LocalAppGraph.current
+    val stats by remember(graph, gameId) { graph.statsRepository.statsFor(gameId) }.collectAsStateWithLifecycle(initialValue = null)
     val currentStats = stats ?: return
     val overview = remember(currentStats) { buildStatsOverview(gameId, mapOf(gameId to currentStats)) }
 
@@ -544,7 +543,7 @@ private fun GameStatsTab(gameId: GameId, endlessCopy: EndlessModeCopy?) {
         val challengerSolvedLabelRes = GameRegistry.of(gameId).challenger?.puzzlesSolvedLabelRes
         val challengerScoreLabelRes = GameRegistry.of(gameId).challenger?.let { R.string.challenger_result_score }
         if (challengerStatsTitleRes != null && challengerStatsBestRunRes != null && challengerSolvedLabelRes != null && challengerScoreLabelRes != null) {
-            val challengerStats by remember(repositories, gameId) { repositories.statsRepository.challengerStatsFor(gameId) }
+            val challengerStats by remember(graph, gameId) { graph.statsRepository.challengerStatsFor(gameId) }
                 .collectAsStateWithLifecycle(initialValue = null)
             challengerStats?.let { current ->
                 HorizontalDivider(Modifier.padding(top = 20.dp))
@@ -570,7 +569,7 @@ private fun GameStatsTab(gameId: GameId, endlessCopy: EndlessModeCopy?) {
             }
         }
         if (endlessCopy != null) {
-            val endlessStats by remember(repositories, gameId) { repositories.statsRepository.endlessStatsFor(gameId) }
+            val endlessStats by remember(graph, gameId) { graph.statsRepository.endlessStatsFor(gameId) }
                 .collectAsStateWithLifecycle(initialValue = null)
             endlessStats?.let { current ->
                 HorizontalDivider(Modifier.padding(top = 20.dp))

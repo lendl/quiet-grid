@@ -8,11 +8,8 @@ import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.themes.toggleThemeExclusion
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class ThemePreferencesRepository @Inject constructor(private val dataStore: DataStore<Preferences>) {
+class ThemePreferencesRepository(private val dataStore: DataStore<Preferences>) {
 
     private fun key(gameId: GameId, locale: String) = stringSetPreferencesKey("themes_excluded_${gameId.key}_$locale")
 

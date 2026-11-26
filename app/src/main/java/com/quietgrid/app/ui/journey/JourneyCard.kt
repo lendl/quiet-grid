@@ -27,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
 import com.quietgrid.app.core.GameId
@@ -36,7 +35,7 @@ import com.quietgrid.app.ui.theme.celebrationGold
 
 @Composable
 fun JourneyCard(gameId: GameId, onOpen: (Int?) -> Unit) {
-    val viewModel: JourneyViewModel = hiltViewModel()
+    val viewModel = journeyViewModel()
     val state by remember(viewModel, gameId) { viewModel.state(gameId) }.collectAsStateWithLifecycle(initialValue = null)
     val summary = state?.summary ?: return
     val chapterIndex = summary.chapterIndex

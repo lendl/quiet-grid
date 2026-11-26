@@ -6,6 +6,7 @@ import org.junit.Test
 
 class AppArchitectureTest {
     private val gamesPackage = "com.quietgrid.app.games."
+    private val emptySavedStateHandle = Regex("""(?<!\w)SavedStateHandle\(\s*\)""")
 
     private val knownCrossGameImports = setOf(
         "guessbynumbers" to "wordguess",
@@ -39,6 +40,22 @@ class AppArchitectureTest {
             emptySet<Pair<String, String>>(),
             knownCrossGameImports - found,
         )
+    }
+
+    @Test
+    fun `production code never builds an empty SavedStateHandle`() {
+        val offenders = Konsist.scopeFromProduction(moduleName = "app").files
+            .filter { emptySavedStateHandle.containsMatchIn(it.text) }
+            .map { it.path }
+        assertEquals(emptyList<String>(), offenders)
+    }
+
+    @Test
+    fun `app code does not use Hilt or Dagger`() {
+        val offenders = Konsist.scopeFromModule("app").files
+            .filter { file -> file.imports.any { i -> listOf("dagger.", "javax.inject.", "androidx.hilt.").any(i.name::startsWith) } }
+            .map { it.path }
+        assertEquals(emptyList<String>(), offenders)
     }
 
     private fun gameOfPackage(name: String?): String? =

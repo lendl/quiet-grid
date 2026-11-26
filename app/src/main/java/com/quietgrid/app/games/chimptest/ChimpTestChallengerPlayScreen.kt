@@ -8,8 +8,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.R
+import com.quietgrid.app.appViewModel
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.standardDifficultyLabelRes
 import com.quietgrid.app.session.ChallengerResult
@@ -25,7 +25,9 @@ import com.quietgrid.app.ui.play.heartsInfo
 fun ChimpTestChallengerPlayScreen(
     onFinished: (ChallengerResult) -> Unit,
 ) {
-    val viewModel = hiltViewModel<ChimpTestChallengerViewModel>()
+    val viewModel = appViewModel { graph ->
+        ChimpTestChallengerViewModel(graph.statsRepository, graph.playHistoryRepository, graph.appForeground)
+    }
 
     CollectPuzzleResult(viewModel.result, onFinished)
 

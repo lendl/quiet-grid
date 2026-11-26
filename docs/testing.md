@@ -68,33 +68,29 @@
     dependency. Run `./gradlew :app:createDebugUnitTestCoverageReport` →
     `app/build/reports/coverage/test/debug/index.html`.
 
-- **Dependency injection (Hilt).** `AppContainer` (the old manual singleton locator) is gone;
-  `QuietGridApplication` is `@HiltAndroidApp`, `MainActivity` is `@AndroidEntryPoint`.
-  - The 3 repositories (`SessionRepository`/`StatsRepository`/`SettingsRepository`) are
-    `@Singleton class ... @Inject constructor(dataStore: DataStore<Preferences>)`; the DataStore
-    itself comes from `AppModule` (`@Provides @Singleton`). `SessionStore`/`StatsStore` (the
-    interfaces `PuzzleSessionController` and the ViewModels actually depend on) are bound to their
-    impls via `RepositoryBindingsModule` (`@Binds`).
-  - Screens that just read/write settings/stats/session state without their own ViewModel (e.g.
-    `StatsScreen`, `SettingsScreen`, `GamesScreen`, `AppNavHost`) call
-    `hiltViewModel<RepositoriesViewModel>()` — a thin `@HiltViewModel` that just exposes the 3
-    repositories, the direct architectural replacement for what `AppContainer.x` used to do. Safe to
-    call from multiple independent Compose scopes (e.g. `AppNavHost`'s Activity scope vs a tab
-    screen's nav-entry scope) since the repositories underneath are `@Singleton` regardless of how
-    many `RepositoriesViewModel` instances exist.
-  - All 8 `*PlayViewModel`s use **assisted injection** (`@AssistedInject`/`@AssistedFactory`), since
-    `requestedDifficulty`/`resume` are per-navigation values Hilt can't provide on its own; the 5
-    that read a bundled puzzle asset take `@ApplicationContext appContext: Context` directly instead
-    of a screen passing `LocalContext.current`. Call sites use
-    `hiltViewModel<XxxPlayViewModel, XxxPlayViewModel.Factory>(creationCallback = { it.create(difficulty, resume) })`
-    (needs `androidx.hilt:hilt-navigation-compose` 1.2.0+ for the `creationCallback` param).
-  - **Real gotcha hit and fixed**: Hilt/Dagger 2.52's bundled annotation processor uses a jarjarred
-    `kotlinx-metadata-jvm` that only parses Kotlin metadata up to version 2.1.0 — Kotlin 2.2.10 (this
-    project's compiler) emits metadata version 2.2.0, so `kaptDebugKotlin` failed outright
-    (`Provided Metadata instance has version 2.2.0, while maximum supported version is 2.1.0`) before
-    generating anything. Fixed by bumping to Hilt 2.60.1 (check Maven Central for whatever's current
-    if this recurs after a future Kotlin bump — don't assume the pinned version here stays compatible
-    forever).
+- **Dependency injection (plain constructors).** There is no Hilt or Dagger.
+  - `AppGraph` (`app/src/main/java/com/quietgrid/app/AppGraph.kt`) builds every app-wide instance
+    once, as a synchronized `by lazy` property: the DataStore, the Room database and its DAOs, the
+    repositories, `AppForeground`, `DailyReminderScheduler`, `QuickPlaySource` and
+    `QuickPlayWidgetUpdater`. `QuietGridApplication.graph` holds it.
+  - Android entry points (the Activity, the worker, the widget) read it with `context.appGraph`.
+    Composables read `LocalAppGraph.current`, which `MainActivity` provides around its content.
+  - Screens create ViewModels with `appViewModel { graph -> XxxPlayViewModel(graph.sessionRepository,
+    ..., difficulty, resume) }`, a thin wrapper over lifecycle's `viewModel { }`. It uses the current
+    `ViewModelStoreOwner` (the navigation entry) and keys the ViewModel by class name, and the lambda
+    runs only when the ViewModel is first created. Per-screen values such as `difficulty` and `resume`
+    are plain constructor arguments. A ViewModel that needs saved state or navigation arguments takes
+    `createSavedStateHandle()` from the lambda's `CreationExtras` receiver, never `SavedStateHandle()`.
+  - `QuietGridWorkerFactory` builds `DailyReminderWorker` for WorkManager. WorkManager looks the
+    worker up by its stored class name, so reminders scheduled by older builds keep firing.
+  - Tests build ViewModels and repositories directly with their constructors and fakes or `mockk`; no
+    DI framework is involved. A Robolectric test that needs the real wiring reads
+    `ApplicationProvider.getApplicationContext<Context>().appGraph`. Composables under test that call
+    `appViewModel` or read `LocalAppGraph` need
+    `CompositionLocalProvider(LocalAppGraph provides context.appGraph)` (see
+    `TabletStoreArtCaptureTest`). `AppGraphTest` and `QuietGridWorkerFactoryTest` cover the wiring.
+  - `AppArchitectureTest` fails if an `:app` file imports `dagger.*`, `javax.inject.*` or
+    `androidx.hilt.*`, or if production code builds an empty `SavedStateHandle()`.
 
 - **Store screenshots** — `TabletStoreArtCaptureTest`
   (`app/src/test/java/com/quietgrid/app/storeart/TabletStoreArtCaptureTest.kt`) is a Roborazzi capture

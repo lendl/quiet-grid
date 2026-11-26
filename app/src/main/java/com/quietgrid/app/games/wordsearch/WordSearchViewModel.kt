@@ -27,11 +27,6 @@ import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
 import com.quietgrid.engine.wordsearch.WSCellRef
 import com.quietgrid.engine.wordsearch.WordSearchPuzzleEntry
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -164,24 +159,18 @@ private class WordSearchPuzzleAdapter(
     )
 }
 
-@HiltViewModel(assistedFactory = WordSearchPlayViewModel.Factory::class)
-class WordSearchPlayViewModel @AssistedInject constructor(
-    @ApplicationContext appContext: Context,
+class WordSearchPlayViewModel(
+    appContext: Context,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     settingsRepository: SettingsRepository,
     themePreferencesRepository: ThemePreferencesRepository,
     badgeStore: BadgeStore,
-    @Assisted requestedDifficulty: Difficulty,
-    @Assisted resume: Boolean,
-    @Assisted dailyDate: LocalDate?,
+    requestedDifficulty: Difficulty,
+    resume: Boolean,
+    dailyDate: LocalDate?,
 ) : ViewModel() {
-
-    @AssistedFactory
-    interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean, dailyDate: LocalDate?): WordSearchPlayViewModel
-    }
 
     private val controller = PuzzleSessionController(
         scope = viewModelScope,

@@ -14,9 +14,6 @@ updates:
         patterns:
           - "org.jetbrains.kotlin*"
           - "com.google.devtools.ksp*"
-      hilt:
-        patterns:
-          - "com.google.dagger*"
       android-gradle-plugin:
         patterns:
           - "com.android.*"

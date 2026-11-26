@@ -15,14 +15,10 @@ import com.quietgrid.app.session.ChallengerRunController
 import com.quietgrid.app.session.challengerTierAfterSolve
 import com.quietgrid.app.session.tick
 import com.quietgrid.engine.blockescape.BlockEscapeMove
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class BlockEscapeChallengerViewModel @Inject constructor(
-    @ApplicationContext private val appContext: Context,
+class BlockEscapeChallengerViewModel(
+    private val appContext: Context,
     statsStore: StatsStore,
     historyStore: PlayHistoryStore,
     appForeground: AppForeground,

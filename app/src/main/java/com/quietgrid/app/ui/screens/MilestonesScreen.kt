@@ -43,9 +43,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
+import com.quietgrid.app.appViewModel
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.badges.BadgeCatalog
 import com.quietgrid.app.core.badges.BadgeCount
@@ -73,7 +73,10 @@ private val RECENT_BADGE_SIZE = 36.dp
 private val GAME_HEX_SIZE = 34.dp
 
 @Composable
-fun MilestonesScreen(modifier: Modifier = Modifier, viewModel: MilestonesViewModel = hiltViewModel()) {
+fun MilestonesScreen(
+    modifier: Modifier = Modifier,
+    viewModel: MilestonesViewModel = appViewModel { graph -> MilestonesViewModel(graph.badgeRepository) },
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     var openId by rememberSaveable { mutableStateOf<String?>(null) }
     if (!state.loaded) return

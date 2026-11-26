@@ -3,9 +3,9 @@ package com.quietgrid.app.games.blockescape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
+import com.quietgrid.app.appViewModel
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.journey.JourneyRequest
@@ -27,9 +27,19 @@ fun BlockEscapePlayScreen(
     journey: JourneyRequest? = null,
     onRestarted: () -> Unit = {},
 ) {
-    val viewModel = hiltViewModel<BlockEscapePlayViewModel, BlockEscapePlayViewModel.Factory>(
-        creationCallback = { factory -> factory.create(difficulty, resume, journey) },
-    )
+    val viewModel = appViewModel { graph ->
+        BlockEscapePlayViewModel(
+            graph.appContext,
+            graph.sessionRepository,
+            graph.statsRepository,
+            graph.playHistoryRepository,
+            graph.journeyProgressRepository,
+            graph.badgeRepository,
+            difficulty,
+            resume,
+            journey,
+        )
+    }
     CollectPuzzleResult(viewModel.result, onFinished)
     CollectPuzzleResult(viewModel.restarts) { onRestarted() }
     val finishing by viewModel.finishing.collectAsStateWithLifecycle()

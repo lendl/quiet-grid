@@ -20,10 +20,6 @@ import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
 import com.quietgrid.engine.sequencememory.sequenceMemoryScore
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filterNotNull
@@ -86,21 +82,15 @@ private class SequenceMemoryPuzzleAdapter : PuzzleAdapter<SequenceMemorySession,
     )
 }
 
-@HiltViewModel(assistedFactory = SequenceMemoryPlayViewModel.Factory::class)
-class SequenceMemoryPlayViewModel @AssistedInject constructor(
+class SequenceMemoryPlayViewModel(
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     private val appForeground: AppForeground,
     badgeStore: BadgeStore,
-    @Assisted requestedDifficulty: Difficulty,
-    @Assisted resume: Boolean,
+    requestedDifficulty: Difficulty,
+    resume: Boolean,
 ) : ViewModel() {
-
-    @AssistedFactory
-    interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean): SequenceMemoryPlayViewModel
-    }
 
     private val controller = PuzzleSessionController(
         scope = viewModelScope,

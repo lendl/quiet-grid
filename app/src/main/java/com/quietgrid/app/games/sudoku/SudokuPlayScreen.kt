@@ -12,10 +12,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
 import java.time.LocalDate
+import com.quietgrid.app.appViewModel
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.journey.JourneyRequest
 import com.quietgrid.app.ui.components.CollectPuzzleResult
@@ -39,9 +39,21 @@ fun SudokuPlayScreen(
     journey: JourneyRequest? = null,
     onRestarted: () -> Unit = {},
 ) {
-    val viewModel = hiltViewModel<SudokuPlayViewModel, SudokuPlayViewModel.Factory>(
-        creationCallback = { factory -> factory.create(difficulty, resume, dailyDate, variant, journey) },
-    )
+    val viewModel = appViewModel { graph ->
+        SudokuPlayViewModel(
+            graph.appContext,
+            graph.sessionRepository,
+            graph.statsRepository,
+            graph.playHistoryRepository,
+            graph.journeyProgressRepository,
+            graph.badgeRepository,
+            difficulty,
+            resume,
+            dailyDate,
+            variant,
+            journey,
+        )
+    }
     CollectPuzzleResult(viewModel.result, onFinished)
     CollectPuzzleResult(viewModel.restarts) { onRestarted() }
     val finishing by viewModel.finishing.collectAsStateWithLifecycle()

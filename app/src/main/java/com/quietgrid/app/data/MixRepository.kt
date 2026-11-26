@@ -16,8 +16,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Serializable
 private data class MixesEnvelope(val mixes: List<Mix> = emptyList())
@@ -32,8 +30,7 @@ private fun decodeMixes(raw: String?): MixesEnvelope =
 
 private fun Preferences.decodeMixes(): MixesEnvelope = decodeMixes(this[MIXES_KEY])
 
-@Singleton
-class MixRepository @Inject constructor(private val dataStore: DataStore<Preferences>) {
+class MixRepository(private val dataStore: DataStore<Preferences>) {
     val mixes: Flow<List<Mix>> = dataStore.data
         .map { it[MIXES_KEY] }
         .distinctUntilChanged()

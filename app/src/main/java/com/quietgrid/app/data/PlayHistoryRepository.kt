@@ -20,8 +20,6 @@ import kotlinx.serialization.json.Json
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Serializable
 data class PlayRecord(
@@ -59,8 +57,7 @@ fun gameKeysByJourneyRecency(records: List<PlayRecord>): List<String> = records
 private val json = Json { ignoreUnknownKeys = true }
 private val PLAY_HISTORY_KEY = stringPreferencesKey("play_history")
 
-@Singleton
-class PlayHistoryRepository @Inject constructor(
+class PlayHistoryRepository(
     private val dataStore: DataStore<Preferences>,
     private val dao: PlayHistoryDao,
 ) : PlayHistoryStore {

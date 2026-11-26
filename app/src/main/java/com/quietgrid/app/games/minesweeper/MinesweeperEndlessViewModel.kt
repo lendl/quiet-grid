@@ -24,10 +24,6 @@ import com.quietgrid.engine.minesweeper.endless.section
 import com.quietgrid.engine.minesweeper.endless.settleEndlessWorld
 import com.quietgrid.engine.minesweeper.endless.startEndlessRun
 import com.quietgrid.engine.minesweeper.endless.toggleEndlessFlag
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
@@ -45,7 +41,6 @@ private const val TICK_INTERVAL_MS = 1000L
 private const val CHECKPOINT_INTERVAL_TICKS = 15
 const val MINESWEEPER_ENDLESS_FINISH_DELAY_MS = 1200L
 
-@HiltViewModel(assistedFactory = MinesweeperEndlessViewModel.Factory::class)
 class MinesweeperEndlessViewModel internal constructor(
     private val sessionStore: SessionStore,
     private val statsStore: StatsStore,
@@ -55,18 +50,12 @@ class MinesweeperEndlessViewModel internal constructor(
     private val random: Random,
 ) : ViewModel() {
 
-    @AssistedInject
     constructor(
         sessionStore: SessionStore,
         statsStore: StatsStore,
         appForeground: AppForeground,
-        @Assisted resume: Boolean,
+        resume: Boolean,
     ) : this(sessionStore, statsStore, appForeground, resume, Dispatchers.Default, Random.Default)
-
-    @AssistedFactory
-    interface Factory {
-        fun create(resume: Boolean): MinesweeperEndlessViewModel
-    }
 
     var session by mutableStateOf<MinesweeperEndlessSession?>(null)
         private set

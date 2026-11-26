@@ -25,6 +25,8 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import com.github.takahirom.roborazzi.captureRoboImage
 import com.quietgrid.app.LaunchRequest
+import com.quietgrid.app.LocalAppGraph
+import com.quietgrid.app.appGraph
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.badges.BadgeFacts
@@ -50,9 +52,6 @@ import com.quietgrid.app.ui.components.LocalHapticsEnabled
 import com.quietgrid.app.ui.theme.QuietGridTheme
 import com.quietgrid.app.ui.theme.ResolvedTheme
 import com.quietgrid.engine.starbattle.StarBattlePuzzleEntry
-import dagger.hilt.android.testing.HiltAndroidRule
-import dagger.hilt.android.testing.HiltAndroidTest
-import dagger.hilt.android.testing.HiltTestApplication
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -67,38 +66,31 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
-import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import org.robolectric.shadows.ShadowLooper
 import java.time.LocalDate
 import java.time.ZoneId
-import javax.inject.Inject
 import kotlin.math.abs
 
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-@HiltAndroidTest
-@Config(application = HiltTestApplication::class)
 class TabletStoreArtCaptureTest {
-    @get:Rule(order = 0)
-    val hiltRule = HiltAndroidRule(this)
-
-    @get:Rule(order = 1)
+    @get:Rule
     val composeRule = createEmptyComposeRule()
 
-    @Inject lateinit var settingsRepository: SettingsRepository
-
-    @Inject lateinit var dailyRepository: DailyRepository
-
-    @Inject lateinit var historyRepository: PlayHistoryRepository
-
-    @Inject lateinit var sessionRepository: SessionRepository
-
-    @Inject lateinit var journeyStore: JourneyProgressStore
-
-    @Inject lateinit var badgeRepository: BadgeRepository
-
     private val app get() = ApplicationProvider.getApplicationContext<Application>()
+
+    val settingsRepository: SettingsRepository get() = app.appGraph.settingsRepository
+
+    val dailyRepository: DailyRepository get() = app.appGraph.dailyRepository
+
+    val historyRepository: PlayHistoryRepository get() = app.appGraph.playHistoryRepository
+
+    val sessionRepository: SessionRepository get() = app.appGraph.sessionRepository
+
+    val journeyStore: JourneyProgressStore get() = app.appGraph.journeyProgressRepository
+
+    val badgeRepository: BadgeRepository get() = app.appGraph.badgeRepository
 
     private enum class Tablet(val folder: String, val qualifiers: String) {
         SEVEN_INCH("tablet-7", "w600dp-h960dp-large-port-xhdpi"),
@@ -132,7 +124,6 @@ class TabletStoreArtCaptureTest {
     @Before
     fun setUp() {
         assumeTrue(System.getProperty("roborazzi.test.record") == "true")
-        hiltRule.inject()
         shadowOf(app.packageManager).addOrUpdateActivity(
             ActivityInfo().apply {
                 name = StoreArtHostActivity::class.java.name
@@ -168,13 +159,15 @@ class TabletStoreArtCaptureTest {
         val scenario = ActivityScenario.launch(StoreArtHostActivity::class.java)
         scenario.onActivity { activity ->
             activity.setContent {
-                QuietGridTheme(resolvedTheme = shot.theme) {
-                    CompositionLocalProvider(LocalHapticsEnabled provides false) {
-                        Box(Modifier.fillMaxSize()) {
-                            AppNavHost(
-                                launchRequest = launchRequest.value,
-                                onLaunchRequestHandled = { launchRequest.value = null },
-                            )
+                CompositionLocalProvider(LocalAppGraph provides activity.appGraph) {
+                    QuietGridTheme(resolvedTheme = shot.theme) {
+                        CompositionLocalProvider(LocalHapticsEnabled provides false) {
+                            Box(Modifier.fillMaxSize()) {
+                                AppNavHost(
+                                    launchRequest = launchRequest.value,
+                                    onLaunchRequestHandled = { launchRequest.value = null },
+                                )
+                            }
                         }
                     }
                 }

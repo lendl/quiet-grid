@@ -47,14 +47,13 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.quietgrid.app.LocalAppGraph
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.difficultyColor
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.quietgrid.app.core.formatElapsed
 import com.quietgrid.app.core.tips.QuietTip
-import com.quietgrid.app.data.RepositoriesViewModel
 import com.quietgrid.app.games.GameRegistry
 import com.quietgrid.app.games.gameDifficultyLabelRes
 import com.quietgrid.app.ui.theme.LocalIsDarkTheme
@@ -128,11 +127,11 @@ fun CompletionScreen(
     val caseSolvedText = (highlight as? CompletionHighlight.CaseSolved)?.text?.takeIf { it.isNotEmpty() }
     val bestTile = (highlight as? CompletionHighlight.BestTile)?.tile
 
-    val repositories: RepositoriesViewModel = hiltViewModel()
+    val graph = LocalAppGraph.current
     val halloween = rememberHalloweenCharacter()?.takeIf { picture == null }
     val bodyText = stringResource(halloween?.lineRes?.takeIf { !isNewHighScore && !isFirstSolve } ?: bodyRes)
 
-    val gameRecords by remember(repositories, gameId) { repositories.playHistoryRepository.recordsFor(gameId) }
+    val gameRecords by remember(graph, gameId) { graph.playHistoryRepository.recordsFor(gameId) }
         .collectAsStateWithLifecycle(initialValue = emptyList())
     val currentWinTimestamp = remember(gameRecords) { gameRecords.maxOfOrNull { it.timestampMillis } ?: 0L }
     val didBounceBack = remember(gameRecords, difficulty, currentWinTimestamp) {

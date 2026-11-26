@@ -13,10 +13,6 @@ import com.quietgrid.app.session.LossReason
 import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filterNotNull
@@ -80,20 +76,14 @@ private class NBackPuzzleAdapter : PuzzleAdapter<NBackSession, NBackResult> {
     }
 }
 
-@HiltViewModel(assistedFactory = NBackPlayViewModel.Factory::class)
-class NBackPlayViewModel @AssistedInject constructor(
+class NBackPlayViewModel(
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     private val appForeground: AppForeground,
-    @Assisted requestedDifficulty: Difficulty,
-    @Assisted resume: Boolean,
+    requestedDifficulty: Difficulty,
+    resume: Boolean,
 ) : ViewModel() {
-
-    @AssistedFactory
-    interface Factory {
-        fun create(requestedDifficulty: Difficulty, resume: Boolean): NBackPlayViewModel
-    }
 
     private val controller = PuzzleSessionController(
         scope = viewModelScope,
