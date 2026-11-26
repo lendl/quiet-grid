@@ -54,7 +54,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Cache Kotlin/Native toolchain
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.konan
           key: konan-${{ runner.os }}-${{ hashFiles('build.gradle.kts') }}
@@ -85,7 +85,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Cache Kotlin/Native toolchain
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.konan
           key: konan-${{ runner.os }}-${{ hashFiles('build.gradle.kts') }}
@@ -109,7 +109,7 @@ jobs:
         run: tar -czf build/QuietGrid-simulator.tar.gz -C build/ios/Build/Products/Debug-iphonesimulator QuietGrid.app
 
       - name: Upload the simulator app
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ios-simulator-app
           path: build/QuietGrid-simulator.tar.gz
@@ -121,7 +121,7 @@ jobs:
 
       - name: Upload screenshots
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ios-skeleton-screenshots
           path: build/ios-screenshots
@@ -142,7 +142,7 @@ jobs:
       - uses: actions/checkout@v7
 
       - name: Download the simulator app
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ios-simulator-app
           path: build
@@ -157,7 +157,7 @@ jobs:
 
       - name: Upload screenshots
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ios-skeleton-screenshots-ios18
           path: build/ios-screenshots-ios18
