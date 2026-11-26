@@ -1,5 +1,6 @@
 package com.quietgrid.cli.circuit
 
+import com.quietgrid.cli.ASSETS_DIR
 import com.quietgrid.engine.circuit.CIRCUIT_TIERS
 import com.quietgrid.engine.circuit.CircuitPuzzleEntry
 import com.quietgrid.engine.circuit.circuitOrientations
@@ -18,7 +19,7 @@ import java.io.File
 
 class CircuitBankVerificationTest {
     private val bank: List<CircuitPuzzleEntry> = Json { ignoreUnknownKeys = true }
-        .decodeFromString(ListSerializer(CircuitPuzzleEntry.serializer()), File("app/src/main/assets/circuit_puzzles.json").readText())
+        .decodeFromString(ListSerializer(CircuitPuzzleEntry.serializer()), File("$ASSETS_DIR/circuit_puzzles.json").readText())
 
     @Test
     fun `every tier has at least 120 puzzles of its size`() {

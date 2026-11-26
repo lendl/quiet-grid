@@ -108,4 +108,4 @@ Timer, hint button, screen rotation, keep screen awake, vibration, check lines a
 - [ ] The dock type fits how the player uses it.
 - [ ] `dockHeight` covers the essential controls, and nothing in the dock grows past its box.
 - [ ] Checked in all six layouts: small and normal phone each upright and sideways, and tablet in landscape and upright. `GamePlayScaffoldTest` shows how to cover them with Robolectric qualifiers.
-- [ ] New strings are only in `values/strings.xml`, per the localization rule in `CLAUDE.md`.
+- [ ] New strings are only in the default `values/strings.xml` (in `shared/src/commonMain/composeResources/`), per the localization rule in `CLAUDE.md`.

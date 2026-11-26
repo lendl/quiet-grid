@@ -1,6 +1,6 @@
 # Theme Word Corpus Guidelines
 
-Rules for adding words to the shared theme word lists (`app/src/main/assets/themes.json`), used by both Word Search and Theme Clear.
+Rules for adding words to the shared theme word lists (`shared/src/commonMain/composeResources/files/themes.json`), used by both Word Search and Theme Clear.
 
 ## Purpose
 

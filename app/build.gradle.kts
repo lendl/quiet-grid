@@ -81,6 +81,8 @@ android {
 
     lint {
         disable += "MissingTranslation"
+        checkGeneratedSources = true
+        lintConfig = file("lint.xml")
     }
 }
 
@@ -112,6 +114,54 @@ abstract class GenerateThemeCountsTask : DefaultTask() {
         val out = outputDir.get().asFile
         out.mkdirs()
         out.resolve("theme_counts.json").writeText(groovy.json.JsonOutput.toJson(counts))
+    }
+}
+
+abstract class SyncSharedStringsTask : DefaultTask() {
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val stringFiles: ConfigurableFileCollection
+
+    @get:OutputDirectory
+    abstract val outputDir: DirectoryProperty
+
+    @TaskAction
+    fun sync() {
+        val out = outputDir.get().asFile
+        out.deleteRecursively()
+        stringFiles.files.sorted().forEach { file ->
+            val xml = file.readText()
+            val name = "${file.parentFile.name}/${file.name}"
+            if ("\\'" in xml || "\\\"" in xml) {
+                throw GradleException(
+                    "$name escapes a quote with a backslash. Write plain ' and \" in the shared strings: " +
+                        "iOS shows the backslash, and this task adds the Android escapes."
+                )
+            }
+            out.resolve(name).apply { parentFile.mkdirs() }.writeText(
+                xml.replace(Regex(">[^<]*<")) { text -> text.value.replace("'", "\\'").replace("\"", "\\\"") }
+            )
+        }
+    }
+}
+
+abstract class CheckLegacyResourcePathsTask : DefaultTask() {
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val legacyFiles: ConfigurableFileCollection
+
+    @get:Internal
+    abstract val projectDir: DirectoryProperty
+
+    @TaskAction
+    fun check() {
+        val found = legacyFiles.files.map { it.relativeTo(projectDir.get().asFile).invariantSeparatorsPath }.sorted()
+        if (found.isNotEmpty()) {
+            throw GradleException(
+                "Puzzle banks and strings live in shared/src/commonMain/composeResources " +
+                    "(files/ and values*/strings.xml). Move these: ${found.joinToString()}"
+            )
+        }
     }
 }
 
@@ -148,12 +198,29 @@ abstract class CheckPermissionsTask : DefaultTask() {
 }
 
 val generateThemeCounts = tasks.register<GenerateThemeCountsTask>("generateThemeCounts") {
-    puzzleFiles.from(fileTree("src/main/assets") { include("wordsearch_puzzles_*.json", "themeclear_puzzles.json") })
+    puzzleFiles.from(
+        fileTree("../shared/src/commonMain/composeResources/files") {
+            include("wordsearch_puzzles_*.json", "themeclear_puzzles.json")
+        }
+    )
+}
+
+val checkLegacyResourcePaths = tasks.register<CheckLegacyResourcePathsTask>("checkLegacyResourcePaths") {
+    legacyFiles.from(fileTree("src/main/assets"), fileTree("src/main/res") { include("values*/strings.xml") })
+    projectDir.set(layout.projectDirectory)
+}
+
+tasks.named("preBuild") { dependsOn(checkLegacyResourcePaths) }
+
+val syncSharedStrings = tasks.register<SyncSharedStringsTask>("syncSharedStrings") {
+    stringFiles.from(fileTree("../shared/src/commonMain/composeResources") { include("values*/strings.xml") })
 }
 
 androidComponents {
     onVariants { variant ->
         variant.sources.assets?.addGeneratedSourceDirectory(generateThemeCounts, GenerateThemeCountsTask::outputDir)
+        variant.sources.res?.addGeneratedSourceDirectory(syncSharedStrings, SyncSharedStringsTask::outputDir)
+        variant.sources.assets?.addStaticSourceDirectory("../shared/src/commonMain/composeResources/files")
     }
     onVariants(selector().withBuildType("release")) { variant ->
         variant.outputs.forEach { output ->

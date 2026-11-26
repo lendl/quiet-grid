@@ -110,7 +110,7 @@ Expert also has to pass two gates in `classifyArrowEscapeDifficulty`, on top of 
    `./gradlew :cli:test --tests "*ArrowEscapeSilhouette*"`
    They check unique ids, parts and fragmentation at `minRows`, and they generate a Medium puzzle for every shape.
 4. Generate 4 puzzles per tier. The bank only holds shaped boards, and every shape that can reach a tier has 4 puzzles in it:
-   `./gradlew :cli:run --args="generate --game arrowescape --difficulty <tier> --count 4 --shape <id> --out app/src/main/assets"`
+   `./gradlew :cli:run --args="generate --game arrowescape --difficulty <tier> --count 4 --shape <id> --out shared/src/commonMain/composeResources/files"`
    Each tier writes its own bank file, `arrowescape_puzzles_<tier>.json`, but run the four tiers one after another, not in parallel, because they share the generation state file.
 5. Run the bank check:
    `./gradlew :cli:test --tests "*ArrowEscapeBankVerificationTest*"`
@@ -120,7 +120,7 @@ Expert also has to pass two gates in `classifyArrowEscapeDifficulty`, on top of 
 A shape with a `season` never goes into the main bank. `--shape all` skips it, and generating it by id writes to `arrowescape_<season>_puzzles.json` instead of the per-tier main bank `arrowescape_puzzles_<tier>.json`. The app serves that bank only on its day: the Halloween bank on October 31, while "Seasonal touches" is on in Settings, as the first new puzzle of each tier that the player hasn't played that day.
 
 The Halloween bank holds at least one puzzle per tier: `witchhat` (Easy), `bat` and `jackolantern` (Medium), and `cauldron` (one Hard board and one bigger Expert board). The bat is too wide for Hard or Expert, so keep it on Medium or below. The jack-o'-lantern reads by its cut-out eyes and mouth, which is how it avoids the plain pumpkin's `apple` problem. Regenerate a tier with:
-`./gradlew :cli:run --args="generate --game arrowescape --difficulty <tier> --count 1 --shape <id> --out app/src/main/assets"`
+`./gradlew :cli:run --args="generate --game arrowescape --difficulty <tier> --count 1 --shape <id> --out shared/src/commonMain/composeResources/files"`
 
 ## Shapes that work and shapes that don't
 

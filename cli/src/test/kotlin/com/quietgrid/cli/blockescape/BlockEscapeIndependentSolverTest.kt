@@ -1,5 +1,6 @@
 package com.quietgrid.cli.blockescape
 
+import com.quietgrid.cli.ASSETS_DIR
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.int
@@ -70,7 +71,7 @@ class BlockEscapeIndependentSolverTest {
 
     @Test
     fun `every bank puzzle needs exactly its stored move count`() {
-        val bank = Json.parseToJsonElement(File("app/src/main/assets/blockescape_puzzles.json").readText()).jsonArray
+        val bank = Json.parseToJsonElement(File("$ASSETS_DIR/blockescape_puzzles.json").readText()).jsonArray
         bank.forEach { element ->
             val entry = element.jsonObject
             val blocks = entry.getValue("blocks").jsonArray.map { block ->

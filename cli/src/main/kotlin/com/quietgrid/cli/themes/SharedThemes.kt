@@ -1,11 +1,12 @@
 package com.quietgrid.cli.themes
 
+import com.quietgrid.cli.ASSETS_DIR
 import com.quietgrid.engine.themeclear.ThemeClearTheme
 import com.quietgrid.engine.themeclear.parseThemeClearThemes
 import kotlinx.serialization.json.JsonPrimitive
 import java.io.File
 
-const val SHARED_THEMES_ASSET = "app/src/main/assets/themes.json"
+const val SHARED_THEMES_ASSET = "$ASSETS_DIR/themes.json"
 
 private val defaultThemes: Map<String, List<ThemeClearTheme>> by lazy { parseThemeClearThemes(File(SHARED_THEMES_ASSET).readText()) }
 

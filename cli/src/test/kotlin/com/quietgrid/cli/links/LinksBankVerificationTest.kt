@@ -1,5 +1,6 @@
 package com.quietgrid.cli.links
 
+import com.quietgrid.cli.ASSETS_DIR
 import com.quietgrid.engine.core.Difficulty
 import com.quietgrid.engine.links.LINKS_SIZE_BY_DIFFICULTY
 import com.quietgrid.engine.links.LinksPuzzleEntry
@@ -14,7 +15,7 @@ import java.io.File
 
 class LinksBankVerificationTest {
     private val bank: List<LinksPuzzleEntry> = Json { ignoreUnknownKeys = true }
-        .decodeFromString(ListSerializer(LinksPuzzleEntry.serializer()), File("app/src/main/assets/links_puzzles.json").readText())
+        .decodeFromString(ListSerializer(LinksPuzzleEntry.serializer()), File("$ASSETS_DIR/links_puzzles.json").readText())
 
     @Test
     fun `every tier has at least 100 puzzles at its grid size`() {

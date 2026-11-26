@@ -23,6 +23,7 @@ pick() {
 
 shoot() {
   local label=$1 runtime=$2 prefix=$3 required=$4
+  shift 4
   local udid=""
   if [ -n "$runtime" ]; then
     udid=$(pick "$runtime" "$prefix")
@@ -41,7 +42,7 @@ shoot() {
   xcrun simctl bootstatus "$udid" -b
   xcrun simctl install "$udid" "$app"
   local launched pid
-  launched=$(xcrun simctl launch "$udid" "$bundle_id")
+  launched=$(xcrun simctl launch "$udid" "$bundle_id" ${@+"$@"})
   pid=${launched##* }
   echo "$label: launched as pid $pid"
   sleep 15
@@ -55,6 +56,7 @@ shoot() {
 }
 
 shoot iphone-newest "$newest" iPhone yes
+shoot iphone-newest-fr "$newest" iPhone yes -AppleLanguages "(fr)" -AppleLocale fr_FR
 shoot ipad-newest "$newest" iPad yes
 case "$ios18_mode" in
   required) shoot iphone-ios18 "$ios18" iPhone yes ;;

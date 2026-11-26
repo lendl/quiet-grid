@@ -1,5 +1,6 @@
 package com.quietgrid.cli.sudoku
 
+import com.quietgrid.cli.ASSETS_DIR
 import com.quietgrid.engine.core.Difficulty
 import com.quietgrid.engine.sudoku.SudokuCandidateEliminationMove
 import com.quietgrid.engine.sudoku.SudokuPlacementMove
@@ -17,7 +18,7 @@ import java.io.File
 
 class SudokuBankVerificationTest {
     private val bank: List<SudokuPuzzleEntry> = Json { ignoreUnknownKeys = true }
-        .decodeFromString(ListSerializer(SudokuPuzzleEntry.serializer()), File("app/src/main/assets/sudoku_puzzles.json").readText())
+        .decodeFromString(ListSerializer(SudokuPuzzleEntry.serializer()), File("$ASSETS_DIR/sudoku_puzzles.json").readText())
 
     @Test
     fun `ids are unique`() {

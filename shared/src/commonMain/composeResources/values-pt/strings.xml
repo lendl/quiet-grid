@@ -688,7 +688,7 @@
     <string name="wordsearch_reset_zoom">Redefinir zoom</string>
     <string name="wordsearch_next_move_show">Mostrar dica da próxima palavra</string>
     <string name="wordsearch_next_move_hide">Ocultar dica da próxima palavra</string>
-    <string name="wordsearch_next_move_title">Encontre \"%1$s\"</string>
+    <string name="wordsearch_next_move_title">Encontre "%1$s"</string>
     <string name="wordsearch_next_move_body">Comece pela letra destacada e trace a palavra inteira em uma única linha reta.</string>
     <string name="wordsearch_hidden_word_next_letter_title">Palavra escondida: %1$s</string>
     <string name="wordsearch_hidden_word_theme_title">Tema da palavra escondida: %1$s</string>

@@ -11,19 +11,19 @@ class ArgsTest {
             "--game", "sudoku",
             "--difficulty", "hard",
             "--count", "5",
-            "--out", "app/src/main/assets",
+            "--out", "shared/src/commonMain/composeResources/files",
         ))
         assertEquals("sudoku", command.game)
         assertEquals("hard", command.difficulty)
         assertEquals(5, command.count)
-        assertEquals("app/src/main/assets", command.outDir)
+        assertEquals("shared/src/commonMain/composeResources/files", command.outDir)
     }
 
     @Test
-    fun `defaults count to 1 and out to app assets dir when omitted`() {
+    fun `defaults count to 1 and out to the bank folder when omitted`() {
         val command = parseArgs(arrayOf("generate", "--game", "takuzu", "--difficulty", "easy"))
         assertEquals(1, command.count)
-        assertEquals("app/src/main/assets", command.outDir)
+        assertEquals("shared/src/commonMain/composeResources/files", command.outDir)
     }
 
     @Test
@@ -58,7 +58,7 @@ class ArgsTest {
     @Test
     fun `parses journey command with default out and scales paths`() {
         assertEquals(
-            com.quietgrid.cli.journey.JourneyArgs("animaldoku", "app/src/main/assets", "cli/src/main/resources/journey_rating_scales.json"),
+            com.quietgrid.cli.journey.JourneyArgs("animaldoku", "shared/src/commonMain/composeResources/files", "cli/src/main/resources/journey_rating_scales.json"),
             com.quietgrid.cli.journey.parseJourneyArgs(arrayOf("journey", "--game", "animaldoku")),
         )
     }

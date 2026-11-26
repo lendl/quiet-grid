@@ -680,7 +680,7 @@
     <string name="wordsearch_reset_zoom">Resetuj przybliżenie</string>
     <string name="wordsearch_next_move_show">Pokaż podpowiedź do kolejnego słowa</string>
     <string name="wordsearch_next_move_hide">Ukryj podpowiedź do kolejnego słowa</string>
-    <string name="wordsearch_next_move_title">Znajdź \"%1$s\"</string>
+    <string name="wordsearch_next_move_title">Znajdź "%1$s"</string>
     <string name="wordsearch_next_move_body">Zacznij od podświetlonej litery i zakreśl całe słowo w jednej linii prostej.</string>
     <string name="wordsearch_hidden_word_next_letter_title">Ukryte słowo: %1$s</string>
     <string name="wordsearch_hidden_word_theme_title">Temat ukrytego słowa: %1$s</string>

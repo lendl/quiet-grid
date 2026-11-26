@@ -1,5 +1,6 @@
 package com.quietgrid.cli.journey
 
+import com.quietgrid.cli.ASSETS_DIR
 import com.quietgrid.cli.readPuzzleEntries
 import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
 import com.quietgrid.engine.core.Difficulty
@@ -14,7 +15,7 @@ import java.io.File
 import kotlin.math.abs
 
 class JourneyAssetsTest {
-    private val assets = "app/src/main/assets"
+    private val assets = ASSETS_DIR
 
     private data class BankRow(val id: String, val difficulty: String, val rating: Int?)
 

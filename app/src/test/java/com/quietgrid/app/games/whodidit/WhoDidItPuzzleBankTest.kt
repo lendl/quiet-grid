@@ -12,7 +12,7 @@ import org.junit.Test
 private val json = Json { ignoreUnknownKeys = true }
 
 internal fun loadWhoDidItBankForTest(): List<WhoDidItPuzzleEntry> =
-    json.decodeFromString(File("src/main/assets/whodidit_puzzles.json").readText())
+    json.decodeFromString(File("../shared/src/commonMain/composeResources/files/whodidit_puzzles.json").readText())
 
 class WhoDidItPuzzleBankTest {
     @Test

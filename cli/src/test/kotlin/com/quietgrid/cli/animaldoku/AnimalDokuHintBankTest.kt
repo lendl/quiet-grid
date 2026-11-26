@@ -1,5 +1,6 @@
 package com.quietgrid.cli.animaldoku
 
+import com.quietgrid.cli.ASSETS_DIR
 import com.quietgrid.engine.animaldoku.AnimalDokuHint
 import com.quietgrid.engine.animaldoku.AnimalDokuPuzzleEntry
 import com.quietgrid.engine.animaldoku.AnimalDokuSolverState
@@ -19,7 +20,7 @@ import kotlin.random.Random
 
 class AnimalDokuHintBankTest {
     private val bank: List<AnimalDokuPuzzleEntry> =
-        Json.decodeFromString(ListSerializer(AnimalDokuPuzzleEntry.serializer()), File("app/src/main/assets/animaldoku_puzzles.json").readText())
+        Json.decodeFromString(ListSerializer(AnimalDokuPuzzleEntry.serializer()), File("$ASSETS_DIR/animaldoku_puzzles.json").readText())
 
     @Test
     fun `hints solve every bank puzzle from an empty board without reveals`() {

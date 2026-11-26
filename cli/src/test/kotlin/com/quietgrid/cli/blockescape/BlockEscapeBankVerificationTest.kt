@@ -1,5 +1,6 @@
 package com.quietgrid.cli.blockescape
 
+import com.quietgrid.cli.ASSETS_DIR
 import com.quietgrid.engine.core.Difficulty
 import com.quietgrid.engine.blockescape.BlockEscapePuzzleEntry
 import com.quietgrid.engine.blockescape.gradeBlockEscape
@@ -16,7 +17,7 @@ import java.io.File
 
 class BlockEscapeBankVerificationTest {
     private val bank: List<BlockEscapePuzzleEntry> = Json { ignoreUnknownKeys = true }
-        .decodeFromString(ListSerializer(BlockEscapePuzzleEntry.serializer()), File("app/src/main/assets/blockescape_puzzles.json").readText())
+        .decodeFromString(ListSerializer(BlockEscapePuzzleEntry.serializer()), File("$ASSETS_DIR/blockescape_puzzles.json").readText())
 
     @Test
     fun `every tier has at least 100 puzzles`() {

@@ -1,5 +1,6 @@
 package com.quietgrid.cli.journey
 
+import com.quietgrid.cli.ASSETS_DIR
 import com.quietgrid.cli.readPuzzleEntries
 import com.quietgrid.cli.writePuzzleEntries
 import com.quietgrid.engine.animaldoku.AnimalDokuPuzzleEntry
@@ -24,7 +25,7 @@ class JourneyCommandTest {
     private fun readJourney() = Json.decodeFromString(JourneyFile.serializer(), File(journeyPath).readText())
 
     private fun seed() {
-        val source = readPuzzleEntries("app/src/main/assets/animaldoku_puzzles.json", AnimalDokuPuzzleEntry.serializer())
+        val source = readPuzzleEntries("$ASSETS_DIR/animaldoku_puzzles.json", AnimalDokuPuzzleEntry.serializer())
         val sample = Difficulty.entries.flatMap { tier -> source.filter { it.difficulty == tier.key }.take(50) }.map { it.copy(rating = null) }
         writePuzzleEntries(bankPath, sample, AnimalDokuPuzzleEntry.serializer())
         writeJourneyScales(scalesPath, mapOf("animaldoku" to JourneyGameScale(JourneyTargetSeconds(60, 900))))

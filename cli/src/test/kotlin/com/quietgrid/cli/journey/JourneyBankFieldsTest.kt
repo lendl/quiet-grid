@@ -1,5 +1,6 @@
 package com.quietgrid.cli.journey
 
+import com.quietgrid.cli.ASSETS_DIR
 import com.quietgrid.engine.animaldoku.AnimalDokuPuzzleEntry
 import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
 import com.quietgrid.engine.killersudoku.KillerSudokuPuzzleEntry
@@ -14,7 +15,7 @@ import org.junit.Test
 import java.io.File
 
 class JourneyBankFieldsTest {
-    private val assets = "app/src/main/assets"
+    private val assets = ASSETS_DIR
 
     private fun assertKnownFields(file: String, serializer: KSerializer<*>) {
         val known = (0 until serializer.descriptor.elementsCount).map { serializer.descriptor.getElementName(it) }.toSet()

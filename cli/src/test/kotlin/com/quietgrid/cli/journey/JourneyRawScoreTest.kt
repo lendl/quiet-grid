@@ -1,5 +1,6 @@
 package com.quietgrid.cli.journey
 
+import com.quietgrid.cli.ASSETS_DIR
 import com.quietgrid.engine.animaldoku.AnimalDokuPuzzleEntry
 import com.quietgrid.engine.animaldoku.animalDokuRawScore
 import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
@@ -19,17 +20,17 @@ import java.io.File
 
 class JourneyRawScoreTest {
     private val json = Json { ignoreUnknownKeys = true }
-    private val animalDoku = json.decodeFromString(ListSerializer(AnimalDokuPuzzleEntry.serializer()), File("app/src/main/assets/animaldoku_puzzles.json").readText())
+    private val animalDoku = json.decodeFromString(ListSerializer(AnimalDokuPuzzleEntry.serializer()), File("$ASSETS_DIR/animaldoku_puzzles.json").readText())
     private val arrowEscape = Difficulty.entries.flatMap { tier ->
-        json.decodeFromString(ListSerializer(ArrowEscapePuzzleEntry.serializer()), File("app/src/main/assets/arrowescape_puzzles_${tier.key}.json").readText()).take(5)
+        json.decodeFromString(ListSerializer(ArrowEscapePuzzleEntry.serializer()), File("$ASSETS_DIR/arrowescape_puzzles_${tier.key}.json").readText()).take(5)
     }
 
     private fun <T> samplePerTier(entries: List<T>, difficulty: (T) -> String, count: Int): List<T> =
         Difficulty.entries.flatMap { tier -> entries.filter { difficulty(it) == tier.key }.take(count) }
 
-    private val starBattle = json.decodeFromString(ListSerializer(StarBattlePuzzleEntry.serializer()), File("app/src/main/assets/starbattle_puzzles.json").readText())
+    private val starBattle = json.decodeFromString(ListSerializer(StarBattlePuzzleEntry.serializer()), File("$ASSETS_DIR/starbattle_puzzles.json").readText())
 
-    private val sudoku = json.decodeFromString(ListSerializer(SudokuPuzzleEntry.serializer()), File("app/src/main/assets/sudoku_puzzles.json").readText())
+    private val sudoku = json.decodeFromString(ListSerializer(SudokuPuzzleEntry.serializer()), File("$ASSETS_DIR/sudoku_puzzles.json").readText())
 
     @Test
     fun `sudoku raw scores sit inside their tier slot`() {
@@ -66,7 +67,7 @@ class JourneyRawScoreTest {
     }
 
     private fun <T> bank(file: String, serializer: kotlinx.serialization.KSerializer<T>): List<T> =
-        json.decodeFromString(ListSerializer(serializer), File("app/src/main/assets/$file").readText())
+        json.decodeFromString(ListSerializer(serializer), File("$ASSETS_DIR/$file").readText())
 
     private val blockEscape = bank("blockescape_puzzles.json", com.quietgrid.engine.blockescape.BlockEscapePuzzleEntry.serializer())
     private val wordSwap = bank("wordswap_puzzles.json", com.quietgrid.engine.wordswap.WordSwapPuzzleEntry.serializer())

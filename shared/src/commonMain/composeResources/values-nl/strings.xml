@@ -70,7 +70,7 @@
     <string name="settings_language">Taal</string>
     <string name="settings_language_ai_disclaimer">De taalteksten zijn met AI gegenereerd en kunnen kleine fouten bevatten.</string>
     <string name="settings_dark">Donker</string>
-    <string name="settings_dark_detail">Houdt bord en menu\'s in een donker palet.</string>
+    <string name="settings_dark_detail">Houdt bord en menu's in een donker palet.</string>
     <string name="settings_light">Licht</string>
     <string name="settings_light_detail">Gebruikt een lichter palet in de hele app.</string>
     <string name="settings_pencil">Potlood</string>
@@ -167,8 +167,8 @@
     <string name="wordguess_quickstart_example_3_hint">W zit helemaal niet in het woord</string>
     <string name="wordguess_quickstart_hook">Minder pogingen en een snellere oplossing geven een hogere score.</string>
 
-    <string name="takuzu_quickstart_goal">Vul het rooster met 0\'en en 1\'en.</string>
-    <string name="takuzu_quickstart_bullet_1">Elke rij en kolom bevat evenveel 0\'en als 1\'en.</string>
+    <string name="takuzu_quickstart_goal">Vul het rooster met 0'en en 1'en.</string>
+    <string name="takuzu_quickstart_bullet_1">Elke rij en kolom bevat evenveel 0'en als 1'en.</string>
     <string name="takuzu_quickstart_bullet_2">Niet meer dan twee gelijke cijfers naast elkaar in een rij.</string>
     <string name="takuzu_quickstart_bullet_3">Geen twee rijen of kolommen mogen identiek zijn.</string>
     <string name="takuzu_quickstart_hook">Los het schoon en snel op voor de hoogste score.</string>
@@ -321,7 +321,7 @@
     <string name="support_info_about_heading_1">Waar de app voor bedoeld is</string>
     <string name="support_info_about_body_1">Quiet Grid houdt logicapuzzels licht, volledig offline, advertentievrij en gratis te gebruiken. Het doel is simpel: duidelijke regels, ondersteunend tempo en geen afleiding.</string>
     <string name="support_info_about_heading_2">Wat Quiet Grid bevat</string>
-    <string name="support_info_about_body_2">Quiet Grid bevat momenteel meerdere puzzelspellen, met lokale statistieken, donkere en lichte thema\'s, en geen accounts.</string>
+    <string name="support_info_about_body_2">Quiet Grid bevat momenteel meerdere puzzelspellen, met lokale statistieken, donkere en lichte thema's, en geen accounts.</string>
     <string name="support_info_licenses_title">Opensource-licenties</string>
     <string name="support_info_licenses_intro">Quiet Grid is opensourcesoftware.</string>
     <string name="support_info_licenses_heading_1">Projectlicentie</string>
@@ -379,16 +379,16 @@
     <string name="takuzu_rule_1_title">Geen drie op rij</string>
     <string name="takuzu_rule_1_body">Drie gelijke cijfers naast elkaar in een rij of kolom zijn niet toegestaan.</string>
     <string name="takuzu_rule_2_title">Gelijke helften</string>
-    <string name="takuzu_rule_2_body">Elke rij en kolom bevat evenveel 0\'en als 1\'en.</string>
+    <string name="takuzu_rule_2_body">Elke rij en kolom bevat evenveel 0'en als 1'en.</string>
     <string name="takuzu_rule_3_title">Alle lijnen zijn uniek</string>
     <string name="takuzu_rule_3_body">Geen twee rijen zijn gelijk, en geen twee kolommen zijn gelijk.</string>
     <string name="takuzu_rules_equal_halves_caption">twee nullen, twee enen</string>
     <string name="takuzu_technique_1_title">Zoek paren</string>
     <string name="takuzu_technique_1_body">Twee gelijke cijfers naast elkaar dwingen de cellen ernaast tot het tegenovergestelde cijfer.</string>
-    <string name="takuzu_technique_2_title">Vermijd trio\'s</string>
+    <string name="takuzu_technique_2_title">Vermijd trio's</string>
     <string name="takuzu_technique_2_body">Als hetzelfde cijfer aan beide kanten van een lege cel staat, moet die cel het tegenovergestelde zijn.</string>
     <string name="takuzu_technique_3_title">Maak rijen en kolommen af</string>
-    <string name="takuzu_technique_3_body">Zodra een rij of kolom zo veel 0\'en (of 1\'en) heeft als toegestaan, moeten de overige cellen het andere cijfer zijn.</string>
+    <string name="takuzu_technique_3_body">Zodra een rij of kolom zo veel 0'en (of 1'en) heeft als toegestaan, moeten de overige cellen het andere cijfer zijn.</string>
     <string name="takuzu_technique_4_title">Schrap op basis van gevulde lijnen</string>
     <string name="takuzu_technique_4_body">Een rij of kolom mag geen kopie zijn van een voltooide lijn. Dreigt dat, gebruik dan de andere waarde.</string>
     <string name="takuzu_technique_5_title">Schrap onmogelijke combinaties</string>
@@ -404,13 +404,13 @@
     <string name="takuzu_hint_paused_title">Nog geen duidelijke volgende zet</string>
     <string name="takuzu_hint_paused_body">Dit deel van de puzzel biedt nu geen sterke volgende zet. Probeer een andere rij of kolom en vraag daarna opnieuw.</string>
     <string name="takuzu_hint_repair_title">%1$s — herstel nodig</string>
-    <string name="takuzu_hint_find_pairs_body">Plaats %1$d in de gemarkeerde cel. Waarom: er staan al twee %2$d\'en naast elkaar in %3$s, dus nog een %2$d zou drie op rij maken.</string>
+    <string name="takuzu_hint_find_pairs_body">Plaats %1$d in de gemarkeerde cel. Waarom: er staan al twee %2$d'en naast elkaar in %3$s, dus nog een %2$d zou drie op rij maken.</string>
     <string name="takuzu_hint_avoid_trios_body">Plaats %1$d in de gemarkeerde cel. Waarom: %2$s toont al %3$d _ %3$d, dus de open cel ertussen moet %1$d zijn om drie op rij te vermijden.</string>
     <string name="takuzu_hint_complete_lines_body">Plaats %1$d in de gemarkeerde cel. Waarom: %2$s heeft al %3$d %4$d%5$s, dus de resterende open cel moet %1$d zijn om de lijn in balans te houden.</string>
     <string name="takuzu_hint_eliminate_filled_lines_body">Plaats %1$d in de gemarkeerde cel. Waarom: als %2$s gelijk werd aan %3$s, zou de complete %4$s niet uniek meer zijn.</string>
     <string name="takuzu_hint_reveal_title">Volgende zet</string>
     <string name="takuzu_hint_reveal_body">Plaats %1$d in de gemarkeerde cel.</string>
-    <string name="takuzu_hint_repair_avoid_trios_body">Pas een gemarkeerde cel in %1$s aan. Waarom: drie %2$d\'en op rij breken de regel zonder trio\'s.</string>
+    <string name="takuzu_hint_repair_avoid_trios_body">Pas een gemarkeerde cel in %1$s aan. Waarom: drie %2$d'en op rij breken de regel zonder trio's.</string>
     <string name="takuzu_hint_repair_complete_lines_body">Pas een gemarkeerde cel in %1$s aan. Waarom: %1$s bevat al %2$d %3$d%4$s, maar de limiet is %5$d.</string>
     <string name="takuzu_hint_repair_eliminate_filled_lines_body">Pas een gemarkeerde cel aan. Waarom: %2$s en %3$s zijn gelijk, maar complete %1$s moeten uniek blijven.</string>
     <string name="takuzu_hint_digit_plural_suffix">s</string>
@@ -616,7 +616,7 @@
     <string name="wordsearch_reset_zoom">Zoom resetten</string>
     <string name="wordsearch_next_move_show">Hint voor volgend woord tonen</string>
     <string name="wordsearch_next_move_hide">Hint voor volgend woord verbergen</string>
-    <string name="wordsearch_next_move_title">Find \"%1$s\"</string>
+    <string name="wordsearch_next_move_title">Find "%1$s"</string>
     <string name="wordsearch_next_move_body">Begin bij de gemarkeerde letter en trek het hele woord in één rechte lijn.</string>
     <string name="wordsearch_hidden_word_next_letter_title">Verborgen woord: %1$s</string>
     <string name="wordsearch_hidden_word_theme_title">Thema van het verborgen woord: %1$s</string>
@@ -779,7 +779,7 @@
     <string name="animaldoku_hint_columns">kolommen %1$s</string>
     <string name="animaldoku_hint_list_and">%1$s en %2$s</string>
     <string name="animaldoku_hint_highlighted_region">de uitgelichte regio</string>
-    <string name="animaldoku_hint_highlighted_regions">de %1$d uitgelichte regio\'s</string>
+    <string name="animaldoku_hint_highlighted_regions">de %1$d uitgelichte regio's</string>
     <string name="animaldoku_technique_last_spot">Laatste plek</string>
     <string name="animaldoku_technique_confinement">Insluiting</string>
     <string name="animaldoku_technique_pairing">Koppeling</string>
@@ -792,7 +792,7 @@
     <string name="animaldoku_hint_confined_to_line_body">Alle open cellen van %1$s liggen in %2$s, dus het dier van die regio staat daar. Zet een X in de andere cellen van %2$s.</string>
     <string name="animaldoku_hint_line_confined_to_region_body">Alle open cellen in %1$s horen bij %2$s, dus het dier van die regio staat in %1$s. Zet een X in de rest van de regio.</string>
     <string name="animaldoku_hint_regions_fill_lines_body">De open cellen van %1$s liggen allemaal in %2$s, dus die lijnen zijn voor hen. Zet een X in de andere cellen van %2$s.</string>
-    <string name="animaldoku_hint_lines_fill_regions_body">De open cellen in %1$s horen allemaal bij %2$s, dus de dieren van die regio\'s staan daar. Zet een X in de rest van die regio\'s.</string>
+    <string name="animaldoku_hint_lines_fill_regions_body">De open cellen in %1$s horen allemaal bij %2$s, dus de dieren van die regio's staan daar. Zet een X in de rest van die regio's.</string>
     <string name="animaldoku_hint_chain_body">Probeer het vervaagde dier: dan blijft er in %1$s geen open cel over. Zet dus een X in zijn cel.</string>
     <string name="animaldoku_hint_chain_long_body">Probeer het vervaagde dier: het dwingt andere dieren op hun plek en dan blijft er in %1$s geen open cel over. Zet dus een X in zijn cel.</string>
     <string name="animaldoku_chain_suppose_title">Stel dat hier een dier staat</string>
@@ -1115,11 +1115,11 @@
     <string name="game_settings_play_off">Uit</string>
     <string name="game_settings_play_reset">Standaard gebruiken</string>
     <string name="game_settings_play_portrait_only">Op telefoons altijd rechtop.</string>
-    <string name="game_settings_themes_title">Thema\'s</string>
-    <string name="game_settings_themes_all">Alle thema\'s</string>
+    <string name="game_settings_themes_title">Thema's</string>
+    <string name="game_settings_themes_all">Alle thema's</string>
     <string name="game_settings_themes_selected">%1$d van %2$d geselecteerd</string>
     <string name="game_settings_themes_select_all">Alles selecteren</string>
-    <string name="game_settings_themes_note">Rode totalen hebben minder dan 30 puzzels, dus puzzels komen vaak terug. Een moeilijkheid met 0 gebruikt alle thema\'s.</string>
+    <string name="game_settings_themes_note">Rode totalen hebben minder dan 30 puzzels, dus puzzels komen vaak terug. Een moeilijkheid met 0 gebruikt alle thema's.</string>
     <string name="game_settings_themes_selected_row">Geselecteerd</string>
     <string name="game_settings_themes_col_total">Totaal</string>
     <string name="game_settings_themes_col_easy">Makk.</string>
@@ -1140,7 +1140,7 @@
     <string name="theme_words_rule_safe">Geen wapens, geweld, drugs, alcohol of inhoud voor volwassenen</string>
     <string name="theme_words_rule_kids">Kindvriendelijk: niets onbeleefds, bloederigs of beledigends</string>
     <string name="theme_words_input_label">Nieuwe woorden</string>
-    <string name="theme_words_input_supporting">Scheid woorden met komma\'s of nieuwe regels</string>
+    <string name="theme_words_input_supporting">Scheid woorden met komma's of nieuwe regels</string>
     <string name="theme_words_input_summary">%1$d nieuw, %2$d al aanwezig, %3$d ongeldig</string>
     <string name="theme_words_too_many">Maximaal %1$d woorden per issue</string>
     <string name="theme_words_reported_title">Melden voor verwijdering</string>
@@ -1156,7 +1156,7 @@
     <string name="mix_widget_create">Maak een mix</string>
     <string name="mix_widget_create_hint">Kies je games en speel ze dan met één tik</string>
     <string name="minisudoku_title">Mini Sudoku</string>
-    <string name="minisudoku_tagline">Kleine sudoku\'s: 4×4 om op te warmen, 6×6 als je meer wilt.</string>
+    <string name="minisudoku_tagline">Kleine sudoku's: 4×4 om op te warmen, 6×6 als je meer wilt.</string>
     <string name="minisudoku_difficulty_desc_easy">4×4-raster met 2×2-boxen, cijfers 1-4.</string>
     <string name="minisudoku_difficulty_desc_medium">6×6-raster waarin je bij elke stap een cel hebt met nog maar één mogelijk cijfer.</string>
     <string name="minisudoku_difficulty_desc_hard">6×6-raster waarin je zoekt naar de enige plek waar een cijfer past.</string>
@@ -1455,7 +1455,7 @@
     <string name="mix_empty_next_up">Hierna: %1$s, %2$s</string>
     <string name="settings_be_quiet_section">Stil</string>
     <string name="settings_be_quiet_label">Stil</string>
-    <string name="settings_be_quiet_detail">Niets extra\'s na een puzzel</string>
+    <string name="settings_be_quiet_detail">Niets extra's na een puzzel</string>
     <string name="settings_suggestions_label">Suggesties</string>
     <string name="settings_suggestions_detail">Af en toe een korte tip om de app af te stemmen op hoe je speelt</string>
     <string name="settings_milestones_label">Mijlpalen</string>

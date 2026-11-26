@@ -1,5 +1,6 @@
 package com.quietgrid.cli.journey
 
+import com.quietgrid.cli.ASSETS_DIR
 import com.quietgrid.cli.readPuzzleEntries
 import com.quietgrid.cli.writePuzzleEntries
 import com.quietgrid.engine.journey.GridTransform
@@ -19,7 +20,7 @@ fun parseJourneyArgs(args: Array<String>): JourneyArgs {
     fun flag(name: String): String? = args.indexOf(name).takeIf { it != -1 && it + 1 < args.size }?.let { args[it + 1] }
     return JourneyArgs(
         game = requireNotNull(flag("--game")) { "Missing required flag --game" },
-        outDir = flag("--out") ?: "app/src/main/assets",
+        outDir = flag("--out") ?: ASSETS_DIR,
         scalesPath = flag("--scales") ?: DEFAULT_JOURNEY_SCALES,
     )
 }

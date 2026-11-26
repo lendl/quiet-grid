@@ -111,7 +111,7 @@ class TakuzuNextMoveTest {
     fun `a board where every cheap technique stalls falls back to a correct reveal from the solution`() {
         val json = Json { ignoreUnknownKeys = true }
         val entries = json.decodeFromString<List<TakuzuPuzzleEntry>>(
-            File("src/main/assets/takuzu_puzzles.json").readText(),
+            File("../shared/src/commonMain/composeResources/files/takuzu_puzzles.json").readText(),
         )
 
         for (entry in entries.filter { it.difficulty == "expert" || it.difficulty == "hard" }) {

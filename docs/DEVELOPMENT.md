@@ -28,7 +28,7 @@ Puzzle banks are generated offline by the `:cli` module (backed by shared rules 
 | `--game` | yes | — | `takuzu`, `nonogram`, `sudoku`, `wordsearch`, `wordguess`, `animaldoku`, `arrowescape`, `starbattle`, `themeclear`, `hashi`, `links`, `blockescape`, `wordswap`, `circuit` |
 | `--difficulty` | yes | — | `easy`, `medium`, `hard`, `expert` |
 | `--count` | no | `1` | number of puzzles to attempt |
-| `--out` | no | `app/src/main/assets` | output dir; merges into that game's `*_puzzles.json` |
+| `--out` | no | `shared/src/commonMain/composeResources/files` | output dir; merges into that game's `*_puzzles.json` |
 | `--locale` | no | `en` | `wordsearch`, `wordguess` and `themeclear` only — `en`, `nl`, `de`, `fr`, `es`, `pl`, `pt` |
 | `--fill-to` | no | — | `wordsearch` only — tops up every theme of `--locale` to at least this many puzzles for the difficulty (ignores `--count`) |
 | `--threads` | no | all cores | `wordsearch` only — parallel generation attempts |

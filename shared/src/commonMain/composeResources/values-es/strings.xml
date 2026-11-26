@@ -636,7 +636,7 @@
     <string name="wordsearch_reset_zoom">Restablecer zoom</string>
     <string name="wordsearch_next_move_show">Mostrar pista de la siguiente palabra</string>
     <string name="wordsearch_next_move_hide">Ocultar pista de la siguiente palabra</string>
-    <string name="wordsearch_next_move_title">Find \"%1$s\"</string>
+    <string name="wordsearch_next_move_title">Find "%1$s"</string>
     <string name="wordsearch_next_move_body">Empieza por la letra resaltada y traza la palabra completa en una sola línea recta.</string>
     <string name="wordsearch_hidden_word_next_letter_title">Palabra oculta: %1$s</string>
     <string name="wordsearch_hidden_word_theme_title">Tema de la palabra oculta: %1$s</string>

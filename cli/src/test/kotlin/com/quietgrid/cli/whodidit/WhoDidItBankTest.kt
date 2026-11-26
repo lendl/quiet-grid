@@ -1,5 +1,6 @@
 package com.quietgrid.cli.whodidit
 
+import com.quietgrid.cli.ASSETS_DIR
 import com.quietgrid.cli.readPuzzleEntries
 import com.quietgrid.engine.core.Difficulty
 import com.quietgrid.engine.whodidit.WHODIDIT_POOL_SIZE
@@ -23,7 +24,7 @@ import org.junit.Test
 
 class WhoDidItBankTest {
     private val bank: List<WhoDidItPuzzleEntry> by lazy {
-        readPuzzleEntries("app/src/main/assets/whodidit_puzzles.json", WhoDidItPuzzleEntry.serializer())
+        readPuzzleEntries("$ASSETS_DIR/whodidit_puzzles.json", WhoDidItPuzzleEntry.serializer())
     }
 
     private fun difficultyOf(entry: WhoDidItPuzzleEntry): Difficulty? = Difficulty.entries.firstOrNull { it.key == entry.difficulty }

@@ -23,7 +23,7 @@ private val bankJson = Json { ignoreUnknownKeys = true }
 class ArrowEscapeBankLookupTest {
 
     private val assets = mockk<AssetManager>().also {
-        every { it.open(any<String>()) } answers { File("src/main/assets/${firstArg<String>()}").inputStream() }
+        every { it.open(any<String>()) } answers { File("../shared/src/commonMain/composeResources/files/${firstArg<String>()}").inputStream() }
     }
     private val context = mockk<Context>(relaxed = true).also {
         every { it.assets } returns assets
@@ -33,7 +33,7 @@ class ArrowEscapeBankLookupTest {
     }
 
     private val halloweenPuzzle: ArrowEscapePuzzleEntry = bankJson
-        .decodeFromString<List<ArrowEscapePuzzleEntry>>(File("src/main/assets/arrowescape_halloween_puzzles.json").readText())
+        .decodeFromString<List<ArrowEscapePuzzleEntry>>(File("../shared/src/commonMain/composeResources/files/arrowescape_halloween_puzzles.json").readText())
         .first()
 
     @Test

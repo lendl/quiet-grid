@@ -20,7 +20,7 @@ application {
 
 tasks.named<JavaExec>("run") {
     // The `run` task (JavaExec) defaults workingDir to this subproject's directory.
-    // Main.kt's CLI resolves its default --out path ("app/src/main/assets") relative
+    // Main.kt's CLI resolves its default --out path ("shared/src/commonMain/composeResources/files") relative
     // to the working directory, matching CLAUDE.md's convention that Gradle tasks are
     // invoked from the repo root. Pin workingDir to the root project so that
     // `./gradlew :cli:run ...` from the repo root resolves default asset paths correctly
@@ -30,7 +30,7 @@ tasks.named<JavaExec>("run") {
 
 tasks.named<Test>("test") {
     // Pin test working directory to the root project so that relative asset paths
-    // in tests (e.g., "app/src/main/assets") resolve correctly.
+    // in tests (e.g., "shared/src/commonMain/composeResources/files") resolve correctly.
     workingDir = rootProject.projectDir
     maxHeapSize = "4g"
 }

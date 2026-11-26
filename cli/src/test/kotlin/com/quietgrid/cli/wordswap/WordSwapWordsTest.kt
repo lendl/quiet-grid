@@ -1,5 +1,6 @@
 package com.quietgrid.cli.wordswap
 
+import com.quietgrid.cli.ASSETS_DIR
 import com.quietgrid.cli.readPuzzleEntries
 import com.quietgrid.cli.wordguess.loadWordGuessBlocklist
 import com.quietgrid.engine.core.Difficulty
@@ -43,7 +44,7 @@ class WordSwapWordsTest {
     @Test
     fun englishBankWordsStayWithinTheirTierVocabulary() {
         val ranked = loadWordSwapRankedWords("en")
-        readPuzzleEntries("app/src/main/assets/wordswap_puzzles.json", WordSwapPuzzleEntry.serializer()).forEach { puzzle ->
+        readPuzzleEntries("$ASSETS_DIR/wordswap_puzzles.json", WordSwapPuzzleEntry.serializer()).forEach { puzzle ->
             val vocabulary = WORDSWAP_TIERS.getValue(Difficulty.entries.first { it.key == puzzle.difficulty }).vocabulary
             val allowed = ranked.take(vocabulary).toSet()
             puzzle.words().forEach { word -> assertTrue("${puzzle.id}: $word", word in allowed) }

@@ -1,5 +1,6 @@
 package com.quietgrid.cli.wordswap
 
+import com.quietgrid.cli.ASSETS_DIR
 import com.quietgrid.cli.readPuzzleEntries
 import com.quietgrid.cli.wordguess.hunspellParadigmsContaining
 import com.quietgrid.cli.wordguess.loadWordGuessBlocklist
@@ -20,7 +21,7 @@ import org.junit.Test
 class WordSwapBankVerificationTest {
 
     private val banks: Map<String, List<WordSwapPuzzleEntry>> = WORDSWAP_LOCALES.associateWith { locale ->
-        readPuzzleEntries("app/src/main/assets/${wordSwapBankFile(locale)}", WordSwapPuzzleEntry.serializer())
+        readPuzzleEntries("$ASSETS_DIR/${wordSwapBankFile(locale)}", WordSwapPuzzleEntry.serializer())
     }
 
     private val plainWord = Regex("[a-z]{3,7}")

@@ -74,7 +74,7 @@ fun parseArgs(args: Array<String>): GenerateCommand {
         game = requireFlag(args, "--game"),
         difficulty = requireFlag(args, "--difficulty"),
         count = optionalFlag(args, "--count", "1").toInt(),
-        outDir = optionalFlag(args, "--out", "app/src/main/assets"),
+        outDir = optionalFlag(args, "--out", ASSETS_DIR),
         locale = optionalFlag(args, "--locale", "en"),
         fillTo = optionalFlag(args, "--fill-to", "").toIntOrNull(),
         threads = optionalFlag(args, "--threads", "${Runtime.getRuntime().availableProcessors()}").toInt(),
@@ -90,7 +90,7 @@ private fun parseDifficulty(value: String): Difficulty =
 fun main(args: Array<String>) {
     if (args.getOrNull(0) == "validate") {
         val game = requireFlag(args, "--game")
-        val path = optionalFlag(args, "--path", "app/src/main/assets/${game}_puzzles.json")
+        val path = optionalFlag(args, "--path", "$ASSETS_DIR/${game}_puzzles.json")
         when (game) {
             "nonogram" -> com.quietgrid.cli.nonogram.validateNonogramBank(path)
             else -> error("Validation not implemented for game '$game'")
@@ -100,7 +100,7 @@ fun main(args: Array<String>) {
 
     if (args.getOrNull(0) == "inspect") {
         val game = requireFlag(args, "--game")
-        val path = optionalFlag(args, "--path", "app/src/main/assets/${game}_puzzles.json")
+        val path = optionalFlag(args, "--path", "$ASSETS_DIR/${game}_puzzles.json")
         when (game) {
             "nonogram" -> com.quietgrid.cli.nonogram.inspectNonogramExtremes(path)
             else -> error("Inspect not implemented for game '$game'")
@@ -110,7 +110,7 @@ fun main(args: Array<String>) {
 
     if (args.getOrNull(0) == "freebie-lines") {
         val game = requireFlag(args, "--game")
-        val path = optionalFlag(args, "--path", "app/src/main/assets/${game}_puzzles.json")
+        val path = optionalFlag(args, "--path", "$ASSETS_DIR/${game}_puzzles.json")
         when (game) {
             "nonogram" -> com.quietgrid.cli.nonogram.analyzeFreebieLineRatioDistribution(path)
             else -> error("Not implemented for game '$game'")
@@ -120,7 +120,7 @@ fun main(args: Array<String>) {
 
     if (args.getOrNull(0) == "purge") {
         val game = requireFlag(args, "--game")
-        val path = optionalFlag(args, "--path", "app/src/main/assets/${game}_puzzles.json")
+        val path = optionalFlag(args, "--path", "$ASSETS_DIR/${game}_puzzles.json")
         when (game) {
             "nonogram" -> {
                 val removed = com.quietgrid.cli.nonogram.purgeDegenerateNonogramEntries(path)
@@ -135,13 +135,13 @@ fun main(args: Array<String>) {
         require(requireFlag(args, "--game") == "wordswap") { "prune only supports --game wordswap" }
         val locale = requireFlag(args, "--locale")
         require(locale in com.quietgrid.cli.wordswap.WORDSWAP_LOCALES) { "Unknown locale '$locale'" }
-        com.quietgrid.cli.wordswap.runWordSwapPrune(locale, optionalFlag(args, "--out", "app/src/main/assets"))
+        com.quietgrid.cli.wordswap.runWordSwapPrune(locale, optionalFlag(args, "--out", ASSETS_DIR))
         return
     }
 
     if (args.getOrNull(0) == "regrade") {
         val game = requireFlag(args, "--game")
-        val path = optionalFlag(args, "--path", "app/src/main/assets/${game}_puzzles.json")
+        val path = optionalFlag(args, "--path", "$ASSETS_DIR/${game}_puzzles.json")
         when (game) {
             "sudoku" -> com.quietgrid.cli.sudoku.runSudokuRegrade(path, write = "--write" in args)
             "minisudoku" -> com.quietgrid.cli.sudoku.runSudokuRegrade(path, write = "--write" in args) {

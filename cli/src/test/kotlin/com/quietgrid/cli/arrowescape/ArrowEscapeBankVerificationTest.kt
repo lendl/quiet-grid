@@ -1,5 +1,6 @@
 package com.quietgrid.cli.arrowescape
 
+import com.quietgrid.cli.ASSETS_DIR
 import com.quietgrid.engine.arrowescape.ARROW_DIRECTION_DELTA
 import com.quietgrid.engine.arrowescape.ARROW_ESCAPE_MASK_ACTIVE
 import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
@@ -23,9 +24,9 @@ private fun readBank(path: String): List<ArrowEscapePuzzleEntry> = Json { ignore
     .decodeFromString(ListSerializer(ArrowEscapePuzzleEntry.serializer()), File(path).readText())
 
 class ArrowEscapeBankVerificationTest {
-    private val tierBanks = Difficulty.entries.associateWith { readBank("app/src/main/assets/arrowescape_puzzles_${it.key}.json") }
+    private val tierBanks = Difficulty.entries.associateWith { readBank("$ASSETS_DIR/arrowescape_puzzles_${it.key}.json") }
     private val mainBank = tierBanks.values.flatten()
-    private val halloweenBank = readBank("app/src/main/assets/arrowescape_halloween_puzzles.json")
+    private val halloweenBank = readBank("$ASSETS_DIR/arrowescape_halloween_puzzles.json")
     private val bank = mainBank + halloweenBank
     private val seasonByShape = loadArrowEscapeSilhouettes().associate { it.id to it.season }
 

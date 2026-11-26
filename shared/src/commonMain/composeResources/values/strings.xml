@@ -125,7 +125,7 @@
     <string name="settings_screen_rotation_portrait">Always upright</string>
     <string name="settings_screen_rotation_landscape">Always sideways</string>
     <string name="settings_show_mistakes_label">Check lines as you go</string>
-    <string name="settings_show_mistakes_detail">A finished line spins when it is right and shakes when it is wrong. When off, only the finished puzzle is checked and wrong lines don\'t lower your score. Sudoku, Mini Sudoku, Takuzu and Killer Sudoku.</string>
+    <string name="settings_show_mistakes_detail">A finished line spins when it is right and shakes when it is wrong. When off, only the finished puzzle is checked and wrong lines don't lower your score. Sudoku, Mini Sudoku, Takuzu and Killer Sudoku.</string>
     <string name="settings_reduce_motion_label">Reduce motion</string>
     <string name="settings_reduce_motion_detail">Skip the board entrance, spins, shakes, confetti and the end-of-puzzle animation.</string>
     <string name="settings_left_handed_label">Left-handed layout</string>
@@ -169,7 +169,7 @@
     <string name="quick_start_examples_title">Examples</string>
 
     <string name="chimp_quickstart_goal">Click the numbers in the correct sequence.</string>
-    <string name="chimp_quickstart_bullet_1">One mistake and you\'re out.</string>
+    <string name="chimp_quickstart_bullet_1">One mistake and you're out.</string>
     <string name="chimp_quickstart_bullet_2">Speed is of the essence.</string>
     <string name="chimp_quickstart_hook">The quicker you are, the higher your score.</string>
 
@@ -321,7 +321,7 @@
     <string name="tab_logs">Logs</string>
     <string name="stats_view_overview">Overview</string>
     <string name="tab_daily">Daily</string>
-    <string name="daily_title">Today\'s puzzles</string>
+    <string name="daily_title">Today's puzzles</string>
     <string name="daily_streak">🔥 %1$d</string>
     <string name="daily_manage">Choose daily games</string>
     <string name="daily_empty_title">Pick games for your daily</string>
@@ -397,7 +397,7 @@
     <string name="support_about_quiet_grid">About Quiet Grid</string>
     <string name="support_contributors">Contributors</string>
     <string name="support_show_your_support">Show your support</string>
-    <string name="support_show_your_support_subtitle">It helps more than you\'d think.</string>
+    <string name="support_show_your_support_subtitle">It helps more than you'd think.</string>
     <string name="support_rate_on_play_store">Rate on Play Store</string>
     <string name="support_star_on_github">Star on GitHub</string>
 
@@ -424,7 +424,7 @@
     <string name="support_info_licenses_heading_2">Third-party packages</string>
     <string name="support_info_licenses_body_2">Quiet Grid also uses open-source packages that keep their own licenses. You can review the full source code and package list in the project repository.</string>
     <string name="support_info_licenses_heading_3">Word Guess word lists</string>
-    <string name="support_info_licenses_body_3">Word Guess and Word Swap word lists are built from Hunspell spelling dictionaries: LibreOffice\'s en_US dictionary (LGPL/BSD), RLA-ES\'s es_ES dictionary (LGPL), Dicollecte\'s French dictionary (MPL 2.0), OpenTaal\'s Dutch dictionary (BSD/CC BY 3.0), Björn Jacke and Franz Michael Baumann\'s de_DE_frami dictionary (GPL), Gianluca Turconi and Davide Prina\'s it_IT dictionary (GPL), SJP.PL\'s Polish dictionary (GPL/LGPL/MPL/Apache 2.0/CC BY-SA), Raimundo Moura\'s VERO pt_BR dictionary (LGPL/MPL), and Dep. Informatica, Universidade do Minho\'s pt_PT dictionary (GPL/LGPL/MPL). Words are also ranked with word-frequency data from the FrequencyWords project (hermitdave/FrequencyWords on GitHub), licensed CC BY-SA 3.0.</string>
+    <string name="support_info_licenses_body_3">Word Guess and Word Swap word lists are built from Hunspell spelling dictionaries: LibreOffice's en_US dictionary (LGPL/BSD), RLA-ES's es_ES dictionary (LGPL), Dicollecte's French dictionary (MPL 2.0), OpenTaal's Dutch dictionary (BSD/CC BY 3.0), Björn Jacke and Franz Michael Baumann's de_DE_frami dictionary (GPL), Gianluca Turconi and Davide Prina's it_IT dictionary (GPL), SJP.PL's Polish dictionary (GPL/LGPL/MPL/Apache 2.0/CC BY-SA), Raimundo Moura's VERO pt_BR dictionary (LGPL/MPL), and Dep. Informatica, Universidade do Minho's pt_PT dictionary (GPL/LGPL/MPL). Words are also ranked with word-frequency data from the FrequencyWords project (hermitdave/FrequencyWords on GitHub), licensed CC BY-SA 3.0.</string>
     <string name="contributors_title">Contributors</string>
     <string name="contributors_intro">Quiet Grid is better because of the people who contribute to it. Thank you.</string>
     <string name="contributors_cta_title">Want to see your name here?</string>
@@ -514,7 +514,7 @@
     <string name="takuzu_tip_watch_flashes_title">Watch for flashes</string>
     <string name="takuzu_tip_watch_flashes_body">When you correctly complete a row or column, all its cells briefly flash as confirmation.</string>
     <string name="analyzer_title">Walk through the solve</string>
-    <string name="analyzer_load_failed">Couldn\'t load the solve for this puzzle.</string>
+    <string name="analyzer_load_failed">Couldn't load the solve for this puzzle.</string>
     <string name="analyzer_already_solved">This puzzle was already fully solved.</string>
     <string name="analyzer_solved_title">Solved!</string>
     <string name="analyzer_solved_body">This is the completed grid.</string>
@@ -586,7 +586,7 @@
     <string name="minesweeper_rule_4_title">Clear every safe cell</string>
     <string name="minesweeper_rule_4_body">The puzzle is complete once every safe cell is revealed.</string>
     <string name="minesweeper_technique_1_title">Forced flag</string>
-    <string name="minesweeper_technique_1_body">When a clue\'s remaining hidden neighbors equal its mine count, every one of them must be a mine — flag them all.</string>
+    <string name="minesweeper_technique_1_body">When a clue's remaining hidden neighbors equal its mine count, every one of them must be a mine — flag them all.</string>
     <string name="minesweeper_technique_2_title">Safe reveal</string>
     <string name="minesweeper_technique_2_body">When a clue already has all its mines flagged, every remaining hidden neighbor is safe to reveal.</string>
     <string name="minesweeper_technique_3_title">Compare clues</string>
@@ -607,7 +607,7 @@
     <string name="minesweeper_hint_title_all_mines_accounted_for">All mines accounted for</string>
     <string name="minesweeper_hint_single_mine_logic_body">Reveal highlighted %1$s. This local clue pattern still leaves one mine slot, which makes the other hidden %1$s safe.</string>
     <string name="minesweeper_hint_all_mines_accounted_for_body">Reveal highlighted %1$s. Around %2$s, known mine positions already account for all %3$d %4$s.</string>
-    <string name="minesweeper_hint_full_clue_resolution_body">Reveal highlighted %1$s. This clue\'s mine requirement is fully resolved, so its remaining hidden %1$s are safe.</string>
+    <string name="minesweeper_hint_full_clue_resolution_body">Reveal highlighted %1$s. This clue's mine requirement is fully resolved, so its remaining hidden %1$s are safe.</string>
     <string name="minesweeper_hint_only_one_possible_mine_body">Reveal highlighted %1$s. Reading %2$s together with %3$s leaves only one legal place for the remaining mine.</string>
     <string name="minesweeper_hint_guaranteed_safe_tile_body">Reveal highlighted %1$s. If this tile were a mine, nearby clue counts would be too high.</string>
     <string name="minesweeper_hint_title_clue_pair">Overlapping clues</string>
@@ -620,7 +620,7 @@
     <string name="minesweeper_tip_2_title">Count shared neighbors</string>
     <string name="minesweeper_tip_2_body">When two revealed numbers touch some of the same hidden cells, compare their remaining mine counts before placing flags.</string>
     <string name="minesweeper_tip_3_title">Use flags carefully</string>
-    <string name="minesweeper_tip_3_body">A flag is only as reliable as the reasoning behind it — don\'t treat flagged cells as confirmed unless the clues support it.</string>
+    <string name="minesweeper_tip_3_body">A flag is only as reliable as the reasoning behind it — don't treat flagged cells as confirmed unless the clues support it.</string>
     <string name="minesweeper_loss_abandoned_eyebrow">Puzzle ended</string>
     <string name="minesweeper_loss_abandoned_title">Puzzle unfinished</string>
     <string name="minesweeper_loss_abandoned_body">You ended this puzzle before it was solved.</string>
@@ -755,7 +755,7 @@
     <string name="wordsearch_reset_zoom">Reset zoom</string>
     <string name="wordsearch_next_move_show">Show next word hint</string>
     <string name="wordsearch_next_move_hide">Hide next word hint</string>
-    <string name="wordsearch_next_move_title">Find \"%1$s\"</string>
+    <string name="wordsearch_next_move_title">Find "%1$s"</string>
     <string name="wordsearch_next_move_body">Start from the highlighted letter and trace the full word in one straight line.</string>
     <string name="wordsearch_hidden_word_next_letter_title">Hidden word: %1$s</string>
     <string name="wordsearch_hidden_word_theme_title">Hidden word theme: %1$s</string>
@@ -763,13 +763,13 @@
     <string name="wordsearch_hidden_word_order_prompt">Tap the leftover letters in reading order.</string>
     <string name="wordsearch_how_to_play_goal">Find every word in the list. Then spell the hidden word to finish the puzzle.</string>
     <string name="wordsearch_how_to_play_controls">Drag across a word, or tap its first letter and then its last letter. To spell the hidden word, tap its letters one at a time.</string>
-    <string name="wordsearch_how_to_play_wrong_move">Invalid word selections are silently ignored — no penalty for tracing wrong paths. Wrong hidden-word taps are different: once you\'re guessing the hidden word, a wrong tap resets your progress and costs accuracy.</string>
+    <string name="wordsearch_how_to_play_wrong_move">Invalid word selections are silently ignored — no penalty for tracing wrong paths. Wrong hidden-word taps are different: once you're guessing the hidden word, a wrong tap resets your progress and costs accuracy.</string>
     <string name="wordsearch_rule_1_title">Trace straight lines</string>
     <string name="wordsearch_rule_1_body">Every listed word appears in one straight line: horizontal, vertical, or diagonal depending on difficulty.</string>
     <string name="wordsearch_rule_2_title">Leftover letters spell the hidden word</string>
     <string name="wordsearch_rule_2_body">When every listed word is found, the letters that no word uses spell the hidden word. It always fits the puzzle theme.</string>
     <string name="wordsearch_rule_3_title">Always in reading order</string>
-    <string name="wordsearch_rule_3_body">The hidden word\'s letters always appear in order: left to right, then top to bottom, like reading a page. The first leftover letter is the first letter of the word.</string>
+    <string name="wordsearch_rule_3_body">The hidden word's letters always appear in order: left to right, then top to bottom, like reading a page. The first leftover letter is the first letter of the word.</string>
     <string name="wordsearch_rule_4_title">Skip ahead for a bonus</string>
     <string name="wordsearch_rule_4_body">Tap the key icon to spell the hidden word before you find every word. Each word you skip adds bonus points. Tap it again to go back to the words.</string>
     <string name="wordsearch_tip_1_title">Start with unique first letters</string>
@@ -873,11 +873,11 @@
     <string name="wordguess_rule_2_title">Six guesses</string>
     <string name="wordguess_rule_2_body">You have six guesses to find the word. The puzzle ends in a loss if you use them all without guessing correctly.</string>
     <string name="wordguess_rule_3_title">Guesses must be real words</string>
-    <string name="wordguess_rule_3_body">Each guess is checked against a dictionary. Guesses that aren\'t real words are rejected and don\'t use up a try.</string>
+    <string name="wordguess_rule_3_body">Each guess is checked against a dictionary. Guesses that aren't real words are rejected and don't use up a try.</string>
     <string name="wordguess_tip_1_title">Start broad</string>
     <string name="wordguess_tip_1_body">Opening with a word that uses common, varied letters narrows down the possibilities fastest.</string>
-    <string name="wordguess_tip_2_title">Reuse what you\'ve learned</string>
-    <string name="wordguess_tip_2_body">The on-screen keyboard remembers every letter\'s best-known state, so you can see at a glance which letters are still worth trying.</string>
+    <string name="wordguess_tip_2_title">Reuse what you've learned</string>
+    <string name="wordguess_tip_2_body">The on-screen keyboard remembers every letter's best-known state, so you can see at a glance which letters are still worth trying.</string>
     <string name="wordguess_how_to_play_scoring">Solving the puzzle scores points based on the difficulty, how many guesses you needed, and how quickly you finished.</string>
     <string name="wordguess_invalid_word_message">Not a valid word</string>
     <string name="wordguess_reveal_word_label">The word was</string>
@@ -907,9 +907,9 @@
     <string name="animaldoku_rule_2_title">One animal per region</string>
     <string name="animaldoku_rule_2_body">Every colored region holds exactly one animal.</string>
     <string name="animaldoku_rule_3_title">No touching</string>
-    <string name="animaldoku_rule_3_body">Animals can\'t be placed next to each other, including diagonally.</string>
+    <string name="animaldoku_rule_3_body">Animals can't be placed next to each other, including diagonally.</string>
     <string name="animaldoku_rule_4_title">Placements are final</string>
-    <string name="animaldoku_rule_4_body">Once you double-tap a cell, correct or wrong, it can\'t be changed again.</string>
+    <string name="animaldoku_rule_4_body">Once you double-tap a cell, correct or wrong, it can't be changed again.</string>
     <string name="animaldoku_hint_show">Show next move hint</string>
     <string name="animaldoku_hint_hide">Hide next move hint</string>
     <string name="animaldoku_hint_row">row %1$d</string>
@@ -929,9 +929,9 @@
     <string name="animaldoku_hint_reveal_title">Next animal</string>
     <string name="animaldoku_hint_last_spot_body">Only one cell in %1$s can still hold an animal. Double-tap it.</string>
     <string name="animaldoku_hint_confined_to_line_body">Every open cell of %1$s is in %2$s, so its animal goes there. Mark the other cells in %2$s with X.</string>
-    <string name="animaldoku_hint_line_confined_to_region_body">Every open cell in %1$s belongs to %2$s, so that region\'s animal is in %1$s. Mark the rest of the region with X.</string>
+    <string name="animaldoku_hint_line_confined_to_region_body">Every open cell in %1$s belongs to %2$s, so that region's animal is in %1$s. Mark the rest of the region with X.</string>
     <string name="animaldoku_hint_regions_fill_lines_body">The open cells of %1$s all sit in %2$s, so those lines belong to them. Mark the other cells in %2$s with X.</string>
-    <string name="animaldoku_hint_lines_fill_regions_body">The open cells in %1$s all belong to %2$s, so those regions\' animals are there. Mark the rest of those regions with X.</string>
+    <string name="animaldoku_hint_lines_fill_regions_body">The open cells in %1$s all belong to %2$s, so those regions' animals are there. Mark the rest of those regions with X.</string>
     <string name="animaldoku_hint_chain_body">Try the faded animal: it would leave %1$s with no open cell. So mark its cell with X.</string>
     <string name="animaldoku_hint_chain_long_body">Try the faded animal: it would force other animals into place and leave %1$s with no open cell. So mark its cell with X.</string>
     <string name="animaldoku_chain_suppose_title">Suppose an animal goes here</string>
@@ -940,7 +940,7 @@
     <string name="animaldoku_chain_forced_again_title">And another</string>
     <string name="animaldoku_chain_forced_body">The faded animals leave only one open cell in %1$s, so an animal would have to go there.</string>
     <string name="animaldoku_chain_stuck_title">Stuck</string>
-    <string name="animaldoku_chain_stuck_body">The faded animals now block every open cell in %1$s. Every row, column and region needs one animal, so this can\'t happen.</string>
+    <string name="animaldoku_chain_stuck_body">The faded animals now block every open cell in %1$s. Every row, column and region needs one animal, so this can't happen.</string>
     <string name="animaldoku_chain_conclusion_title">So the guess was wrong</string>
     <string name="animaldoku_chain_conclusion_body">No animal can go in the cell you tried. Mark it with X.</string>
     <string name="animaldoku_hint_wrong_mark_body">This cell is marked X, but an animal belongs here. Tap it to clear the mark.</string>
@@ -954,8 +954,8 @@
     <string name="challenger_label">Challenger</string>
     <string name="challenger_solved_label">Solved</string>
     <string name="challenger_tier_label">Tier</string>
-    <string name="challenger_result_time_up_title">Time\'s up!</string>
-    <string name="challenger_result_time_up_body">The clock ran out. Here\'s how your run went.</string>
+    <string name="challenger_result_time_up_title">Time's up!</string>
+    <string name="challenger_result_time_up_body">The clock ran out. Here's how your run went.</string>
     <string name="challenger_result_abandoned_title">Run ended</string>
     <string name="challenger_result_abandoned_body">You stopped the run early.</string>
     <string name="challenger_result_lives_exhausted_title">Out of lives!</string>
@@ -989,7 +989,7 @@
     <string name="arrowescape_difficulty_desc_expert">Long chains of arrows block each other all the way across the board.</string>
     <string name="arrowescape_how_to_play_goal">Clear every arrow from the board.</string>
     <string name="arrowescape_how_to_play_controls">Tap an arrow to pull it off the board in the direction it points. It only comes free if nothing else is in its way.</string>
-    <string name="arrowescape_how_to_play_wrong_move">If an arrow is blocked, tapping it costs one life and marks it as wrong. It bumps into whatever is in its way, so you can see what is stopping it. A wrong arrow can\'t be tapped again. It slides out by itself once its way is clear.</string>
+    <string name="arrowescape_how_to_play_wrong_move">If an arrow is blocked, tapping it costs one life and marks it as wrong. It bumps into whatever is in its way, so you can see what is stopping it. A wrong arrow can't be tapped again. It slides out by itself once its way is clear.</string>
     <string name="arrowescape_arrows_cleared">%1$d / %2$d arrows</string>
     <string name="arrowescape_hint_content_description">Show a hint</string>
     <string name="arrowescape_rule_1_title">One direction</string>
@@ -1021,7 +1021,7 @@
     <string name="starbattle_rule_3_title">Stars per region</string>
     <string name="starbattle_rule_3_body">Every colored region holds exactly the right number of stars for the puzzle.</string>
     <string name="starbattle_rule_4_title">No touching</string>
-    <string name="starbattle_rule_4_body">Stars can\'t be placed next to each other, including diagonally.</string>
+    <string name="starbattle_rule_4_body">Stars can't be placed next to each other, including diagonally.</string>
     <string name="starbattle_loss_abandoned_eyebrow">Puzzle ended</string>
     <string name="starbattle_loss_abandoned_title">Puzzle abandoned</string>
     <string name="starbattle_loss_abandoned_body">You ended this puzzle before it was finished.</string>
@@ -1042,13 +1042,13 @@
     <string name="guessbynumbers_how_to_play_goal">Guess the hidden word in ten tries. After each guess, two numbers tell you how close you were.</string>
     <string name="guessbynumbers_how_to_play_controls">Type a guess using the on-screen keyboard and submit it. Your guess must be a real word of the correct length.</string>
     <string name="guessbynumbers_rule_1_title">Matches</string>
-    <string name="guessbynumbers_rule_1_body">Matches counts how many letters in your guess also appear in the target word, whether or not they\'re in the right spot.</string>
+    <string name="guessbynumbers_rule_1_body">Matches counts how many letters in your guess also appear in the target word, whether or not they're in the right spot.</string>
     <string name="guessbynumbers_rule_2_title">Exact</string>
-    <string name="guessbynumbers_rule_2_body">Exact counts how many of those letters are also in the correct position. Exact equal to the word length means you\'ve won.</string>
+    <string name="guessbynumbers_rule_2_body">Exact counts how many of those letters are also in the correct position. Exact equal to the word length means you've won.</string>
     <string name="guessbynumbers_rule_3_title">Ten guesses</string>
     <string name="guessbynumbers_rule_3_body">You have ten guesses to find the word. The puzzle ends in a loss if you use them all without guessing correctly.</string>
     <string name="guessbynumbers_rule_4_title">Guesses must be real words</string>
-    <string name="guessbynumbers_rule_4_body">Each guess is checked against a dictionary. Guesses that aren\'t real words are rejected and don\'t use up a try.</string>
+    <string name="guessbynumbers_rule_4_body">Each guess is checked against a dictionary. Guesses that aren't real words are rejected and don't use up a try.</string>
     <string name="guessbynumbers_how_to_play_scoring">Solving the puzzle scores points based on the difficulty, how many guesses you needed, and how quickly you finished.</string>
     <string name="guessbynumbers_matches_label">Matches</string>
     <string name="guessbynumbers_exact_label">Exact</string>
@@ -1084,7 +1084,7 @@
     <string name="mix_entry_challenger_chip">Challenger</string>
     <string name="mix_delete_button">Delete Mix</string>
     <string name="mix_delete_confirm_title">Delete this mix?</string>
-    <string name="mix_delete_confirm_body">This can\'t be undone.</string>
+    <string name="mix_delete_confirm_body">This can't be undone.</string>
     <string name="mix_delete_confirm_button">Delete</string>
 
     <string name="nback_title">N-Back</string>
@@ -1121,7 +1121,7 @@
     <string name="daily_reminder_channel_name">Daily puzzle reminder</string>
     <string name="daily_reminder_channel_description">A daily reminder when your subscribed daily puzzles are still unfinished.</string>
     <string name="daily_reminder_title">Daily puzzles</string>
-    <string name="daily_reminder_text">Today\'s puzzles are ready: %1$s</string>
+    <string name="daily_reminder_text">Today's puzzles are ready: %1$s</string>
     <string name="settings_daily_reminder">Daily reminder</string>
     <string name="settings_daily_reminder_detail">Notify me when subscribed daily puzzles are unfinished</string>
     <string name="settings_daily_reminder_time">Reminder time</string>
@@ -1133,16 +1133,16 @@
     <string name="themeclear_difficulty_desc_hard">Bigger grid, words that block each other</string>
     <string name="themeclear_difficulty_desc_expert">Large grid where most tempting words lead nowhere</string>
     <string name="themeclear_quickstart_goal">Use every letter in the grid to spell words from the theme.</string>
-    <string name="themeclear_quickstart_bullet_1">Tap letters in any order to spell a word. They don\'t need to touch.</string>
+    <string name="themeclear_quickstart_bullet_1">Tap letters in any order to spell a word. They don't need to touch.</string>
     <string name="themeclear_quickstart_bullet_2">Theme words are accepted automatically. The letters above fall down.</string>
     <string name="themeclear_quickstart_bullet_3">Tap × on a found word to put its letters back.</string>
     <string name="themeclear_quickstart_hook">Any theme words count, as long as every letter gets used.</string>
-    <string name="themeclear_how_to_play_goal">Clear the whole grid by spelling words that belong to the puzzle\'s theme. Every letter must be used.</string>
+    <string name="themeclear_how_to_play_goal">Clear the whole grid by spelling words that belong to the puzzle's theme. Every letter must be used.</string>
     <string name="themeclear_how_to_play_controls">Tap letters in any order to spell a word. Tap a selected letter again to drop it, or tap the word below the grid to clear it. Theme words are accepted automatically. If a longer theme word could still follow, the word waits two seconds; tap it to accept right away. Use shuffle to rearrange the letters.</string>
     <string name="themeclear_rule_1_title">Any order</string>
-    <string name="themeclear_rule_1_body">Letters don\'t need to touch. Pick them from anywhere in the grid.</string>
+    <string name="themeclear_rule_1_body">Letters don't need to touch. Pick them from anywhere in the grid.</string>
     <string name="themeclear_rule_2_title">Theme words only</string>
-    <string name="themeclear_rule_2_body">Only words from the puzzle\'s theme count, in their usual form, with three letters or more.</string>
+    <string name="themeclear_rule_2_body">Only words from the puzzle's theme count, in their usual form, with three letters or more.</string>
     <string name="themeclear_rule_3_title">Take a word back</string>
     <string name="themeclear_rule_3_body">Tap × on a found word to return its letters. They drop back into the grid in random places. Every word you find still counts toward your score.</string>
     <string name="themeclear_tip_1_title">Watch for traps</string>
@@ -1152,12 +1152,12 @@
     <string name="themeclear_tip_3_title">Shuffle for a fresh look</string>
     <string name="themeclear_tip_3_body">Stuck? Shuffle the letters. Seeing them in new spots can reveal words you missed.</string>
     <string name="themeclear_loss_abandoned_title">Puzzle unfinished</string>
-    <string name="themeclear_reveal_words_label">The puzzle\'s words were</string>
+    <string name="themeclear_reveal_words_label">The puzzle's words were</string>
     <string name="themeclear_hint_show">Show hint</string>
     <string name="themeclear_hint_hide">Hide hint</string>
     <string name="themeclear_shuffle">Shuffle letters</string>
     <string name="themeclear_remove_word">Remove %1$s</string>
-    <string name="themeclear_dead_end">These letters can\'t all be cleared. Remove a word.</string>
+    <string name="themeclear_dead_end">These letters can't all be cleared. Remove a word.</string>
     <string name="theme_fallback">Theme</string>
     <string name="theme_animals">Animals</string>
     <string name="theme_food">Food</string>
@@ -1621,7 +1621,7 @@
     <string name="whodidit_subject_item">whoever had the %1$s</string>
     <string name="whodidit_subject_motive">whoever acted out of %1$s</string>
     <string name="whodidit_sentence">%1$s %2$s.</string>
-    <string name="whodidit_statement">%1$s: \"%2$s.\"</string>
+    <string name="whodidit_statement">%1$s: "%2$s."</string>
     <string name="whodidit_crime_suspect">%1$s is %2$s</string>
     <string name="whodidit_trait_suspect_tall_label">Tall</string>
     <string name="whodidit_trait_suspect_tall_predicate">is tall</string>
@@ -1699,7 +1699,7 @@
     <string name="whodidit_hint_body_clues">Clues: %1$s</string>
     <string name="whodidit_hint_body_statements">Statements: %1$s</string>
     <string name="whodidit_hint_body_grid">The grid itself holds the answer. Look closely at what is already marked.</string>
-    <string name="whodidit_hint_wrong_marks">Heads up: one of your marks doesn\'t fit.</string>
+    <string name="whodidit_hint_wrong_marks">Heads up: one of your marks doesn't fit.</string>
     <string name="whodidit_hint_first">First: %1$s. %2$s</string>
     <string name="whodidit_hint_action_yes">Mark a match (O)</string>
     <string name="whodidit_hint_action_no">Cross out (X)</string>
@@ -1759,7 +1759,7 @@
     <string name="sequencememory_quickstart_bullet_3">Repeat the full sequence length to solve the puzzle.</string>
     <string name="sequencememory_quickstart_hook">Higher difficulty means more pads, faster flashes and a longer sequence.</string>
     <string name="sequencememory_how_to_play_goal">Repeat a growing sequence of lit pads until you reach the full sequence length for your difficulty.</string>
-    <string name="sequencememory_how_to_play_controls">Watch while the pads light up one by one. When it says Your turn, tap the pads in the same order. You can\'t tap while the sequence is playing.</string>
+    <string name="sequencememory_how_to_play_controls">Watch while the pads light up one by one. When it says Your turn, tap the pads in the same order. You can't tap while the sequence is playing.</string>
     <string name="sequencememory_how_to_play_wrong_move">Tapping the wrong pad ends the puzzle immediately. The pad you should have tapped lights up so you can see where it went wrong.</string>
     <string name="sequencememory_rule_1_title">Watch the sequence</string>
     <string name="sequencememory_rule_1_body">The pads light up one at a time. The same pad can light up more than once.</string>
@@ -1792,26 +1792,26 @@
     <string name="hashi_quickstart_goal">Connect every island with bridges so each one has exactly its number.</string>
     <string name="hashi_quickstart_bullet_1">Tap the gap between two islands to add a bridge.</string>
     <string name="hashi_quickstart_bullet_2">Tap again for a double bridge, a third time to clear it.</string>
-    <string name="hashi_quickstart_bullet_3">Bridges run straight and can\'t cross each other.</string>
+    <string name="hashi_quickstart_bullet_3">Bridges run straight and can't cross each other.</string>
     <string name="hashi_quickstart_hook">Every island must end up linked into one network.</string>
     <string name="hashi_how_to_play_goal">Connect every island with bridges so each island has exactly as many bridges as its number, and all islands form one connected network.</string>
     <string name="hashi_how_to_play_controls">Tap the gap between two islands to place a bridge. Tap again to make it a double bridge, and once more to remove it. An island fills in when it has the right number of bridges.</string>
-    <string name="hashi_how_to_play_wrong_move">There are no lives. An island with too many bridges dims, and a bridge that would cross another one is refused. A hint shows the next logical bridge, or turns a bridge that doesn\'t belong into a dashed line.</string>
+    <string name="hashi_how_to_play_wrong_move">There are no lives. An island with too many bridges dims, and a bridge that would cross another one is refused. A hint shows the next logical bridge, or turns a bridge that doesn't belong into a dashed line.</string>
     <string name="hashi_rule_1_title">Match the numbers</string>
     <string name="hashi_rule_1_body">Each island needs exactly as many bridges as the number on it.</string>
     <string name="hashi_rule_2_title">Straight lines only</string>
     <string name="hashi_rule_2_body">Bridges run horizontally or vertically between two islands, at most two between the same pair.</string>
     <string name="hashi_rule_3_title">No crossings</string>
-    <string name="hashi_rule_3_body">Bridges can\'t cross other bridges or pass over islands.</string>
+    <string name="hashi_rule_3_body">Bridges can't cross other bridges or pass over islands.</string>
     <string name="hashi_rule_4_title">One network</string>
-    <string name="hashi_rule_4_body">When you\'re done, every island must be reachable from every other island.</string>
+    <string name="hashi_rule_4_body">When you're done, every island must be reachable from every other island.</string>
     <string name="hashi_islands_done">%1$d / %2$d islands</string>
     <string name="hashi_hint_content_description">Show a hint</string>
     <string name="circuit_title">Circuit</string>
     <string name="circuit_tagline">Turn the tiles until every wire is live</string>
     <string name="circuit_difficulty_desc_easy">A small grid where the edges show the way</string>
-    <string name="circuit_difficulty_desc_medium">A bigger grid with a spot or two where you\'ll need to think ahead</string>
-    <string name="circuit_difficulty_desc_hard">Wires wrap around the edges, so there\'s no border to lean on</string>
+    <string name="circuit_difficulty_desc_medium">A bigger grid with a spot or two where you'll need to think ahead</string>
+    <string name="circuit_difficulty_desc_hard">Wires wrap around the edges, so there's no border to lean on</string>
     <string name="circuit_difficulty_desc_expert">A large wrapping grid full of what-if chains</string>
     <string name="circuit_quickstart_goal">Turn the tiles so every wire joins into one network.</string>
     <string name="circuit_quickstart_bullet_1">Tap a tile to turn it a quarter clockwise.</string>
@@ -1819,8 +1819,8 @@
     <string name="circuit_quickstart_bullet_3">Wires light up once they reach the power tile.</string>
     <string name="circuit_quickstart_hook">Light up every tile, with no loose ends and no loops.</string>
     <string name="circuit_how_to_play_goal">Turn the tiles until every wire meets a wire on the next tile and the whole grid forms one network. When every tile is lit, the puzzle is solved.</string>
-    <string name="circuit_how_to_play_controls">Tap a tile to turn it a quarter clockwise. Press and hold a tile to lock it, so a stray tap can\'t turn it, and hold again to unlock it. Wires connected to the power tile in the middle light up.</string>
-    <string name="circuit_how_to_play_wrong_move">There are no lives, so turn tiles as often as you like. A locked tile shakes when you tap it. A hint turns one tile into place, locks it and tells you why, or fixes a locked tile that\'s turned the wrong way.</string>
+    <string name="circuit_how_to_play_controls">Tap a tile to turn it a quarter clockwise. Press and hold a tile to lock it, so a stray tap can't turn it, and hold again to unlock it. Wires connected to the power tile in the middle light up.</string>
+    <string name="circuit_how_to_play_wrong_move">There are no lives, so turn tiles as often as you like. A locked tile shakes when you tap it. A hint turns one tile into place, locks it and tells you why, or fixes a locked tile that's turned the wrong way.</string>
     <string name="circuit_rule_1_title">Join every wire</string>
     <string name="circuit_rule_1_body">Each wire must meet a wire on the neighboring tile.</string>
     <string name="circuit_rule_2_title">No loose ends</string>
@@ -1866,9 +1866,9 @@
     <string name="killersudoku_technique_2_title">Rule of 45</string>
     <string name="killersudoku_technique_2_body">Every row, column and box adds up to 45. Add up the cages that sit fully inside one, and the cells poking in or out of it must make up the difference.</string>
     <string name="killersudoku_technique_3_title">Cages that lock a house</string>
-    <string name="killersudoku_technique_3_body">If a cage must contain a digit and all its spots for it are in one row, column or box, that digit can\'t go anywhere else there.</string>
+    <string name="killersudoku_technique_3_body">If a cage must contain a digit and all its spots for it are in one row, column or box, that digit can't go anywhere else there.</string>
     <string name="killersudoku_hint_unsupported_body">This position may need a deeper technique than Killer Sudoku currently teaches in Quiet Grid, or a digit on the board is wrong.</string>
-    <string name="killersudoku_hint_cage_conflict_body">The highlighted cage can\'t add up to %1$d with the digits in it. Correct it before asking for the next move.</string>
+    <string name="killersudoku_hint_cage_conflict_body">The highlighted cage can't add up to %1$d with the digits in it. Correct it before asking for the next move.</string>
     <string name="killersudoku_hint_technique_cage_last_cell">Last cell in a cage</string>
     <string name="killersudoku_hint_technique_cage_combination">Cage combination</string>
     <string name="killersudoku_hint_technique_cage_permutation">Cage permutation</string>
@@ -1902,9 +1902,9 @@
     <string name="links_rule_1_title">Connect the pairs</string>
     <string name="links_rule_1_body">Join each dot to the other dot of the same color with one pipe.</string>
     <string name="links_rule_2_title">No crossings</string>
-    <string name="links_rule_2_body">Pipes run between neighboring cells and can\'t cross or share a cell.</string>
+    <string name="links_rule_2_body">Pipes run between neighboring cells and can't cross or share a cell.</string>
     <string name="links_rule_3_title">Fill the grid</string>
-    <string name="links_rule_3_body">When you\'re done, every cell must be part of a pipe.</string>
+    <string name="links_rule_3_body">When you're done, every cell must be part of a pipe.</string>
     <string name="links_pairs_done">Pairs %1$d / %2$d</string>
     <string name="links_moves">Moves %1$d</string>
     <string name="links_filled">%1$d%% filled</string>
@@ -1920,7 +1920,7 @@
     <string name="settings_milestones_detail">Note a badge on the end screen when you earn one, and show the Milestones page in Stats.</string>
     <string name="badge_new_line">New badge: %1$s</string>
     <string name="milestones_title">Badges</string>
-    <string name="milestones_intro">Little markers of the puzzles you\'ve done. Nothing here expires or resets, and there\'s no rush.</string>
+    <string name="milestones_intro">Little markers of the puzzles you've done. Nothing here expires or resets, and there's no rush.</string>
     <string name="milestones_earned_total">/ %1$d</string>
     <string name="milestones_earned_label">badges earned</string>
     <string name="milestones_group_across">Across games</string>
@@ -1955,7 +1955,7 @@
     <string name="badge_pumpkin_patch_desc">Solve a Halloween puzzle. Only on October 31.</string>
     <string name="badge_chapter_one_name">Chapter one</string>
     <string name="badge_chapter_one_desc">Finish any chapter of the journey.</string>
-    <string name="badge_journey_end_name">Journey\'s end</string>
+    <string name="badge_journey_end_name">Journey's end</string>
     <string name="badge_journey_end_desc">Finish every chapter of the journey.</string>
     <string name="badge_every_star_name">Every star</string>
     <string name="badge_every_star_desc">Earn all 3 stars on every stop of the journey.</string>
@@ -2046,11 +2046,11 @@
     <string name="tip_rotation_body_landscape">Your screen turned upright a few times in %1$s and you turned it straight back. Want %1$s to stay sideways?</string>
     <string name="tip_rotation_action_portrait">Keep %1$s upright</string>
     <string name="tip_rotation_action_landscape">Keep %1$s sideways</string>
-    <string name="tip_rotation_done_portrait">%1$s now stays upright. You can change this in %1$s\'s Settings tab.</string>
-    <string name="tip_rotation_done_landscape">%1$s now stays sideways. You can change this in %1$s\'s Settings tab.</string>
+    <string name="tip_rotation_done_portrait">%1$s now stays upright. You can change this in %1$s's Settings tab.</string>
+    <string name="tip_rotation_done_landscape">%1$s now stays sideways. You can change this in %1$s's Settings tab.</string>
     <string name="tip_keep_awake_body">Your screen went dark during %1$s. Keep it awake while you play?</string>
     <string name="tip_keep_awake_action">Keep the screen awake</string>
-    <string name="tip_keep_awake_done">The screen now stays awake in %1$s. You can change this in %1$s\'s Settings tab.</string>
+    <string name="tip_keep_awake_done">The screen now stays awake in %1$s. You can change this in %1$s's Settings tab.</string>
     <string name="tip_reduce_motion_body">In a hurry? Reduce motion skips the long animations.</string>
     <string name="tip_reduce_motion_action">Reduce motion</string>
     <string name="tip_reduce_motion_done">Animations are now shorter. You can change this in Settings.</string>
@@ -2072,7 +2072,7 @@
     <string name="halloween_line_ghost">Boo-tifully solved.</string>
     <string name="halloween_line_bat">Solved before midnight.</string>
     <string name="halloween_line_moon">Solved by moonlight.</string>
-    <string name="halloween_character_pumpkin">Jack-o\'-lantern</string>
+    <string name="halloween_character_pumpkin">Jack-o'-lantern</string>
     <string name="halloween_character_cat">Black cat in front of the moon</string>
     <string name="halloween_character_owl">Owl on a branch</string>
     <string name="halloween_character_ghost">Friendly ghost</string>
@@ -2171,7 +2171,7 @@
     <string name="blockescape_difficulty_desc_expert">30 moves or more, with long chains of blocks to clear</string>
     <string name="blockescape_quickstart_goal">Slide the other blocks out of the way and move the coral block out through the exit.</string>
     <string name="blockescape_quickstart_bullet_1">Drag a block to slide it. Flat blocks move left and right, tall blocks move up and down.</string>
-    <string name="blockescape_quickstart_bullet_2">Blocks can\'t jump, turn or pass through each other.</string>
+    <string name="blockescape_quickstart_bullet_2">Blocks can't jump, turn or pass through each other.</string>
     <string name="blockescape_quickstart_bullet_3">Each slide counts as one move, however far it goes.</string>
     <string name="blockescape_quickstart_hook">Work backwards: what is in the way, and what is in the way of that?</string>
     <string name="blockescape_how_to_play_goal">Get the coral block out through the exit on the right side of the grid. The puzzle is solved as soon as it reaches the exit.</string>
@@ -2181,7 +2181,7 @@
     <string name="blockescape_rule_1_title">Slide along its length</string>
     <string name="blockescape_rule_1_body">A flat block only moves left and right. A tall block only moves up and down.</string>
     <string name="blockescape_rule_2_title">No passing</string>
-    <string name="blockescape_rule_2_body">Blocks can\'t jump, turn or slide through each other or off the grid.</string>
+    <string name="blockescape_rule_2_body">Blocks can't jump, turn or slide through each other or off the grid.</string>
     <string name="blockescape_rule_3_title">Free the coral block</string>
     <string name="blockescape_rule_3_body">Clear a path and slide the coral block to the exit on the right.</string>
     <string name="blockescape_moves">Moves %1$d</string>
@@ -2204,9 +2204,9 @@
     <string name="wordswap_how_to_play_wrong_move">There are no lives. Every swap counts, and the info strip shows the fewest swaps this puzzle can be solved in. A hint shows which word goes in one line, and why.</string>
     <string name="wordswap_how_to_play_scoring">Starts at 10,000. Loses 10 points every second on Easy, 5 on Medium, 4 on Hard and 3 on Expert. Each hint costs 1,000 points and each swap beyond the fewest possible costs 100.</string>
     <string name="wordswap_rule_1_title">Swap any two tiles</string>
-    <string name="wordswap_rule_1_body">The two tiles don\'t have to touch. Gaps in the grid stay empty.</string>
+    <string name="wordswap_rule_1_body">The two tiles don't have to touch. Gaps in the grid stay empty.</string>
     <string name="wordswap_rule_2_title">Every line is a word</string>
-    <string name="wordswap_rule_2_body">Each line of three or more tiles across or down spells a word from the list. Shorter lines don\'t count. Words listed under Diagonal sit on a diagonal somewhere in the grid, and finding where is part of the puzzle.</string>
+    <string name="wordswap_rule_2_body">Each line of three or more tiles across or down spells a word from the list. Shorter lines don't count. Words listed under Diagonal sit on a diagonal somewhere in the grid, and finding where is part of the puzzle.</string>
     <string name="wordswap_rule_3_title">Finished words light up</string>
     <string name="wordswap_rule_3_body">A word that is fully in place changes color and is crossed off the list.</string>
     <string name="wordswap_swaps">Swaps %1$d</string>
@@ -2221,10 +2221,10 @@
     <string name="wordswap_hint_show">Show hint</string>
     <string name="wordswap_hint_hide">Hide hint</string>
     <string name="wordswap_hint_place_title">Place %1$s here</string>
-    <string name="wordswap_hint_length_single">It\'s the only %1$d-letter word left for this direction.</string>
-    <string name="wordswap_hint_crossing_single">It\'s the only word that fits the letters already in place.</string>
+    <string name="wordswap_hint_length_single">It's the only %1$d-letter word left for this direction.</string>
+    <string name="wordswap_hint_crossing_single">It's the only word that fits the letters already in place.</string>
     <string name="wordswap_hint_only_slot">This is the only line where it fits.</string>
     <string name="wordswap_hint_cross_check">Comparing crossing lines rules out every other choice.</string>
     <string name="wordswap_hint_swap_title">Swap these two tiles</string>
-    <string name="wordswap_hint_swap_body">It\'s one step of a shortest solution.</string>
+    <string name="wordswap_hint_swap_body">It's one step of a shortest solution.</string>
 </resources>

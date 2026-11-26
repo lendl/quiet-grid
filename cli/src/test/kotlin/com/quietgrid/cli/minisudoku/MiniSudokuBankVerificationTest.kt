@@ -1,5 +1,6 @@
 package com.quietgrid.cli.minisudoku
 
+import com.quietgrid.cli.ASSETS_DIR
 import com.quietgrid.cli.sudoku.countSudokuSolutions
 import com.quietgrid.engine.core.Difficulty
 import com.quietgrid.engine.sudoku.MINI_SUDOKU_SIZE_BY_DIFFICULTY
@@ -18,7 +19,7 @@ import java.io.File
 
 class MiniSudokuBankVerificationTest {
     private val bank: List<SudokuPuzzleEntry> =
-        Json.decodeFromString(File("app/src/main/assets/minisudoku_puzzles.json").readText())
+        Json.decodeFromString(File("$ASSETS_DIR/minisudoku_puzzles.json").readText())
 
     private fun SudokuSolveTrace.agreesWith(solution: List<List<Int>>): Boolean = solved && moves.all { move ->
         when (move) {

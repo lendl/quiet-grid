@@ -1,5 +1,6 @@
 package com.quietgrid.cli.themeclear
 
+import com.quietgrid.cli.ASSETS_DIR
 import com.quietgrid.engine.core.Difficulty
 import com.quietgrid.engine.themeclear.ThemeClearBankEntry
 import com.quietgrid.engine.themeclear.ThemeClearDictionary
@@ -17,7 +18,7 @@ import java.io.File
 class ThemeClearBankVerificationTest {
     private val bankJson = Json { ignoreUnknownKeys = true }
     private val bank: List<ThemeClearPuzzleEntry> = bankJson
-        .decodeFromString(ListSerializer(ThemeClearBankEntry.serializer()), File("app/src/main/assets/themeclear_puzzles.json").readText())
+        .decodeFromString(ListSerializer(ThemeClearBankEntry.serializer()), File("$ASSETS_DIR/themeclear_puzzles.json").readText())
         .map { it.toPuzzleEntry() }
     private val themesByLocale: Map<String, Map<String, Set<String>>> =
         com.quietgrid.cli.themes.loadSharedThemes()

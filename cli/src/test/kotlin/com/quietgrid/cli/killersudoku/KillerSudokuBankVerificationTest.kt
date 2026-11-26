@@ -1,5 +1,6 @@
 package com.quietgrid.cli.killersudoku
 
+import com.quietgrid.cli.ASSETS_DIR
 import com.quietgrid.engine.core.Difficulty
 import com.quietgrid.engine.killersudoku.KillerCageLayout
 import com.quietgrid.engine.killersudoku.KillerSudokuPuzzleEntry
@@ -15,7 +16,7 @@ import java.io.File
 
 class KillerSudokuBankVerificationTest {
     private val bank: List<KillerSudokuPuzzleEntry> = Json { ignoreUnknownKeys = true }
-        .decodeFromString(ListSerializer(KillerSudokuPuzzleEntry.serializer()), File("app/src/main/assets/killersudoku_puzzles.json").readText())
+        .decodeFromString(ListSerializer(KillerSudokuPuzzleEntry.serializer()), File("$ASSETS_DIR/killersudoku_puzzles.json").readText())
 
     @Test
     fun `every tier has at least 100 puzzles`() {

@@ -1,5 +1,6 @@
 package com.quietgrid.cli.hashi
 
+import com.quietgrid.cli.ASSETS_DIR
 import com.quietgrid.engine.core.Difficulty
 import com.quietgrid.engine.hashi.HashiPuzzleEntry
 import com.quietgrid.engine.hashi.classifyHashiDifficulty
@@ -16,7 +17,7 @@ import java.io.File
 
 class HashiBankVerificationTest {
     private val bank: List<HashiPuzzleEntry> = Json { ignoreUnknownKeys = true }
-        .decodeFromString(ListSerializer(HashiPuzzleEntry.serializer()), File("app/src/main/assets/hashi_puzzles.json").readText())
+        .decodeFromString(ListSerializer(HashiPuzzleEntry.serializer()), File("$ASSETS_DIR/hashi_puzzles.json").readText())
 
     @Test
     fun `every tier has at least 100 puzzles`() {

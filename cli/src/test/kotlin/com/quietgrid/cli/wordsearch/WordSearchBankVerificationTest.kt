@@ -1,5 +1,6 @@
 package com.quietgrid.cli.wordsearch
 
+import com.quietgrid.cli.ASSETS_DIR
 import com.quietgrid.cli.themes.loadSharedThemes
 import com.quietgrid.engine.core.Difficulty
 import com.quietgrid.engine.wordsearch.WordPlacement
@@ -23,7 +24,7 @@ class WordSearchBankVerificationTest {
             Difficulty.entries.flatMap { difficulty ->
                 json.decodeFromString(
                     ListSerializer(WordSearchBankEntry.serializer()),
-                    File("app/src/main/assets/wordsearch_puzzles_${difficulty.key}.json").readText(),
+                    File("$ASSETS_DIR/wordsearch_puzzles_${difficulty.key}.json").readText(),
                 ).map { it.toPuzzleEntry(difficulty.key) }
             }
         }
