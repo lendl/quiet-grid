@@ -113,7 +113,7 @@ Expert also has to pass two gates in `classifyArrowEscapeDifficulty`, on top of 
    `./gradlew :cli:run --args="generate --game arrowescape --difficulty <tier> --count 4 --shape <id> --out shared/src/commonMain/composeResources/files"`
    Each tier writes its own bank file, `arrowescape_puzzles_<tier>.json`, but run the four tiers one after another, not in parallel, because they share the generation state file.
 5. Run the bank check:
-   `./gradlew :cli:test --tests "*ArrowEscapeBankVerificationTest*"`
+   `./gradlew :cli:bankTest --tests "*ArrowEscapeBankVerificationTest*"`
 
 ## Seasonal shapes
 

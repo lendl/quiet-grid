@@ -1,0 +1,49 @@
+name: Puzzle bank checks
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'shared/src/commonMain/composeResources/files/**'
+      - 'cli/**'
+      - 'engine/**'
+      - 'build.gradle.kts'
+      - 'settings.gradle.kts'
+      - 'gradle.properties'
+      - 'gradle/**'
+      - '.github/workflows/bank-checks.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'shared/src/commonMain/composeResources/files/**'
+      - 'cli/**'
+      - 'engine/**'
+      - 'build.gradle.kts'
+      - 'settings.gradle.kts'
+      - 'gradle.properties'
+      - 'gradle/**'
+      - '.github/workflows/bank-checks.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bank-checks:
+    name: Puzzle bank checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v6
+        with:
+          java-version: '17'
+          distribution: temurin
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Check every puzzle bank, Journey file and word list
+        run: ./gradlew :cli:bankTest

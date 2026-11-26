@@ -35,6 +35,30 @@ tasks.named<Test>("test") {
     maxHeapSize = "4g"
 }
 
+val bankTestSourceSet = sourceSets.create("bankTest") {
+    compileClasspath += sourceSets.main.get().output + sourceSets.test.get().output
+    runtimeClasspath += sourceSets.main.get().output + sourceSets.test.get().output
+}
+
+kotlin {
+    target.compilations.named("bankTest") {
+        associateWith(target.compilations.getByName("main"))
+        associateWith(target.compilations.getByName("test"))
+    }
+}
+
+configurations.named("bankTestImplementation") { extendsFrom(configurations.testImplementation.get()) }
+configurations.named("bankTestRuntimeOnly") { extendsFrom(configurations.testRuntimeOnly.get()) }
+
+tasks.register<Test>("bankTest") {
+    description = "Checks every committed puzzle bank, Journey file and word list."
+    group = "verification"
+    testClassesDirs = bankTestSourceSet.output.classesDirs
+    classpath = bankTestSourceSet.runtimeClasspath
+    workingDir = rootProject.projectDir
+    maxHeapSize = "4g"
+}
+
 dependencies {
     implementation(project(":engine"))
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.12.0")

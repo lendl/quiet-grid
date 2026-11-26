@@ -5,6 +5,10 @@
 - All unit tests (app + engine + cli): `./gradlew test`
 - App module only: `./gradlew :app:testDebugUnitTest`
 - Engine/CLI only (plain JVM, no emulator): `./gradlew :engine:test :cli:test`
+- Puzzle data checks: `./gradlew :cli:bankTest` (40 to 60 minutes). The tests in `cli/src/bankTest` check
+  every committed puzzle bank, Journey file and word list. Run it after generating, regrading or editing
+  a bank, and after engine changes to solving or grading. CI runs it in the `Puzzle bank checks` workflow
+  only when the banks, `cli/`, `engine/` or the Gradle build files change, or when started by hand.
 - Shared module (Android host): `./gradlew :shared:testAndroidHostTest`
 - Single class: `./gradlew :app:testDebugUnitTest --tests "com.quietgrid.app.games.sudoku.*"`
 - Single engine class: `./gradlew :engine:jvmTest --tests "com.quietgrid.engine.sudoku.*"`. `:engine:test`
