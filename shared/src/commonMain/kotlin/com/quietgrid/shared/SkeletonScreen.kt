@@ -22,6 +22,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.readText
 import com.quietgrid.engine.sudoku.SUDOKU_BOX_SIZE
 import com.quietgrid.engine.sudoku.SUDOKU_SIZE
 import com.quietgrid.engine.sudoku.SudokuPuzzleEntry
@@ -36,9 +38,9 @@ private val TextSpace = 192.dp
 private val MaxCellSize = 48.dp
 
 @Composable
-fun SkeletonScreen(modifier: Modifier = Modifier) {
-    val entry by produceState<SudokuPuzzleEntry?>(null) {
-        value = firstSudokuEntry(Res.readBytes(SKELETON_BANK_FILE).decodeToString())
+fun SkeletonScreen(files: BundledFiles, modifier: Modifier = Modifier) {
+    val entry by produceState<SudokuPuzzleEntry?>(null, files) {
+        value = firstSudokuEntry(files.readText(SKELETON_BANK_FILE))
     }
     MaterialTheme {
         Surface(modifier = modifier.fillMaxSize()) {

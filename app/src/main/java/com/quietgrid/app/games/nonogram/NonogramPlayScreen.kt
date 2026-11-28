@@ -32,12 +32,14 @@ fun NonogramPlayScreen(
 ) {
     val viewModel = appViewModel { graph ->
         NonogramPlayViewModel(
-            graph.appContext,
+            graph.bundledFiles,
             graph.sessionRepository,
             graph.statsRepository,
             graph.playHistoryRepository,
             graph.journeyProgressRepository,
             graph.badgeRepository,
+            graph.appForeground,
+            graph.motionSettings,
             difficulty,
             resume,
             journey,

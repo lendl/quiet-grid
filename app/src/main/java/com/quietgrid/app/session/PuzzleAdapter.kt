@@ -4,7 +4,7 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.badges.BadgeFacts
 import com.quietgrid.app.core.journey.JourneySignals
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 data class PuzzleOutcome(
     val difficulty: Difficulty,

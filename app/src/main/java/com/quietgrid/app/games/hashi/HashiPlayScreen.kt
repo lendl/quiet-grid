@@ -28,10 +28,12 @@ fun HashiPlayScreen(
 ) {
     val viewModel = appViewModel { graph ->
         HashiPlayViewModel(
-            graph.appContext,
+            graph.bundledFiles,
             graph.sessionRepository,
             graph.statsRepository,
             graph.playHistoryRepository,
+            graph.appForeground,
+            graph.motionSettings,
             difficulty,
             resume,
         )

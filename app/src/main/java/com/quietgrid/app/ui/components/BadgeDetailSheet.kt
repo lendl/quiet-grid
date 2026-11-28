@@ -29,14 +29,15 @@ import com.quietgrid.app.R
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.badges.BadgeCount
 import com.quietgrid.app.core.badges.BadgeDef
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.toJavaLocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 @Composable
 fun rememberBadgeDate(date: LocalDate): String {
     val locale = LocalConfiguration.current.locales[0]
-    return remember(date, locale) { date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale)) }
+    return remember(date, locale) { date.toJavaLocalDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale)) }
 }
 
 @Composable

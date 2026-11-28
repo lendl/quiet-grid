@@ -42,6 +42,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.quietgrid.app.LocalAppGraph
 import com.quietgrid.app.R
 import com.quietgrid.app.appViewModel
 import com.quietgrid.app.core.Difficulty
@@ -56,7 +57,8 @@ import com.quietgrid.app.ui.components.AccountIconButton
 import com.quietgrid.app.ui.components.StatGroup
 import com.quietgrid.app.ui.components.StatItem
 import kotlinx.coroutines.launch
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.toJavaLocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import com.quietgrid.app.ui.components.LogoGridLoader
@@ -72,7 +74,7 @@ fun DailyScreen(
 ) {
     val viewModel = appViewModel { graph ->
         DailyViewModel(
-            graph.appContext,
+            graph.bundledFiles,
             graph.dailyRepository,
             graph.playHistoryRepository,
             graph.sessionRepository,
@@ -81,12 +83,14 @@ fun DailyScreen(
     }
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val shareChooserTitle = stringResource(R.string.daily_share_chooser)
+    val shareSheet = LocalAppGraph.current.shareSheet
     val scope = rememberCoroutineScope()
     val requestNotificationPermission = rememberFirstSubscribePermissionRequest()
     var openGameKey by rememberSaveable { mutableStateOf<String?>(null) }
     val locale = LocalConfiguration.current.locales[0]
     val dateText = remember(state.today, locale) {
-        state.today.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale))
+        state.today.toJavaLocalDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale))
     }
 
     val todayEntries = state.games.flatMap { game ->
@@ -104,7 +108,10 @@ fun DailyScreen(
             DailyTierStatus.Unplayed -> onStartDaily(gameId, difficulty, state.today)
             DailyTierStatus.InProgress -> onResumeDaily(gameId)
             is DailyTierStatus.Solved, DailyTierStatus.Lost ->
-                scope.launch { viewModel.share(context, gameId, difficulty, state.today) }
+                scope.launch {
+                    viewModel.shareText(gameId, difficulty, state.today, dailyShareCopy(context, gameId, difficulty))
+                        ?.let { shareSheet.shareText(it, shareChooserTitle) }
+                }
         }
     }
 

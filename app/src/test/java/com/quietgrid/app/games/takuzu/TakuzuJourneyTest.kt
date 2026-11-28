@@ -1,5 +1,8 @@
 package com.quietgrid.app.games.takuzu
 
+import com.quietgrid.app.platform.AndroidBundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
@@ -46,9 +49,9 @@ class TakuzuJourneyTest {
     }
 
     private fun newViewModel(journey: JourneyRequest? = null): TakuzuPlayViewModel = TakuzuPlayViewModel(
-        context, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakeJourneyStore(),
+        AndroidBundledFiles(context), FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakeJourneyStore(),
         FakeBadgeStore(),
-        Difficulty.MEDIUM, resume = false, dailyDate = null, journey = journey,
+        AppForeground { false }, MotionSettings { false }, Difficulty.MEDIUM, resume = false, dailyDate = null, journey = journey,
     ).also { it.hintDispatcher = mainDispatcherRule.dispatcher }
 
     @Test
@@ -71,13 +74,13 @@ class TakuzuJourneyTest {
         viewModel.toggleNextMoveHint()
         assertEquals(2, viewModel.session?.hintsUsed)
 
-        val adapter = TakuzuPuzzleAdapter(context, FakeHistoryStore())
+        val adapter = TakuzuPuzzleAdapter(AndroidBundledFiles(context), FakeHistoryStore())
         assertEquals(2, kotlinx.coroutines.runBlocking { adapter.restoreSession(adapter.encode(viewModel.session!!), 0.0) }?.hintsUsed)
     }
 
     @Test
     fun `takuzu signals count hints and accuracy drops`() {
-        val adapter = TakuzuPuzzleAdapter(context, FakeHistoryStore())
+        val adapter = TakuzuPuzzleAdapter(AndroidBundledFiles(context), FakeHistoryStore())
         val session = createTakuzuSession(JOURNEY_PUZZLE).copy(hintsUsed = 3, accuracyDrops = 1)
         assertEquals(JourneySignals(hintsUsed = 3, mistakes = 1), adapter.journeySignals(session))
     }

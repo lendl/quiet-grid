@@ -1,6 +1,8 @@
 package com.quietgrid.app.games.takuzu
 
-import android.content.Context
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,7 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.daily.selectDaily
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.journey.JourneyRequest
 import com.quietgrid.app.core.journey.JourneySignals
@@ -54,24 +56,24 @@ data class TakuzuResult(
 )
 
 internal class TakuzuPuzzleAdapter(
-    private val appContext: Context,
+    private val files: BundledFiles,
     private val historyStore: PlayHistoryStore,
 ) : PuzzleAdapter<TakuzuSession, TakuzuResult> {
     override val gameId: GameId = GameId.TAKUZU
 
     override suspend fun freshSession(difficulty: Difficulty): TakuzuSession? {
         val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
-        val puzzle = TakuzuPuzzleBank.randomPuzzle(appContext, difficulty, recentIds) ?: return null
+        val puzzle = TakuzuPuzzleBank.randomPuzzle(files, difficulty, recentIds) ?: return null
         return createTakuzuSession(puzzle)
     }
 
     override suspend fun dailySession(difficulty: Difficulty, date: LocalDate): TakuzuSession? {
-        val puzzle = selectDaily(TakuzuPuzzleBank.dailyPool(appContext, difficulty), { it.id }, gameId.key, difficulty.key, date) ?: return null
+        val puzzle = selectDaily(TakuzuPuzzleBank.dailyPool(files, difficulty), { it.id }, gameId.key, difficulty.key, date) ?: return null
         return createTakuzuSession(puzzle)
     }
 
     override suspend fun journeySession(difficulty: Difficulty, puzzleId: String, transform: Int): TakuzuSession? =
-        TakuzuPuzzleBank.puzzleById(appContext, difficulty, puzzleId)?.transformed(gridTransformById(transform))?.let(::createTakuzuSession)
+        TakuzuPuzzleBank.puzzleById(files, difficulty, puzzleId)?.transformed(gridTransformById(transform))?.let(::createTakuzuSession)
 
     override fun journeySignals(session: TakuzuSession): JourneySignals = JourneySignals(session.hintsUsed, session.accuracyDrops)
 
@@ -130,12 +132,14 @@ internal class TakuzuPuzzleAdapter(
 }
 
 class TakuzuPlayViewModel(
-    appContext: Context,
+    files: BundledFiles,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     journeyStore: JourneyProgressStore,
     badgeStore: BadgeStore,
+    appForeground: AppForeground,
+    motion: MotionSettings,
     requestedDifficulty: Difficulty,
     resume: Boolean,
     dailyDate: LocalDate?,
@@ -147,7 +151,9 @@ class TakuzuPlayViewModel(
         sessionStore = sessionRepository,
         statsStore = statsRepository,
         historyStore = historyRepository,
-        adapter = TakuzuPuzzleAdapter(appContext, historyRepository),
+        adapter = TakuzuPuzzleAdapter(files, historyRepository),
+        isAppForeground = appForeground::isForeground,
+        animationsEnabled = motion::animationsEnabled,
         journeyStore = journeyStore,
         badgeStore = badgeStore,
     )

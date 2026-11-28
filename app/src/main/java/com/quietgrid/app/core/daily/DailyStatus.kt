@@ -5,7 +5,9 @@ import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.ActiveSessionEnvelope
 import com.quietgrid.app.data.PlayRecord
-import java.time.LocalDate
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.minus
 
 sealed interface DailyTierStatus {
     data object Unplayed : DailyTierStatus
@@ -43,11 +45,11 @@ fun dailyStreak(records: List<PlayRecord>, gameIds: Set<GameId>, today: LocalDat
         .filter { it.solved && it.gameId in keys }
         .mapNotNull { record -> record.dailyDate?.let { runCatching { LocalDate.parse(it) }.getOrNull() } }
         .toSet()
-    var day = if (today in solvedDates) today else today.minusDays(1)
+    var day = if (today in solvedDates) today else today.minus(1, DateTimeUnit.DAY)
     var count = 0
     while (day in solvedDates) {
         count++
-        day = day.minusDays(1)
+        day = day.minus(1, DateTimeUnit.DAY)
     }
     return count
 }

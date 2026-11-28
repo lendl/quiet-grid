@@ -22,14 +22,14 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 class BadgeRepositoryTest {
 
     @get:Rule
     val tempFolder = TemporaryFolder()
 
-    private val today = LocalDate.of(2026, 11, 14)
+    private val today = LocalDate(2026, 11, 14)
 
     private fun finish(gameId: GameId, difficulty: Difficulty, solved: Boolean, facts: BadgeFacts = BadgeFacts()) = FinishFacts(
         gameId = gameId,

@@ -1,5 +1,8 @@
 package com.quietgrid.app.games.whodidit
 
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -17,7 +20,7 @@ import com.quietgrid.app.session.PuzzleAdapter
 import com.quietgrid.app.session.PuzzleOutcome
 import com.quietgrid.app.session.PuzzleSessionController
 import com.quietgrid.engine.whodidit.WhoDidItPuzzleEntry
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -43,19 +46,19 @@ data class WhoDidItResult(
 data class WhoDidItWrongPickEvent(val id: Int, val block: Int, val row: Int, val col: Int)
 
 private class WhoDidItPuzzleAdapter(
-    private val appContext: android.content.Context,
+    private val files: BundledFiles,
     private val historyStore: PlayHistoryStore,
 ) : PuzzleAdapter<WhoDidItSession, WhoDidItResult> {
     override val gameId: GameId = GameId.WHODIDIT
 
     override suspend fun freshSession(difficulty: Difficulty): WhoDidItSession? {
         val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
-        val puzzle = WhoDidItPuzzleBank.randomPuzzle(appContext, difficulty, recentIds) ?: return null
+        val puzzle = WhoDidItPuzzleBank.randomPuzzle(files, difficulty, recentIds) ?: return null
         return createWhoDidItSession(puzzle)
     }
 
     override suspend fun dailySession(difficulty: Difficulty, date: LocalDate): WhoDidItSession? {
-        val puzzle = selectDaily(WhoDidItPuzzleBank.dailyPool(appContext, difficulty), { it.id }, gameId.key, difficulty.key, date) ?: return null
+        val puzzle = selectDaily(WhoDidItPuzzleBank.dailyPool(files, difficulty), { it.id }, gameId.key, difficulty.key, date) ?: return null
         return createWhoDidItSession(puzzle)
     }
 
@@ -101,10 +104,12 @@ private class WhoDidItPuzzleAdapter(
 }
 
 class WhoDidItPlayViewModel(
-    appContext: android.content.Context,
+    files: BundledFiles,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
+    appForeground: AppForeground,
+    motion: MotionSettings,
     requestedDifficulty: Difficulty,
     resume: Boolean,
     dailyDate: LocalDate?,
@@ -115,7 +120,9 @@ class WhoDidItPlayViewModel(
         sessionStore = sessionRepository,
         statsStore = statsRepository,
         historyStore = historyRepository,
-        adapter = WhoDidItPuzzleAdapter(appContext, historyRepository),
+        adapter = WhoDidItPuzzleAdapter(files, historyRepository),
+        isAppForeground = appForeground::isForeground,
+        animationsEnabled = motion::animationsEnabled,
     )
 
     val session get() = controller.session

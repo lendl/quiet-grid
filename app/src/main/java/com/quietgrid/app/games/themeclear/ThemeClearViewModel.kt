@@ -1,6 +1,8 @@
 package com.quietgrid.app.games.themeclear
 
-import android.content.Context
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -47,7 +49,7 @@ data class ThemeClearResult(
 )
 
 private class ThemeClearPuzzleAdapter(
-    private val appContext: Context,
+    private val files: BundledFiles,
     private val settingsRepository: SettingsRepository,
     private val themePreferencesRepository: ThemePreferencesRepository,
     private val historyStore: PlayHistoryStore,
@@ -58,7 +60,7 @@ private class ThemeClearPuzzleAdapter(
         val locale = currentThemeClearLocale(settingsRepository.settings.first().puzzleLanguage)
         val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
         val excludedThemes = themePreferencesRepository.excludedThemes(gameId, locale).first()
-        val entry = ThemeClearPuzzleBank.randomPuzzle(appContext, locale, difficulty, recentIds, excludedThemes) ?: return null
+        val entry = ThemeClearPuzzleBank.randomPuzzle(files, locale, difficulty, recentIds, excludedThemes) ?: return null
         return themeClearNewSession(entry)
     }
 
@@ -109,13 +111,15 @@ private class ThemeClearPuzzleAdapter(
 }
 
 class ThemeClearPlayViewModel(
-    private val appContext: Context,
+    private val files: BundledFiles,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     settingsRepository: SettingsRepository,
     themePreferencesRepository: ThemePreferencesRepository,
     badgeStore: BadgeStore,
+    appForeground: AppForeground,
+    motion: MotionSettings,
     requestedDifficulty: Difficulty,
     resume: Boolean,
 ) : ViewModel() {
@@ -125,7 +129,9 @@ class ThemeClearPlayViewModel(
         sessionStore = sessionRepository,
         statsStore = statsRepository,
         historyStore = historyRepository,
-        adapter = ThemeClearPuzzleAdapter(appContext, settingsRepository, themePreferencesRepository, historyRepository),
+        adapter = ThemeClearPuzzleAdapter(files, settingsRepository, themePreferencesRepository, historyRepository),
+        isAppForeground = appForeground::isForeground,
+        animationsEnabled = motion::animationsEnabled,
         badgeStore = badgeStore,
     )
 
@@ -159,7 +165,7 @@ class ThemeClearPlayViewModel(
 
     private suspend fun solverFor(current: ThemeClearSession): ThemeClearSolver? {
         solver?.let { return it }
-        val dictionary = ThemeClearPuzzleBank.dictionary(appContext, current.puzzle.locale, current.puzzle.themeId) ?: return null
+        val dictionary = ThemeClearPuzzleBank.dictionary(files, current.puzzle.locale, current.puzzle.themeId) ?: return null
         return ThemeClearSolver(dictionary).also { solver = it }
     }
 

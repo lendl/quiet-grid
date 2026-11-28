@@ -14,8 +14,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.time.LocalTime
-import java.time.ZonedDateTime
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlin.time.Clock
 import java.util.concurrent.TimeUnit
 
 private const val WORK_NAME = "daily_reminder"
@@ -47,9 +48,9 @@ class DailyReminderScheduler(
             workManager.cancelUniqueWork(WORK_NAME)
             return
         }
-        val delay = nextReminderDelay(ZonedDateTime.now(), time)
+        val delay = nextReminderDelay(Clock.System.now(), TimeZone.currentSystemDefault(), time)
         val request = OneTimeWorkRequestBuilder<DailyReminderWorker>()
-            .setInitialDelay(delay.toMillis(), TimeUnit.MILLISECONDS)
+            .setInitialDelay(delay.inWholeMilliseconds, TimeUnit.MILLISECONDS)
             .build()
         workManager.enqueueUniqueWork(WORK_NAME, ExistingWorkPolicy.REPLACE, request)
     }

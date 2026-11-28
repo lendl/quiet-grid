@@ -16,10 +16,12 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
+import kotlin.concurrent.Volatile
+import kotlin.time.Instant
 
 @Serializable
 data class PlayRecord(
@@ -226,8 +228,8 @@ suspend fun PlayHistoryStore.recentlyPlayedPuzzleIds(
     .mapNotNull { it.puzzleId }
     .toSet()
 
-suspend fun PlayHistoryStore.puzzleIdsPlayedOn(gameId: GameId, date: LocalDate, zone: ZoneId = ZoneId.systemDefault()): Set<String> =
+suspend fun PlayHistoryStore.puzzleIdsPlayedOn(gameId: GameId, date: LocalDate, zone: TimeZone = TimeZone.currentSystemDefault()): Set<String> =
     recordsFor(gameId).first()
-        .filter { Instant.ofEpochMilli(it.timestampMillis).atZone(zone).toLocalDate() == date }
+        .filter { Instant.fromEpochMilliseconds(it.timestampMillis).toLocalDateTime(zone).date == date }
         .mapNotNull { it.puzzleId }
         .toSet()

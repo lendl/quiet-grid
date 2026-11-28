@@ -1,6 +1,9 @@
 // app/src/main/java/com/quietgrid/app/games/arrowescape/ArrowEscapeViewModel.kt
 package com.quietgrid.app.games.arrowescape
 
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.today
 import com.quietgrid.app.core.badges.BadgeFacts
 import com.quietgrid.app.core.badges.SEASON_HALLOWEEN
 import com.quietgrid.app.core.journey.JourneyRequest
@@ -40,7 +44,6 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.time.LocalDate
 
 private val json = Json { ignoreUnknownKeys = true }
 
@@ -63,7 +66,7 @@ private class ParsedArrowEscapePuzzle(val puzzle: ArrowEscapePuzzleEntry) {
 }
 
 internal class ArrowEscapePuzzleAdapter(
-    private val appContext: android.content.Context,
+    private val files: BundledFiles,
     private val historyStore: PlayHistoryStore,
     private val settingsRepository: SettingsRepository,
 ) : PuzzleAdapter<ArrowEscapeSession, ArrowEscapeResult> {
@@ -71,22 +74,22 @@ internal class ArrowEscapePuzzleAdapter(
 
     override suspend fun freshSession(difficulty: Difficulty): ArrowEscapeSession? {
         halloweenPuzzle(difficulty)?.let { return createArrowEscapeSession(it).copy(seasonal = SEASON_HALLOWEEN) }
-        val puzzle = ArrowEscapePuzzleBank.randomPuzzle(appContext, difficulty, historyStore.recentlyPlayedPuzzleIds(gameId, difficulty))
+        val puzzle = ArrowEscapePuzzleBank.randomPuzzle(files, difficulty, historyStore.recentlyPlayedPuzzleIds(gameId, difficulty))
             ?: return null
         return createArrowEscapeSession(puzzle)
     }
 
     private suspend fun halloweenPuzzle(difficulty: Difficulty): ArrowEscapePuzzleEntry? {
-        val today = LocalDate.now()
-        if (!settingsRepository.isHalloweenActive(today)) return null
-        return ArrowEscapePuzzleBank.halloweenPuzzle(appContext, difficulty, historyStore.puzzleIdsPlayedOn(gameId, today))
+        val date = today()
+        if (!settingsRepository.isHalloweenActive(date)) return null
+        return ArrowEscapePuzzleBank.halloweenPuzzle(files, difficulty, historyStore.puzzleIdsPlayedOn(gameId, date))
     }
 
     override suspend fun journeySession(difficulty: Difficulty, puzzleId: String, transform: Int): ArrowEscapeSession? =
         bankPuzzle(difficulty, puzzleId, transform)?.let { createArrowEscapeSession(it, transform) }
 
     private suspend fun bankPuzzle(difficulty: Difficulty, puzzleId: String, transform: Int): ArrowEscapePuzzleEntry? =
-        ArrowEscapePuzzleBank.puzzleById(appContext, difficulty, puzzleId)?.transformed(gridTransformById(transform))
+        ArrowEscapePuzzleBank.puzzleById(files, difficulty, puzzleId)?.transformed(gridTransformById(transform))
 
     override fun journeySignals(session: ArrowEscapeSession): JourneySignals =
         JourneySignals(session.hintsUsed, ARROW_ESCAPE_STARTING_LIVES - session.lives)
@@ -123,7 +126,7 @@ internal class ArrowEscapePuzzleAdapter(
 
     private suspend fun inlinePuzzleTransform(puzzle: ArrowEscapePuzzleEntry): Int {
         val difficulty = Difficulty.entries.firstOrNull { it.key == puzzle.difficulty } ?: return 0
-        val original = ArrowEscapePuzzleBank.puzzleById(appContext, difficulty, puzzle.id) ?: return 0
+        val original = ArrowEscapePuzzleBank.puzzleById(files, difficulty, puzzle.id) ?: return 0
         return GridTransform.entries.firstOrNull { original.transformed(it) == puzzle }?.id ?: 0
     }
 
@@ -169,13 +172,15 @@ internal class ArrowEscapePuzzleAdapter(
 }
 
 class ArrowEscapePlayViewModel(
-    appContext: android.content.Context,
+    files: BundledFiles,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     settingsRepository: SettingsRepository,
     journeyStore: JourneyProgressStore,
     badgeStore: BadgeStore,
+    appForeground: AppForeground,
+    motion: MotionSettings,
     requestedDifficulty: Difficulty,
     resume: Boolean,
     journey: JourneyRequest?,
@@ -186,7 +191,9 @@ class ArrowEscapePlayViewModel(
         sessionStore = sessionRepository,
         statsStore = statsRepository,
         historyStore = historyRepository,
-        adapter = ArrowEscapePuzzleAdapter(appContext, historyRepository, settingsRepository),
+        adapter = ArrowEscapePuzzleAdapter(files, historyRepository, settingsRepository),
+        isAppForeground = appForeground::isForeground,
+        animationsEnabled = motion::animationsEnabled,
         journeyStore = journeyStore,
         badgeStore = badgeStore,
     )

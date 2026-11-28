@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import com.quietgrid.app.ui.setContentWithGraph
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.unit.dp
@@ -34,7 +35,7 @@ class MinesweeperEndlessGridTest {
 
     private fun showGrid() {
         val world = startEndlessRun(WorldCell(4, 4), Random(7)).world
-        composeRule.setContent {
+        composeRule.setContentWithGraph {
             MaterialTheme {
                 MinesweeperEndlessGrid(
                     world = world,

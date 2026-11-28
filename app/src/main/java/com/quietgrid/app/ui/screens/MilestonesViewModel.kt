@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 private const val SUBSCRIBE_TIMEOUT_MS = 5_000L
 private const val ANNOUNCEMENT_LOADED_KEY = "badge_announcement_loaded"

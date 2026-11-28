@@ -1,6 +1,6 @@
 package com.quietgrid.app.games.nonogram
 
-import android.content.Context
+import com.quietgrid.app.platform.BundledFiles
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -18,7 +18,7 @@ import com.quietgrid.app.session.tick
 import kotlinx.coroutines.launch
 
 class NonogramChallengerViewModel(
-    private val appContext: Context,
+    private val files: BundledFiles,
     statsStore: StatsStore,
     historyStore: PlayHistoryStore,
     appForeground: AppForeground,
@@ -40,7 +40,7 @@ class NonogramChallengerViewModel(
 
     init {
         viewModelScope.launch {
-            val firstPuzzle = NonogramPuzzleBank.randomPuzzle(appContext, Difficulty.EASY)
+            val firstPuzzle = NonogramPuzzleBank.randomPuzzle(files, Difficulty.EASY)
             if (firstPuzzle != null) {
                 controller.start(createInitialNonogramChallengerSession(firstPuzzle))
             }
@@ -74,7 +74,7 @@ class NonogramChallengerViewModel(
         val (nextTier, nextSolvesInTier) = challengerTierAfterSolve(NONOGRAM_CHALLENGER_CONFIG, withTap.tier, withTap.solvesInTier)
         advancing = true
         viewModelScope.launch {
-            val nextPuzzle = NonogramPuzzleBank.randomPuzzle(appContext, nextTier, withTap.servedPuzzleIds)
+            val nextPuzzle = NonogramPuzzleBank.randomPuzzle(files, nextTier, withTap.servedPuzzleIds)
             if (nextPuzzle == null) {
                 val credited = withTap.creditSolve(nonogramChallengerPuzzleScore(withTap))
                 controller.finalizeRun(credited, "bank_exhausted")

@@ -1,5 +1,8 @@
 package com.quietgrid.app.games.starbattle
 
+import com.quietgrid.app.platform.AndroidBundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
@@ -52,9 +55,9 @@ class StarBattleJourneyTest {
     }
 
     private fun newViewModel(journey: JourneyRequest? = null): StarBattlePlayViewModel = StarBattlePlayViewModel(
-        context, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakeJourneyStore(),
+        AndroidBundledFiles(context), FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakeJourneyStore(),
         FakeBadgeStore(),
-        Difficulty.MEDIUM, resume = false, journey = journey,
+        AppForeground { false }, MotionSettings { false }, Difficulty.MEDIUM, resume = false, journey = journey,
     )
 
     @Test
@@ -73,7 +76,7 @@ class StarBattleJourneyTest {
 
     @Test
     fun `star battle signals count lost lives as mistakes`() {
-        val adapter = StarBattlePuzzleAdapter(context, FakeHistoryStore())
+        val adapter = StarBattlePuzzleAdapter(AndroidBundledFiles(context), FakeHistoryStore())
         val session = createStarBattleSession(JOURNEY_PUZZLE).copy(lives = STARBATTLE_STARTING_LIVES - 1)
         assertEquals(JourneySignals(hintsUsed = 0, mistakes = 1), adapter.journeySignals(session))
     }

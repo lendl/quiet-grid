@@ -1,5 +1,6 @@
 package com.quietgrid.app.games.sequencememory
 
+import com.quietgrid.app.platform.MotionSettings
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
@@ -31,7 +32,7 @@ class SequenceMemoryPlayViewModelTest {
         foreground: () -> Boolean = { true },
         difficulty: Difficulty = Difficulty.EASY,
         resume: Boolean = false,
-    ) = SequenceMemoryPlayViewModel(sessionStore, FakeStatsStore(), FakeHistoryStore(), AppForeground { foreground() }, FakeBadgeStore(), difficulty, resume)
+    ) = SequenceMemoryPlayViewModel(sessionStore, FakeStatsStore(), FakeHistoryStore(), AppForeground { foreground() }, MotionSettings { false }, FakeBadgeStore(), difficulty, resume)
 
     private fun advance(ms: Long) {
         mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(ms)

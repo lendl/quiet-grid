@@ -11,7 +11,7 @@ import com.quietgrid.app.core.GameId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import java.time.LocalTime
+import kotlinx.datetime.LocalTime
 
 enum class ThemeMode { SYSTEM, LIGHT, DARK, PENCIL, SILK, NORD, COFFEE, DRACULA }
 
@@ -33,7 +33,7 @@ data class AppSettings(
     val favoriteGameIds: Set<String> = emptySet(),
     val newBadgeSeenGameIds: Set<String> = emptySet(),
     val dailyReminderEnabled: Boolean = true,
-    val dailyReminderTime: LocalTime = LocalTime.of(9, 0),
+    val dailyReminderTime: LocalTime = LocalTime(9, 0),
     val dailyReminderPermissionAsked: Boolean = false,
     val seasonalTouchesEnabled: Boolean = true,
     val beQuiet: Boolean = false,
@@ -91,7 +91,7 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
             favoriteGameIds = prefs[Keys.FAVORITE_GAMES] ?: emptySet(),
             newBadgeSeenGameIds = prefs[Keys.NEW_BADGE_SEEN] ?: emptySet(),
             dailyReminderEnabled = prefs[Keys.DAILY_REMINDER_ENABLED] ?: true,
-            dailyReminderTime = (prefs[Keys.DAILY_REMINDER_MINUTE_OF_DAY] ?: 540).let { LocalTime.of(it / 60, it % 60) },
+            dailyReminderTime = (prefs[Keys.DAILY_REMINDER_MINUTE_OF_DAY] ?: 540).let { LocalTime(it / 60, it % 60) },
             dailyReminderPermissionAsked = prefs[Keys.DAILY_REMINDER_PERMISSION_ASKED] ?: false,
             seasonalTouchesEnabled = prefs[Keys.SEASONAL_TOUCHES_ENABLED] ?: true,
             beQuiet = prefs[Keys.BE_QUIET] ?: false,

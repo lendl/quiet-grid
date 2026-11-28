@@ -7,7 +7,7 @@ import com.quietgrid.app.data.ActiveSessionEnvelope
 import com.quietgrid.app.data.ActiveSessionSummary
 import com.quietgrid.app.data.toSummary
 import com.quietgrid.app.data.SESSION_MODE_ENDLESS
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -52,7 +52,7 @@ class RoutesTest {
 
     @Test
     fun `play route parses its daily date`() {
-        assertEquals(LocalDate.of(2026, 10, 7), PlayRoute(GameId.SUDOKU, Difficulty.EASY, resume = false, daily = "2026-10-07").dailyDate)
+        assertEquals(LocalDate(2026, 10, 7), PlayRoute(GameId.SUDOKU, Difficulty.EASY, resume = false, daily = "2026-10-07").dailyDate)
         assertNull(PlayRoute(GameId.SUDOKU, Difficulty.EASY, resume = false).journey)
     }
 

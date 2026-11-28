@@ -1,5 +1,7 @@
 package com.quietgrid.app.games.game2048
 
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.session.LossReason
@@ -22,7 +24,7 @@ class Game2048PlayViewModelTest {
 
     @Test
     fun `starting fresh creates a playable session sized for the difficulty`() {
-        val viewModel = Game2048PlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakeBadgeStore(), Difficulty.EASY, resume = false)
+        val viewModel = Game2048PlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakeBadgeStore(), AppForeground { false }, MotionSettings { false }, Difficulty.EASY, resume = false)
 
         assertNotNull(viewModel.session)
         assertEquals(5, viewModel.session?.puzzle?.size)
@@ -32,7 +34,7 @@ class Game2048PlayViewModelTest {
 
     @Test
     fun `a swipe that changes the board updates the session`() {
-        val viewModel = Game2048PlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakeBadgeStore(), Difficulty.MEDIUM, resume = false)
+        val viewModel = Game2048PlayViewModel(FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakeBadgeStore(), AppForeground { false }, MotionSettings { false }, Difficulty.MEDIUM, resume = false)
         val before = viewModel.session!!.board
 
         Game2048Direction.entries.forEach { viewModel.onSwipe(it) }
@@ -43,7 +45,7 @@ class Game2048PlayViewModelTest {
     @Test
     fun `endPuzzle finalizes the session as an abandoned loss`() {
         val sessionStore = FakeSessionStore()
-        val viewModel = Game2048PlayViewModel(sessionStore, FakeStatsStore(), FakeHistoryStore(), FakeBadgeStore(), Difficulty.EASY, resume = false)
+        val viewModel = Game2048PlayViewModel(sessionStore, FakeStatsStore(), FakeHistoryStore(), FakeBadgeStore(), AppForeground { false }, MotionSettings { false }, Difficulty.EASY, resume = false)
         val results = mutableListOf<Game2048Result>()
         val collectJob = CoroutineScope(mainDispatcherRule.dispatcher).launch { viewModel.result.collect { results.add(it) } }
 

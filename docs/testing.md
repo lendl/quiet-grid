@@ -92,9 +92,34 @@
     `ApplicationProvider.getApplicationContext<Context>().appGraph`. Composables under test that call
     `appViewModel` or read `LocalAppGraph` need
     `CompositionLocalProvider(LocalAppGraph provides context.appGraph)` (see
-    `TabletStoreArtCaptureTest`). `AppGraphTest` and `QuietGridWorkerFactoryTest` cover the wiring.
-  - `AppArchitectureTest` fails if an `:app` file imports `dagger.*`, `javax.inject.*` or
-    `androidx.hilt.*`, or if production code builds an empty `SavedStateHandle()`.
+    `TabletStoreArtCaptureTest`), or the `setContentWithGraph` helper in
+    `app/src/test/java/com/quietgrid/app/ui/TestGraph.kt`. `AppGraphTest` and
+    `QuietGridWorkerFactoryTest` cover the wiring.
+  - `AppArchitectureTest` fails in these cases:
+    - an `:app` file imports `dagger.*`, `javax.inject.*` or `androidx.hilt.*`;
+    - production code builds an empty `SavedStateHandle()`;
+    - a ViewModel takes a `Context`;
+    - a file in the portable set (see CLAUDE.md) imports `android.*`, `java.*`, `javax.*` or an
+      `androidx.*` package outside the allowlist;
+    - a file in the portable set calls a JVM-only API that needs no import: `System.`, `Charsets.`,
+      `Math.`, `Thread.`, `synchronized(`, `::class.java`, `.javaClass`, `String.format`, or
+      `@Volatile` without `import kotlin.concurrent.Volatile`.
+
+- **Storage and platform services** (the iOS port's step 5+6):
+  - **Migrations.** `QuietGridMigrationTest` builds each older database version with raw SQL
+    through `AndroidSQLiteDriver` and opens it with the current Room setup from `:shared`, so every
+    migration runs on real data. It uses `@Config(application = Application::class)` so the real
+    app's startup does not open the same database file.
+  - **Storage files.** `QuietGridStorageTest` checks that the DataStore keeps the file the old
+    `preferencesDataStore` delegate used, and reads a value written there.
+  - **Saved formats.** `SavedDateFormatTest` pins every stored date and time to a literal copied
+    from what the app writes: the session envelope, badge dates, quiet tips, the reminder time,
+    history and daily keys. If one of these breaks, users' saved data would decode differently.
+  - **Small checks.**
+    - `TodayTest`: `today()` across time zones.
+    - `BankStreamingTest`: streamed banks match whole-file reads.
+    - `SupportLinksTest`: `encodeUrlComponent` and the support link URLs.
+    - `AndroidPlatformTest`: the Android platform implementations.
 
 - **Store screenshots** — `TabletStoreArtCaptureTest`
   (`app/src/test/java/com/quietgrid/app/storeart/TabletStoreArtCaptureTest.kt`) is a Roborazzi capture

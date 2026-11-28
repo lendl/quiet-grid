@@ -12,14 +12,17 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import java.time.LocalDate
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.minus
+import kotlinx.datetime.plus
 
 class QuietTipsRepositoryTest {
 
     @get:Rule
     val tempFolder = TemporaryFolder()
 
-    private val today = LocalDate.of(2026, 11, 14)
+    private val today = LocalDate(2026, 11, 14)
 
     @Test
     fun `a fresh install has no tip history`() = runTest {
@@ -61,11 +64,11 @@ class QuietTipsRepositoryTest {
         repeat(4) { repository.recordResult() }
         repository.markShown(key, today)
         repository.recordResult()
-        repository.markShown(key, today.plusDays(2))
+        repository.markShown(key, today.plus(2, DateTimeUnit.DAY))
 
         val state = repository.state().first()
         assertEquals(0, state.resultsSinceLast)
-        assertEquals(today.plusDays(2), state.lastShownDay)
+        assertEquals(today.plus(2, DateTimeUnit.DAY), state.lastShownDay)
         assertEquals(mapOf(key to 2), state.shownCounts)
     }
 
@@ -81,11 +84,11 @@ class QuietTipsRepositoryTest {
 
         repository.markOpened(key)
         assertTrue(key in repository.state().first().openedKeys)
-        repository.snooze(key, today.plusDays(7))
+        repository.snooze(key, today.plus(7, DateTimeUnit.DAY))
 
         val state = repository.state().first()
         assertFalse(key in state.openedKeys)
-        assertEquals(mapOf(key to today.plusDays(7)), state.snoozedUntil)
+        assertEquals(mapOf(key to today.plus(7, DateTimeUnit.DAY)), state.snoozedUntil)
     }
 
     @Test

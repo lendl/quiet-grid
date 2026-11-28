@@ -1,6 +1,6 @@
 package com.quietgrid.app.core
 
-import java.time.LocalDate
-import java.time.Month
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.Month
 
-fun isHalloween(date: LocalDate): Boolean = date.month == Month.OCTOBER && date.dayOfMonth == 31
+fun isHalloween(date: LocalDate): Boolean = date.month == Month.OCTOBER && date.day == 31

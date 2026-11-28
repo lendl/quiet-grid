@@ -1,4 +1,4 @@
-package com.quietgrid.app.core
+package com.quietgrid.app.platform
 
 import android.app.LocaleManager
 import android.content.Context

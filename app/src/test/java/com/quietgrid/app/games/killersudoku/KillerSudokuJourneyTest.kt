@@ -1,5 +1,8 @@
 package com.quietgrid.app.games.killersudoku
 
+import com.quietgrid.app.platform.AndroidBundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
@@ -87,9 +90,9 @@ class KillerSudokuJourneyTest {
     }
 
     private fun newViewModel(journey: JourneyRequest? = null): KillerSudokuPlayViewModel = KillerSudokuPlayViewModel(
-        context, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakeJourneyStore(),
+        AndroidBundledFiles(context), FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakeJourneyStore(),
         FakeBadgeStore(),
-        Difficulty.EASY, resume = false, journey = journey,
+        AppForeground { false }, MotionSettings { false }, Difficulty.EASY, resume = false, journey = journey,
     ).also { it.hintDispatcher = mainDispatcherRule.dispatcher }
 
     @Test
@@ -112,13 +115,13 @@ class KillerSudokuJourneyTest {
         viewModel.toggleHint()
         assertEquals(2, viewModel.session?.grid?.hintsUsed)
 
-        val adapter = KillerSudokuPuzzleAdapter(context, FakeHistoryStore())
+        val adapter = KillerSudokuPuzzleAdapter(AndroidBundledFiles(context), FakeHistoryStore())
         assertEquals(2, kotlinx.coroutines.runBlocking { adapter.restoreSession(adapter.encode(viewModel.session!!), 0.0) }?.grid?.hintsUsed)
     }
 
     @Test
     fun `killer signals count hints and accuracy drops`() {
-        val adapter = KillerSudokuPuzzleAdapter(context, FakeHistoryStore())
+        val adapter = KillerSudokuPuzzleAdapter(AndroidBundledFiles(context), FakeHistoryStore())
         val base = createKillerSudokuSession(JOURNEY_PUZZLE)
         val session = base.copy(grid = base.grid.copy(hintsUsed = 1, accuracyDrops = 2))
         assertEquals(JourneySignals(hintsUsed = 1, mistakes = 2), adapter.journeySignals(session))

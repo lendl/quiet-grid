@@ -27,7 +27,7 @@ fun SudokuChallengerPlayScreen(
 ) {
     val viewModel = appViewModel { graph ->
         SudokuChallengerViewModel(
-            graph.appContext,
+            graph.bundledFiles,
             graph.statsRepository,
             graph.playHistoryRepository,
             graph.appForeground,

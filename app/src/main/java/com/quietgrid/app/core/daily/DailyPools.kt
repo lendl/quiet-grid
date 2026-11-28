@@ -1,6 +1,6 @@
 package com.quietgrid.app.core.daily
 
-import android.content.Context
+import com.quietgrid.app.platform.BundledFiles
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.games.animaldoku.AnimalDokuPuzzleBank
@@ -14,17 +14,17 @@ import com.quietgrid.app.games.wordsearch.WordSearchPuzzleBank
 import com.quietgrid.app.games.wordsearch.currentWordSearchLocale
 
 object DailyPools {
-    private suspend fun poolSize(context: Context, gameId: GameId, difficulty: Difficulty, puzzleLanguage: String): Int = when (gameId) {
-        GameId.SUDOKU -> SudokuPuzzleBank.dailyPool(context, difficulty).size
-        GameId.MINISUDOKU -> MiniSudokuPuzzleBank.dailyPool(context, difficulty).size
-        GameId.TAKUZU -> TakuzuPuzzleBank.dailyPool(context, difficulty).size
-        GameId.ANIMALDOKU -> AnimalDokuPuzzleBank.dailyPool(context, difficulty).size
-        GameId.WHODIDIT -> WhoDidItPuzzleBank.dailyPool(context, difficulty).size
-        GameId.WORDGUESS -> WordGuessPuzzleBank.dailyPool(context, currentWordGuessLocale(puzzleLanguage), difficulty).size
-        GameId.WORDSEARCH -> WordSearchPuzzleBank.dailyPoolSize(context, currentWordSearchLocale(puzzleLanguage), difficulty)
+    private suspend fun poolSize(files: BundledFiles, gameId: GameId, difficulty: Difficulty, puzzleLanguage: String): Int = when (gameId) {
+        GameId.SUDOKU -> SudokuPuzzleBank.dailyPool(files, difficulty).size
+        GameId.MINISUDOKU -> MiniSudokuPuzzleBank.dailyPool(files, difficulty).size
+        GameId.TAKUZU -> TakuzuPuzzleBank.dailyPool(files, difficulty).size
+        GameId.ANIMALDOKU -> AnimalDokuPuzzleBank.dailyPool(files, difficulty).size
+        GameId.WHODIDIT -> WhoDidItPuzzleBank.dailyPool(files, difficulty).size
+        GameId.WORDGUESS -> WordGuessPuzzleBank.dailyPool(files, currentWordGuessLocale(puzzleLanguage), difficulty).size
+        GameId.WORDSEARCH -> WordSearchPuzzleBank.dailyPoolSize(files, currentWordSearchLocale(puzzleLanguage), difficulty)
         else -> 0
     }
 
-    suspend fun poolSizes(context: Context, gameId: GameId, puzzleLanguage: String): Map<Difficulty, Int> =
-        Difficulty.entries.associateWith { poolSize(context, gameId, it, puzzleLanguage) }
+    suspend fun poolSizes(files: BundledFiles, gameId: GameId, puzzleLanguage: String): Map<Difficulty, Int> =
+        Difficulty.entries.associateWith { poolSize(files, gameId, it, puzzleLanguage) }
 }

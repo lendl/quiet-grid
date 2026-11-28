@@ -1,5 +1,8 @@
 package com.quietgrid.app.games.nonogram
 
+import com.quietgrid.app.platform.AndroidBundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
@@ -53,9 +56,9 @@ class NonogramJourneyTest {
     }
 
     private fun newViewModel(journey: JourneyRequest? = null): NonogramPlayViewModel = NonogramPlayViewModel(
-        context, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakeJourneyStore(),
+        AndroidBundledFiles(context), FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakeJourneyStore(),
         FakeBadgeStore(),
-        Difficulty.HARD, resume = false, journey = journey,
+        AppForeground { false }, MotionSettings { false }, Difficulty.HARD, resume = false, journey = journey,
     ).also { it.hintDispatcher = mainDispatcherRule.dispatcher }
 
     @Test
@@ -76,13 +79,13 @@ class NonogramJourneyTest {
         viewModel.toggleNextMoveHint()
         assertEquals(2, viewModel.session?.hintsUsed)
 
-        val adapter = NonogramPuzzleAdapter(context, FakeHistoryStore())
+        val adapter = NonogramPuzzleAdapter(AndroidBundledFiles(context), FakeHistoryStore())
         assertEquals(2, kotlinx.coroutines.runBlocking { adapter.restoreSession(adapter.encode(viewModel.session!!), 0.0) }?.hintsUsed)
     }
 
     @Test
     fun `nonogram signals count hints and never mistakes`() {
-        val adapter = NonogramPuzzleAdapter(context, FakeHistoryStore())
+        val adapter = NonogramPuzzleAdapter(AndroidBundledFiles(context), FakeHistoryStore())
         val session = createNonogramSession(JOURNEY_PUZZLE).copy(hintsUsed = 2)
         assertEquals(JourneySignals(hintsUsed = 2, mistakes = 0), adapter.journeySignals(session))
     }

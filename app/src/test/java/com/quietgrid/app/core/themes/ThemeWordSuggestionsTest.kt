@@ -62,4 +62,11 @@ class ThemeWordSuggestionsTest {
         assertTrue(matchesThemeWordSearch("Hamster", "  "))
         assertFalse(matchesThemeWordSearch("Hamster", "dog"))
     }
+
+    @Test
+    fun foldRemovesAccentsAndLowercases() {
+        assertEquals("cafe noir", foldThemeWord("  Caf\u00e9 NOIR "))
+        assertEquals("angstrom", foldThemeWord("\u00c5ngstr\u00f6m"))
+        assertEquals("nino", foldThemeWord("NI\u00d1O"))
+    }
 }

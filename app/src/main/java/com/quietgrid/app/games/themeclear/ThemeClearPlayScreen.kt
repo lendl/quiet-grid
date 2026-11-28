@@ -64,13 +64,15 @@ fun ThemeClearPlayScreen(
 ) {
     val viewModel = appViewModel { graph ->
         ThemeClearPlayViewModel(
-            graph.appContext,
+            graph.bundledFiles,
             graph.sessionRepository,
             graph.statsRepository,
             graph.playHistoryRepository,
             graph.settingsRepository,
             graph.themePreferencesRepository,
             graph.badgeRepository,
+            graph.appForeground,
+            graph.motionSettings,
             difficulty,
             resume,
         )

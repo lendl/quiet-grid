@@ -6,6 +6,7 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.quietgrid.app.R
+import com.quietgrid.app.ui.setContentWithGraph
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -21,7 +22,7 @@ class BottomNavBarTest {
     @Test
     fun `tapping a tab reports it as selected`() {
         var selected = AppTab.GAMES
-        composeRule.setContent {
+        composeRule.setContentWithGraph {
             BottomNavBar(selectedTab = selected, onSelectTab = { selected = it })
         }
 
@@ -32,7 +33,7 @@ class BottomNavBarTest {
 
     @Test
     fun `every tab's label is shown regardless of which one is selected`() {
-        composeRule.setContent {
+        composeRule.setContentWithGraph {
             BottomNavBar(selectedTab = AppTab.STATS, onSelectTab = {})
         }
 
@@ -44,7 +45,7 @@ class BottomNavBarTest {
     @Test
     fun `tapping a tab invokes the callback with that tab`() {
         var callbackTab: AppTab? = null
-        composeRule.setContent {
+        composeRule.setContentWithGraph {
             BottomNavBar(selectedTab = AppTab.GAMES, onSelectTab = { callbackTab = it })
         }
 

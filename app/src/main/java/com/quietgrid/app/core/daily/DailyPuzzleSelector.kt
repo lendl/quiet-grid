@@ -1,18 +1,18 @@
 package com.quietgrid.app.core.daily
 
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.daysUntil
 import kotlin.random.Random
 
 const val DAILY_MIN_POOL: Int = 90
 
-val DAILY_EPOCH: LocalDate = LocalDate.of(2026, 1, 1)
+val DAILY_EPOCH: LocalDate = LocalDate(2026, 1, 1)
 
 private const val FNV_PRIME: Long = 0x100000001b3L
 
 fun fnv1a64(text: String): Long {
     var hash = 0xcbf29ce484222325uL.toLong()
-    for (byte in text.toByteArray(Charsets.UTF_8)) {
+    for (byte in text.encodeToByteArray()) {
         hash = hash xor (byte.toLong() and 0xff)
         hash *= FNV_PRIME
     }
@@ -29,6 +29,6 @@ fun <T> selectDaily(pool: List<T>, idOf: (T) -> String, gameKey: String, tierKey
         ordered[i] = ordered[j]
         ordered[j] = swap
     }
-    val dayIndex = ChronoUnit.DAYS.between(DAILY_EPOCH, date)
-    return ordered[Math.floorMod(dayIndex, ordered.size.toLong()).toInt()]
+    val dayIndex = DAILY_EPOCH.daysUntil(date)
+    return ordered[dayIndex.mod(ordered.size)]
 }

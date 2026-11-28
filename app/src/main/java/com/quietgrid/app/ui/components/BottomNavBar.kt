@@ -31,7 +31,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -55,8 +54,8 @@ private val BOTTOM_NAV_ENTRIES = listOf(
 
 @Composable
 fun BottomNavBar(selectedTab: AppTab, onSelectTab: (AppTab) -> Unit) {
-    val context = LocalContext.current
-    val reduceMotion = remember { systemAnimationsDisabled(context) }
+    val motionSettings = LocalMotionSettings.current
+    val reduceMotion = remember(motionSettings) { !motionSettings.animationsEnabled() }
 
     NavigationBar(containerColor = MaterialTheme.colorScheme.surfaceVariant) {
         BOTTOM_NAV_ENTRIES.forEach { entry ->

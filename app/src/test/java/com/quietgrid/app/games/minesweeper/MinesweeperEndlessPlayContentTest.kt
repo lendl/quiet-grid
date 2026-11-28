@@ -4,6 +4,7 @@ import androidx.activity.ComponentActivity
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import com.quietgrid.app.ui.setContentWithGraph
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onRoot
 import com.quietgrid.app.ui.play.PLAY_BOARD_TAG
@@ -30,7 +31,7 @@ class MinesweeperEndlessPlayContentTest {
             bestAtStart = 9,
             camera = MinesweeperEndlessCamera(),
         )
-        composeRule.setContent {
+        composeRule.setContentWithGraph {
             MaterialTheme {
                 MinesweeperEndlessPlayContent(
                     session = session,

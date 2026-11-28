@@ -1,6 +1,7 @@
 package com.quietgrid.app.games.whodidit
 
-import android.content.Context
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.readText
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.engine.whodidit.WHODIDIT_THEMES
 import com.quietgrid.engine.whodidit.WhoDidItPuzzleEntry
@@ -20,10 +21,10 @@ internal fun isPlayable(entry: WhoDidItPuzzleEntry): Boolean {
 object WhoDidItPuzzleBank {
     private var cache: Map<String, List<WhoDidItPuzzleEntry>>? = null
 
-    private suspend fun load(context: Context): Map<String, List<WhoDidItPuzzleEntry>> {
+    private suspend fun load(files: BundledFiles): Map<String, List<WhoDidItPuzzleEntry>> {
         cache?.let { return it }
         return withContext(Dispatchers.IO) {
-            val text = context.assets.open("whodidit_puzzles.json").bufferedReader().use { it.readText() }
+            val text = files.readText("whodidit_puzzles.json")
             val entries = json.decodeFromString<List<WhoDidItPuzzleEntry>>(text).filter(::isPlayable)
             val grouped = entries.groupBy { it.difficulty }
             cache = grouped
@@ -31,11 +32,11 @@ object WhoDidItPuzzleBank {
         }
     }
 
-    suspend fun dailyPool(context: Context, difficulty: Difficulty): List<WhoDidItPuzzleEntry> =
-        load(context)[difficulty.key].orEmpty()
+    suspend fun dailyPool(files: BundledFiles, difficulty: Difficulty): List<WhoDidItPuzzleEntry> =
+        load(files)[difficulty.key].orEmpty()
 
-    suspend fun randomPuzzle(context: Context, difficulty: Difficulty, recentlyPlayedIds: Set<String> = emptySet()): WhoDidItPuzzleEntry? {
-        val pool = dailyPool(context, difficulty)
+    suspend fun randomPuzzle(files: BundledFiles, difficulty: Difficulty, recentlyPlayedIds: Set<String> = emptySet()): WhoDidItPuzzleEntry? {
+        val pool = dailyPool(files, difficulty)
         if (pool.isEmpty()) return null
         val candidates = pool.filter { it.id !in recentlyPlayedIds }
         return candidates.ifEmpty { pool }.random()

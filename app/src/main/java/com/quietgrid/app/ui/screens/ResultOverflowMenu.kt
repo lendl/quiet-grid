@@ -1,7 +1,7 @@
 package com.quietgrid.app.ui.screens
 
-import android.content.Intent
-import android.net.Uri
+import androidx.compose.ui.platform.LocalUriHandler
+import com.quietgrid.app.ui.components.tryOpen
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.PlaylistAdd
@@ -22,14 +22,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.LocalAppGraph
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
-import com.quietgrid.app.core.appVersionName
 import com.quietgrid.app.core.buildPuzzleReportUrl
 import com.quietgrid.app.data.PlayRecord
 
@@ -41,9 +39,9 @@ fun ResultOverflowMenu(
     modifier: Modifier = Modifier,
     onOpenGamePage: (() -> Unit)? = null,
 ) {
-    val context = LocalContext.current
     val language = LocalConfiguration.current.locales[0].toLanguageTag()
     val graph = LocalAppGraph.current
+    val uriHandler = LocalUriHandler.current
     val records by remember(graph, gameId) { graph.playHistoryRepository.recordsFor(gameId) }
         .collectAsStateWithLifecycle(initialValue = emptyList())
     var menuOpen by remember { mutableStateOf(false) }
@@ -58,10 +56,10 @@ fun ResultOverflowMenu(
             puzzleId = latest?.puzzleId,
             dailyDate = latest?.dailyDate,
             result = latest?.resultLabel() ?: "unknown",
-            appVersion = appVersionName(context),
+            appVersion = graph.appInfo.versionName,
             appLanguage = language,
         )
-        runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }
+        uriHandler.tryOpen(url)
     }
 
     Box(modifier) {

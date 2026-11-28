@@ -1,6 +1,6 @@
 package com.quietgrid.app.data
 
-import android.content.Context
+import com.quietgrid.app.platform.BundledFiles
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.journey.JourneyMilestone
@@ -34,6 +34,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import kotlin.time.Clock
 
 interface JourneyProgressStore {
     fun progressFor(gameId: GameId): Flow<Map<String, JourneyStopProgress>>
@@ -52,22 +53,22 @@ class JourneyProgressRepository(
     private val historyStore: PlayHistoryStore,
     private val journeyFile: suspend (JourneyTrack) -> JourneyFile?,
     private val ratedPool: suspend (JourneyTrack, Difficulty) -> List<Pair<String, Int>>,
-    private val clock: () -> Long = System::currentTimeMillis,
+    private val clock: () -> Long = { Clock.System.now().toEpochMilliseconds() },
     private val workDispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val trackOf: (GameId) -> Flow<JourneyTrack> = { flowOf(journeyTrack(it, "en")) },
     private val stopTrackOf: (GameId, String) -> JourneyTrack? = ::journeyTrackOfStop,
 ) : JourneyProgressStore {
 
     constructor(
-        context: Context,
+        files: BundledFiles,
         dao: JourneyProgressDao,
         historyStore: PlayHistoryStore,
         settingsRepository: SettingsRepository,
     ) : this(
         dao = dao,
         historyStore = historyStore,
-        journeyFile = { loadJourneyFile(context, it) },
-        ratedPool = { track, difficulty -> journeyRatedPool(context, track, difficulty) },
+        journeyFile = { loadJourneyFile(files, it) },
+        ratedPool = { track, difficulty -> journeyRatedPool(files, track, difficulty) },
         trackOf = { settingsRepository.journeyTrack(it) },
     )
 

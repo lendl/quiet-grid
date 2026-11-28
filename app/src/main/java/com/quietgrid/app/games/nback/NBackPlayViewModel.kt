@@ -1,5 +1,6 @@
 package com.quietgrid.app.games.nback
 
+import com.quietgrid.app.platform.MotionSettings
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,6 +19,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlin.time.Clock
 
 private const val NBACK_FOREGROUND_POLL_MS = 250L
 
@@ -81,6 +83,7 @@ class NBackPlayViewModel(
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     private val appForeground: AppForeground,
+    motion: MotionSettings,
     requestedDifficulty: Difficulty,
     resume: Boolean,
 ) : ViewModel() {
@@ -92,6 +95,7 @@ class NBackPlayViewModel(
         historyStore = historyRepository,
         adapter = NBackPuzzleAdapter(),
         isAppForeground = appForeground::isForeground,
+        animationsEnabled = motion::animationsEnabled,
     )
 
     val session get() = controller.session
@@ -119,7 +123,7 @@ class NBackPlayViewModel(
                 while (!appForeground.isForeground()) delay(NBACK_FOREGROUND_POLL_MS)
                 val current = session ?: return@launch
                 controller.updateSession(current.copy(currentIndex = index, showStimulus = true), persist = false)
-                trialStartMillis = System.currentTimeMillis()
+                trialStartMillis = Clock.System.now().toEpochMilliseconds()
                 delay(NBACK_STIMULUS_ON_MS)
                 val lit = session ?: return@launch
                 controller.updateSession(lit.copy(showStimulus = false), persist = false)
@@ -137,7 +141,7 @@ class NBackPlayViewModel(
         val index = current.currentIndex
         if (index !in current.trials.indices) return
         if (current.trials[index].responded) return
-        val reactionTimeMs = System.currentTimeMillis() - trialStartMillis
+        val reactionTimeMs = Clock.System.now().toEpochMilliseconds() - trialStartMillis
         val updatedTrials = current.trials.toMutableList()
         updatedTrials[index] = updatedTrials[index].copy(responded = true, reactionTimeMs = reactionTimeMs)
         controller.updateSession(current.copy(trials = updatedTrials), persist = false)

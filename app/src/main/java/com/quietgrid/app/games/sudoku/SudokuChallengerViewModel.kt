@@ -1,6 +1,6 @@
 package com.quietgrid.app.games.sudoku
 
-import android.content.Context
+import com.quietgrid.app.platform.BundledFiles
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -21,7 +21,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SudokuChallengerViewModel(
-    private val appContext: Context,
+    private val files: BundledFiles,
     statsStore: StatsStore,
     historyStore: PlayHistoryStore,
     appForeground: AppForeground,
@@ -53,7 +53,7 @@ class SudokuChallengerViewModel(
 
     init {
         viewModelScope.launch {
-            val firstPuzzle = SudokuPuzzleBank.randomPuzzle(appContext, Difficulty.EASY)
+            val firstPuzzle = SudokuPuzzleBank.randomPuzzle(files, Difficulty.EASY)
             if (firstPuzzle != null) {
                 controller.start(createInitialSudokuChallengerSession(firstPuzzle))
             }
@@ -163,7 +163,7 @@ class SudokuChallengerViewModel(
         val (nextTier, nextSolvesInTier) = challengerTierAfterSolve(SUDOKU_CHALLENGER_CONFIG, withValidation.tier, withValidation.solvesInTier)
         advancing = true
         viewModelScope.launch {
-            val nextPuzzle = SudokuPuzzleBank.randomPuzzle(appContext, nextTier, withValidation.servedPuzzleIds)
+            val nextPuzzle = SudokuPuzzleBank.randomPuzzle(files, nextTier, withValidation.servedPuzzleIds)
             if (nextPuzzle == null) {
                 val credited = withValidation.creditSolve(sudokuChallengerPuzzleScore(withValidation))
                 controller.finalizeRun(credited, "bank_exhausted")

@@ -10,7 +10,7 @@ import com.quietgrid.app.core.mix.MixEntryMode
 import com.quietgrid.app.data.PlayRecord
 import com.quietgrid.engine.journey.JourneyFile
 import kotlinx.serialization.Serializable
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 enum class BadgeGroup { GENERAL, JOURNEY, GAME }
 
@@ -228,7 +228,7 @@ private val GENERAL_ENTRIES: List<BadgeEntry> = listOf(
     general("slow_and_steady", BadgeSection.PATIENCE, BadgeGlyph.HOURGLASS) { it.solved && it.finish.elapsedSeconds >= SLOW_AND_STEADY_SECONDS },
     general("picked_back_up", BadgeSection.PATIENCE, BadgeGlyph.BOOKMARK) { check ->
         val started = check.finish.startedDate
-        check.solved && started != null && started.isBefore(check.finish.date)
+        check.solved && started != null && started < check.finish.date
     },
     general("pumpkin_patch", BadgeSection.SEASONAL, BadgeGlyph.PUMPKIN) { it.solved && it.facts.seasonal == SEASON_HALLOWEEN },
 )

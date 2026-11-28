@@ -1,5 +1,8 @@
 package com.quietgrid.app.games.whodidit
 
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
@@ -50,11 +53,11 @@ class WhoDidItPlayViewModelTest {
         resume: Boolean = false,
         sessionStore: FakeSessionStore = FakeSessionStore(),
     ) = WhoDidItPlayViewModel(
-        mockk<Context>(relaxed = true),
+        mockk<BundledFiles>(relaxed = true),
         sessionStore,
         FakeStatsStore(),
         FakeHistoryStore(),
-        difficulty,
+        AppForeground { false }, MotionSettings { false }, difficulty,
         resume,
         null,
     ).also { it.hintDispatcher = mainDispatcherRule.dispatcher }

@@ -1,5 +1,8 @@
 package com.quietgrid.app.games.starbattle
 
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -56,19 +59,19 @@ private fun decodeCells(flat: List<Int>, size: Int): List<List<StarBattleCellSta
 }
 
 internal class StarBattlePuzzleAdapter(
-    private val appContext: android.content.Context,
+    private val files: BundledFiles,
     private val historyStore: PlayHistoryStore,
 ) : PuzzleAdapter<StarBattleSession, StarBattleResult> {
     override val gameId: GameId = GameId.STARBATTLE
 
     override suspend fun freshSession(difficulty: Difficulty): StarBattleSession? {
         val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
-        val puzzle = StarBattlePuzzleBank.randomPuzzle(appContext, difficulty, recentIds) ?: return null
+        val puzzle = StarBattlePuzzleBank.randomPuzzle(files, difficulty, recentIds) ?: return null
         return createStarBattleSession(puzzle)
     }
 
     override suspend fun journeySession(difficulty: Difficulty, puzzleId: String, transform: Int): StarBattleSession? =
-        StarBattlePuzzleBank.puzzleById(appContext, difficulty, puzzleId)?.transformed(gridTransformById(transform))?.let(::createStarBattleSession)
+        StarBattlePuzzleBank.puzzleById(files, difficulty, puzzleId)?.transformed(gridTransformById(transform))?.let(::createStarBattleSession)
 
     override fun journeySignals(session: StarBattleSession): JourneySignals =
         JourneySignals(0, STARBATTLE_STARTING_LIVES - session.lives)
@@ -116,12 +119,14 @@ internal class StarBattlePuzzleAdapter(
 }
 
 class StarBattlePlayViewModel(
-    appContext: android.content.Context,
+    files: BundledFiles,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     journeyStore: JourneyProgressStore,
     badgeStore: BadgeStore,
+    appForeground: AppForeground,
+    motion: MotionSettings,
     requestedDifficulty: Difficulty,
     resume: Boolean,
     journey: JourneyRequest?,
@@ -132,7 +137,9 @@ class StarBattlePlayViewModel(
         sessionStore = sessionRepository,
         statsStore = statsRepository,
         historyStore = historyRepository,
-        adapter = StarBattlePuzzleAdapter(appContext, historyRepository),
+        adapter = StarBattlePuzzleAdapter(files, historyRepository),
+        isAppForeground = appForeground::isForeground,
+        animationsEnabled = motion::animationsEnabled,
         journeyStore = journeyStore,
         badgeStore = badgeStore,
     )

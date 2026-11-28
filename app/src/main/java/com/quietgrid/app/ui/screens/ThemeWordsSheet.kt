@@ -1,7 +1,8 @@
 package com.quietgrid.app.ui.screens
 
-import android.content.Intent
-import android.net.Uri
+import androidx.compose.ui.platform.LocalUriHandler
+import com.quietgrid.app.ui.components.tryOpen
+import com.quietgrid.app.LocalAppGraph
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -47,7 +48,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextDecoration
@@ -55,7 +55,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
 import com.quietgrid.app.core.GameId
-import com.quietgrid.app.core.appVersionName
 import com.quietgrid.app.core.buildThemeWordsIssueUrl
 import com.quietgrid.app.core.themes.MAX_THEME_WORD_CHANGES
 import com.quietgrid.app.core.themes.ThemeWordIndex
@@ -73,11 +72,13 @@ private enum class ThemeWordsPage { WORDS, SUGGEST }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ThemeWordsSheet(gameId: GameId, themeId: String, locale: String, onDismiss: () -> Unit) {
-    val context = LocalContext.current
+    val uriHandler = LocalUriHandler.current
+    val graph = LocalAppGraph.current
+    val files = graph.bundledFiles
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val words by produceState<List<String>?>(null, locale, themeId) {
-        value = ThemeWordIndex.wordsFor(context, locale, themeId)
+        value = ThemeWordIndex.wordsFor(files, locale, themeId)
             .sortedWith(Collator.getInstance(Locale.forLanguageTag(locale)))
     }
     var page by rememberSaveable { mutableStateOf(ThemeWordsPage.WORDS) }
@@ -121,9 +122,9 @@ fun ThemeWordsSheet(gameId: GameId, themeId: String, locale: String, onDismiss: 
                             locale = locale,
                             added = added,
                             removed = reported,
-                            appVersion = appVersionName(context),
+                            appVersion = graph.appInfo.versionName,
                         )
-                        val opened = runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }.isSuccess
+                        val opened = uriHandler.tryOpen(url)
                         if (opened) close()
                     },
                 )

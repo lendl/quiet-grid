@@ -49,13 +49,15 @@ fun ArrowEscapePlayScreen(
 ) {
     val viewModel = appViewModel { graph ->
         ArrowEscapePlayViewModel(
-            graph.appContext,
+            graph.bundledFiles,
             graph.sessionRepository,
             graph.statsRepository,
             graph.playHistoryRepository,
             graph.settingsRepository,
             graph.journeyProgressRepository,
             graph.badgeRepository,
+            graph.appForeground,
+            graph.motionSettings,
             difficulty,
             resume,
             journey,

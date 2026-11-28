@@ -37,13 +37,13 @@ import androidx.glance.unit.ColorProvider
 import com.quietgrid.app.LaunchRequest
 import com.quietgrid.app.R
 import com.quietgrid.app.appGraph
-import com.quietgrid.app.core.AppLocale
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.difficultyColor
 import com.quietgrid.app.data.ThemeMode
 import com.quietgrid.app.games.gameDifficultyLabelRes
+import com.quietgrid.app.platform.AppLocale
 import com.quietgrid.app.toIntent
 import com.quietgrid.app.ui.components.chunkyEdgeColor
 import com.quietgrid.app.ui.theme.ResolvedTheme

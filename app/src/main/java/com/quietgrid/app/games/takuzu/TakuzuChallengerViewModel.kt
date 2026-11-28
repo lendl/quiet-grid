@@ -1,6 +1,6 @@
 package com.quietgrid.app.games.takuzu
 
-import android.content.Context
+import com.quietgrid.app.platform.BundledFiles
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -20,7 +20,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class TakuzuChallengerViewModel(
-    private val appContext: Context,
+    private val files: BundledFiles,
     statsStore: StatsStore,
     historyStore: PlayHistoryStore,
     appForeground: AppForeground,
@@ -48,7 +48,7 @@ class TakuzuChallengerViewModel(
 
     init {
         viewModelScope.launch {
-            val firstPuzzle = TakuzuPuzzleBank.randomPuzzle(appContext, Difficulty.EASY)
+            val firstPuzzle = TakuzuPuzzleBank.randomPuzzle(files, Difficulty.EASY)
             if (firstPuzzle != null) {
                 controller.start(createInitialTakuzuChallengerSession(firstPuzzle))
             }
@@ -93,7 +93,7 @@ class TakuzuChallengerViewModel(
     private fun onSolved(withValidation: TakuzuChallengerSession) {
         val (nextTier, nextSolvesInTier) = challengerTierAfterSolve(TAKUZU_CHALLENGER_CONFIG, withValidation.tier, withValidation.solvesInTier)
         viewModelScope.launch {
-            val nextPuzzle = TakuzuPuzzleBank.randomPuzzle(appContext, nextTier, withValidation.servedPuzzleIds)
+            val nextPuzzle = TakuzuPuzzleBank.randomPuzzle(files, nextTier, withValidation.servedPuzzleIds)
             if (nextPuzzle == null) {
                 val credited = withValidation.creditSolve(takuzuChallengerPuzzleScore(withValidation))
                 controller.finalizeRun(credited, "bank_exhausted")

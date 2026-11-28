@@ -2,8 +2,8 @@ package com.quietgrid.app.games.wordsearch
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import java.io.ByteArrayInputStream
-import java.io.InputStream
+import okio.Buffer
+import okio.Source
 
 class WordSearchPuzzleBankTest {
     private fun entryJson(id: String, locale: String?): String {
@@ -11,9 +11,9 @@ class WordSearchPuzzleBankTest {
         return """{"id":"$id","rows":1,"cols":3,"themeId":"animals","words":[],"hiddenWord":"CAT"$localeField}"""
     }
 
-    private fun bank(vararg entries: Pair<String, String?>): () -> InputStream {
+    private fun bank(vararg entries: Pair<String, String?>): () -> Source {
         val text = entries.joinToString(",", prefix = "[", postfix = "]") { (id, locale) -> entryJson(id, locale) }
-        return { ByteArrayInputStream(text.toByteArray()) }
+        return { Buffer().writeUtf8(text) }
     }
 
     @Test

@@ -25,10 +25,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.LocalAppGraph
 import com.quietgrid.app.core.isHalloween
+import com.quietgrid.app.core.today
 import com.quietgrid.app.ui.theme.LocalIsDarkTheme
 import com.quietgrid.app.ui.theme.LocalIsPencilTheme
 import kotlinx.coroutines.flow.map
-import java.time.LocalDate
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.sin
@@ -59,8 +59,8 @@ private fun pulse(t: Float, start: Float, end: Float): Float {
 
 @Composable
 fun rememberHalloweenActive(): Boolean {
-    val today = remember { LocalDate.now() }
-    if (!isHalloween(today)) return false
+    val date = remember { today() }
+    if (!isHalloween(date)) return false
     val graph = LocalAppGraph.current
     val enabled by remember(graph) { graph.settingsRepository.settings.map { it.seasonalTouchesEnabled } }
         .collectAsStateWithLifecycle(initialValue = true)

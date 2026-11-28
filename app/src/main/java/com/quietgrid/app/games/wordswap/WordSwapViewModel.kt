@@ -1,5 +1,8 @@
 package com.quietgrid.app.games.wordswap
 
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -49,7 +52,7 @@ data class WordSwapResult(
 )
 
 internal class WordSwapPuzzleAdapter(
-    private val appContext: android.content.Context,
+    private val files: BundledFiles,
     private val historyStore: PlayHistoryStore,
     private val puzzleLanguage: suspend () -> String,
 ) : PuzzleAdapter<WordSwapSession, WordSwapResult> {
@@ -58,12 +61,12 @@ internal class WordSwapPuzzleAdapter(
     override suspend fun freshSession(difficulty: Difficulty): WordSwapSession? {
         val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
         val locale = currentWordSwapLocale(puzzleLanguage())
-        val puzzle = WordSwapPuzzleBank.randomPuzzle(appContext, locale, difficulty, recentIds) ?: return null
+        val puzzle = WordSwapPuzzleBank.randomPuzzle(files, locale, difficulty, recentIds) ?: return null
         return createWordSwapSession(puzzle)
     }
 
     override suspend fun journeySession(difficulty: Difficulty, puzzleId: String, transform: Int): WordSwapSession? =
-        WordSwapPuzzleBank.puzzleById(appContext, difficulty, puzzleId)?.let(::createWordSwapSession)
+        WordSwapPuzzleBank.puzzleById(files, difficulty, puzzleId)?.let(::createWordSwapSession)
 
     override fun journeySignals(session: WordSwapSession): JourneySignals = JourneySignals(session.hintsUsed, 0)
 
@@ -112,13 +115,15 @@ internal class WordSwapPuzzleAdapter(
 }
 
 class WordSwapPlayViewModel(
-    appContext: android.content.Context,
+    files: BundledFiles,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     journeyStore: JourneyProgressStore,
     badgeStore: BadgeStore,
     settingsRepository: SettingsRepository,
+    appForeground: AppForeground,
+    motion: MotionSettings,
     requestedDifficulty: Difficulty,
     resume: Boolean,
     journey: JourneyRequest?,
@@ -129,7 +134,9 @@ class WordSwapPlayViewModel(
         sessionStore = sessionRepository,
         statsStore = statsRepository,
         historyStore = historyRepository,
-        adapter = WordSwapPuzzleAdapter(appContext, historyRepository) { settingsRepository.settings.first().puzzleLanguage },
+        adapter = WordSwapPuzzleAdapter(files, historyRepository) { settingsRepository.settings.first().puzzleLanguage },
+        isAppForeground = appForeground::isForeground,
+        animationsEnabled = motion::animationsEnabled,
         journeyStore = journeyStore,
         badgeStore = badgeStore,
     )

@@ -1,6 +1,5 @@
 package com.quietgrid.app.session
 
-import android.animation.ValueAnimator
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,6 +7,7 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameCatalog
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.badges.FinishFacts
+import com.quietgrid.app.core.today
 import com.quietgrid.app.core.journey.JourneyRequest
 import com.quietgrid.app.core.journey.JourneySignals
 import com.quietgrid.app.data.ActiveSessionEnvelope
@@ -28,7 +28,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
+import kotlin.time.Clock
 
 private const val FOLD_HANDOFF_MS = 1500L
 private const val TICK_INTERVAL_MS = 1000L
@@ -40,17 +41,14 @@ object FinishMotion {
     var reduced: Boolean = false
 }
 
-private fun systemAnimatorsEnabled(): Boolean =
-    runCatching { ValueAnimator.areAnimatorsEnabled() }.getOrDefault(false)
-
 class PuzzleSessionController<TSession, TResult>(
     private val scope: CoroutineScope,
     private val sessionStore: SessionStore,
     private val statsStore: StatsStore,
     private val historyStore: PlayHistoryStore,
     private val adapter: PuzzleAdapter<TSession, TResult>,
-    private val isAppForeground: () -> Boolean = ProcessAppForeground()::isForeground,
-    private val animationsEnabled: () -> Boolean = ::systemAnimatorsEnabled,
+    private val isAppForeground: () -> Boolean,
+    private val animationsEnabled: () -> Boolean,
     private val journeyStore: JourneyProgressStore? = null,
     private val badgeStore: BadgeStore? = null,
 ) {
@@ -136,7 +134,7 @@ class PuzzleSessionController<TSession, TResult>(
                         solved = true,
                         score = score,
                         elapsedSeconds = elapsedSeconds.toInt(),
-                        timestampMillis = System.currentTimeMillis(),
+                        timestampMillis = Clock.System.now().toEpochMilliseconds(),
                         lossReason = null,
                         dailyDate = dailyDate?.toString(),
                         shareDetail = if (dailyDate != null) adapter.dailyShareDetail(current) else null,
@@ -204,7 +202,7 @@ class PuzzleSessionController<TSession, TResult>(
                     solved = false,
                     score = score,
                     elapsedSeconds = elapsedSeconds.toInt(),
-                    timestampMillis = System.currentTimeMillis(),
+                    timestampMillis = Clock.System.now().toEpochMilliseconds(),
                     lossReason = reason.key,
                     dailyDate = dailyDate?.toString(),
                     shareDetail = if (dailyDate != null) session?.let { adapter.dailyShareDetail(it) } else null,
@@ -227,7 +225,7 @@ class PuzzleSessionController<TSession, TResult>(
         difficulty = difficulty,
         solved = solved,
         elapsedSeconds = elapsedSeconds.toInt(),
-        date = LocalDate.now(),
+        date = today(),
         startedDate = startedDate,
         journeyStopId = journey?.stopId,
         mixId = null,
@@ -282,7 +280,7 @@ class PuzzleSessionController<TSession, TResult>(
                 solved = false,
                 score = 0,
                 elapsedSeconds = envelope.elapsedSeconds.toInt(),
-                timestampMillis = System.currentTimeMillis(),
+                timestampMillis = Clock.System.now().toEpochMilliseconds(),
                 lossReason = LossReason.ABANDONED.key,
                 dailyDate = staleDate,
             ),
@@ -331,7 +329,7 @@ class PuzzleSessionController<TSession, TResult>(
             journeyStopId = journey?.stopId,
             journeyPuzzleId = journey?.puzzleId,
             journeyTransform = journey?.transform ?: 0,
-            startedDate = (startedDate ?: LocalDate.now().also { startedDate = it }).toString(),
+            startedDate = (startedDate ?: today().also { startedDate = it }).toString(),
         )
     }
 

@@ -1,7 +1,6 @@
 package com.quietgrid.app.core.themes
 
-import java.text.Normalizer
-import java.util.Locale
+import com.quietgrid.engine.themeclear.decomposeCanonically
 
 const val MAX_THEME_WORD_CHANGES = 40
 
@@ -18,9 +17,9 @@ data class WordSuggestions(
 )
 
 fun foldThemeWord(value: String): String =
-    Normalizer.normalize(value.trim(), Normalizer.Form.NFD)
+    decomposeCanonically(value.trim())
         .replace(combiningMarks, "")
-        .lowercase(Locale.ROOT)
+        .lowercase()
 
 fun matchesThemeWordSearch(word: String, query: String): Boolean = foldThemeWord(word).contains(foldThemeWord(query))
 

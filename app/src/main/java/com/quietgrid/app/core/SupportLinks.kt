@@ -1,17 +1,33 @@
 package com.quietgrid.app.core
 
-import android.content.Context
-import java.net.URLEncoder
-
 const val SUPPORT_EMAIL = "quiet-grid@outlook.com"
 const val REPO_URL = "https://github.com/lendl/quiet-grid"
 const val ISSUES_URL = "$REPO_URL/issues"
 const val PLAY_STORE_APP_URL = "market://details?id=com.quietgrid.app"
 const val PLAY_STORE_WEB_URL = "https://play.google.com/store/apps/details?id=com.quietgrid.app"
 
+private const val HEX_DIGITS = "0123456789ABCDEF"
+
+private fun isUnreservedByte(value: Int): Boolean =
+    value in 'A'.code..'Z'.code || value in 'a'.code..'z'.code || value in '0'.code..'9'.code ||
+        value == '-'.code || value == '.'.code || value == '_'.code || value == '~'.code
+
+fun encodeUrlComponent(value: String): String = buildString {
+    value.encodeToByteArray().forEach { byte ->
+        val unsigned = byte.toInt() and 0xFF
+        if (isUnreservedByte(unsigned)) {
+            append(unsigned.toChar())
+        } else {
+            append('%')
+            append(HEX_DIGITS[unsigned shr 4])
+            append(HEX_DIGITS[unsigned and 0xF])
+        }
+    }
+}
+
 private fun buildIssueUrl(title: String, body: String): String {
-    val encodedTitle = URLEncoder.encode(title, "UTF-8")
-    val encodedBody = URLEncoder.encode(body, "UTF-8")
+    val encodedTitle = encodeUrlComponent(title)
+    val encodedBody = encodeUrlComponent(body)
     return "$ISSUES_URL/new?title=$encodedTitle&body=$encodedBody"
 }
 
@@ -116,7 +132,3 @@ fun buildThemeWordsIssueUrl(
             ).joinToString("\n"),
     )
 }
-
-fun appVersionName(context: Context): String =
-    runCatching { context.packageManager.getPackageInfo(context.packageName, 0).versionName }
-        .getOrNull() ?: "unknown"

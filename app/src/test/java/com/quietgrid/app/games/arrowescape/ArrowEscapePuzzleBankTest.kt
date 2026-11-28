@@ -4,6 +4,7 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.engine.arrowescape.ArrowEscapePuzzleEntry
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
+import okio.Buffer
 import org.junit.Test
 
 class ArrowEscapePuzzleBankTest {
@@ -24,7 +25,7 @@ class ArrowEscapePuzzleBankTest {
             {"id":"b","difficulty":"expert","rows":2,"cols":2,"pieces":[{"cells":[[1,0],[1,1]],"headDirection":"right"}]},
             {"id":"c","difficulty":"easy","rows":2,"cols":2,"pieces":[{"cells":[[1,1],[0,1]],"headDirection":"up"}]}
         ]"""
-        val pool = decodeArrowEscapePool(json.byteInputStream(), Difficulty.EASY)
+        val pool = decodeArrowEscapePool(Buffer().writeUtf8(json), Difficulty.EASY)
         assertEquals(listOf("a", "c"), pool.map { it.id })
         assertEquals(listOf("##", ".."), pool[0].mask)
     }

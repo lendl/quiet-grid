@@ -1,5 +1,8 @@
 package com.quietgrid.app.games.arrowescape
 
+import com.quietgrid.app.platform.AndroidBundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
@@ -74,16 +77,16 @@ class ArrowEscapeJourneyTest {
     @Test
     fun `journey start loads the stop puzzle by id`() {
         val viewModel = ArrowEscapePlayViewModel(
-            context, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), settingsRepository, FakeJourneyStore(),
+            AndroidBundledFiles(context), FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), settingsRepository, FakeJourneyStore(),
             FakeBadgeStore(),
-            Difficulty.HARD, resume = false, journey = JourneyRequest("ae-stop", "ae-stop", 0),
+            AppForeground { false }, MotionSettings { false }, Difficulty.HARD, resume = false, journey = JourneyRequest("ae-stop", "ae-stop", 0),
         )
         assertEquals("ae-stop", viewModel.session?.puzzle?.id)
     }
 
     @Test
     fun `journey session with transform 1 is mirrored`() = kotlinx.coroutines.runBlocking {
-        val adapter = ArrowEscapePuzzleAdapter(context, FakeHistoryStore(), settingsRepository)
+        val adapter = ArrowEscapePuzzleAdapter(AndroidBundledFiles(context), FakeHistoryStore(), settingsRepository)
         val session = adapter.journeySession(Difficulty.HARD, "ae-mirror", 1)!!
         assertEquals("ae-mirror", session.puzzle.id)
         assertEquals(listOf(listOf(0, 2), listOf(0, 1)), session.puzzle.pieces.single().cells)
@@ -93,14 +96,14 @@ class ArrowEscapeJourneyTest {
 
     @Test
     fun `the same request builds the same board twice`() = kotlinx.coroutines.runBlocking {
-        val adapter = ArrowEscapePuzzleAdapter(context, FakeHistoryStore(), settingsRepository)
+        val adapter = ArrowEscapePuzzleAdapter(AndroidBundledFiles(context), FakeHistoryStore(), settingsRepository)
         assertEquals(adapter.journeySession(Difficulty.HARD, "ae-mirror", 1)!!.puzzle, adapter.journeySession(Difficulty.HARD, "ae-mirror", 1)!!.puzzle)
         assertEquals(ASYMMETRIC, adapter.journeySession(Difficulty.HARD, "ae-mirror", 0)!!.puzzle)
     }
 
     @Test
     fun `arrowescape signals count hints and lost lives`() {
-        val adapter = ArrowEscapePuzzleAdapter(context, FakeHistoryStore(), settingsRepository)
+        val adapter = ArrowEscapePuzzleAdapter(AndroidBundledFiles(context), FakeHistoryStore(), settingsRepository)
         val session = createArrowEscapeSession(puzzle("ae-stop")).copy(hintsUsed = 2, lives = ARROW_ESCAPE_STARTING_LIVES - 1)
         assertEquals(JourneySignals(hintsUsed = 2, mistakes = 1), adapter.journeySignals(session))
     }

@@ -5,21 +5,21 @@ import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.ActiveSessionEnvelope
 import com.quietgrid.app.data.PlayRecord
 import org.junit.Assert.assertEquals
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 import org.junit.Test
-import java.time.Duration
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
+import kotlin.time.Duration.Companion.hours
 
 class DailyReminderLogicTest {
 
-    private val zone = ZoneId.of("Europe/Amsterdam")
-    private val today = LocalDate.of(2026, 9, 24)
+    private val zone = TimeZone.of("Europe/Amsterdam")
+    private val today = LocalDate(2026, 9, 24)
     private val fullPools = Difficulty.entries.associateWith { 200 }
 
-    private fun at(date: LocalDate, hour: Int, minute: Int) = ZonedDateTime.of(LocalDateTime.of(date, LocalTime.of(hour, minute)), zone)
+    private fun at(date: LocalDate, hour: Int, minute: Int) = LocalDateTime(date, LocalTime(hour, minute)).toInstant(zone)
 
     private fun record(gameId: GameId, difficulty: Difficulty, solved: Boolean) = PlayRecord(
         gameId = gameId.key,
@@ -33,29 +33,29 @@ class DailyReminderLogicTest {
 
     @Test
     fun `delay targets later today when time still ahead`() {
-        assertEquals(Duration.ofHours(2), nextReminderDelay(at(today, 7, 0), LocalTime.of(9, 0)))
+        assertEquals(2.hours, nextReminderDelay(at(today, 7, 0), zone, LocalTime(9, 0)))
     }
 
     @Test
     fun `delay targets tomorrow when time already passed`() {
-        assertEquals(Duration.ofHours(23), nextReminderDelay(at(today, 10, 0), LocalTime.of(9, 0)))
+        assertEquals(23.hours, nextReminderDelay(at(today, 10, 0), zone, LocalTime(9, 0)))
     }
 
     @Test
     fun `delay targets tomorrow when exactly at time`() {
-        assertEquals(Duration.ofHours(24), nextReminderDelay(at(today, 9, 0), LocalTime.of(9, 0)))
+        assertEquals(24.hours, nextReminderDelay(at(today, 9, 0), zone, LocalTime(9, 0)))
     }
 
     @Test
     fun `delay across spring forward is one hour shorter`() {
-        val beforeDst = LocalDate.of(2026, 3, 28)
-        assertEquals(Duration.ofHours(23), nextReminderDelay(at(beforeDst, 9, 0), LocalTime.of(9, 0)))
+        val beforeDst = LocalDate(2026, 3, 28)
+        assertEquals(23.hours, nextReminderDelay(at(beforeDst, 9, 0), zone, LocalTime(9, 0)))
     }
 
     @Test
     fun `delay across fall back is one hour longer`() {
-        val beforeDst = LocalDate.of(2026, 10, 24)
-        assertEquals(Duration.ofHours(25), nextReminderDelay(at(beforeDst, 9, 0), LocalTime.of(9, 0)))
+        val beforeDst = LocalDate(2026, 10, 24)
+        assertEquals(25.hours, nextReminderDelay(at(beforeDst, 9, 0), zone, LocalTime(9, 0)))
     }
 
     @Test

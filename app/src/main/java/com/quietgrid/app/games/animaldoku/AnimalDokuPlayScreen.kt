@@ -25,7 +25,7 @@ import com.quietgrid.engine.animaldoku.AnimalDokuHint
 import com.quietgrid.engine.animaldoku.AnimalDokuUnit
 import com.quietgrid.engine.animaldoku.AnimalDokuUnitKind
 import com.quietgrid.app.core.journey.JourneyRequest
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 @Composable
 fun AnimalDokuPlayScreen(
@@ -39,12 +39,14 @@ fun AnimalDokuPlayScreen(
 ) {
     val viewModel = appViewModel { graph ->
         AnimalDokuPlayViewModel(
-            graph.appContext,
+            graph.bundledFiles,
             graph.sessionRepository,
             graph.statsRepository,
             graph.playHistoryRepository,
             graph.journeyProgressRepository,
             graph.badgeRepository,
+            graph.appForeground,
+            graph.motionSettings,
             difficulty,
             resume,
             dailyDate,

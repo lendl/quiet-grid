@@ -43,6 +43,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.LocalAppGraph
+import com.quietgrid.app.platform.BundledFiles
 import com.quietgrid.app.R
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
@@ -71,9 +72,9 @@ private fun themeLocaleFor(gameId: GameId, puzzleLanguage: String): String = whe
     else -> currentWordSearchLocale(puzzleLanguage)
 }
 
-private suspend fun themeCountsFor(gameId: GameId, context: Context, locale: String): List<ThemeCount> = when (gameId) {
-    GameId.THEMECLEAR -> ThemeClearPuzzleBank.themeCounts(context, locale)
-    GameId.WORDSEARCH -> WordSearchPuzzleBank.themeCounts(context, locale)
+private suspend fun themeCountsFor(gameId: GameId, files: BundledFiles, locale: String): List<ThemeCount> = when (gameId) {
+    GameId.THEMECLEAR -> ThemeClearPuzzleBank.themeCounts(files, locale)
+    GameId.WORDSEARCH -> WordSearchPuzzleBank.themeCounts(files, locale)
     else -> emptyList()
 }
 
@@ -108,7 +109,7 @@ private fun ThemeSelectionSection(gameId: GameId, header: @Composable () -> Unit
     val puzzleLanguage = settings?.puzzleLanguage ?: return
     val locale = themeLocaleFor(gameId, puzzleLanguage)
     val counts by produceState<List<ThemeCount>?>(null, gameId, locale) {
-        value = themeCountsFor(gameId, context, locale)
+        value = themeCountsFor(gameId, graph.bundledFiles, locale)
     }
     val excludedFlow = remember(gameId, locale) { graph.themePreferencesRepository.excludedThemes(gameId, locale) }
     val excluded by excludedFlow.collectAsStateWithLifecycle(initialValue = null)

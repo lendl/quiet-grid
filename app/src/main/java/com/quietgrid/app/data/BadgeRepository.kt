@@ -1,6 +1,6 @@
 package com.quietgrid.app.data
 
-import android.content.Context
+import com.quietgrid.app.platform.BundledFiles
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.today
 import com.quietgrid.app.core.badges.BADGE_JOURNEY_GAMES
 import com.quietgrid.app.core.badges.BadgeLedger
 import com.quietgrid.app.core.badges.BadgeProgress
@@ -34,7 +35,8 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
+import kotlin.concurrent.Volatile
 
 interface BadgeStore {
     val earned: Flow<Map<String, LocalDate>>
@@ -67,11 +69,11 @@ class BadgeRepository(
     private val journeyStore: JourneyProgressStore,
     private val journeyFile: suspend (GameId) -> JourneyFile?,
     private val activeMix: suspend () -> Mix?,
-    private val today: () -> LocalDate = LocalDate::now,
+    private val today: () -> LocalDate = ::today,
 ) : BadgeStore {
 
     constructor(
-        context: Context,
+        files: BundledFiles,
         dataStore: DataStore<Preferences>,
         historyStore: PlayHistoryStore,
         journeyStore: JourneyProgressStore,
@@ -81,7 +83,7 @@ class BadgeRepository(
         dataStore = dataStore,
         historyStore = historyStore,
         journeyStore = journeyStore,
-        journeyFile = { loadJourneyFile(context, settingsRepository.journeyTrack(it).first()) },
+        journeyFile = { loadJourneyFile(files, settingsRepository.journeyTrack(it).first()) },
         activeMix = {
             val activeId = mixRepository.activeMixId.first()
             activeId?.let { id -> mixRepository.mixes.first().firstOrNull { it.id == id } }

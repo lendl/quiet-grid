@@ -1,5 +1,6 @@
 package com.quietgrid.app.games.animaldoku
 
+import com.quietgrid.app.platform.BundledFiles
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.ChallengerPuzzleSolve
@@ -54,7 +55,7 @@ class AnimalDokuChallengerViewModelTest {
         historyStore: FakeHistoryStore = FakeHistoryStore(),
         appForeground: AppForeground = AppForeground { true },
     ) =
-        AnimalDokuChallengerViewModel(mockk<Context>(relaxed = true), statsStore, historyStore, appForeground)
+        AnimalDokuChallengerViewModel(mockk<BundledFiles>(relaxed = true), statsStore, historyStore, appForeground)
 
     private fun solveCurrentPuzzle(viewModel: AnimalDokuChallengerViewModel) {
         for (row in testPuzzle.solution.indices) {

@@ -112,4 +112,25 @@ class SupportLinksTest {
         assertFalse(body.contains("## Add"))
         assertTrue(body.contains("## Remove\n\n- Gin"))
     }
+
+    @Test
+    fun encodeUrlComponentKeepsUnreservedAndPercentEncodesTheRest() {
+        assertEquals("a%20b%26c%2F%C3%A9", encodeUrlComponent("a b&c/\u00e9"))
+        assertEquals("AZaz09-._~", encodeUrlComponent("AZaz09-._~"))
+        assertEquals("%0A", encodeUrlComponent("\n"))
+    }
+
+    @Test
+    fun issueUrlsMatchTheEarlierEncodingExceptSpacesAsPercent20() {
+        val oldPuzzle = "https://github.com/lendl/quiet-grid/issues/new?title=%5BPuzzle%5D+sudoku+hard+a+b%26c%2F%C3%A9&body=%23%23+What+went+wrong%0A%0ADescribe+the+problem+%28for+example%3A+more+than+one+solution%2C+a+correct+move+was+rejected%2C+a+clue+looks+wrong%29.%0A%0A%23%23+Puzzle%0A%0AGame%3A+sudoku%0ADifficulty%3A+hard%0APuzzle%3A+a+b%26c%2F%C3%A9%0ADaily%3A+2026-11-27%0AResult%3A+solved%0A%0A%23%23+App%0A%0AVersion%3A+1.7.0%0ALanguage%3A+nl"
+        val oldWords = "https://github.com/lendl/quiet-grid/issues/new?title=%5BTheme+words%5D+caf%C3%A9+noir+%28fr%29&body=%23%23+Theme%0A%0ATheme%3A+caf%C3%A9+noir%0ALanguage%3A+fr%0AGame%3A+wordsearch%0A%0A%23%23+Add%0A%0A-+%C3%A9t%C3%A9%0A-+x+y%0A%0A%23%23+Remove%0A%0A-+a%26b%0A%0A%23%23+Notes%0A%0AAnything+else+about+these+words+%28optional%29.%0A%0A%23%23+App%0A%0AVersion%3A+1.7.0"
+        assertEquals(
+            oldPuzzle.replace("+", "%20"),
+            buildPuzzleReportUrl("sudoku", "hard", "a b&c/\u00e9", "2026-11-27", "solved", "1.7.0", "nl"),
+        )
+        assertEquals(
+            oldWords.replace("+", "%20"),
+            buildThemeWordsIssueUrl("wordsearch", "caf\u00e9 noir", "fr", listOf("\u00e9t\u00e9", "x y"), listOf("a&b"), "1.7.0"),
+        )
+    }
 }

@@ -1,5 +1,6 @@
 package com.quietgrid.app.games.starbattle
 
+import com.quietgrid.app.platform.BundledFiles
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
@@ -54,7 +55,7 @@ class StarBattleChallengerViewModelTest {
         historyStore: FakeHistoryStore = FakeHistoryStore(),
         appForeground: AppForeground = AppForeground { true },
     ) =
-        StarBattleChallengerViewModel(mockk<Context>(relaxed = true), statsStore, historyStore, appForeground)
+        StarBattleChallengerViewModel(mockk<BundledFiles>(relaxed = true), statsStore, historyStore, appForeground)
 
     private fun solveCurrentPuzzle(viewModel: StarBattleChallengerViewModel) {
         for (row in testPuzzle.solution.indices) {

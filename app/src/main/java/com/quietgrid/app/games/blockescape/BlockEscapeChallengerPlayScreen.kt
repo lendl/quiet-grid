@@ -22,7 +22,7 @@ fun BlockEscapeChallengerPlayScreen(
 ) {
     val viewModel = appViewModel { graph ->
         BlockEscapeChallengerViewModel(
-            graph.appContext,
+            graph.bundledFiles,
             graph.statsRepository,
             graph.playHistoryRepository,
             graph.appForeground,

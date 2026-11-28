@@ -13,9 +13,12 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import java.time.LocalDate
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.minus
+import kotlinx.datetime.plus
 
-private val TODAY = LocalDate.of(2026, 11, 14)
+private val TODAY = LocalDate(2026, 11, 14)
 private val NO_JOURNEYS = JourneySnapshot(emptyMap(), emptyMap(), emptyMap())
 
 private fun finish(
@@ -96,9 +99,9 @@ class BadgesTest {
         assertEquals("themeclear_spotless", afterFirst.announcement)
 
         val loss = qualifying(finish(GameId.THEMECLEAR, Difficulty.EASY, solved = false))
-        val afterLoss = afterFirst.afterFinish(loss, TODAY.plusDays(1))
+        val afterLoss = afterFirst.afterFinish(loss, TODAY.plus(1, DateTimeUnit.DAY))
         assertEquals("themeclear_deep_theme", afterLoss.announcement)
-        assertEquals(TODAY.plusDays(1), afterLoss.earned["themeclear_deep_theme"])
+        assertEquals(TODAY.plus(1, DateTimeUnit.DAY), afterLoss.earned["themeclear_deep_theme"])
         assertEquals(listOf("themeclear_deep_and_spotless"), afterLoss.queue)
     }
 
@@ -164,8 +167,8 @@ class BadgesTest {
     fun `picked back up needs a start date before the finish date`() {
         assertFalse("picked_back_up" in qualifying(finish(GameId.SUDOKU, startedDate = null)))
         assertFalse("picked_back_up" in qualifying(finish(GameId.SUDOKU, startedDate = TODAY)))
-        assertTrue("picked_back_up" in qualifying(finish(GameId.SUDOKU, startedDate = TODAY.minusDays(1))))
-        assertFalse("picked_back_up" in qualifying(finish(GameId.SUDOKU, solved = false, startedDate = TODAY.minusDays(1))))
+        assertTrue("picked_back_up" in qualifying(finish(GameId.SUDOKU, startedDate = TODAY.minus(1, DateTimeUnit.DAY))))
+        assertFalse("picked_back_up" in qualifying(finish(GameId.SUDOKU, solved = false, startedDate = TODAY.minus(1, DateTimeUnit.DAY))))
     }
 
     @Test

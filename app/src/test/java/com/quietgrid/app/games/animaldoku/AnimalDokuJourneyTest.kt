@@ -1,5 +1,8 @@
 package com.quietgrid.app.games.animaldoku
 
+import com.quietgrid.app.platform.AndroidBundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
@@ -58,9 +61,9 @@ class AnimalDokuJourneyTest {
     }
 
     private fun newViewModel(journey: JourneyRequest? = null): AnimalDokuPlayViewModel = AnimalDokuPlayViewModel(
-        context, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakeJourneyStore(),
+        AndroidBundledFiles(context), FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakeJourneyStore(),
         FakeBadgeStore(),
-        Difficulty.MEDIUM, resume = false, dailyDate = null, journey = journey,
+        AppForeground { false }, MotionSettings { false }, Difficulty.MEDIUM, resume = false, dailyDate = null, journey = journey,
     ).also { it.hintDispatcher = mainDispatcherRule.dispatcher }
 
     @Test
@@ -82,14 +85,14 @@ class AnimalDokuJourneyTest {
         viewModel.toggleHint()
         assertEquals(2, viewModel.session?.hintsUsed)
 
-        val adapter = AnimalDokuPuzzleAdapter(context, FakeHistoryStore())
+        val adapter = AnimalDokuPuzzleAdapter(AndroidBundledFiles(context), FakeHistoryStore())
         val session = viewModel.session!!
         assertEquals(2, kotlinx.coroutines.runBlocking { adapter.restoreSession(adapter.encode(session), 0.0) }?.hintsUsed)
     }
 
     @Test
     fun `saved sessions from before hint counting restore with zero hints`() {
-        val adapter = AnimalDokuPuzzleAdapter(context, FakeHistoryStore())
+        val adapter = AnimalDokuPuzzleAdapter(AndroidBundledFiles(context), FakeHistoryStore())
         val encoded = adapter.encode(createAnimalDokuSession(JOURNEY_PUZZLE)).replace(",\"hintsUsed\":0", "")
         assertEquals(0, kotlinx.coroutines.runBlocking { adapter.restoreSession(encoded, 0.0) }?.hintsUsed)
     }
@@ -112,7 +115,7 @@ class AnimalDokuJourneyTest {
 
     @Test
     fun `animaldoku signals count hints and lost lives`() {
-        val adapter = AnimalDokuPuzzleAdapter(context, FakeHistoryStore())
+        val adapter = AnimalDokuPuzzleAdapter(AndroidBundledFiles(context), FakeHistoryStore())
         val session = createAnimalDokuSession(JOURNEY_PUZZLE).copy(hintsUsed = 1, lives = ANIMALDOKU_STARTING_LIVES - 2)
         assertEquals(JourneySignals(hintsUsed = 1, mistakes = 2), adapter.journeySignals(session))
     }

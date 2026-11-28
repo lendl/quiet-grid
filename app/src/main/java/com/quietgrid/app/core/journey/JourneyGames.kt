@@ -1,6 +1,7 @@
 package com.quietgrid.app.core.journey
 
-import android.content.Context
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.readText
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.games.GameRegistry
@@ -22,8 +23,9 @@ import com.quietgrid.engine.journey.JourneyStop
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
-import java.io.IOException
-import java.util.concurrent.ConcurrentHashMap
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import okio.IOException
 
 val JOURNEY_GAMES: Set<GameId> = setOf(
     GameId.ANIMALDOKU, GameId.ARROWESCAPE, GameId.STARBATTLE, GameId.SUDOKU, GameId.MINISUDOKU, GameId.KILLERSUDOKU, GameId.TAKUZU, GameId.NONOGRAM,
@@ -45,34 +47,35 @@ data class JourneyRequest(val stopId: String, val puzzleId: String, val transfor
 
 private val journeyJson = Json { ignoreUnknownKeys = true }
 
-private val journeyFiles = ConcurrentHashMap<String, JourneyFile>()
+private val journeyFiles = HashMap<String, JourneyFile>()
+private val journeyFilesLock = Mutex()
 
-suspend fun loadJourneyFile(context: Context, track: JourneyTrack): JourneyFile? {
+suspend fun loadJourneyFile(files: BundledFiles, track: JourneyTrack): JourneyFile? {
     if (track.gameId !in JOURNEY_GAMES) return null
-    journeyFiles[track.scope]?.let { return it }
+    journeyFilesLock.withLock { journeyFiles[track.scope] }?.let { return it }
     return withContext(Dispatchers.IO) {
         try {
-            val text = context.assets.open(track.assetName).bufferedReader().use { it.readText() }
-            journeyJson.decodeFromString(JourneyFile.serializer(), text).also { journeyFiles[track.scope] = it }
+            val text = files.readText(track.assetName)
+            journeyJson.decodeFromString(JourneyFile.serializer(), text).also { journeyFilesLock.withLock { journeyFiles[track.scope] = it } }
         } catch (_: IOException) {
             null
         }
     }
 }
 
-suspend fun journeyRatedPool(context: Context, track: JourneyTrack, difficulty: Difficulty): List<Pair<String, Int>> = when (track.gameId) {
-    GameId.ANIMALDOKU -> AnimalDokuPuzzleBank.ratedPool(context, difficulty)
-    GameId.ARROWESCAPE -> ArrowEscapePuzzleBank.ratedPool(context, difficulty)
-    GameId.STARBATTLE -> StarBattlePuzzleBank.ratedPool(context, difficulty)
-    GameId.SUDOKU -> SudokuPuzzleBank.ratedPool(context, difficulty)
-    GameId.MINISUDOKU -> MiniSudokuPuzzleBank.ratedPool(context, difficulty)
-    GameId.KILLERSUDOKU -> KillerSudokuPuzzleBank.ratedPool(context, difficulty)
-    GameId.TAKUZU -> TakuzuPuzzleBank.ratedPool(context, difficulty)
-    GameId.NONOGRAM -> NonogramPuzzleBank.ratedPool(context, difficulty)
-    GameId.BLOCKESCAPE -> BlockEscapePuzzleBank.ratedPool(context, difficulty)
-    GameId.CIRCUIT -> CircuitPuzzleBank.ratedPool(context, difficulty)
-    GameId.LINKS -> LinksPuzzleBank.ratedPool(context, difficulty)
-    GameId.WORDSWAP -> WordSwapPuzzleBank.ratedPool(context, track.locale, difficulty)
+suspend fun journeyRatedPool(files: BundledFiles, track: JourneyTrack, difficulty: Difficulty): List<Pair<String, Int>> = when (track.gameId) {
+    GameId.ANIMALDOKU -> AnimalDokuPuzzleBank.ratedPool(files, difficulty)
+    GameId.ARROWESCAPE -> ArrowEscapePuzzleBank.ratedPool(files, difficulty)
+    GameId.STARBATTLE -> StarBattlePuzzleBank.ratedPool(files, difficulty)
+    GameId.SUDOKU -> SudokuPuzzleBank.ratedPool(files, difficulty)
+    GameId.MINISUDOKU -> MiniSudokuPuzzleBank.ratedPool(files, difficulty)
+    GameId.KILLERSUDOKU -> KillerSudokuPuzzleBank.ratedPool(files, difficulty)
+    GameId.TAKUZU -> TakuzuPuzzleBank.ratedPool(files, difficulty)
+    GameId.NONOGRAM -> NonogramPuzzleBank.ratedPool(files, difficulty)
+    GameId.BLOCKESCAPE -> BlockEscapePuzzleBank.ratedPool(files, difficulty)
+    GameId.CIRCUIT -> CircuitPuzzleBank.ratedPool(files, difficulty)
+    GameId.LINKS -> LinksPuzzleBank.ratedPool(files, difficulty)
+    GameId.WORDSWAP -> WordSwapPuzzleBank.ratedPool(files, track.locale, difficulty)
     else -> emptyList()
 }
 

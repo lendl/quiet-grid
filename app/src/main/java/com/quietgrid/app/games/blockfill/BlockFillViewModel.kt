@@ -1,5 +1,7 @@
 package com.quietgrid.app.games.blockfill
 
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
@@ -92,6 +94,8 @@ class BlockFillPlayViewModel(
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     badgeStore: BadgeStore,
+    appForeground: AppForeground,
+    motion: MotionSettings,
     requestedDifficulty: Difficulty,
     resume: Boolean,
 ) : ViewModel() {
@@ -102,6 +106,8 @@ class BlockFillPlayViewModel(
         statsStore = statsRepository,
         historyStore = historyRepository,
         adapter = BlockFillPuzzleAdapter(),
+        isAppForeground = appForeground::isForeground,
+        animationsEnabled = motion::animationsEnabled,
         badgeStore = badgeStore,
     )
 

@@ -1,6 +1,8 @@
 package com.quietgrid.app.games.sudoku
 
-import android.content.Context
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,7 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.daily.selectDaily
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.journey.JourneyRequest
 import com.quietgrid.app.core.journey.JourneySignals
@@ -55,7 +57,7 @@ data class SudokuResult(
 )
 
 internal class SudokuPuzzleAdapter(
-    private val appContext: Context,
+    private val files: BundledFiles,
     private val historyStore: PlayHistoryStore,
     private val variant: SudokuVariant,
 ) : PuzzleAdapter<SudokuSession, SudokuResult> {
@@ -63,17 +65,17 @@ internal class SudokuPuzzleAdapter(
 
     override suspend fun freshSession(difficulty: Difficulty): SudokuSession? {
         val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
-        val entry = variant.bank.randomPuzzle(appContext, difficulty, recentIds) ?: return null
+        val entry = variant.bank.randomPuzzle(files, difficulty, recentIds) ?: return null
         return createSudokuSession(entry)
     }
 
     override suspend fun dailySession(difficulty: Difficulty, date: LocalDate): SudokuSession? {
-        val entry = selectDaily(variant.bank.dailyPool(appContext, difficulty), { it.id }, gameId.key, difficulty.key, date) ?: return null
+        val entry = selectDaily(variant.bank.dailyPool(files, difficulty), { it.id }, gameId.key, difficulty.key, date) ?: return null
         return createSudokuSession(entry)
     }
 
     override suspend fun journeySession(difficulty: Difficulty, puzzleId: String, transform: Int): SudokuSession? =
-        variant.bank.puzzleById(appContext, difficulty, puzzleId)?.transformed(gridTransformById(transform))?.let(::createSudokuSession)
+        variant.bank.puzzleById(files, difficulty, puzzleId)?.transformed(gridTransformById(transform))?.let(::createSudokuSession)
 
     override fun journeySignals(session: SudokuSession): JourneySignals = JourneySignals(session.hintsUsed, session.accuracyDrops)
 
@@ -131,12 +133,14 @@ internal class SudokuPuzzleAdapter(
 }
 
 class SudokuPlayViewModel(
-    appContext: Context,
+    files: BundledFiles,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     journeyStore: JourneyProgressStore,
     badgeStore: BadgeStore,
+    appForeground: AppForeground,
+    motion: MotionSettings,
     requestedDifficulty: Difficulty,
     resume: Boolean,
     dailyDate: LocalDate?,
@@ -149,7 +153,9 @@ class SudokuPlayViewModel(
         sessionStore = sessionRepository,
         statsStore = statsRepository,
         historyStore = historyRepository,
-        adapter = SudokuPuzzleAdapter(appContext, historyRepository, variant),
+        adapter = SudokuPuzzleAdapter(files, historyRepository, variant),
+        isAppForeground = appForeground::isForeground,
+        animationsEnabled = motion::animationsEnabled,
         journeyStore = journeyStore,
         badgeStore = badgeStore,
     )

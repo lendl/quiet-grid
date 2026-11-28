@@ -1,5 +1,8 @@
 package com.quietgrid.app.games.blockescape
 
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
@@ -58,13 +61,13 @@ class BlockEscapePlayViewModelTest {
 
     private fun newViewModel(): BlockEscapePlayViewModel {
         val viewModel = BlockEscapePlayViewModel(
-            mockk<Context>(relaxed = true),
+            mockk<BundledFiles>(relaxed = true),
             FakeSessionStore(),
             FakeStatsStore(),
             FakeHistoryStore(),
             FakeJourneyStore(),
             FakeBadgeStore(),
-            Difficulty.EASY,
+            AppForeground { false }, MotionSettings { false }, Difficulty.EASY,
             resume = false,
             journey = null,
         )

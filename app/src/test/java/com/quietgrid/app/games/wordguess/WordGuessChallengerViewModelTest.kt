@@ -1,5 +1,6 @@
 package com.quietgrid.app.games.wordguess
 
+import com.quietgrid.app.platform.BundledFiles
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.ChallengerPuzzleSolve
@@ -56,7 +57,7 @@ class WordGuessChallengerViewModelTest {
     ): WordGuessChallengerViewModel {
         val settingsRepository = mockk<SettingsRepository>(relaxed = true)
         every { settingsRepository.settings } returns MutableStateFlow(AppSettings())
-        return WordGuessChallengerViewModel(mockk<Context>(relaxed = true), settingsRepository, statsStore, historyStore, appForeground)
+        return WordGuessChallengerViewModel(mockk<BundledFiles>(relaxed = true), settingsRepository, statsStore, historyStore, appForeground)
     }
 
     @Test

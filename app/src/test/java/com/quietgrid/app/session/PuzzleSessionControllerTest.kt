@@ -31,7 +31,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import kotlinx.coroutines.flow.first
 import org.junit.Assert.assertFalse
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 private data class TestSession(val value: Int, val meaningful: Boolean = true)
 
@@ -219,7 +219,7 @@ private class FakePuzzleAdapter(
 
 class PuzzleSessionControllerTest {
 
-    private val dailyDay = LocalDate.of(2026, 9, 24)
+    private val dailyDay = LocalDate(2026, 9, 24)
 
     @Test
     fun `daily start uses dailySession and tags the envelope`() = runTest {
@@ -228,6 +228,7 @@ class PuzzleSessionControllerTest {
         val controller = PuzzleSessionController(
             backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), adapter,
             isAppForeground = { true },
+            animationsEnabled = { false },
         )
 
         controller.start(Difficulty.HARD, resume = false, requestedDailyDate = dailyDay)
@@ -247,6 +248,7 @@ class PuzzleSessionControllerTest {
         val controller = PuzzleSessionController(
             backgroundScope, FakeSessionStore(), FakeStatsStore(), history, FakePuzzleAdapter(shareDetail = "grid"),
             isAppForeground = { true },
+            animationsEnabled = { false },
         )
 
         controller.start(Difficulty.HARD, resume = false, requestedDailyDate = dailyDay)
@@ -265,6 +267,7 @@ class PuzzleSessionControllerTest {
         val controller = PuzzleSessionController(
             backgroundScope, FakeSessionStore(), FakeStatsStore(), history, FakePuzzleAdapter(shareDetail = "grid"),
             isAppForeground = { true },
+            animationsEnabled = { false },
         )
 
         controller.start(Difficulty.HARD, resume = false)
@@ -283,6 +286,8 @@ class PuzzleSessionControllerTest {
         val history = FakeHistoryStore()
         val controller = PuzzleSessionController(
             backgroundScope, sessionStore, FakeStatsStore(), history, FakePuzzleAdapter(),
+            isAppForeground = { false },
+            animationsEnabled = { false },
         )
 
         controller.start(Difficulty.EASY, resume = false)
@@ -304,6 +309,8 @@ class PuzzleSessionControllerTest {
         val history = FakeHistoryStore()
         val controller = PuzzleSessionController(
             backgroundScope, sessionStore, FakeStatsStore(), history, FakePuzzleAdapter(),
+            isAppForeground = { false },
+            animationsEnabled = { false },
         )
 
         controller.start(Difficulty.EASY, resume = false)
@@ -319,6 +326,8 @@ class PuzzleSessionControllerTest {
         val history = FakeHistoryStore()
         val controller = PuzzleSessionController(
             backgroundScope, sessionStore, FakeStatsStore(), history, FakePuzzleAdapter(),
+            isAppForeground = { false },
+            animationsEnabled = { false },
         )
 
         controller.start(Difficulty.HARD, resume = false, requestedDailyDate = dailyDay)
@@ -333,6 +342,8 @@ class PuzzleSessionControllerTest {
         sessionStore.preload(ActiveSessionEnvelope(GameId.TAKUZU.key, 12.0, "p", "2026-09-24", "medium"))
         val controller = PuzzleSessionController(
             backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(restoreValue = TestSession(7)),
+            isAppForeground = { false },
+            animationsEnabled = { false },
         )
 
         controller.start(Difficulty.EASY, resume = true)
@@ -347,6 +358,7 @@ class PuzzleSessionControllerTest {
         val controller = PuzzleSessionController(
             backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
             isAppForeground = { true },
+            animationsEnabled = { false },
         )
 
         controller.start(Difficulty.EASY, resume = false)
@@ -365,6 +377,7 @@ class PuzzleSessionControllerTest {
         val controller = PuzzleSessionController(
             backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
             isAppForeground = { true },
+            animationsEnabled = { false },
         )
 
         controller.start(Difficulty.HARD, resume = false)
@@ -382,6 +395,7 @@ class PuzzleSessionControllerTest {
         val controller = PuzzleSessionController(
             backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
             isAppForeground = { foreground },
+            animationsEnabled = { false },
         )
 
         controller.start(Difficulty.EASY, resume = false)
@@ -400,6 +414,7 @@ class PuzzleSessionControllerTest {
         val controller = PuzzleSessionController(
             scope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
             isAppForeground = { true },
+            animationsEnabled = { false },
         )
 
         controller.start(Difficulty.EASY, resume = false)
@@ -418,6 +433,7 @@ class PuzzleSessionControllerTest {
         val controller = PuzzleSessionController(
             scope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
             isAppForeground = { true },
+            animationsEnabled = { false },
         )
 
         controller.start(Difficulty.EASY, resume = false)
@@ -437,6 +453,7 @@ class PuzzleSessionControllerTest {
         val controller = PuzzleSessionController(
             backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
             isAppForeground = { false },
+            animationsEnabled = { false },
         )
 
         controller.start(Difficulty.EASY, resume = false)
@@ -451,7 +468,7 @@ class PuzzleSessionControllerTest {
         val sessionStore = FakeSessionStore()
         sessionStore.preload(ActiveSessionEnvelope(gameId = GameId.TAKUZU.key, elapsedSeconds = 42.0, payload = "p"))
         val adapter = FakePuzzleAdapter(restoreValue = TestSession(7))
-        val controller = PuzzleSessionController(backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), adapter)
+        val controller = PuzzleSessionController(backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), adapter, isAppForeground = { false }, animationsEnabled = { false })
 
         controller.start(Difficulty.EASY, resume = true)
         runCurrent()
@@ -467,7 +484,7 @@ class PuzzleSessionControllerTest {
             ActiveSessionEnvelope(gameId = GameId.TAKUZU.key, elapsedSeconds = 42.0, payload = "p", mode = SESSION_MODE_ENDLESS),
         )
         val adapter = FakePuzzleAdapter(freshValue = 3, restoreValue = TestSession(7))
-        val controller = PuzzleSessionController(backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), adapter)
+        val controller = PuzzleSessionController(backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), adapter, isAppForeground = { false }, animationsEnabled = { false })
 
         controller.start(Difficulty.EASY, resume = true)
         runCurrent()
@@ -481,7 +498,7 @@ class PuzzleSessionControllerTest {
         val sessionStore = FakeSessionStore()
         sessionStore.preload(ActiveSessionEnvelope(gameId = GameId.TAKUZU.key, elapsedSeconds = 42.0, payload = "bad"))
         val adapter = FakePuzzleAdapter(freshValue = 3, restoreValue = null)
-        val controller = PuzzleSessionController(backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), adapter)
+        val controller = PuzzleSessionController(backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), adapter, isAppForeground = { false }, animationsEnabled = { false })
 
         controller.start(Difficulty.EASY, resume = true)
         runCurrent()
@@ -493,7 +510,7 @@ class PuzzleSessionControllerTest {
     @Test
     fun `updateSession persists only when adapter reports meaningful progress`() = runTest {
         val sessionStore = FakeSessionStore()
-        val controller = PuzzleSessionController(backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter())
+        val controller = PuzzleSessionController(backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(), isAppForeground = { false }, animationsEnabled = { false })
         controller.start(Difficulty.EASY, resume = false)
         runCurrent()
 
@@ -509,7 +526,7 @@ class PuzzleSessionControllerTest {
     @Test
     fun `updateSession with persist false never saves`() = runTest {
         val sessionStore = FakeSessionStore()
-        val controller = PuzzleSessionController(backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter())
+        val controller = PuzzleSessionController(backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(), isAppForeground = { false }, animationsEnabled = { false })
         controller.start(Difficulty.EASY, resume = false)
         runCurrent()
 
@@ -524,7 +541,7 @@ class PuzzleSessionControllerTest {
     fun `finishAsWin records stats, clears the session store, and emits isFirstSolve`() = runTest {
         val sessionStore = FakeSessionStore()
         val statsStore = FakeStatsStore()
-        val controller = PuzzleSessionController(backgroundScope, sessionStore, statsStore, FakeHistoryStore(), FakePuzzleAdapter())
+        val controller = PuzzleSessionController(backgroundScope, sessionStore, statsStore, FakeHistoryStore(), FakePuzzleAdapter(), isAppForeground = { false }, animationsEnabled = { false })
         controller.start(Difficulty.MEDIUM, resume = false)
         runCurrent()
 
@@ -544,7 +561,7 @@ class PuzzleSessionControllerTest {
     @Test
     fun `finishAsWin reports isNewHighScore against prior best`() = runTest {
         val statsStore = FakeStatsStore().apply { seed(GameId.TAKUZU, Difficulty.MEDIUM, solved = 3, bestScore = 50) }
-        val controller = PuzzleSessionController(backgroundScope, FakeSessionStore(), statsStore, FakeHistoryStore(), FakePuzzleAdapter())
+        val controller = PuzzleSessionController(backgroundScope, FakeSessionStore(), statsStore, FakeHistoryStore(), FakePuzzleAdapter(), isAppForeground = { false }, animationsEnabled = { false })
         controller.start(Difficulty.MEDIUM, resume = false)
         runCurrent()
 
@@ -562,7 +579,7 @@ class PuzzleSessionControllerTest {
 
     @Test
     fun `endPuzzle emits a loss result with the abandoned reason`() = runTest {
-        val controller = PuzzleSessionController(backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter())
+        val controller = PuzzleSessionController(backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(), isAppForeground = { false }, animationsEnabled = { false })
         controller.start(Difficulty.HARD, resume = false)
         runCurrent()
 
@@ -580,7 +597,7 @@ class PuzzleSessionControllerTest {
 
     @Test
     fun `finalized guard prevents a second result emission`() = runTest {
-        val controller = PuzzleSessionController(backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter())
+        val controller = PuzzleSessionController(backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(), isAppForeground = { false }, animationsEnabled = { false })
         controller.start(Difficulty.EASY, resume = false)
         runCurrent()
 
@@ -601,6 +618,8 @@ class PuzzleSessionControllerTest {
         val historyStore = FakeHistoryStore()
         val controller = PuzzleSessionController(
             backgroundScope, FakeSessionStore(), FakeStatsStore(), historyStore, FakePuzzleAdapter(puzzleId = "t6-abc"),
+            isAppForeground = { false },
+            animationsEnabled = { false },
         )
         controller.start(Difficulty.HARD, resume = false)
         runCurrent()
@@ -622,6 +641,8 @@ class PuzzleSessionControllerTest {
         val historyStore = FakeHistoryStore()
         val controller = PuzzleSessionController(
             backgroundScope, FakeSessionStore(), FakeStatsStore(), historyStore, FakePuzzleAdapter(),
+            isAppForeground = { false },
+            animationsEnabled = { false },
         )
         controller.start(Difficulty.EASY, resume = false)
         runCurrent()
@@ -641,6 +662,7 @@ class PuzzleSessionControllerTest {
         val controller = PuzzleSessionController(
             backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
             animationsEnabled = { true },
+            isAppForeground = { false },
         )
         controller.start(Difficulty.EASY, resume = false)
         runCurrent()
@@ -665,10 +687,12 @@ class PuzzleSessionControllerTest {
         val abandoned = PuzzleSessionController(
             backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
             animationsEnabled = { true },
+            isAppForeground = { false },
         )
         val failed = PuzzleSessionController(
             backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
             animationsEnabled = { true },
+            isAppForeground = { false },
         )
         abandoned.start(Difficulty.EASY, resume = false)
         failed.start(Difficulty.EASY, resume = false)
@@ -687,6 +711,7 @@ class PuzzleSessionControllerTest {
         val controller = PuzzleSessionController(
             backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
             animationsEnabled = { false },
+            isAppForeground = { false },
         )
         controller.start(Difficulty.EASY, resume = false)
         runCurrent()
@@ -706,6 +731,7 @@ class PuzzleSessionControllerTest {
         val controller = PuzzleSessionController(
             backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
             animationsEnabled = { true },
+            isAppForeground = { false },
         )
         controller.start(Difficulty.EASY, resume = false)
         runCurrent()
@@ -731,6 +757,8 @@ class PuzzleSessionControllerTest {
         val statsStore = FakeStatsStore()
         val controller = PuzzleSessionController(
             backgroundScope, FakeSessionStore(), statsStore, historyStore, FakePuzzleAdapter(gameId = GameId.NBACK),
+            isAppForeground = { false },
+            animationsEnabled = { false },
         )
         controller.start(Difficulty.EASY, resume = false)
         runCurrent()
@@ -747,6 +775,8 @@ class PuzzleSessionControllerTest {
         val historyStore = FakeHistoryStore()
         val controller = PuzzleSessionController(
             backgroundScope, FakeSessionStore(), FakeStatsStore(), historyStore, FakePuzzleAdapter(gameId = GameId.NBACK),
+            isAppForeground = { false },
+            animationsEnabled = { false },
         )
         controller.start(Difficulty.EASY, resume = false)
         runCurrent()
@@ -765,6 +795,8 @@ class PuzzleSessionControllerTest {
         val adapter = FakePuzzleAdapter(freshValue = 1)
         val controller = PuzzleSessionController(
             backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), adapter,
+            isAppForeground = { false },
+            animationsEnabled = { false },
         )
 
         controller.start(Difficulty.HARD, resume = false, journey = journeyRequest)
@@ -782,6 +814,7 @@ class PuzzleSessionControllerTest {
         val first = PuzzleSessionController(
             backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
             isAppForeground = { true },
+            animationsEnabled = { false },
         )
         first.start(Difficulty.HARD, resume = false, journey = journeyRequest)
         advanceTimeBy(15_001)
@@ -793,6 +826,8 @@ class PuzzleSessionControllerTest {
 
         val resumed = PuzzleSessionController(
             backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(restoreValue = TestSession(9)),
+            isAppForeground = { false },
+            animationsEnabled = { false },
         )
         resumed.start(Difficulty.EASY, resume = true)
         runCurrent()
@@ -810,6 +845,7 @@ class PuzzleSessionControllerTest {
             backgroundScope, FakeSessionStore(), FakeStatsStore(), history, FakePuzzleAdapter(puzzleId = "sib", signals = signals),
             isAppForeground = { true },
             journeyStore = journeyStore,
+            animationsEnabled = { false },
         )
         controller.start(Difficulty.HARD, resume = false, journey = journeyRequest)
         advanceTimeBy(5_001)
@@ -830,6 +866,8 @@ class PuzzleSessionControllerTest {
         val lost = PuzzleSessionController(
             backgroundScope, FakeSessionStore(), FakeStatsStore(), history, FakePuzzleAdapter(),
             journeyStore = journeyStore,
+            isAppForeground = { false },
+            animationsEnabled = { false },
         )
         lost.start(Difficulty.HARD, resume = false, journey = journeyRequest)
         runCurrent()
@@ -842,6 +880,8 @@ class PuzzleSessionControllerTest {
         val abandoned = PuzzleSessionController(
             backgroundScope, FakeSessionStore(), FakeStatsStore(), history, FakePuzzleAdapter(),
             journeyStore = journeyStore,
+            isAppForeground = { false },
+            animationsEnabled = { false },
         )
         abandoned.start(Difficulty.HARD, resume = false, journey = journeyRequest)
         runCurrent()
@@ -864,6 +904,7 @@ class PuzzleSessionControllerTest {
             backgroundScope, sessionStore, FakeStatsStore(), history, FakePuzzleAdapter(),
             animationsEnabled = { true },
             journeyStore = journeyStore,
+            isAppForeground = { false },
         )
         controller.start(Difficulty.HARD, resume = false, journey = journeyRequest)
         runCurrent()
@@ -897,6 +938,8 @@ class PuzzleSessionControllerTest {
         val controller = PuzzleSessionController(
             backgroundScope, FakeSessionStore(), FakeStatsStore(), history, FakePuzzleAdapter(),
             journeyStore = journeyStore,
+            isAppForeground = { false },
+            animationsEnabled = { false },
         )
         controller.start(Difficulty.HARD, resume = false)
         runCurrent()
@@ -912,9 +955,13 @@ class PuzzleSessionControllerTest {
         val signals = JourneySignals(hintsUsed = 1, mistakes = 2)
         val won = PuzzleSessionController(
             backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(signals = signals),
+            isAppForeground = { false },
+            animationsEnabled = { false },
         )
         val lost = PuzzleSessionController(
             backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(signals = signals),
+            isAppForeground = { false },
+            animationsEnabled = { false },
         )
         won.start(Difficulty.HARD, resume = false, journey = journeyRequest)
         lost.start(Difficulty.HARD, resume = false, journey = journeyRequest)
@@ -940,6 +987,7 @@ class PuzzleSessionControllerTest {
             backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(signals = JourneySignals(2, 1)),
             isAppForeground = { true },
             badgeStore = badges,
+            animationsEnabled = { false },
         )
 
         controller.start(Difficulty.HARD, resume = false)
@@ -961,6 +1009,7 @@ class PuzzleSessionControllerTest {
             backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
             isAppForeground = { true },
             badgeStore = badges,
+            animationsEnabled = { false },
         )
         lost.start(Difficulty.HARD, resume = false)
         runCurrent()
@@ -971,6 +1020,7 @@ class PuzzleSessionControllerTest {
             backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(),
             isAppForeground = { true },
             badgeStore = badges,
+            animationsEnabled = { false },
         )
         ended.start(Difficulty.HARD, resume = false)
         runCurrent()
@@ -987,6 +1037,7 @@ class PuzzleSessionControllerTest {
             backgroundScope, FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(gameId = GameId.HASHI),
             isAppForeground = { true },
             badgeStore = badges,
+            animationsEnabled = { false },
         )
 
         controller.start(Difficulty.HARD, resume = false)
@@ -1006,6 +1057,7 @@ class PuzzleSessionControllerTest {
             backgroundScope, sessionStore, FakeStatsStore(), FakeHistoryStore(), FakePuzzleAdapter(restoreValue = TestSession(7)),
             isAppForeground = { true },
             badgeStore = badges,
+            animationsEnabled = { false },
         )
 
         controller.start(Difficulty.EASY, resume = true)
@@ -1014,6 +1066,6 @@ class PuzzleSessionControllerTest {
         controller.finishAsWin()
         runCurrent()
 
-        assertEquals(LocalDate.of(2026, 9, 20), badges.finishes.single().startedDate)
+        assertEquals(LocalDate(2026, 9, 20), badges.finishes.single().startedDate)
     }
 }

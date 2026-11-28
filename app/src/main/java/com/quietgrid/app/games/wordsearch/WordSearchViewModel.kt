@@ -1,6 +1,8 @@
 package com.quietgrid.app.games.wordsearch
 
-import android.content.Context
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,8 +10,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.daily.selectDaily
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.today
 import com.quietgrid.app.core.badges.BadgeFacts
 import com.quietgrid.app.core.badges.SEASON_HALLOWEEN
 import com.quietgrid.app.data.BadgeStore
@@ -57,7 +60,7 @@ data class WordSearchResult(
 data class WSSelectionEvent(val id: Int, val wasCorrect: Boolean)
 
 private class WordSearchPuzzleAdapter(
-    private val appContext: Context,
+    private val files: BundledFiles,
     private val settingsRepository: SettingsRepository,
     private val themePreferencesRepository: ThemePreferencesRepository,
     private val historyStore: PlayHistoryStore,
@@ -70,7 +73,7 @@ private class WordSearchPuzzleAdapter(
         val entry = halloween ?: run {
             val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
             val excludedThemes = themePreferencesRepository.excludedThemes(gameId, locale).first()
-            WordSearchPuzzleBank.randomPuzzle(appContext, locale, difficulty, recentIds, excludedThemes)
+            WordSearchPuzzleBank.randomPuzzle(files, locale, difficulty, recentIds, excludedThemes)
         } ?: return null
         return WordSearchSession(
             puzzle = entry,
@@ -85,14 +88,14 @@ private class WordSearchPuzzleAdapter(
     }
 
     private suspend fun halloweenPuzzle(locale: String, difficulty: Difficulty): WordSearchPuzzleEntry? {
-        val today = LocalDate.now()
-        if (!settingsRepository.isHalloweenActive(today)) return null
-        return WordSearchPuzzleBank.halloweenPuzzle(appContext, locale, difficulty, historyStore.puzzleIdsPlayedOn(gameId, today))
+        val date = today()
+        if (!settingsRepository.isHalloweenActive(date)) return null
+        return WordSearchPuzzleBank.halloweenPuzzle(files, locale, difficulty, historyStore.puzzleIdsPlayedOn(gameId, date))
     }
 
     override suspend fun dailySession(difficulty: Difficulty, date: LocalDate): WordSearchSession? {
         val locale = currentWordSearchLocale(settingsRepository.settings.first().puzzleLanguage)
-        val entry = selectDaily(WordSearchPuzzleBank.dailyPool(appContext, locale, difficulty), { it.id }, gameId.key, difficulty.key, date) ?: return null
+        val entry = selectDaily(WordSearchPuzzleBank.dailyPool(files, locale, difficulty), { it.id }, gameId.key, difficulty.key, date) ?: return null
         return WordSearchSession(
             puzzle = entry,
             foundWordIds = emptyList(),
@@ -160,13 +163,15 @@ private class WordSearchPuzzleAdapter(
 }
 
 class WordSearchPlayViewModel(
-    appContext: Context,
+    files: BundledFiles,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     settingsRepository: SettingsRepository,
     themePreferencesRepository: ThemePreferencesRepository,
     badgeStore: BadgeStore,
+    appForeground: AppForeground,
+    motion: MotionSettings,
     requestedDifficulty: Difficulty,
     resume: Boolean,
     dailyDate: LocalDate?,
@@ -177,7 +182,9 @@ class WordSearchPlayViewModel(
         sessionStore = sessionRepository,
         statsStore = statsRepository,
         historyStore = historyRepository,
-        adapter = WordSearchPuzzleAdapter(appContext, settingsRepository, themePreferencesRepository, historyRepository),
+        adapter = WordSearchPuzzleAdapter(files, settingsRepository, themePreferencesRepository, historyRepository),
+        isAppForeground = appForeground::isForeground,
+        animationsEnabled = motion::animationsEnabled,
         badgeStore = badgeStore,
     )
 

@@ -4,12 +4,15 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
-import java.time.LocalDate
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.minus
+import kotlinx.datetime.plus
 
 class DailyPuzzleSelectorTest {
 
     private val pool = (1..50).map { "p${it.toString().padStart(3, '0')}" }
-    private val start = LocalDate.of(2026, 9, 24)
+    private val start = LocalDate(2026, 9, 24)
 
     @Test
     fun `fnv1a64 matches reference vectors`() {
@@ -39,27 +42,33 @@ class DailyPuzzleSelectorTest {
 
     @Test
     fun `consecutive days cover every puzzle once per cycle`() {
-        val picks = (0 until pool.size).map { selectDaily(pool, { it }, "sudoku", "hard", start.plusDays(it.toLong())) }
+        val picks = (0 until pool.size).map { selectDaily(pool, { it }, "sudoku", "hard", start.plus(it.toLong(), DateTimeUnit.DAY)) }
         assertEquals(pool.toSet(), picks.toSet())
     }
 
     @Test
     fun `cycle repeats after pool size days`() {
         val first = selectDaily(pool, { it }, "sudoku", "hard", start)
-        val later = selectDaily(pool, { it }, "sudoku", "hard", start.plusDays(pool.size.toLong()))
+        val later = selectDaily(pool, { it }, "sudoku", "hard", start.plus(pool.size.toLong(), DateTimeUnit.DAY))
         assertEquals(first, later)
     }
 
     @Test
+    fun `pick for a fixed date stays the same`() {
+        val pool = (0 until 10).map { "p$it" }
+        assertEquals("p1", selectDaily(pool, { it }, "takuzu", "easy", LocalDate(2026, 3, 4)))
+    }
+
+    @Test
     fun `dates before the epoch still resolve`() {
-        val pick = selectDaily(pool, { it }, "sudoku", "hard", LocalDate.of(2025, 6, 1))
+        val pick = selectDaily(pool, { it }, "sudoku", "hard", LocalDate(2025, 6, 1))
         assertEquals(true, pick in pool)
     }
 
     @Test
     fun `different tiers use different orders`() {
-        val hard = (0 until 20).map { selectDaily(pool, { it }, "sudoku", "hard", start.plusDays(it.toLong())) }
-        val easy = (0 until 20).map { selectDaily(pool, { it }, "sudoku", "easy", start.plusDays(it.toLong())) }
+        val hard = (0 until 20).map { selectDaily(pool, { it }, "sudoku", "hard", start.plus(it.toLong(), DateTimeUnit.DAY)) }
+        val easy = (0 until 20).map { selectDaily(pool, { it }, "sudoku", "easy", start.plus(it.toLong(), DateTimeUnit.DAY)) }
         assertNotEquals(hard, easy)
     }
 }

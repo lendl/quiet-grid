@@ -1,5 +1,8 @@
 package com.quietgrid.app.games.blockescape
 
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -46,19 +49,19 @@ data class BlockEscapeResult(
 )
 
 internal class BlockEscapePuzzleAdapter(
-    private val appContext: android.content.Context,
+    private val files: BundledFiles,
     private val historyStore: PlayHistoryStore,
 ) : PuzzleAdapter<BlockEscapeSession, BlockEscapeResult> {
     override val gameId: GameId = GameId.BLOCKESCAPE
 
     override suspend fun freshSession(difficulty: Difficulty): BlockEscapeSession? {
         val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
-        val puzzle = BlockEscapePuzzleBank.randomPuzzle(appContext, difficulty, recentIds) ?: return null
+        val puzzle = BlockEscapePuzzleBank.randomPuzzle(files, difficulty, recentIds) ?: return null
         return createBlockEscapeSession(puzzle)
     }
 
     override suspend fun journeySession(difficulty: Difficulty, puzzleId: String, transform: Int): BlockEscapeSession? =
-        BlockEscapePuzzleBank.puzzleById(appContext, difficulty, puzzleId)?.let(::createBlockEscapeSession)
+        BlockEscapePuzzleBank.puzzleById(files, difficulty, puzzleId)?.let(::createBlockEscapeSession)
 
     override fun journeySignals(session: BlockEscapeSession): JourneySignals = JourneySignals(session.hintsUsed, 0)
 
@@ -107,12 +110,14 @@ internal class BlockEscapePuzzleAdapter(
 }
 
 class BlockEscapePlayViewModel(
-    appContext: android.content.Context,
+    files: BundledFiles,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     journeyStore: JourneyProgressStore,
     badgeStore: BadgeStore,
+    appForeground: AppForeground,
+    motion: MotionSettings,
     requestedDifficulty: Difficulty,
     resume: Boolean,
     journey: JourneyRequest?,
@@ -123,7 +128,9 @@ class BlockEscapePlayViewModel(
         sessionStore = sessionRepository,
         statsStore = statsRepository,
         historyStore = historyRepository,
-        adapter = BlockEscapePuzzleAdapter(appContext, historyRepository),
+        adapter = BlockEscapePuzzleAdapter(files, historyRepository),
+        isAppForeground = appForeground::isForeground,
+        animationsEnabled = motion::animationsEnabled,
         journeyStore = journeyStore,
         badgeStore = badgeStore,
     )

@@ -31,12 +31,14 @@ fun LinksPlayScreen(
 ) {
     val viewModel = appViewModel { graph ->
         LinksPlayViewModel(
-            graph.appContext,
+            graph.bundledFiles,
             graph.sessionRepository,
             graph.statsRepository,
             graph.playHistoryRepository,
             graph.journeyProgressRepository,
             graph.badgeRepository,
+            graph.appForeground,
+            graph.motionSettings,
             difficulty,
             resume,
             journey,

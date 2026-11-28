@@ -1,6 +1,6 @@
 package com.quietgrid.app.games.blockescape
 
-import android.content.Context
+import com.quietgrid.app.platform.BundledFiles
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -18,7 +18,7 @@ import com.quietgrid.engine.blockescape.BlockEscapeMove
 import kotlinx.coroutines.launch
 
 class BlockEscapeChallengerViewModel(
-    private val appContext: Context,
+    private val files: BundledFiles,
     statsStore: StatsStore,
     historyStore: PlayHistoryStore,
     appForeground: AppForeground,
@@ -38,7 +38,7 @@ class BlockEscapeChallengerViewModel(
 
     init {
         viewModelScope.launch {
-            val firstPuzzle = BlockEscapePuzzleBank.randomPuzzle(appContext, Difficulty.EASY)
+            val firstPuzzle = BlockEscapePuzzleBank.randomPuzzle(files, Difficulty.EASY)
             if (firstPuzzle != null) {
                 controller.start(createInitialBlockEscapeChallengerSession(firstPuzzle))
             }
@@ -75,7 +75,7 @@ class BlockEscapeChallengerViewModel(
         canUndo = false
         val (nextTier, nextSolvesInTier) = challengerTierAfterSolve(BLOCKESCAPE_CHALLENGER_CONFIG, solved.tier, solved.solvesInTier)
         viewModelScope.launch {
-            val nextPuzzle = BlockEscapePuzzleBank.randomPuzzle(appContext, nextTier, solved.servedPuzzleIds)
+            val nextPuzzle = BlockEscapePuzzleBank.randomPuzzle(files, nextTier, solved.servedPuzzleIds)
             if (nextPuzzle == null || nextPuzzle.id in solved.servedPuzzleIds) {
                 controller.finalizeRun(creditBlockEscapeChallengerSolve(solved), "bank_exhausted")
             } else {

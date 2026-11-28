@@ -14,7 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.R
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 import com.quietgrid.app.appViewModel
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.journey.JourneyRequest
@@ -40,12 +40,14 @@ fun TakuzuPlayScreen(
 ) {
     val viewModel = appViewModel { graph ->
         TakuzuPlayViewModel(
-            graph.appContext,
+            graph.bundledFiles,
             graph.sessionRepository,
             graph.statsRepository,
             graph.playHistoryRepository,
             graph.journeyProgressRepository,
             graph.badgeRepository,
+            graph.appForeground,
+            graph.motionSettings,
             difficulty,
             resume,
             dailyDate,

@@ -1,5 +1,8 @@
 package com.quietgrid.app.games.hashi
 
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -46,14 +49,14 @@ internal fun hashiScore(hintsUsed: Int, elapsedSeconds: Int): Int =
     maxOf(0, HASHI_BASE_SCORE - hintsUsed * HASHI_HINT_PENALTY - elapsedSeconds * HASHI_TIME_PENALTY_PER_SECOND)
 
 private class HashiPuzzleAdapter(
-    private val appContext: android.content.Context,
+    private val files: BundledFiles,
     private val historyStore: PlayHistoryStore,
 ) : PuzzleAdapter<HashiSession, HashiResult> {
     override val gameId: GameId = GameId.HASHI
 
     override suspend fun freshSession(difficulty: Difficulty): HashiSession? {
         val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
-        val puzzle = HashiPuzzleBank.randomPuzzle(appContext, difficulty, recentIds) ?: return null
+        val puzzle = HashiPuzzleBank.randomPuzzle(files, difficulty, recentIds) ?: return null
         return createHashiSession(puzzle)
     }
 
@@ -102,10 +105,12 @@ private class HashiPuzzleAdapter(
 }
 
 class HashiPlayViewModel(
-    appContext: android.content.Context,
+    files: BundledFiles,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
+    appForeground: AppForeground,
+    motion: MotionSettings,
     requestedDifficulty: Difficulty,
     resume: Boolean,
 ) : ViewModel() {
@@ -115,7 +120,9 @@ class HashiPlayViewModel(
         sessionStore = sessionRepository,
         statsStore = statsRepository,
         historyStore = historyRepository,
-        adapter = HashiPuzzleAdapter(appContext, historyRepository),
+        adapter = HashiPuzzleAdapter(files, historyRepository),
+        isAppForeground = appForeground::isForeground,
+        animationsEnabled = motion::animationsEnabled,
     )
 
     val session get() = controller.session

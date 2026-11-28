@@ -1,5 +1,7 @@
 package com.quietgrid.app.games.game2048
 
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -80,6 +82,8 @@ class Game2048PlayViewModel(
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     badgeStore: BadgeStore,
+    appForeground: AppForeground,
+    motion: MotionSettings,
     requestedDifficulty: Difficulty,
     resume: Boolean,
 ) : ViewModel() {
@@ -90,6 +94,8 @@ class Game2048PlayViewModel(
         statsStore = statsRepository,
         historyStore = historyRepository,
         adapter = Game2048PuzzleAdapter(),
+        isAppForeground = appForeground::isForeground,
+        animationsEnabled = motion::animationsEnabled,
         badgeStore = badgeStore,
     )
 

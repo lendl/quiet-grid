@@ -31,13 +31,15 @@ fun WordSwapPlayScreen(
 ) {
     val viewModel = appViewModel { graph ->
         WordSwapPlayViewModel(
-            graph.appContext,
+            graph.bundledFiles,
             graph.sessionRepository,
             graph.statsRepository,
             graph.playHistoryRepository,
             graph.journeyProgressRepository,
             graph.badgeRepository,
             graph.settingsRepository,
+            graph.appForeground,
+            graph.motionSettings,
             difficulty,
             resume,
             journey,

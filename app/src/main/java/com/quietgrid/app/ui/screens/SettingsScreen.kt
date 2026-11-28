@@ -48,7 +48,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quietgrid.app.LocalAppGraph
 import com.quietgrid.app.R
-import com.quietgrid.app.core.AppLocale
 import com.quietgrid.app.core.localeFlagEmoji
 import com.quietgrid.app.data.AppSettings
 import com.quietgrid.app.data.GameToggle
@@ -74,7 +73,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.quietgrid.app.notifications.DailyReminderNotifier
-import java.time.LocalTime
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.toJavaLocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
@@ -153,7 +153,7 @@ fun PreferencesSection() {
     var languageMenuOpen by remember { mutableStateOf(false) }
     var puzzleLanguageMenuOpen by remember { mutableStateOf(false) }
     var rotationMenuOpen by remember { mutableStateOf(false) }
-    val currentLanguageTag = AppLocale.currentTag(context)
+    val currentLanguageTag = graph.appLanguage.currentTag()
 
     Column(Modifier.fillMaxWidth()) {
         val selectedTheme = THEME_OPTIONS.firstOrNull { it.mode == settings.themeMode } ?: THEME_OPTIONS[0]
@@ -208,7 +208,7 @@ fun PreferencesSection() {
                         text = { Text(stringResource(option.labelRes)) },
                         onClick = {
                             languageMenuOpen = false
-                            AppLocale.setLanguage(context, option.tag)
+                            graph.appLanguage.setLanguage(option.tag)
                             context.findActivity()?.recreate()
                         },
                     )
@@ -525,7 +525,7 @@ private fun DailyReminderSettings(settings: AppSettings) {
         },
     )
 
-    val timeText = settings.dailyReminderTime.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
+    val timeText = settings.dailyReminderTime.toJavaLocalTime().format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
     Row(
         Modifier
             .fillMaxWidth()
@@ -558,7 +558,7 @@ private fun DailyReminderSettings(settings: AppSettings) {
             confirmButton = {
                 TextButton(onClick = {
                     showTimePicker = false
-                    scope.launch { graph.settingsRepository.setDailyReminderTime(LocalTime.of(pickerState.hour, pickerState.minute)) }
+                    scope.launch { graph.settingsRepository.setDailyReminderTime(LocalTime(pickerState.hour, pickerState.minute)) }
                 }) { Text(stringResource(R.string.settings_daily_reminder_ok)) }
             },
             dismissButton = {

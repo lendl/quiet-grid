@@ -11,6 +11,7 @@ import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import com.quietgrid.app.ui.setContentWithGraph
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -56,7 +57,7 @@ class SudokuDockLayoutTest {
     fun `tablet upright shows the whole pad`() = assertWholePadVisible()
 
     private fun assertWholePadVisible() {
-        composeRule.setContent {
+        composeRule.setContentWithGraph {
             MaterialTheme {
                 GamePlayScaffold(
                     gameId = GameId.SUDOKU,

@@ -1,5 +1,6 @@
 package com.quietgrid.app.storeart
 
+import com.quietgrid.app.platform.AndroidBundledFiles
 import android.app.Application
 import android.content.pm.ActivityInfo
 import androidx.activity.compose.setContent
@@ -29,6 +30,7 @@ import com.quietgrid.app.LocalAppGraph
 import com.quietgrid.app.appGraph
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.today
 import com.quietgrid.app.core.badges.BadgeFacts
 import com.quietgrid.app.core.badges.FinishFacts
 import com.quietgrid.app.core.journey.JourneySignals
@@ -68,8 +70,14 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.GraphicsMode
 import org.robolectric.shadows.ShadowLooper
-import java.time.LocalDate
-import java.time.ZoneId
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.minus
+import kotlinx.datetime.plus
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 import kotlin.math.abs
 
 @RunWith(RobolectricTestRunner::class)
@@ -302,7 +310,7 @@ class TabletStoreArtCaptureTest {
     }
 
     private fun millisOn(date: LocalDate, hour: Int): Long =
-        date.atTime(hour, 0).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        LocalDateTime(date, LocalTime(hour, 0)).toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
 
     private suspend fun seed() {
         GameId.entries.forEach {
@@ -314,7 +322,7 @@ class TabletStoreArtCaptureTest {
         dailyRepository.setSubscribed(GameId.SUDOKU, true)
         dailyRepository.setSubscribed(GameId.WORDSEARCH, Difficulty.EASY, true)
         dailyRepository.setSubscribed(GameId.WORDSEARCH, Difficulty.MEDIUM, true)
-        val today = LocalDate.now()
+        val today = today()
         seedDailies(today)
         seedHistory(today)
         seedJourney(today)
@@ -323,7 +331,7 @@ class TabletStoreArtCaptureTest {
 
     private suspend fun seedDailies(today: LocalDate) {
         (1..10).forEach { daysAgo ->
-            val date = today.minusDays(daysAgo.toLong())
+            val date = today.minus(daysAgo.toLong(), DateTimeUnit.DAY)
             historyRepository.appendRecord(
                 PlayRecord(
                     gameId = GameId.SUDOKU.key,
@@ -360,7 +368,7 @@ class TabletStoreArtCaptureTest {
                         solved = index >= lost,
                         score = 8_800 + index * 13,
                         elapsedSeconds = 300 + index * 17,
-                        timestampMillis = millisOn(today.minusDays(offset++), 20),
+                        timestampMillis = millisOn(today.minus(offset++, DateTimeUnit.DAY), 20),
                     ),
                 )
             }
@@ -369,7 +377,7 @@ class TabletStoreArtCaptureTest {
 
     private suspend fun seedJourney(today: LocalDate) {
         val track = settingsRepository.journeyTrack(GameId.SUDOKU).first()
-        val stops = loadJourneyFile(app, track)?.chapters?.firstOrNull()?.stops ?: return
+        val stops = loadJourneyFile(AndroidBundledFiles(app), track)?.chapters?.firstOrNull()?.stops ?: return
         val cleared = stops.take(minOf(JOURNEY_STOPS_CLEARED, stops.size - 1))
         cleared.forEachIndexed { index, stop ->
             val elapsedSeconds = if (index % 3 == 2) stop.targetSeconds + 45 else stop.targetSeconds * 2 / 3
@@ -383,7 +391,7 @@ class TabletStoreArtCaptureTest {
                     solved = true,
                     score = score,
                     elapsedSeconds = elapsedSeconds,
-                    timestampMillis = millisOn(today.minusDays((cleared.size - index).toLong()), 19),
+                    timestampMillis = millisOn(today.minus((cleared.size - index).toLong(), DateTimeUnit.DAY), 19),
                     journeyStop = stop.puzzleId,
                     journeyStars = stars,
                 ),
@@ -393,10 +401,10 @@ class TabletStoreArtCaptureTest {
 
     private suspend fun seedBadges(today: LocalDate) {
         val finishes = listOf(
-            badgeFinish(GameId.SUDOKU, Difficulty.HARD, 1_900, today.minusDays(9)),
-            badgeFinish(GameId.WORDSEARCH, Difficulty.MEDIUM, 310, today.minusDays(6), BadgeFacts(hiddenWordSolved = true)),
-            badgeFinish(GameId.SUDOKU, Difficulty.EXPERT, 1_260, today.minusDays(4)),
-            badgeFinish(GameId.SUDOKU, Difficulty.MEDIUM, 640, today.minusDays(2), startedDate = today.minusDays(3)),
+            badgeFinish(GameId.SUDOKU, Difficulty.HARD, 1_900, today.minus(9, DateTimeUnit.DAY)),
+            badgeFinish(GameId.WORDSEARCH, Difficulty.MEDIUM, 310, today.minus(6, DateTimeUnit.DAY), BadgeFacts(hiddenWordSolved = true)),
+            badgeFinish(GameId.SUDOKU, Difficulty.EXPERT, 1_260, today.minus(4, DateTimeUnit.DAY)),
+            badgeFinish(GameId.SUDOKU, Difficulty.MEDIUM, 640, today.minus(2, DateTimeUnit.DAY), startedDate = today.minus(3, DateTimeUnit.DAY)),
         )
         finishes.forEach { badgeRepository.recordFinish(it) }
         badgeRepository.clearAnnouncement()
@@ -423,10 +431,10 @@ class TabletStoreArtCaptureTest {
     )
 
     private suspend fun seedStarBattleSession() {
-        val puzzle = StarBattlePuzzleBank.ratedPool(app, Difficulty.MEDIUM)
-            .mapNotNull { (id, _) -> StarBattlePuzzleBank.puzzleById(app, Difficulty.MEDIUM, id) }
+        val puzzle = StarBattlePuzzleBank.ratedPool(AndroidBundledFiles(app), Difficulty.MEDIUM)
+            .mapNotNull { (id, _) -> StarBattlePuzzleBank.puzzleById(AndroidBundledFiles(app), Difficulty.MEDIUM, id) }
             .minByOrNull { entry -> entry.regions.flatten().groupingBy { it }.eachCount().values.max() }
-            ?: StarBattlePuzzleBank.randomPuzzle(app, Difficulty.MEDIUM)
+            ?: StarBattlePuzzleBank.randomPuzzle(AndroidBundledFiles(app), Difficulty.MEDIUM)
             ?: return
         val regionSizes = puzzle.regions.flatten().groupingBy { it }.eachCount()
         val placed = puzzle.solution

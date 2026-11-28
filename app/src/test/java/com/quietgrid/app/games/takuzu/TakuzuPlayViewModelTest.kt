@@ -1,5 +1,8 @@
 package com.quietgrid.app.games.takuzu
 
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
@@ -69,7 +72,7 @@ class TakuzuPlayViewModelTest {
     }
 
     private fun newViewModel(sessionStore: FakeSessionStore = FakeSessionStore(), statsStore: FakeStatsStore = FakeStatsStore()) =
-        TakuzuPlayViewModel(mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), FakeJourneyStore(), FakeBadgeStore(), Difficulty.EASY, resume = false, dailyDate = null, journey = null)
+        TakuzuPlayViewModel(mockk<BundledFiles>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), FakeJourneyStore(), FakeBadgeStore(), AppForeground { false }, MotionSettings { false }, Difficulty.EASY, resume = false, dailyDate = null, journey = null)
 
     @Test
     fun `starting fresh loads the mocked puzzle with only the ungiven cell blank`() {

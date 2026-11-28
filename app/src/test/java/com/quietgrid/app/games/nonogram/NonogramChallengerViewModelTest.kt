@@ -1,5 +1,6 @@
 package com.quietgrid.app.games.nonogram
 
+import com.quietgrid.app.platform.BundledFiles
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
@@ -53,7 +54,7 @@ class NonogramChallengerViewModelTest {
         historyStore: FakeHistoryStore = FakeHistoryStore(),
         appForeground: AppForeground = AppForeground { true },
     ) =
-        NonogramChallengerViewModel(mockk<Context>(relaxed = true), statsStore, historyStore, appForeground)
+        NonogramChallengerViewModel(mockk<BundledFiles>(relaxed = true), statsStore, historyStore, appForeground)
 
     @Test
     fun `starting fresh loads a puzzle on the Easy tier with starting seconds`() {

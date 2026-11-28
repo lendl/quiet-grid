@@ -20,7 +20,7 @@ import com.quietgrid.app.ui.play.InfoItem
 import com.quietgrid.app.ui.play.PlayTimer
 import com.quietgrid.app.ui.play.puzzleLanguageInfo
 import com.quietgrid.engine.wordguess.foldWordGuessKeyboardState
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 import kotlinx.coroutines.delay
 
 @Composable
@@ -33,12 +33,14 @@ fun WordGuessPlayScreen(
 ) {
     val viewModel = appViewModel { graph ->
         WordGuessPlayViewModel(
-            graph.appContext,
+            graph.bundledFiles,
             graph.sessionRepository,
             graph.statsRepository,
             graph.playHistoryRepository,
             graph.settingsRepository,
             graph.badgeRepository,
+            graph.appForeground,
+            graph.motionSettings,
             difficulty,
             resume,
             dailyDate,

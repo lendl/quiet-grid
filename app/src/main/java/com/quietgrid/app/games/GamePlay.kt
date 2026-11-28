@@ -4,7 +4,7 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.journey.JourneyRequest
 import com.quietgrid.app.core.journey.JourneySignals
 import com.quietgrid.app.session.LossReason
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 data class PlayRequest(
     val difficulty: Difficulty,

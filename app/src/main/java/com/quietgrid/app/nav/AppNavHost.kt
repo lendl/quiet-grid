@@ -99,7 +99,6 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
     val mixes = mixesState.value
     val settings = settingsState.value
     val context = LocalContext.current
-    val appContext = context.applicationContext
     val quietTipSignals = appViewModel { QuietTipSignalsViewModel(graph.quietTipsRepository) }
     LaunchedEffect(selectedTab) {
         if (selectedTab == AppTab.DAILY) quietTipSignals.dailyTabOpened()
@@ -110,7 +109,6 @@ fun AppNavHost(launchRequest: LaunchRequest? = null, onLaunchRequestHandled: () 
             navController = navController,
             scope = scope,
             graph = graph,
-            appContext = appContext,
             activeSession = activeSessionState,
             activeMixState = activeMixState,
             resolvePreferences = { gameId -> resolveGamePlayPreferences(settingsState.value, overridesState.value[gameId] ?: GamePreferenceOverrides()) },

@@ -28,7 +28,7 @@ fun TakuzuChallengerPlayScreen(
 ) {
     val viewModel = appViewModel { graph ->
         TakuzuChallengerViewModel(
-            graph.appContext,
+            graph.bundledFiles,
             graph.statsRepository,
             graph.playHistoryRepository,
             graph.appForeground,

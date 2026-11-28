@@ -1,9 +1,11 @@
 package com.quietgrid.app.ui.screens
 
+import kotlin.uuid.Uuid
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.today as todayDate
 import com.quietgrid.app.core.mix.Mix
 import com.quietgrid.app.core.mix.MixEntry
 import com.quietgrid.app.core.mix.MixEntryMode
@@ -27,8 +29,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.LocalDate
-import java.util.UUID
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.plus
 
 private const val LOADED_KEY = "quiet_tip_loaded"
 private const val MIX_TIP_ENTRY_WEIGHT = 5
@@ -50,7 +53,7 @@ class QuietTipViewModel(
         if (!eligible) return
         viewModelScope.launch {
             quietTipsRepository.recordResult()
-            val today = LocalDate.now()
+            val today = todayDate()
             val settings = settingsRepository.settings.first()
             val overrides = gamePreferencesRepository.overrides(gameId).first()
             val picked = pickQuietTip(
@@ -103,7 +106,7 @@ class QuietTipViewModel(
         persist {
             quietTipsRepository.close(tip.key)
             val mix = Mix(
-                id = UUID.randomUUID().toString(),
+                id = Uuid.random().toString(),
                 name = nextMixName(mixRepository.mixes.first().map { it.name }, nameForNumber),
                 entries = tip.games.map { (gameId, difficulty) ->
                     MixEntry(gameId.key, MixEntryMode.PUZZLE, difficulty.key, weight = MIX_TIP_ENTRY_WEIGHT)
@@ -138,7 +141,7 @@ class QuietTipViewModel(
 
     fun snooze(tip: QuietTip) {
         shown.value = null
-        persist { quietTipsRepository.snooze(tip.key, LocalDate.now().plusDays(SNOOZE_DAYS)) }
+        persist { quietTipsRepository.snooze(tip.key, todayDate().plus(SNOOZE_DAYS, DateTimeUnit.DAY)) }
     }
 
     private fun persist(block: suspend () -> Unit) {

@@ -1,6 +1,6 @@
 package com.quietgrid.app.games.starbattle
 
-import android.content.Context
+import com.quietgrid.app.platform.BundledFiles
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -18,7 +18,7 @@ import com.quietgrid.app.session.tick
 import kotlinx.coroutines.launch
 
 class StarBattleChallengerViewModel(
-    private val appContext: Context,
+    private val files: BundledFiles,
     statsStore: StatsStore,
     historyStore: PlayHistoryStore,
     appForeground: AppForeground,
@@ -41,7 +41,7 @@ class StarBattleChallengerViewModel(
 
     init {
         viewModelScope.launch {
-            val firstPuzzle = StarBattlePuzzleBank.randomPuzzle(appContext, Difficulty.EASY)
+            val firstPuzzle = StarBattlePuzzleBank.randomPuzzle(files, Difficulty.EASY)
             if (firstPuzzle != null) {
                 controller.start(createInitialStarBattleChallengerSession(firstPuzzle))
             }
@@ -74,7 +74,7 @@ class StarBattleChallengerViewModel(
                 controller.session = withOpen
                 val (nextTier, nextSolvesInTier) = challengerTierAfterSolve(STARBATTLE_CHALLENGER_CONFIG, current.tier, current.solvesInTier)
                 viewModelScope.launch {
-                    val nextPuzzle = StarBattlePuzzleBank.randomPuzzle(appContext, nextTier, withOpen.servedPuzzleIds)
+                    val nextPuzzle = StarBattlePuzzleBank.randomPuzzle(files, nextTier, withOpen.servedPuzzleIds)
                     if (nextPuzzle == null) {
                         val credited = withOpen.creditSolve(starBattleChallengerPuzzleScore(withOpen))
                         controller.finalizeRun(credited, "bank_exhausted")

@@ -1,6 +1,7 @@
 package com.quietgrid.app.games.sudoku
 
-import android.content.Context
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.readText
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.engine.sudoku.SudokuPuzzleEntry
 import kotlinx.coroutines.Dispatchers
@@ -13,10 +14,10 @@ private val json = Json { ignoreUnknownKeys = true }
 open class SudokuEntryBank(private val assetName: String) {
     private var cache: Map<String, List<SudokuPuzzleEntry>>? = null
 
-    private suspend fun load(context: Context): Map<String, List<SudokuPuzzleEntry>> {
+    private suspend fun load(files: BundledFiles): Map<String, List<SudokuPuzzleEntry>> {
         cache?.let { return it }
         return withContext(Dispatchers.IO) {
-            val text = context.assets.open(assetName).bufferedReader().use { it.readText() }
+            val text = files.readText(assetName)
             val entries = json.decodeFromString<List<SudokuPuzzleEntry>>(text)
             val grouped = entries.groupBy { it.difficulty }
             cache = grouped
@@ -24,17 +25,17 @@ open class SudokuEntryBank(private val assetName: String) {
         }
     }
 
-    suspend fun dailyPool(context: Context, difficulty: Difficulty): List<SudokuPuzzleEntry> =
-        load(context)[difficulty.key].orEmpty()
+    suspend fun dailyPool(files: BundledFiles, difficulty: Difficulty): List<SudokuPuzzleEntry> =
+        load(files)[difficulty.key].orEmpty()
 
-    suspend fun puzzleById(context: Context, difficulty: Difficulty, id: String): SudokuPuzzleEntry? =
-        dailyPool(context, difficulty).firstOrNull { it.id == id }
+    suspend fun puzzleById(files: BundledFiles, difficulty: Difficulty, id: String): SudokuPuzzleEntry? =
+        dailyPool(files, difficulty).firstOrNull { it.id == id }
 
-    suspend fun ratedPool(context: Context, difficulty: Difficulty): List<Pair<String, Int>> =
-        dailyPool(context, difficulty).mapNotNull { entry -> entry.rating?.let { entry.id to it } }
+    suspend fun ratedPool(files: BundledFiles, difficulty: Difficulty): List<Pair<String, Int>> =
+        dailyPool(files, difficulty).mapNotNull { entry -> entry.rating?.let { entry.id to it } }
 
-    suspend fun randomPuzzle(context: Context, difficulty: Difficulty, recentlyPlayedIds: Set<String> = emptySet()): SudokuPuzzleEntry? {
-        val pool = dailyPool(context, difficulty)
+    suspend fun randomPuzzle(files: BundledFiles, difficulty: Difficulty, recentlyPlayedIds: Set<String> = emptySet()): SudokuPuzzleEntry? {
+        val pool = dailyPool(files, difficulty)
         if (pool.isEmpty()) return null
         val candidates = pool.filter { it.id !in recentlyPlayedIds }
         return candidates.ifEmpty { pool }.random()

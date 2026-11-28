@@ -1,5 +1,6 @@
 package com.quietgrid.app.games.arrowescape
 
+import com.quietgrid.app.platform.AndroidBundledFiles
 import android.content.Context
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.data.AppSettings
@@ -56,7 +57,7 @@ class ArrowEscapeSessionRestoreTest {
     private val settingsRepository = mockk<SettingsRepository>(relaxed = true).also {
         every { it.settings } returns MutableStateFlow(AppSettings())
     }
-    private val adapter = ArrowEscapePuzzleAdapter(context, FakeHistoryStore(), settingsRepository)
+    private val adapter = ArrowEscapePuzzleAdapter(AndroidBundledFiles(context), FakeHistoryStore(), settingsRepository)
 
     @Before
     fun setUp() {

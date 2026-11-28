@@ -1,5 +1,6 @@
 package com.quietgrid.app.games.circuit
 
+import com.quietgrid.app.platform.BundledFiles
 import android.content.Context
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.journey.JourneySignals
@@ -39,7 +40,7 @@ private val PUZZLE = CircuitPuzzleEntry(
 
 class CircuitJourneyTest {
 
-    private val adapter = CircuitPuzzleAdapter(mockk<Context>(relaxed = true), FakeHistoryStore())
+    private val adapter = CircuitPuzzleAdapter(mockk<BundledFiles>(relaxed = true), FakeHistoryStore())
 
     @Before
     fun setUp() {

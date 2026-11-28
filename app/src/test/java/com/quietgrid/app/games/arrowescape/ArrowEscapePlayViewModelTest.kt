@@ -1,5 +1,8 @@
 package com.quietgrid.app.games.arrowescape
 
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
@@ -62,7 +65,7 @@ class ArrowEscapePlayViewModelTest {
     private fun newViewModel(sessionStore: FakeSessionStore = FakeSessionStore(), statsStore: FakeStatsStore = FakeStatsStore()): ArrowEscapePlayViewModel {
         val settingsRepository = mockk<SettingsRepository>(relaxed = true)
         every { settingsRepository.settings } returns MutableStateFlow(AppSettings())
-        return ArrowEscapePlayViewModel(mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), settingsRepository, FakeJourneyStore(), FakeBadgeStore(), Difficulty.EASY, resume = false, journey = null)
+        return ArrowEscapePlayViewModel(mockk<BundledFiles>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), settingsRepository, FakeJourneyStore(), FakeBadgeStore(), AppForeground { false }, MotionSettings { false }, Difficulty.EASY, resume = false, journey = null)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)

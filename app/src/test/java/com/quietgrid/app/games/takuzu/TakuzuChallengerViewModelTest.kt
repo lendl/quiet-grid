@@ -1,5 +1,6 @@
 package com.quietgrid.app.games.takuzu
 
+import com.quietgrid.app.platform.BundledFiles
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
@@ -79,7 +80,7 @@ class TakuzuChallengerViewModelTest {
     ): TakuzuChallengerViewModel {
         mockkObject(TakuzuPuzzleBank)
         coEvery { TakuzuPuzzleBank.randomPuzzle(any(), any(), any()) } returns puzzle
-        return TakuzuChallengerViewModel(mockk<Context>(relaxed = true), statsStore, historyStore, appForeground)
+        return TakuzuChallengerViewModel(mockk<BundledFiles>(relaxed = true), statsStore, historyStore, appForeground)
     }
 
     @Test

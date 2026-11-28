@@ -29,7 +29,7 @@ fun AnimalDokuChallengerPlayScreen(
 ) {
     val viewModel = appViewModel { graph ->
         AnimalDokuChallengerViewModel(
-            graph.appContext,
+            graph.bundledFiles,
             graph.statsRepository,
             graph.playHistoryRepository,
             graph.appForeground,

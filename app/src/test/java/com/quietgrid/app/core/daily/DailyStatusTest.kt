@@ -6,9 +6,12 @@ import com.quietgrid.app.data.ActiveSessionEnvelope
 import com.quietgrid.app.data.PlayRecord
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import java.time.LocalDate
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.minus
+import kotlinx.datetime.plus
 
-private val today = LocalDate.of(2026, 9, 24)
+private val today = LocalDate(2026, 9, 24)
 
 private fun daily(gameId: GameId, date: LocalDate, solved: Boolean, difficulty: Difficulty = Difficulty.EASY, elapsed: Int = 60) = PlayRecord(
     gameId = gameId.key,
@@ -16,7 +19,7 @@ private fun daily(gameId: GameId, date: LocalDate, solved: Boolean, difficulty: 
     solved = solved,
     score = 0,
     elapsedSeconds = elapsed,
-    timestampMillis = date.toEpochDay(),
+    timestampMillis = date.toEpochDays(),
     dailyDate = date.toString(),
 )
 
@@ -58,8 +61,8 @@ class DailyStatusTest {
     fun `streak counts consecutive solved days ending today`() {
         val records = listOf(
             daily(GameId.SUDOKU, today, solved = true),
-            daily(GameId.SUDOKU, today.minusDays(1), solved = true),
-            daily(GameId.SUDOKU, today.minusDays(3), solved = true),
+            daily(GameId.SUDOKU, today.minus(1, DateTimeUnit.DAY), solved = true),
+            daily(GameId.SUDOKU, today.minus(3, DateTimeUnit.DAY), solved = true),
         )
         assertEquals(2, dailyStreak(records, setOf(GameId.SUDOKU), today))
     }
@@ -67,8 +70,8 @@ class DailyStatusTest {
     @Test
     fun `streak stays alive through yesterday when today unplayed`() {
         val records = listOf(
-            daily(GameId.SUDOKU, today.minusDays(1), solved = true),
-            daily(GameId.SUDOKU, today.minusDays(2), solved = true),
+            daily(GameId.SUDOKU, today.minus(1, DateTimeUnit.DAY), solved = true),
+            daily(GameId.SUDOKU, today.minus(2, DateTimeUnit.DAY), solved = true),
         )
         assertEquals(2, dailyStreak(records, setOf(GameId.SUDOKU), today))
     }
@@ -77,8 +80,8 @@ class DailyStatusTest {
     fun `loss-only day breaks the streak`() {
         val records = listOf(
             daily(GameId.SUDOKU, today, solved = true),
-            daily(GameId.SUDOKU, today.minusDays(1), solved = false),
-            daily(GameId.SUDOKU, today.minusDays(2), solved = true),
+            daily(GameId.SUDOKU, today.minus(1, DateTimeUnit.DAY), solved = false),
+            daily(GameId.SUDOKU, today.minus(2, DateTimeUnit.DAY), solved = true),
         )
         assertEquals(1, dailyStreak(records, setOf(GameId.SUDOKU), today))
     }
@@ -96,7 +99,7 @@ class DailyStatusTest {
     fun `overall streak spans games, per-game streak filters`() {
         val records = listOf(
             daily(GameId.SUDOKU, today, solved = true),
-            daily(GameId.TAKUZU, today.minusDays(1), solved = true),
+            daily(GameId.TAKUZU, today.minus(1, DateTimeUnit.DAY), solved = true),
         )
         assertEquals(2, dailyStreak(records, setOf(GameId.SUDOKU, GameId.TAKUZU), today))
         assertEquals(1, dailyStreak(records, setOf(GameId.SUDOKU), today))

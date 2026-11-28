@@ -1,5 +1,6 @@
 package com.quietgrid.app.games.wordswap
 
+import com.quietgrid.app.platform.BundledFiles
 import android.content.Context
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.journey.JourneySignals
@@ -34,7 +35,7 @@ private val PUZZLE = WordSwapPuzzleEntry(
 
 class WordSwapJourneyTest {
 
-    private val adapter = WordSwapPuzzleAdapter(mockk<Context>(relaxed = true), FakeHistoryStore()) { "nl" }
+    private val adapter = WordSwapPuzzleAdapter(mockk<BundledFiles>(relaxed = true), FakeHistoryStore()) { "nl" }
 
     @Before
     fun setUp() {

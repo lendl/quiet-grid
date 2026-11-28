@@ -1,5 +1,6 @@
 package com.quietgrid.app.games.links
 
+import com.quietgrid.app.platform.BundledFiles
 import android.content.Context
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.journey.JourneySignals
@@ -29,7 +30,7 @@ private val PUZZLE = LinksPuzzleEntry(
 
 class LinksJourneyTest {
 
-    private val adapter = LinksPuzzleAdapter(mockk<Context>(relaxed = true), FakeHistoryStore())
+    private val adapter = LinksPuzzleAdapter(mockk<BundledFiles>(relaxed = true), FakeHistoryStore())
 
     @Before
     fun setUp() {

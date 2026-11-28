@@ -17,7 +17,7 @@ import com.quietgrid.app.data.SessionStore
 import com.quietgrid.app.data.StatsStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 class FakeSessionStore : SessionStore {
     private val state = MutableStateFlow<ActiveSessionEnvelope?>(null)

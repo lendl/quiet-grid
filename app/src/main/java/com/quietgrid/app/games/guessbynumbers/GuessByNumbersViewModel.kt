@@ -1,6 +1,8 @@
 package com.quietgrid.app.games.guessbynumbers
 
-import android.content.Context
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -41,7 +43,7 @@ data class GuessByNumbersResult(
 )
 
 private class GuessByNumbersPuzzleAdapter(
-    private val appContext: Context,
+    private val files: BundledFiles,
     private val settingsRepository: SettingsRepository,
     private val historyStore: PlayHistoryStore,
 ) : PuzzleAdapter<GuessByNumbersSession, GuessByNumbersResult> {
@@ -50,7 +52,7 @@ private class GuessByNumbersPuzzleAdapter(
     override suspend fun freshSession(difficulty: Difficulty): GuessByNumbersSession? {
         val locale = currentWordGuessLocale(settingsRepository.settings.first().puzzleLanguage)
         val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
-        val entry = WordGuessPuzzleBank.randomPuzzle(appContext, locale, difficulty, recentIds) ?: return null
+        val entry = WordGuessPuzzleBank.randomPuzzle(files, locale, difficulty, recentIds) ?: return null
         return GuessByNumbersSession(
             puzzleId = entry.id,
             locale = locale,
@@ -112,12 +114,14 @@ private class GuessByNumbersPuzzleAdapter(
 }
 
 class GuessByNumbersPlayViewModel(
-    appContext: Context,
+    private val files: BundledFiles,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     settingsRepository: SettingsRepository,
     badgeStore: BadgeStore,
+    appForeground: AppForeground,
+    motion: MotionSettings,
     requestedDifficulty: Difficulty,
     resume: Boolean,
 ) : ViewModel() {
@@ -127,7 +131,9 @@ class GuessByNumbersPlayViewModel(
         sessionStore = sessionRepository,
         statsStore = statsRepository,
         historyStore = historyRepository,
-        adapter = GuessByNumbersPuzzleAdapter(appContext, settingsRepository, historyRepository),
+        adapter = GuessByNumbersPuzzleAdapter(files, settingsRepository, historyRepository),
+        isAppForeground = appForeground::isForeground,
+        animationsEnabled = motion::animationsEnabled,
         badgeStore = badgeStore,
     )
 
@@ -139,7 +145,6 @@ class GuessByNumbersPlayViewModel(
     var wrongGuessTrigger by mutableStateOf(0)
         private set
 
-    private val appCtx = appContext
     private var dictionary: Set<String> = emptySet()
 
     init {
@@ -150,7 +155,7 @@ class GuessByNumbersPlayViewModel(
         val current = session ?: return
         viewModelScope.launch {
             if (dictionary.isEmpty()) {
-                dictionary = WordGuessPuzzleBank.loadDictionary(appCtx, current.locale)
+                dictionary = WordGuessPuzzleBank.loadDictionary(files, current.locale)
             }
             when (val outcome = submitGuessByNumbersGuess(current, dictionary, rawGuess)) {
                 GuessByNumbersSubmitResult.InvalidWord -> onInvalid()

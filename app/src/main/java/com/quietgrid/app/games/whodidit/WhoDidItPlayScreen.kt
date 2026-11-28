@@ -48,7 +48,7 @@ import com.quietgrid.app.ui.play.PlaySizeClass
 import com.quietgrid.app.ui.play.PlayTimer
 import com.quietgrid.engine.whodidit.WhoDidItPuzzleEntry
 import com.quietgrid.engine.whodidit.WhoDidItRef
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 private val PANEL_MAX_HEIGHT = 190.dp
 private val PANEL_MIN_HEIGHT = 120.dp
@@ -68,10 +68,12 @@ fun WhoDidItPlayScreen(
 ) {
     val viewModel = appViewModel { graph ->
         WhoDidItPlayViewModel(
-            graph.appContext,
+            graph.bundledFiles,
             graph.sessionRepository,
             graph.statsRepository,
             graph.playHistoryRepository,
+            graph.appForeground,
+            graph.motionSettings,
             difficulty,
             resume,
             dailyDate,

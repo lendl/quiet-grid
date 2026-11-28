@@ -33,6 +33,7 @@ fun SequenceMemoryPlayScreen(
             graph.statsRepository,
             graph.playHistoryRepository,
             graph.appForeground,
+            graph.motionSettings,
             graph.badgeRepository,
             difficulty,
             resume,

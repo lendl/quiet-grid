@@ -7,9 +7,12 @@ import com.quietgrid.app.data.GamePreferenceOverrides
 import com.quietgrid.app.data.GameToggle
 import com.quietgrid.app.data.PlayRecord
 import com.quietgrid.app.data.ScreenRotation
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.minus
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Instant
 
 enum class TipKind { SETTING, DISCOVERY }
 
@@ -78,7 +81,7 @@ data class TipInputs(
     val appReduceMotion: Boolean,
     val hasAnyMix: Boolean,
     val gameKeepsScreenOn: Boolean = false,
-    val zone: ZoneId = ZoneId.systemDefault(),
+    val zone: TimeZone = TimeZone.currentSystemDefault(),
 )
 
 const val MIN_RESULTS_BETWEEN_TIPS = 3
@@ -96,7 +99,7 @@ fun pickQuietTip(inputs: TipInputs): QuietTip? {
     if (inputs.beQuiet || !inputs.suggestionsEnabled) return null
     val state = inputs.state
     val lastShown = state.lastShownDay
-    if (lastShown != null && !lastShown.isBefore(inputs.today)) return null
+    if (lastShown != null && lastShown >= inputs.today) return null
     if (state.resultsSinceLast < MIN_RESULTS_BETWEEN_TIPS) return null
     return candidates(inputs).firstOrNull { state.allows(it.key, inputs.today) }
 }
@@ -105,7 +108,7 @@ private fun QuietTipState.allows(key: String, today: LocalDate): Boolean {
     if (key in closedKeys || key in openedKeys) return false
     if ((shownCounts[key] ?: 0) >= MAX_TIMES_SHOWN) return false
     val snoozed = snoozedUntil[key]
-    return snoozed == null || !today.isBefore(snoozed)
+    return snoozed == null || today >= snoozed
 }
 
 private fun candidates(inputs: TipInputs): Sequence<QuietTip> = sequence {
@@ -149,21 +152,21 @@ private fun mixTip(inputs: TipInputs): QuietTip? {
 private fun dailyTip(inputs: TipInputs): QuietTip? {
     if (inputs.state.dailyTabOpened) return null
     if (inputs.history.any { it.dailyDate != null }) return null
-    val firstDay = inputs.today.minusDays(DAILY_WINDOW_DAYS - 1)
+    val firstDay = inputs.today.minus(DAILY_WINDOW_DAYS - 1, DateTimeUnit.DAY)
     val playDays = inputs.history
         .map { it.localDate(inputs.zone) }
-        .filter { !it.isBefore(firstDay) && !it.isAfter(inputs.today) }
+        .filter { it >= firstDay && it <= inputs.today }
         .toSet()
     if (playDays.size < DAILY_PLAY_DAYS_NEEDED) return null
     return QuietTip.TryDaily
 }
 
-fun recentFavoriteGames(history: List<PlayRecord>, today: LocalDate, zone: ZoneId): List<Pair<GameId, Difficulty>> {
-    val firstDay = today.minusDays(MIX_WINDOW_DAYS - 1)
+fun recentFavoriteGames(history: List<PlayRecord>, today: LocalDate, zone: TimeZone): List<Pair<GameId, Difficulty>> {
+    val firstDay = today.minus(MIX_WINDOW_DAYS - 1, DateTimeUnit.DAY)
     val recent = history.filter { record ->
         val day = record.localDate(zone)
         record.solved && !record.isChallenger && record.dailyDate == null && record.journeyStop == null &&
-            !day.isBefore(firstDay) && !day.isAfter(today)
+            day >= firstDay && day <= today
     }
     return recent
         .mapNotNull { record -> gameIdOf(record.gameId)?.let { it to record } }
@@ -185,4 +188,4 @@ private fun gameIdOf(key: String): GameId? = GameId.entries.firstOrNull { it.key
 
 private fun difficultyOf(key: String): Difficulty? = Difficulty.entries.firstOrNull { it.key == key }
 
-private fun PlayRecord.localDate(zone: ZoneId): LocalDate = Instant.ofEpochMilli(timestampMillis).atZone(zone).toLocalDate()
+private fun PlayRecord.localDate(zone: TimeZone): LocalDate = Instant.fromEpochMilliseconds(timestampMillis).toLocalDateTime(zone).date

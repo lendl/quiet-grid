@@ -1,7 +1,7 @@
 package com.quietgrid.app.ui.screens
 
-import android.content.Intent
-import android.net.Uri
+import androidx.compose.ui.platform.LocalUriHandler
+import com.quietgrid.app.ui.components.tryOpen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
@@ -26,9 +25,9 @@ import com.quietgrid.app.core.REPO_URL
 
 @Composable
 fun ContributorsScreen() {
-    val context = LocalContext.current
+    val uriHandler = LocalUriHandler.current
     fun openUrl(url: String) {
-        runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }
+        uriHandler.tryOpen(url)
     }
 
     Column(

@@ -9,17 +9,11 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.room.Room
 import com.quietgrid.app.data.BadgeRepository
 import com.quietgrid.app.data.DailyRepository
 import com.quietgrid.app.data.GamePreferencesRepository
 import com.quietgrid.app.data.JourneyProgressDao
 import com.quietgrid.app.data.JourneyProgressRepository
-import com.quietgrid.app.data.MIGRATION_2_3
-import com.quietgrid.app.data.MIGRATION_3_4
-import com.quietgrid.app.data.MIGRATION_4_5
-import com.quietgrid.app.data.MIGRATION_5_6
-import com.quietgrid.app.data.MIGRATION_6_7
 import com.quietgrid.app.data.MixRepository
 import com.quietgrid.app.data.PlayHistoryDao
 import com.quietgrid.app.data.PlayHistoryRepository
@@ -29,21 +23,27 @@ import com.quietgrid.app.data.SessionRepository
 import com.quietgrid.app.data.SettingsRepository
 import com.quietgrid.app.data.StatsRepository
 import com.quietgrid.app.data.ThemePreferencesRepository
-import com.quietgrid.app.data.appDataStore
+import com.quietgrid.app.data.quietGridDataStore
+import com.quietgrid.app.data.quietGridDatabase
 import com.quietgrid.app.notifications.DailyReminderScheduler
+import com.quietgrid.app.platform.AndroidAppInfo
+import com.quietgrid.app.platform.AndroidAppLanguage
+import com.quietgrid.app.platform.AndroidBundledFiles
+import com.quietgrid.app.platform.AndroidMotionSettings
+import com.quietgrid.app.platform.AndroidShareSheet
+import com.quietgrid.app.platform.AppInfo
+import com.quietgrid.app.platform.AppLanguage
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.MotionSettings
 import com.quietgrid.app.session.AppForeground
-import com.quietgrid.app.session.ProcessAppForeground
+import com.quietgrid.app.platform.ProcessAppForeground
+import com.quietgrid.app.platform.ShareSheet
 import com.quietgrid.app.widget.QuickPlaySource
 import com.quietgrid.app.widget.QuickPlayWidgetUpdater
 
 class AppGraph(val appContext: Context) {
-    val dataStore: DataStore<Preferences> by lazy { appContext.appDataStore }
-    val database: QuietGridDatabase by lazy {
-        Room.databaseBuilder(appContext, QuietGridDatabase::class.java, "quiet_grid.db")
-            .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
-            .fallbackToDestructiveMigration(dropAllTables = false)
-            .build()
-    }
+    val dataStore: DataStore<Preferences> by lazy { quietGridDataStore(appContext) }
+    val database: QuietGridDatabase by lazy { quietGridDatabase(appContext) }
     val playHistoryDao: PlayHistoryDao by lazy { database.playHistoryDao() }
     val journeyProgressDao: JourneyProgressDao by lazy { database.journeyProgressDao() }
 
@@ -57,11 +57,17 @@ class AppGraph(val appContext: Context) {
     val gamePreferencesRepository: GamePreferencesRepository by lazy { GamePreferencesRepository(dataStore) }
     val quietTipsRepository: QuietTipsRepository by lazy { QuietTipsRepository(dataStore) }
     val journeyProgressRepository: JourneyProgressRepository by lazy {
-        JourneyProgressRepository(appContext, journeyProgressDao, playHistoryRepository, settingsRepository)
+        JourneyProgressRepository(bundledFiles, journeyProgressDao, playHistoryRepository, settingsRepository)
     }
     val badgeRepository: BadgeRepository by lazy {
-        BadgeRepository(appContext, dataStore, playHistoryRepository, journeyProgressRepository, mixRepository, settingsRepository)
+        BadgeRepository(bundledFiles, dataStore, playHistoryRepository, journeyProgressRepository, mixRepository, settingsRepository)
     }
+
+    val bundledFiles: BundledFiles by lazy { AndroidBundledFiles(appContext) }
+    val appLanguage: AppLanguage by lazy { AndroidAppLanguage(appContext) }
+    val motionSettings: MotionSettings by lazy { AndroidMotionSettings(appContext) }
+    val appInfo: AppInfo by lazy { AndroidAppInfo(appContext) }
+    val shareSheet: ShareSheet by lazy { AndroidShareSheet(appContext) }
 
     val appForeground: AppForeground by lazy { ProcessAppForeground() }
     val dailyReminderScheduler: DailyReminderScheduler by lazy {

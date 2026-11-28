@@ -1,5 +1,8 @@
 package com.quietgrid.app.games.nonogram
 
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
@@ -52,7 +55,7 @@ class NonogramPlayViewModelTest {
     }
 
     private fun newViewModel(sessionStore: FakeSessionStore = FakeSessionStore(), statsStore: FakeStatsStore = FakeStatsStore()) =
-        NonogramPlayViewModel(mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), FakeJourneyStore(), FakeBadgeStore(), Difficulty.EASY, resume = false, journey = null)
+        NonogramPlayViewModel(mockk<BundledFiles>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), FakeJourneyStore(), FakeBadgeStore(), AppForeground { false }, MotionSettings { false }, Difficulty.EASY, resume = false, journey = null)
 
     @Test
     fun `starting fresh loads the mocked puzzle with an empty board`() {

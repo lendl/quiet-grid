@@ -1,17 +1,19 @@
 package com.quietgrid.app.ui.screens
 
-import android.content.Context
+import com.quietgrid.app.platform.BundledFiles
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
+import com.quietgrid.app.core.today as todayDate
 import com.quietgrid.app.core.daily.DailyGameUi
 import com.quietgrid.app.core.daily.DailyPools
 import com.quietgrid.app.core.daily.availableDailyTiers
 import com.quietgrid.app.core.daily.buildDailyGames
 import com.quietgrid.app.core.daily.dailyEligibleGames
 import com.quietgrid.app.core.daily.dailyStreak
-import com.quietgrid.app.core.daily.shareDailyResult
+import com.quietgrid.app.core.daily.DailyShareCopy
+import com.quietgrid.app.core.daily.dailyShareText
 import com.quietgrid.app.data.DailyRepository
 import com.quietgrid.app.data.PlayHistoryRepository
 import com.quietgrid.app.data.SessionRepository
@@ -30,7 +32,7 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 private const val TODAY_POLL_MS = 60_000L
 
@@ -47,7 +49,7 @@ data class DailyUiState(
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DailyViewModel(
-    private val appContext: Context,
+    private val files: BundledFiles,
     private val dailyRepository: DailyRepository,
     private val historyRepository: PlayHistoryRepository,
     sessionRepository: SessionRepository,
@@ -58,7 +60,7 @@ class DailyViewModel(
 
     private val today = flow {
         while (true) {
-            emit(LocalDate.now())
+            emit(todayDate())
             delay(TODAY_POLL_MS)
         }
     }.distinctUntilChanged()
@@ -66,7 +68,7 @@ class DailyViewModel(
     private val poolSizes = settingsRepository.settings
         .map { it.puzzleLanguage }
         .distinctUntilChanged()
-        .mapLatest { language -> eligible.associateWith { DailyPools.poolSizes(appContext, it, language) } }
+        .mapLatest { language -> eligible.associateWith { DailyPools.poolSizes(files, it, language) } }
         .flowOn(Dispatchers.IO)
         .shareIn(viewModelScope, SharingStarted.Lazily, replay = 1)
 
@@ -92,7 +94,7 @@ class DailyViewModel(
     }.flowOn(Dispatchers.Default).stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5_000),
-        DailyUiState(LocalDate.now(), 0, emptyMap(), eligible, emptyMap(), emptyList(), loading = true),
+        DailyUiState(todayDate(), 0, emptyMap(), eligible, emptyMap(), emptyList(), loading = true),
     )
 
     fun setSubscribed(gameId: GameId, subscribed: Boolean) {
@@ -103,7 +105,6 @@ class DailyViewModel(
         viewModelScope.launch { dailyRepository.setSubscribed(gameId, difficulty, subscribed) }
     }
 
-    suspend fun share(context: Context, gameId: GameId, difficulty: Difficulty, date: LocalDate) {
-        shareDailyResult(context, historyRepository, gameId, difficulty, date.toString())
-    }
+    suspend fun shareText(gameId: GameId, difficulty: Difficulty, date: LocalDate, copy: DailyShareCopy): String? =
+        dailyShareText(historyRepository, gameId, difficulty, date.toString(), copy)
 }

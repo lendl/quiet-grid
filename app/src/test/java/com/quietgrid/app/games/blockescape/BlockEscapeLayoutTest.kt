@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import com.quietgrid.app.ui.setContentWithGraph
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
@@ -68,7 +69,7 @@ class BlockEscapeLayoutTest {
 
     private fun assertBoardStillAndUndoVisible() {
         var hintOn by mutableStateOf(false)
-        composeRule.setContent {
+        composeRule.setContentWithGraph {
             MaterialTheme {
                 GamePlayScaffold(
                     gameId = GameId.BLOCKESCAPE,

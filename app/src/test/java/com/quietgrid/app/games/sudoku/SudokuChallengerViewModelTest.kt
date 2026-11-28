@@ -1,5 +1,6 @@
 package com.quietgrid.app.games.sudoku
 
+import com.quietgrid.app.platform.BundledFiles
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
@@ -80,7 +81,7 @@ class SudokuChallengerViewModelTest {
         historyStore: FakeHistoryStore = FakeHistoryStore(),
         appForeground: AppForeground = AppForeground { true },
     ) =
-        SudokuChallengerViewModel(mockk<Context>(relaxed = true), statsStore, historyStore, appForeground)
+        SudokuChallengerViewModel(mockk<BundledFiles>(relaxed = true), statsStore, historyStore, appForeground)
 
     private fun advancePastValidation() {
         mainDispatcherRule.dispatcher.scheduler.advanceTimeBy(SUDOKU_VALIDATION_DELAY_MS)

@@ -6,7 +6,7 @@ import com.quietgrid.app.core.journey.JourneyRequest
 import com.quietgrid.app.data.ActiveSessionSummary
 import com.quietgrid.app.data.SESSION_MODE_ENDLESS
 import com.quietgrid.app.session.LossReason
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 
 @Serializable

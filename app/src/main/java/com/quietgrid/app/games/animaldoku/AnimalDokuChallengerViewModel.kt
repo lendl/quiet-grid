@@ -1,7 +1,7 @@
 // app/src/main/java/com/quietgrid/app/games/animaldoku/AnimalDokuChallengerViewModel.kt
 package com.quietgrid.app.games.animaldoku
 
-import android.content.Context
+import com.quietgrid.app.platform.BundledFiles
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -19,7 +19,7 @@ import com.quietgrid.app.session.tick
 import kotlinx.coroutines.launch
 
 class AnimalDokuChallengerViewModel(
-    private val appContext: Context,
+    private val files: BundledFiles,
     statsStore: StatsStore,
     historyStore: PlayHistoryStore,
     appForeground: AppForeground,
@@ -42,7 +42,7 @@ class AnimalDokuChallengerViewModel(
 
     init {
         viewModelScope.launch {
-            val firstPuzzle = AnimalDokuPuzzleBank.randomPuzzle(appContext, Difficulty.EASY)
+            val firstPuzzle = AnimalDokuPuzzleBank.randomPuzzle(files, Difficulty.EASY)
             if (firstPuzzle != null) {
                 controller.start(createInitialChallengerSession(firstPuzzle))
             }
@@ -75,7 +75,7 @@ class AnimalDokuChallengerViewModel(
                 controller.session = withOpen
                 val (nextTier, nextSolvesInTier) = challengerTierAfterSolve(ANIMALDOKU_CHALLENGER_CONFIG, current.tier, current.solvesInTier)
                 viewModelScope.launch {
-                    val nextPuzzle = AnimalDokuPuzzleBank.randomPuzzle(appContext, nextTier, withOpen.servedPuzzleIds)
+                    val nextPuzzle = AnimalDokuPuzzleBank.randomPuzzle(files, nextTier, withOpen.servedPuzzleIds)
                     if (nextPuzzle == null) {
                         val credited = withOpen.creditSolve(animalDokuChallengerPuzzleScore(withOpen))
                         controller.finalizeRun(credited, "bank_exhausted")

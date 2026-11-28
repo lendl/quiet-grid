@@ -1,5 +1,8 @@
 package com.quietgrid.app.games.wordsearch
 
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
@@ -74,7 +77,7 @@ class WordSearchPlayViewModelTest {
         val themePreferencesRepository = mockk<ThemePreferencesRepository>()
         every { themePreferencesRepository.excludedThemes(any(), any()) } returns flowOf(excludedThemes)
         return WordSearchPlayViewModel(
-            mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), settingsRepository, themePreferencesRepository, FakeBadgeStore(), Difficulty.EASY, resume = false, dailyDate = null,
+            mockk<BundledFiles>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), settingsRepository, themePreferencesRepository, FakeBadgeStore(), AppForeground { false }, MotionSettings { false }, Difficulty.EASY, resume = false, dailyDate = null,
         )
     }
 

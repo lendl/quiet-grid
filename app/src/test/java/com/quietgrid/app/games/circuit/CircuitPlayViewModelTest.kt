@@ -1,5 +1,8 @@
 package com.quietgrid.app.games.circuit
 
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
@@ -73,13 +76,13 @@ class CircuitPlayViewModelTest {
 
     private fun newViewModel(sessionStore: FakeSessionStore = FakeSessionStore(), resume: Boolean = false): CircuitPlayViewModel {
         val viewModel = CircuitPlayViewModel(
-            mockk<Context>(relaxed = true),
+            mockk<BundledFiles>(relaxed = true),
             sessionStore,
             FakeStatsStore(),
             FakeHistoryStore(),
             FakeJourneyStore(),
             FakeBadgeStore(),
-            Difficulty.EASY,
+            AppForeground { false }, MotionSettings { false }, Difficulty.EASY,
             resume = resume,
             journey = null,
         )

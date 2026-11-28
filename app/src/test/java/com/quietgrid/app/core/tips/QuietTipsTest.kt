@@ -10,12 +10,18 @@ import com.quietgrid.app.data.ScreenRotation
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
-import java.time.LocalDate
-import java.time.ZoneOffset
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.minus
+import kotlinx.datetime.plus
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 
 class QuietTipsTest {
 
-    private val today = LocalDate.of(2026, 11, 14)
+    private val today = LocalDate(2026, 11, 14)
     private val ready = QuietTipState(resultsSinceLast = MIN_RESULTS_BETWEEN_TIPS)
 
     private fun inputs(
@@ -42,7 +48,7 @@ class QuietTipsTest {
         appReduceMotion = appReduceMotion,
         hasAnyMix = hasAnyMix,
         gameKeepsScreenOn = gameKeepsScreenOn,
-        zone = ZoneOffset.UTC,
+        zone = TimeZone.UTC,
     )
 
     private fun record(
@@ -60,7 +66,7 @@ class QuietTipsTest {
         solved = solved,
         score = 100,
         elapsedSeconds = 60,
-        timestampMillis = today.minusDays(daysAgo).atTime(12, minute).toInstant(ZoneOffset.UTC).toEpochMilli(),
+        timestampMillis = today.minus(daysAgo, DateTimeUnit.DAY).let { LocalDateTime(it, LocalTime(12, minute)) }.toInstant(TimeZone.UTC).toEpochMilliseconds(),
         isChallenger = isChallenger,
         dailyDate = dailyDate,
         journeyStop = journeyStop,
@@ -226,7 +232,7 @@ class QuietTipsTest {
     @Test
     fun `at most one tip a day`() {
         assertNull(pickQuietTip(inputs(rotationState.copy(lastShownDay = today))))
-        assertEquals(QuietTip.LockRotation(GameId.SUDOKU, ScreenRotation.PORTRAIT), pickQuietTip(inputs(rotationState.copy(lastShownDay = today.minusDays(1)))))
+        assertEquals(QuietTip.LockRotation(GameId.SUDOKU, ScreenRotation.PORTRAIT), pickQuietTip(inputs(rotationState.copy(lastShownDay = today.minus(1, DateTimeUnit.DAY)))))
     }
 
     @Test
@@ -256,7 +262,7 @@ class QuietTipsTest {
     fun `a snoozed tip waits until its date`() {
         val key = rotationTipKey(GameId.SUDOKU)
 
-        assertNull(pickQuietTip(inputs(rotationState.copy(snoozedUntil = mapOf(key to today.plusDays(1))))))
+        assertNull(pickQuietTip(inputs(rotationState.copy(snoozedUntil = mapOf(key to today.plus(1, DateTimeUnit.DAY))))))
         assertEquals(
             QuietTip.LockRotation(GameId.SUDOKU, ScreenRotation.PORTRAIT),
             pickQuietTip(inputs(rotationState.copy(snoozedUntil = mapOf(key to today)))),

@@ -1,5 +1,6 @@
 package com.quietgrid.app.nav
 
+import com.quietgrid.app.ui.screens.dailyShareCopy
 import android.content.Context
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -31,7 +32,7 @@ import com.quietgrid.app.appViewModel
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.daily.nextUnplayedDaily
-import com.quietgrid.app.core.daily.shareDailyResult
+import com.quietgrid.app.core.daily.dailyShareText
 import com.quietgrid.app.core.tips.QuietTip
 import com.quietgrid.app.games.GameFinish
 import com.quietgrid.app.games.GameRegistry
@@ -303,7 +304,9 @@ private fun quietTipActions(
 private fun shareDaily(navigator: AppNavigator, context: Context, gameId: GameId, difficulty: Difficulty, dailyKey: String?) {
     if (dailyKey == null) return
     navigator.scope.launch {
-        shareDailyResult(context, navigator.graph.playHistoryRepository, gameId, difficulty, dailyKey)
+        val copy = dailyShareCopy(context, gameId, difficulty)
+        dailyShareText(navigator.graph.playHistoryRepository, gameId, difficulty, dailyKey, copy)
+            ?.let { navigator.graph.shareSheet.shareText(it, context.getString(R.string.daily_share_chooser)) }
     }
 }
 
@@ -312,7 +315,7 @@ private fun rememberNextDaily(dailyKey: String?, finishedGameId: GameId, finishe
     if (dailyKey == null) return null
     val dailyViewModel = appViewModel { graph ->
         DailyViewModel(
-            graph.appContext,
+            graph.bundledFiles,
             graph.dailyRepository,
             graph.playHistoryRepository,
             graph.sessionRepository,

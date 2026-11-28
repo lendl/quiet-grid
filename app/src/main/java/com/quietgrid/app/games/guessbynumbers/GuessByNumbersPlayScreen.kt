@@ -44,12 +44,14 @@ fun GuessByNumbersPlayScreen(
 ) {
     val viewModel = appViewModel { graph ->
         GuessByNumbersPlayViewModel(
-            graph.appContext,
+            graph.bundledFiles,
             graph.sessionRepository,
             graph.statsRepository,
             graph.playHistoryRepository,
             graph.settingsRepository,
             graph.badgeRepository,
+            graph.appForeground,
+            graph.motionSettings,
             difficulty,
             resume,
         )

@@ -4,7 +4,6 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
     id("com.android.compose.screenshot")
     id("jacoco")
-    id("com.google.devtools.ksp")
     id("io.github.takahirom.roborazzi")
     id("androidx.baselineprofile")
 }
@@ -81,7 +80,6 @@ android {
     lint {
         disable += "MissingTranslation"
         checkGeneratedSources = true
-        lintConfig = file("lint.xml")
     }
 }
 
@@ -251,6 +249,7 @@ androidComponents {
 
 dependencies {
     implementation(project(":engine"))
+    implementation(project(":shared"))
     baselineProfile(project(":baselineprofile"))
     implementation(platform("androidx.compose:compose-bom:2026.09.00"))
     implementation("androidx.compose.ui:ui")
@@ -268,10 +267,9 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.10.2")
     implementation("androidx.datastore:datastore-preferences:1.3.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.12.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-okio:1.12.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
     implementation("androidx.work:work-runtime-ktx:2.12.0")
-    implementation("androidx.room:room-runtime:2.8.5")
-    implementation("androidx.room:room-ktx:2.8.5")
-    ksp("androidx.room:room-compiler:2.8.5")
     implementation("androidx.glance:glance-appwidget:1.2.0")
     implementation("androidx.glance:glance-material3:1.2.0")
 

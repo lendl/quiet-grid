@@ -4,15 +4,22 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.ActiveSessionEnvelope
 import com.quietgrid.app.data.PlayRecord
-import java.time.Duration
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.ZonedDateTime
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Duration
+import kotlin.time.Instant
 
-fun nextReminderDelay(now: ZonedDateTime, time: LocalTime): Duration {
-    val todayAt = now.toLocalDate().atTime(time).atZone(now.zone)
-    val target = if (todayAt.isAfter(now)) todayAt else now.toLocalDate().plusDays(1).atTime(time).atZone(now.zone)
-    return Duration.between(now, target)
+fun nextReminderDelay(now: Instant, zone: TimeZone, time: LocalTime): Duration {
+    val todayDate = now.toLocalDateTime(zone).date
+    val todayAt = LocalDateTime(todayDate, time).toInstant(zone)
+    val target = if (todayAt > now) todayAt else LocalDateTime(todayDate.plus(1, DateTimeUnit.DAY), time).toInstant(zone)
+    return target - now
 }
 
 fun gamesNeedingReminder(

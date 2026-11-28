@@ -1,5 +1,6 @@
 package com.quietgrid.app.games.arrowescape
 
+import com.quietgrid.app.platform.AndroidBundledFiles
 import android.content.Context
 import android.content.res.AssetManager
 import com.quietgrid.app.core.Difficulty
@@ -39,21 +40,21 @@ class ArrowEscapeBankLookupTest {
     @Test
     fun `a halloween puzzle id resolves from the seasonal bank`() = runBlocking {
         val difficulty = Difficulty.fromKey(halloweenPuzzle.difficulty)
-        assertEquals(halloweenPuzzle, ArrowEscapePuzzleBank.puzzleById(context, difficulty, halloweenPuzzle.id))
+        assertEquals(halloweenPuzzle, ArrowEscapePuzzleBank.puzzleById(AndroidBundledFiles(context), difficulty, halloweenPuzzle.id))
     }
 
     @Test
     fun `a halloween session saved by id resumes`() = runBlocking {
-        val adapter = ArrowEscapePuzzleAdapter(context, FakeHistoryStore(), settingsRepository)
+        val adapter = ArrowEscapePuzzleAdapter(AndroidBundledFiles(context), FakeHistoryStore(), settingsRepository)
         val session = createArrowEscapeSession(halloweenPuzzle).copy(removedIndices = setOf(0))
         assertEquals(session, adapter.restoreSession(adapter.encode(session), 0.0))
     }
 
     @Test
     fun `an id in neither bank resolves to nothing`() = runBlocking {
-        val adapter = ArrowEscapePuzzleAdapter(context, FakeHistoryStore(), settingsRepository)
+        val adapter = ArrowEscapePuzzleAdapter(AndroidBundledFiles(context), FakeHistoryStore(), settingsRepository)
         val payload = adapter.encode(createArrowEscapeSession(halloweenPuzzle.copy(id = "ae-not-in-any-bank")))
-        assertNull(ArrowEscapePuzzleBank.puzzleById(context, Difficulty.fromKey(halloweenPuzzle.difficulty), "ae-not-in-any-bank"))
+        assertNull(ArrowEscapePuzzleBank.puzzleById(AndroidBundledFiles(context), Difficulty.fromKey(halloweenPuzzle.difficulty), "ae-not-in-any-bank"))
         assertNull(adapter.restoreSession(payload, 0.0))
     }
 }

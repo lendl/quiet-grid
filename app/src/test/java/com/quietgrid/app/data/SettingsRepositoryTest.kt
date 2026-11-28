@@ -9,7 +9,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import java.time.LocalTime
+import kotlinx.datetime.LocalTime
 
 class SettingsRepositoryTest {
 
@@ -20,7 +20,7 @@ class SettingsRepositoryTest {
         val settings = repository.settings.first()
 
         assertTrue(settings.dailyReminderEnabled)
-        assertEquals(LocalTime.of(9, 0), settings.dailyReminderTime)
+        assertEquals(LocalTime(9, 0), settings.dailyReminderTime)
         assertFalse(settings.dailyReminderPermissionAsked)
     }
 
@@ -29,12 +29,12 @@ class SettingsRepositoryTest {
         val repository = SettingsRepository(newDataStore(backgroundScope))
 
         repository.setDailyReminderEnabled(false)
-        repository.setDailyReminderTime(LocalTime.of(20, 45))
+        repository.setDailyReminderTime(LocalTime(20, 45))
         repository.markDailyReminderPermissionAsked()
 
         val settings = repository.settings.first()
         assertFalse(settings.dailyReminderEnabled)
-        assertEquals(LocalTime.of(20, 45), settings.dailyReminderTime)
+        assertEquals(LocalTime(20, 45), settings.dailyReminderTime)
         assertTrue(settings.dailyReminderPermissionAsked)
     }
 

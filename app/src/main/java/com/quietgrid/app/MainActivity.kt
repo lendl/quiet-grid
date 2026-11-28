@@ -29,10 +29,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.quietgrid.app.core.AppLocale
 import com.quietgrid.app.data.ThemeMode
 import com.quietgrid.app.nav.AppNavHost
+import com.quietgrid.app.platform.AppLocale
 import com.quietgrid.app.ui.components.LocalHapticsEnabled
+import com.quietgrid.app.ui.components.LocalMotionSettings
 import com.quietgrid.app.ui.theme.QuietGridTheme
 import com.quietgrid.app.ui.theme.ResolvedTheme
 import com.quietgrid.app.ui.theme.fixedResolvedTheme
@@ -73,7 +74,7 @@ class MainActivity : ComponentActivity() {
         holdFirstDrawUntilReady()
 
         setContent {
-            CompositionLocalProvider(LocalAppGraph provides appGraph) {
+            CompositionLocalProvider(LocalAppGraph provides appGraph, LocalMotionSettings provides appGraph.motionSettings) {
                 AppContent()
             }
         }

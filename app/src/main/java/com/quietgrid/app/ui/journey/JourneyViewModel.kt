@@ -1,6 +1,6 @@
 package com.quietgrid.app.ui.journey
 
-import android.content.Context
+import com.quietgrid.app.platform.BundledFiles
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -58,7 +58,7 @@ private const val NONOGRAM_PREVIEW_GUIDE = 5
 data class JourneyState(val rows: List<JourneyStopRow>, val summary: JourneySummary, val mastered: Boolean = false)
 
 class JourneyViewModel(
-    private val context: Context,
+    private val files: BundledFiles,
     private val store: JourneyProgressStore,
     private val history: PlayHistoryStore,
     private val settings: SettingsRepository,
@@ -69,7 +69,7 @@ class JourneyViewModel(
     @OptIn(ExperimentalCoroutinesApi::class)
     fun state(gameId: GameId): Flow<JourneyState?> = settings.journeyTrack(gameId).flatMapLatest { track ->
         flow {
-            val file = loadJourneyFile(context, track)
+            val file = loadJourneyFile(files, track)
             if (file == null) {
                 emit(null)
                 return@flow
@@ -109,41 +109,41 @@ class JourneyViewModel(
             ?.let { Difficulty.fromKey(it.stop.difficulty) to journeyRequestFor(it) }
 
     suspend fun previewFor(gameId: GameId, difficulty: String, puzzleId: String, transform: Int): JourneyBoardPreviewData? = when (gameId) {
-        GameId.ARROWESCAPE -> ArrowEscapePuzzleBank.puzzleById(context, Difficulty.fromKey(difficulty), puzzleId)
+        GameId.ARROWESCAPE -> ArrowEscapePuzzleBank.puzzleById(files, Difficulty.fromKey(difficulty), puzzleId)
             ?.transformed(gridTransformById(transform))
             ?.let { JourneyBoardPreviewData.Arrows(it.rows, it.cols, it.pieces, it.mask) }
-        GameId.ANIMALDOKU -> AnimalDokuPuzzleBank.puzzleById(context, Difficulty.fromKey(difficulty), puzzleId)
+        GameId.ANIMALDOKU -> AnimalDokuPuzzleBank.puzzleById(files, Difficulty.fromKey(difficulty), puzzleId)
             ?.transformed(gridTransformById(transform))
             ?.let { JourneyBoardPreviewData.Regions(it.size, it.regions) }
-        GameId.STARBATTLE -> StarBattlePuzzleBank.puzzleById(context, Difficulty.fromKey(difficulty), puzzleId)
+        GameId.STARBATTLE -> StarBattlePuzzleBank.puzzleById(files, Difficulty.fromKey(difficulty), puzzleId)
             ?.transformed(gridTransformById(transform))
             ?.let { JourneyBoardPreviewData.Regions(it.size, it.regions) }
         GameId.SUDOKU, GameId.MINISUDOKU -> {
             val bank = if (gameId == GameId.SUDOKU) SudokuPuzzleBank else MiniSudokuPuzzleBank
-            bank.puzzleById(context, Difficulty.fromKey(difficulty), puzzleId)
+            bank.puzzleById(files, Difficulty.fromKey(difficulty), puzzleId)
                 ?.transformed(gridTransformById(transform))
                 ?.let { digitsPreview(it.givens) }
         }
-        GameId.KILLERSUDOKU -> KillerSudokuPuzzleBank.puzzleById(context, Difficulty.fromKey(difficulty), puzzleId)
+        GameId.KILLERSUDOKU -> KillerSudokuPuzzleBank.puzzleById(files, Difficulty.fromKey(difficulty), puzzleId)
             ?.transformed(gridTransformById(transform))
             ?.let { entry ->
                 val cageOf = MutableList(SUDOKU_SIZE * SUDOKU_SIZE) { 0 }
                 entry.cages.forEachIndexed { index, cage -> cage.cells.forEach { cageOf[it] = index } }
                 JourneyBoardPreviewData.Cages(SUDOKU_SIZE, SUDOKU_BOX_SIZE, cageOf)
             }
-        GameId.NONOGRAM -> NonogramPuzzleBank.puzzleById(context, Difficulty.fromKey(difficulty), puzzleId)
+        GameId.NONOGRAM -> NonogramPuzzleBank.puzzleById(files, Difficulty.fromKey(difficulty), puzzleId)
             ?.transformed(gridTransformById(transform))
             ?.let { JourneyBoardPreviewData.EmptyGrid(it.rows, it.cols, NONOGRAM_PREVIEW_GUIDE) }
-        GameId.TAKUZU -> TakuzuPuzzleBank.puzzleById(context, Difficulty.fromKey(difficulty), puzzleId)
+        GameId.TAKUZU -> TakuzuPuzzleBank.puzzleById(files, Difficulty.fromKey(difficulty), puzzleId)
             ?.transformed(gridTransformById(transform))
             ?.let { JourneyBoardPreviewData.Digits(it.size, it.size, it.size, decodePuzzleBoard(it.solution, it.mask, it.size)) }
-        GameId.BLOCKESCAPE -> BlockEscapePuzzleBank.puzzleById(context, Difficulty.fromKey(difficulty), puzzleId)
+        GameId.BLOCKESCAPE -> BlockEscapePuzzleBank.puzzleById(files, Difficulty.fromKey(difficulty), puzzleId)
             ?.let { JourneyBoardPreviewData.Blocks(BLOCKESCAPE_SIZE, it.blocks, BLOCKESCAPE_EXIT_ROW) }
-        GameId.CIRCUIT -> CircuitPuzzleBank.puzzleById(context, Difficulty.fromKey(difficulty), puzzleId)
+        GameId.CIRCUIT -> CircuitPuzzleBank.puzzleById(files, Difficulty.fromKey(difficulty), puzzleId)
             ?.let { JourneyBoardPreviewData.Wires(it.rows, it.cols, it.start, it.source) }
-        GameId.LINKS -> LinksPuzzleBank.puzzleById(context, Difficulty.fromKey(difficulty), puzzleId)
+        GameId.LINKS -> LinksPuzzleBank.puzzleById(files, Difficulty.fromKey(difficulty), puzzleId)
             ?.let { JourneyBoardPreviewData.Pairs(it) }
-        GameId.WORDSWAP -> WordSwapPuzzleBank.puzzleById(context, Difficulty.fromKey(difficulty), puzzleId)
+        GameId.WORDSWAP -> WordSwapPuzzleBank.puzzleById(files, Difficulty.fromKey(difficulty), puzzleId)
             ?.let { JourneyBoardPreviewData.Letters(it.rows, it.cols, it.start) }
         else -> null
     }
@@ -160,5 +160,5 @@ class JourneyViewModel(
 
 @Composable
 fun journeyViewModel(): JourneyViewModel = appViewModel { graph ->
-    JourneyViewModel(graph.appContext, graph.journeyProgressRepository, graph.playHistoryRepository, graph.settingsRepository)
+    JourneyViewModel(graph.bundledFiles, graph.journeyProgressRepository, graph.playHistoryRepository, graph.settingsRepository)
 }

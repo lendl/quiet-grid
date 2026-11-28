@@ -29,7 +29,7 @@ fun WordGuessChallengerPlayScreen(
 ) {
     val viewModel = appViewModel { graph ->
         WordGuessChallengerViewModel(
-            graph.appContext,
+            graph.bundledFiles,
             graph.settingsRepository,
             graph.statsRepository,
             graph.playHistoryRepository,

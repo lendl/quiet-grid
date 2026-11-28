@@ -1,7 +1,7 @@
 package com.quietgrid.app.ui.screens
 
-import android.content.Intent
-import android.net.Uri
+import androidx.compose.ui.platform.LocalUriHandler
+import com.quietgrid.app.ui.components.tryOpen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -45,7 +45,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -58,7 +57,6 @@ import com.quietgrid.app.core.PLAY_STORE_APP_URL
 import com.quietgrid.app.core.PLAY_STORE_WEB_URL
 import com.quietgrid.app.core.REPO_URL
 import com.quietgrid.app.core.SUPPORT_EMAIL
-import com.quietgrid.app.core.appVersionName
 import com.quietgrid.app.core.buildBugReportUrl
 import com.quietgrid.app.core.buildFeatureRequestUrl
 import kotlinx.coroutines.launch
@@ -69,10 +67,11 @@ private val ABOUT_ICON_COLOR = Color(0xFFF472B6)
 
 @Composable
 fun SupportPageScreen() {
-    val context = LocalContext.current
-    val appVersion = remember { appVersionName(context) }
+    val graph = LocalAppGraph.current
+    val uriHandler = LocalUriHandler.current
+    val appVersion = remember { graph.appInfo.versionName }
     fun openUrl(url: String): Boolean =
-        runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }.isSuccess
+        uriHandler.tryOpen(url)
 
     Column(
         Modifier
@@ -89,12 +88,12 @@ fun SupportPageScreen() {
 
 @Composable
 fun TrustPageScreen(onOpenInfo: (String) -> Unit) {
-    val context = LocalContext.current
+    val uriHandler = LocalUriHandler.current
     val graph = LocalAppGraph.current
     val scope = rememberCoroutineScope()
     var showClearDialog by remember { mutableStateOf(false) }
     fun openUrl(url: String): Boolean =
-        runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }.isSuccess
+        uriHandler.tryOpen(url)
 
     Column(
         Modifier
@@ -132,9 +131,9 @@ fun TrustPageScreen(onOpenInfo: (String) -> Unit) {
 
 @Composable
 fun AboutPageScreen(onOpenInfo: (String) -> Unit) {
-    val context = LocalContext.current
+    val uriHandler = LocalUriHandler.current
     fun openUrl(url: String) {
-        runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }
+        uriHandler.tryOpen(url)
     }
 
     Column(
@@ -181,9 +180,9 @@ private fun HelpWantedRow(item: HelpWantedItem, onClick: () -> Unit) {
 
 @Composable
 internal fun ShowYourSupportSection(modifier: Modifier = Modifier) {
-    val context = LocalContext.current
+    val uriHandler = LocalUriHandler.current
     fun openUrl(url: String): Boolean =
-        runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }.isSuccess
+        uriHandler.tryOpen(url)
     fun openRateApp() {
         if (!openUrl(PLAY_STORE_APP_URL)) openUrl(PLAY_STORE_WEB_URL)
     }

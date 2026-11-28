@@ -2,7 +2,7 @@ package com.quietgrid.app.core.badges
 
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 const val SEASON_HALLOWEEN = "halloween"
 

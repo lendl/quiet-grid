@@ -1,5 +1,8 @@
 package com.quietgrid.app.games.themeclear
 
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
@@ -69,7 +72,7 @@ class ThemeClearPlayViewModelTest {
         val themePreferencesRepository = mockk<ThemePreferencesRepository>()
         every { themePreferencesRepository.excludedThemes(any(), any()) } returns flowOf(excludedThemes)
         return ThemeClearPlayViewModel(
-            mockk<Context>(relaxed = true), FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), settingsRepository, themePreferencesRepository, FakeBadgeStore(), Difficulty.EASY, resume = false,
+            mockk<BundledFiles>(relaxed = true), FakeSessionStore(), FakeStatsStore(), FakeHistoryStore(), settingsRepository, themePreferencesRepository, FakeBadgeStore(), AppForeground { false }, MotionSettings { false }, Difficulty.EASY, resume = false,
         ).also {
             it.solverDispatcher = Dispatchers.Unconfined
             it.random = Random(1)

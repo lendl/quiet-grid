@@ -1,5 +1,6 @@
 package com.quietgrid.app.games.sequencememory
 
+import com.quietgrid.app.platform.MotionSettings
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -87,6 +88,7 @@ class SequenceMemoryPlayViewModel(
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     private val appForeground: AppForeground,
+    motion: MotionSettings,
     badgeStore: BadgeStore,
     requestedDifficulty: Difficulty,
     resume: Boolean,
@@ -99,6 +101,7 @@ class SequenceMemoryPlayViewModel(
         historyStore = historyRepository,
         adapter = SequenceMemoryPuzzleAdapter(),
         isAppForeground = appForeground::isForeground,
+        animationsEnabled = motion::animationsEnabled,
         badgeStore = badgeStore,
     )
 

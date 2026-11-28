@@ -1,5 +1,7 @@
 package com.quietgrid.app.games.minesweeper
 
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -81,6 +83,8 @@ class MinesweeperPlayViewModel(
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     badgeStore: BadgeStore,
+    appForeground: AppForeground,
+    motion: MotionSettings,
     requestedDifficulty: Difficulty,
     resume: Boolean,
 ) : ViewModel() {
@@ -91,6 +95,8 @@ class MinesweeperPlayViewModel(
         statsStore = statsRepository,
         historyStore = historyRepository,
         adapter = MinesweeperPuzzleAdapter(),
+        isAppForeground = appForeground::isForeground,
+        animationsEnabled = motion::animationsEnabled,
         badgeStore = badgeStore,
     )
 

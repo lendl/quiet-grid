@@ -1,5 +1,7 @@
 package com.quietgrid.app.games.chimptest
 
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -81,6 +83,8 @@ class ChimpTestPlayViewModel(
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     badgeStore: BadgeStore,
+    appForeground: AppForeground,
+    motion: MotionSettings,
     requestedDifficulty: Difficulty,
     resume: Boolean,
 ) : ViewModel() {
@@ -91,6 +95,8 @@ class ChimpTestPlayViewModel(
         statsStore = statsRepository,
         historyStore = historyRepository,
         adapter = ChimpTestPuzzleAdapter(),
+        isAppForeground = appForeground::isForeground,
+        animationsEnabled = motion::animationsEnabled,
         badgeStore = badgeStore,
     )
 

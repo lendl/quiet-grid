@@ -42,12 +42,14 @@ fun StarBattlePlayScreen(
 ) {
     val viewModel = appViewModel { graph ->
         StarBattlePlayViewModel(
-            graph.appContext,
+            graph.bundledFiles,
             graph.sessionRepository,
             graph.statsRepository,
             graph.playHistoryRepository,
             graph.journeyProgressRepository,
             graph.badgeRepository,
+            graph.appForeground,
+            graph.motionSettings,
             difficulty,
             resume,
             journey,

@@ -1,5 +1,6 @@
 package com.quietgrid.app.games.blockescape
 
+import com.quietgrid.app.platform.BundledFiles
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.session.AppForeground
@@ -54,7 +55,7 @@ class BlockEscapeChallengerViewModelTest {
     private fun newViewModel(): BlockEscapeChallengerViewModel {
         mockkObject(BlockEscapePuzzleBank)
         coEvery { BlockEscapePuzzleBank.randomPuzzle(any(), any(), any()) } returnsMany listOf(oneMove, fiveMove, fiveMove)
-        return BlockEscapeChallengerViewModel(mockk<Context>(relaxed = true), FakeStatsStore(), FakeHistoryStore(), AppForeground { true })
+        return BlockEscapeChallengerViewModel(mockk<BundledFiles>(relaxed = true), FakeStatsStore(), FakeHistoryStore(), AppForeground { true })
     }
 
     @Test

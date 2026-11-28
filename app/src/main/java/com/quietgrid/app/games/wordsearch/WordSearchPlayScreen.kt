@@ -32,7 +32,7 @@ import com.quietgrid.app.ui.play.PlayHintAction
 import com.quietgrid.app.ui.play.PlayHintMessage
 import com.quietgrid.app.ui.play.PlayTimer
 import com.quietgrid.app.ui.play.puzzleLanguageInfo
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 @Composable
 fun WordSearchPlayScreen(
@@ -44,13 +44,15 @@ fun WordSearchPlayScreen(
 ) {
     val viewModel = appViewModel { graph ->
         WordSearchPlayViewModel(
-            graph.appContext,
+            graph.bundledFiles,
             graph.sessionRepository,
             graph.statsRepository,
             graph.playHistoryRepository,
             graph.settingsRepository,
             graph.themePreferencesRepository,
             graph.badgeRepository,
+            graph.appForeground,
+            graph.motionSettings,
             difficulty,
             resume,
             dailyDate,

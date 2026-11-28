@@ -20,7 +20,7 @@ fun NonogramChallengerPlayScreen(
 ) {
     val viewModel = appViewModel { graph ->
         NonogramChallengerViewModel(
-            graph.appContext,
+            graph.bundledFiles,
             graph.statsRepository,
             graph.playHistoryRepository,
             graph.appForeground,

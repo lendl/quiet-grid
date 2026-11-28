@@ -1,5 +1,8 @@
 package com.quietgrid.app.games.links
 
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -46,19 +49,19 @@ data class LinksResult(
 )
 
 internal class LinksPuzzleAdapter(
-    private val appContext: android.content.Context,
+    private val files: BundledFiles,
     private val historyStore: PlayHistoryStore,
 ) : PuzzleAdapter<LinksSession, LinksResult> {
     override val gameId: GameId = GameId.LINKS
 
     override suspend fun freshSession(difficulty: Difficulty): LinksSession? {
         val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
-        val puzzle = LinksPuzzleBank.randomPuzzle(appContext, difficulty, recentIds) ?: return null
+        val puzzle = LinksPuzzleBank.randomPuzzle(files, difficulty, recentIds) ?: return null
         return createLinksSession(puzzle)
     }
 
     override suspend fun journeySession(difficulty: Difficulty, puzzleId: String, transform: Int): LinksSession? =
-        LinksPuzzleBank.puzzleById(appContext, difficulty, puzzleId)?.let(::createLinksSession)
+        LinksPuzzleBank.puzzleById(files, difficulty, puzzleId)?.let(::createLinksSession)
 
     override fun journeySignals(session: LinksSession): JourneySignals = JourneySignals(session.hintsUsed, 0)
 
@@ -109,12 +112,14 @@ internal class LinksPuzzleAdapter(
 }
 
 class LinksPlayViewModel(
-    appContext: android.content.Context,
+    files: BundledFiles,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     journeyStore: JourneyProgressStore,
     badgeStore: BadgeStore,
+    appForeground: AppForeground,
+    motion: MotionSettings,
     requestedDifficulty: Difficulty,
     resume: Boolean,
     journey: JourneyRequest?,
@@ -125,7 +130,9 @@ class LinksPlayViewModel(
         sessionStore = sessionRepository,
         statsStore = statsRepository,
         historyStore = historyRepository,
-        adapter = LinksPuzzleAdapter(appContext, historyRepository),
+        adapter = LinksPuzzleAdapter(files, historyRepository),
+        isAppForeground = appForeground::isForeground,
+        animationsEnabled = motion::animationsEnabled,
         journeyStore = journeyStore,
         badgeStore = badgeStore,
     )

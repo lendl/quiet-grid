@@ -13,7 +13,7 @@ import com.quietgrid.app.core.tips.QuietTipState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 class QuietTipsRepository(private val dataStore: DataStore<Preferences>) {
     private object Keys {

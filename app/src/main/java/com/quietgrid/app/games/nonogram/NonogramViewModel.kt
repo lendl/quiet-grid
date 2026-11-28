@@ -1,6 +1,8 @@
 package com.quietgrid.app.games.nonogram
 
-import android.content.Context
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -47,19 +49,19 @@ data class NonogramResult(
 )
 
 internal class NonogramPuzzleAdapter(
-    private val appContext: Context,
+    private val files: BundledFiles,
     private val historyStore: PlayHistoryStore,
 ) : PuzzleAdapter<NonogramSession, NonogramResult> {
     override val gameId: GameId = GameId.NONOGRAM
 
     override suspend fun freshSession(difficulty: Difficulty): NonogramSession? {
         val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
-        val entry = NonogramPuzzleBank.randomPuzzle(appContext, difficulty, recentIds) ?: return null
+        val entry = NonogramPuzzleBank.randomPuzzle(files, difficulty, recentIds) ?: return null
         return createNonogramSession(entry)
     }
 
     override suspend fun journeySession(difficulty: Difficulty, puzzleId: String, transform: Int): NonogramSession? =
-        NonogramPuzzleBank.puzzleById(appContext, difficulty, puzzleId)?.transformed(gridTransformById(transform))?.let(::createNonogramSession)
+        NonogramPuzzleBank.puzzleById(files, difficulty, puzzleId)?.transformed(gridTransformById(transform))?.let(::createNonogramSession)
 
     override fun journeySignals(session: NonogramSession): JourneySignals = JourneySignals(session.hintsUsed, 0)
 
@@ -109,12 +111,14 @@ internal class NonogramPuzzleAdapter(
 }
 
 class NonogramPlayViewModel(
-    appContext: Context,
+    files: BundledFiles,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     journeyStore: JourneyProgressStore,
     badgeStore: BadgeStore,
+    appForeground: AppForeground,
+    motion: MotionSettings,
     requestedDifficulty: Difficulty,
     resume: Boolean,
     journey: JourneyRequest?,
@@ -125,7 +129,9 @@ class NonogramPlayViewModel(
         sessionStore = sessionRepository,
         statsStore = statsRepository,
         historyStore = historyRepository,
-        adapter = NonogramPuzzleAdapter(appContext, historyRepository),
+        adapter = NonogramPuzzleAdapter(files, historyRepository),
+        isAppForeground = appForeground::isForeground,
+        animationsEnabled = motion::animationsEnabled,
         journeyStore = journeyStore,
         badgeStore = badgeStore,
     )

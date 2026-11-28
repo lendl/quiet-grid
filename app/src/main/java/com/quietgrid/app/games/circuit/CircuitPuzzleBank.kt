@@ -1,6 +1,7 @@
 package com.quietgrid.app.games.circuit
 
-import android.content.Context
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.readText
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.engine.circuit.CircuitPuzzleEntry
 import kotlinx.coroutines.Dispatchers
@@ -13,24 +14,24 @@ private val json = Json { ignoreUnknownKeys = true }
 object CircuitPuzzleBank {
     private var cache: Map<String, List<CircuitPuzzleEntry>>? = null
 
-    private suspend fun load(context: Context): Map<String, List<CircuitPuzzleEntry>> {
+    private suspend fun load(files: BundledFiles): Map<String, List<CircuitPuzzleEntry>> {
         cache?.let { return it }
         return withContext(Dispatchers.IO) {
-            val text = context.assets.open("circuit_puzzles.json").bufferedReader().use { it.readText() }
+            val text = files.readText("circuit_puzzles.json")
             val grouped = json.decodeFromString<List<CircuitPuzzleEntry>>(text).groupBy { it.difficulty }
             cache = grouped
             grouped
         }
     }
 
-    suspend fun puzzleById(context: Context, difficulty: Difficulty, id: String): CircuitPuzzleEntry? =
-        load(context)[difficulty.key].orEmpty().firstOrNull { it.id == id }
+    suspend fun puzzleById(files: BundledFiles, difficulty: Difficulty, id: String): CircuitPuzzleEntry? =
+        load(files)[difficulty.key].orEmpty().firstOrNull { it.id == id }
 
-    suspend fun ratedPool(context: Context, difficulty: Difficulty): List<Pair<String, Int>> =
-        load(context)[difficulty.key].orEmpty().mapNotNull { entry -> entry.rating?.let { entry.id to it } }
+    suspend fun ratedPool(files: BundledFiles, difficulty: Difficulty): List<Pair<String, Int>> =
+        load(files)[difficulty.key].orEmpty().mapNotNull { entry -> entry.rating?.let { entry.id to it } }
 
-    suspend fun randomPuzzle(context: Context, difficulty: Difficulty, recentlyPlayedIds: Set<String> = emptySet()): CircuitPuzzleEntry? {
-        val pool = load(context)[difficulty.key] ?: return null
+    suspend fun randomPuzzle(files: BundledFiles, difficulty: Difficulty, recentlyPlayedIds: Set<String> = emptySet()): CircuitPuzzleEntry? {
+        val pool = load(files)[difficulty.key] ?: return null
         if (pool.isEmpty()) return null
         val candidates = pool.filter { it.id !in recentlyPlayedIds }
         return candidates.ifEmpty { pool }.random()

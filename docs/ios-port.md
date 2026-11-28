@@ -49,13 +49,17 @@ refactor. Each step leaves the Android app building and passing its tests.
   `QuietGridApplication` builds every shared instance once; screens create ViewModels with
   `appViewModel { graph -> ... }` over lifecycle's `viewModel { }`, which Compose Multiplatform also
   has. `QuietGridWorkerFactory` builds the daily reminder worker.
-- [ ] 5. **Storage.** DataStore Preferences and Room move to their KMP builds. Existing Android
-  saves, settings, stats and history survive the change.
-- [ ] 6. **Platform services.** `expect`/`actual` for haptics, keep screen awake, in-app language,
-  daily reminders, storage file paths, and opening the theme-suggestion link.
+- [x] 5+6. **Storage and platform services.** Done as one step.
+  - **Storage.** The Room database (entities, DAOs, migrations) and the DataStore setup moved into `:shared`, on their KMP builds. Android keeps the same database and preferences files, so existing saves, settings, stats and history carry over. iOS uses the bundled SQLite driver.
+  - **Platform services.** These are interfaces in `:shared`'s `com.quietgrid.app.platform`: `BundledFiles`, `AppLanguage`, `MotionSettings`, `Haptics`, `ShareSheet`, `AppInfo`. The Android implementations are in `:app` `platform/` and the iOS ones in `:shared` iosMain.
+  - **Banks.** The puzzle banks read through `BundledFiles` (okio), and the large banks stream.
+  - **No Context.** ViewModels and repositories take no `Context`.
+  - **Dates.** Dates use kotlinx-datetime.
+  - **Portability guard.** A Konsist rule keeps the code that moves in step 7 free of Android and JVM APIs.
 - [ ] 7. **Screens move.** Games, navigation and the shell move into `:shared`, in slices.
 - [ ] 8. **iOS polish and QA.** Safe areas, swipe-back, hidden beta games, simulator smoke tests,
   screenshot gallery for iPhone and iPad.
+  - **Daily reminders on iOS.** These are local notifications. On Android the reminder text is worked out when the reminder fires: it checks whether today's daily is already played. iOS has no such hook, so the notification content is worked out when it is scheduled, and it is rescheduled after each daily.
 - [ ] 9. **Store.** Signing, TestFlight upload, App Store listing in 8 languages (reusing
   `fastlane/metadata`), privacy label, review submission. (`PrivacyInfo.xcprivacy` already ships
   from step 2b; extend it if later code uses more required-reason APIs.)
@@ -96,8 +100,7 @@ iOS targets are only declared when the Gradle property `quietgrid.ios=true` is p
   generated resources (so `R.string.*` keeps working), and the bank folder is a static assets
   directory. The shared files write `'` and `"` without backslashes, because Compose resources
   shows a backslash literally; `syncSharedStrings` adds the `\'` and `\"` escapes Android needs and
-  fails on a backslash-escaped quote. Lint checks the copied strings (`checkGeneratedSources`;
-  `app/lint.xml` skips the KSP output). The `checkLegacyResourcePaths` task fails the Android build if anything is put back in
+  fails on a backslash-escaped quote. Lint checks the copied strings (`checkGeneratedSources`). The `checkLegacyResourcePaths` task fails the Android build if anything is put back in
   `app/src/main/assets/` or `app/src/main/res/values*/strings.xml`. The CLI writes to the bank
   folder by default (`ASSETS_DIR` in `cli/`). CI's screenshot artifact also holds
   `iphone-newest-fr.png`, launched in French.

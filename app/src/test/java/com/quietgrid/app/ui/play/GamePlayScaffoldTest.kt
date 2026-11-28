@@ -27,6 +27,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.unit.DpRect
 import androidx.compose.ui.unit.dp
 import com.quietgrid.app.R
+import com.quietgrid.app.ui.setContentWithGraph
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.data.GamePlayPreferences
 import com.quietgrid.app.data.ScreenRotation
@@ -74,7 +75,7 @@ class GamePlayScaffoldTest {
     @Test
     @Config(qualifiers = "w390dp-h844dp-port")
     fun `rules button opens the picture rules and a tap closes them`() {
-        composeRule.setContent {
+        composeRule.setContentWithGraph {
             MaterialTheme {
                 GamePlayScaffold(gameId = GameId.TAKUZU, timer = null, onBack = {}, onEndPuzzle = {}, board = { Box(Modifier.fillMaxSize()) })
             }
@@ -96,7 +97,7 @@ class GamePlayScaffoldTest {
     @Config(qualifiers = "w390dp-h844dp-port")
     fun `full rules opens the game's rules page`() {
         var openedRulesFor: GameId? = null
-        composeRule.setContent {
+        composeRule.setContentWithGraph {
             MaterialTheme {
                 CompositionLocalProvider(LocalOpenGameRules provides { gameId -> openedRulesFor = gameId }) {
                     GamePlayScaffold(gameId = GameId.TAKUZU, timer = null, onBack = {}, onEndPuzzle = {}, board = { Box(Modifier.fillMaxSize()) })
@@ -116,7 +117,7 @@ class GamePlayScaffoldTest {
     @Config(qualifiers = "w390dp-h844dp-port")
     fun `hint and rules never show at the same time`() {
         var hintActive by mutableStateOf(true)
-        composeRule.setContent {
+        composeRule.setContentWithGraph {
             MaterialTheme {
                 GamePlayScaffold(
                     gameId = GameId.TAKUZU,
@@ -145,7 +146,7 @@ class GamePlayScaffoldTest {
     @Test
     @Config(qualifiers = "w844dp-h390dp-land")
     fun `sideways game without controls stacks the strip and the hint beside the board`() {
-        composeRule.setContent {
+        composeRule.setContentWithGraph {
             MaterialTheme {
                 GamePlayScaffold(
                     gameId = GameId.MINESWEEPER,
@@ -168,7 +169,7 @@ class GamePlayScaffoldTest {
     }
 
     private fun showFillingBoard() {
-        composeRule.setContent {
+        composeRule.setContentWithGraph {
             MaterialTheme {
                 GamePlayScaffold(
                     gameId = GameId.MINESWEEPER,
@@ -211,7 +212,7 @@ class GamePlayScaffoldTest {
     @Test
     @Config(qualifiers = "w390dp-h844dp-port")
     fun `a rules override replaces the game's rules`() {
-        composeRule.setContent {
+        composeRule.setContentWithGraph {
             MaterialTheme {
                 GamePlayScaffold(
                     gameId = GameId.TAKUZU,
@@ -238,7 +239,7 @@ class GamePlayScaffoldTest {
     @Test
     @Config(qualifiers = "w390dp-h844dp-port")
     fun `board without a dock sits in the middle of the page`() {
-        composeRule.setContent {
+        composeRule.setContentWithGraph {
             MaterialTheme {
                 GamePlayScaffold(gameId = GameId.TAKUZU, timer = null, onBack = {}, onEndPuzzle = {}, board = { Box(Modifier.fillMaxSize()) })
             }
@@ -255,7 +256,7 @@ class GamePlayScaffoldTest {
     fun `closing the hint card keeps the hint and the hint button brings the card back`() {
         var hintActive by mutableStateOf(true)
         var toggles = 0
-        composeRule.setContent {
+        composeRule.setContentWithGraph {
             MaterialTheme {
                 GamePlayScaffold(
                     gameId = GameId.TAKUZU,
@@ -290,7 +291,7 @@ class GamePlayScaffoldTest {
     fun `tight small phone shows only the hint title and expands it on tap`() {
         val title = "Hidden single: 5"
         val body = "Row 3 has only one cell left where a 5 can go, so the 5 must go in r3c7."
-        composeRule.setContent {
+        composeRule.setContentWithGraph {
             MaterialTheme {
                 GamePlayScaffold(
                     gameId = GameId.SUDOKU,
@@ -322,7 +323,7 @@ class GamePlayScaffoldTest {
     @GraphicsMode(GraphicsMode.Mode.NATIVE)
     fun `tight hint keeps the whole title and cuts the description instead`() {
         val title = "Naked pair in row 3 removes 4 and 7 from every other cell in that row"
-        composeRule.setContent {
+        composeRule.setContentWithGraph {
             MaterialTheme {
                 GamePlayScaffold(
                     gameId = GameId.SUDOKU,
@@ -352,7 +353,7 @@ class GamePlayScaffoldTest {
     @Config(qualifiers = "sw390dp-w390dp-h844dp-port")
     fun `portrait-only game locks a phone to portrait and restores it on leave`() {
         var showGame by mutableStateOf(true)
-        composeRule.setContent {
+        composeRule.setContentWithGraph {
             MaterialTheme {
                 if (showGame) {
                     GamePlayScaffold(
@@ -377,7 +378,7 @@ class GamePlayScaffoldTest {
     @Test
     @Config(qualifiers = "sw800dp-w1280dp-h800dp-land")
     fun `portrait-only game leaves tablets free to rotate`() {
-        composeRule.setContent {
+        composeRule.setContentWithGraph {
             MaterialTheme {
                 GamePlayScaffold(
                     gameId = GameId.WORDGUESS,
@@ -395,7 +396,7 @@ class GamePlayScaffoldTest {
     @Test
     @Config(qualifiers = "w390dp-h844dp-port")
     fun `hidden hints and timer leave the top bar without them`() {
-        composeRule.setContent {
+        composeRule.setContentWithGraph {
             MaterialTheme {
                 ProvideGamePlayPreferences(GamePlayPreferences(showTimer = false, showHints = false)) {
                     GamePlayScaffold(
@@ -416,7 +417,7 @@ class GamePlayScaffoldTest {
     @Test
     @Config(qualifiers = "w390dp-h844dp-port")
     fun `countdown stays visible when the timer is hidden`() {
-        composeRule.setContent {
+        composeRule.setContentWithGraph {
             MaterialTheme {
                 ProvideGamePlayPreferences(GamePlayPreferences(showTimer = false)) {
                     GamePlayScaffold(
@@ -436,7 +437,7 @@ class GamePlayScaffoldTest {
     @Config(qualifiers = "sw800dp-w1280dp-h800dp-land")
     fun `sideways preference locks the screen sideways and restores it on leave`() {
         var showGame by mutableStateOf(true)
-        composeRule.setContent {
+        composeRule.setContentWithGraph {
             MaterialTheme {
                 if (showGame) {
                     ProvideGamePlayPreferences(GamePlayPreferences(rotation = ScreenRotation.LANDSCAPE)) {
@@ -456,7 +457,7 @@ class GamePlayScaffoldTest {
     @Test
     @Config(qualifiers = "sw390dp-w390dp-h844dp-port")
     fun `portrait-only game stays upright on a phone even with a sideways preference`() {
-        composeRule.setContent {
+        composeRule.setContentWithGraph {
             MaterialTheme {
                 ProvideGamePlayPreferences(GamePlayPreferences(rotation = ScreenRotation.LANDSCAPE)) {
                     GamePlayScaffold(
@@ -477,7 +478,7 @@ class GamePlayScaffoldTest {
     @Config(qualifiers = "w390dp-h844dp-port")
     fun `end puzzle without confirmation ends right away`() {
         var ended = false
-        composeRule.setContent {
+        composeRule.setContentWithGraph {
             MaterialTheme {
                 ProvideGamePlayPreferences(GamePlayPreferences(confirmEndPuzzle = false)) {
                     GamePlayScaffold(gameId = GameId.SUDOKU, timer = null, onBack = {}, onEndPuzzle = { ended = true }, board = { Box(Modifier.fillMaxSize()) })
@@ -495,7 +496,7 @@ class GamePlayScaffoldTest {
     @Test
     @Config(qualifiers = "w844dp-h390dp-land")
     fun `left-handed sideways phone moves the rail to the right of the board`() {
-        composeRule.setContent {
+        composeRule.setContentWithGraph {
             MaterialTheme {
                 ProvideGamePlayPreferences(GamePlayPreferences(leftHanded = true)) {
                     GamePlayScaffold(
@@ -519,7 +520,7 @@ class GamePlayScaffoldTest {
 
     private fun assertHintLeavesBoardAlone(hintBesideBoard: Boolean) {
         var hintActive by mutableStateOf(false)
-        composeRule.setContent {
+        composeRule.setContentWithGraph {
             MaterialTheme {
                 GamePlayScaffold(
                     gameId = GameId.TAKUZU,

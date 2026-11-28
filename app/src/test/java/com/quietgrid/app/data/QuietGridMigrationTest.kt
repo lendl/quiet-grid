@@ -1,10 +1,10 @@
 package com.quietgrid.app.data
 
+import android.app.Application
 import android.content.Context
-import androidx.room.Room
-import androidx.sqlite.db.SupportSQLiteDatabase
-import androidx.sqlite.db.SupportSQLiteOpenHelper
-import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
+import androidx.sqlite.SQLiteConnection
+import androidx.sqlite.driver.AndroidSQLiteDriver
+import androidx.sqlite.execSQL
 import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -15,10 +15,10 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-
-private const val DB_NAME = "migration-test.db"
+import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
+@Config(application = Application::class)
 class QuietGridMigrationTest {
 
     private lateinit var context: Context
@@ -26,64 +26,57 @@ class QuietGridMigrationTest {
     @Before
     fun setUp() {
         context = ApplicationProvider.getApplicationContext()
-        context.deleteDatabase(DB_NAME)
+        context.deleteDatabase(QUIET_GRID_DATABASE_FILE)
     }
 
     @After
     fun tearDown() {
-        context.deleteDatabase(DB_NAME)
+        context.deleteDatabase(QUIET_GRID_DATABASE_FILE)
     }
 
     private fun createVersion2Database() = createLegacyDatabase(2) {}
 
-    private fun createVersion3Database() = createLegacyDatabase(3) { db -> MIGRATION_2_3.migrate(db) }
+    private fun createVersion3Database() = createLegacyDatabase(3) { connection -> MIGRATION_2_3.migrate(connection) }
 
-    private fun createVersion4Database() = createLegacyDatabase(4) { db ->
-        MIGRATION_2_3.migrate(db)
-        MIGRATION_3_4.migrate(db)
-        db.execSQL("INSERT INTO journey_progress (scope, puzzleId, stars, cleared, clean, underTarget, bestSeconds, skipped, attempts, nextPuzzleId, lastPlayedMillis) VALUES ('animaldoku', 'ad-1', 2, 1, 1, 0, 95, 0, 1, NULL, 3000)")
+    private fun createVersion4Database() = createLegacyDatabase(4) { connection ->
+        MIGRATION_2_3.migrate(connection)
+        MIGRATION_3_4.migrate(connection)
+        connection.execSQL("INSERT INTO journey_progress (scope, puzzleId, stars, cleared, clean, underTarget, bestSeconds, skipped, attempts, nextPuzzleId, lastPlayedMillis) VALUES ('animaldoku', 'ad-1', 2, 1, 1, 0, 95, 0, 1, NULL, 3000)")
     }
 
-    private fun createVersion5Database() = createLegacyDatabase(5) { db ->
-        MIGRATION_2_3.migrate(db)
-        MIGRATION_3_4.migrate(db)
-        MIGRATION_4_5.migrate(db)
-        db.execSQL("INSERT INTO journey_progress (scope, puzzleId, stars, cleared, clean, underTarget, bestSeconds, bestScore, skipped, attempts, nextPuzzleId, lastPlayedMillis) VALUES ('animaldoku', 'ad-1', 3, 1, 1, 1, 80, 700, 0, 2, 'ad-9', 3000)")
+    private fun createVersion5Database() = createLegacyDatabase(5) { connection ->
+        MIGRATION_2_3.migrate(connection)
+        MIGRATION_3_4.migrate(connection)
+        MIGRATION_4_5.migrate(connection)
+        connection.execSQL("INSERT INTO journey_progress (scope, puzzleId, stars, cleared, clean, underTarget, bestSeconds, bestScore, skipped, attempts, nextPuzzleId, lastPlayedMillis) VALUES ('animaldoku', 'ad-1', 3, 1, 1, 1, 80, 700, 0, 2, 'ad-9', 3000)")
     }
 
-    private fun createVersion6Database() = createLegacyDatabase(6) { db ->
-        MIGRATION_2_3.migrate(db)
-        MIGRATION_3_4.migrate(db)
-        MIGRATION_4_5.migrate(db)
-        MIGRATION_5_6.migrate(db)
-        db.execSQL("INSERT INTO journey_progress (scope, puzzleId, stars, cleared, clean, underTarget, bestSeconds, bestScore, skipped, attempts, nextPuzzleId, lastPlayedMillis) VALUES ('animaldoku', 'ad-1', 2, 1, 1, 0, 95, 640, 0, 1, 'ad-9', 3000)")
-        db.execSQL("INSERT INTO journey_milestone (scope, kind, chapterIndex, achievedMillis, shownMillis) VALUES ('animaldoku', 'chapter', 1, 4000, NULL)")
+    private fun createVersion6Database() = createLegacyDatabase(6) { connection ->
+        MIGRATION_2_3.migrate(connection)
+        MIGRATION_3_4.migrate(connection)
+        MIGRATION_4_5.migrate(connection)
+        MIGRATION_5_6.migrate(connection)
+        connection.execSQL("INSERT INTO journey_progress (scope, puzzleId, stars, cleared, clean, underTarget, bestSeconds, bestScore, skipped, attempts, nextPuzzleId, lastPlayedMillis) VALUES ('animaldoku', 'ad-1', 2, 1, 1, 0, 95, 640, 0, 1, 'ad-9', 3000)")
+        connection.execSQL("INSERT INTO journey_milestone (scope, kind, chapterIndex, achievedMillis, shownMillis) VALUES ('animaldoku', 'chapter', 1, 4000, NULL)")
     }
 
-    private fun openDatabase() = Room.databaseBuilder(context, QuietGridDatabase::class.java, DB_NAME)
-        .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
-        .allowMainThreadQueries()
-        .build()
+    private fun openDatabase() = quietGridDatabase(context)
 
-    private fun createLegacyDatabase(version: Int, upgrade: (SupportSQLiteDatabase) -> Unit) {
-        val config = SupportSQLiteOpenHelper.Configuration.builder(context)
-            .name(DB_NAME)
-            .callback(object : SupportSQLiteOpenHelper.Callback(version) {
-                override fun onCreate(db: SupportSQLiteDatabase) {
-                    db.execSQL("CREATE TABLE IF NOT EXISTS `play_records` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `gameId` TEXT NOT NULL, `difficulty` TEXT NOT NULL, `puzzleId` TEXT, `solved` INTEGER NOT NULL, `score` INTEGER NOT NULL, `elapsedSeconds` INTEGER NOT NULL, `timestampMillis` INTEGER NOT NULL, `lossReason` TEXT, `isChallenger` INTEGER NOT NULL, `puzzlesSolved` INTEGER)")
-                    db.execSQL("CREATE INDEX IF NOT EXISTS `index_play_records_gameId` ON `play_records` (`gameId`)")
-                    db.execSQL("CREATE INDEX IF NOT EXISTS `index_play_records_gameId_difficulty` ON `play_records` (`gameId`, `difficulty`)")
-                    db.execSQL("CREATE INDEX IF NOT EXISTS `index_play_records_gameId_puzzleId_difficulty` ON `play_records` (`gameId`, `puzzleId`, `difficulty`)")
-                    db.execSQL("CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)")
-                    db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a472c60e6443638bd6d2e0f599e93725')")
-                    db.execSQL("INSERT INTO play_records (gameId, difficulty, puzzleId, solved, score, elapsedSeconds, timestampMillis, lossReason, isChallenger, puzzlesSolved) VALUES ('sudoku', 'hard', 's-1', 1, 120, 300, 1000, NULL, 0, NULL)")
-                    upgrade(db)
-                }
-
-                override fun onUpgrade(db: SupportSQLiteDatabase, oldVersion: Int, newVersion: Int) = Unit
-            })
-            .build()
-        FrameworkSQLiteOpenHelperFactory().create(config).writableDatabase.close()
+    private fun createLegacyDatabase(version: Int, upgrade: (SQLiteConnection) -> Unit) {
+        val connection = AndroidSQLiteDriver().open(context.getDatabasePath(QUIET_GRID_DATABASE_FILE).absolutePath)
+        try {
+            connection.execSQL("CREATE TABLE IF NOT EXISTS `play_records` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `gameId` TEXT NOT NULL, `difficulty` TEXT NOT NULL, `puzzleId` TEXT, `solved` INTEGER NOT NULL, `score` INTEGER NOT NULL, `elapsedSeconds` INTEGER NOT NULL, `timestampMillis` INTEGER NOT NULL, `lossReason` TEXT, `isChallenger` INTEGER NOT NULL, `puzzlesSolved` INTEGER)")
+            connection.execSQL("CREATE INDEX IF NOT EXISTS `index_play_records_gameId` ON `play_records` (`gameId`)")
+            connection.execSQL("CREATE INDEX IF NOT EXISTS `index_play_records_gameId_difficulty` ON `play_records` (`gameId`, `difficulty`)")
+            connection.execSQL("CREATE INDEX IF NOT EXISTS `index_play_records_gameId_puzzleId_difficulty` ON `play_records` (`gameId`, `puzzleId`, `difficulty`)")
+            connection.execSQL("CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)")
+            connection.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a472c60e6443638bd6d2e0f599e93725')")
+            connection.execSQL("INSERT INTO play_records (gameId, difficulty, puzzleId, solved, score, elapsedSeconds, timestampMillis, lossReason, isChallenger, puzzlesSolved) VALUES ('sudoku', 'hard', 's-1', 1, 120, 300, 1000, NULL, 0, NULL)")
+            upgrade(connection)
+            connection.execSQL("PRAGMA user_version = $version")
+        } finally {
+            connection.close()
+        }
     }
 
     @Test

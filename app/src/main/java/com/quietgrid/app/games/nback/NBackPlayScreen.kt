@@ -45,6 +45,7 @@ fun NBackPlayScreen(
             graph.statsRepository,
             graph.playHistoryRepository,
             graph.appForeground,
+            graph.motionSettings,
             difficulty,
             resume,
         )

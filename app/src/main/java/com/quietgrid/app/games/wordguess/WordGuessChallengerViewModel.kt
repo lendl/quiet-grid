@@ -1,6 +1,6 @@
 package com.quietgrid.app.games.wordguess
 
-import android.content.Context
+import com.quietgrid.app.platform.BundledFiles
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -24,7 +24,7 @@ private const val CHALLENGER_SOLVE_ADVANCE_DELAY_MS = 700L
 private const val CHALLENGER_LOSS_REVEAL_DELAY_MS = 1400L
 
 class WordGuessChallengerViewModel(
-    private val appContext: Context,
+    private val files: BundledFiles,
     private val settingsRepository: SettingsRepository,
     statsStore: StatsStore,
     historyStore: PlayHistoryStore,
@@ -57,8 +57,8 @@ class WordGuessChallengerViewModel(
     init {
         viewModelScope.launch {
             locale = currentWordGuessLocale(settingsRepository.settings.first().puzzleLanguage)
-            dictionary = WordGuessPuzzleBank.loadDictionary(appContext, locale)
-            val firstPuzzle = WordGuessPuzzleBank.randomPuzzle(appContext, locale, Difficulty.EASY)
+            dictionary = WordGuessPuzzleBank.loadDictionary(files, locale)
+            val firstPuzzle = WordGuessPuzzleBank.randomPuzzle(files, locale, Difficulty.EASY)
             if (firstPuzzle != null) {
                 controller.start(createInitialWordGuessChallengerSession(firstPuzzle))
             }
@@ -87,7 +87,7 @@ class WordGuessChallengerViewModel(
         val (nextTier, nextSolvesInTier) = challengerTierAfterSolve(WORDGUESS_CHALLENGER_CONFIG, withGuess.tier, withGuess.solvesInTier)
         viewModelScope.launch {
             delay(CHALLENGER_SOLVE_ADVANCE_DELAY_MS)
-            val nextPuzzle = WordGuessPuzzleBank.randomPuzzle(appContext, locale, nextTier, withGuess.servedPuzzleIds)
+            val nextPuzzle = WordGuessPuzzleBank.randomPuzzle(files, locale, nextTier, withGuess.servedPuzzleIds)
             if (nextPuzzle == null) {
                 val credited = withGuess.creditSolve(wordGuessChallengerPuzzleScore(withGuess))
                 controller.finalizeRun(credited, "bank_exhausted")
@@ -108,7 +108,7 @@ class WordGuessChallengerViewModel(
         }
         viewModelScope.launch {
             delay(CHALLENGER_LOSS_REVEAL_DELAY_MS)
-            val nextPuzzle = WordGuessPuzzleBank.randomPuzzle(appContext, locale, afterLoss.tier, afterLoss.servedPuzzleIds)
+            val nextPuzzle = WordGuessPuzzleBank.randomPuzzle(files, locale, afterLoss.tier, afterLoss.servedPuzzleIds)
             if (nextPuzzle == null) {
                 controller.finalizeRun(afterLoss, "bank_exhausted")
             } else {

@@ -38,6 +38,8 @@ fun Game2048PlayScreen(
             graph.statsRepository,
             graph.playHistoryRepository,
             graph.badgeRepository,
+            graph.appForeground,
+            graph.motionSettings,
             difficulty,
             resume,
         )

@@ -1,6 +1,8 @@
 package com.quietgrid.app.games.wordguess
 
-import android.content.Context
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,7 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.daily.selectDaily
 import com.quietgrid.app.core.daily.wordGuessShareGrid
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.badges.BadgeFacts
 import com.quietgrid.app.data.BadgeStore
@@ -42,7 +44,7 @@ data class WordGuessResult(
 )
 
 private class WordGuessPuzzleAdapter(
-    private val appContext: Context,
+    private val files: BundledFiles,
     private val settingsRepository: SettingsRepository,
     private val historyStore: PlayHistoryStore,
 ) : PuzzleAdapter<WordGuessSession, WordGuessResult> {
@@ -51,7 +53,7 @@ private class WordGuessPuzzleAdapter(
     override suspend fun freshSession(difficulty: Difficulty): WordGuessSession? {
         val locale = currentWordGuessLocale(settingsRepository.settings.first().puzzleLanguage)
         val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
-        val entry = WordGuessPuzzleBank.randomPuzzle(appContext, locale, difficulty, recentIds) ?: return null
+        val entry = WordGuessPuzzleBank.randomPuzzle(files, locale, difficulty, recentIds) ?: return null
         return WordGuessSession(
             puzzleId = entry.id,
             locale = locale,
@@ -65,7 +67,7 @@ private class WordGuessPuzzleAdapter(
 
     override suspend fun dailySession(difficulty: Difficulty, date: LocalDate): WordGuessSession? {
         val locale = currentWordGuessLocale(settingsRepository.settings.first().puzzleLanguage)
-        val entry = selectDaily(WordGuessPuzzleBank.dailyPool(appContext, locale, difficulty), { it.id }, gameId.key, "$locale:${difficulty.key}", date) ?: return null
+        val entry = selectDaily(WordGuessPuzzleBank.dailyPool(files, locale, difficulty), { it.id }, gameId.key, "$locale:${difficulty.key}", date) ?: return null
         return WordGuessSession(
             puzzleId = entry.id,
             locale = locale,
@@ -130,12 +132,14 @@ private class WordGuessPuzzleAdapter(
 }
 
 class WordGuessPlayViewModel(
-    appContext: Context,
+    private val files: BundledFiles,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     settingsRepository: SettingsRepository,
     badgeStore: BadgeStore,
+    appForeground: AppForeground,
+    motion: MotionSettings,
     requestedDifficulty: Difficulty,
     resume: Boolean,
     dailyDate: LocalDate?,
@@ -146,7 +150,9 @@ class WordGuessPlayViewModel(
         sessionStore = sessionRepository,
         statsStore = statsRepository,
         historyStore = historyRepository,
-        adapter = WordGuessPuzzleAdapter(appContext, settingsRepository, historyRepository),
+        adapter = WordGuessPuzzleAdapter(files, settingsRepository, historyRepository),
+        isAppForeground = appForeground::isForeground,
+        animationsEnabled = motion::animationsEnabled,
         badgeStore = badgeStore,
     )
 
@@ -158,7 +164,6 @@ class WordGuessPlayViewModel(
     var wrongGuessTrigger by mutableStateOf(0)
         private set
 
-    private val appCtx = appContext
     private var dictionary: Set<String> = emptySet()
 
     init {
@@ -169,7 +174,7 @@ class WordGuessPlayViewModel(
         val current = session ?: return
         viewModelScope.launch {
             if (dictionary.isEmpty()) {
-                dictionary = WordGuessPuzzleBank.loadDictionary(appCtx, current.locale)
+                dictionary = WordGuessPuzzleBank.loadDictionary(files, current.locale)
             }
             when (val outcome = submitWordGuess(current, dictionary, rawGuess)) {
                 WordGuessSubmitResult.InvalidWord -> onInvalid()

@@ -1,5 +1,8 @@
 package com.quietgrid.app.games.guessbynumbers
 
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import android.content.Context
 import com.quietgrid.app.MainDispatcherRule
 import com.quietgrid.app.core.Difficulty
@@ -59,7 +62,7 @@ class GuessByNumbersPlayViewModelTest {
         val settingsRepository = mockk<SettingsRepository>(relaxed = true)
         every { settingsRepository.settings } returns MutableStateFlow(AppSettings())
         return GuessByNumbersPlayViewModel(
-            mockk<Context>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), settingsRepository, FakeBadgeStore(), Difficulty.EASY, resume = false,
+            mockk<BundledFiles>(relaxed = true), sessionStore, statsStore, FakeHistoryStore(), settingsRepository, FakeBadgeStore(), AppForeground { false }, MotionSettings { false }, Difficulty.EASY, resume = false,
         )
     }
 

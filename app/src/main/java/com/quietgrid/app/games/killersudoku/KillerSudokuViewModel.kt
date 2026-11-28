@@ -1,6 +1,8 @@
 package com.quietgrid.app.games.killersudoku
 
-import android.content.Context
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -65,19 +67,19 @@ data class KillerSudokuResult(
 )
 
 internal class KillerSudokuPuzzleAdapter(
-    private val appContext: Context,
+    private val files: BundledFiles,
     private val historyStore: PlayHistoryStore,
 ) : PuzzleAdapter<KillerSudokuSession, KillerSudokuResult> {
     override val gameId: GameId = GameId.KILLERSUDOKU
 
     override suspend fun freshSession(difficulty: Difficulty): KillerSudokuSession? {
         val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
-        val entry = KillerSudokuPuzzleBank.randomPuzzle(appContext, difficulty, recentIds) ?: return null
+        val entry = KillerSudokuPuzzleBank.randomPuzzle(files, difficulty, recentIds) ?: return null
         return createKillerSudokuSession(entry)
     }
 
     override suspend fun journeySession(difficulty: Difficulty, puzzleId: String, transform: Int): KillerSudokuSession? =
-        KillerSudokuPuzzleBank.puzzleById(appContext, difficulty, puzzleId)?.transformed(gridTransformById(transform))?.let(::createKillerSudokuSession)
+        KillerSudokuPuzzleBank.puzzleById(files, difficulty, puzzleId)?.transformed(gridTransformById(transform))?.let(::createKillerSudokuSession)
 
     override fun journeySignals(session: KillerSudokuSession): JourneySignals =
         JourneySignals(session.grid.hintsUsed, session.grid.accuracyDrops)
@@ -137,12 +139,14 @@ internal class KillerSudokuPuzzleAdapter(
 }
 
 class KillerSudokuPlayViewModel(
-    appContext: Context,
+    files: BundledFiles,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     journeyStore: JourneyProgressStore,
     badgeStore: BadgeStore,
+    appForeground: AppForeground,
+    motion: MotionSettings,
     requestedDifficulty: Difficulty,
     resume: Boolean,
     journey: JourneyRequest?,
@@ -153,7 +157,9 @@ class KillerSudokuPlayViewModel(
         sessionStore = sessionRepository,
         statsStore = statsRepository,
         historyStore = historyRepository,
-        adapter = KillerSudokuPuzzleAdapter(appContext, historyRepository),
+        adapter = KillerSudokuPuzzleAdapter(files, historyRepository),
+        isAppForeground = appForeground::isForeground,
+        animationsEnabled = motion::animationsEnabled,
         journeyStore = journeyStore,
         badgeStore = badgeStore,
     )

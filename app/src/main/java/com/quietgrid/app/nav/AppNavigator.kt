@@ -1,6 +1,5 @@
 package com.quietgrid.app.nav
 
-import android.content.Context
 import androidx.compose.runtime.State
 import androidx.navigation.NavHostController
 import androidx.navigation.toRoute
@@ -19,7 +18,7 @@ import com.quietgrid.app.data.ActiveSessionSummary
 import com.quietgrid.app.data.GamePlayPreferences
 import com.quietgrid.app.data.journeyTrack
 import com.quietgrid.app.ui.components.AppTab
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 import kotlin.reflect.KClass
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
@@ -29,7 +28,6 @@ class AppNavigator(
     val navController: NavHostController,
     val scope: CoroutineScope,
     val graph: AppGraph,
-    private val appContext: Context,
     private val activeSession: State<ActiveSessionSummary?>,
     private val activeMixState: State<Mix?>,
     private val resolvePreferences: (GameId) -> GamePlayPreferences,
@@ -80,7 +78,7 @@ class AppNavigator(
 
     private suspend fun chapterOf(gameId: GameId, stopId: String): Int? {
         val track = graph.settingsRepository.journeyTrack(gameId).first()
-        return loadJourneyFile(appContext, track)?.locate(stopId)?.first?.index
+        return loadJourneyFile(graph.bundledFiles, track)?.locate(stopId)?.first?.index
     }
 
     fun openGamePage(gameId: GameId) {

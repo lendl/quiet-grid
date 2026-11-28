@@ -4,6 +4,7 @@ import com.quietgrid.app.core.Difficulty
 import kotlin.math.max
 import kotlin.math.roundToInt
 import kotlin.random.Random
+import kotlin.time.Clock
 
 private const val MIN_SCORE = 1000
 
@@ -32,7 +33,7 @@ fun generateChimpTestCells(count: Int, gridSize: Int): List<ChimpTestCell> {
 fun createChimpTestSession(difficulty: Difficulty): ChimpTestSession {
     val config = DIFFICULTY_CONFIG.getValue(difficulty)
     val puzzle = ChimpTestPuzzle(
-        id = "${difficulty.key}-${System.currentTimeMillis()}",
+        id = "${difficulty.key}-${Clock.System.now().toEpochMilliseconds()}",
         difficulty = difficulty.key,
         gridSize = config.gridSize,
         startCount = config.startCount,

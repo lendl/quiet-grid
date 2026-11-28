@@ -1,5 +1,8 @@
 package com.quietgrid.app.games.circuit
 
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -44,19 +47,19 @@ data class CircuitResult(
 )
 
 internal class CircuitPuzzleAdapter(
-    private val appContext: android.content.Context,
+    private val files: BundledFiles,
     private val historyStore: PlayHistoryStore,
 ) : PuzzleAdapter<CircuitSession, CircuitResult> {
     override val gameId: GameId = GameId.CIRCUIT
 
     override suspend fun freshSession(difficulty: Difficulty): CircuitSession? {
         val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
-        val puzzle = CircuitPuzzleBank.randomPuzzle(appContext, difficulty, recentIds) ?: return null
+        val puzzle = CircuitPuzzleBank.randomPuzzle(files, difficulty, recentIds) ?: return null
         return createCircuitSession(puzzle)
     }
 
     override suspend fun journeySession(difficulty: Difficulty, puzzleId: String, transform: Int): CircuitSession? =
-        CircuitPuzzleBank.puzzleById(appContext, difficulty, puzzleId)?.let(::createCircuitSession)
+        CircuitPuzzleBank.puzzleById(files, difficulty, puzzleId)?.let(::createCircuitSession)
 
     override fun journeySignals(session: CircuitSession): JourneySignals = JourneySignals(session.hintsUsed, 0)
 
@@ -109,12 +112,14 @@ internal class CircuitPuzzleAdapter(
 }
 
 class CircuitPlayViewModel(
-    appContext: android.content.Context,
+    files: BundledFiles,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     journeyStore: JourneyProgressStore,
     badgeStore: BadgeStore,
+    appForeground: AppForeground,
+    motion: MotionSettings,
     requestedDifficulty: Difficulty,
     resume: Boolean,
     journey: JourneyRequest?,
@@ -125,7 +130,9 @@ class CircuitPlayViewModel(
         sessionStore = sessionRepository,
         statsStore = statsRepository,
         historyStore = historyRepository,
-        adapter = CircuitPuzzleAdapter(appContext, historyRepository),
+        adapter = CircuitPuzzleAdapter(files, historyRepository),
+        isAppForeground = appForeground::isForeground,
+        animationsEnabled = motion::animationsEnabled,
         journeyStore = journeyStore,
         badgeStore = badgeStore,
     )

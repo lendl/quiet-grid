@@ -11,7 +11,7 @@ import com.quietgrid.app.core.Difficulty
 import com.quietgrid.app.core.GameId
 import com.quietgrid.app.core.journey.JourneyRequest
 import com.quietgrid.app.session.LossReason
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -39,7 +39,7 @@ class TypedRoutesNavigationTest {
             }
         }
         val routes = listOf(
-            PlayRoute.of(GameId.GAME_2048, Difficulty.EXPERT, resume = true, daily = LocalDate.of(2026, 11, 13), journey = JourneyRequest("s1", "p1", 3)),
+            PlayRoute.of(GameId.GAME_2048, Difficulty.EXPERT, resume = true, daily = LocalDate(2026, 11, 13), journey = JourneyRequest("s1", "p1", 3)),
             PlayRoute.of(GameId.SUDOKU, Difficulty.EASY, resume = false),
             LossRoute(GameId.ARROWESCAPE, Difficulty.HARD, 30, LossReason.OUT_OF_LIVES, 120, journeyStop = "ae-1"),
             ChallengerResultRoute(GameId.TAKUZU, 4, Difficulty.MEDIUM, 900, true, "time_up", 700, 12.5),

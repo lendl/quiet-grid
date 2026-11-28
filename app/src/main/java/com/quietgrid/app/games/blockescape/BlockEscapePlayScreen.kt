@@ -29,12 +29,14 @@ fun BlockEscapePlayScreen(
 ) {
     val viewModel = appViewModel { graph ->
         BlockEscapePlayViewModel(
-            graph.appContext,
+            graph.bundledFiles,
             graph.sessionRepository,
             graph.statsRepository,
             graph.playHistoryRepository,
             graph.journeyProgressRepository,
             graph.badgeRepository,
+            graph.appForeground,
+            graph.motionSettings,
             difficulty,
             resume,
             journey,

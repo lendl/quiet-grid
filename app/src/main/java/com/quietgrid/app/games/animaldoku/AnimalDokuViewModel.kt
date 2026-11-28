@@ -1,6 +1,9 @@
 // app/src/main/java/com/quietgrid/app/games/animaldoku/AnimalDokuViewModel.kt
 package com.quietgrid.app.games.animaldoku
 
+import com.quietgrid.app.platform.BundledFiles
+import com.quietgrid.app.platform.MotionSettings
+import com.quietgrid.app.session.AppForeground
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -32,7 +35,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 private val json = Json { ignoreUnknownKeys = true }
 private const val ANIMALDOKU_BASE_SCORE = 1000
@@ -66,24 +69,24 @@ internal fun decodeAnimalDokuCells(flat: List<Int>, size: Int): List<List<Animal
 }
 
 internal class AnimalDokuPuzzleAdapter(
-    private val appContext: android.content.Context,
+    private val files: BundledFiles,
     private val historyStore: PlayHistoryStore,
 ) : PuzzleAdapter<AnimalDokuSession, AnimalDokuResult> {
     override val gameId: GameId = GameId.ANIMALDOKU
 
     override suspend fun freshSession(difficulty: Difficulty): AnimalDokuSession? {
         val recentIds = historyStore.recentlyPlayedPuzzleIds(gameId, difficulty)
-        val puzzle = AnimalDokuPuzzleBank.randomPuzzle(appContext, difficulty, recentIds) ?: return null
+        val puzzle = AnimalDokuPuzzleBank.randomPuzzle(files, difficulty, recentIds) ?: return null
         return createAnimalDokuSession(puzzle)
     }
 
     override suspend fun dailySession(difficulty: Difficulty, date: LocalDate): AnimalDokuSession? {
-        val puzzle = selectDaily(AnimalDokuPuzzleBank.dailyPool(appContext, difficulty), { it.id }, gameId.key, difficulty.key, date) ?: return null
+        val puzzle = selectDaily(AnimalDokuPuzzleBank.dailyPool(files, difficulty), { it.id }, gameId.key, difficulty.key, date) ?: return null
         return createAnimalDokuSession(puzzle)
     }
 
     override suspend fun journeySession(difficulty: Difficulty, puzzleId: String, transform: Int): AnimalDokuSession? =
-        AnimalDokuPuzzleBank.puzzleById(appContext, difficulty, puzzleId)?.transformed(gridTransformById(transform))?.let(::createAnimalDokuSession)
+        AnimalDokuPuzzleBank.puzzleById(files, difficulty, puzzleId)?.transformed(gridTransformById(transform))?.let(::createAnimalDokuSession)
 
     override fun journeySignals(session: AnimalDokuSession): JourneySignals =
         JourneySignals(session.hintsUsed, ANIMALDOKU_STARTING_LIVES - session.lives)
@@ -134,12 +137,14 @@ internal class AnimalDokuPuzzleAdapter(
 }
 
 class AnimalDokuPlayViewModel(
-    appContext: android.content.Context,
+    files: BundledFiles,
     sessionRepository: SessionStore,
     statsRepository: StatsStore,
     historyRepository: PlayHistoryStore,
     journeyStore: JourneyProgressStore,
     badgeStore: BadgeStore,
+    appForeground: AppForeground,
+    motion: MotionSettings,
     requestedDifficulty: Difficulty,
     resume: Boolean,
     dailyDate: LocalDate?,
@@ -151,7 +156,9 @@ class AnimalDokuPlayViewModel(
         sessionStore = sessionRepository,
         statsStore = statsRepository,
         historyStore = historyRepository,
-        adapter = AnimalDokuPuzzleAdapter(appContext, historyRepository),
+        adapter = AnimalDokuPuzzleAdapter(files, historyRepository),
+        isAppForeground = appForeground::isForeground,
+        animationsEnabled = motion::animationsEnabled,
         journeyStore = journeyStore,
         badgeStore = badgeStore,
     )
