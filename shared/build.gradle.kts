@@ -35,11 +35,11 @@ kotlin {
             implementation("org.jetbrains.compose.foundation:foundation:1.12.2")
             implementation("org.jetbrains.compose.material3:material3:1.9.0")
             implementation("org.jetbrains.compose.components:components-resources:1.12.2")
-            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.12.0")
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.13.0")
             api("androidx.room:room-runtime:2.8.5")
             api("androidx.datastore:datastore-preferences-core:1.3.0")
             api("com.squareup.okio:okio:3.17.0")
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
         }
         androidMain.dependencies {
             implementation("androidx.sqlite:sqlite-framework:2.6.2")

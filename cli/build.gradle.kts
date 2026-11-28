@@ -61,7 +61,7 @@ tasks.register<Test>("bankTest") {
 
 dependencies {
     implementation(project(":engine"))
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.12.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.13.0")
     implementation("org.apache.lucene:lucene-analysis-common:10.6.0")
 
     testImplementation("junit:junit:4.13.2")
